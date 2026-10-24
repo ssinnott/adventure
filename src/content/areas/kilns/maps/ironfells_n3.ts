@@ -5,17 +5,10 @@
 // bare fell under the crag, and a collapsed working in the rock at the south-east corner.
 // The gate at 28,8 is the way into Anvilhall (#459, GATE).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.3 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
-import { EAST, NORTH } from '../../../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
-
-/**
- * The gate into Anvilhall (#459): a door on the gate's square in the crag's dressed front, into the
- * town's start inside its own gate, saying the town's gate line (docs/areas/kilns.md §4.4) as the
- * company goes in; the town's way back lands on 28,9, facing south.
- */
-export const GATE: Exit = { x: 28, y: 8, to: 'anvilhall', tx: 7, ty: 14, tf: NORTH,
-  label: 'A door in the hill, iron-bound, and the hammering behind it. Over the lintel, words cut deep and painted red.' };
+import { IRONFELLS_GATE } from '../public.ts';
 
 export const IRONFELLS_N3: MapDef = {
   id: 'ironfells_n3',
@@ -59,7 +52,7 @@ export const IRONFELLS_N3: MapDef = {
     ',,===,,,,,,,,,,,^,,^^^,,rrr:rrrr',
     ',,,,==,,,,,,,,,,,,,,,,,,rrrrrrrr',
   ],
-  exits: [GATE],
+  exits: [IRONFELLS_GATE],
   features: [
     // Where the spur leaves the trail, the hammering heard; along it, the camp in the knoll's lee.
     { kind: 'event', x: 2, y: 27, id: 'n3_hammering', once: true, text: 'The spur leaves the trail for the north-east, and the hammering comes down it. It comes out of the hill.' },

@@ -63,7 +63,8 @@ import { makeRng } from '../../../lib/engine/rng.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
 import { FURRIER } from './items.ts';
 import { INTERIORS } from './interiors.ts';
-import { NIGHTS, WENNA_UP, WENNA_LODGE } from './maps/rime_lodge.ts';
+import { NIGHTS, WENNA_UP } from './maps/rime_lodge.ts';
+import { WENNA_LODGE } from './public.ts';
 import { CHAPTER } from './chapter.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -77,7 +78,7 @@ import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { readMarks } from '../../../game/inscriptions.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import type { Person } from '../../../game/people.ts';
-import { NOTCH } from '../cairnmoor/maps/cairnfield_n8.ts';
+import { NOTCH } from '../cairnmoor/public.ts';
 import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
 import { DOOR } from './maps/coldmere_k9.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
@@ -85,7 +86,7 @@ import { GUILD_QUESTS } from '../../index.ts';
 import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take, rankOf } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
-import { FOURTH_RANKS_OPEN } from '../kilns/guilds.ts';
+import { FOURTH_RANKS_OPEN } from '../kilns/public.ts';
 import { RESPAWN } from '../../../game/keys.ts';
 
 /**

@@ -61,15 +61,13 @@ import { seekId, sought } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { questLog, questMarks, TRAINERS } from '../../../game/quests.ts';
 import type { QuestCond, When } from '../../../game/quests.ts';
-import { VENTS } from '../ashfall/maps/firemount_g11.ts';
-import { STAIR } from '../ashfall/maps/meridian_camp.ts';
-import { STAIR2 } from '../ashfall/maps/meridian_camp2.ts';
-import { ROPE } from '../ashfall/maps/meridian_camp3.ts';
+import { VENTS, STAIR, STAIR2, ROPE, CURES, LIT, ROAD_WEST } from '../ashfall/public.ts';
 import { SCOUT_ASKED, MAP_GIVEN, LION_HUNT, LION_LEFT, LION_BLOW, LION_TOLD, LION_TAKEN, LION_DOWN } from './maps/wold_b8.ts';
-import { HORSE_ASKED, HORSE_BROKEN, HORSE_CARRIED, HORSE_WHOLE, GARDEN_CARRIED, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT } from './maps/wold_d8.ts';
-import { ORDERS_CARRIED, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from './maps/wold_c8.ts';
+import { HORSE_CARRIED, GARDEN_CARRIED } from './maps/wold_d8.ts';
+import { HORSE_ASKED, HORSE_BROKEN, HORSE_WHOLE, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED, ROAD_EAST } from './public.ts';
+import { ORDERS_CARRIED } from './maps/wold_c8.ts';
 import { QUESTS } from './quests.ts';
-import { AREAS, ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
+import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -84,17 +82,16 @@ import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { take as ride } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { RIDERS_RIDE } from '../../crossings.ts';
-import { CURES } from '../ashfall/items.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
-import { STORY, ROAD_EAST } from './maps/wold_d8.ts';
+import { STORY } from './maps/wold_d8.ts';
 import { CHAPTER } from './chapter.ts';
-import { CHAPTER as WINDOW } from '../ashfall/chapter.ts';
-import { LIT } from '../ashfall/maps/ember_stone.ts';
-import { ROAD_WEST } from '../ashfall/maps/emberwaste_e10.ts';
 import { WATCH, SCHOLAR_ASKED, ETCHING_GIVEN, ETCHING_READ } from './maps/wold_b9.ts';
 import { MASTER_MET, MASTER_FAVOUR } from './maps/wold_d10.ts';
 import { RESPAWN } from '../../../game/keys.ts';
+
+// Another area's chapter, taken from the quest by its id and not from its file (#992).
+const WINDOW = THE_QUEST.chapters.find((c) => c.id === 'window')!;
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);

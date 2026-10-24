@@ -11,6 +11,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
+import { ORDERS_ASKED, ORDERS_BURNED } from '../public.ts';
 
 /**
  * Orders on the Scarp Stair (#56's 54, #532): sent up the stair by Hendra, the Compact's factor at
@@ -18,8 +19,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * and at Akordu gives them to the eldest sealed (`ORDERS_SEALED`), tells her what they say
  * (`ORDERS_TOLD`) or burns them (`ORDERS_BURNED`), when the runner climbs again.
  */
-export const ORDERS_ASKED = 'q_scarp', ORDERS_CARRIED = 'q_scarp_carried';
-export const ORDERS_SEALED = 'q_scarp_sealed', ORDERS_TOLD = 'q_scarp_told', ORDERS_BURNED = 'q_scarp_burned';
+export const ORDERS_CARRIED = 'q_scarp_carried';
 
 export const WOLD_C8: MapDef = {
   id: 'wold_c8',

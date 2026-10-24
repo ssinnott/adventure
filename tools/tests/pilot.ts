@@ -57,7 +57,8 @@ import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
 import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
 import { MessageScreen } from '../../src/ui/screens.ts';
-import { CHOICE_TWO, CHOICE_THREE, VASK_FALLEN, VOICE_WHOLE } from '../../src/content/areas/hearth/maps/core.ts';
+import { CHOICE_TWO, CHOICE_THREE, VASK_FALLEN } from '../../src/content/areas/hearth/maps/core.ts';
+import { VOICE_WHOLE } from '../../src/content/areas/hearth/public.ts';
 import { LAIR } from './enclave.ts';
 
 /** A headless game with an instant pilot, off. */

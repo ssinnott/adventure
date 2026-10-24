@@ -7,9 +7,10 @@
 // are keyed is in src/content/area.ts (`chapter`), and tools/tests/quests.ts checks every key.
 // docs/areas/whitespine.md §5 and §9 (#505) are its design.
 import type { Chapter, When } from '../../../game/quests.ts';
-import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
+import { SLEEPERS_SEEN } from '../rimewater/public.ts';
 import { WENNA_TAKEN } from './maps/sheerpoint_i8.ts';
-import { STAIR_PASSED, STAIR_TOP } from './maps/highspine_i10.ts';
+import { STAIR_PASSED } from './maps/highspine_i10.ts';
+import { STAIR_TOP } from './public.ts';
 
 /** Where Rimewater's The Sleepers ends, the beds seen and the pass's mouth reached; or Monks' Vale walked into. */
 const OVER: When = [{ flag: SLEEPERS_SEEN, seen: 'coldmere_k10:k10_mouth' }, { visited: 'monksvale_j11' }];

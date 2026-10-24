@@ -9,9 +9,9 @@
 import type { MapDef, Words } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { LAMP_LIT, WALL_WALKED } from '../quests.ts';
-import { NEST_WATCH } from '../../whitespine/maps/highspine_i11.ts';
+import { NEST_WATCH } from '../../whitespine/public.ts';
 import { ENDINGS } from '../../../endings.ts';
-import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { CRACK_SEALED } from '../../hearth/public.ts';
 
 /**
  * The Reader's words, read to what the company carries: the papers, the log or both, each opened

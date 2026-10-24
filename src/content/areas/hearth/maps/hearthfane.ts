@@ -6,7 +6,7 @@
 // the crypt (#756). Band 28-29; docs/areas/hearth_isle.md §4.4 is its brief, §6 56's.
 import type { Exit, Feature, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
-import { THRONE_REMOVED } from '../../shelf/maps/keep.ts';
+import { THRONE_REMOVED } from '../../shelf/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /** Met the sacristan under the vestry's table (56). */

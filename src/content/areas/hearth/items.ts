@@ -10,7 +10,7 @@
 // §4.9): a lightning mace and a robe that raises personality, in a cell cut in the east rim.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
-import { slagMace } from '../ashfall/items.ts';
+import { slagMace } from '../ashfall/public.ts';
 
 /** The Hand's knife, a point past Cinderport's Marlinspike (1d8+13): light, the thief's (§8; §9.1, 41). */
 export const greyKnife = W('grey_knife', 'Grey Knife', 6400, 1, 8, { kind: 'light', bonus: 14 });
@@ -35,6 +35,39 @@ export const greyShield: ItemDef = { id: 'grey_shield', name: 'Grey Shield', slo
  */
 export const oldLanternsStaff = W('old_lanterns_staff', 'Old Lantern\'s Staff', 7000, 1, 10, { kind: 'staff', bonus: 14, twoHanded: true, text: ['A staff of the old Lanterns, the lamp in its head still lit after four hundred years.'] });
 
+// The sacristan's key to the treasury (56): it opens that door, and only it does.
+export const faneKey: ItemDef = { id: 'fane_key', name: 'Sacristan\'s Key', slot: 'none', price: 0 };
+// Three in a pouch in the north rim's cache: each wakes one member from sleep or paralysis, used up
+// (§9.1, 37). Named apart from Lantern Oil, which the store sells.
+export const smellingSalts: ItemDef = { id: 'smelling_salts', name: 'Smelling Salts', slot: 'none', price: 0, use: { cure: ['asleep', 'paralysed'] } };
+// The pilgrims' tokens (57), each given by its pilgrim in the Bowl: a piece for its claimant at the
+// Council, and who stands at the bottom where no claimant's verdict carried.
+export const wardensBadge: ItemDef = { id: 'wardens_badge', name: 'Wardens\' Badge', slot: 'none', price: 0 };
+export const treatySeal: ItemDef = { id: 'treaty_seal', name: 'Treaty Seal', slot: 'none', price: 0 };
+export const tallisTally: ItemDef = { id: 'tallis_tally', name: 'Tallis\'s Tally', slot: 'none', price: 0 };
+// Under a dead champion's hands on the Stair (58): read from the pack, and taken home to Gullwick (#765).
+export const gullwickLetter: ItemDef = { id: 'gullwick_letter', name: 'Letter for Gullwick', slot: 'none', price: 0, text: [
+  'A letter sealed with a knot of rope, the seal Gullwick\'s.',
+  '"To my mother, at the third house from the slip. We are on the isle. The grey men say the door opens tomorrow, and after that everything is different, and I will come home then and explain."',
+  '"I was never cargo. I chose this. Tell Wenna\'s mother I saw her girl, and she is well, and she is not afraid, which is more than I am. Your son, Jowan."',
+] };
+// The Queen's signet, off Vask's finger at the Heart: every answer at the panel gives it (64, #759); the
+// Council's clerk at Helmstow's gate or the sea off Gullwick takes it (#765). Read from the pack.
+export const queensSignet: ItemDef = { id: 'queens_signet', name: 'Queen\'s Signet', slot: 'none', price: 0, text: [
+  'A heavy ring, gold, worn thin on the inside. The seal is the one on the treaty, and on the chisel, and on the north rim: the first people\'s mark.',
+] };
+// The vigil cell in the east rim's face (#864), behind a second secret door in I6, and off the ladder: no GEAR row
+// dresses a company in either, no shop sells either, and each is priced inside the window of 7,000 and under the
+// Grey Mail's, the dearest find the curve names for the area. The Slag Mace of Cinderport's 25, the rung under the
+// Grey Blade the ladder wears from 28, with a lightning die on its head: its steel the rung under, so the die is the
+// gain (hits 21.5 against 19 and 18). The Grey Blade's 6,600 and a point of plus (150) to each point of that gain,
+// to the 50 below. Locked, in the grey-banded chest.
+export const levinMace: ItemDef = { ...slagMace, id: 'levin_mace', name: 'Levin Mace', price: 6950, element: 'lightning' };
+// The Grey Robe a point lighter in the armour, as Cinderport's, and cut for the faithful: +3 personality while worn,
+// which the armour slot makes one robe at a time. The Grey Robe's 6,200, less 150 for the point of armour and with
+// 300 more for the raise. In the plain chest beside the locked one.
+export const vigilRobe: ItemDef = { ...greyRobe, id: 'vigil_robe', name: 'Vigil Robe', price: 6350, ac: 12, stat: { personality: 3 } };
+
 export const ITEMS: readonly ItemDef[] = [
   greyKnife,
   greyStaff,
@@ -49,36 +82,13 @@ export const ITEMS: readonly ItemDef[] = [
   oldLanternsStaff,
   // In the rearguard's chest on the Stair's first landing (#758).
   greyAxe,
-  // The sacristan's key to the treasury (56): it opens that door, and only it does.
-  { id: 'fane_key', name: 'Sacristan\'s Key', slot: 'none', price: 0 },
-  // Three in a pouch in the north rim's cache: each wakes one member from sleep or paralysis, used up
-  // (§9.1, 37). Named apart from Lantern Oil, which the store sells.
-  { id: 'smelling_salts', name: 'Smelling Salts', slot: 'none', price: 0, use: { cure: ['asleep', 'paralysed'] } },
-  // The pilgrims' tokens (57), each given by its pilgrim in the Bowl: a piece for its claimant at the
-  // Council, and who stands at the bottom where no claimant's verdict carried.
-  { id: 'wardens_badge', name: 'Wardens\' Badge', slot: 'none', price: 0 },
-  { id: 'treaty_seal', name: 'Treaty Seal', slot: 'none', price: 0 },
-  { id: 'tallis_tally', name: 'Tallis\'s Tally', slot: 'none', price: 0 },
-  // Under a dead champion's hands on the Stair (58): read from the pack, and taken home to Gullwick (#765).
-  { id: 'gullwick_letter', name: 'Letter for Gullwick', slot: 'none', price: 0, text: [
-    'A letter sealed with a knot of rope, the seal Gullwick\'s.',
-    '"To my mother, at the third house from the slip. We are on the isle. The grey men say the door opens tomorrow, and after that everything is different, and I will come home then and explain."',
-    '"I was never cargo. I chose this. Tell Wenna\'s mother I saw her girl, and she is well, and she is not afraid, which is more than I am. Your son, Jowan."',
-  ] },
-  // The Queen's signet, off Vask's finger at the Heart: every answer at the panel gives it (64, #759); the
-  // Council's clerk at Helmstow's gate or the sea off Gullwick takes it (#765). Read from the pack.
-  { id: 'queens_signet', name: 'Queen\'s Signet', slot: 'none', price: 0, text: [
-    'A heavy ring, gold, worn thin on the inside. The seal is the one on the treaty, and on the chisel, and on the north rim: the first people\'s mark.',
-  ] },
-  // The vigil cell in the east rim's face (#864), behind a second secret door in I6, and off the ladder: no GEAR row
-  // dresses a company in either, no shop sells either, and each is priced inside the window of 7,000 and under the
-  // Grey Mail's, the dearest find the curve names for the area. The Slag Mace of Cinderport's 25, the rung under the
-  // Grey Blade the ladder wears from 28, with a lightning die on its head: its steel the rung under, so the die is the
-  // gain (hits 21.5 against 19 and 18). The Grey Blade's 6,600 and a point of plus (150) to each point of that gain,
-  // to the 50 below. Locked, in the grey-banded chest.
-  { ...slagMace, id: 'levin_mace', name: 'Levin Mace', price: 6950, element: 'lightning' },
-  // The Grey Robe a point lighter in the armour, as Cinderport's, and cut for the faithful: +3 personality while worn,
-  // which the armour slot makes one robe at a time. The Grey Robe's 6,200, less 150 for the point of armour and with
-  // 300 more for the raise. In the plain chest beside the locked one.
-  { ...greyRobe, id: 'vigil_robe', name: 'Vigil Robe', price: 6350, ac: 12, stat: { personality: 3 } },
+  faneKey,
+  smellingSalts,
+  wardensBadge,
+  treatySeal,
+  tallisTally,
+  gullwickLetter,
+  queensSignet,
+  levinMace,
+  vigilRobe,
 ];

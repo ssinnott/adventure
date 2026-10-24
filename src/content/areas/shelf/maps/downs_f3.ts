@@ -6,7 +6,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
-import { WENNA_HOME, SIGNET } from '../../hearth/maps/core.ts';
+import { WENNA_HOME, SIGNET } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DOWNS_F3: MapDef = {

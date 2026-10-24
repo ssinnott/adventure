@@ -12,9 +12,8 @@ import { ARMOURER, CURES } from '../items.ts';
 import { GATE, FOUNDING_RAISED } from './cindercoast_g10.ts';
 import { SHOVEL_STORY } from './firemount_g11.ts';
 import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING, sells } from '../../../crossings.ts';
-import { MASON_PASSAGE } from '../../whitespine/maps/sheerpoint_i8.ts';
-import { HORSE_ASKED, HORSE_BROKEN, HORSE_WHOLE, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT } from '../../glasswold/maps/wold_d8.ts';
-import { ORDERS_ASKED, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from '../../glasswold/maps/wold_c8.ts';
+import { MASON_PASSAGE } from '../../whitespine/public.ts';
+import { HORSE_ASKED, HORSE_BROKEN, HORSE_WHOLE, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT, ORDERS_ASKED, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from '../../glasswold/public.ts';
 import { ENDED } from '../../../endings.ts';
 
 /**

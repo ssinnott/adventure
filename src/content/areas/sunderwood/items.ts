@@ -2,22 +2,60 @@
 // with a plus that the Sunder and the boxes round it give up by 16, and the finds of its boxes.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY, core } from '../../items.ts';
-import { ITEMS as FORELAND } from '../shelf/items.ts';
-import { ITEMS as THORNMARK } from '../thornmark/items.ts';
-
-const halberd = FORELAND.find((i) => i.id === 'halberd')!;
-const plate = THORNMARK.find((i) => i.id === 'plate')!;
-const chain = FORELAND.find((i) => i.id === 'chain')!;
+import { halberd, chain } from '../shelf/public.ts';
+import { plate } from '../thornmark/public.ts';
 
 // Sold in the Watch's stores (#201): a step past Saltmouth's finds for every class, at 14.
-const flail = W('flail', 'Flail', 1100, 2, 8, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
-const wardensDirk = W('wardens_dirk', "Warden's Dirk", 1100, 1, 8, { kind: 'light', bonus: 7 });
-const ironwoodBow = W('ironwood_bow', 'Ironwood Bow', 1200, 1, 12, { kind: 'bow', bonus: 6, ranged: true, twoHanded: true, classes: ['ranger'] });
-const greatAxe = W('great_axe', 'Great Axe', 1200, 2, 8, { bonus: 4, twoHanded: true, classes: MARTIAL });
-const watchStaff = W('watch_staff', 'Watch Staff', 1000, 1, 10, { kind: 'staff', bonus: 6, twoHanded: true });
-const lamellar = A('lamellar', 'Lamellar', 1600, 10, { classes: NO_CASTER_HEAVY });
-const watchHabit = A('watch_habit', 'Watch Habit', 1000, 8);
-const watchShield: ItemDef = { id: 'watch_shield', name: 'Watch Shield', slot: 'shield', price: 900, ac: 5, classes: MAIL };
+export const flail = W('flail', 'Flail', 1100, 2, 8, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
+export const wardensDirk = W('wardens_dirk', "Warden's Dirk", 1100, 1, 8, { kind: 'light', bonus: 7 });
+export const ironwoodBow = W('ironwood_bow', 'Ironwood Bow', 1200, 1, 12, { kind: 'bow', bonus: 6, ranged: true, twoHanded: true, classes: ['ranger'] });
+export const greatAxe = W('great_axe', 'Great Axe', 1200, 2, 8, { bonus: 4, twoHanded: true, classes: MARTIAL });
+export const watchStaff = W('watch_staff', 'Watch Staff', 1000, 1, 10, { kind: 'staff', bonus: 6, twoHanded: true });
+export const lamellar = A('lamellar', 'Lamellar', 1600, 10, { classes: NO_CASTER_HEAVY });
+export const watchHabit = A('watch_habit', 'Watch Habit', 1000, 8);
+export const watchShield: ItemDef = { id: 'watch_shield', name: 'Watch Shield', slot: 'shield', price: 900, ac: 5, classes: MAIL };
+
+// Found, not sold, by 16: the Sunder's, K3's and L2's, and J2's below (docs/areas/sunderwood.md
+// §4). The plate is a step past the stores' lamellar, for those who wear plate.
+export const flailPlus1 = P(flail, 1);
+export const ironwoodBowPlus1 = P(ironwoodBow, 1);
+export const platePlus2 = P(plate, 2);
+export const wardensDirkPlus1 = P(wardensDirk, 1);
+export const lanternsStaff = P(watchStaff, 1, { id: 'lanterns_staff', name: "Lantern's Staff +1" });
+// J2's secret (#196): in the bear's cave, with the gleaner's sack.
+export const greatAxePlus1 = P(greatAxe, 1);
+// The Warden of the Sunder's (#199): its heart, which it drops.
+export const sunderHeart: ItemDef = { id: 'sunder_heart', name: 'Heart of the Sunder', slot: 'none', price: 0 };
+// K3's secret (#198): in the river's old bed, where the first shards were quarried.
+export const sunderShard: ItemDef = { id: 'sunder_shard', name: 'Sunder Shard', slot: 'none', price: 0 };
+// K2's secret (#197): on the ledge behind Sunderfall's water.
+export const longswordPlus2 = P(core('longsword'), 2);
+// J3's secret (#202): in the gleaners' cache behind the bears' den.
+export const chainPlus2 = P(chain, 2);
+// I2's secret (#195): the Watch's last patrol's, under the milestone.
+export const wardensHalberd = P(halberd, 1, { id: 'wardens_halberd', name: "Warden's Halberd +1" });
+// The depths' secrets (#203): the Hand's store above L4's landing, and K4's boathouse at the
+// gorge's foot with the depths' roll of Lanterns, read from the pack. L3's lamp-house gives K2's
+// Long Sword +2 again.
+export const wardensDirkPlus2 = P(wardensDirk, 2);
+export const flailPlus2 = P(flail, 2);
+export const lanternsRoll: ItemDef = { id: 'lanterns_roll', name: "The Lanterns' Roll", slot: 'none', price: 0, text: [
+  'THE LANTERNS OF THE DEPTHS, the hand steady, and under it the names in a column as a prior keeps them, a lamp beside each and the lamp\'s place.',
+  'Every name is struck through. The strokes are one hand\'s, one ink, done at one sitting, the pen pressed hard enough to cut.',
+  'One name is not struck. LEOFRUN, the moth shrine. Beside it, in a smaller hand and later: STILL LIT.',
+] };
+// The side quests' (#205): no shop buys them. Garret takes the lamp; the tally and the map are
+// letters, read from the pack, and stay in it.
+export const wardingLamp: ItemDef = { id: 'warding_lamp', name: 'Warding Lamp', slot: 'none', price: 0 };
+export const foremansTally: ItemDef = { id: 'foremans_tally', name: "The Foreman's Tally", slot: 'none', price: 0, text: [
+  'A tally board of pale pine, the columns scored with a knife and filled in with charcoal.',
+  'Sacks, by the week since midsummer: eight, eleven, fourteen. Where sent: TO THE SHIP, mostly, and a second column that starts in the autumn and grows: TO THE POINT.',
+  'The last week has nothing to the ship and everything to the Point, and under it, pressed hard: SHEER POINT WANTS ALL WE CAN SEND.',
+] };
+export const watchMap: ItemDef = { id: 'watch_map', name: "The Watch's Map", slot: 'none', price: 0, text: [
+  'A vellum gone soft, the Sunder drawn on it ledge by ledge in a hundred years of hands, each ledge named for the Lantern who first walked it.',
+  'The names go down the east face and stop. Below the lowest ledge, one line ruled edge to edge, and no name to it. Nothing under the line.',
+] };
 
 export const ITEMS: readonly ItemDef[] = [
   flail,
@@ -28,45 +66,21 @@ export const ITEMS: readonly ItemDef[] = [
   lamellar,
   watchHabit,
   watchShield,
-  // Found, not sold, by 16: the Sunder's, K3's and L2's, and J2's below (docs/areas/sunderwood.md
-  // §4). The plate is a step past the stores' lamellar, for those who wear plate.
-  P(flail, 1),
-  P(ironwoodBow, 1),
-  P(plate, 2),
-  P(wardensDirk, 1),
-  P(watchStaff, 1, { id: 'lanterns_staff', name: "Lantern's Staff +1" }),
-  // J2's secret (#196): in the bear's cave, with the gleaner's sack.
-  P(greatAxe, 1),
-  // The Warden of the Sunder's (#199): its heart, which it drops.
-  { id: 'sunder_heart', name: 'Heart of the Sunder', slot: 'none', price: 0 },
-  // K3's secret (#198): in the river's old bed, where the first shards were quarried.
-  { id: 'sunder_shard', name: 'Sunder Shard', slot: 'none', price: 0 },
-  // K2's secret (#197): on the ledge behind Sunderfall's water.
-  P(core('longsword'), 2),
-  // J3's secret (#202): in the gleaners' cache behind the bears' den.
-  P(chain, 2),
-  // I2's secret (#195): the Watch's last patrol's, under the milestone.
-  P(halberd, 1, { id: 'wardens_halberd', name: "Warden's Halberd +1" }),
-  // The depths' secrets (#203): the Hand's store above L4's landing, and K4's boathouse at the
-  // gorge's foot with the depths' roll of Lanterns, read from the pack. L3's lamp-house gives K2's
-  // Long Sword +2 again.
-  P(wardensDirk, 2),
-  P(flail, 2),
-  { id: 'lanterns_roll', name: "The Lanterns' Roll", slot: 'none', price: 0, text: [
-    'THE LANTERNS OF THE DEPTHS, the hand steady, and under it the names in a column as a prior keeps them, a lamp beside each and the lamp\'s place.',
-    'Every name is struck through. The strokes are one hand\'s, one ink, done at one sitting, the pen pressed hard enough to cut.',
-    'One name is not struck. LEOFRUN, the moth shrine. Beside it, in a smaller hand and later: STILL LIT.',
-  ] },
-  // The side quests' (#205): no shop buys them. Garret takes the lamp; the tally and the map are
-  // letters, read from the pack, and stay in it.
-  { id: 'warding_lamp', name: 'Warding Lamp', slot: 'none', price: 0 },
-  { id: 'foremans_tally', name: "The Foreman's Tally", slot: 'none', price: 0, text: [
-    'A tally board of pale pine, the columns scored with a knife and filled in with charcoal.',
-    'Sacks, by the week since midsummer: eight, eleven, fourteen. Where sent: TO THE SHIP, mostly, and a second column that starts in the autumn and grows: TO THE POINT.',
-    'The last week has nothing to the ship and everything to the Point, and under it, pressed hard: SHEER POINT WANTS ALL WE CAN SEND.',
-  ] },
-  { id: 'watch_map', name: "The Watch's Map", slot: 'none', price: 0, text: [
-    'A vellum gone soft, the Sunder drawn on it ledge by ledge in a hundred years of hands, each ledge named for the Lantern who first walked it.',
-    'The names go down the east face and stop. Below the lowest ledge, one line ruled edge to edge, and no name to it. Nothing under the line.',
-  ] },
+  flailPlus1,
+  ironwoodBowPlus1,
+  platePlus2,
+  wardensDirkPlus1,
+  lanternsStaff,
+  greatAxePlus1,
+  sunderHeart,
+  sunderShard,
+  longswordPlus2,
+  chainPlus2,
+  wardensHalberd,
+  wardensDirkPlus2,
+  flailPlus2,
+  lanternsRoll,
+  wardingLamp,
+  foremansTally,
+  watchMap,
 ];

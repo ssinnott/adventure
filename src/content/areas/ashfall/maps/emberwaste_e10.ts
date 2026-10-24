@@ -15,16 +15,9 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.9 and docs/areas/glasswold.md §4.2 are its briefs.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-import { LIT } from './ember_stone.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
-
-/**
- * The road west taken once the Stone is lit: `e10_west` sets it on the Hills' last shoulder, the once,
- * and the Wold's D8 at its horse-lines (`d8_east`) for a company that rides west instead. Ashfall's
- * chapter, The Window, is done on it, and the Wold's (#531) starts on it.
- */
-export const ROAD_WEST = 'q_road_west';
+import { ROAD_WEST, LIT } from '../public.ts';
 
 export const EMBERWASTE_E10: MapDef = {
   id: 'emberwaste_e10',

@@ -13,7 +13,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/hearth_isle.md §4.3 is its brief (#754).
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
-import { THRONE_REMOVED } from '../../shelf/maps/keep.ts';
+import { THRONE_REMOVED } from '../../shelf/public.ts';
 import { ELEVEN_KEPT, LOG_GIVEN } from './hearthfane2.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

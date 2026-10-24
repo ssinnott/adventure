@@ -8,18 +8,11 @@
 // its end the inspector before the door to the service ways, which opens for nobody. Once the Stone is lit a
 // sentry is on the stair, going up. Band 26, the area's top, its gallery at 28; docs/areas/meridian_camp.md
 // §4.3 is its brief.
-import type { Choice, Exit, MapDef } from '../../../../game/map.ts';
+import type { Choice, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
-
-/**
- * Fane's rope (#22; meridian_camp.md §8, 3): from its foot up the cold flue off the hall, 19,2, onto Fire
- * Mountain's shoulder at G11's 13,10, beside the lookout, facing south. A way out and never in, as Kelp
- * Hole's flooded passage is: nothing on G11 leads back down it.
- */
-export const ROPE: Exit = { x: 19, y: 2, to: 'firemount_g11', tx: 13, ty: 10, tf: SOUTH,
-  label: 'Up the rope, a long cold climb in the dark, and out through a crack into wind on the mountain\'s shoulder.' };
+import { ROPE } from '../public.ts';
 
 /** Fane's map, held out at the first meeting whatever was read (EXPANSION §2.3): its giving is the Lost Expedition done. */
 const MAP: Choice = {
