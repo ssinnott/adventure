@@ -11,7 +11,8 @@
 // for square (docs/areas/cairnmoor.md §9, #834's 11 to 14).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §12.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CAIRNFIELD_L8: MapDef = {
@@ -22,6 +23,7 @@ export const CAIRNFIELD_L8: MapDef = {
   band: [18, 19],
   region: 'cairnmoor',
   start: { x: 31, y: 23, facing: WEST },
+  anchors: { from_carn_fada: { x: 23, y: 27, facing: EAST } },
   rows: [
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
@@ -59,7 +61,7 @@ export const CAIRNFIELD_L8: MapDef = {
   // Carn Fada, the enclave (#845): the gap in the mound's face at 22,27, where the facing stones have
   // fallen, walked into from the hills at 23,27.
   exits: [
-    { x: 22, y: 27, to: 'carn_fada', tx: 7, ty: 1, tf: SOUTH, label: 'You squeeze in where the mound\'s facing stones have fallen, and the noise of the sea goes small.' },
+    anchored({ x: 22, y: 27, to: 'carn_fada', at: 'start', label: 'You squeeze in where the mound\'s facing stones have fallen, and the noise of the sea goes small.' }),
   ],
   features: [
     // The strand: the netters' hut, the woman raking the wrack and the tideline.

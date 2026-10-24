@@ -4,7 +4,8 @@
 // the rail (MONSTERS §6.2); the main hatch down; the helm aft. Band 12-13, floored at the area's 12
 // as Kelp Hole's levels are; docs/areas/wrackholm.md §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 const NIGHT = { hours: 'night' } as const;
@@ -19,6 +20,7 @@ export const TIDE_SHIP: MapDef = {
   band: [12, 13],
   region: 'wrackholm',
   start: { x: 5, y: 9, facing: EAST },
+  anchors: { from_tide_ship2: { x: 8, y: 5, facing: SOUTH } },
   palette: { wall: '#5a4634', wallDark: '#3a2c20', floor: '#4a3a2a', ceiling: '#0e1220', door: '#3e2e20', wallStyle: 'brick', ceilingStyle: 'vault', banner: '#2a3a4a' },
   rows: [
     '################',
@@ -39,8 +41,8 @@ export const TIDE_SHIP: MapDef = {
     '################',
   ],
   exits: [
-    { x: 4, y: 9, to: 'wrackholm_f6', tx: 14, ty: 29, tf: NORTH, label: 'You go back over the rail into a boat and row for the shingle.' },
-    { x: 8, y: 4, to: 'tide_ship2', tx: 8, ty: 4, tf: SOUTH, label: 'You go down the main hatch into the dark of the lower deck.' },
+    anchored({ x: 4, y: 9, to: 'wrackholm_f6', at: 'from_tide_ship', label: 'You go back over the rail into a boat and row for the shingle.' }),
+    anchored({ x: 8, y: 4, to: 'tide_ship2', at: 'start', label: 'You go down the main hatch into the dark of the lower deck.' }),
   ],
   features: [
     { kind: 'event', x: 6, y: 9, id: 'ts_aboard', once: true, text: 'Over the rail onto wet planks. The deck is dark end to end, the lanterns hooded, and the whole ship leans with the tide.' },

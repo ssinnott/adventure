@@ -8,7 +8,8 @@
 // edge and from D4 (#72) over its west, square for square. No group. Laid whole in the Downs, cut from
 // the atlas with the rocks drawn in; docs/areas/shelf.md §12.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 
 export const DOWNS_E4: MapDef = {
   id: 'downs_e4',
@@ -18,6 +19,7 @@ export const DOWNS_E4: MapDef = {
   band: [4, 5],
   region: 'shelf',
   start: { x: 6, y: 0, facing: SOUTH },
+  anchors: { from_hag_hole: { x: 3, y: 7, facing: SOUTH } },
   rows: [
     ',,,,,,,,,__~~WWWWWWWWWWWWWWWWWWW',
     ',,,,,,,,,_rrrWWWWWWWWWWWWWWWWWWW',
@@ -68,6 +70,6 @@ export const DOWNS_E4: MapDef = {
   secrets: [{ x: 10, y: 2, hint: 'e4_shells' }],
   // The mouth in the cliff's face, the way into Hag Hole, the artifact's lair (#845, #846).
   exits: [
-    { x: 3, y: 6, to: 'hag_hole', tx: 7, ty: 14, tf: NORTH, label: 'You stoop in at a mouth in the cliff\'s face. The sand inside is wet, and the dark goes back.' },
+    anchored({ x: 3, y: 6, to: 'hag_hole', at: 'start', label: 'You stoop in at a mouth in the cliff\'s face. The sand inside is wet, and the dark goes back.' }),
   ],
 };

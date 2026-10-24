@@ -12,7 +12,8 @@
 // D8, 8,30, the diggers' cut into Karaordu, the enclave (#845). Cut from the atlas by tools/scaffold.ts;
 // docs/areas/glasswold.md §12 is its brief (#833).
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const WOLD_D7: MapDef = {
@@ -23,6 +24,7 @@ export const WOLD_D7: MapDef = {
   band: [26, 27],
   region: 'glasswold',
   start: { x: 20, y: 31, facing: NORTH },
+  anchors: { from_karaordu: { x: 8, y: 29, facing: NORTH }, from_kushdag: { x: 18, y: 24, facing: WEST } },
   rows: [
     '-;~WWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     '-;~WWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
@@ -61,8 +63,8 @@ export const WOLD_D7: MapDef = {
   // at 8,29. Kushdag, the artifact's lair (#847): the shelf cut in the Scarp's east face at 19,24, walked
   // onto from the grass at 18,24.
   exits: [
-    { x: 8, y: 30, to: 'karaordu', tx: 7, ty: 1, tf: SOUTH, label: 'You stoop into a cut in the hill\'s face and down into still air. The wind off the grass is gone.' },
-    { x: 19, y: 24, to: 'kushdag', tx: 1, ty: 3, tf: EAST, label: 'You edge onto a shelf cut in the Scarp\'s face. The gulf is a long way down, and the wind is hard.' },
+    anchored({ x: 8, y: 30, to: 'karaordu', at: 'start', label: 'You stoop into a cut in the hill\'s face and down into still air. The wind off the grass is gone.' }),
+    anchored({ x: 19, y: 24, to: 'kushdag', at: 'start', label: 'You edge onto a shelf cut in the Scarp\'s face. The gulf is a long way down, and the wind is hard.' }),
   ],
   features: [
     // Under the Scarp, the Saltings' strip, walked onto from C7 and D6: the pans' end, a salt-raker at the

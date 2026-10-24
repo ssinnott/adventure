@@ -4,7 +4,8 @@
 // Oak tavern and Elder Sylvane, who wants proof of who cut the Stone. Three first prestiges are
 // taught here: the Ranger's, the Cleric's and the Druid's (#19).
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH } from '../../../../game/types.ts';
 
 /** Sylvane's words once the chisel is paid for: after her hand-in, and once, before the brigands' terms. */
 const GROVE_QUIET = ['"The Grove is quiet again. The cut will need a Lantern to mend, and we have sent for one. The treaty is in Henlys, south through the deep past the Grove; ask for the lorekeeper, and say I sent you. Rest here first. Thornhold owes you."'];
@@ -38,8 +39,8 @@ export const THORNHOLD: MapDef = {
     '#######==#######',
   ],
   exits: [
-    { x: 7, y: 15, to: 'thornmark', tx: 23, ty: 5, tf: SOUTH, label: 'You leave Thornhold by the oak gate.' },
-    { x: 8, y: 15, to: 'thornmark', tx: 23, ty: 5, tf: SOUTH, label: 'You leave Thornhold by the oak gate.' },
+    anchored({ x: 7, y: 15, to: 'thornmark', at: 'from_thornhold', label: 'You leave Thornhold by the oak gate.' }),
+    anchored({ x: 8, y: 15, to: 'thornmark', at: 'from_thornhold', label: 'You leave Thornhold by the oak gate.' }),
   ],
   features: [
     { kind: 'inn', x: 4, y: 4, name: 'The Green Man', price: 20, interior: 'green_man' },

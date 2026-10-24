@@ -5,7 +5,8 @@
 // The gate at 28,4 is the way into Kilnhaven (#469, GATE).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.13 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
@@ -14,8 +15,8 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * (docs/areas/kilns.md §4.14) as the company goes in; the town's way back out lands on 29,4, facing
  * east, the road's end before the gate.
  */
-export const GATE: Exit = { x: 28, y: 4, to: 'kilnhaven', tx: 14, ty: 7, tf: WEST,
-  label: 'Kilnhaven: ore on the quay, iron in the air, and the sea. Three ways out, and all of them cost.' };
+export const GATE: Exit = anchored({ x: 28, y: 4, to: 'kilnhaven', at: 'start',
+  label: 'Kilnhaven: ore on the quay, iron in the air, and the sea. Three ways out, and all of them cost.' });
 
 export const KILNMOUTH_L6: MapDef = {
   id: 'kilnmouth_l6',
@@ -25,6 +26,7 @@ export const KILNMOUTH_L6: MapDef = {
   band: [16, 18],
   region: 'kilns',
   start: { x: 31, y: 4, facing: WEST },
+  anchors: { from_kilnhaven: { x: 29, y: 4, facing: EAST } },
   rows: [
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWB::_',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWB::f',

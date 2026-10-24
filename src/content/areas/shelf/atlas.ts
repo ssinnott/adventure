@@ -2,10 +2,12 @@
 // grid, and the planned), the plates of its towns and dungeons, and its sites. src/content/index.ts
 // merges them into ATLAS with the rest of the world, which is planned (src/content/atlas.ts).
 import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
+import { laid } from '../../../game/atlas.ts';
+import { PLAN } from '../../atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'shelf', name: 'The Foreland', area: 'shelf', maps: [{ map: 'shelf', at: [200, 30] }], road: ['shelf:road_rats', 'shelf:hill_wolves'] },
-  { id: 'downs', name: 'Callow Downs', area: 'shelf', band: [2, 5], maps: [{ map: 'downs_f2', at: [168, 30] }, { map: 'downs_f3', at: [168, 62] }, { map: 'downs_e3', at: [136, 62] }, { map: 'downs_e2', at: [136, 30] }, { map: 'downs_d2', at: [104, 30] }, { map: 'downs_d3', at: [104, 62] }, { map: 'downs_d4', at: [104, 94] }, { map: 'downs_e4', at: [136, 94] }], seeds: [[160, 48], [128, 66], [180, 30]], label: [132, 60], road: ['downs_f2:f2_bandits'] },
+  { id: 'shelf', name: 'The Foreland', area: 'shelf', maps: [laid(PLAN, 'shelf', 'G2')], road: ['shelf:road_rats', 'shelf:hill_wolves'] },
+  { id: 'downs', name: 'Callow Downs', area: 'shelf', band: [2, 5], maps: [laid(PLAN, 'downs_f2'), laid(PLAN, 'downs_f3'), laid(PLAN, 'downs_e3'), laid(PLAN, 'downs_e2'), laid(PLAN, 'downs_d2'), laid(PLAN, 'downs_d3'), laid(PLAN, 'downs_d4'), laid(PLAN, 'downs_e4')], seeds: [[160, 48], [128, 66], [180, 30]], label: [132, 60], road: ['downs_f2:f2_bandits'] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [

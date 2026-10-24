@@ -6,6 +6,7 @@
 // has removed Vask (#764) the gibbets go, the inn is the old city's price and the Eel talks of the
 // verdict; the hold's opens the Chapel and Tallis's makes the stores a port's.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { THRONE_COUNCIL, THRONE_WENNA } from './keep.ts';
@@ -39,6 +40,11 @@ export const HARROW: MapDef = {
   band: [1, 4],
   region: 'shelf',
   start: { x: 7, y: 14, facing: NORTH },
+  anchors: {
+    from_keep: { x: 7, y: 1, facing: SOUTH },
+    from_keep_2: { x: 8, y: 1, facing: SOUTH },
+    from_shelf: { x: 13, y: 14, facing: NORTH },
+  },
   rows: [
     '#######==#######',
     '#,,,,,,==,,,,,,#',
@@ -58,13 +64,13 @@ export const HARROW: MapDef = {
     '#######==####,##',
   ],
   exits: [
-    { x: 7, y: 15, to: 'shelf', tx: 16, ty: 4, tf: SOUTH, label: 'You leave Helmstow by the south gate.' },
-    { x: 8, y: 15, to: 'shelf', tx: 16, ty: 4, tf: SOUTH, label: 'You leave Helmstow by the south gate.' },
+    anchored({ x: 7, y: 15, to: 'shelf', at: 'from_harrow', label: 'You leave Helmstow by the south gate.' }),
+    anchored({ x: 8, y: 15, to: 'shelf', at: 'from_harrow', label: 'You leave Helmstow by the south gate.' }),
     // The harbour postern (#157), by the Gilded Eel: open in both cities, and the way in for a company
     // the south gate turns back after Act II.
-    { x: 13, y: 15, to: 'shelf', tx: 18, ty: 4, tf: SOUTH, label: 'You leave Helmstow by the harbour postern, the way the fish carts go down to the boats.' },
-    { x: 7, y: 0, to: 'keep', tx: 7, ty: 8, tf: NORTH, label: 'You pass under the gatehouse into the keep\'s ward.' },
-    { x: 8, y: 0, to: 'keep', tx: 8, ty: 8, tf: NORTH, label: 'You pass under the gatehouse into the keep\'s ward.' },
+    anchored({ x: 13, y: 15, to: 'shelf', at: 'from_harrow_2', label: 'You leave Helmstow by the harbour postern, the way the fish carts go down to the boats.' }),
+    anchored({ x: 7, y: 0, to: 'keep', at: 'start', label: 'You pass under the gatehouse into the keep\'s ward.' }),
+    anchored({ x: 8, y: 0, to: 'keep', at: 'from_harrow', label: 'You pass under the gatehouse into the keep\'s ward.' }),
   ],
   features: [
     // After Act II (`q_salt_done`, #157) Helmstow is Vask's: the inn and the stores come back dearer on

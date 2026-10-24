@@ -2,8 +2,9 @@
 // the Grove Stone itself. A secret door opens the second ring, a door the third, and an iron key
 // the chamber. The Hand of Ash waits at the Stone, and what its cut let through waits beside it.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The tear closing, the Warden of the Cut's death: past it the Rift that came through stops coming back. */
@@ -36,7 +37,7 @@ export const GROVE2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 1, to: 'grove1', tx: 11, ty: 11, tf: NORTH, label: 'Up the stairs into the roots.' },
+    anchored({ x: 1, y: 1, to: 'grove1', at: 'from_grove2', label: 'Up the stairs into the roots.' }),
   ],
   features: [
     { kind: 'event', x: 1, y: 2, id: 'g2_in', once: true, text: 'The corridors here are square, smooth, and older than the trees above. Underdeep work, the Lanterns would say, if any were here.' },

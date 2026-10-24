@@ -6,7 +6,8 @@
 // ones who did not wake were laid out with their packs. Band 30-32; docs/areas/rimewater.md §12.5 is its
 // brief (#832).
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 
 export const SPITTAL2: MapDef = {
   id: 'spittal2',
@@ -36,7 +37,7 @@ export const SPITTAL2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'spittal', tx: 7, ty: 11, tf: NORTH, label: 'You climb the stair out of the warm, round and up, to the cold of the Spittal.' },
+    anchored({ x: 7, y: 1, to: 'spittal', at: 'from_spittal2', label: 'You climb the stair out of the warm, round and up, to the cold of the Spittal.' }),
   ],
   features: [
     // The stair's foot and the room of basins before the ward.

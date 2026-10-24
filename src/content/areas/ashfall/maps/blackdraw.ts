@@ -6,7 +6,8 @@
 // Band 27-28, a band over F12's 25-26, out of the area's figures; its brief is
 // docs/areas/ashfall.md §12.3.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const BLACKDRAW: MapDef = {
@@ -37,7 +38,7 @@ export const BLACKDRAW: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'emberwaste_f12', tx: 10, ty: 2, tf: NORTH, label: 'Up the flue and out at its mouth, onto the ash under the mountain\'s wall.' },
+    anchored({ x: 7, y: 1, to: 'emberwaste_f12', at: 'from_blackdraw', label: 'Up the flue and out at its mouth, onto the ash under the mountain\'s wall.' }),
   ],
   features: [
     // The mouth and the flue going down, lined with iron plates black with soot.

@@ -7,7 +7,8 @@
 // Lodge, taken onto M9 (#486, NOTCH).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { EAST, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { NOTCH } from '../public.ts';
 
@@ -16,8 +17,8 @@ import { NOTCH } from '../public.ts';
  * passage's first square at 1,8, facing east, in under the cairn; the way back out lands on 5,18,
  * facing west, on the road before the door.
  */
-export const DOOR: Exit = { x: 6, y: 18, to: 'cairns', tx: 1, ty: 8, tf: EAST,
-  label: 'The slabs of the door grind back, and you stoop in under the cairn.' };
+export const DOOR: Exit = anchored({ x: 6, y: 18, to: 'cairns', at: 'start',
+  label: 'The slabs of the door grind back, and you stoop in under the cairn.' });
 
 export const CAIRNFIELD_N8: MapDef = {
   id: 'cairnfield_n8',
@@ -27,6 +28,7 @@ export const CAIRNFIELD_N8: MapDef = {
   band: [18, 20],
   region: 'cairnmoor',
   start: { x: 7, y: 0, facing: SOUTH },
+  anchors: { from_cairns: { x: 5, y: 18, facing: WEST }, from_longmere_m9: { x: 1, y: 28, facing: EAST } },
   exits: [DOOR, NOTCH],
   rows: [
     'hh*hhhh=wwwwhhhhhh**hhhhhhhhhhh~',

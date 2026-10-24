@@ -11,7 +11,8 @@
 // the vents, the fourth journal left there. Band 25-26, the Sentinel and the sentries the top;
 // docs/areas/ashfall.md §4.8 is its brief.
 import type { Answer, Feature, MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { LIT } from '../public.ts';
 
@@ -85,7 +86,7 @@ export const EMBER_STONE: MapDef = {
   ],
   exits: [
     // Back up the builders' stair onto the Stone's front on F11, facing away from it.
-    { x: 8, y: 1, to: 'emberwaste_f11', tx: 8, ty: 23, tf: NORTH, label: 'You climb the builders\' stair up out of the Stone, onto the field of cinders.' },
+    anchored({ x: 8, y: 1, to: 'emberwaste_f11', at: 'from_ember_stone', label: 'You climb the builders\' stair up out of the Stone, onto the field of cinders.' }),
   ],
   features: [
     // The gallery round the housing, and the doorway into its heart.

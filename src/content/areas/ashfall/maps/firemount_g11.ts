@@ -17,7 +17,8 @@
 // §12.4).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { VENTS } from '../public.ts';
@@ -47,8 +48,8 @@ export const AXE_RUMOUR = [
  * The scavenger's way down (#56's 52): the far end of his hole, 31,17, onto the vents behind the stokers'
  * furnace room, at 29,30 facing north (#22); the way back up lands in the hole on 31,16, facing west.
  */
-export const HOLE: Exit = { x: 31, y: 17, to: 'meridian_camp', tx: 29, ty: 30, tf: NORTH,
-  label: 'Down the scavenger\'s rope, hand under hand, a long way through the slag, and out into heat.' };
+export const HOLE: Exit = anchored({ x: 31, y: 17, to: 'meridian_camp', at: 'from_firemount_g11',
+  label: 'Down the scavenger\'s rope, hand under hand, a long way through the slag, and out into heat.' });
 
 /**
  * The Shovel That Does Not Blunt (#56's 52, #519): the scavenger's story, told to a company sent by
@@ -64,6 +65,11 @@ export const FIREMOUNT_G11: MapDef = {
   band: [25, 25],
   region: 'ashfall',
   start: { x: 28, y: 0, facing: SOUTH },
+  anchors: {
+    from_meridian_camp: { x: 27, y: 16, facing: EAST },
+    from_meridian_camp_2: { x: 31, y: 16, facing: WEST },
+    from_meridian_camp3: { x: 13, y: 10, facing: SOUTH },
+  },
   exits: [VENTS, HOLE],
   rows: [
     'aaaaaMMMMMMMMMMMMMMMMMMaaaaaaaaa',

@@ -5,7 +5,8 @@
 // and the pans beginning at the south edge. Cut from the atlas by tools/scaffold.ts;
 // docs/areas/saltreach.md §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SALTINGS_C6: MapDef = {
@@ -16,6 +17,7 @@ export const SALTINGS_C6: MapDef = {
   band: [11, 12],
   region: 'saltreach',
   start: { x: 26, y: 0, facing: SOUTH },
+  anchors: { from_saltmouth: { x: 26, y: 18, facing: NORTH }, from_saltmouth_2: { x: 28, y: 18, facing: NORTH } },
   rows: [
     'wwwwwwwww~wwwwwwww~~~~wwww=;~WWW',
     'wwwwwwwww~~wwwwwwww~~~wwww=;~WWW',
@@ -51,7 +53,7 @@ export const SALTINGS_C6: MapDef = {
     'wwwwwwwwwwwwww----------~~~~~---',
   ],
   exits: [
-    { x: 26, y: 19, to: 'saltmouth', tx: 7, ty: 1, tf: SOUTH, label: 'You pass under the land gate into Saltmouth.' },
+    anchored({ x: 26, y: 19, to: 'saltmouth', at: 'start', label: 'You pass under the land gate into Saltmouth.' }),
   ],
   features: [
     // The road in from the Delta, and the milestone beside it.

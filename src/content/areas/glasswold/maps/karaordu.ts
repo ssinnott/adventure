@@ -6,7 +6,8 @@
 // of the horses set in rows and turned to it, the eldest khan's cell and the Khan's Sabre. Band 28-29, a
 // band over the Wold's, out of the Glasswold's figures; docs/areas/glasswold.md §12.4 is its brief (#833).
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KARAORDU: MapDef = {
@@ -37,7 +38,7 @@ export const KARAORDU: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'wold_d7', tx: 8, ty: 29, tf: NORTH, label: 'Up the cut and out of the hill\'s face, into the light and the wind off the grass.' },
+    anchored({ x: 7, y: 1, to: 'wold_d7', at: 'from_karaordu', label: 'Up the cut and out of the hill\'s face, into the light and the wind off the grass.' }),
   ],
   features: [
     // The diggers' cut down through the hill, and the passage's head, where they stand in stone.

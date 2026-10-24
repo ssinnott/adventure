@@ -6,6 +6,7 @@
 // its stair down to the choir, where the count is heard from the top. Band 11-12;
 // docs/areas/saltreach.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { QuestCond, When } from '../../../../game/quests.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
@@ -31,6 +32,7 @@ export const DROWNED_TEMPLES: MapDef = {
   band: [11, 12],
   region: 'saltreach',
   start: { x: 8, y: 14, facing: NORTH },
+  anchors: { from_drowned_temples2: { x: 8, y: 2, facing: SOUTH } },
   palette: { wall: '#56605a', wallDark: '#363e3a', floor: '#3c4642', ceiling: '#1a2220', door: '#4a4234', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#2e5a5a' },
   rows: [
     '################',
@@ -51,8 +53,8 @@ export const DROWNED_TEMPLES: MapDef = {
     '################',
   ],
   exits: [
-    { x: 8, y: 14, to: 'delta_b6', tx: 16, ty: 12, tf: SOUTH, label: 'You come out of the dry door onto the causeway.' },
-    { x: 8, y: 1, to: 'drowned_temples2', tx: 7, ty: 14, tf: NORTH, label: 'You go down the stair into the choir.' },
+    anchored({ x: 8, y: 14, to: 'delta_b6', at: 'from_drowned_temples', label: 'You come out of the dry door onto the causeway.' }),
+    anchored({ x: 8, y: 1, to: 'drowned_temples2', at: 'start', label: 'You go down the stair into the choir.' }),
   ],
   features: [
     // The narthex, and the bell's frame: empty until the priestess has the bell back and hangs it, and

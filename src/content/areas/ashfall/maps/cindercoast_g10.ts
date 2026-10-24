@@ -11,7 +11,8 @@
 // wall, against G9's shore.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.3 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
@@ -19,8 +20,8 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * inside its own gate, 8,14, facing north, saying the town's gate line as the company goes in; the
  * town's way back out lands on 6,3, facing south, the gate's front and this box's way in.
  */
-export const GATE: Exit = { x: 6, y: 2, to: 'cinderport', tx: 8, ty: 14, tf: NORTH,
-  label: 'Cinderport: black stone limed pale, ash along every wall, and the sea behind it.' };
+export const GATE: Exit = anchored({ x: 6, y: 2, to: 'cinderport', at: 'start',
+  label: 'Cinderport: black stone limed pale, ash along every wall, and the sea behind it.' });
 
 /**
  * The Founding Stone (#56's 50, #519): the stone carried up from Old Cinder and given to the potter to

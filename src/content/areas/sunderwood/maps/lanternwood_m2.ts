@@ -6,7 +6,8 @@
 // Cut from the atlas by hand, its rim's pine drawn as forest and the void at its corner as mountain;
 // docs/areas/sunderwood.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, NORTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -18,6 +19,7 @@ export const LANTERNWOOD_M2: MapDef = {
   band: [15, 16],
   region: 'sunderwood',
   start: { x: 1, y: 29, facing: EAST },
+  anchors: { from_ironfells_m3: { x: 1, y: 31, facing: NORTH } },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'TTTTT~TTTTTTTTTTTTTTTTMMMMMMMMMM',
@@ -54,7 +56,7 @@ export const LANTERNWOOD_M2: MapDef = {
   ],
   exits: [
     // The east road on south over the border, into the Iron Fells (#457): walked, and said on crossing.
-    { x: 1, y: 31, to: 'ironfells_m3', tx: 1, ty: 0, tf: SOUTH, label: 'The Iron Fells. Pine, and the ground going up. Somewhere ahead something is being hammered, and has been all day.' },
+    anchored({ x: 1, y: 31, to: 'ironfells_m3', at: 'start', label: 'The Iron Fells. Pine, and the ground going up. Somewhere ahead something is being hammered, and has been all day.' }),
   ],
   features: [
     // The road over the corner, and the milestone where it leaves for the pass.

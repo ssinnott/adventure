@@ -4,7 +4,8 @@
 // against the Deepthorn's I3; the road runs on out of the east edge for J2 and the bridge.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const EAVES_I2: MapDef = {
@@ -15,6 +16,7 @@ export const EAVES_I2: MapDef = {
   band: [14, 15],
   region: 'sunderwood',
   start: { x: 0, y: 10, facing: EAST },
+  anchors: { from_thornmark: { x: 1, y: 10, facing: EAST } },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'MMMMMM^^tttt^^^^^^tttttttTTttttM',
@@ -50,7 +52,7 @@ export const EAVES_I2: MapDef = {
     'MMMWMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
   ],
   exits: [
-    { x: 0, y: 10, to: 'thornmark', tx: 30, ty: 10, tf: WEST },
+    anchored({ x: 0, y: 10, to: 'thornmark', at: 'from_eaves_i2' }),
   ],
   features: [
     // The road over the shoulder and into the wood.

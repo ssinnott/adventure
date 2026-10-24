@@ -6,7 +6,8 @@
 // cut with a smoking mountain, and behind it the war-band's offerings walled into a niche. One level,
 // band 30-32; docs/areas/ashfall.md §12.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 
 export const GRIMS_HOWE: MapDef = {
   id: 'grims_howe',
@@ -37,7 +38,7 @@ export const GRIMS_HOWE: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'emberwaste_f12', tx: 20, ty: 13, tf: NORTH, label: 'Up out from under the crust, onto the flow in its cut and into the wind off the ash.' },
+    anchored({ x: 7, y: 1, to: 'emberwaste_f12', at: 'from_grims_howe', label: 'Up out from under the crust, onto the flow in its cut and into the wind off the ash.' }),
   ],
   features: [
     // The way in under the crust, and the tube going down.

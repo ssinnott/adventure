@@ -9,7 +9,8 @@
 // Laid whole in Loch Fada, its larger zone. Cut by hand from the atlas, the void written '%', the pines at
 // 16,0 drawn where the atlas has the rim, to meet L11's; docs/areas/rimewater.md §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LONGMERE_L12: MapDef = {
@@ -20,6 +21,7 @@ export const LONGMERE_L12: MapDef = {
   band: [20, 21],
   region: 'rimewater',
   start: { x: 10, y: 0, facing: SOUTH },
+  anchors: { from_creag_fionn: { x: 11, y: 3, facing: NORTH } },
   rows: [
     'pppppppppppppppppMMMMMMMMMMMMMMM',
     'ppppppppppppppMMMMMMMMMMMMMMMMMM',
@@ -56,7 +58,7 @@ export const LONGMERE_L12: MapDef = {
   ],
   // Creag Fionn, the enclave (#845): the cave in the rim's face at 11,4, walked into from the pines at 11,3.
   exits: [
-    { x: 11, y: 4, to: 'creag_fionn', tx: 7, ty: 1, tf: SOUTH, label: 'You stoop into a cave in the rim\'s face and down a ramp of packed snow, into dark that smells of wet fur.' },
+    anchored({ x: 11, y: 4, to: 'creag_fionn', at: 'start', label: 'You stoop into a cave in the rim\'s face and down a ramp of packed snow, into dark that smells of wet fur.' }),
   ],
   features: [
     // The north: the resin-gatherers' old fire, a spring under the rim's foot that does not freeze, and

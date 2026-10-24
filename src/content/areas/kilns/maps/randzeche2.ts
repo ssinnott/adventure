@@ -5,7 +5,8 @@
 // smith who went down for more sits against the rock with his kist, and the Erzhemd in it (#846). Band
 // 30-32; docs/areas/kilns.md §12.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 
 export const RANDZECHE2: MapDef = {
   id: 'randzeche2',
@@ -35,7 +36,7 @@ export const RANDZECHE2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 10, y: 2, to: 'randzeche', tx: 10, ty: 12, tf: NORTH, label: 'You climb the ladder up the winze to the old level, out of the dark ore.' },
+    anchored({ x: 10, y: 2, to: 'randzeche', at: 'from_randzeche2', label: 'You climb the ladder up the winze to the old level, out of the dark ore.' }),
   ],
   features: [
     // The winze's foot, the knockers' heaps and the seam along the gallery.

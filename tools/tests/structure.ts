@@ -14,9 +14,9 @@ import { AREAS, MAP_DEFS, MONSTERS, ATLAS } from '../../src/content/index.ts';
 import { TEAR_CLOSED } from '../../src/content/areas/thornmark/maps/grove2.ts';
 import { gridFaults } from '../../src/game/atlas.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
-import { GameMap } from '../../src/game/map.ts';
-import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
-import { SOUTH } from '../../src/game/types.ts';
+import { GameMap, anchored, landExits } from '../../src/game/map.ts';
+import type { EncounterDef, Exit, Feature, MapDef } from '../../src/game/map.ts';
+import { EAST, SOUTH } from '../../src/game/types.ts';
 import { RESPAWN } from '../../src/game/keys.ts';
 import { ok } from './lib.ts';
 import { presenceFaults, strandedLocks, respawnsOutOfRange, returningGuardians, questItems, guardian } from '../kit/rules/structure.ts';
@@ -119,6 +119,29 @@ export async function structure(): Promise<void> {
     ok(!edge.length, `a 32 by 30 map at C1, a box of row 1, passes${list(edge)}`);
     const twice = gridFaults(moved('shelf', [200, 30], [{ id: 'fixture_twice', name: 'Twice', area: 'shelf', maps: [{ map: 'shelf', at: [168, 30] }] }]), MAP_DEFS);
     ok(twice.length === 1 && /laid twice/.test(twice[0]), `a map two zones lay fails${list(twice)}`);
+  }
+  { // Every exit lands on a named anchor of the map it leads to, which the join turns into its square
+    // and facing (#993); an anchor the landing map lacks, an anchor named twice and an exit with both
+    // an anchor and a square are each refused by name. Fresh fixtures each time: the join fills in place.
+    const loose = MAP_DEFS.flatMap((d) => (d.exits ?? []).filter((e) => e.at === undefined).map((e) => `${d.id} ${e.x},${e.y}`));
+    ok(!loose.length, `every exit of the areas' maps lands on an anchor (${MAP_DEFS.reduce((n, d) => n + (d.exits?.length ?? 0), 0)} exits)${list(loose)}`);
+    const room = (id: string, more: Partial<MapDef> = {}): MapDef => ({ id, name: id, kind: 'dungeon', start: { x: 1, y: 1, facing: SOUTH }, rows: ['#####', '#...#', '#####'], ...more });
+    const hall = (anchors: MapDef['anchors'] = { from_cell: { x: 2, y: 1, facing: EAST } }): MapDef => room('fx_hall', { anchors });
+    const cell = (...exits: Exit[]): MapDef => room('fx_cell', { exits });
+    const join = (defs: MapDef[]): string => { try { landExits(defs); return 'nothing refused'; } catch (e) { return (e as Error).message; } };
+    const ways = [anchored({ x: 3, y: 1, to: 'fx_hall', at: 'start' }), anchored({ x: 2, y: 1, to: 'fx_hall', at: 'from_cell' })];
+    const fine = join([cell(...ways), hall()]), [a, b] = ways.map((e) => `${e.tx},${e.ty} ${e.tf}`);
+    ok(fine === 'nothing refused' && a === `1,1 ${SOUTH}` && b === `2,1 ${EAST}`, `an exit to the hall's start and one to its anchor land on their squares and facings (${fine}: ${a}; ${b})`);
+    const lacks = join([cell(anchored({ x: 3, y: 1, to: 'fx_hall', at: 'from_yard' })), hall()]);
+    ok(lacks === `exit of fx_cell at 3,1 to fx_hall lands at 'from_yard', and fx_hall has no such anchor`, `an anchor the landing map lacks is refused by name (${lacks})`);
+    const twice = join([cell(anchored({ x: 3, y: 1, to: 'fx_hall', at: 'start' })), hall({ start: { x: 2, y: 1, facing: EAST } })]);
+    ok(twice === `map fx_hall names the anchor 'start' twice: its start is one`, `an anchor named twice is refused by name (${twice})`);
+    // Another name twice is a literal's, which keeps the last, so only the typecheck can refuse it.
+    // @ts-expect-error: an anchor named twice in one literal
+    const same: MapDef['anchors'] = { from_cell: { x: 2, y: 1, facing: EAST }, from_cell: { x: 3, y: 1, facing: EAST } };
+    ok(Object.keys(same ?? {}).join() === 'from_cell', `any other name twice is the typecheck's to refuse, as the line above holds; the join sees it once (${Object.keys(same ?? {}).join()})`);
+    const both = join([cell({ x: 3, y: 1, to: 'fx_hall', at: 'from_cell', tx: 2, ty: 1 }), hall()]);
+    ok(both === `exit of fx_cell at 3,1 to fx_hall lands both at 'from_cell' and on a square`, `an exit with both an anchor and a square is refused by name (${both})`);
   }
 
   // Broken on purpose, each a copy of a real map, kept out of MAP_DEFS.

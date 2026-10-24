@@ -1,10 +1,12 @@
 // The Whitespine's part of the world map: its three zones, the plates of its one dungeon's two levels,
 // and its sites. docs/areas/whitespine.md is its brief (#498).
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
+import { laid } from '../../../game/atlas.ts';
+import { PLAN } from '../../atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', band: [23, 24], maps: [{ map: 'sheerpoint_i9', at: [264, 254] }, { map: 'sheerpoint_i8', at: [264, 222] }, { map: 'sheerpoint_j8', at: [296, 222] }], seeds: [[282, 244], [276, 262]],
+    id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', band: [23, 24], maps: [laid(PLAN, 'sheerpoint_i9'), laid(PLAN, 'sheerpoint_i8'), laid(PLAN, 'sheerpoint_j8')], seeds: [[282, 244], [276, 262]],
     // The crossing line said north along the ridge from the High Spine, at the same floor (#166, #503).
     crossing: { harder: 'Out here the land runs thin toward the sea, and nothing on it is any kinder than the range.', warning: 'Nothing on the Point would spare you. The way you came is still open.' },
     // North along the ridge trail from the Stair's head, past the snow trolls lying in the gully off it
@@ -13,7 +15,7 @@ export const ZONES: readonly AtlasZone[] = [
     road: ['sheerpoint_i9:i9_trolls', 'sheerpoint_i9:i9_masons', 'sheerpoint_i8:i8_eagles', 'sheerpoint_i8:i8_masons', 'sheerpoint_i8:i8_foreman'],
   },
   {
-    id: 'highspine', name: 'The High Spine', area: 'whitespine', band: [23, 24], maps: [{ map: 'highspine_i11', at: [264, 318] }, { map: 'highspine_i10', at: [264, 286] }, { map: 'highspine_i12', at: [264, 350] }], seeds: [[292, 310], [290, 350]],
+    id: 'highspine', name: 'The High Spine', area: 'whitespine', band: [23, 24], maps: [laid(PLAN, 'highspine_i11'), laid(PLAN, 'highspine_i10'), laid(PLAN, 'highspine_i12')], seeds: [[292, 310], [290, 350]],
     // The crossing line said over the crest from the vale (#166, #501), and south along the ridge from
     // the Point (#503), so it says nothing of the way it was come by.
     crossing: { harder: 'On the crest the wind is at you, and nothing up here is any kinder.', warning: 'Nothing on this crest would spare you. The way back is still open.' },
@@ -23,7 +25,7 @@ export const ZONES: readonly AtlasZone[] = [
     road: ['highspine_i11:i11_brothers', 'highspine_i10:i10_stair'],
   },
   {
-    id: 'monksvale', name: 'Monks\' Vale', area: 'whitespine', band: [22, 23], maps: [{ map: 'monksvale_j11', at: [296, 318] }, { map: 'monksvale_j10', at: [296, 286] }, { map: 'monksvale_j12', at: [296, 350] }], seeds: [[322, 344], [318, 318]], label: [318, 326],
+    id: 'monksvale', name: 'Monks\' Vale', area: 'whitespine', band: [22, 23], maps: [laid(PLAN, 'monksvale_j11'), laid(PLAN, 'monksvale_j10'), laid(PLAN, 'monksvale_j12')], seeds: [[322, 344], [318, 318]], label: [318, 326],
     // The crossing line said over the pass (#166, #499): how the range feels to a company under its floor.
     crossing: { harder: 'The range begins here, and it is harder than the lochs behind.', warning: 'The range, and nothing in it would spare you. The way back over the pass is still open.' },
     // Down off the pass past the brothers at its foot, and on down the road to the gate past the brothers

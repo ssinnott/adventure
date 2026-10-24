@@ -1,10 +1,12 @@
 // Sunderwood's part of the world map: its two zones, the plates of its town and dungeon, and its
 // sites. docs/areas/sunderwood.md is its brief.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
+import { laid } from '../../../game/atlas.ts';
+import { PLAN } from '../../atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [{ map: 'eaves_i2', at: [264, 30] }, { map: 'eaves_j2', at: [296, 30] }, { map: 'eaves_k2', at: [328, 30] }, { map: 'eaves_k3', at: [328, 62] }, { map: 'eaves_j3', at: [296, 62] }], seeds: [[292, 40], [300, 86]], road: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2', 'eaves_j2:j2_bears', 'eaves_j2:j2_hounds', 'eaves_k2:k2_hounds', 'eaves_k2:k2_bears'] },
-  { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', band: [15, 16], maps: [{ map: 'lanternwood_l2', at: [360, 30] }, { map: 'lanternwood_m2', at: [392, 30] }, { map: 'lanternwood_l3', at: [360, 62] }, { map: 'lanternwood_l4', at: [360, 94] }, { map: 'lanternwood_k4', at: [328, 94] }], seeds: [[372, 50]], label: [378, 84], road: ['lanternwood_l2:l2_lamp_moths', 'lanternwood_l2:l2_bears', 'lanternwood_m2:m2_hounds'] },
+  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [laid(PLAN, 'eaves_i2'), laid(PLAN, 'eaves_j2'), laid(PLAN, 'eaves_k2'), laid(PLAN, 'eaves_k3'), laid(PLAN, 'eaves_j3')], seeds: [[292, 40], [300, 86]], road: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2', 'eaves_j2:j2_bears', 'eaves_j2:j2_hounds', 'eaves_k2:k2_hounds', 'eaves_k2:k2_bears'] },
+  { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', band: [15, 16], maps: [laid(PLAN, 'lanternwood_l2'), laid(PLAN, 'lanternwood_m2'), laid(PLAN, 'lanternwood_l3'), laid(PLAN, 'lanternwood_l4'), laid(PLAN, 'lanternwood_k4')], seeds: [[372, 50]], label: [378, 84], road: ['lanternwood_l2:l2_lamp_moths', 'lanternwood_l2:l2_bears', 'lanternwood_m2:m2_hounds'] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
