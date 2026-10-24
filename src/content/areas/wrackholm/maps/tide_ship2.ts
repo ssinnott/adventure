@@ -4,6 +4,7 @@
 // 12-13; docs/areas/wrackholm.md §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const TIDE_SHIP2: MapDef = {
   id: 'tide_ship2',
@@ -51,7 +52,7 @@ export const TIDE_SHIP2: MapDef = {
     { kind: 'event', x: 5, y: 13, id: 'ts2_clerk_desk', once: true, text: 'A clerk\'s stool in the corner, a shelf for a desk, the ink dry in the well. On it a book, a ribbon in the last page.' },
   ],
   encounters: [
-    { id: 'ts2_rats', x: 7, y: 6, monsters: new Array(8).fill('bilge_rat'), aware: 2, respawn: 1440 },
+    { id: 'ts2_rats', x: 7, y: 6, monsters: new Array(8).fill('bilge_rat'), aware: 2, respawn: RESPAWN.day },
     { id: 'ts2_post', x: 5, y: 10, monsters: ['ashen_overseer', 'ashen_overseer', 'ashen_overseer'], aware: 2, roams: false },
   ],
 };

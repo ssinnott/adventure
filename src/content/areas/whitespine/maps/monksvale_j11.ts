@@ -15,6 +15,7 @@ import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { WENNA_LODGE } from '../../rimewater/maps/rime_lodge.ts';
 import { NEST_FOUND } from './highspine_i11.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The way into Highcell (#500): the gate in the monastery's north wall at 26,24, past the brother in
@@ -135,11 +136,11 @@ export const MONKSVALE_J11: MapDef = {
     // Brothers walking the road to the gate, the gentlest at the pass's foot; spine eagles over the
     // hills either side of it; and on the summit's path, the far end from the pass, the snow trolls,
     // the box's group at 23.
-    { id: 'j11_brothers_foot', x: 19, y: 6, monsters: ['brother', 'brother', 'brother'], aware: 3, respawn: 1440 },
-    { id: 'j11_eagles_west', x: 15, y: 9, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: 1440 },
-    { id: 'j11_eagles_east', x: 25, y: 8, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: 1440 },
-    { id: 'j11_brothers_road', x: 23, y: 19, monsters: ['brother', 'brother', 'brother', 'brother'], aware: 3, respawn: 1440 },
-    { id: 'j11_trolls', x: 6, y: 10, monsters: ['snow_troll', 'snow_troll'], aware: 2, respawn: 2880, roams: false },
+    { id: 'j11_brothers_foot', x: 19, y: 6, monsters: ['brother', 'brother', 'brother'], aware: 3, respawn: RESPAWN.day },
+    { id: 'j11_eagles_west', x: 15, y: 9, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: RESPAWN.day },
+    { id: 'j11_eagles_east', x: 25, y: 8, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: RESPAWN.day },
+    { id: 'j11_brothers_road', x: 23, y: 19, monsters: ['brother', 'brother', 'brother', 'brother'], aware: 3, respawn: RESPAWN.day },
+    { id: 'j11_trolls', x: 6, y: 10, monsters: ['snow_troll', 'snow_troll'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // The Vigil (#448): once Oswin is answered, by night five brothers come up the path to the summit's
     // camp, and never again once they are down. The Monk's third's fight, set at 26 with the vale's own
     // brothers (§9, #448's 2).

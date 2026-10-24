@@ -5,6 +5,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNSHEART_N6: MapDef = {
   id: 'kilnsheart_n6',
@@ -78,7 +79,7 @@ export const KILNSHEART_N6: MapDef = {
   encounters: [
     // Fire beetles on the road's verge out of the woods, and at the far end a rock worm under the grass
     // by the heather, the box's top.
-    { id: 'n6_beetles', x: 11, y: 9, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: 1440 },
-    { id: 'n6_worm', x: 13, y: 28, monsters: ['rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'n6_beetles', x: 11, y: 9, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: RESPAWN.day },
+    { id: 'n6_worm', x: 13, y: 28, monsters: ['rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

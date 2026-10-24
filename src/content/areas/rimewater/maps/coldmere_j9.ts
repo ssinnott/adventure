@@ -10,6 +10,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief (#497).
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const COLDMERE_J9: MapDef = {
   id: 'coldmere_j9',
@@ -86,7 +87,7 @@ export const COLDMERE_J9: MapDef = {
   encounters: [
     // Ice pike under the strand's ice by the old woman's holes, near the way in; and under the mountain
     // a pair of ice bears, the box's hardest.
-    { id: 'j9_pike', x: 21, y: 4, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: 1440, under: 'ice' },
-    { id: 'j9_bears', x: 7, y: 28, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
+    { id: 'j9_pike', x: 21, y: 4, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice' },
+    { id: 'j9_bears', x: 7, y: 28, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

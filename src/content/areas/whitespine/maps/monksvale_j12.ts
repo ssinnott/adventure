@@ -14,6 +14,7 @@
 // is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const MONKSVALE_J12: MapDef = {
   id: 'monksvale_j12',
@@ -89,6 +90,6 @@ export const MONKSVALE_J12: MapDef = {
   encounters: [
     // The box's one fight: the snow trolls in the pines at the vale's far end, two together, the hardest
     // and the only group.
-    { id: 'j12_trolls', x: 21, y: 19, monsters: ['snow_troll', 'snow_troll'], aware: 3, respawn: 2880, roams: false },
+    { id: 'j12_trolls', x: 21, y: 19, monsters: ['snow_troll', 'snow_troll'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

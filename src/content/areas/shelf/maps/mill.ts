@@ -2,6 +2,7 @@
 // four rooms; a locked door and a secret door decide the order the rings open in.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const MILL: MapDef = {
   id: 'mill',
@@ -46,12 +47,12 @@ export const MILL: MapDef = {
   ],
   secrets: [{ x: 4, y: 7, hint: 'mill_draught' }],
   encounters: [
-    { id: 'm_rats', x: 5, y: 1, monsters: ['barn_rat', 'barn_rat', 'barn_rat', 'barn_rat', 'barn_rat'], aware: 5, respawn: 1440 },
-    { id: 'm_slime', x: 1, y: 6, monsters: ['rift_crawler', 'slime', 'slime'], aware: 3, respawn: 1440 },
+    { id: 'm_rats', x: 5, y: 1, monsters: ['barn_rat', 'barn_rat', 'barn_rat', 'barn_rat', 'barn_rat'], aware: 5, respawn: RESPAWN.day },
+    { id: 'm_slime', x: 1, y: 6, monsters: ['rift_crawler', 'slime', 'slime'], aware: 3, respawn: RESPAWN.day },
     { id: 'm_cult1', x: 9, y: 1, monsters: ['ashen_acolyte', 'ashen_acolyte'], aware: 5 },
     { id: 'm_cult2', x: 14, y: 6, monsters: ['ashen_acolyte', 'ashen_acolyte', 'cultist'], aware: 5 },
-    { id: 'm_skel', x: 8, y: 8, monsters: ['skeleton', 'ghoul', 'ghoul'], aware: 4, respawn: 2880 },
-    { id: 'm_skel2', x: 14, y: 13, monsters: ['ghoul', 'ghoul', 'ghoul'], aware: 4, respawn: 2880 },
+    { id: 'm_skel', x: 8, y: 8, monsters: ['skeleton', 'ghoul', 'ghoul'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'm_skel2', x: 14, y: 13, monsters: ['ghoul', 'ghoul', 'ghoul'], aware: 4, respawn: RESPAWN.twoDays },
     { id: 'm_rift1', x: 6, y: 8, monsters: ['rift_crawler', 'rift_crawler', 'riftling'], aware: 5 },
     { id: 'm_rift2', x: 1, y: 13, monsters: ['rift_crawler', 'riftling', 'riftling'], aware: 5 },
     { id: 'm_warden', x: 3, y: 11, monsters: ['rift_warden', 'riftling'], aware: 2, roams: false, boss: true },

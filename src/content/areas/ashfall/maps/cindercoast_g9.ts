@@ -11,6 +11,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.10 is its brief (#522).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CINDERCOAST_G9: MapDef = {
   id: 'cindercoast_g9',
@@ -79,6 +80,6 @@ export const CINDERCOAST_G9: MapDef = {
   secrets: [{ x: 13, y: 28, hint: 'g9_step' }],
   encounters: [
     // The box's one fight: two drakes on the beach east of the wall, down off the mountain for the seals.
-    { id: 'g9_drakes', x: 27, y: 25, monsters: ['cinder_drake', 'cinder_drake'], aware: 5, respawn: 2880 },
+    { id: 'g9_drakes', x: 27, y: 25, monsters: ['cinder_drake', 'cinder_drake'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

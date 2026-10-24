@@ -555,14 +555,14 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 
 `tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
 measures it. The company is the premade six at the level, in the gear the tables give it by then
-(the gear ladder, `GEAR`: the kits, the Foreland's band gear and its finds with a plus by 3 and 5,
-then Thornmark's past them, the Deepthorn's at 10). It fights the encounter again and again from a
-fresh start, mending between fights with spells as a player would, until it loses one or must rest.
-A bot plays it that mends whoever is in danger and strikes, and casts a damage spell only when the
-hit points it saves are worth the spell points. Each is counted against what the company has left of
-that pool before it must rest, and a healer's spell points are priced at what they would mend. So
-the bot spends on what hurts while it is fresh, and holds back as its spell points run down. The
-calibration:
+(the gear ladder, `GEAR`, from each area's rungs in its `checks.ts`: the kits, the Foreland's band
+gear and its finds with a plus by 3 and 5, then Thornmark's past them, the Deepthorn's at 10). It
+fights the encounter again and again from a fresh start, mending between fights with spells as a
+player would, until it loses one or must rest. A bot plays it that mends whoever is in danger and
+strikes, and casts a damage spell only when the hit points it saves are worth the spell points. Each
+is counted against what the company has left of that pool before it must rest, and a healer's spell
+points are priced at what they would mend. So the bot spends on what hurts while it is fresh, and
+holds back as its spell points run down. The calibration:
 
 - Every role keeps its shape (§4.2) and hits as today's monsters hit, on the line; its hit points
   are whatever makes the day's fights.
@@ -649,12 +649,12 @@ points, armour, to-hit, blow and xp are `testMonster(role, level)`'s (`node tool
 healer's `cast`. When `--calibrate --write` makes the line again, a def on it is re-derived the same
 way, from its role and level, and keeps its notes: only its hit points and its dice move, since its
 armour, to-hit and xp come from the line's formulas and the curve. A def on a shape of the line, the
-test troll (`testTroll`) or a role come down whole by a share named in `WHOLE`, is re-derived from
-that shape, its mending with it. A def set off the line on purpose, a boss its box's gate tuned,
-keeps its numbers and is named in `OFF_LINE` (`tools/tests/harness.ts`) with the issue that set it.
-The harness suite fails any other monster past 10 that stands on no shape of the line at its level,
-so a def drawn on the old line fails until it is re-derived, as #414 re-derived Act II's after #409
-and #541 Act III's.
+test troll (`testTroll`) or a role come down whole by a share it names (`offLine`, on its def in its
+area's `monsters.ts`), is re-derived from that shape, its mending with it. A def set off the line on
+purpose, a boss its box's gate tuned, keeps its numbers and says so on itself (`offLine`) with the
+issue that set it. The harness suite fails any other monster past 10 that stands on no shape of the
+line at its level, so a def drawn on the old line fails until it is re-derived, as #414 re-derived
+Act II's after #409 and #541 Act III's.
 
 What it shows:
 
@@ -1027,9 +1027,10 @@ Decided by delegate for #541, each the owner's to overturn:
    so the walk without the ladders is the harder one, and the one held.
 7. **Every monster past 10 stands on the line or is named off it** (`tools/tests/harness.ts`): its
    hit points and its blow, within half a point, some role's test monster's at its level, the test
-   troll's or a role's come down whole by a share named in `WHOLE` (the Bog Light's 0.575); else the
-   issue that set it off is named in `OFF_LINE`, as Act II's four bosses set by their gates are. A
-   def drawn on the old line fails until it is re-derived ("When the line moves", above).
+   troll's or a role's come down whole by a share it names (`offLine`, the Bog Light's 0.575); else
+   the issue that set it off is named there, on its def in its area's `monsters.ts`, as Act II's
+   four bosses set by their gates are. A def drawn on the old line fails until it is re-derived
+   ("When the line moves", above).
 8. **Act III's monsters are re-stated as #414 re-stated Act II's,** each on its role's line at its
    level with its notes kept: the Kilns' Mender, Rock Worm and Anvil Guard at 17 and Slag Elder,
    Foreman, Warden of the Anvil and Great Salamander at 18; Rimewater's Ice Pike, Snow Lynx and
@@ -1060,12 +1061,12 @@ Decided by delegate for #549, each the owner's to overturn:
    Ashfall's Ash Husk, Stoker, Sentry and Sentinel, and Meridian Camp's and the Dead-Drop's eight
    (#22), each re-derived or set off the line by the box that placed it.
    `RESTATE` in `tools/tests/harness.ts` is empty and the harness suite is green: 69 monsters past
-   10 on the line and 22 set off it (`OFF_LINE`). The Cinder Drake, placed at G10 (#660), is set
-   off the line for its gate.
+   10 on the line and 22 set off it (each by its `offLine`). The Cinder Drake, placed at G10 (#660),
+   is set off the line for its gate.
 7. **The harness's company needed nothing new:** tier 7 from 23, the step and a draught from 25 and
    the third prestige at 27, its last rite and third blow, were in; the line's points lagged.
-8. **Act IV's bosses are set by their gates,** each in `OFF_LINE` (`tools/tests/harness.ts`) with
-   its gate named: the Stair-king (#502), the Old Drake (#515), the Sentinel (#516), the Brood
+8. **Act IV's bosses are set by their gates,** each by its `offLine`, in its area's `monsters.ts`,
+   with its gate named: the Stair-king (#502), the Old Drake (#515), the Sentinel (#516), the Brood
    Drake and the Tallymaster (#22), the Grey Lion (#529) and the Cinder Drake (#660), the Abbot
    being #500's. Won, as the gates print them at the box's floor and two over it: the Stair-king
    58% at 22 and 79% at 24, the Old Drake 65% at 25 and 99% at 27, the Sentinel 65% at 25 and 97%

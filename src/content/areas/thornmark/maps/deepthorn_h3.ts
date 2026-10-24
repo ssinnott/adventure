@@ -5,7 +5,7 @@
 // tools/scaffold.ts; docs/areas/thornmark.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/keys.ts';
+import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 
 /** The spiders' nest burnt: its brood stops coming. */
@@ -90,12 +90,12 @@ export const DEEPTHORN_H3: MapDef = {
     // The gentlest first: dire wolves in the light woods, the nest's brood about it, rift hounds
     // strayed from the Grove on the shore, brambles across the road short of the ford, and east of
     // it, where the deep begins, the rootwalkers.
-    { id: 'h3_wolves', x: 7, y: 11, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },
-    { id: 'h3_brood1', x: 15, y: 9, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 1440, until: NEST_BURNT },
-    { id: 'h3_brood2', x: 14, y: 18, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 1440, until: NEST_BURNT },
+    { id: 'h3_wolves', x: 7, y: 11, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: RESPAWN.day },
+    { id: 'h3_brood1', x: 15, y: 9, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: RESPAWN.day, until: NEST_BURNT },
+    { id: 'h3_brood2', x: 14, y: 18, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: RESPAWN.day, until: NEST_BURNT },
     { id: 'h3_keepers', x: 18, y: 27, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 3, roams: false },
-    { id: 'h3_hounds', x: 12, y: 27, monsters: ['rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: 2880, until: TEAR_CLOSED },
-    { id: 'h3_brambles', x: 19, y: 23, monsters: ['bramble', 'bramble', 'bramble', 'bramble'], aware: 1, roams: false, respawn: 2880, until: TEAR_CLOSED },
-    { id: 'h3_rootwalkers', x: 30, y: 23, monsters: ['rootwalker', 'rootwalker', 'rootwalker', 'rootwalker'], aware: 3, respawn: 2880, until: TEAR_CLOSED },
+    { id: 'h3_hounds', x: 12, y: 27, monsters: ['rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
+    { id: 'h3_brambles', x: 19, y: 23, monsters: ['bramble', 'bramble', 'bramble', 'bramble'], aware: 1, roams: false, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
+    { id: 'h3_rootwalkers', x: 30, y: 23, monsters: ['rootwalker', 'rootwalker', 'rootwalker', 'rootwalker'], aware: 3, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
   ],
 };

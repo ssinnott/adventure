@@ -7,6 +7,7 @@
 import type { Exit, Feature, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { THRONE_REMOVED } from '../../shelf/maps/keep.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** Met the sacristan under the vestry's table (56). */
 export const LAMPS = 'q_lamps';
@@ -135,14 +136,14 @@ export const HEARTHFANE: MapDef = {
     // in the court, its hardest, never roaming; the court's second group goes once Vask is gone from
     // Helmstow by the Council's verdict. The garrison's rest (#794): two on the nave's treasury side, below
     // the crossing, and three more threes in the court, one beside the Hand's tithe under the arch.
-    { id: 'hf_moths', x: 8, y: 12, monsters: many(12, 'hearth_moth'), aware: 3, respawn: 720, until: { flag: LAMPS_OUT }, leaves: true },
-    { id: 'hf_champions', x: 8, y: 8, monsters: many(4, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
-    { id: 'hf_sermon', x: 8, y: 5, monsters: [...many(3, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 3, roams: false, respawn: 2880 },
-    { id: 'hf_second', x: 6, y: 4, monsters: [...many(2, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 2, roams: false, respawn: 2880, until: { flag: THRONE_REMOVED }, leaves: true },
-    { id: 'hf_nave2', x: 9, y: 11, monsters: many(2, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
-    { id: 'hf_court1', x: 5, y: 2, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
-    { id: 'hf_court2', x: 10, y: 2, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
-    { id: 'hf_court3', x: 11, y: 5, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
-    { id: 'hf_swarm', x: 8, y: 9, monsters: many(12, 'hearth_moth'), aware: 3, respawn: 720, after: { flag: LAMPS_WRONG }, until: { flag: LAMPS_OUT }, leaves: true },
+    { id: 'hf_moths', x: 8, y: 12, monsters: many(12, 'hearth_moth'), aware: 3, respawn: RESPAWN.half, until: { flag: LAMPS_OUT }, leaves: true },
+    { id: 'hf_champions', x: 8, y: 8, monsters: many(4, 'ashen_champion'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'hf_sermon', x: 8, y: 5, monsters: [...many(3, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 3, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'hf_second', x: 6, y: 4, monsters: [...many(2, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 2, roams: false, respawn: RESPAWN.twoDays, until: { flag: THRONE_REMOVED }, leaves: true },
+    { id: 'hf_nave2', x: 9, y: 11, monsters: many(2, 'ashen_champion'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'hf_court1', x: 5, y: 2, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'hf_court2', x: 10, y: 2, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'hf_court3', x: 11, y: 5, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'hf_swarm', x: 8, y: 9, monsters: many(12, 'hearth_moth'), aware: 3, respawn: RESPAWN.half, after: { flag: LAMPS_WRONG }, until: { flag: LAMPS_OUT }, leaves: true },
   ],
 };

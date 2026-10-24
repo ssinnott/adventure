@@ -6,6 +6,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.10 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LANTERNWOOD_K4: MapDef = {
   id: 'lanternwood_k4',
@@ -67,7 +68,7 @@ export const LANTERNWOOD_K4: MapDef = {
   encounters: [
     // Two of the Hand's gleaners and their hound at the foot, carrying east along the shore; and on
     // the west lip by night two deathsheads, the box's group at 16.
-    { id: 'k4_gleaners', x: 17, y: 23, monsters: ['ashen_gleaner', 'ashen_gleaner', 'sunder_hound'], aware: 4, respawn: 2880 },
-    { id: 'k4_deathshead', x: 4, y: 12, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
+    { id: 'k4_gleaners', x: 17, y: 23, monsters: ['ashen_gleaner', 'ashen_gleaner', 'sunder_hound'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'k4_deathshead', x: 4, y: 12, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: RESPAWN.day, when: { hours: 'night' } },
   ],
 };

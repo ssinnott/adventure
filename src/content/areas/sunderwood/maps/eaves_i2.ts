@@ -5,6 +5,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const EAVES_I2: MapDef = {
   id: 'eaves_i2',
@@ -72,8 +73,8 @@ export const EAVES_I2: MapDef = {
   encounters: [
     // The gentlest first: pine bears in the north woods by the way in, the moths beside the camp by
     // night, and on the road at the far end a pine bear with a glass bear, the first glass.
-    { id: 'i2_bears1', x: 11, y: 6, monsters: ['pine_bear', 'pine_bear'], aware: 4, respawn: 2880 },
-    { id: 'i2_moths', x: 22, y: 16, monsters: ['lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth'], aware: 5, respawn: 1440, when: { hours: 'night' } },
-    { id: 'i2_bears2', x: 29, y: 10, monsters: ['pine_bear', 'glass_bear'], aware: 5, respawn: 2880, roams: false },
+    { id: 'i2_bears1', x: 11, y: 6, monsters: ['pine_bear', 'pine_bear'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'i2_moths', x: 22, y: 16, monsters: ['lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth', 'lantern_moth'], aware: 5, respawn: RESPAWN.day, when: { hours: 'night' } },
+    { id: 'i2_bears2', x: 29, y: 10, monsters: ['pine_bear', 'glass_bear'], aware: 5, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

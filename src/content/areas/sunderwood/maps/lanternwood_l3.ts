@@ -7,6 +7,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LANTERNWOOD_L3: MapDef = {
   id: 'lanternwood_l3',
@@ -80,7 +81,7 @@ export const LANTERNWOOD_L3: MapDef = {
   encounters: [
     // Sunder hounds with a moth on the bank path, the gentlest; and down by the crossing two glass
     // bears, the box's group at 16.
-    { id: 'l3_bank', x: 25, y: 9, monsters: ['sunder_hound', 'sunder_hound', 'lantern_moth'], aware: 4, respawn: 2880, until: { flag: CRACK_SEALED }, leaves: true },
-    { id: 'l3_moths', x: 20, y: 27, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
+    { id: 'l3_bank', x: 25, y: 9, monsters: ['sunder_hound', 'sunder_hound', 'lantern_moth'], aware: 4, respawn: RESPAWN.twoDays, until: { flag: CRACK_SEALED }, leaves: true },
+    { id: 'l3_moths', x: 20, y: 27, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: RESPAWN.day, when: { hours: 'night' } },
   ],
 };

@@ -12,6 +12,7 @@
 // whitespine.md §12.1 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SHEERPOINT_J8: MapDef = {
   id: 'sheerpoint_j8',
@@ -78,7 +79,7 @@ export const SHEERPOINT_J8: MapDef = {
     // Four spine eagles over the shallows at the neck of the point, nearer the way in, the gentler, at
     // 22; two snow trolls on the point behind them, the hardest, at 23: the neck is the only way on to
     // them, so a company on foot meets the eagles first from every square the box is entered by.
-    { id: 'j8_eagles', x: 5, y: 23, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 3, respawn: 1440, roams: false },
-    { id: 'j8_trolls', x: 6, y: 23, monsters: ['snow_troll', 'snow_troll'], aware: 3, respawn: 2880, roams: false },
+    { id: 'j8_eagles', x: 5, y: 23, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'j8_trolls', x: 6, y: 23, monsters: ['snow_troll', 'snow_troll'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

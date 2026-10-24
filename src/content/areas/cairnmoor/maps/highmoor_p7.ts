@@ -10,6 +10,7 @@
 // §12.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const HIGHMOOR_P7: MapDef = {
   id: 'highmoor_p7',
@@ -82,7 +83,7 @@ export const HIGHMOOR_P7: MapDef = {
   encounters: [
     // Seven ravens on the crag in the north, the gentler, at 18; and three of the old folk walking at
     // their long cairns in the south, the hardest, at 19.
-    { id: 'p7_ravens', x: 8, y: 5, monsters: ['raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven'], aware: 3, respawn: 1440 },
-    { id: 'p7_wights', x: 3, y: 20, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 3, respawn: 1440, roams: false },
+    { id: 'p7_ravens', x: 8, y: 5, monsters: ['raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven'], aware: 3, respawn: RESPAWN.day },
+    { id: 'p7_wights', x: 3, y: 20, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 3, respawn: RESPAWN.day, roams: false },
   ],
 };

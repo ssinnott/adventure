@@ -9,7 +9,7 @@
 // hand, its void written in; §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/keys.ts';
+import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 
 /** B4's heronry burnt: the herons off it stop coming back. */
 const HERONRY_BURNT = denBurnt('delta_b4', 'b4_heronry');
@@ -72,8 +72,8 @@ export const DELTA_A4: MapDef = {
   secrets: [{ x: 12, y: 18, hint: 'a4_reek' }],
   encounters: [
     // Three herons off B4's heronry fishing the fen's corner, the nearest, back until it burns.
-    { id: 'a4_herons', x: 27, y: 24, monsters: ['grey_heron', 'grey_heron', 'grey_heron'], aware: 5, respawn: 1440, until: HERONRY_BURNT },
+    { id: 'a4_herons', x: 27, y: 24, monsters: ['grey_heron', 'grey_heron', 'grey_heron'], aware: 5, respawn: RESPAWN.day, until: HERONRY_BURNT },
     // A bull toad and a leech in the corner's pools, the farthest and the hardest, kept to them.
-    { id: 'a4_toad', x: 27, y: 29, monsters: ['bull_toad', 'leech'], aware: 4, roams: false, respawn: 1440 },
+    { id: 'a4_toad', x: 27, y: 29, monsters: ['bull_toad', 'leech'], aware: 4, roams: false, respawn: RESPAWN.day },
   ],
 };

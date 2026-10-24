@@ -5,7 +5,7 @@
 // §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/keys.ts';
+import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 
 /** The wolves on the chalk run until the den in the chalk pit is pulled down. */
 const PULLED = denBurnt('downs_d2', 'd2_den');
@@ -80,12 +80,12 @@ export const DOWNS_D2: MapDef = {
   ],
   secrets: [{ x: 20, y: 4, hint: 'd2_ring' }],
   encounters: [
-    { id: 'd2_crows', x: 27, y: 15, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
-    { id: 'd2_wolves1', x: 24, y: 6, monsters: WOLVES, aware: 5, respawn: 1440, until: PULLED },
-    { id: 'd2_wolves2', x: 25, y: 23, monsters: WOLVES, aware: 5, respawn: 1440, until: PULLED },
-    { id: 'd2_wolves3', x: 8, y: 26, monsters: WOLVES, aware: 5, respawn: 1440, until: PULLED },
+    { id: 'd2_crows', x: 27, y: 15, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: RESPAWN.day },
+    { id: 'd2_wolves1', x: 24, y: 6, monsters: WOLVES, aware: 5, respawn: RESPAWN.day, until: PULLED },
+    { id: 'd2_wolves2', x: 25, y: 23, monsters: WOLVES, aware: 5, respawn: RESPAWN.day, until: PULLED },
+    { id: 'd2_wolves3', x: 8, y: 26, monsters: WOLVES, aware: 5, respawn: RESPAWN.day, until: PULLED },
     { id: 'd2_pack', x: 6, y: 6, monsters: ['barrow_wolf', 'barrow_wolf'], aware: 3, roams: false },
-    { id: 'd2_dog', x: 17, y: 10, when: { hours: 'night' }, monsters: ['black_dog'], aware: 5, respawn: 1440 },
-    { id: 'd2_dogs', x: 11, y: 16, when: { hours: 'night' }, monsters: ['black_dog', 'black_dog'], aware: 5, respawn: 2880 },
+    { id: 'd2_dog', x: 17, y: 10, when: { hours: 'night' }, monsters: ['black_dog'], aware: 5, respawn: RESPAWN.day },
+    { id: 'd2_dogs', x: 11, y: 16, when: { hours: 'night' }, monsters: ['black_dog', 'black_dog'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

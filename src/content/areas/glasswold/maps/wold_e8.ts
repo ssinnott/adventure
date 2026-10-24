@@ -10,6 +10,7 @@
 // docs/areas/glasswold.md §4.9 is its brief (#534).
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const WOLD_E8: MapDef = {
   id: 'wold_e8',
@@ -84,8 +85,8 @@ export const WOLD_E8: MapDef = {
   encounters: [
     // From the way in: the pride on the strand after the mares, with its vultures, and more vultures on the
     // boat's ribs; and at the strand's north end two basilisks in the sun, the hardest.
-    { id: 'e8_pride', x: 9, y: 24, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: 2880 },
-    { id: 'e8_vultures', x: 8, y: 21, monsters: ['vulture', 'vulture', 'vulture'], aware: 3, respawn: 2880 },
-    { id: 'e8_basilisks', x: 2, y: 6, monsters: ['basilisk', 'basilisk'], aware: 3, respawn: 2880 },
+    { id: 'e8_pride', x: 9, y: 24, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'e8_vultures', x: 8, y: 21, monsters: ['vulture', 'vulture', 'vulture'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'e8_basilisks', x: 2, y: 6, monsters: ['basilisk', 'basilisk'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

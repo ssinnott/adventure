@@ -8,6 +8,7 @@
 // hand, its void written in; docs/areas/saltreach.md §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DELTA_A5: MapDef = {
   id: 'delta_a5',
@@ -70,8 +71,8 @@ export const DELTA_A5: MapDef = {
   secrets: [{ x: 21, y: 15, hint: 'a5_water' }],
   encounters: [
     // Four leeches and an eel in the fen's pools, the nearest, kept to them.
-    { id: 'a5_pools', x: 25, y: 9, monsters: ['leech', 'leech', 'leech', 'leech', 'fen_eel'], aware: 4, roams: false, respawn: 1440 },
+    { id: 'a5_pools', x: 25, y: 9, monsters: ['leech', 'leech', 'leech', 'leech', 'fen_eel'], aware: 4, roams: false, respawn: RESPAWN.day },
     // A bull toad alone where the dyke gives out, the farthest and the hardest.
-    { id: 'a5_toad', x: 25, y: 28, monsters: ['bull_toad'], aware: 4, respawn: 1440 },
+    { id: 'a5_toad', x: 25, y: 28, monsters: ['bull_toad'], aware: 4, respawn: RESPAWN.day },
   ],
 };

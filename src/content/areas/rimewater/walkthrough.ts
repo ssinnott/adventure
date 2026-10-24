@@ -86,6 +86,7 @@ import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take, rankOf } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
 import { FOURTH_RANKS_OPEN } from '../kilns/guilds.ts';
+import { RESPAWN } from '../../../game/keys.ts';
 
 /**
  * The Wardens' fourth rank's ask at the ice-hole (DESIGN §8, #439), on a copy of the walk's company made
@@ -1408,7 +1409,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   w.level = 22;
   const groups = CF.encounters!, eagles = groups.find((g) => g.id === 'cf_eagles')!, trolls = groups.find((g) => g.id === 'cf_trolls')!;
   ok(groups.length === 2 && eagles.monsters.join() === 'spine_eagle,spine_eagle,spine_eagle,spine_eagle' && trolls.monsters.join() === 'snow_troll,snow_troll'
-    && eagles.respawn === 1440 && trolls.respawn === 2880 && groups.every((g) => g.roams === false && !g.slainText), 'four spine eagles in the neck and two snow trolls in the passage to the cave\'s back, and no guardian');
+    && eagles.respawn === RESPAWN.day && trolls.respawn === RESPAWN.twoDays && groups.every((g) => g.roams === false && !g.slainText), 'four spine eagles in the neck and two snow trolls in the passage to the cave\'s back, and no guardian');
   const hold = new GameMap(CF), [wall] = CF.secrets!;
   const walked = (live: readonly { x: number; y: number }[], can: Can): Set<string> => {
     const seen = new Set<string>(), todo: [number, number][] = [[CF.start.x, CF.start.y]];

@@ -11,6 +11,7 @@ import type { Feature, MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { SLAG } from '../../../rifts/materials.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Warden of the Anvil fallen in the cut. */
 export const WARDEN_SLAIN: When = { slain: 'anvil_stone:as_warden' };
@@ -87,12 +88,12 @@ export const ANVIL_STONE: MapDef = {
   encounters: [
     // Slaglings down the middle lane and in the west, and a pair of slag elders at the heads of the
     // west and east lanes, before the cut face: all come back until the tear is closed.
-    { id: 'as_slag_lane', x: 7, y: 9, monsters: ['slagling', 'slagling', 'slagling', 'slagling'], aware: 4, respawn: 1440, until: CLOSED },
-    { id: 'as_slag_west', x: 3, y: 10, monsters: ['slagling', 'slagling', 'slagling', 'slagling'], aware: 4, respawn: 1440, until: CLOSED },
-    { id: 'as_elders_west', x: 3, y: 5, monsters: ['slag_elder', 'slag_elder'], aware: 3, respawn: 2880, roams: false, until: CLOSED },
-    { id: 'as_elders_east', x: 11, y: 5, monsters: ['slag_elder', 'slag_elder'], aware: 3, respawn: 2880, roams: false, until: CLOSED },
+    { id: 'as_slag_lane', x: 7, y: 9, monsters: ['slagling', 'slagling', 'slagling', 'slagling'], aware: 4, respawn: RESPAWN.day, until: CLOSED },
+    { id: 'as_slag_west', x: 3, y: 10, monsters: ['slagling', 'slagling', 'slagling', 'slagling'], aware: 4, respawn: RESPAWN.day, until: CLOSED },
+    { id: 'as_elders_west', x: 3, y: 5, monsters: ['slag_elder', 'slag_elder'], aware: 3, respawn: RESPAWN.twoDays, roams: false, until: CLOSED },
+    { id: 'as_elders_east', x: 11, y: 5, monsters: ['slag_elder', 'slag_elder'], aware: 3, respawn: RESPAWN.twoDays, roams: false, until: CLOSED },
     // The Warden of the Anvil, standing up out of the cut: it never comes back, and the tear closes
     // when it falls.
-    { id: 'as_warden', x: 7, y: 1, monsters: ['anvil_warden'], aware: 2, roams: false, slainText: 'The red goes out of the slag. The ground stops humming. Up at the cut, the Stone is only a stone.', sets: 'q_anvil_closed' },
+    { id: 'as_warden', x: 7, y: 1, monsters: ['anvil_warden'], aware: 2, roams: false, boss: true, slainText: 'The red goes out of the slag. The ground stops humming. Up at the cut, the Stone is only a stone.', sets: 'q_anvil_closed' },
   ],
 };

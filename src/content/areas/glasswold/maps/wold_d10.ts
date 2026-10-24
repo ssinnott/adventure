@@ -11,6 +11,7 @@
 // Rider hides who drilled the Riders: the Wold's Master of arms (#858, docs/areas/glasswold.md §6).
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The Master of arms (#858), found and never told: Mergen has met the company (`MASTER_MET`), and his bow
@@ -123,10 +124,10 @@ export const WOLD_D10: MapDef = {
     // From the way in: the near pride at its kill with the vultures down on it, the south pride in the grass,
     // the mesa fight in the scree under the great mesa's north face, the basilisk on the lip behind its pride;
     // the glass scorpions at the dunes' edge, and a basilisk alone in the small mesa's shade, the hardest at 27.
-    { id: 'd10_pride', x: 27, y: 11, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: 2880 },
-    { id: 'd10_pride_south', x: 28, y: 17, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: 2880 },
-    { id: 'd10_mesa', x: 24, y: 0, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'basilisk'], aware: 3, respawn: 2880 },
-    { id: 'd10_scorpions', x: 4, y: 3, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: 2880 },
-    { id: 'd10_basilisk', x: 4, y: 19, monsters: ['basilisk'], aware: 3, respawn: 2880 },
+    { id: 'd10_pride', x: 27, y: 11, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'd10_pride_south', x: 28, y: 17, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'd10_mesa', x: 24, y: 0, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'basilisk'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'd10_scorpions', x: 4, y: 3, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'd10_basilisk', x: 4, y: 19, monsters: ['basilisk'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

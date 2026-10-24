@@ -7,6 +7,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CAIRNFIELD_M7: MapDef = {
   id: 'cairnfield_m7',
@@ -83,7 +84,7 @@ export const CAIRNFIELD_M7: MapDef = {
   encounters: [
     // The ravens at the dead ewe by the fold, and by night the moor hounds down off the moor onto the
     // grazing below the shielings.
-    { id: 'm7_ravens', x: 23, y: 25, monsters: ['raven', 'raven', 'raven', 'raven', 'raven'], aware: 4, respawn: 1440, roams: false },
-    { id: 'm7_hounds', x: 14, y: 9, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 5, respawn: 2880, when: { hours: 'night' } },
+    { id: 'm7_ravens', x: 23, y: 25, monsters: ['raven', 'raven', 'raven', 'raven', 'raven'], aware: 4, respawn: RESPAWN.day, roams: false },
+    { id: 'm7_hounds', x: 14, y: 9, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 5, respawn: RESPAWN.twoDays, when: { hours: 'night' } },
   ],
 };

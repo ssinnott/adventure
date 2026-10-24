@@ -269,7 +269,6 @@ const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
     'tools/tests/pilot.ts > tools/walk.ts',
     'tools/tests/quests.ts > tools/checks.ts',
     'tools/tests/quests.ts > tools/tests/enclave.ts',
-    'tools/tests/quests.ts > tools/tests/pillars.ts',
     'tools/tests/rifts.ts > tools/tests/density.ts',
     'tools/tests/rifts.ts > tools/tests/pillars.ts',
     'tools/tests/rifts.ts > tools/tests/structure.ts',

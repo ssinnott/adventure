@@ -8,6 +8,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { QuestCond, When } from '../../../../game/quests.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Choirmaster fallen, and the count with it (level two). */
 export const COUNT_STOPPED: QuestCond = { slain: 'drowned_temples2:dt2_choirmaster' };
@@ -80,7 +81,7 @@ export const DROWNED_TEMPLES: MapDef = {
   encounters: [
     // Two drowned men in the nave's dry strip; and two bull toads in the north-east chapel, come in with
     // the fen through the sunk north chapels, the level's hardest at 12.
-    { id: 'dt1_nave', x: 8, y: 6, monsters: ['temple_drowned', 'temple_drowned'], aware: 2, roams: false, respawn: 2880 },
-    { id: 'dt1_chapel', x: 13, y: 3, monsters: ['bull_toad', 'bull_toad'], aware: 4, roams: false, respawn: 2880 },
+    { id: 'dt1_nave', x: 8, y: 6, monsters: ['temple_drowned', 'temple_drowned'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'dt1_chapel', x: 13, y: 3, monsters: ['bull_toad', 'bull_toad'], aware: 4, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

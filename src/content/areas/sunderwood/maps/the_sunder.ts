@@ -7,6 +7,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const THE_SUNDER: MapDef = {
   id: 'the_sunder',
@@ -70,6 +71,6 @@ export const THE_SUNDER: MapDef = {
     { kind: 'event', x: 10, y: 28, id: 'su1_landing', once: true, text: 'The last landing, and the ledges end. A stair goes down into the rock, cut square, chip marks on the treads, and the rain stays above it.' },
   ],
   encounters: [
-    { id: 'su1_spiders', x: 16, y: 20, monsters: ['glass_spider', 'glass_spider', 'glass_spider', 'glass_spider'], aware: 3, respawn: 2880, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
+    { id: 'su1_spiders', x: 16, y: 20, monsters: ['glass_spider', 'glass_spider', 'glass_spider', 'glass_spider'], aware: 3, respawn: RESPAWN.twoDays, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
   ],
 };

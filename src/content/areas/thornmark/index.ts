@@ -16,7 +16,7 @@ import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
 import { GUILDS } from './guilds.ts';
 import { CHAPTER } from './chapter.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
 export const AREA = {
   id: 'thornmark' as const,
@@ -33,5 +33,5 @@ export const AREA = {
     fogText: 'Mist rises between the trees.', thunderText: 'Thunder rolls over the forest.' },
   interiors: ['green_man', 'lantern_chapterhouse', 'thornhold_armoury', 'lantern_hall', 'elders_yard', 'split_oak'] as const,
   novel: { families: ['ogre', 'wraith'], terrain: [], mechanics: ['encounter:slainText', 'encounter:choice'], landmarks: ['hold', 'tower', 'barrow', 'grove'] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;

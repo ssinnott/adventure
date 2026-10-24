@@ -6,6 +6,7 @@
 // mountain; no road. Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.15 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNSHEART_O4: MapDef = {
   id: 'kilnsheart_o4',
@@ -80,7 +81,7 @@ export const KILNSHEART_O4: MapDef = {
   encounters: [
     // The salamanders on the quarry floor, come up out of the warm stone; and further in, under the
     // pines' edge, a pair of rock worms, the box's top.
-    { id: 'o4_salamanders', x: 6, y: 10, monsters: ['salamander', 'salamander', 'salamander'], aware: 3, respawn: 1440 },
-    { id: 'o4_worms', x: 25, y: 4, monsters: ['rock_worm', 'rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'o4_salamanders', x: 6, y: 10, monsters: ['salamander', 'salamander', 'salamander'], aware: 3, respawn: RESPAWN.day },
+    { id: 'o4_worms', x: 25, y: 4, monsters: ['rock_worm', 'rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

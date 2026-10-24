@@ -4,7 +4,7 @@
 // the Wold and the fused desert in the Glass; the lava flow in the plan's ridges seals the Glass from
 // the Ember Waste, so the Riders' gap at the dunes is its one way in (#443, call 5). The Buried Tower's
 // band is the cap's, 30-32, and the row changes with the reach's own atlas work.
-import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
@@ -24,8 +24,14 @@ export const ZONES: readonly AtlasZone[] = [
     // (E9, #534), or walked from the Saltings' C7 and D6 onto the strip under the Scarp in D7 (#833), so
     // true every way in.
     crossing: { harder: 'The grass is long, and what hunts in it is harder than the road behind.', warning: 'Nothing that hunts the grass would spare you. The way back is still open.' },
+    // Onto the mesas over E10's west edge, past the pride at its kill by the way in and the south pride in
+    // the grass, along the great mesa's foot to the mesa fight in the scree under its north face, out to the
+    // scorpions at the dunes' edge and the basilisk alone under the small mesa (#527); then onto the steppe
+    // over its south edge, past the pride at its kill, west along the road past the scorpions at the dunes'
+    // edge to the glass walker at the far south-west, and north up the Riders' track past the north pride (#525).
+    road: ['wold_d10:d10_pride', 'wold_d10:d10_pride_south', 'wold_d10:d10_mesa', 'wold_d10:d10_scorpions', 'wold_d10:d10_basilisk', 'wold_d9:d9_pride', 'wold_d9:d9_scorpions', 'wold_d9:d9_walker', 'wold_d9:d9_pride_north'],
   },
-  { id: 'theglass', name: 'The Glass', area: 'glasswold', seeds: [[80, 282], [90, 300], [78, 312]], label: [96, 304] },
+  { id: 'theglass', name: 'The Glass', area: 'glasswold', seeds: [[80, 282], [90, 300], [78, 312]], label: [96, 304], reach: true },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
@@ -39,4 +45,8 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Buried Tower', icon: 'obelisk', at: [84, 280], label: 'below', planned: true },
   { name: 'Akordu', icon: 'camp', at: [120, 250], label: 'below' }, // the Wold Riders' camp, built with D8 (#526)
   { name: 'Kushtash', icon: 'camp', at: [46, 242], label: 'right' }, // the Eyrie, on the far-west mesa under the rim, built with B8 (#529): the Ranger's third prestige (moved from 132,289; #443, call 5)
+];
+
+export const LINKS: readonly AtlasLink[] = [
+  { from: 'theglass', to: 'buried_tower', kind: 'enter', a: [84, 280] },
 ];

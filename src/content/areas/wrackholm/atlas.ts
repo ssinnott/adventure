@@ -3,10 +3,10 @@
 // levels (#188) and the Tide Ship, the Dead-Drop's below it (#22), and its sites. The Area carries it
 // (index.ts).
 // docs/areas/wrackholm.md is its brief.
-import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'wrackholm', name: 'Wrackholm', area: 'wrackholm', band: [12, 14], maps: [{ map: 'wrackholm_e6', at: [136, 158] }, { map: 'wrackholm_f6', at: [168, 158] }, { map: 'wrackholm_e5', at: [136, 126] }, { map: 'wrackholm_f5', at: [168, 126] }, { map: 'wrackholm_f7', at: [168, 190] }], seeds: [[168, 176]] },
+  { id: 'wrackholm', name: 'Wrackholm', area: 'wrackholm', band: [12, 14], maps: [{ map: 'wrackholm_e6', at: [136, 158] }, { map: 'wrackholm_f6', at: [168, 158] }, { map: 'wrackholm_e5', at: [136, 126] }, { map: 'wrackholm_f5', at: [168, 126] }, { map: 'wrackholm_f7', at: [168, 190] }], seeds: [[168, 176]], road: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
@@ -28,4 +28,9 @@ export const SITES: readonly AtlasSite[] = [
   // IV. Wrackholm.
   { name: 'Kelp Hole', icon: 'cave', map: 'wrackholm_e6', at: [18.5, 12.5], label: 'left' },
   { name: 'Tide Ship', icon: 'wreck', map: 'wrackholm_f6', at: [14.5, 30.5], label: 'right' }, // its anchorage off F6's shingle; the plates lie out in the sea
+];
+
+export const LINKS: readonly AtlasLink[] = [
+  { from: 'wrackholm', to: 'smugglers_cove', kind: 'enter', a: [154, 170] },
+  { from: 'wrackholm', to: 'tide_ship', kind: 'enter', a: [182, 188] },
 ];

@@ -6,6 +6,7 @@
 // floor all fire, where the Great Salamander lies. Band 17-18; docs/areas/kilns.md §4.11 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LAVA_TUBES2: MapDef = {
   id: 'lava_tubes2',
@@ -61,8 +62,8 @@ export const LAVA_TUBES2: MapDef = {
   encounters: [
     // Salamanders in the west tube and the east; in the deepest chamber, the Great Salamander, boss at
     // 18, which never comes back and drops its hide.
-    { id: 'lt2_salamanders_w', x: 3, y: 7, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: 1440, roams: false },
-    { id: 'lt2_salamanders_e', x: 12, y: 7, monsters: ['salamander', 'salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: 1440, roams: false },
-    { id: 'lt2_great_salamander', x: 10, y: 11, monsters: ['great_salamander'], aware: 2, roams: false, slainText: 'The Great Salamander sinks into its own fire, and the fire goes out of it. Its hide cools grey on the rock.' },
+    { id: 'lt2_salamanders_w', x: 3, y: 7, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'lt2_salamanders_e', x: 12, y: 7, monsters: ['salamander', 'salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'lt2_great_salamander', x: 10, y: 11, monsters: ['great_salamander'], aware: 2, roams: false, boss: true, slainText: 'The Great Salamander sinks into its own fire, and the fire goes out of it. Its hide cools grey on the rock.' },
   ],
 };

@@ -7,6 +7,7 @@
 // band over the Wold's, out of the Glasswold's figures; docs/areas/glasswold.md §12.4 is its brief (#833).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KARAORDU: MapDef = {
   id: 'karaordu',
@@ -59,9 +60,9 @@ export const KARAORDU: MapDef = {
   secrets: [{ x: 7, y: 13, hint: 'kr_skulls' }],
   encounters: [
     // At the passage's head, where the diggers met their eyes: four basilisks laired in the cool, the nearer.
-    { id: 'kr_basilisks', x: 7, y: 4, monsters: ['basilisk', 'basilisk', 'basilisk', 'basilisk'], aware: 3, roams: false, respawn: 2880 },
+    { id: 'kr_basilisks', x: 7, y: 4, monsters: ['basilisk', 'basilisk', 'basilisk', 'basilisk'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
     // Among the bones of the khans' chamber, the rats come down the diggers' cut: the farther and the hardest, on the
     // square before the hint's, so that the hint is searched from beside them and the sabre is had past them.
-    { id: 'kr_rats', x: 7, y: 11, monsters: ['deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat'], aware: 3, roams: false, respawn: 2880 },
+    { id: 'kr_rats', x: 7, y: 11, monsters: ['deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat', 'deep_rat'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

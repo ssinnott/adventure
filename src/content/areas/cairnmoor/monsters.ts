@@ -15,7 +15,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // over the bog by night and round the ring (#477, #478), a controller at 18: it flies, and its touch takes spell points
   // before hit points in place of the line's paralysis. On MONSTERS §4.4's line (204 hp, 3d8+2) four end the day in four
   // fights, so it comes down whole, hit points and blow together (0.575), to about the day's eight and a half
-  { id: 'bog_light', name: 'Bog Light', plural: 'Bog Lights', sprite: 'bog_light', kind: 'rift', look: 'A light over the bog, where nobody is.', level: 18, hp: 117, ac: 20, attack: 11, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 713, gold: [0, 0], ranged: true, drain: 'sp', tint: '#bff0b0', size: 0.5 },
+  { id: 'bog_light', name: 'Bog Light', plural: 'Bog Lights', sprite: 'bog_light', kind: 'rift', look: 'A light over the bog, where nobody is.', level: 18, hp: 117, ac: 20, attack: 11, dice: 2, sides: 6, bonus: 2, speed: 12, xp: 713, gold: [0, 0], ranged: true, drain: 'sp', offLine: { role: 'controller', share: 0.575, why: 'four on the line end a company\'s day in four fights (#597)' }, tint: '#bff0b0', size: 0.5 },
   // out of the peat, from N7 on (#476), a soldier on MONSTERS §4.4's line at 18: it carries disease, at 0.2 a hit
   { id: 'bog_body', name: 'Bog Body', plural: 'Bog Bodies', sprite: 'bog_body', kind: 'dead', look: 'Leather over bone, and a rope still round its neck.', level: 18, hp: 200, ac: 20, attack: 11, dice: 3, sides: 7, bonus: 5, speed: 11, xp: 713, gold: [0, 0], inflict: { cond: 'diseased', chance: 0.2 }, tint: '#5e3f28', size: 0.9 },
   // the moor by night, from N7 on (#476), a skirmisher on MONSTERS §4.4's line at 19: its bite holds (paralysis, 0.15)
@@ -29,7 +29,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // on its seat at the end of the hall under Carn Dubh (#480), the area's boss at 20; it never comes back, and it curses
   // as its wights do (0.2). Off MONSTERS §4.4's boss line (1,113 hp, 20d8+20, won 81% at 19 and 91% at 21), its hit
   // points and its blow are set for #480's gate: about half at its floor, 19, and nearly always at 21
-  { id: 'cairn_king', name: 'The Cairn King', plural: 'Cairn Kings', sprite: 'cairn_king', kind: 'dead', look: 'Crowned, and older than the crown.', level: 20, hp: 1800, ac: 23, attack: 14, dice: 16, sides: 8, bonus: 14, speed: 13, xp: 12693, gold: [150, 300], inflict: { cond: 'cursed', chance: 0.2 }, tint: '#b9a682', size: 1.3 },
+  { id: 'cairn_king', name: 'The Cairn King', plural: 'Cairn Kings', sprite: 'cairn_king', kind: 'dead', look: 'Crowned, and older than the crown.', level: 20, hp: 1800, ac: 23, attack: 14, dice: 16, sides: 8, bonus: 14, speed: 13, xp: 12693, gold: [150, 300], inflict: { cond: 'cursed', chance: 0.2 }, offLine: 'Carn Dubh\'s boss, its hit points and its blow set by its gate (#480)', tint: '#b9a682', size: 1.3 },
   // the bounds' lair (#834): Bearn Liath, the cleft in the rim behind P7, where it keeps Torhide in the hollow under the
   // tops. The rim stood up, the lair's boss at 32 (MONSTERS §13): it mends each round but a round fire struck it (`regen`,
   // as the tor troll's), and stands at size 2, a tall boss drawn inside TALL_REACH. Drawn at the test troll's at 32 (797

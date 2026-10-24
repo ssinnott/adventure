@@ -5,7 +5,7 @@
 // with the Ways (#757), the Stair with a plate of its own (#758) and the Core with the Heart (#759). The
 // bands are the plan's (§8): the isle 28-29,
 // the Ways 30, the Stair 30-31, the Heart 32, so the area's row is the curve's, 28-32.
-import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
@@ -15,6 +15,11 @@ export const ZONES: readonly AtlasZone[] = [
     seeds: [[256, 172]],
     // The crossing line (#166, #524): said where the isle is first walked into, off the last crossing's boat.
     crossing: { harder: 'The isle, and the light\'s heat on your face. What keeps the temple is harder than anything on the far side.', warning: 'The isle. Nothing on it would spare you, and the boat is the only way back.' },
+    // Up the cleft from the strand where the last crossing grounds, past the Hand's pickets in it and at
+    // its head, and over the Bowl to the preacher's group before the temple's door (#753); then out of the
+    // Bowl's east pocket past the champions where the rim's path begins, by Anchorhold's yard and down the
+    // rim's east foot to the Hand's camp, its guard and the two at the stair's head (#754).
+    road: ['hearthisle_h6:h6_picket1', 'hearthisle_h6:h6_picket2', 'hearthisle_h6:h6_sermon', 'hearthisle_i6:i6_rim', 'hearthisle_i6:i6_guard', 'hearthisle_i6:i6_guard2'],
   },
 ];
 
@@ -30,4 +35,9 @@ export const SITES: readonly AtlasSite[] = [
   // XII. Hearth Isle (docs/areas/hearth_isle.md §10 has the names).
   { name: 'The Hearth', icon: 'hearth', at: [256, 174], label: 'none' }, // the column's foot on H6, 24,16 (#753)
   { name: 'Anchorhold', icon: 'tower', at: [268, 176], label: 'right' }, // the cell on I6, 4,18 (#754): the Cleric's third prestige
+];
+
+export const LINKS: readonly AtlasLink[] = [
+  { from: 'hearthisle', to: 'underdeep', kind: 'deep', a: [250, 172] },
+  { from: 'underdeep', to: 'core', kind: 'deep' },
 ];

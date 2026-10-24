@@ -5,6 +5,7 @@
 // tools/scaffold.ts; docs/areas/shelf.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DOWNS_F2: MapDef = {
   id: 'downs_f2',
@@ -105,10 +106,10 @@ export const DOWNS_F2: MapDef = {
   ],
   secrets: [{ x: 12, y: 3, hint: 'f2_holly' }],
   encounters: [
-    { id: 'f2_crows', x: 8, y: 25, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
-    { id: 'f2_wolves', x: 15, y: 6, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: 1440 },
-    { id: 'f2_boar', x: 9, y: 7, monsters: ['tusker'], aware: 3, respawn: 2880 },
-    { id: 'f2_rats', x: 11, y: 11, monsters: ['barn_rat', 'barn_rat', 'barn_rat', 'barn_rat', 'barn_rat'], aware: 4, respawn: 720 },
-    { id: 'f2_bandits', x: 17, y: 30, monsters: ['footpad', 'footpad', 'poacher'], aware: 5, respawn: 2880 },
+    { id: 'f2_crows', x: 8, y: 25, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: RESPAWN.day },
+    { id: 'f2_wolves', x: 15, y: 6, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: RESPAWN.day },
+    { id: 'f2_boar', x: 9, y: 7, monsters: ['tusker'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'f2_rats', x: 11, y: 11, monsters: ['barn_rat', 'barn_rat', 'barn_rat', 'barn_rat', 'barn_rat'], aware: 4, respawn: RESPAWN.half },
+    { id: 'f2_bandits', x: 17, y: 30, monsters: ['footpad', 'footpad', 'poacher'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

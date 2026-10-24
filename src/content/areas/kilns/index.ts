@@ -34,7 +34,7 @@ import { RANDZECHE2 } from './maps/randzeche2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
@@ -57,5 +57,5 @@ export const AREA = {
     fogText: 'A haze comes down off the Fells, and it smells of smoke.', thunderText: 'Thunder rolls along the Fells.' },
   interiors: INTERIORS,
   novel: { families: ['salamanders', 'knockers'], terrain: ['pine', 'ash', 'lava'], mechanics: ['sign:read', 'sign:marks', 'encounter:sets'], landmarks: ['fortress', 'forge', 'mine'] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;

@@ -8,7 +8,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/keys.ts';
+import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 
 /** The owls' roost burnt: its brood stops coming. */
@@ -84,9 +84,9 @@ export const DEEPTHORN_I5: MapDef = {
   // wood sleeps once the tear is closed (MONSTERS §5.4); the brood stops with the roost.
   encounters: [
     { id: 'i5_keepers', x: 21, y: 7, monsters: ['great_owl', 'great_owl', 'great_owl', 'great_owl'], aware: 2, roams: false },
-    { id: 'i5_brood1', x: 28, y: 11, when: { hours: 'night' }, monsters: ['great_owl', 'great_owl', 'great_owl'], aware: 5, respawn: 1440, until: ROOST_BURNT },
-    { id: 'i5_brood2', x: 26, y: 15, when: { hours: 'night' }, monsters: ['great_owl', 'great_owl', 'great_owl'], aware: 5, respawn: 1440, until: ROOST_BURNT },
-    { id: 'i5_brambles', x: 24, y: 11, monsters: ['bramble', 'bramble', 'bramble'], aware: 1, roams: false, until: TEAR_CLOSED, respawn: 2880 },
-    { id: 'i5_rootwalkers', x: 29, y: 18, monsters: ['rootwalker', 'rootwalker', 'rootwalker'], aware: 3, until: TEAR_CLOSED, respawn: 2880 },
+    { id: 'i5_brood1', x: 28, y: 11, when: { hours: 'night' }, monsters: ['great_owl', 'great_owl', 'great_owl'], aware: 5, respawn: RESPAWN.day, until: ROOST_BURNT },
+    { id: 'i5_brood2', x: 26, y: 15, when: { hours: 'night' }, monsters: ['great_owl', 'great_owl', 'great_owl'], aware: 5, respawn: RESPAWN.day, until: ROOST_BURNT },
+    { id: 'i5_brambles', x: 24, y: 11, monsters: ['bramble', 'bramble', 'bramble'], aware: 1, roams: false, until: TEAR_CLOSED, respawn: RESPAWN.twoDays },
+    { id: 'i5_rootwalkers', x: 29, y: 18, monsters: ['rootwalker', 'rootwalker', 'rootwalker'], aware: 3, until: TEAR_CLOSED, respawn: RESPAWN.twoDays },
   ],
 };

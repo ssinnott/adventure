@@ -8,6 +8,7 @@
 // tools/scaffold.ts, its void written in; docs/areas/saltreach.md §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const UPPERWATER_C2: MapDef = {
   id: 'upperwater_c2',
@@ -79,8 +80,8 @@ export const UPPERWATER_C2: MapDef = {
   encounters: [
     // The Hand's watch beside its fire on the crest: a master and three bargemen, who break when he falls.
     // It stands next to the fire, so no company rests there while it stands (wilds.ts, `restRefused`).
-    { id: 'c2_watch', x: 7, y: 23, monsters: ['barge_master', 'bargeman', 'bargeman', 'bargeman'], leader: 'barge_master', aware: 3, roams: false, respawn: 2880 },
+    { id: 'c2_watch', x: 7, y: 23, monsters: ['barge_master', 'bargeman', 'bargeman', 'bargeman'], leader: 'barge_master', aware: 3, roams: false, respawn: RESPAWN.twoDays },
     // A bull toad and a fen toad come up out of the fen to spawn in the tarn, the farthest and the hardest.
-    { id: 'c2_toad', x: 12, y: 15, monsters: ['bull_toad', 'fen_toad'], aware: 4, respawn: 1440 },
+    { id: 'c2_toad', x: 12, y: 15, monsters: ['bull_toad', 'fen_toad'], aware: 4, respawn: RESPAWN.day },
   ],
 };

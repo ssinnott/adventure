@@ -306,7 +306,7 @@ export function uses(area: Pick<Area, 'maps' | 'atlas'>, family: Map<string, rea
  * named here until the atlas marks them itself (EXPANSION §5.8); a town or dungeon goes with the zone
  * it opens from.
  */
-export const REACH_ZONES: readonly string[] = ['theglass', 'glacierfoot'];
+export const REACH_ZONES: readonly string[] = [];
 
 /** A map as the pace check reads it: the area that lists it, and the atlas zone it lies in or opens from. */
 export interface PacedMap { def: MapDef; area: string; zone?: string }

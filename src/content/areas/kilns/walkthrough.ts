@@ -124,6 +124,7 @@ import { World, HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as RING } from '../cairnmoor/chapter.ts';
 import { CREW_OPEN, CREW_SHUT } from '../hearth/maps/underdeep.ts';
+import { RESPAWN } from '../../../game/keys.ts';
 
 const M3 = MAP_DEFS.find((d) => d.id === 'ironfells_m3')!, N3 = MAP_DEFS.find((d) => d.id === 'ironfells_n3')!, N4 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n4')!;
 const N2 = MAP_DEFS.find((d) => d.id === 'ironfells_n2')!;
@@ -1947,7 +1948,7 @@ function crewOpen(ok: (cond: boolean, msg: string) => void): void {
     v.party.flags[CREW_OPEN] = 1;
     v.level = L3.band![0];
     const look = said(v);
-    ok(up.monsters.join() === 'knocker,knocker,knocker' && MONSTERS.knocker.level === 16 && up.respawn === 2880 && live(v) && look.join() === 'They came up through the door you left open.',
+    ok(up.monsters.join() === 'knocker,knocker,knocker' && MONSTERS.knocker.level === 16 && up.respawn === RESPAWN.twoDays && live(v) && look.join() === 'They came up through the door you left open.',
       `the door left open, three of the corridor's own knockers at 6,3, level 16, and before them: ${look.join(' ')}`);
     fight(v, 'deep_mines3:ud_mines');
     const dead = !live(v);
@@ -2034,7 +2035,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   see(w, `${K6.id}:k6_rings`);
   kneel(w, `${K6.id}:k6_boles`);
   for (const g of K6.encounters!) fight(w, `${K6.id}:${g.id}`);
-  ok(K6.encounters!.every((g) => g.monsters.join() === 'rock_worm,rock_worm' && g.respawn === 2880), 'the heath holds one group, a pair of rock worms at the top of the band, back after two days');
+  ok(K6.encounters!.every((g) => g.monsters.join() === 'rock_worm,rock_worm' && g.respawn === RESPAWN.twoDays), 'the heath holds one group, a pair of rock worms at the top of the band, back after two days');
 
   // The secret: the old rails rubbed bright to the winch-house wall, the search there and the strongroom
   // behind it. Walked, waded, climbed or floated, it is never reached but through the wall.
@@ -2156,7 +2157,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   for (const g of L7.encounters!) fight(w, `${L7.id}:${g.id}`);
   const [spill, dunes] = L7.encounters!, fire = L7.features!.find((f) => f.kind === 'camp')!;
-  ok(L7.encounters!.length === 2 && spill.monsters.join() === 'fire_beetle,fire_beetle,fire_beetle,fire_beetle' && spill.respawn === 1440 && dunes.monsters.join() === 'rock_worm' && dunes.respawn === 2880 && dunes.roams === false,
+  ok(L7.encounters!.length === 2 && spill.monsters.join() === 'fire_beetle,fire_beetle,fire_beetle,fire_beetle' && spill.respawn === RESPAWN.day && dunes.monsters.join() === 'rock_worm' && dunes.respawn === RESPAWN.twoDays && dunes.roams === false,
     'the shore holds four fire beetles at the spill, back after a day, and a lone rock worm in the dunes, back after two and staying where it is');
   ok(L7.encounters!.every((g) => Math.max(Math.abs(g.x - fire.x), Math.abs(g.y - fire.y)) > 4), 'the driftwood fire stands more than four squares clear of both groups, so a company can rest at it');
 

@@ -7,6 +7,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const IRONFELLS_M3: MapDef = {
   id: 'ironfells_m3',
@@ -80,8 +81,8 @@ export const IRONFELLS_M3: MapDef = {
   encounters: [
     // Fire beetles on the spoil, the Kilns' gentlest: three at the heap's toe, where they see the
     // trail, and three on its west side; and a rock worm in the adit's cut, the box's group at 17.
-    { id: 'm3_beetles1', x: 23, y: 22, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: 1440 },
-    { id: 'm3_beetles2', x: 21, y: 23, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: 1440, roams: false },
-    { id: 'm3_worm', x: 23, y: 28, monsters: ['rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'm3_beetles1', x: 23, y: 22, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: RESPAWN.day },
+    { id: 'm3_beetles2', x: 21, y: 23, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'm3_worm', x: 23, y: 28, monsters: ['rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

@@ -7,6 +7,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.6 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The way down into the Tiefzeche (#462): the cage's gate on the shaft at 16,2, onto the workings'
@@ -103,9 +104,9 @@ export const KILNSHEART_N4: MapDef = {
   encounters: [
     // Fire beetles on the fresh spoil at its head by the trail, salamanders at its warm end under the
     // crag; a rock worm in each of the old workings' open cuts, the box's groups at 17.
-    { id: 'n4_beetles', x: 12, y: 7, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: 1440 },
-    { id: 'n4_salamanders', x: 15, y: 10, monsters: ['salamander', 'salamander', 'salamander', 'fire_beetle'], aware: 3, respawn: 1440 },
-    { id: 'n4_worm_west', x: 4, y: 28, monsters: ['rock_worm'], aware: 2, respawn: 2880, roams: false },
-    { id: 'n4_worm_east', x: 28, y: 21, monsters: ['rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'n4_beetles', x: 12, y: 7, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: RESPAWN.day },
+    { id: 'n4_salamanders', x: 15, y: 10, monsters: ['salamander', 'salamander', 'salamander', 'fire_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'n4_worm_west', x: 4, y: 28, monsters: ['rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'n4_worm_east', x: 28, y: 21, monsters: ['rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

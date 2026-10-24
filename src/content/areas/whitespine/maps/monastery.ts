@@ -10,6 +10,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { NEST_CELL } from './highspine_i11.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Novice told, back from his mother: he walks out at the gate, home to Anvilhall (#56's 45, #506). */
 export const NOVICE_TOLD = 'q_novice_told';
@@ -134,7 +135,7 @@ export const MONASTERY: MapDef = {
   ],
   encounters: [
     // Brothers at their hours on the east walk, by the cells; and ringers on the tower's stair.
-    { id: 'hc1_brothers', x: 11, y: 7, monsters: ['brother', 'brother', 'brother'], aware: 2, respawn: 2880, roams: false },
-    { id: 'hc1_ringers', x: 1, y: 12, monsters: ['bell_ringer', 'bell_ringer', 'bell_ringer', 'bell_ringer'], aware: 2, respawn: 2880, roams: false },
+    { id: 'hc1_brothers', x: 11, y: 7, monsters: ['brother', 'brother', 'brother'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'hc1_ringers', x: 1, y: 12, monsters: ['bell_ringer', 'bell_ringer', 'bell_ringer', 'bell_ringer'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

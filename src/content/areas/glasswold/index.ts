@@ -15,7 +15,7 @@ import { KARAORDU } from './maps/karaordu.ts';
 import { KUSHDAG } from './maps/kushdag.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
@@ -54,5 +54,5 @@ export const AREA = {
   // first inflicted by the mesas' basilisks (#546, #527); Akordu's camp (#526) is a landmark on the road
   // before it.
   novel: { families: ['glasswalkers'], terrain: ['dunes'], mechanics: ['inflict:stoned'], landmarks: [] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;

@@ -13,6 +13,7 @@
 // Whitespine's own (its novelty); docs/areas/rimewater.md §12.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const COLDMERE_K12: MapDef = {
   id: 'coldmere_k12',
@@ -90,7 +91,7 @@ export const COLDMERE_K12: MapDef = {
   encounters: [
     // Four lynxes in the pines nearer the way in, waiting on the bears' leavings, the gentler, at 20; and
     // the two ice bears on their kill, the hardest, at 21.
-    { id: 'k12_cats', x: 9, y: 4, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 3, respawn: 1440, roams: false },
-    { id: 'k12_bears', x: 14, y: 7, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880, roams: false },
+    { id: 'k12_cats', x: 9, y: 4, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'k12_bears', x: 14, y: 7, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

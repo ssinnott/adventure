@@ -7,7 +7,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/keys.ts';
+import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 
 /** The den under the fallen oak burnt: its brood stops coming. */
@@ -121,13 +121,13 @@ export const DEEPTHORN_I3: MapDef = {
     // The gentlest first: thorn spiders in the river brakes by the way in, the den's pack and brood
     // off the road, the ogre alone on it, the lodge's brambles and its owl by night, and the
     // heartwood on the game trail, the hardest.
-    { id: 'i3_spiders', x: 2, y: 20, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 4, respawn: 1440 },
-    { id: 'i3_brood1', x: 12, y: 25, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440, until: DEN_BURNT },
-    { id: 'i3_brood2', x: 19, y: 26, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440, until: DEN_BURNT },
+    { id: 'i3_spiders', x: 2, y: 20, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 4, respawn: RESPAWN.day },
+    { id: 'i3_brood1', x: 12, y: 25, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: RESPAWN.day, until: DEN_BURNT },
+    { id: 'i3_brood2', x: 19, y: 26, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: RESPAWN.day, until: DEN_BURNT },
     { id: 'i3_pack', x: 17, y: 27, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 3, roams: false },
-    { id: 'i3_ogre', x: 12, y: 29, monsters: ['ogre'], aware: 3, respawn: 2880 },
+    { id: 'i3_ogre', x: 12, y: 29, monsters: ['ogre'], aware: 3, respawn: RESPAWN.twoDays },
     { id: 'lodge_brambles', x: 8, y: 15, monsters: ['bramble', 'bramble', 'bramble', 'bramble'], aware: 1, roams: false },
-    { id: 'i3_owl', x: 9, y: 14, monsters: ['great_owl', 'great_owl', 'great_owl', 'great_owl'], aware: 5, respawn: 1440, when: { hours: 'night' }, until: TEAR_CLOSED },
-    { id: 'i3_heartwood', x: 11, y: 9, monsters: ['heartwood', 'heartwood'], aware: 3, respawn: 2880, until: TEAR_CLOSED },
+    { id: 'i3_owl', x: 9, y: 14, monsters: ['great_owl', 'great_owl', 'great_owl', 'great_owl'], aware: 5, respawn: RESPAWN.day, when: { hours: 'night' }, until: TEAR_CLOSED },
+    { id: 'i3_heartwood', x: 11, y: 9, monsters: ['heartwood', 'heartwood'], aware: 3, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
   ],
 };

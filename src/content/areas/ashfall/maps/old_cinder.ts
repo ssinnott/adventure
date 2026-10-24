@@ -8,6 +8,7 @@
 // (#859). Band 25-26, the boss the top; docs/areas/ashfall.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Master of magic's favour done (#859): the town's roll handed to the scholar, which her Master tests. */
 export const ROLL_GIVEN = 'q_roll_given';
@@ -91,9 +92,9 @@ export const OLD_CINDER: MapDef = {
   secrets: [{ x: 2, y: 9, hint: 'oc1_cup' }],
   encounters: [
     // Husks in the street between the well and the square, the nearest.
-    { id: 'oc1_husks', x: 8, y: 8, monsters: ['ash_husk', 'ash_husk', 'ash_husk', 'ash_husk'], aware: 2, respawn: 2880, roams: false },
+    { id: 'oc1_husks', x: 8, y: 8, monsters: ['ash_husk', 'ash_husk', 'ash_husk', 'ash_husk'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // The Old Drake asleep on the square: it wakes only when the company comes beside it, and its death
     // closes nothing. It never comes back.
-    { id: 'oc1_drake', x: 11, y: 11, monsters: ['old_drake'], aware: 1, roams: false, slainText: 'The Old Drake lays its head down in the ash and is still. Nothing else in the town has moved.' },
+    { id: 'oc1_drake', x: 11, y: 11, monsters: ['old_drake'], aware: 1, roams: false, boss: true, slainText: 'The Old Drake lays its head down in the ash and is still. Nothing else in the town has moved.' },
   ],
 };

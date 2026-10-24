@@ -8,6 +8,7 @@
 // is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNSHEART_P6: MapDef = {
   id: 'kilnsheart_p6',
@@ -71,7 +72,7 @@ export const KILNSHEART_P6: MapDef = {
     // Four salamanders on the ash, the nearest and the gentlest, at 16; and at the warm vent under the rim a
     // slag elder strayed east off Feuerstollen's ridge with a salamander at its heels, the hardest, at 17,
     // until the tear is closed.
-    { id: 'p6_salamanders', x: 3, y: 16, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: 1440 },
-    { id: 'p6_elder', x: 10, y: 10, monsters: ['slag_elder', 'salamander'], aware: 3, respawn: 2880, roams: false, until: { flag: 'q_anvil_closed' } },
+    { id: 'p6_salamanders', x: 3, y: 16, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: RESPAWN.day },
+    { id: 'p6_elder', x: 10, y: 10, monsters: ['slag_elder', 'salamander'], aware: 3, respawn: RESPAWN.twoDays, roams: false, until: { flag: 'q_anvil_closed' } },
   ],
 };
