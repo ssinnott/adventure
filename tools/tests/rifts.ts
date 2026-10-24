@@ -15,10 +15,10 @@ import { World } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { EAST } from '../../src/game/types.ts';
 import { wallDressing } from '../../src/ui/viewport.ts';
-import { judge } from './density.ts';
-import { lineFaults, hintFaults, missingGlyphs, americanisms } from './pillars.ts';
-import { strandedLocks, respawnsOutOfRange, returningGuardians, presenceFaults, questItems } from './structure.ts';
-import { ok, stopsWalk, fxKey, fxMap } from './lib.ts';
+import { judge } from '../kit/rules/density.ts';
+import { lineFaults, hintFaults, missingGlyphs, americanisms } from '../kit/rules/pillars.ts';
+import { strandedLocks, respawnsOutOfRange, returningGuardians, presenceFaults, questItems } from '../kit/rules/structure.ts';
+import { ok, stopsWalk, fxMap, fxKey } from './lib.ts';
 
 /** What is wrong with a generated Rift, by the contract's checks on a map as written. */
 function faults(def: MapDef, items: ReadonlySet<string>, maps: readonly MapDef[] = MAP_DEFS): string[] {

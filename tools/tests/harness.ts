@@ -12,12 +12,16 @@ import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { MONSTERS, MAP_DEFS, ITEMS } from '../../src/content/index.ts';
-import { gateCompany, gateTurn, fightSeed, winRate } from '../gate.ts';
-import { GATE } from './gate.ts';
-import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../testmonster.ts';
-import type { Role } from '../testmonster.ts';
-import { measure, days, fight, play, outcomeOf, companyAt, newerCompany, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, unforge, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard, whatIfs, writeRefusal, casting, cellsOnCores, artifactIds } from '../harness.ts';
-import type { BotOpts } from '../harness.ts';
+import { gateTurn, gateBot, fightSeed, winRate } from '../kit/fight.ts';
+import { gateCompany } from '../kit/company.ts';
+import { GATE } from '../kit/rules/gate.ts';
+import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../kit/line.ts';
+import type { Role } from '../kit/line.ts';
+import { measure, days, fight, play, outcomeOf, spent, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, WORST, CAP, casting, cellsOnCores } from '../kit/harness.ts';
+import { mustRest, REST_AT, ANSWER, wakeWith, breathGuard } from '../../src/game/bot.ts';
+import { companyAt, newerCompany, edgeOf, unforge, GEAR, GEAR_TOP, whatIfs, writeRefusal, artifactIds } from '../kit/company.ts';
+import { ROUND_CAP, playOut } from '../kit/fight.ts';
+import type { BotOpts } from '../../src/game/bot.ts';
 import { ok } from './lib.ts';
 
 export async function harness(): Promise<void> {
@@ -181,8 +185,7 @@ function whatIfsOff(): void {
   const ALL: BotOpts = { bless: true, sleep: true, drink: true }, soldiers = standardEncounter('soldier', 13);
   const gated = (rules = {}): string[] => {
     const p = gateCompany(13, 1, rules), rng = makeRng(fightSeed(1)), s = startCombat(p, [{ id: 'g', monsters: soldiers }], rng);
-    for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > ROUND_CAP) break; if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i, rules); }
-    return s.log;
+    return playOut(s, p, rng, gateBot, rules, ROUND_CAP).log;
   };
   const casts = (log: string[]): number => log.filter((l) => / casts (Bless\.|Slumber:)/.test(l)).length;
   const offPlay = casting(13, soldiers, 10), offGate = casts(gated());

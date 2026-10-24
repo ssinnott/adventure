@@ -19,11 +19,12 @@ import { Input } from '../../src/input.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
 import type { Game } from '../../src/game/game.ts';
 import { MAP_DEFS } from '../../src/content/index.ts';
-import { CONTENT, collect, compare } from '../shipped.ts';
-import { judge, measure } from './density.ts';
-import { texts, lineFaults } from './pillars.ts';
-import { condFaults } from './quests.ts';
-import { ok, headlessGame, drive, fxKey } from './lib.ts';
+import { CONTENT, collect, compare } from '../kit/shipped.ts';
+import { judge, measure } from '../kit/rules/density.ts';
+import { texts, lineFaults } from '../kit/rules/pillars.ts';
+import { condFaults } from '../kit/rules/quests.ts';
+import { ok, fxKey } from './lib.ts';
+import { headlessGame, drive } from '../kit/headless.ts';
 
 const FIXTURE: MapDef = {
   id: 'wilds', name: 'Wilds', kind: 'outdoor', region: 'shelf', density: 'country',

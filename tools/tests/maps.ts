@@ -10,7 +10,7 @@ import { MAX_LEVEL } from '../../src/game/party.ts';
 import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, personFlags, personGives, groupFlags } from '../../src/game/people.ts';
-import { areaRows, gather, once, unknownFields } from '../checks.ts';
+import { areaRows, gather, once, unknownFields } from '../kit/checks.ts';
 import { ok, owed, stopsWalk, fxMap } from './lib.ts';
 
 /**

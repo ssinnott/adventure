@@ -84,9 +84,9 @@ DESIGN.md first for the why.
   the Vigil Robe raise speed, accuracy, might and personality by 3. An artifact is an item marked so
   (`ItemDef.artifact`, #847; DESIGN §9): one in the world, found and never sold; no shop stocks one
   or takes one, and no rung of the ladder or price window holds one, by its mark. The sheet says each
-  borne and its power ("ARTIFACT The Erzhemd, SPEED +5"). The three whose kinds are built, the
-  Telstok (holy blows), the Erzhemd (speed +5) and Akkush (accuracy +5), are in Saltreach's, the
-  Kilns' and the Glasswold's items and placed nowhere yet: #830, #831 and #833 lay their lairs.
+  borne and its power ("ARTIFACT The Erzhemd, SPEED +5"). All eight are in their areas' items, each
+  of the five kinds of power built (#921), and seven lie in their lairs; the Telstok (holy blows),
+  in Saltreach's items, waits for its lair (#830).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
@@ -269,8 +269,10 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   solid): nothing crosses it, whatever a company can do, and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
   well: the Foreland's north and south edges, F2's, E2's and D2's north (the rim, cut for good),
-  D2's west until C2 is built, E3's south, D3's west, beyond the cliff and the Upper Water's void,
-  D4's west and south, where the Delta begins, and Thornmark's north, east and south. Between the
+  F3's east and south, E4's east and Thornmark's north. D2's, D3's and D4's west, D4's south, E3's
+  south and Thornmark's east and south once faced nothing too, and meet Saltreach's C2, C3, C4 and
+  D5, the Foreland's E4 (#930), Sunderwood's I2 and the Deepthorn's H3 now. F3's east opens onto
+  G3, a crumb left unbuilt, at rows 0 and 1 (`src/content/areas/shelf/checks.ts`). Between the
   Foreland and Thornmark the ridge stands as it was, two squares thick with the pass through it;
   between the Foreland and F2 it is the Foreland's ring alone, with the Salt Road through a gap at
   0,29. The void is drawn as its look, the ground the world map paints there (#829, `MapDef.looks`,
@@ -327,9 +329,10 @@ Decided by delegate for #536, each the owner's to overturn:
    so, and the gate check keys its rate apart from the same group on dry ground.
 7. **Lying snow is the maps' snow, `*`,** walked, white in every season, on no built map yet, so
    Cairnmoor or Rimewater may claim it; nothing new was needed for it.
-8. **A sample of each ground stands in for the maps to come** (`tools/grounds.ts`): the smoke test
-   sweeps them for cracks every run and paints the grounds through the year, and the sheet shows them
-   with `--ground` and whenever it draws every map, as the Rift samples show the templates.
+8. **A sample of each ground stands in for the maps to come** (`tools/kit/grounds.ts`): the smoke
+   test sweeps them for cracks every run and paints the grounds through the year, and the sheet
+   shows them with `--ground` and whenever it draws every map, as the Rift samples show the
+   templates.
 
 - **Act IV's ground** (#543). Peaks and cliffs have their characters (`A`, `|`), and on the world map
   they are the atlas's peak and cliff, so the scaffold drafts the Whitespine's boxes with them: J11's
@@ -778,15 +781,17 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `narrow/`, in one process and under `--jobs`, their failures kept out of the real run, then
   `node tools/test.ts fullrun`, the pilot's full run on the shelf (about 10 to 25 s; it
   repeats walkthrough:shelf's play). The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
-  is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
-  traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
+  is what they share, and `tools/kit/` what they share with the walkthroughs: the
+  headless game, the fight, the company, the line and the rules, #984), which the
+  runner finds (maps, movement, monsters, combat, harness, party, traits, calendar,
+  terrain, weather, atlas, outdoors, save, quests, then any other in name order),
   then each area's walkthrough (the Foreland's and Thornmark's), in road order, each with an `ok` of
   its own, under which its runs keep the goals they walk (`everyGoalWalked`), so one passes alone as
   in the full run. After every suite the runner finds the item and monster tables as they were, each
   entry by identity, and fails a suite that leaves one added, removed or replaced, by name (#946); a
   suite lends a def through `withDefs` (`lib.ts`). `layers` holds the imports to the layers
   (EXPANSION §8.1, #900). Each area's
-  `checks.ts`, found by its file as its walkthrough is (`tools/checks.ts`), holds the rows the suites
+  `checks.ts`, found by its file as its walkthrough is (`tools/kit/checks.ts`), holds the rows the suites
   keep of it that are its own and no part of the game, what it owes, its rungs of the ladder, its lead
   over the road, its seams as built and its edges open on nothing (`AreaChecks`); what describes a
   zone, a group, a monster or an exit is a field of that. A suite
@@ -849,7 +854,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   one silhouette and to its span (within 2 px at any size, and no more than a twentieth of a height
   wider; it prints the span to write), every pair of sprite part kinds to a union with no hole, and
   sweeps for cracks between walls: one way from every square of the cellar, Helmstow, its keep and
-  the ground's samples (`tools/grounds.ts`, a small map each of ash, pine, ice, cliffs, peaks, steppe, dunes, vines and the volcano) each run, all four
+  the ground's samples (`tools/kit/grounds.ts`, a small map each of ash, pine, ice, cliffs, peaks, steppe, dunes, vines and the volcano) each run, all four
   ways on the maps changed since `SMOKE_BASE=<ref>` (CI passes the pull request's base;
   `node tools/changed.ts <ref> maps` names them, and `monsters` or `interiors` the sheet's), or on
   those `SMOKE_SWEEP=all|<id>,<id>` names. `SMOKE_PART=rest` runs everything but the four-way sweep
@@ -897,9 +902,10 @@ over content broken on purpose too, and two tools to theirs:
   no chest or drop dearer than its window, an artifact excepted by its mark alone (`windowed`, #847,
   and each would be caught unmarked). An enclave (#845) is counted in no clear and held to its
   own band and its country's window, and stands over its box (`enclaveFaults`).
-- `gate` (§2.2, §5.2): `tools/gate.ts`'s bot plays the premade company, dressed by the gear ladder
-  and with its prestiges, harness's own (#541), against every group alone; it takes no tier, skill
-  or found item and never blesses, sleeps, drinks or flees (J2). Each map is held to its band, and
+- `gate` (§2.2, §5.2): the gate's bot (`tools/kit/fight.ts`) plays the premade company
+  (`tools/kit/company.ts`), dressed by the gear ladder and with its prestiges, harness's
+  own (#541), against every group alone; it takes no tier, skill or found item and
+  never blesses, sleeps, drinks or flees (J2). Each map is held to its band, and
   each area pools its groups, each fought at its own map's floor: nine fights in ten won at the
   floor; two under it (of a map whose floor is its area's, and of the area, a zone map's groups two
   under its own floor and a town's or dungeon's two under the area's), a quarter at most won in
@@ -1028,7 +1034,7 @@ over content broken on purpose too, and two tools to theirs:
 - `layers` (§8.1, #900): the runtime imports of `src/` and `tools/`, read from the files in about
   0.2 s, held to the layers: no cycle among `src`'s, nothing in `src/game` taking content, the UI or
   the app, nothing in the UI the app, no area another's files but its `public.ts` (#992), and the
-  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 146 crossings are the
+  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's crossings are the
   rows of its `KNOWN`, each under the issue that clears it; a new crossing fails, and so does a row
   that no longer crosses, so the table only shrinks.
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
@@ -1037,11 +1043,11 @@ over content broken on purpose too, and two tools to theirs:
   crystal, salt, tidal ground, heather, ash, pine, ice, peaks, cliffs, vines, steppe, dunes and lava
   and all, laid back into the atlas, are the atlas square for square.
 - `ladder`: every class betters its kit by level 3 and again by level 5 (`GEAR` in
-  `tools/harness.ts`), every find is an item within the Foreland's window and owed to its box until
-  a chest, cairn or statue gives it or a monster drops it, Mottram's sells the band's gear and the
-  gate check's company wears what harness's does; every class finds a plus it can use in Thornmark,
-  each in the ladder by 9, and nothing there gives the Armoury's gear; no rung holds an artifact
-  (#847).
+  `tools/kit/company.ts`), every find is an item within the Foreland's window and owed to its box
+  until a chest, cairn or statue gives it or a monster drops it, Mottram's sells the band's gear and
+  the gate check's company wears what harness's does; every class finds a plus it can use in
+  Thornmark, each in the ladder by 9, and nothing there gives the Armoury's gear; no rung holds an
+  artifact (#847).
 
 `node tools/shot.ts out.png [map x y facing] [keys...]` screenshots any state for eyeballing (a zone map takes its own coordinates: `shelf 8 1 0` faces the end of the world). Besides
 keys it takes `fight:<group>`, `time:<hour>`, `walk:<n>`, `day:<n>` (game day n at the same hour),
@@ -1065,11 +1071,11 @@ makes a pull request's contact sheet: each map from its arrivals and, outdoors, 
 and by night (a dungeon once, lit), with the automap revealed and its crop of the world map; each
 monster as a strip ending in the hit flash; and each interior at noon and at night. The world is
 pinned, so the same tree makes the same PNG; an unknown flag or id, a flag given twice or one with
-no value is refused. `--changed <base>` draws what changed since the base (tools/changed.ts), which
-is how the checks attach a sheet to every pull request that changes a map, a monster or an
+no value is refused. `--changed <base>` draws what changed since the base (tools/kit/changed.ts),
+which is how the checks attach a sheet to every pull request that changes a map, a monster or an
 interior (a file anywhere in an area's folder of rooms, `ui/interiors/<area>/`, counts every room
 of that area); with nothing changed it says so and writes none. `--ground all` (or
-`--ground ash,ice`) draws the ground's samples (`tools/grounds.ts`), each with its plan in its
+`--ground ash,ice`) draws the ground's samples (`tools/kit/grounds.ts`), each with its plan in its
 grounds' colours, and a change that draws every map draws them too, so a new ground is seen before
 a map holds it.
 `node tools/lanes.ts <base> [--labels "lane: area, lane: quality"]` lists the lanes the files

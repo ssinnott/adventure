@@ -15,8 +15,8 @@ import { guildFlag } from '../../src/game/party.ts';
 import { SAVE_VERSION } from '../../src/game/save.ts';
 import { UPGRADES } from '../../src/game/upgrades.ts';
 import type { Upgrade } from '../../src/game/upgrades.ts';
-import { CONTENT, LISTS, collect, collectShares, compare, join, readShares, readShipped, shippedFile } from '../shipped.ts';
-import type { Content, Share, Shares, Shipped } from '../shipped.ts';
+import { CONTENT, LISTS, collect, collectShares, compare, join, readShares, readShipped, shippedFile } from '../kit/shipped.ts';
+import type { Content, Share, Shares, Shipped } from '../kit/shipped.ts';
 import { ok } from './lib.ts';
 
 const list = (xs: readonly string[]): string => xs.length ? ':\n        ' + xs.join('\n        ') : '';

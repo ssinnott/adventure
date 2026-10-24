@@ -66,7 +66,7 @@ import { questLog } from '../../../game/quests.ts';
 import type { PageView } from '../../../game/quests.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { spellsFor } from '../../../game/spells.ts';
-import { ACT_II } from '../../../../tools/tests/ladder.ts';
+import { ACT_II } from '../../../../tools/kit/rules/ladder.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer, readText } from '../../../game/people.ts';
 import { approach, burn, burnt } from '../../../game/dens.ts';

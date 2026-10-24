@@ -4,64 +4,27 @@
 // the quests walk through end to end, each change announced once.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, GUILD_QUESTS } from '../../src/content/index.ts';
+import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST } from '../../src/content/index.ts';
 import { homeMap, zoneOfMap } from '../../src/game/atlas.ts';
 import { existsSync, readFileSync } from 'node:fs';
-import { takenFlag, doneFlag } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, takeItem, takePrestige, prestigeOf } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { sellPrice } from '../../src/game/items.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { questLog, questMarks, questNews, goalMap, finishedBy } from '../../src/game/quests.ts';
-import { handIns, personFlags, groupFlags } from '../../src/game/people.ts';
+import { handIns } from '../../src/game/people.ts';
 import type { Chapter, LogQuest, PageView, QuestCond, QuestDef, QuestView, When } from '../../src/game/quests.ts';
 import { questSheets, chapterHeading, openingSheet, PAGE, LIST } from '../../src/ui/quests.ts';
 import { wrap } from '../../src/ui/draw.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { NORTH } from '../../src/game/types.ts';
-import type { Feature, MapDef } from '../../src/game/map.ts';
-import { spentId } from '../../src/game/wilds.ts';
-import { readId } from '../../src/game/inscriptions.ts';
-import { FIXTURE, LAIR } from './enclave.ts';
+import type { MapDef } from '../../src/game/map.ts';
+import { FIXTURE, LAIR } from '../kit/rules/enclave.ts';
 import type { MapState } from '../../src/game/world.ts';
-import { areaRows, gather, once } from '../checks.ts';
-import { ok, owed, fxKey, fxMap } from './lib.ts';
-
-/**
- * Flags a condition may read before anything sets them, each owed by its area to the issue that will
- * set it (`Owes.unset`): reported as that issue's while nothing does, and failed once something does,
- * so its row is dropped; a flag owed twice is refused.
- */
-const unset = gather(areaRows((c) => c.owes?.unset));
-
-/** The flags a feature sets: a person's, met, an event's, said (#156), an inn's, stayed at and a camp's, rested at (#730). */
-export const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'inn' ? f.nights ?? [] : f.kind === 'camp' ? (f.nights ?? []).map((n) => n.sets) : [];
-
-/**
- * What in a condition names nothing real: a flag no NPC, event or guild quest sets (nor one an area owes), an item, something spent once and kept
- * by its id (a once-only event, a chest, a cairn, a shrine, a fountain or a statue, or an inscription read, #538), a guardian that
- * never respawns (one that does comes back to life, and what turns on its death with it), a map. The
- * maps are the game's unless given.
- */
-export function condFaults(w: When, maps: readonly MapDef[] = MAP_DEFS): string[] {
-  // The flags people, groups (by their falls and questions) and events set, and the guild quests' own (a hall sets them: game/guilds.ts).
-  const npcFlags = new Set([
-    ...maps.flatMap((d) => (d.features ?? []).flatMap(featureFlags)),
-    ...maps.flatMap((d) => (d.encounters ?? []).flatMap(groupFlags)),
-    ...GUILD_QUESTS.flatMap((q) => [takenFlag(q.id), doneFlag(q.id)]),
-  ]);
-  const onMap = (ref: string): { map: MapDef | undefined; id: string } => { const [m, id] = ref.split(':'); return { map: maps.find((d) => d.id === m), id }; };
-  const bad: string[] = [];
-  for (const c of [w].flat() as QuestCond[]) {
-    for (const f of [c.flag ?? []].flat()) if (!npcFlags.has(f) && !Object.hasOwn(unset.all, f)) bad.push(`flag ${f}`);
-    if (c.item !== undefined && !(c.item in ITEMS)) bad.push(`item ${c.item}`);
-    if (c.seen !== undefined) { const { map, id } = onMap(c.seen); if (!map?.features?.some((f) => id !== undefined && (spentId(f) === id || readId(f) === id))) bad.push(`seen ${c.seen}`); }
-    for (const ref of [c.slain ?? []].flat()) { const { map, id } = onMap(ref); const e = map?.encounters?.find((x) => x.id === id); if (!e || e.respawn) bad.push(`slain ${ref}`); }
-    if (c.visited !== undefined && !maps.some((d) => d.id === c.visited)) bad.push(`visited ${c.visited}`);
-  }
-  return bad;
-}
+import { once } from '../kit/checks.ts';
+import { ok, owed, fxMap, fxKey } from './lib.ts';
+import { condFaults, featureFlags, unset } from '../kit/rules/quests.ts';
 
 /**
  * The parts of a condition that can stop holding once they hold: a member's race, which goes when
