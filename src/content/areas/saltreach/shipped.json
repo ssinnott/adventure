@@ -357,6 +357,27 @@
       "doors": [
         "14,4"
       ]
+    },
+    "wytgat": {
+      "size": "16x16",
+      "used": [
+        "wy_cutting",
+        "wy_names",
+        "wy_rows",
+        "wy_seam",
+        "wy_seam_chest",
+        "wy_store",
+        "wy_strongbox",
+        "wy_strongroom"
+      ],
+      "groups": [
+        "wy_chains",
+        "wy_keepers",
+        "wy_watch"
+      ],
+      "doors": [
+        "13,8"
+      ]
     }
   },
   "zones": {
@@ -476,6 +497,7 @@
   ],
   "items": [
     "brandy_cask",
+    "brine_needle",
     "brine_shard",
     "chain+1",
     "crabshell_buckler",
