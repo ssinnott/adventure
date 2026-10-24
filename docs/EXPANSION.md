@@ -389,7 +389,7 @@ and Rimewater 20–22, their windows rising 500 a band to 3,500, 4,000 and 4,500
 in the same way (#542): the Whitespine 22–24, Ashfall 24–26 and the Glasswold 26–28, their windows
 to 5,000, 5,500 and 6,000.
 
-The gear ladder (`GEAR`, `tools/harness.ts`, made from each area's rungs in its `checks.ts`) is what
+The gear ladder (`GEAR`, `tools/kit/company.ts`, made from each area's rungs in its `checks.ts`) is what
 a company has in hand by a level, and the harness and the gate dress their companies by it. Act I's:
 Mottram's by 3, the Downs' finds by 5, Thornmark's Armoury by 8, its chests' plus by 9 and the
 Deepthorn's +2s by 10. Act II's (#399): Saltmouth's armourer by 11, Saltreach's and Wrackholm's
@@ -454,7 +454,7 @@ in no shop, on no rung and in no window, and that unmarked the window would catc
     and shows them, so DESIGN §9's "read from the pack" holds for every slotted piece, the Old
     Lantern's Staff among them.
 
-The gate, checked with the bot of `tools/gate.ts`. Each figure below is its **aim**, and each has a
+The gate, checked with the bot of `tools/kit/fight.ts` (`gateTurn`). Each figure below is its **aim**, and each has a
 **limit** beyond it (#273): inside its aim a figure passes; between its aim and its limit it passes,
 and the check lists it as off its aim (under `--list`, #895); past its limit it fails, and only
 then is it owed. The limits, weighed by the pilot on every box of the Downs and left as they were
@@ -848,7 +848,7 @@ Decided by the builder for #914, each the owner's to overturn:
   something thrown. This is #7 as a check, in `tools/smoke.ts`; each family declares the parts in its
   `SPRITES` (#915).
 - **No cracks.** The per-square crack sweep runs all four ways on every map a pull request changes,
-  and one way on the cellar, Helmstow, its keep and the ground's samples (`tools/grounds.ts`); the
+  and one way on the cellar, Helmstow, its keep and the ground's samples (`tools/kit/grounds.ts`); the
   rest are swept on release, a run of the checks started by hand (`tools/smoke.ts`,
   `tools/changed.ts`). A monster's drawing sweeps no map: the sweep paints the scene with
   `paintScene`, which draws no monster, so `EVERY_MAP` names the scenery (`src/ui/scenery.ts`) and
@@ -1030,8 +1030,8 @@ Decided by the builder for #900, each the owner's to overturn:
 5. **The keys are the plan's:** L2 the items (`items.ts`, `party.ts`, `skills.ts`), L3 the monsters
    and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
    `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
-   imports of `src/input.ts`; K8 a walkthrough taking another; K7 the walkthroughs' and the suites'
-   others. L8 and L9 hold none: `src/game` takes a screen only in the pilot and `game.ts`.
+   imports of `src/input.ts`; K8 a walkthrough taking another, and the walkthroughs' and three suites'
+   `tools/walk.ts`, keyed K7 until #984 cleared K7's others. L8 and L9 hold none: `src/game` takes a screen only in the pilot and `game.ts`.
 6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
    `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
    modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).
@@ -1076,10 +1076,49 @@ Decided by the builder for #899, each the owner's to overturn:
    and the report to the lines it must write.
 8. **The library is the kit's, the command a thin tool:** the layers check (#900) lets a suite take
    `src` and `tools/kit/` and not a tool, so the table, `laneOf`, the report and the reading of the
-   diff and the event are `tools/kit/lanes.ts`, the kit's first file (K7 fills the folder; it
-   imports `node:` modules alone, which the check does not follow), and `tools/lanes.ts` is the
+   diff and the event are `tools/kit/lanes.ts`, the kit's first file (#984, K7, filled the folder;
+   it imports `node:` modules alone, which the check does not follow), and `tools/lanes.ts` is the
    command line that takes it. The job and the docs still name `node tools/lanes.ts`, and no `KNOWN`
    row is added.
+
+The kit holds what the walkthroughs and the suites take, as #984 filled it: the fight once
+(`fight.ts`: `playOut`, `ROUND_CAP`, the gate's bot, its fight, its win rate and their memo), the
+premade company and its ladder (`company.ts`), the test monster's line (`line.ts`, its two tables in
+`line.json`, which `node tools/harness.ts --calibrate --write` writes), the harness's library
+(`harness.ts`), the headless game (`headless.ts`), the rules the suites share (`rules/`, a module a
+suite) and the libraries of `checks`, `grounds`, `ways`, `shipped`, `changed` and `scaffold`.
+`tools/gate.ts` and `tools/harness.ts` are command lines over it and import nothing of each other;
+`roadPlace` is `src/game/atlas.ts`'s, beside `areaBand`.
+
+Decided by the builder for #984, each the owner's to overturn:
+
+1. **The harness's library is a module of its own,** `tools/kit/harness.ts` (the thrifty bot, a fight
+   and a day of fights measured, the calibration and the workers), in #899's form; the company, the
+   fight and the line, which the gate takes too, are `company.ts`, `fight.ts` and `line.ts`. The
+   gate's library is the fight's, its `gateCompany` the company's.
+2. **The loop takes a fight already begun,** `playOut(s, p, rng, bot, rules, cap)`: each caller starts
+   its own (its group's name, its weather, its edge), and the bot is the harness's `Bot`, handed
+   `rules.bot` and `rules`; the gate's is `gateBot`. The cap is read once the turn is found, as four
+   of the five loops read it; the combat suite's, which read it first, ends inside the cap either way.
+3. **The guard is 4,000 turns:** no fight under the cap comes near it (the harness's 5,000 never
+   bit), and an uncapped one, a walkthrough's `fight`, is broken off at it.
+4. **The memo takes its seeds with it:** `rate` and `SEEDS` (100) are the fight's, keyed as they
+   were, and the gate suite takes both.
+5. **The line's tables are `tools/kit/line.json`, a role a line,** each row as `JSON.stringify`
+   writes it (`lineJson`), read as `line.ts` loads; `tools/restate.ts` reads the file at a ref, or
+   `tools/testmonster.ts` at a ref before #984.
+6. **The suites take the headless game from the kit too:** `tools/tests/lib.ts` keeps `ok`, `owed`
+   and the rest and re-exports nothing, so a suite that plays no game no longer loads `Game`.
+7. **A suite's shared rules are one module named for it,** `tools/kit/rules/<suite>.ts`, the
+   fullrun's `play` and the ladder's acts among them; each suite keeps its checks.
+8. **Three of the six tools move whole and three split:** `checks`, `grounds` and `ways` into the
+   kit; `shipped`, `changed` and `scaffold` keep their command lines over `tools/kit/<name>.ts`.
+   `DECIDES` names `tools/kit/changed.ts` beside `tools/changed.ts`, the changed suite's tool the
+   gate loads is `tools/kit/harness.ts` and the sheet watches the kit's `ways.ts` and `grounds.ts`.
+9. **`tools/walk.ts` takes the gate's win rate and the headless game from the kit,** two import
+   lines, so #985 can move it whole; its 15 rows are keyed `K8`.
+10. **The import lines were rewritten by a script,** `tools/rehome.ts`, committed first and deleted
+    last, as #968's sweep was.
 
 The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; it, the monsters' kit
 (`src/ui/monsters/kit/`) and the rooms' (`src/ui/interiors/kit/`) are the systems lane's, as

@@ -311,7 +311,7 @@ by default they wait for a chapter's failure and print with it (#895).
 
 Before each chapter the run takes a save point (`serialize`) with the map on top, where a player can
 save. A chapter the fair pilot does not finish is played again from that point by a fresh pilot with
-`omniscient` set, the save loaded as F9 loads one (`headlessLoad`, `tools/tests/lib.ts`), so no memory
+`omniscient` set, the save loaded as F9 loads one (`headlessLoad`, `tools/kit/headless.ts`), so no memory
 crosses it. A second line says which kind of failure it is: "thornmark: fair pilot lost; omniscient
 also fails (fell in Callow Downs 109,120, ...)". The omniscient Known has every square seen, each
 cell as it is (a secret door a door), every exit there now and every feature the automap marks. The
@@ -490,7 +490,7 @@ not the finish.
 | `tools/tests/survival.ts` | the suite `survival` (#723): the shelf's first chapter on `SEEDS` with the premade company and the drawn ones, a line a seed, each held to its `FLOOR`; run only when named (`ASKED`, `tools/test.ts`) |
 | `src/ui/riddle.ts` | `RiddleScreen`'s `riddle`, the question as its box shows it, which talk reads (#721) |
 | `src/input.ts` | `drainTyped`: typed keys applied to a word, `Input`'s text mode and a headless game's alike (#721); `Game.input.typed` is where they are typed, by the keyboard or the pilot |
-| `tools/tests/lib.ts` | `headlessGame(seed, party)`: a new game under Node, with the premade company or the one given (#723); `headlessLoad(save)`: a game under Node loaded from a save's text as F9 loads one (#723); its input drains its typed keys as `Input` does, so the pilot types under Node as in the browser (#721) |
+| `tools/kit/headless.ts` (`tools/tests/lib.ts` until #984) | `headlessGame(seed, party)`: a new game under Node, with the premade company or the one given (#723); `headlessLoad(save)`: a game under Node loaded from a save's text as F9 loads one (#723); its input drains its typed keys as `Input` does, so the pilot types under Node as in the browser (#721) |
 | `tools/tests/fullrun.ts` | the suite `fullrun` (#723): the one quest's chapters played on one Game by the pilot, the omniscient run from the save point beside a chapter the fair pilot loses, the notes; `reach` (the road FULLRUN reaches), `SEED`, `TICK_CAP` and `BUDGET`; run only when named (`ASKED`, `tools/test.ts`) |
 | `.github/workflows/checks.yml` | the `fullrun` job, run by hand with its `fullrun` input; the tests job runs the shelf's full run through `npm test` (#723) |
 | `package.json` | `npm test`: the suites, the runner's own check, then the shelf's full run (#723) |
@@ -506,7 +506,7 @@ not the finish.
 | `src/game/game.ts` | what the pilot leaves on the `Game`: `pilot`, `attracting`, `newRandomGame` (P on the title's and attract mode's start), `attract` and its wake in `update`, `band` (the band over the view: the pilot's, with attract mode's opening lines and the way out), the no-op `saveGame` and the wipe's restart in `gameOver` (#722) |
 | `tools/tests/pilot.ts` | the suite `pilot` |
 
-No parameter property, enum or namespace may enter anything a `Game` imports: `tools/tests/lib.ts`
+No parameter property, enum or namespace may enter anything a `Game` imports: `tools/kit/headless.ts`
 loads the game under plain node, which only strips types (#715, decision 2).
 
 ## Decided by delegate
