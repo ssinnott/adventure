@@ -91,7 +91,8 @@ import { LOCKS } from '../../locks.ts';
 import { meet, heard, answer, barred, SHORT } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, createCharacter, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, rest, createCharacter, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
+import { nightCost, stay, train } from '../../../game/services.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { questLog } from '../../../game/quests.ts';
@@ -1001,15 +1002,13 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(TOWN.exits!.length === 1 && TOWN.exits!.every((e) => !e.shut && !e.needFlag), 'nothing shuts the gate, either way');
   listen(w);
 
-  // A company of 16 rests, buys the act's first step and trains to 19, each as the business's screen
-  // does it (src/ui/screens.ts).
+  // A company of 16 rests, buys the act's first step and trains to 19, each by the rule its business's
+  // screen serves (src/game/services.ts).
   ok(business('inn').length === 1 && business('temple').length === 1, 'Anvilhall has an inn to rest at and a mine-surgeon who cures');
   w.party.gold = 30000;
-  const inn = business('inn')[0], night = inn.price * w.party.members.length;
+  const inn = business('inn')[0], night = nightCost(inn, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
-  w.party.gold -= night;
-  for (const m of w.party.members) rest(m);
-  w.world.sleepUntilMorning();
+  stay(w.party, w.world, inn);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 30000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
   const rung = ACT_III.find((r) => r.level === 17)!;
   ok(FORGE_SHOP.stock.length === FORGE.length && FORGE.every((id) => FORGE_SHOP.stock.includes(id)), `the smiths' forge sells the act's first step, all ${FORGE.length} wares and nothing else`);
@@ -1017,12 +1016,11 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const stores = business('shop').find((f) => f.interior === 'anvilhall_stores')!;
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => stores.stock.includes(id)) && !stores.stock.some((id) => FORGE.includes(id)), 'the stores sell provisions and lamp oil, and no steel');
   const yard = business('trainer')[0];
-  // Trained on a copy, so the company walks on as it was.
+  // Trained on a copy, from a copy of the purse, so the company walks on as it was.
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 18; trainee.xp = xpForLevel(19);
   ok(business('trainer').length === 1 && yard.maxLevel === 19 && yard.interior === 'anvilhall_training_hall' && canTrainAt(trainee, yard.maxLevel), `${yard.name} will train a member of 18`);
-  const fee = trainPrice(trainee);
-  levelUp(trainee, makeRng(1), 19);
+  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), yard.maxLevel);
   ok(trainee.level === 19 && !canTrainAt(trainee, yard.maxLevel), `who trains to 19 for ${fee} gold, and no further`);
 
   // The verse. With no reader of its own the company sees it at the great hall's doors, and the
@@ -1137,14 +1135,12 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   ok(HAVEN.exits!.length === 1 && HAVEN.exits!.every((e) => !e.shut && !e.needFlag), 'nothing shuts the gate');
   listen(w);
 
-  // A night at the inn, as the business's screen does it (src/ui/screens.ts).
+  // A night at the inn, by the rule its screen serves (src/game/services.ts).
   ok(here('inn').length === 1 && here('temple').length === 1 && here('trainer').length === 1, 'Kilnhaven has an inn to rest at, a chapel that cures and a shed that trains');
   w.party.gold = 30000;
-  const inn = here('inn')[0], night = inn.price * w.party.members.length;
+  const inn = here('inn')[0], night = nightCost(inn, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
-  w.party.gold -= night;
-  for (const m of w.party.members) rest(m);
-  w.world.sleepUntilMorning();
+  stay(w.party, w.world, inn);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 30000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
 
   // The smith sells the act's first step at a quarter more than Anvilhall's forge (#535), each class
@@ -1165,13 +1161,12 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   taker.world.travel('kilnhaven', SMITHY.x, SMITHY.y);
   ok(taker.world.present(SMITHY) && taker.world.present(DIETMAR) && !taker.world.present(FORGE_SHOP) && says(taker, DIETMAR).includes('Mine is open'), 'the Stone taken, Anvilhall\'s forge is shut, and the smith is open still and says so');
 
-  // Training to 19 at the ore shed, on a copy, so the company walks on as it was.
+  // Training to 19 at the ore shed, a copy from a copy of the purse, so the company walks on as it was.
   const shed = here('trainer')[0];
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 18; trainee.xp = xpForLevel(19);
   ok(shed.maxLevel === 19 && shed.interior === 'kilnhaven_training_hall' && canTrainAt(trainee, shed.maxLevel), `${shed.name} will train a member of 18`);
-  const fee = trainPrice(trainee);
-  levelUp(trainee, makeRng(1), 19);
+  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), shed.maxLevel);
   ok(trainee.level === 19 && !canTrainAt(trainee, shed.maxLevel), `who trains to 19 for ${fee} gold, and no further`);
 
   // The manifests, read by the harbourmaster in her office: iron to Cinderport, and the Compact's
