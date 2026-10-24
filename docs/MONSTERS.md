@@ -50,7 +50,7 @@ The rules that follow from them:
   about half the time at the band's floor, nearly always two levels over or at the cap; one whose
   floor is the cap is judged at its floor alone, and one alone on its map on its odds alone, with no
   day; and one whose odds rise too little from the floor to the cap for both is held to the floor,
-  the second left inside its limit (EXPANSION.md §5.2; the Catcher, docs/areas/hearth_isle.md §8).
+  the second left inside its limit (EXPANSION.md §5.2; the Catcher, docs/areas/hearth.md §8).
 - **Found, never told.** No monster explains itself, and no fight's text names the machine. What a
   thing does and what it carries are the clue.
 - **Plain names.** English words a listener could spell, as STORY.md is written for the ear, in
@@ -1864,7 +1864,7 @@ two in three then a quarter to a third, but the whole stood far under them on th
 Vask's size was set by the Heart's gate (#759) and the run to 32 settled by #752 (§4.4). The bots find
 Vask first the better play, since his fall stops the calls and stands the sentries down. As built, with
 the sentries at 890 hit points, the clock let run holds, 28% on 400 seeds; the Hands first wins 62%,
-three in five where the plan said two in three, and Vask first 72% (docs/areas/hearth_isle.md §7).
+three in five where the plan said two in three, and Vask first 72% (docs/areas/hearth.md §7).
 
 Nine on frames that exist are drawn (#761). The Hearth
 Moth is the lantern moth's hands cut deeper, to flames, rust above and red beneath, its dust falling
@@ -1878,7 +1878,7 @@ the sigil burnt in, a cleaver low; the Grey Hand a dark robe and a plain grey ma
 and grey to the shoulder and held out to take hold. Lord Vask stands on the figure frame bare of a
 robe, in the Wardens' grey coat and red sash under a black cloak, the Queen's ring lit on his raised
 hand, size 1.6 inside the tall boss's crown. The boxes place them (#753, #757 to #759;
-docs/areas/hearth_isle.md §9.2).
+docs/areas/hearth.md §9.2).
 
 The crawlers are drawn too (#761), a family of their own (`src/ui/monsters/crawlers.ts`): machines
 that come down from above, a spine of blackened iron plates rimmed in worn steel on a dark rod, long

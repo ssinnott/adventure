@@ -411,7 +411,7 @@ export function curve(): void {
     'a guild quest whose deed is seen, slain or visited on a map of another area is counted in the clear of the area whose file holds it, with its xp a member and its gold');
   ok(!deed({ seen: fxKey('fx_a1:x') }) && !deed({ flag: fxFlag('fx_f') }) && !deed({ item: 'fx_i' }) && !deed(undefined) && !deed({ seen: fxKey('fx_nowhere:x') }) && !deed({ seen: fxKey('fx_b1:x') }, { items: ['fx_i'] }),
     'and one whose deed is on the area\'s own maps, a flag, an item, none or no map at all, or that pays no xp or gold, is not printed');
-  // The road's last area reads its deep places' bands with its zone's (docs/areas/hearth_isle.md §9,
+  // The road's last area reads its deep places' bands with its zone's (docs/areas/hearth.md §9,
   // call 2): its isle laid at 28-29 reads 28-32 with the Underdeep and the Core, and 28-29 without.
   const laid = { ...ATLAS, zones: ATLAS.zones.map((z) => (z.area === 'hearth' ? { ...z, maps: [{ map: 'fx_isle', at: [0, 0] as const }] } : z)) };
   const strand = [{ ...MAP_DEFS[0], id: 'fx_isle', band: [28, 29] as [number, number] }];
@@ -480,7 +480,7 @@ export function curve(): void {
     const later = road[i + 1];
     const at = order(id);
     // The road's last row has no area after it to take a floor from: its next floor is the cap, which
-    // three quarters of its clear must reach (Hearth Isle's, 32: docs/areas/hearth_isle.md §8).
+    // three quarters of its clear must reach (Hearth Isle's, 32: docs/areas/hearth.md §8).
     const last = !later && Number.isFinite(at) && !ATLAS.areas.some((a) => a.order > at);
     const next = later ? CURVE[later.id].band[0] : last ? MAX_LEVEL : ATLAS.areas.find((a) => a.order === at + 1)?.band?.[0];
     ok(row.next === next, `${id}: the next floor, ${row.next}, is ${last ? 'the cap, no area coming after it' : 'the next area\'s'} (${next ?? 'none'})`);

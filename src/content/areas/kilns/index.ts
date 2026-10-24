@@ -1,5 +1,6 @@
 // The Kilns, over the east road (band 16-18): the Iron Fells, the Kilns' heart and Kilnmouth, the
-// first of Act III. docs/areas/kilns.md is its brief.
+// first of Act III. docs/areas/kilns.md is its state, and docs/areas/kilns/ holds its plan and
+// decisions.
 import type { Area } from '../../area.ts';
 import { FLAGS } from './flags.ts';
 import { IRONFELLS_M3 } from './maps/ironfells_m3.ts';
