@@ -17,8 +17,9 @@
 // interior at noon and at night. The world is pinned (the seed as the smoke test pins it, high
 // summer, a clear sky), so the same tree makes the same PNG.
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
 import { createServer } from './server.ts';
+import { open as openPage, type Load } from './kit/browser.ts';
+import { read, SHEET } from './kit/args.ts';
 import { changedFiles, changedMaps, changedMonsters, changedInteriors } from './changed.ts';
 import { AREAS, MAP_DEFS as PLACED, MONSTERS, INTERIORS, ATLAS, CLIMATES } from '../src/content/index.ts';
 import { RIFT_SAMPLES } from '../src/content/rifts/index.ts';
@@ -33,25 +34,11 @@ import { weatherAt, classify } from '../src/game/weather.ts';
 import type { RegionId } from '../src/game/weather.ts';
 import { daylightAt, MINUTES_PER_DAY, MIDSUMMER, EPOCH_DAY, DAYS_PER_YEAR } from '../src/game/calendar.ts';
 
-const require = createRequire(import.meta.url);
-const USAGE = 'usage: node tools/sheet.ts out.png [--area <id>] [--maps a,b] [--monsters x,y] [--interiors p,q] [--rifts all|a,b] [--ground all|a,b] [--changed <base>]';
+const USAGE = SHEET.usage;
 const fail = (msg: string): never => { console.error(msg); process.exit(2); };
-// Strict: one output path, and each known flag once with a value. Anything else is refused, so a
-// misspelt flag never makes an empty sheet that looks like nothing changed.
-const FLAGS = ['area', 'maps', 'monsters', 'interiors', 'rifts', 'ground', 'changed'];
-const opts: Record<string, string> = {};
-let out: string | undefined;
-for (let i = 2; i < process.argv.length; i++) {
-  const a = process.argv[i];
-  if (a.startsWith('--')) {
-    const name = a.slice(2), v = process.argv[i + 1];
-    if (!FLAGS.includes(name)) fail(`unknown flag ${a}\n${USAGE}`);
-    if (name in opts) fail(`${a} given twice\n${USAGE}`);
-    if (v === undefined || v.startsWith('--') || v === '') fail(`${a} needs a value\n${USAGE}`);
-    opts[name] = v; i++;
-  } else if (out === undefined) out = a;
-  else fail(`one output path only, not '${out}' and '${a}'\n${USAGE}`);
-}
+// Strict (tools/kit/args.ts): one output path, and each known flag once with a value. Anything else is
+// refused, so a misspelt flag never makes an empty sheet that looks like nothing changed.
+const { out, opts } = read(SHEET);
 if (!out) fail(USAGE);
 if (!/\.png$/i.test(out!)) fail(`'${out}' is not a .png: the sheet is written as a PNG\n${USAGE}`);
 if (!Object.keys(opts).length) fail(`nothing to draw\n${USAGE}`);
@@ -166,52 +153,19 @@ const mapPlans = maps.map(planMap);
 
 // ---------------------------------------------------------------- the pinned world
 
-// The page's Math.random is pinned as the smoke test pins it (tools/smoke.ts), so the new game's
+// The page's Math.random is pinned as the smoke test pins it (tools/kit/browser.ts), so the new game's
 // seed, and so its weather seed, is the same every run.
 const SEED = 1;
-
-function loadPlaywright(): any {
-  for (const c of ['/opt/node22/lib/node_modules/playwright', '/usr/lib/node_modules/playwright', 'playwright', 'playwright-core']) {
-    try { return require(c); } catch { /* next */ }
-  }
-  throw new Error('Playwright not found');
-}
-async function launch(chromium: any): Promise<any> {
-  try { return await chromium.launch(); }
-  catch (e) {
-    const exe = process.env.PLAYWRIGHT_CHROMIUM || '/opt/pw-browsers/chromium';
-    if (fs.existsSync(exe)) return chromium.launch({ executablePath: exe });
-    throw e;
-  }
-}
 
 const t0 = Date.now();
 const server = createServer();
 await new Promise<void>((r) => server.listen(0, () => r()));
 const port = (server.address() as { port: number }).port;
-const { chromium } = loadPlaywright();
-const browser = await launch(chromium);
-const page = await browser.newPage({ viewport: { width: 1280, height: 720 }, deviceScaleFactor: 1 });
-await page.addInitScript((seed: number) => {
-  let s = seed >>> 0, first = true;
-  Math.random = () => {
-    if (first) { first = false; return (seed + 0.5) / 0x7fffffff; }
-    s = (s + 0x6d2b79f5) >>> 0;
-    let t = s;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}, SEED);
-const errors: string[] = [];
-page.on('pageerror', (e: Error) => errors.push('pageerror: ' + e.message));
-page.on('console', (m: any) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
-await page.goto(`http://localhost:${port}/`, { waitUntil: 'load' });
-await page.waitForFunction(() => (window as any).__game?.ready === true, null, { timeout: 15000 });
+const { browser, page, errors } = await openPage(port, { seed: SEED });
 // Title, then the premade company.
 await page.keyboard.press('Space'); await page.waitForTimeout(80);
 await page.keyboard.press('Space'); await page.waitForTimeout(120);
-const weatherSeed: number = await page.evaluate(() => (window as any).__game.game.world.state.weatherSeed);
+const weatherSeed: number = await page.evaluate(() => window.__game!.game!.world.state.weatherSeed!);
 
 /**
  * The day and the two hours each region is shot at: high summer, so the trees are in leaf and the
@@ -242,15 +196,15 @@ const times = Object.fromEntries([...new Set(mapPlans.map((p) => p.region))].map
 const monsterIds = monsters, interiorIds = interiors;
 const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<string, { day: number; noon: number; night: number; sky: string }>; monsters: string[]; interiors: string[] }) => {
   // Served by the dev server, resolved by the browser: opaque to the typechecker on purpose.
-  const load = (p: string): Promise<any> => import(p);
-  const T = await load('/src/lib/engine/text.ts');
-  const S = await load('/src/ui/sprites.ts');
-  const I = await load('/src/ui/interior.ts');
-  const WM = await load('/src/ui/worldmap.ts');
-  const C = await load('/src/content/index.ts');
-  const GM = await load('/src/game/map.ts');
-  const P = await load('/src/ui/palette.ts');
-  const g = (window as any).__game.game, w = g.world;
+  const load: Load = (p) => import(p);
+  const T = await load<typeof import('../src/lib/engine/text.ts')>('/src/lib/engine/text.ts');
+  const S = await load<typeof import('../src/ui/sprites.ts')>('/src/ui/sprites.ts');
+  const I = await load<typeof import('../src/ui/interior.ts')>('/src/ui/interior.ts');
+  const WM = await load<typeof import('../src/ui/worldmap.ts')>('/src/ui/worldmap.ts');
+  const C = await load<typeof import('../src/content/index.ts')>('/src/content/index.ts');
+  const GM = await load<typeof import('../src/game/map.ts')>('/src/game/map.ts');
+  const P = await load<typeof import('../src/ui/palette.ts')>('/src/ui/palette.ts');
+  const g = window.__game!.game!, w = g.world;
 
   // The stage's top: the view, the status strip, the automap and the purse, above the party cards.
   const SHOT = { w: 640, h: 284 }, GAP = 12, CAP = 14, MARGIN = 16, CROP = 284;
@@ -265,7 +219,7 @@ const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<stri
   type Block = { h: number; w: number; draw: (ctx: CanvasRenderingContext2D, x: number, y: number) => void };
   const blocks: Block[] = [];
   const heading = (text: string): void => { blocks.push({ w: 0, h: 22, draw: (ctx, x, y) => T.drawText(ctx, text.toUpperCase(), x, y + 6, { size: 2, color: '#e8dcc0' }) }); };
-  const caption = (ctx: CanvasRenderingContext2D, text: string, x: number, y: number): void => T.drawText(ctx, text, x, y + 2, { size: 1, color: '#c8bca0' });
+  const caption = (ctx: CanvasRenderingContext2D, text: string, x: number, y: number): void => void T.drawText(ctx, text, x, y + 2, { size: 1, color: '#c8bca0' });
   const snapshot = (): HTMLCanvasElement => { const c = document.createElement('canvas'); c.width = SHOT.w; c.height = SHOT.h; c.getContext('2d')!.drawImage(stage, 0, 0); return c; };
   const clock = (min: number): string => `${String(Math.floor(min % 1440 / 60)).padStart(2, '0')}:00`;
 
@@ -281,7 +235,7 @@ const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<stri
         w.state.light = dungeon ? 999 : 0;
         // The whole map revealed on the automap (outdoors, the zone's own cells, not its neighbours'
         // or the void round them), and a clear log: nothing over the view but the game.
-        const ms = w.mapState, mw = w.map.width, z = w.map.zones.find((q: any) => q.id === m.id);
+        const ms = w.mapState, mw = w.map.width, z = w.map.zones.find((q) => q.id === m.id);
         const r = z ?? { x: 0, y: 0, w: mw, h: w.map.height };
         for (let yy = r.y; yy < r.y + r.h; yy++) for (let xx = r.x; xx < r.x + r.w; xx++) { const i = yy * mw + xx; ms.explored[i >> 5] |= 1 << (i & 31); }
         g.log = [];
@@ -290,7 +244,7 @@ const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<stri
         // No 'A sign: Space' hint over the view: the sheet shows the place, not what is to hand in
         // it. A group ahead keeps its 'Space to attack', since the same lookup draws the group.
         w.featureHere = () => undefined;
-        try { g.render(sctx); } finally { delete w.featureHere; }
+        try { g.render(sctx); } finally { Reflect.deleteProperty(w, 'featureHere'); }
         return snapshot();
       };
       shots.push({ label: v.label, day: one(t.noon), night: dungeon ? null : one(t.night) });
@@ -333,9 +287,9 @@ const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<stri
     const FRAMES = 4, FW = 160, CELL_W = FW * FRAMES + 20;
     for (let i = 0; i < o.monsters.length; i += 2) {
       const pair = o.monsters.slice(i, i + 2).map((id) => C.MONSTERS[id]);
-      const mainH = Math.round(Math.max(...pair.map((d: any) => S.combatHeight(d.size, 3))) * 1.5);
+      const mainH = Math.round(Math.max(...pair.map((d) => S.combatHeight(d.size, 3))) * 1.5);
       const hh = CAP + mainH + 8;
-      blocks.push({ w: CELL_W * 2 + GAP, h: hh, draw: (ctx, x, y) => pair.forEach((d: any, j: number) => {
+      blocks.push({ w: CELL_W * 2 + GAP, h: hh, draw: (ctx, x, y) => pair.forEach((d, j: number) => {
         const x0 = x + j * (CELL_W + GAP), y0 = y + CAP, ground = y0 + mainH * 0.93;
         caption(ctx, `${d.name}  (${d.id}, ${d.sprite}, size ${d.size})`, x0, y);
         ctx.fillStyle = '#7a8a5a'; ctx.fillRect(x0, y0, CELL_W, mainH);
@@ -357,7 +311,7 @@ const shot = await page.evaluate(async (o: { maps: MapPlan[]; times: Record<stri
           const x0 = x + (j * 2 + n) * (IW + GAP);
           caption(ctx, `${k}  ${hour}`, x0, y);
           ctx.save(); ctx.beginPath(); ctx.rect(x0, y + CAP, IW, IH); ctx.clip();
-          I.drawInterior(ctx, k, { x: x0, y: y + CAP, w: IW, h: IH }, daylight, 40);
+          I.drawInterior(ctx, k as Parameters<typeof I.drawInterior>[1], { x: x0, y: y + CAP, w: IW, h: IH }, daylight, 40);
           ctx.restore();
         }
       }) });
