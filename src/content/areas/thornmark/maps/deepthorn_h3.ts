@@ -12,7 +12,7 @@ import { TEAR_CLOSED } from './grove2.ts';
 /** The spiders' nest burnt: its brood stops coming. */
 const NEST_BURNT = denBurnt('deepthorn_h3', 'h3_nest');
 
-export const DEEPTHORN_H3: MapDef = {
+export const DEEPTHORN_H3: MapDef<'deepthorn_h3'> = {
   id: 'deepthorn_h3',
   name: 'The Deepthorn',
   kind: 'outdoor',

@@ -16,7 +16,7 @@ export const LAMP_ASKED = 'q_old_lamp';
 /** The lamp at the bottom of the walk lit: what the old Lightbearer teaches the third for. */
 export const LAMP_LIT = 'q_old_lamp_lit';
 
-export const OLD_CINDER2: MapDef = {
+export const OLD_CINDER2: MapDef<'old_cinder2'> = {
   id: 'old_cinder2',
   name: 'Old Cinder',
   kind: 'dungeon',

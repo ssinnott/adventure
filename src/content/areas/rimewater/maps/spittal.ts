@@ -9,7 +9,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
-export const SPITTAL: MapDef = {
+export const SPITTAL: MapDef<'spittal'> = {
   id: 'spittal',
   name: 'The Spittal',
   kind: 'dungeon',

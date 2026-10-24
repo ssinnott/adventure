@@ -11,7 +11,7 @@ import { WEST } from '../../../../game/types.ts';
 import { COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const DELTA_A6: MapDef = {
+export const DELTA_A6: MapDef<'delta_a6'> = {
   id: 'delta_a6',
   name: 'The Delta',
   kind: 'outdoor',

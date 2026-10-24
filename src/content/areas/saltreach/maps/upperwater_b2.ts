@@ -7,7 +7,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const UPPERWATER_B2: MapDef = {
+export const UPPERWATER_B2: MapDef<'upperwater_b2'> = {
   id: 'upperwater_b2',
   name: 'The Upper Water',
   kind: 'outdoor',

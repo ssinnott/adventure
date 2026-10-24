@@ -25,7 +25,7 @@ const MAP: Choice = {
   ],
 };
 
-export const MERIDIAN_CAMP3: MapDef = {
+export const MERIDIAN_CAMP3: MapDef<'meridian_camp3'> = {
   id: 'meridian_camp3',
   name: 'The Camp',
   kind: 'dungeon',

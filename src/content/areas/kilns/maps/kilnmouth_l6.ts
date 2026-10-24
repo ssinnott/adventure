@@ -18,7 +18,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 export const GATE: Exit = anchored({ x: 28, y: 4, to: 'kilnhaven', at: 'start',
   label: 'Kilnhaven: ore on the quay, iron in the air, and the sea. Three ways out, and all of them cost.' });
 
-export const KILNMOUTH_L6: MapDef = {
+export const KILNMOUTH_L6: MapDef<'kilnmouth_l6'> = {
   id: 'kilnmouth_l6',
   name: 'Kilnmouth',
   kind: 'outdoor',

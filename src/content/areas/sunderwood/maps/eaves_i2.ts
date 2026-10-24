@@ -8,7 +8,7 @@ import { anchored } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const EAVES_I2: MapDef = {
+export const EAVES_I2: MapDef<'eaves_i2'> = {
   id: 'eaves_i2',
   name: 'The Eaves',
   kind: 'outdoor',

@@ -8,7 +8,7 @@ import { EAST } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const EAVES_J2: MapDef = {
+export const EAVES_J2: MapDef<'eaves_j2'> = {
   id: 'eaves_j2',
   name: 'The Eaves',
   kind: 'outdoor',

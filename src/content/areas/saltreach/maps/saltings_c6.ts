@@ -9,7 +9,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const SALTINGS_C6: MapDef = {
+export const SALTINGS_C6: MapDef<'saltings_c6'> = {
   id: 'saltings_c6',
   name: 'The Saltings',
   kind: 'outdoor',

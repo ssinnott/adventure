@@ -1,7 +1,7 @@
 // The maps as played. Kept apart from the tables in ./index.ts, so what imports an item or a monster
 // does not lay out the whole outdoors.
 import { GameMap } from '../game/map.ts';
-import type { MapDef } from '../game/map.ts';
+import type { PlayedDef } from '../game/map.ts';
 import { layOutdoors } from '../game/outdoors.ts';
 import { worldGrid } from '../game/atlas.ts';
 import type { WorldGrid } from '../game/atlas.ts';
@@ -18,7 +18,7 @@ export const GRID: WorldGrid = worldGrid(ATLAS, MAP_DEFS);
  * the atlas puts them (game/outdoors.ts), its void drawn as the atlas paints it, and the towns and
  * dungeons, whose ways out lead onto it.
  */
-export const PLAYED_DEFS: readonly MapDef[] = layOutdoors(ATLAS, MAP_DEFS, GRID);
+export const PLAYED_DEFS: readonly PlayedDef[] = layOutdoors(ATLAS, MAP_DEFS, GRID);
 
 /** Fresh GameMap instances (cells are mutable: doors unlock, secrets open). */
 export function buildMaps(): Record<string, GameMap> {

@@ -6,6 +6,7 @@ import type { Feature } from './map.ts';
 import type { Den } from './dens.ts';
 import type { QuestCond } from './quests.ts';
 import type { GuildId } from '../content/guilds.ts';
+import type { MapId } from '../content/index.ts';
 
 /**
  * How soon a group comes back once beaten, in minutes (`EncounterDef.respawn`): half a day, a day
@@ -14,8 +15,16 @@ import type { GuildId } from '../content/guilds.ts';
  */
 export const RESPAWN = { half: 720, day: 1440, twoDays: 2880 } as const;
 
+/**
+ * A thing on a map, kept in the save by its map's id and its own (`QuestCond.seen` and `slain`): the
+ * map's is one the areas list (#994), its own the quests suite holds (tools/tests/quests.ts).
+ */
+export type MapKey = `${MapId}:${string}`;
+/** The key of a thing on a map, for a `seen` or `slain` the content builds. Never ':' in the map's id, which `seen` splits on. */
+export const mapKey = (map: MapId, id: string): MapKey => `${map}:${id}`;
+
 /** The brood's `until`: the den burnt, by its map as written and its id. */
-export const denBurnt = (map: string, id: string): QuestCond => ({ seen: `${map}:${id}` });
+export const denBurnt = (map: MapId, id: string): QuestCond => ({ seen: mapKey(map, id) });
 
 /** The key a den's look is kept by in `used` once said. Never ':', which `seen` splits on. */
 export const lookKey = (den: Den): string => `${den.id}.seen`;

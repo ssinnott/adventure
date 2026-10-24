@@ -20,7 +20,7 @@ export const TALLIS_OWES = 'q_crown_sailed';
 /** The dwarf on the quay heard, who says the corridors under the Tiefzeche run south toward the lakes (§5); the chapter may read it. */
 export const DWARF_MET = 'kh_dwarf_met';
 
-export const KILNHAVEN: MapDef = {
+export const KILNHAVEN: MapDef<'kilnhaven'> = {
   id: 'kilnhaven',
   name: 'Kilnhaven',
   kind: 'town',

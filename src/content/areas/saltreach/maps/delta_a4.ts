@@ -14,7 +14,7 @@ import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 /** B4's heronry burnt: the herons off it stop coming back. */
 const HERONRY_BURNT = denBurnt('delta_b4', 'b4_heronry');
 
-export const DELTA_A4: MapDef = {
+export const DELTA_A4: MapDef<'delta_a4'> = {
   id: 'delta_a4',
   name: 'The Delta',
   kind: 'outdoor',

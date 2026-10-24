@@ -16,7 +16,7 @@ const DEN_BURNT = denBurnt('deepthorn_i3', 'i3_den');
 /** The lodge's yard open: its brambles cut down. */
 const YARD_OPEN: When = { slain: 'deepthorn_i3:lodge_brambles' };
 
-export const DEEPTHORN_I3: MapDef = {
+export const DEEPTHORN_I3: MapDef<'deepthorn_i3'> = {
   id: 'deepthorn_i3',
   name: 'The Deepthorn',
   kind: 'outdoor',

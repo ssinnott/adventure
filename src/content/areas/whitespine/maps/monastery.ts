@@ -31,7 +31,7 @@ export const VERSES: QuestCond = { flag: VERSE_FLAGS, seen: LOG_TAKEN };
 /** Asked, and the three held: they are sung to him the next time he is met. */
 export const SING: QuestCond = { flag: [ELEVEN_ASKED, ...VERSE_FLAGS], seen: LOG_TAKEN };
 
-export const MONASTERY: MapDef = {
+export const MONASTERY: MapDef<'monastery'> = {
   id: 'monastery',
   name: 'Highcell',
   kind: 'dungeon',

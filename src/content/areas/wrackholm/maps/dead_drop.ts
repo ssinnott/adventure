@@ -19,7 +19,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 export const VAULT_STAIR: Exit = anchored({ x: 25, y: 30, to: 'dead_drop2', at: 'start',
   label: 'Down the rails\' slope a long way, into air that is dry and still.' });
 
-export const DEAD_DROP: MapDef = {
+export const DEAD_DROP: MapDef<'dead_drop'> = {
   id: 'dead_drop',
   name: 'The Drop',
   kind: 'dungeon',

@@ -12,7 +12,7 @@ import { NORTH } from '../../../../game/types.ts';
 import { SLEEPERS_SEEN } from '../public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const SLEEPERS_BAY2: MapDef = {
+export const SLEEPERS_BAY2: MapDef<'sleepers_bay2'> = {
   id: 'sleepers_bay2',
   name: 'The Sleepers\' Bay',
   kind: 'dungeon',

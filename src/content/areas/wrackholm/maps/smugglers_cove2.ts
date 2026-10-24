@@ -11,7 +11,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 /** The Great Devilfish dead, a guardian that stays so: the boy has fed it for the last time. */
 export const BEAST_SLAIN = { slain: 'smugglers_cove2:kh2_great_devilfish' } as const;
 
-export const SMUGGLERS_COVE2: MapDef = {
+export const SMUGGLERS_COVE2: MapDef<'smugglers_cove2'> = {
   id: 'smugglers_cove2',
   name: 'The Sea Cave',
   kind: 'dungeon',

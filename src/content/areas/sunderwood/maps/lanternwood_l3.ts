@@ -9,7 +9,7 @@ import { SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const LANTERNWOOD_L3: MapDef = {
+export const LANTERNWOOD_L3: MapDef<'lanternwood_l3'> = {
   id: 'lanternwood_l3',
   name: 'The Moth Wood',
   kind: 'outdoor',

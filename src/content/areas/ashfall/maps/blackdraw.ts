@@ -10,7 +10,7 @@ import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const BLACKDRAW: MapDef = {
+export const BLACKDRAW: MapDef<'blackdraw'> = {
   id: 'blackdraw',
   name: 'Blackdraw',
   kind: 'dungeon',

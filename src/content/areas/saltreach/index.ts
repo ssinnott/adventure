@@ -31,6 +31,8 @@ import { GUILDS } from './guilds.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { CHAPTER } from './chapter.ts';
 
+export const MAPS = [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4, UPPERWATER_C3, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, DROWNED_TEMPLES, DROWNED_TEMPLES2, SALTINGS_C6, SALTMOUTH, SALTINGS_C7, UPPERWATER_B3, DELTA_B4, UPPERWATER_C2, UPPERWATER_B2, UPPERWATER_A3, DELTA_A4, DELTA_A5, DELTA_A6, SALTINGS_B7, SALTINGS_D6] as const;
+
 export const AREA = {
   id: 'saltreach' as const,
   // The road's order: the shore under the Edge, the fen, the spur up the river to Rietum, west over
@@ -39,7 +41,7 @@ export const AREA = {
   // Rietum and its head under the rim, then the rim's foot behind the willows and the hills over the heronry,
   // then the fen's west shore and the fen under the rim, then the Scarp's foot west of the pans and the
   // plate's old place off Saltmouth.
-  maps: [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4, UPPERWATER_C3, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, DROWNED_TEMPLES, DROWNED_TEMPLES2, SALTINGS_C6, SALTMOUTH, SALTINGS_C7, UPPERWATER_B3, DELTA_B4, UPPERWATER_C2, UPPERWATER_B2, UPPERWATER_A3, DELTA_A4, DELTA_A5, DELTA_A6, SALTINGS_B7, SALTINGS_D6],
+  maps: MAPS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

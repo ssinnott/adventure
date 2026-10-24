@@ -9,7 +9,7 @@ import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const MONASTERY2: MapDef = {
+export const MONASTERY2: MapDef<'monastery2'> = {
   id: 'monastery2',
   name: 'Highcell',
   kind: 'dungeon',

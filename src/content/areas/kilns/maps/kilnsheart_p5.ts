@@ -12,7 +12,7 @@ import { anchored } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const KILNSHEART_P5: MapDef = {
+export const KILNSHEART_P5: MapDef<'kilnsheart_p5'> = {
   id: 'kilnsheart_p5',
   name: 'The Kilns',
   kind: 'outdoor',

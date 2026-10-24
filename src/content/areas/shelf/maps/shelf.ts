@@ -37,7 +37,7 @@ const THORNHOLD: Answer = { label: 'Thornhold, over the Scarth.', sets: 'q_surve
   '"Thornhold. Elves and trees and nobody in grey." She takes the stake for a crutch. "Elder Sylvane knows a Lantern\'s word when she hears one. I\'ll tell her about you. She\'ll pretend not to have listened, and then she\'ll have listened. That\'s how the Chapterhouse works."',
 ] };
 
-export const SHELF: MapDef = {
+export const SHELF: MapDef<'shelf'> = {
   id: 'shelf',
   name: 'The Foreland',
   kind: 'outdoor',

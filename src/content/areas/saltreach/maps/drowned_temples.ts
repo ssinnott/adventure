@@ -25,7 +25,7 @@ const singId = (x: number): string => (x === 8 ? 'dt1_stair_sing' : `dt1_sing_${
 const SUNG: When = SINGS.map((x) => ({ seen: `drowned_temples:${singId(x)}` }));
 const SONG = 'The nave\'s head, the apse dark ahead and its stair going down out of the floor. Up it, under the drip of the aisle, one low note, held, and another a little above.';
 
-export const DROWNED_TEMPLES: MapDef = {
+export const DROWNED_TEMPLES: MapDef<'drowned_temples'> = {
   id: 'drowned_temples',
   name: 'The Drowned Temples',
   kind: 'dungeon',

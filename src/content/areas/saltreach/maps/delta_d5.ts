@@ -16,7 +16,7 @@ const HALE_TAKEN: Feature[] = Array.from({ length: 10 }, (_, x) => ({
   text: 'Up on the Edge behind you two riders in Warden grey go over the top, east, towards the Scarth. Neither looks down.',
 }));
 
-export const DELTA_D5: MapDef = {
+export const DELTA_D5: MapDef<'delta_d5'> = {
   id: 'delta_d5',
   name: 'The Delta',
   kind: 'outdoor',

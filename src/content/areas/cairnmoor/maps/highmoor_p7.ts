@@ -13,7 +13,7 @@ import { anchored } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const HIGHMOOR_P7: MapDef = {
+export const HIGHMOOR_P7: MapDef<'highmoor_p7'> = {
   id: 'highmoor_p7',
   name: 'High Moor',
   kind: 'outdoor',

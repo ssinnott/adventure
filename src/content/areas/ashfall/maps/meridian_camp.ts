@@ -15,7 +15,7 @@ import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { STAIR } from '../public.ts';
 
-export const MERIDIAN_CAMP: MapDef = {
+export const MERIDIAN_CAMP: MapDef<'meridian_camp'> = {
   id: 'meridian_camp',
   name: 'Meridian Camp',
   kind: 'dungeon',

@@ -7,6 +7,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
+import type { Rift } from '../../../rifts/index.ts';
 import { STONE_HOME } from './drowned_temples.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -19,7 +20,7 @@ export const RIFT_N_CLOSED: When = [{ slain: 'b5_rift_n:b5_rift_n_warden' }, STO
 export const RIFT_S_CLOSED: When = [{ slain: 'b5_rift_s:b5_rift_s_warden' }, STONE_HOME];
 
 /** The brine Rift on the hummock north of the boards (#165): two tide elders at the tear's heart. */
-export const B5_RIFT_N = rift({
+export const B5_RIFT_N: Rift<'b5_rift_n'> = rift({
   id: 'b5_rift_n', template: 'cells', material: 'brine', seed: 11, band: [11, 12], region: 'saltreach',
   out: { to: 'delta_b5', at: 'from_b5_rift_n' },
   table: { groups: [], warden: ['tide_elder', 'tide_elder'] },
@@ -28,7 +29,7 @@ export const B5_RIFT_N = rift({
 });
 
 /** The brine Rift on the hummock over the channel, south of the boards: two tide elders at its heart. */
-export const B5_RIFT_S = rift({
+export const B5_RIFT_S: Rift<'b5_rift_s'> = rift({
   id: 'b5_rift_s', template: 'breach', material: 'brine', seed: 12, band: [11, 12], region: 'saltreach',
   out: { to: 'delta_b5', at: 'from_b5_rift_s' },
   table: { groups: [], warden: ['tide_elder', 'tide_elder'] },
@@ -36,7 +37,7 @@ export const B5_RIFT_S = rift({
   until: RIFT_S_CLOSED,
 });
 
-export const DELTA_B5: MapDef = {
+export const DELTA_B5: MapDef<'delta_b5'> = {
   id: 'delta_b5',
   name: 'The Delta',
   kind: 'outdoor',

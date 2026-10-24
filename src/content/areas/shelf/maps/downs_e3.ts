@@ -8,7 +8,7 @@ import { anchored } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const DOWNS_E3: MapDef = {
+export const DOWNS_E3: MapDef<'downs_e3'> = {
   id: 'downs_e3',
   name: 'Callow Downs',
   kind: 'outdoor',

@@ -15,7 +15,7 @@ import { anchored } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const CAIRNFIELD_L8: MapDef = {
+export const CAIRNFIELD_L8: MapDef<'cairnfield_l8'> = {
   id: 'cairnfield_l8',
   name: 'The Cairnfield',
   kind: 'outdoor',

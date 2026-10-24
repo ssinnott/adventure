@@ -13,7 +13,7 @@ const CREW = ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'
 /** Colan answered, and gone below: the truth to be told his brother, or his letter carried (#192). */
 const COLAN_GONE = [{ flag: 'q_brother_truth' }, { flag: 'q_brother_letter' }] as const;
 
-export const SMUGGLERS_COVE: MapDef = {
+export const SMUGGLERS_COVE: MapDef<'smugglers_cove'> = {
   id: 'smugglers_cove',
   name: 'Kelp Hole',
   kind: 'dungeon',

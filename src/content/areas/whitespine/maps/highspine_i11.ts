@@ -19,7 +19,7 @@ export const NEST_FOUND: QuestCond = { seen: 'highspine_i11:i11_nest_bones' };
 /** The badge given to the Reader at Lantern Watch, or to the brother in Highcell's first cell: either ends it. */
 export const NEST_CELL = 'q_nest_cell';
 
-export const HIGHSPINE_I11: MapDef = {
+export const HIGHSPINE_I11: MapDef<'highspine_i11'> = {
   id: 'highspine_i11',
   name: 'The High Spine',
   kind: 'outdoor',

@@ -27,7 +27,7 @@ export const GREY_DOOR: Exit = anchored({ x: 8, y: 1, to: 'underdeep', at: 'star
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 
-export const HEARTHFANE2: MapDef = {
+export const HEARTHFANE2: MapDef<'hearthfane2'> = {
   id: 'hearthfane2',
   name: 'The Crypt',
   kind: 'dungeon',

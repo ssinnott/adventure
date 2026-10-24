@@ -21,7 +21,7 @@ import { ORDERS_ASKED, ORDERS_BURNED } from '../public.ts';
  */
 export const ORDERS_CARRIED = 'q_scarp_carried';
 
-export const WOLD_C8: MapDef = {
+export const WOLD_C8: MapDef<'wold_c8'> = {
   id: 'wold_c8',
   name: 'The Wold',
   kind: 'outdoor',

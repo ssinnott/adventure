@@ -12,7 +12,7 @@ import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { CREW_OPEN } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const DEEP_MINES3: MapDef = {
+export const DEEP_MINES3: MapDef<'deep_mines3'> = {
   id: 'deep_mines3',
   name: 'The Clean Corridor',
   kind: 'dungeon',
