@@ -130,7 +130,7 @@ export const ACT_IV: readonly Rung<'ashfall'>[] = [
 ];
 
 /**
- * Act V's rung (#746, docs/areas/hearth_isle.md §8), the last: the Hand's steel at 28, found and never
+ * Act V's rung (#746, docs/areas/hearth.md §8), the last: the Hand's steel at 28, found and never
  * sold, each piece a point past Cinderport's armourer's. The isle has no town: each piece lies in a
  * chest, a hoard or a drop of the box named beside it, every one placed. Each class takes the piece
  * that betters the one it took at 25, and plate's wearers the mail, which betters their plate; the

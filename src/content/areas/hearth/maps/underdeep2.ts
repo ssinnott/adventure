@@ -4,7 +4,7 @@
 // rearguard on the first (57), the Hand's dead on the flights below where the crawlers caught them (58), the
 // crawl way's door from the Ways' hatch onto the fourth (24,18, 59), her name on the last frame (16,6), and
 // the Catcher on the last landing before the last door (16,1), with the Hand's own door beside it, shut
-// (13,1). Band 30-31; docs/areas/hearth_isle.md §4.7 is its brief.
+// (13,1). Band 30-31; docs/areas/hearth.md §4.7 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';

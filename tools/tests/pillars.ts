@@ -256,7 +256,7 @@ const isService = (o: Record<string, unknown>): boolean => typeof o.interior ===
  * presence is, and closes nothing. The door marked CREW ONLY is there once the company has answered
  * at it, either way: it waits on nothing from anywhere else, only on that answer where it stands, and
  * the Kilns are reached by their own road whichever way it goes, so it is no lock between the Hearth
- * and the Kilns (docs/areas/hearth_isle.md §6, 60; §9.1, 44). The act's one lock stays the Core's
+ * and the Kilns (docs/areas/hearth.md §6, 60; §9.1, 44). The act's one lock stays the Core's
  * door. An exit not there yet is no way beside a shut one either. A `lifts` only ends a shut, so the
  * shut is found as before.
  */
