@@ -43,6 +43,12 @@ export function people(): void {
   }
   // Everything a person says fits the box.
   for (const { map, p } of all) { const bad = boxFaults(p); ok(!bad.length, `${map} ${p.x},${p.y}: every text fits the box, and every question its answers${bad.length ? ' -> ' + bad.join('; ') : ''}`); }
+  // A flag a person sets is one area's people's: one spelt alike in two areas has each person meet the
+  // other's company as an old friend (#941). Each map's area is the one whose lists hold it.
+  const areaOf = new Map(CONTENT.areas.flatMap((a) => a.maps.map((m) => [m, a.id] as const))), setBy = new Map<string, Set<string>>();
+  for (const { map, p } of all) for (const f of personFlags(p)) setBy.set(f, (setBy.get(f) ?? new Set()).add(areaOf.get(map) ?? map));
+  const twice = [...setBy].filter(([, areas]) => areas.size > 1).map(([f, areas]) => `${f} (${[...areas].join(', ')})`);
+  ok(setBy.size > 0 && !twice.length, `no flag a person sets is set by a person of another area (${setBy.size} flags)${twice.length ? ' -> ' + twice.join('; ') : ''}`);
   // Every group that asks before it fights (#544) can be refused, and only once: the refusal costs and
   // sets nothing, so it is put again, and every other answer sets a flag, so the walk past is
   // remembered. Its question fits the box, where a group's parley is asked (`Game.parley`); the side panel's

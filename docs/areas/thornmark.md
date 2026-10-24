@@ -178,8 +178,9 @@ than the Foreland, hard winters whose snow lies for weeks, mist under the trees.
 - **The Hoarhills' end** (J4, `deepthorn_j4`, country, band 8–10; #216): the long glade down the
   box's west side, in from Henlys's glade at the seam and on south for the head; the last crag over
   Sunder Bay, a lookout, with the carriers' cleft in it behind a door in the rock (a War Hammer +2)
-  and the boot prints on the glade road its hint; a hermit on the shore under it; the Eaves' forest
-  north-east of the ridge, closed, its 30 squares of dead wood painted over as forest; and the shore
+  and the boot prints on the glade road its hint; a hermit on the shore under it, whose first
+  meeting sets a flag of his own, `q_hermit_deepthorn` (#941); the Eaves' forest north-east of
+  the ridge, closed, its 30 squares of dead wood painted over as forest; and the shore
   path east to the box's edge, where K4 is void. Five groups, none above eight: thorn spiders where
   the glade comes in, dire wolves, great owls by night, rootwalkers under the crag and the heartwood
   alone at the glade's south end, the old wood asleep once the tear is closed. The gate holds at 8,
@@ -232,7 +233,8 @@ under, the zone's groups at 3 and the dungeons' at the area's 3 too, it wins 21.
 Its `walkthrough.ts` plays the chain of the one quest, the Foreland's chapter and then its own,
 The Grove Stone, a step at a time (`tools/walk.ts`); then again with Thornmark taken before Vask's
 hire, and after it but before the wand, where the log must read true and end the same. A step added
-to the chapter adds its play there. Then the side quests, both ways, and the prestiges' four trainers:
+to the chapter adds its play there. Then the side quests, both ways, with the hermit on the shore
+and Wrackholm's Merryn met in either order (#941), and the prestiges' four trainers:
 where each stands, the three firsts taught at 11 and the second at 19, off the road and the fights. The other end-to-end tests (the pass, the stairs) cross between
 the Foreland and Thornmark, so they stay in `tools/tests/`.
 
@@ -899,6 +901,17 @@ Left for later: a home for the subplots that span areas. The Lost Expedition and
 live in Thornmark's `quests.ts`. #181 goes on with The Lost Expedition in Saltmouth, which would
 edit another area's file (EXPANSION §5.8), and Tallis's claim comes in Phase 4 (#177); a home joined
 as the chapters are is a systems ask, wanted before #181.
+
+Decided by the builder for #941, each the owner's to overturn:
+
+57. **The check counts people only, and each map's area by the areas' own lists.** It reads a
+    person's flags as the shipped files do (`personFlags`); an event or a group that sets another
+    area's flag is not its business, as `q_road_west` is shared by design.
+58. **Both orders are walked here, at the end of the side quests,** each from a new game: the Rift
+    closed by the Warden fought at level 8, as the Eldest's walk does, and Merryn found through
+    `MAP_DEFS`, so the walk imports nothing of Wrackholm's.
+59. **The two checks that asked `SAVE_VERSION` 5 ask 5 and after,** their reason kept in a comment:
+    the tiers and the mark came with no upgrade of their own, and 6 asks none for them either.
 
 ## 10. Names
 

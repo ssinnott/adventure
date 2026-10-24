@@ -242,6 +242,26 @@
         "11,5"
       ]
     },
+    "hag_hole": {
+      "size": "16x16",
+      "used": [
+        "hh_box",
+        "hh_cave",
+        "hh_ledge",
+        "hh_mouth",
+        "hh_narrows",
+        "hh_purse",
+        "hh_smoke",
+        "hh_tide",
+        "hh_wrack"
+      ],
+      "groups": [
+        "hh_hag"
+      ],
+      "doors": [
+        "3,3"
+      ]
+    },
     "harrow": {
       "size": "16x16",
       "used": [
@@ -338,6 +358,7 @@
   },
   "flags": [
     "guild_Lantern Guildhall",
+    "netmender_met",
     "q_ailith",
     "q_ashcombe",
     "q_ashcombe_done",
