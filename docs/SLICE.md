@@ -84,9 +84,9 @@ DESIGN.md first for the why.
   the Vigil Robe raise speed, accuracy, might and personality by 3. An artifact is an item marked so
   (`ItemDef.artifact`, #847; DESIGN §9): one in the world, found and never sold; no shop stocks one
   or takes one, and no rung of the ladder or price window holds one, by its mark. The sheet says each
-  borne and its power ("ARTIFACT The Erzhemd, SPEED +5"). The three whose kinds are built, the
-  Telstok (holy blows), the Erzhemd (speed +5) and Akkush (accuracy +5), are in Saltreach's, the
-  Kilns' and the Glasswold's items and placed nowhere yet: #830, #831 and #833 lay their lairs.
+  borne and its power ("ARTIFACT The Erzhemd, SPEED +5"). All eight are in their areas' items, each
+  of the five kinds of power built (#921), and seven lie in their lairs; the Telstok (holy blows),
+  in Saltreach's items, waits for its lair (#830).
 - **Save/load:** F5/F9 to localStorage; door changes, explored cells, group state and the rng all
   survive a reload. Saves are version 2 (the outdoors as one map, cells seen kept a bit apiece); a
   version 1 save loads, its Foreland and Thornmark state folded into the outdoors where they now lie.
@@ -269,8 +269,10 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   solid): nothing crosses it, whatever a company can do, and nothing sees through it. The ring of
   mountains that closed each zone map in is, where it faces nothing built, the end of the world as
   well: the Foreland's north and south edges, F2's, E2's and D2's north (the rim, cut for good),
-  D2's west until C2 is built, E3's south, D3's west, beyond the cliff and the Upper Water's void,
-  D4's west and south, where the Delta begins, and Thornmark's north, east and south. Between the
+  F3's east and south, E4's east and Thornmark's north. D2's, D3's and D4's west, D4's south, E3's
+  south and Thornmark's east and south once faced nothing too, and meet Saltreach's C2, C3, C4 and
+  D5, the Foreland's E4 (#930), Sunderwood's I2 and the Deepthorn's H3 now. F3's east opens onto
+  G3, a crumb left unbuilt, at rows 0 and 1 (`src/content/areas/shelf/checks.ts`). Between the
   Foreland and Thornmark the ridge stands as it was, two squares thick with the pass through it;
   between the Foreland and F2 it is the Foreland's ring alone, with the Salt Road through a gap at
   0,29. The void is drawn as its look, the ground the world map paints there (#829, `MapDef.looks`,
@@ -1028,7 +1030,7 @@ over content broken on purpose too, and two tools to theirs:
 - `layers` (§8.1, #900): the runtime imports of `src/` and `tools/`, read from the files in about
   0.2 s, held to the layers: no cycle among `src`'s, nothing in `src/game` taking content, the UI or
   the app, nothing in the UI the app, no area another's files but its `public.ts` (#992), and the
-  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 146 crossings are the
+  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's crossings are the
   rows of its `KNOWN`, each under the issue that clears it; a new crossing fails, and so does a row
   that no longer crosses, so the table only shrinks.
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
