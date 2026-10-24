@@ -20,7 +20,7 @@ import type { Person } from '../src/game/people.ts';
 import { questLog, questMarks, questNews, holds } from '../src/game/quests.ts';
 import type { Chapter, QuestCond, QuestView, When } from '../src/game/quests.ts';
 import { Pilot } from '../src/game/pilot/pilot.ts';
-import { headlessGame, drive } from './tests/lib.ts';
+import { headlessGame, drive } from './kit/headless.ts';
 import { homeMap } from '../src/game/atlas.ts';
 import { useShrine } from '../src/game/wilds.ts';
 import type { Feature } from '../src/game/map.ts';

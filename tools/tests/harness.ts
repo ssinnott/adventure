@@ -14,7 +14,7 @@ import type { MonsterDef } from '../../src/game/monsters.ts';
 import { MONSTERS, MAP_DEFS, ITEMS } from '../../src/content/index.ts';
 import { gateTurn, gateBot, fightSeed, winRate } from '../kit/fight.ts';
 import { gateCompany } from '../kit/company.ts';
-import { GATE } from './gate.ts';
+import { GATE } from '../kit/rules/gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../kit/line.ts';
 import type { Role } from '../kit/line.ts';
 import { measure, days, fight, play, outcomeOf, spent, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, WORST, CAP, casting, cellsOnCores } from '../kit/harness.ts';

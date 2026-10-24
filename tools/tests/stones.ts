@@ -14,8 +14,8 @@ import { save } from '../../src/game/save.ts';
 import type { Store } from '../../src/game/save.ts';
 import { stonesRestored, savedStones, hearthBearing, flickerOf, steadier, MOST, HEARTH, hearthIn } from '../../src/game/stones.ts';
 import { testMonster } from '../kit/line.ts';
-import { condFaults } from './quests.ts';
-import { presenceFaults } from './structure.ts';
+import { condFaults } from '../kit/rules/quests.ts';
+import { presenceFaults } from '../kit/rules/structure.ts';
 import { ok, owed } from './lib.ts';
 
 export function stones(): void {

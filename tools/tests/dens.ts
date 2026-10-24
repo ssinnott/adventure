@@ -16,10 +16,10 @@ import type { Den } from '../../src/game/dens.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../shipped.ts';
-import { judge, measure } from './density.ts';
-import { lineFaults, texts } from './pillars.ts';
-import { condFaults } from './quests.ts';
-import { presenceFaults } from './structure.ts';
+import { judge, measure } from '../kit/rules/density.ts';
+import { lineFaults, texts } from '../kit/rules/pillars.ts';
+import { condFaults } from '../kit/rules/quests.ts';
+import { presenceFaults } from '../kit/rules/structure.ts';
 import { ok } from './lib.ts';
 
 const DEN: Den = {

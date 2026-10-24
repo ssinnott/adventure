@@ -51,7 +51,7 @@
 // Last the chapter, three ways in (`theWarning`).
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
-import { headlessGame } from '../../../../tools/tests/lib.ts';
+import { headlessGame } from '../../../../tools/kit/headless.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';

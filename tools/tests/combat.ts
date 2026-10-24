@@ -27,7 +27,8 @@ import { logLines } from '../../src/ui/frame.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
-import { ok, headlessGame, drive, withDefs } from './lib.ts';
+import { ok, withDefs } from './lib.ts';
+import { headlessGame, drive } from '../kit/headless.ts';
 
 export function combat(): void {
   // A scripted policy: everyone attacks the first living monster, casters cast when they can.

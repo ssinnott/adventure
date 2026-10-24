@@ -15,7 +15,7 @@ import type { MapDef, Words, Answer, Choice, EncounterDef } from '../../src/game
 import { NORTH, EAST } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { CONTENT, collect } from '../shipped.ts';
-import { condFaults } from './quests.ts';
+import { condFaults } from '../kit/rules/quests.ts';
 import { wrap, columnLabelWidth } from '../../src/ui/draw.ts';
 import { measureText as measure } from '../../src/lib/engine/text.ts';
 import { SAY_W, SAY_LINES, ASK_LINES, ASK_SIDE_LINES, SIDE_W, onAutomap } from '../../src/ui/frame.ts';

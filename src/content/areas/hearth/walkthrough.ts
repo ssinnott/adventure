@@ -51,7 +51,7 @@ import type { Feature, MapDef } from '../../../game/map.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
 import { elementMult } from '../../../game/monsters.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
-import { headlessGame } from '../../../../tools/tests/lib.ts';
+import { headlessGame } from '../../../../tools/kit/headless.ts';
 import { xpForLevel, takePrestige, className, PRESTIGES, defaultParty, equip, statOf, spellHeal } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
 import { teach, barOf } from '../../../game/prestige.ts';

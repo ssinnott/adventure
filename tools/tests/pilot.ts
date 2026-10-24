@@ -27,7 +27,8 @@ import { ChoiceScreen, InteriorScreen } from '../../src/ui/screens.ts';
 import { randomParty } from '../../src/ui/create.ts';
 import { CLASSES, RACES, companyLevel } from '../../src/game/party.ts';
 import type { RaceId } from '../../src/game/party.ts';
-import { ok, headlessGame, drive } from './lib.ts';
+import { ok } from './lib.ts';
+import { headlessGame, drive } from '../kit/headless.ts';
 import { keep, need, needs, better, reserve, spare } from '../../src/game/pilot/keep.ts';
 import type { Need } from '../../src/game/pilot/keep.ts';
 import { companyAt } from '../kit/company.ts';
@@ -52,14 +53,14 @@ import { weary, caster, FOOD_RESTS } from '../../src/game/pilot/keep.ts';
 import { searches } from '../../src/game/pilot/route.ts';
 import { holds } from '../../src/game/quests.ts';
 import { pilotRun } from '../walk.ts';
-import { play } from './fullrun.ts';
+import { play } from '../kit/rules/fullrun.ts';
 import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
 import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
 import { MessageScreen } from '../../src/ui/screens.ts';
 import { CHOICE_TWO, CHOICE_THREE, VASK_FALLEN } from '../../src/content/areas/hearth/maps/core.ts';
 import { VOICE_WHOLE } from '../../src/content/areas/hearth/public.ts';
-import { LAIR } from './enclave.ts';
+import { LAIR } from '../kit/rules/enclave.ts';
 
 /** A headless game with an instant pilot, off. */
 const piloted = (seed = 4): Game => {

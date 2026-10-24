@@ -36,7 +36,8 @@ import {
   tierLine, teachTier, teachesExpert, askLine, askTier, noneHere, favourDone, LEAVE_TIERS,
 } from '../../src/game/mastery.ts';
 import type { Tiers, Line, Mastery } from '../../src/game/mastery.ts';
-import { ok, headlessGame, drive } from './lib.ts';
+import { ok } from './lib.ts';
+import { headlessGame, drive } from '../kit/headless.ts';
 
 /** The town trainers that teach Expert (ceiling 13 or over) and those that do not, written out and not read from the rule. */
 const TEACH = ['The Sail Loft', 'The Lamp Gallery', 'The Old Working', 'The Ore Shed', "The Trainers' Yard", 'The Ash Yard', "The Sergeant's Tent"];

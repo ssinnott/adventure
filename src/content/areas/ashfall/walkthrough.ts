@@ -89,7 +89,7 @@ import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
 import { World, HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING } from '../../crossings.ts';
-import { ACT_IV, ACT_V } from '../../../../tools/tests/ladder.ts';
+import { ACT_IV, ACT_V } from '../../../../tools/kit/rules/ladder.ts';
 import { CURVE } from '../../progression.ts';
 import { ARMOURER, CURES } from './items.ts';
 import { INTERIORS } from './interiors.ts';

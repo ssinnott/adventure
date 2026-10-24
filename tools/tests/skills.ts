@@ -42,7 +42,8 @@ import type { GuildId } from '../../src/content/guilds.ts';
 import { MAP_DEFS, CLIMATES, ITEMS } from '../../src/content/index.ts';
 import { SKILLS, SKILL_PRICE, SPIRIT_REACH, STRANGER, LEAVE_SKILLS, skillsOf, hasSkill, bornTo, skillNames, taughtBy, mayLearn, skillOffers, skillLine, skillRow, skillBar, learn, askSkill, askWhich, skilled } from '../../src/game/skills.ts';
 import type { SkillId } from '../../src/game/skills.ts';
-import { ok, headlessGame, drive, withDefs } from './lib.ts';
+import { ok, withDefs } from './lib.ts';
+import { headlessGame, drive } from '../kit/headless.ts';
 
 /** DESIGN §8's table: the skills each guild teaches, three to a guild, twelve in all (DESIGN §5). */
 const TAUGHT: Record<GuildId, readonly string[]> = {

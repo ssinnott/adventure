@@ -57,7 +57,7 @@ import { defaultParty, equip, statOf } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { elementMult } from '../../../game/monsters.ts';
-import { headlessGame } from '../../../../tools/tests/lib.ts';
+import { headlessGame } from '../../../../tools/kit/headless.ts';
 import { GEAR } from '../../../../tools/kit/company.ts';
 import { WRACKHOLM_E6 } from './maps/wrackholm_e6.ts';
 import { WRACKHOLM_F6 } from './maps/wrackholm_f6.ts';
