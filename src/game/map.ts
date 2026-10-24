@@ -68,10 +68,20 @@ export interface Cell {
   look?: Cell;
 }
 
+/** A named square of a map that another map's exit lands on, and the facing it lands with (#993). */
+export interface Anchor { x: number; y: number; facing: Facing }
+
 /** Where a map hands the party to another map. */
 export interface Exit {
   x: number; y: number;
   to: string;
+  /**
+   * The anchor of `to` it lands on, by name: `start`, or one of `to`'s `anchors` (#993). An area's
+   * map lands every exit so, through `anchored`, and writes no square: the maps' join fills `tx`,
+   * `ty` and `tf` from the anchor (`landExits`, content/index.ts), and the game reads those.
+   */
+  at?: string;
+  /** Where it lands: filled from `at` where the maps are joined, or written so off the areas' maps (a Rift's way out, a fixture). */
   tx: number; ty: number;
   /** Facing on arrival; default: keep. */
   tf?: Facing;
@@ -431,6 +441,11 @@ export interface MapDef {
   /** Extra legend entries for this map; merged over the kind's default legend. */
   legend?: Record<string, Partial<Cell>>;
   start: { x: number; y: number; facing: Facing };
+  /**
+   * The squares other maps' exits land on, by name (#993); the start is one more, named `start`, and
+   * no anchor takes that name. An exit names one as its `at`.
+   */
+  anchors?: Readonly<Record<string, Anchor>>;
   exits?: Exit[];
   features?: Feature[];
   /**
@@ -476,6 +491,38 @@ export interface MapDef {
    * `VOID_CH`; any other square's character is its own and not read. Written by game/outdoors.ts.
    */
   looks?: readonly string[];
+}
+
+/** An exit as an area writes it (#993): `at`, an anchor of the map it leads to, in place of `tx`, `ty` and `tf`. */
+export type Anchored = Omit<Exit, 'at' | 'tx' | 'ty' | 'tf'> & { at: string };
+
+/**
+ * An exit written by its anchor, typed as the exit it is once the maps are joined: the join fills
+ * its `tx`, `ty` and `tf` in place (`landExits`) before anything reads them.
+ */
+export const anchored = (e: Anchored): Exit => e as Exit;
+
+/**
+ * Lands every exit written by an anchor (#993): fills its `tx`, `ty` and `tf` in place from the
+ * anchor its `at` names on the map it leads to, so that every reader reads the square and facing
+ * as it always has. Refuses, by name, an `at` the landing map lacks, an anchor named twice and an
+ * exit with both an `at` and a square. Returns the maps it was given.
+ */
+export function landExits<T extends readonly MapDef[]>(defs: T): T {
+  const byId = new Map(defs.map((d) => [d.id, d]));
+  for (const d of defs) if (d.anchors && Object.hasOwn(d.anchors, 'start')) throw new Error(`map ${d.id} names the anchor 'start' twice: its start is one`);
+  const landed = new Set<Exit>();
+  for (const d of defs) for (const e of d.exits ?? []) {
+    if (e.at === undefined || landed.has(e)) continue;
+    const name = `exit of ${d.id} at ${e.x},${e.y} to ${e.to}`;
+    if (e.tx !== undefined || e.ty !== undefined || e.tf !== undefined) throw new Error(`${name} lands both at '${e.at}' and on a square`);
+    const to = byId.get(e.to);
+    const a = e.at === 'start' ? to?.start : to?.anchors && Object.hasOwn(to.anchors, e.at) ? to.anchors[e.at] : undefined;
+    if (!a) throw new Error(`${name} lands at '${e.at}', and ${to ? `${e.to} has no such anchor` : 'no map has that id'}`);
+    e.tx = a.x; e.ty = a.y; e.tf = a.facing;
+    landed.add(e);
+  }
+  return defs;
 }
 
 export interface MapPalette {
