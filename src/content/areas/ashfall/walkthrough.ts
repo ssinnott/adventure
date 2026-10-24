@@ -1856,7 +1856,7 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   const yard = ofKind(PORT, 'trainer')[0], trainee = structuredClone(w.party.members[0]);
   trainee.level = 26; trainee.xp = xpForLevel(27);
   ok(yard.maxLevel === 27 && yard.interior === 'cinderport_yard' && canTrainAt(trainee, yard.maxLevel), `${yard.name} will train a member of 26`);
-  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), yard.maxLevel);
+  const { paid: fee } = train(TABLES.spells, { gold: w.party.gold }, trainee, makeRng(1), yard.maxLevel);
   ok(trainee.level === 27 && !canTrainAt(trainee, yard.maxLevel), `who trains to 27 for ${fee} gold, and no further`);
 
   // The two halls (#443, call 7), each a room: the Chart House the Cartographers' second, and the

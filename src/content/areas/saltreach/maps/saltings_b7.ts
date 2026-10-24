@@ -2,12 +2,14 @@
 // salters' grass under the Scarp, open to B6 along its north edge and to C7 along its east; a salt-carter
 // at the end of the salters' track with word of a fire under the Scarp, a camp, a cairn and a shrine; three
 // salt crabs on the grass and the Hand's smugglers at their fire under the rock; and in the Scarp's foot a
-// bothy walled up with salt, found from the dead white fan of grass that points at its door. The Scarp and
-// the Glasswold's ground above it are the rim's mountain, shut, and so is the west edge against A7, which
-// stays cut, its corner with it, as B6's 0,31 and A6's 31,31 beside it are. Cut from the atlas by
-// tools/scaffold.ts and closed by hand; docs/areas/saltreach.md §12 is its brief.
+// bothy walled up with salt, found from the dead white fan of grass that points at its door; east of it, at
+// 22,22, the cut into Wytgat, the enclave (#845). The Scarp and the Glasswold's ground above it are the
+// rim's mountain, shut, and so is the west edge against A7, which stays cut, its corner with it, as B6's
+// 0,31 and A6's 31,31 beside it are. Cut from the atlas by tools/scaffold.ts and closed by hand;
+// docs/areas/saltreach/plan.md §12.8 is its brief.
 import type { MapDef } from '../../../../game/mapdef.ts';
-import { WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SALTINGS_B7: MapDef<'saltings_b7'> = {
@@ -18,6 +20,7 @@ export const SALTINGS_B7: MapDef<'saltings_b7'> = {
   band: [11, 12],
   region: 'saltreach',
   start: { x: 31, y: 16, facing: WEST },
+  anchors: { from_wytgat: { x: 22, y: 21, facing: NORTH } },
   rows: [
     'Mwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
     'MMwwwwwwwwwwwwwwwwwwwwwwwwwwwwww',
@@ -41,7 +44,7 @@ export const SALTINGS_B7: MapDef<'saltings_b7'> = {
     'MMMMMBBBBBB,,,,,,,,,,,,,,,,,,,,,',
     'MMMMMMMMMMMMMMM,,,,,,,,,,,,,,,,,',
     'MMMMMMMMMMMMMMMMMMMM,,,,,,,,,,,,',
-    'MMMMMMMMMMMMMMMMMMMMMMMMMMM,,,,,',
+    'MMMMMMMMMMMMMMMMMMMMMM"MMMM,,,,,',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
@@ -51,6 +54,10 @@ export const SALTINGS_B7: MapDef<'saltings_b7'> = {
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
+  ],
+  // Wytgat, the enclave (#845): the cut in the Scarp's foot at 22,22, walked into from the grass at 22,21.
+  exits: [
+    anchored({ x: 22, y: 22, to: 'wytgat', at: 'start', label: 'You stoop in under the Scarp\'s lip and down a cut in the rock. The wind off the pans drops behind you.' }),
   ],
   features: [
     // In from B6's reeds, and the pans seen over the marsh from C7's side.

@@ -93,39 +93,39 @@ export function services(): void {
   students.gold = 1000;
   const fee = payFee(students, hall);
   ok(fee.done && fee.paid === 50 && students.gold === 950 && joined(students, hall) && fee.line === 'You may study here.', `the fee of 50 paid once and kept (1000 -> ${students.gold}): "${fee.line}"`);
-  const offers = hallOffers(students, hall), lacking = (who: number, tier: number): string[] => spellsFor(CLASSES[students.members[who].cls].spells!, tier).filter((sp) => !students.members[who].spells.includes(sp.id)).map((sp) => sp.id);
-  ok([1, 2, 3, 4].map(spellPrice).join() === '40,80,160,320' && offers.length > 0 && offers.every((o) => o.price === spellPrice(spell(o.id).level))
+  const offers = hallOffers(TABLES.spells, students, hall), lacking = (who: number, tier: number): string[] => spellsFor(TABLES.spells, CLASSES[students.members[who].cls].spells!, tier).filter((sp) => !students.members[who].spells.includes(sp.id)).map((sp) => sp.id);
+  ok([1, 2, 3, 4].map(spellPrice).join() === '40,80,160,320' && offers.length > 0 && offers.every((o) => o.price === spellPrice(spell(TABLES.spells, o.id).level))
     && offers.map((o) => o.id).join() === [...lacking(4, 3), ...lacking(5, 3)].join() && offers.every((o) => o.who === 4 || o.who === 5)
-    && hallOffers(students, { ...hall, maxTier: undefined }).every((o) => spell(o.id).level <= 2),
+    && hallOffers(TABLES.spells, students, { ...hall, maxTier: undefined }).every((o) => spell(TABLES.spells, o.id).level <= 2),
     `a spell costs 40, 80, 160 and 320 by its tier; the hall offers its two classes, Maren and Cassian, the ${offers.length} spells to the third tier they lack, and to the second where it names no tier`);
-  const o = offers.at(-1)!, buyer = students.members[o.who], before = students.gold, learnt = learnSpell(students, o);
-  ok(learnt.done && learnt.paid === o.price && students.gold === before - o.price && buyer.spells.includes(o.id) && !hallOffers(students, hall).some((x) => x.who === o.who && x.id === o.id)
-    && learnt.line === `${buyer.name} learns ${spell(o.id).name}.`, `${buyer.name} learns ${spell(o.id).name} for ${o.price}, and it is offered no more: "${learnt.line}"`);
+  const o = offers.at(-1)!, buyer = students.members[o.who], before = students.gold, learnt = learnSpell(TABLES.spells, students, o);
+  ok(learnt.done && learnt.paid === o.price && students.gold === before - o.price && buyer.spells.includes(o.id) && !hallOffers(TABLES.spells, students, hall).some((x) => x.who === o.who && x.id === o.id)
+    && learnt.line === `${buyer.name} learns ${spell(TABLES.spells, o.id).name}.`, `${buyer.name} learns ${spell(TABLES.spells, o.id).name} for ${o.price}, and it is offered no more: "${learnt.line}"`);
   students.gold = offers[0].price - 1;
-  const wasBuying = JSON.stringify(students), dear = learnSpell(students, offers[0]);
+  const wasBuying = JSON.stringify(students), dear = learnSpell(TABLES.spells, students, offers[0]);
   ok(!dear.done && unchanged(students, wasBuying) && dear.line === 'Not enough gold.', `a spell of ${offers[0].price} with ${students.gold} gold is not learnt: "${dear.line}"`);
 
   // A trainer: one level a visit for its price, however much xp, never past its own level, the hit
   // points those of one level on the same seed; one not ready, past it or down is refused unsaid.
   const yard = company(1000), [ready, , , , , down] = yard.members;
   ready.xp = xpForLevel(4);
-  const visits = [train(yard, ready, makeRng(1), 3), train(yard, ready, makeRng(1), 3), train(yard, ready, makeRng(1), 3)];
+  const visits = [train(TABLES.spells, yard, ready, makeRng(1), 3), train(TABLES.spells, yard, ready, makeRng(1), 3), train(TABLES.spells, yard, ready, makeRng(1), 3)];
   const one = defaultParty(TABLES, makeRng(1)).members[0];
-  one.xp = xpForLevel(2); levelUp(one, makeRng(1));
+  one.xp = xpForLevel(2); levelUp(TABLES.spells, one, makeRng(1));
   ok(visits[0].done && visits[0].paid === 25 && visits[0].line === `Bram trains to level 2. HP ${one.maxHp}, SP ${one.maxSp}.` && visits[1].done && visits[1].paid === 50 && ready.level === 3
     && !visits[2].done && visits[2].line === '' && ready.xp === xpForLevel(4) && yard.gold === 925,
     `the cap: a member of 1 with the xp for 4 trains one level a visit, to 2 for ${visits[0].paid} and to 3 for ${visits[1].paid}, and a trainer to 3 takes him no further: "${visits[0].line}"`);
   // The price: 25 a level to the fourth, 40 a level from the fifth.
   const drilled = company(1000), [four, five] = drilled.members;
   four.level = 4; four.xp = xpForLevel(5); five.level = 5; five.xp = xpForLevel(6);
-  const at4 = train(drilled, four, makeRng(1), 10), at5 = train(drilled, five, makeRng(1), 10);
+  const at4 = train(TABLES.spells, drilled, four, makeRng(1), 10), at5 = train(TABLES.spells, drilled, five, makeRng(1), 10);
   ok(at4.paid === 100 && at5.paid === 200 && drilled.gold === 700 && four.level === 5 && five.level === 6,
     `a member of 4 trains for ${at4.paid} and one of 5 for ${at5.paid}: 25 a level to the fourth, 40 from the fifth`);
   down.xp = xpForLevel(2); addCondition(TABLES.items, down, 'unconscious');
-  const wasYard = JSON.stringify(yard), fallen = train(yard, down, makeRng(1), 10);
+  const wasYard = JSON.stringify(yard), fallen = train(TABLES.spells, yard, down, makeRng(1), 10);
   ok(!mayTrain(down, 10) && !fallen.done && fallen.line === '' && unchanged(yard, wasYard), `${down.name}, ready but down, is not trained and nothing is said, as the screen bars the row`);
   const purse = { gold: 24 }, cheap = structuredClone(yard.members[1]);
   cheap.xp = xpForLevel(2);
-  const wasCheap = JSON.stringify(cheap), dearer = train(purse, cheap, makeRng(1), 10);
+  const wasCheap = JSON.stringify(cheap), dearer = train(TABLES.spells, purse, cheap, makeRng(1), 10);
   ok(!dearer.done && purse.gold === 24 && JSON.stringify(cheap) === wasCheap && dearer.line === 'Not enough gold.', `a member of 1 at 25 with 24 gold is not trained: "${dearer.line}"`);
 }

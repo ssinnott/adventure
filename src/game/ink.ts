@@ -66,7 +66,7 @@ export function markedGroups(world: World): LiveGroup[] {
   return world.liveGroups().filter(({ def, state: s }) => {
     const d = Math.abs(s.x - x) + Math.abs(s.y - y);
     return inView.has(s.y * m.width + s.x) || (world.explored(s.x, s.y) && d <= 2 && !world.hidden(s.x, s.y))
-      || (spirit && d <= SPIRIT_REACH && def.monsters.every((id) => monster(id).kind === 'dead'))
+      || (spirit && d <= SPIRIT_REACH && def.monsters.every((id) => monster(world.tables.monsters, id).kind === 'dead'))
       || (danger && def.roams !== false && d <= (def.aware ?? AWARE));
   });
 }

@@ -232,9 +232,9 @@ function shown(lent: Tables): void {
   const plain = statText(lent.items, c, 'speed');
   equip(lent.items, c, COAT.id); equip(lent.items, c, STORM.id);
   const quick = statText(lent.items, c, 'speed'), other = statText(lent.items, c, 'might');
-  const w0 = weaponLine(lent.items, c);
+  const w0 = weaponLine(lent, c);
   c.tiers = { arms: 'expert' };
-  const w1 = weaponLine(lent.items, c);
+  const w1 = weaponLine(lent, c);
   ok(plain[1] === '' && quick[0] === String(c.stats.speed + 3) && quick[1] === '(+3)' && other[1] === '' && other[0] === String(c.stats.might),
     `the sheet prints the total a fight reads and the raise, SPE ${quick.join('')} (bare ${plain.join('')}), and a stat not raised as ever (MIG ${other.join('')})`);
   ok(w0 === 'WEAPON Storm Blade, LIGHTNING' && w1 === 'WEAPON Storm Blade, LIGHTNING, EXPERT', `the WEAPON line says the element, before the tier: "${w1}"`);
@@ -249,7 +249,7 @@ function shown(lent: Tables): void {
     `in the font's glyphs; the raise ends at ${end}, and the label at ${label}, short of the total at ${total}`);
   // Every elemental weapon's WEAPON line, with the widest tier, ends inside the left column.
   const tier = (Object.keys(TIER_NAMES) as Tier[]).reduce((a, b) => (measureText(TIER_NAMES[b]) > measureText(TIER_NAMES[a]) ? b : a));
-  const endOf = (d: ItemDef, u: Tables = lent): number => { const m = defaultParty(u, makeRng(1)).members[0]; m.equipment.weapon = d.id; m.tiers = { arms: tier }; return 20 + measureText(weaponLine(u.items, m)); };
+  const endOf = (d: ItemDef, u: Tables = lent): number => { const m = defaultParty(u, makeRng(1)).members[0]; m.equipment.weapon = d.id; m.tiers = { arms: tier }; return 20 + measureText(weaponLine(u, m)); };
   const elemental = Object.values(ITEMS).filter((d) => d.slot === 'weapon' && d.element), over = elemental.filter((d) => endOf(d) > LEFT_END);
   ok(elemental.length >= 2 && !over.length, `every elemental weapon's WEAPON line, ${TIER_NAMES[tier]} at arms, ends by ${LEFT_END} (the widest at ${Math.max(...elemental.map((d) => endOf(d)))})${over.length ? ' -> ' + over.map((d) => `${d.name} at ${endOf(d)}`).join(', ') : ''}`);
   // The cap on an elemental weapon's name, exact: with lightning, the widest element, and the widest tier.
@@ -350,7 +350,7 @@ function artifacts(lent: Tables): void {
     // A thing carried has no numbers; any other piece is its Hand's piece and a point.
     const numbers = d.slot === 'none' ? !b?.hand && [d.dice, d.bonus, d.ac].every((n) => n === undefined) : point === 1 && like;
     ok(homed && !bad.length && numbers && (d.classes ?? []).join() === b.classes.join(),
-      `${d.name}: an artifact in ${b?.area}'s items, one power (${power(d)}), ${h ? `the ${h.name}'s numbers and a point` : 'carried, with no numbers'}, for ${b?.classes.length ? `the ${b.classes.join(', ')}` : 'any of the ten'}${bad.length ? ' -> ' + bad.join('; ') : ''}`);
+      `${d.name}: an artifact in ${b?.area}'s items, one power (${power(TABLES.spells, d)}), ${h ? `the ${h.name}'s numbers and a point` : 'carried, with no numbers'}, for ${b?.classes.length ? `the ${b.classes.join(', ')}` : 'any of the ten'}${bad.length ? ' -> ' + bad.join('; ') : ''}`);
     ok(!stocked.has(d.id), `${d.name}: no shop sells it`);
     // Placed, it lies once in the world, in a lair of its own area; waiting, its lair's issue owes it until it lies anywhere.
     const at = placesOf(d.id, b?.area), where = at.length ? ` (${at.map((x) => x.at).join(', ')})` : '';
@@ -495,7 +495,7 @@ function powers(): void {
       if (!t || t.side === 'monster') { g3.update(null); continue; }
       if (t.i !== 3) { g3.update('n4' as Action); continue; }
       const had = chargesLeft(TABLES.items, g3.party, knife.id);
-      seen.push(castRows(TABLES.items, g3.party, o3).map((r) => r.label).join());
+      seen.push(castRows(TABLES, g3.party, o3).map((r) => r.label).join());
       g3.update('n2' as Action); g3.update('interact');
       if (had > 0) g3.update('interact'); else { seen.push(g3.log.at(-1) ?? ''); g3.update('cancel'); g3.update('n4' as Action); }
       after.push(chargesLeft(TABLES.items, g3.party, knife.id));
@@ -526,7 +526,7 @@ function sheet(): void {
   const q = defaultParty(TABLES, makeRng(1)), [b2, , w2, o2, m2] = q.members;
   equip(TABLES.items, w2, ITEMS.akkush.id); equip(TABLES.items, w2, ITEMS.erzhemd.id); equip(TABLES.items, m2, ITEMS.telstok.id); equip(TABLES.items, o2, ITEMS.holdfast.id);
   b2.pack.push(ITEMS.hagstone.id); equip(TABLES.items, b2, ITEMS.torhide.id); m2.pack.push(ITEMS.wakerobe.id);
-  const said = [weaponLine(TABLES.items, w2), slotLine(TABLES.items, w2, 'armor'), weaponLine(TABLES.items, m2), weaponLine(TABLES.items, o2), slotLine(TABLES.items, b2, 'shield'), ...artifactLines(TABLES.items, b2), ...artifactLines(TABLES.items, m2), ...artifactLines(TABLES.items, w2)];
+  const said = [weaponLine(TABLES, w2), slotLine(TABLES, w2, 'armor'), weaponLine(TABLES, m2), weaponLine(TABLES, o2), slotLine(TABLES, b2, 'shield'), ...artifactLines(TABLES, b2), ...artifactLines(TABLES, m2), ...artifactLines(TABLES, w2)];
   const glyphs = (t: string): boolean => [...t.toUpperCase()].every((ch) => ch === ' ' || FONT_CHARS.includes(ch));
   ok(said.join(' / ') === "WEAPON Akkush, ACCURACY +5 / ARMOUR The Erzhemd, SPEED +5 / WEAPON The Telstok, HOLY BLOWS / WEAPON Holdfast, GRASPING ROOTS 3 A DAY / SHIELD Torhide, MENDS A TENTH AN HOUR / ARTIFACT The Hagstone, NEVER PARALYSED",
     `the sheet says each artifact borne and its power, on its slot's line or, carried, a line of its own: ${said.join(' / ')}; none for armour in the pack`);
@@ -539,7 +539,7 @@ function sheet(): void {
     c.spells = Object.values(SPELLS).filter((x) => x.list === CLASSES[cls].spells).map((x) => x.id);
     c.conditions = ['poisoned', 'diseased', 'cursed'];
     for (const d of ARTS) if (d.slot === 'none') c.pack.push(d.id); else if (!d.classes || d.classes.includes(cls)) equip(TABLES.items, c, d.id);
-    const rows = sheetRows(TABLES.items, c), last = rows.at(-1)!;
+    const rows = sheetRows(TABLES, c), last = rows.at(-1)!;
     ends.push(`${cls} ${last.y + 7}`);
     for (const r of rows) if (!r.text.startsWith('SPELLS ') && (measureText(r.text) > SHEET_COL_W || !glyphs(r.text))) wide.push(r.text);
   }
@@ -549,12 +549,12 @@ function sheet(): void {
   const lineOf = (d: ItemDef): string => {
     const c = createCharacter(TABLES, 'Wenceslaus', 'human', (d.classes?.[0] ?? 'knight') as ClassId, {}, makeRng(1));
     c.tiers = { arms: 'master' }; c.equipment.weapon = null; c.equipment.shield = null;
-    if (d.slot === 'none') { c.pack.push(d.id); return artifactLines(TABLES.items, c)[0] ?? ''; }
+    if (d.slot === 'none') { c.pack.push(d.id); return artifactLines(TABLES, c)[0] ?? ''; }
     equip(TABLES.items, c, d.id);
-    return d.slot === 'weapon' ? weaponLine(TABLES.items, c) : slotLine(TABLES.items, c, d.slot === 'armor' ? 'armor' : 'shield');
+    return d.slot === 'weapon' ? weaponLine(TABLES, c) : slotLine(TABLES, c, d.slot === 'armor' ? 'armor' : 'shield');
   };
   const own = ARTS.map(lineOf), widest = own.reduce((a, b) => (measureText(b) > measureText(a) ? b : a));
-  ok(own.every((l) => l.includes(power(ITEMS[ARTS[own.indexOf(l)].id])) && glyphs(l) && measureText(l) <= SHEET_COL_W),
+  ok(own.every((l) => l.includes(power(TABLES.spells, ITEMS[ARTS[own.indexOf(l)].id])) && glyphs(l) && measureText(l) <= SHEET_COL_W),
     `each of the ${own.length} artifacts' sheet lines says its power in the font's glyphs inside the ${SHEET_COL_W} px column (the widest ${measureText(widest)}: ${widest})`);
   // The SPELLS line runs on past the column into the item list's, so it starts under the list's last row,
   // for a member with nothing more above it as for the fullest.
@@ -562,7 +562,7 @@ function sheet(): void {
   for (const cls of Object.keys(CLASSES) as ClassId[]) {
     if (!CLASSES[cls].spells) continue;
     const c = createCharacter(TABLES, 'Wenceslaus', 'human', cls, {}, makeRng(1));
-    tops.push(`${cls} ${sheetRows(TABLES.items, c).find((r) => r.text.startsWith('SPELLS '))?.y}`);
+    tops.push(`${cls} ${sheetRows(TABLES, c).find((r) => r.text.startsWith('SPELLS '))?.y}`);
   }
   ok(tops.every((t) => Number(t.split(' ')[1]) >= lastItem + lineHeight() - 1),
     `the SPELLS line, which runs on into the item list, starts under its ${SHEET_ITEMS}th row at ${lastItem} for a caster with least above it (${tops.join(', ')})`);

@@ -1,11 +1,11 @@
 # Saltreach's plan
 
 Saltreach's plan and its history (EXPANSION §8.2): the old §4, §11 and §12 of its doc,
-`docs/areas/saltreach.md`, moved here whole by #1027 (every box in them is built but the bounds'
-enclave and lair, §12.10, not started), then under "Moved from the state" the lines of the old
-header, §1, §3 and §5 to §8 that the current state does not keep, each under the heading it had. A
-new box's brief goes here first, with its "As built" once it is built. The enclave's and the lair's
-(#830) are the next. Its decisions are `docs/areas/saltreach/decisions.md`.
+`docs/areas/saltreach.md`, moved here whole by #1027 (every box in them was built then but the
+bounds' enclave and lair, §12.10), then under "Moved from the state" the lines of the old header,
+§1, §3 and §5 to §8 that the current state does not keep, each under the heading it had. A new
+box's brief goes here first, with its "As built" once it is built: the enclave's, Wytgat, is §12.12
+(#830), and the lair's is the next. Its decisions are `docs/areas/saltreach/decisions.md`.
 
 ## 4. What is still to build
 
@@ -551,8 +551,9 @@ The land the area's maps lie open to, built as country off the quest, level for 
 sliver. Eight boxes, 3,645 squares a company could walk by the atlas, which 244 edge squares of the
 Upper Water, the Delta, the Saltings and the Downs open onto. Each box is built to the looser floor
 (EXPANSION §5.3) at its zone's band, from the area's roster, paid from its budget (§8), with nothing
-on the road's quest. Then the area's enclave and its artifact's lair (§12.10). This is their brief, in
-§4's form; each box's pull request builds from it, and adds its "As built".
+on the road's quest. Then the area's enclave and its artifact's lair (§12.10), the enclave built as
+Wytgat (§12.12). This is their brief, in §4's form; each box's pull request builds from it, and adds
+its "As built".
 
 | Box | Laid in | Walkable | Other land in it | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|---|
@@ -563,7 +564,8 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 | A5 | the Delta, `delta_a5` | 589 | | A4, B5 | 10–11 | the third, built (#830) |
 | A6 | the Delta, `delta_a6` | 491 | | A5, B6 | 11–12 | the third, built (#830) |
 | B7 | the Saltings, `saltings_b7` | 944 | the Delta's 346; the Wold's 219 above the Scarp | B6, C7, B8 (the Wold) | 11–12 | the fourth, built (#830) |
-| D6 | the Saltings, `saltings_d6` | 61 | the Delta's 48 | C6, D5, E6 (Wrackholm, across the sea) | 11–12 | the fourth, built (#830) |
+| D6 | the Saltings, `saltings_d6` | 61 | the Delta's 48 | C6, D5, D7 (the Wold, #924), E6 (Wrackholm, across the sea) | 11–12 | the fourth, built (#830) |
+| Wytgat, the enclave | off the grid, `wytgat`, its door B7's 22,22 | 98 | | B7 | 13–14 | the fifth, built (#830) |
 
 ### 12.1 What every box keeps
 
@@ -870,6 +872,8 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   spreading north; inside, a cot, a scale and a damp ledger, and a chest of 250 gold and an elixir
   at 6,18. The gate holds at 11: 7.41 fights to a rest, every fight won. Density: 98.0% within 12
   steps, the furthest 16. By the curve's count the box pays about 604 xp a member and 427 gold.
+  Since (#830, 24 October): the cut into Wytgat at 22,22 (§12.12), the one square changed, so the
+  box stands 615 squares and its density reads 98.5% within 12 (606 of 615), the cut a point.
 
 ### 12.9 D6, the plate's old place: country, band 11–12
 
@@ -881,8 +885,9 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
   edge: the sea 0 to 5, shallows at 6, tidal ground at 7, sand at 8, the warehouse's wall at 9 and
   10, sand 11 to 19, tidal ground at 20, shallows 21 to 24, tidal ground 25 to 28 and salt 29 to
   31. Its east edge meets E6's west edge, the sea the whole way. Its south edge is the sea but for
-  salt at 0 and tidal ground at 1 onto D7, which stays unbuilt (decision 31). Its pull request
-  deletes the rows `delta_d5 south` and `saltings_c6 east` and adds one, `saltings_d6 south`.
+  salt at 0 and tidal ground at 1 onto D7, the Wold's, built since (#924), which meets it letter for
+  letter (decision 31). Its pull request deletes the rows `delta_d5 south` and `saltings_c6 east`
+  and adds one, `saltings_d6 south`, which #924 deleted.
 - **Landmarks.** The spit's end where Saltmouth's plate stood before #177 moved it, and in the world
   the footing of the old harbour light; the tidal shore under the town; the sea.
 - **Points of interest,** three features and one group: the light's footing, the hint; a cairn of
@@ -913,11 +918,14 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 They come after the boxes, each in its own pull request. **The lair** (#846, #847): the artifact's,
 at the cap's band, a drowned mound of two levels on the fen's west edge under the rim with one
 guardian, its door on A5, as #846's design has it (#908); the artifact, its guardian and the rumour
-that first speaks of it are #846's, and where #846 changes them, this note gives way to it. **The
-enclave** (#845): its door in the Scarp's foot on B7, a place of its own held a band or two over the
+that first speaks of it are #846's, and where #846 changes them, this note gives way to it.
+The guardian is drawn: the Old Chanter (`old_chanter`, the skeleton family's, size 1.35), its
+staff the Telstok's bog oak and its numbers the line's boss at 32 for the lair's pull request
+to set. It is owed in `checks.ts` until a group in the mound holds it. **The enclave** (#845):
+its door in the Scarp's foot on B7, a place of its own held a band or two over the
 Saltings', with its own reward, as #845 sets them. B7 has the room: 614 squares to stand on, its Scarp's foot
 clear of the pans and the smugglers' fire. The owner's delegate moved the two doors so on 18
-October (call 11).
+October (call 11). The enclave is built: Wytgat, at 13–14 (§12.12).
 
 ### 12.11 For the next builders
 
@@ -944,6 +952,51 @@ What the seven areas after Saltreach copy from these boxes, and what they avoid 
     unbuilt land and as the mountain, climbable, where it faces a box built since (decision 36);
   - a shallow at an edge square where the atlas past the edge has tidal ground: the pillars check
     carries water and roads on into the atlas, even where the neighbour is unbuilt (decision 31).
+
+### 12.12 Wytgat, the enclave (#830): dungeon, 16×16, band 13–14
+
+- **Purpose.** Saltreach's enclave (#845), behind B7: the salters' old rock-salt working in the
+  Scarp's foot, which the Hand took for its strongroom and its store of brine glass and worked with
+  men in chains. A place of its own, held a band over the Saltings', with a reward found there
+  alone.
+- **Band.** 13–14, a band over B7's 11–12. Its pay is a figure, counted in no clear, and its finds
+  sit in the enclave's window, the country's at its floor: Wrackholm's 2,500 (#845).
+- **Landmarks.** The cut in the Scarp's foot; the salters' cutting, its walls rock salt under the
+  soot, with the Hand's brazier; the gallery of the chained rows; the Hand's strongroom; the store
+  of brine glass.
+- **Points of interest,** seven events and two chests: the cutting; the chained rows; the names
+  scratched low on the wall; the strongroom and its strongbox; the store; the soot on the back
+  wall, the hint; the salters' last gallery and its strongbox.
+- **Encounters.** Three groups of the Hand, rising from the way in, each where every way on passes,
+  so that no company steps round it: the watch at the brazier, three smugglers and a bowman (12),
+  the nearest; the overseers of the chained rows, two overseers and three smugglers (13); the
+  strongroom's keepers in its door, three gleaners and an overseer (15), the farthest and the
+  hardest. None is a guardian, and each is back in two days.
+- **Ways in and out.** One, the cut at B7's 22,22, at the end of the grass along row 21: in from
+  22,21 onto 7,1 facing south, the door's line the game's own, "Wytgat: levels 13-14.", with harder
+  one or two under and the warning three or more; out up the cut onto B7's 22,21, facing the grass.
+- **The secret and its hint.** The salters' last gallery, walled up when the Hand came, behind the
+  store's back wall. The hint: the lamp soot on that wall drawn into one crack in long grey tongues,
+  as if the rock breathes in there.
+- **New here.** The enclave itself (#845). Nothing is drawn for it: its kinds stand in Wrackholm and
+  the Sunder.
+- **Finds.** The Brine Needle, the reward, with 300 gold in the Hand's strongbox; 200 gold and an
+  elixir in the salters'.
+- **As built** (#830, 24 October): `wytgat`, a dungeon of one level of 16 by 16, `enclave: true`,
+  its plate at 62,217 in Saltreach's `PLACES`, five squares south of its door under the Scarp. B7's
+  22,22, mountain, is drawn as stone, the cut, its one square changed; nothing stands within four
+  squares of it. Inside, 98 squares to stand on: the cutting at 4–10,3–6, held by the brazier's
+  watch at 7,4, 3 steps in, which every way on passes; west of it the gallery of the chained rows
+  down columns 1 and 2, held by its overseers at 2,10, 14 steps in, with the names scratched at 1,12
+  past them; at its foot the strongroom at 5–10,11–14, held at its door by its keepers at 5,13, 20
+  steps in, with the Hand's strongbox behind them at 9,14, 300 gold and the Brine Needle, Stiletto
+  (1d8+5 and a die of lightning, 1,150 gold: 13 a blow against the stiletto's 9.5); east of the
+  cutting, past the watch, the store at 12–14,3–7, the soot at 13,7 and, behind the walling at 13,8,
+  the salters' last gallery at 12–14,9–10, its strongbox at 13,10, 200 gold and an elixir, which no
+  walker, wader, climber or floater reaches but through the walling (91 squares reached without
+  it). The gate holds at 13: 6.66 fights to a rest, every fight won; two under, at 11, 4.61, 63.6%
+  of the floor's 7.25. Density: 100.0% within 7 steps, the furthest 4. By the curve's count it pays
+  1,104 xp a member and 921 gold, counted in no clear.
 
 ## Moved from the state
 

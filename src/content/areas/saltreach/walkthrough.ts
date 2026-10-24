@@ -54,7 +54,7 @@ import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/mapdef.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { restRefused, answerRiddle } from '../../../game/wilds.ts';
-import { buy, item, priceIn } from '../../../game/items.ts';
+import { buy, item, priceIn, hits, ELEMENT_DIE } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, resists, rest, isDown, NAME_MAX } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
 import { teach } from '../../../game/prestige.ts';
@@ -66,11 +66,11 @@ import { take as takeWork, report, offered, rankOf, rankName } from '../../../ga
 import { countItem } from '../../../game/party.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
-import { World } from '../../../game/world.ts';
+import { World, HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { buildMaps } from '../../maps.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { ACT_II } from '../../../../tools/kit/rules/ladder.ts';
-import { MAP_DEFS, GUILD_QUESTS, THE_QUEST, TABLES } from '../../index.ts';
+import { MAP_DEFS, MONSTERS, GUILD_QUESTS, THE_QUEST, TABLES } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { businessEntries, ChoiceScreen } from '../../../ui/screens.ts';
 import { optionParts, columnLabelWidth } from '../../../ui/draw.ts';
@@ -78,6 +78,7 @@ import { SIDE_W } from '../../../ui/frame.ts';
 import { measureText } from '../../../lib/engine/text.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
+import { RESPAWN } from '../../../game/keys.ts';
 
 // Other areas' chapters, taken from the quest by their ids and not from their files (#992).
 const FORELAND = THE_QUEST.chapters.find((c) => c.id === 'ashcombe')!;
@@ -1087,11 +1088,14 @@ export const walkthrough: Walkthrough = (ok) => {
  * Saltings, and west out of C7's pans at 0,16, both walked; its west edge the rim's mountain, 0,0 with
  * it, shut against A7, and its south edge and the Glasswold's ground above the Scarp shut; the
  * salt-carter's word on the fire, the shrine at the marsh's edge, a rest at the salters' halt while both
- * groups stand clear of it, the crabs and the smugglers won at 11, the Scarp's foot left bare for the
- * enclave's door and the bothy found from the fan of dead grass. The plate's old place (D6): south out of
+ * groups stand clear of it, the crabs and the smugglers won at 11 and the bothy found from the fan of dead
+ * grass. Wytgat, the enclave (#845): south from B7's grass through the cut in the Scarp's foot, its door
+ * saying its band and how it feels at 10, 11 and 13 and its sign its band; its three groups, each where
+ * every way on passes, won at 13; the Brine Needle in the strongbox; the salters' last gallery found from
+ * the soot the rock breathes in; and up the cut onto B7 again. The plate's old place (D6): south out of
  * D5's spit at 10,31, which names the Saltings, and east out of C6's shore at 31,16, both walked; the
- * spit, the shore and its south end three pieces of land, the toads won at 11 and the keeper's store
- * found from the footing's boom. Walked, waded, climbed or floated, no prize is reached but through its door.
+ * spit, the shore and its south end three pieces of land, the toads won at 11 and the keeper's store found
+ * from the footing's boom. Walked, waded, climbed or floated, no prize is reached but through its door.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
@@ -1307,10 +1311,82 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(B7.encounters!.every((g) => Math.abs(g.x - halt.x) + Math.abs(g.y - halt.y) > 2) && restRefused(w.world) === '',
     `the salters' halt at ${halt.x},${halt.y} stands clear of both groups, and a company rests there while they stand (${restRefused(w.world) || 'rest allowed'})`);
   for (const g of B7.encounters!) fight(w, `${B7.id}:${g.id}`);
-  // The Scarp's foot at 22,22 is left bare for the enclave's door: its way along row 21 is walked, and no
-  // feature or group stands within four squares of it.
-  ok(grass.has(square(out, b7, 22, 21)) && grass.has(square(out, b7, 20, 21)) && grass.has(square(out, b7, 26, 21)) && ![...B7.features!, ...B7.encounters!].some((f) => Math.abs(f.x - 22) + Math.abs(f.y - 22) <= 4),
-    'the Scarp\'s foot at 22,22, where the enclave\'s door will stand, is walked to along row 21 from the way in, and no feature or group stands within four squares of it');
+  // Wytgat, the enclave (#845): in at the cut in the Scarp's foot, B7's 22,22, one stone in the mountain
+  // with the mountain either side and under it, walked to along row 21 and into from the grass at 22,21,
+  // and nothing within four squares of it. Its door says its band and how it feels, as a border's line:
+  // the warning at 10, harder at 11 and its band alone at 13; inside, its sign gives its band.
+  {
+    const WY = MAP_DEFS.find((d) => d.id === 'wytgat')!, cut = B7.exits!.find((e) => e.to === WY.id)!, levels = w.party.members.map((m) => m.level);
+    const near4 = [...B7.features!, ...B7.encounters!, ...B7.secrets!].filter((f) => Math.abs(f.x - 22) + Math.abs(f.y - 22) <= 4);
+    ok(B7.exits!.length === 1 && cut.x === 22 && cut.y === 22 && cut.tx === WY.start.x && cut.ty === WY.start.y && cut.tf === WY.start.facing && B7.rows[22].slice(21, 24) === 'M"M' && B7.rows[23][22] === 'M'
+      && [20, 22, 26].every((x) => grass.has(square(out, b7, x, 21))) && grass.has(square(out, b7, 22, 22)) && !near4.length,
+      `the cut into Wytgat is the one stone in the Scarp's foot at B7's 22,22, the mountain either side and under it, walked to along row 21 from the way in; nothing stands within four squares of it${near4.length ? ` (${near4.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+    const door = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(B7.id, 22, 21, SOUTH);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === WY.id && w.world.state.x === WY.start.x && w.world.state.y === WY.start.y && w.world.state.facing === SOUTH ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'Wytgat: levels 13-14.', far = door(10), near = door(11), at13 = door(13);
+    ok(far === `${cut.label} | ${band} ${WARNING_IN}` && near === `${cut.label} | ${band} ${HARDER_IN}` && at13 === `${cut.label} | ${band}`,
+      `south from B7's 22,21 into Wytgat, the way's own line and then its band, with the warning at 10, harder at 11 and nothing more at 13 (${far}; ${near}; ${at13})`);
+    ok(!!WY.enclave && w.world.here.name === 'Wytgat' && w.world.here.band?.join('-') === '13-14', `inside, its sign gives its own band, over B7's 11-12 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    // Its three groups of the Hand won at its floor, rising from the watch at the brazier to the strongroom's
+    // keepers; none is a guardian, and each is back in two days.
+    w.level = 13;
+    ok(WY.encounters!.map((g) => g.id).join() === 'wy_watch,wy_chains,wy_keepers' && WY.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && g.roams === false),
+      'three groups of the Hand: the watch at the brazier, the overseers of the chained rows and the strongroom\'s keepers; no guardian');
+    // Each stands where every way on passes, so nothing past it is had without its fight: with a standing
+    // group's square and those a step from it shut, the watch holds the cutting, the overseers the gallery
+    // and the keepers the strongroom's door.
+    const free = (...standing: string[]): Set<string> => {
+      const by = WY.encounters!.filter((g) => standing.includes(g.id)), map = new GameMap(WY), seen = new Set<string>(), todo: [number, number][] = [[WY.start.x, WY.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (seen.has(`${x},${y}`) || WY.secrets!.some((s) => s.x === x && s.y === y) || map.passable(x, y, ALL) !== 'ok' || by.some((g) => Math.abs(g.x - x) + Math.abs(g.y - y) <= 1)) continue;
+        seen.add(`${x},${y}`);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return seen;
+    };
+    const atCut = free('wy_watch', 'wy_chains', 'wy_keepers'), pastWatch = free('wy_chains', 'wy_keepers'), pastRows = free('wy_keepers');
+    ok(!atCut.has('4,3') && !atCut.has('12,4') && pastWatch.has('13,7') && !pastWatch.has('2,12') && pastRows.has('3,13') && !pastRows.has('6,12') && !pastRows.has('9,14'),
+      `walked, waded, climbed or floated, the watch is met in the cutting, the overseers in the gallery and the keepers in the strongroom's door: the store and the soot lie past the watch and the strongbox past all three (${atCut.size}, ${pastWatch.size} and ${pastRows.size} squares open before each)`);
+    for (const g of WY.encounters!) fight(w, `${WY.id}:${g.id}`);
+    for (const id of ['wy_cutting', 'wy_rows', 'wy_names', 'wy_strongroom', 'wy_store']) see(w, `${WY.id}:${id}`);
+    // The strongbox and the Brine Needle in it, which no shop sells, no other chest or cairn holds and no
+    // monster drops: the stiletto with a die of lightning, on no rung of the act's ladder.
+    ok(gold(WY, 'wy_strongbox') === 300 && contents(WY, 'wy_strongbox').join() === 'brine_needle'
+      && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('brine_needle')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'wy_strongbox' && f.items?.includes('brine_needle'))))
+      && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'brine_needle')),
+      'in the strongroom, the Hand\'s strongbox: 300 gold and the Brine Needle; no shop sells it, no other chest or cairn holds it and no monster drops it');
+    const needle = item(TABLES.items, 'brine_needle'), plain = item(TABLES.items, 'stiletto'), plus = item(TABLES.items, 'stiletto+1');
+    ok(needle.element === 'lightning' && !needle.artifact && needle.price <= CURVE.wrackholm.price && hits(needle) === hits(plain) + (ELEMENT_DIE + 1) / 2 && hits(needle) > hits(plus)
+      && ACT_II.some((r) => r.level === 13 && (['thief', 'bard'] as const).every((c) => r.classes[c].includes(plus.id))) && !ACT_II.some((r) => Object.values(r.classes).some((ids) => ids.includes(needle.id))),
+      `the Brine Needle hits ${hits(needle)} against the stiletto's ${hits(plain)} and the Stiletto +1's ${hits(plus)}, the thief's and the bard's from 13, at ${needle.price} inside Wrackholm's ${CURVE.wrackholm.price}`);
+    // The secret: the soot the back wall breathes in, the search below it and the salters' last gallery
+    // behind. Walked, waded, climbed or floated, it is never reached but through the walling.
+    const [seam] = WY.secrets!, hold = new GameMap(WY), inside = new Set<string>(), todo: [number, number][] = [[WY.start.x, WY.start.y]];
+    while (todo.length) {
+      const [x, y] = todo.pop()!;
+      if (inside.has(`${x},${y}`) || (x === seam.x && y === seam.y) || hold.passable(x, y, ALL) !== 'ok') continue;
+      inside.add(`${x},${y}`);
+      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+    }
+    ok(seam.hint === 'wy_draught' && inside.size === 91 && !inside.has('13,9') && !inside.has('13,10'),
+      `the salters' gallery is shut but for its walling: none of Wytgat's ${inside.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${WY.id}:wy_draught`);
+    ok(search(w, WY.id, 13, 7, SOUTH, 'wy_seam'), 'searched below the soot, the walling gives, and the salters\' last gallery can be walked into');
+    ok(gold(WY, 'wy_seam_chest') === 200 && contents(WY, 'wy_seam_chest').join() === 'elixir', 'in the gallery, the salters\' strongbox: 200 gold and an elixir');
+    // And out: up the cut onto B7's 22,21, facing the grass, with the way's own line and no other.
+    w.world.travel(WY.id, WY.start.x, WY.start.y + 1, NORTH);
+    const up = w.world.move('forward');
+    ok(up.kind === 'moved' && w.world.zone?.id === B7.id && w.world.state.x === b7.x + 22 && w.world.state.y === b7.y + 21 && w.world.state.facing === NORTH && up.messages.join(' | ') === WY.exits![0].label,
+      `up the cut out of Wytgat onto B7's 22,21, facing the grass, the way's own line alone (${said(up)})`);
+    listen(w);
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+  }
   // The secret: the fan of dead grass pointing at the rock, the search at its point and the bothy behind the salt.
   const bothy = reach(out, b7, [B7.start.x, B7.start.y], ALL, [9, 16]);
   ok(bothy.size > 500 && !bothy.has(square(out, b7, 9, 17)), `the bothy is shut but for its salted door: none of B7's ${bothy.size} squares walked, waded, climbed or floated reaches it`);

@@ -37,7 +37,7 @@ import { item } from './items.ts';
 import type { ItemDef } from './items.ts';
 import { spell } from './spells.ts';
 import type { SpellDef, SpellTarget } from './spells.ts';
-import type { Items } from './tables.ts';
+import type { Items, Tables } from './tables.ts';
 
 /**
  * A company must rest once anyone in it is under this share of their hit points after mending, or it
@@ -101,8 +101,8 @@ export const asSeen: Sees = (s, m, trait) => {
  * cheapest spell the member can afford that lifts it; none if no one need be freed. One of the back
  * row with no spells is left to wake or break free of itself.
  */
-export function wakeWith(p: Party, c: Character, answer: BotAnswer = ANSWER): { spellId: string; target: number } | undefined {
-  const cures = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.target === 'ally' && x.sp <= c.sp).sort((a, b) => a.sp - b.sp);
+export function wakeWith(spells: Tables['spells'], p: Party, c: Character, answer: BotAnswer = ANSWER): { spellId: string; target: number } | undefined {
+  const cures = c.spells.map((id) => spell(spells, id)).filter((x) => x.context !== 'explore' && x.target === 'ally' && x.sp <= c.sp).sort((a, b) => a.sp - b.sp);
   const who = freeFirst(p, (m) => cures.find((x) => x.cure?.some((k) => frees(m, k, answer))));
   return who && { spellId: who.x.id, target: who.j };
 }
@@ -193,7 +193,7 @@ export function gateBlast(s: CombatState, c: Character, sees: Sees = asWritten, 
   const foes = aliveMonsters(s), foe = at ?? markOf(s, foes, sees, answer) ?? foes[0];
   if (foe === undefined) return undefined;
   const mult = (x: SpellDef): number => seenMult(s, s.monsters[foe], x.element);
-  return c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.dice && REACH[x.target] && foes.some((f) => seenMult(s, s.monsters[f], x.element) > 0) && (at === undefined || !wakesMany(s, x, at)))
+  return c.spells.map((id) => spell(s.tables.spells, id)).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.dice && REACH[x.target] && foes.some((f) => seenMult(s, s.monsters[f], x.element) > 0) && (at === undefined || !wakesMany(s, x, at)))
     .sort((a, b) => mult(b) - mult(a) || REACH[b.target]! - REACH[a.target]! || b.dice! * b.sides! - a.dice! * a.sides!)[0];
 }
 
@@ -206,7 +206,7 @@ export function gateBlast(s: CombatState, c: Character, sees: Sees = asWritten, 
 export function gateBurn(s: CombatState, c: Character, lie = false): { spellId: string; target: number } | undefined {
   const target = aliveMonsters(s).find((f) => { const m = s.monsters[f]; return !!s.mends?.[m.def.id] && !m.burnt && seenMult(s, m, 'fire') > 0; });
   if (target === undefined) return undefined;
-  const fire = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.element === 'fire' && REACH[x.target] && !(lie && wakesMany(s, x, target)))
+  const fire = c.spells.map((id) => spell(s.tables.spells, id)).filter((x) => x.context !== 'explore' && x.sp <= c.sp && x.element === 'fire' && REACH[x.target] && !(lie && wakesMany(s, x, target)))
     .sort((a, b) => REACH[b.target]! - REACH[a.target]! || b.dice! * b.sides! - a.dice! * a.sides!)[0];
   return fire && { spellId: fire.id, target };
 }
@@ -249,7 +249,7 @@ export const letsLie = (p: Party, opts: Readonly<BotOpts>): boolean => !!opts.sl
  */
 export function blessWith(s: CombatState, p: Party, i: number): SpellDef | undefined {
   if (s.round !== 1 || s.bless > 0 || aliveMonsters(s).length < 3) return undefined;
-  const bless = (m: Character): SpellDef | undefined => m.spells.map(spell).find((x) => x.buff === 'bless' && x.context !== 'explore' && m.sp - x.sp >= m.maxSp * REST_AT);
+  const bless = (m: Character): SpellDef | undefined => m.spells.map((id) => spell(s.tables.spells, id)).find((x) => x.buff === 'bless' && x.context !== 'explore' && m.sp - x.sp >= m.maxSp * REST_AT);
   const idle = (j: number): boolean => !canAttackFromRow(s.tables.items, p.members[j], j);
   const later = s.order.slice(s.turn + 1).some((t) => t.side === 'party' && idle(t.i) && canAct(p.members[t.i]) && p.members[t.i].level >= FIRST_PAST_ACT_I && !!bless(p.members[t.i]));
   return idle(i) || !later ? bless(p.members[i]) : undefined;
@@ -267,7 +267,7 @@ const SLEEPS: Partial<Record<ClassId, string>> = { sorcerer: 'sleep', druid: 'ro
  * bears (#847), that one, which costs a charge and no points, at a group of one as well.
  */
 export function sleepWith(s: CombatState, c: Character, sees: Sees = asWritten, from?: SpellDef): { spell: SpellDef; target: number; foes: number[] } | undefined {
-  const id = SLEEPS[c.cls], x = from ?? (id && c.spells.includes(id) ? spell(id) : undefined), k = x?.inflict;
+  const id = SLEEPS[c.cls], x = from ?? (id && c.spells.includes(id) ? spell(s.tables.spells, id) : undefined), k = x?.inflict;
   if (!x || !k || (!from && x.sp > c.sp)) return undefined;
   const groups = new Map<number, number[]>(), proof = new Set<number>();
   for (const f of aliveMonsters(s)) {
@@ -300,7 +300,7 @@ const draughts = (items: Items, p: Party, c: Character): ItemDef[] => [...c.pack
  * `wakeWith` would free first. From the member's pack or the company's bag; none else.
  */
 export function drinkFor(s: CombatState, p: Party, c: Character, sees: Sees = asWritten, answer: BotAnswer = ANSWER): PartyAction | undefined {
-  const can = (does: (x: SpellDef) => boolean): boolean => p.members.some((o) => canAct(o) && o.spells.map(spell).some((x) => x.context !== 'explore' && x.sp <= o.sp && does(x)));
+  const can = (does: (x: SpellDef) => boolean): boolean => p.members.some((o) => canAct(o) && o.spells.map((id) => spell(s.tables.spells, id)).some((x) => x.context !== 'explore' && x.sp <= o.sp && does(x)));
   const lines = mendLines(s, p, sees, answer), held = draughts(s.tables.items, p, c);
   const low = p.members.map((m, j) => ({ m, j })).filter(({ m, j }) => !isDown(m) && m.hp < lines[j]).sort((a, b) => a.m.hp - b.m.hp)[0];
   if (low && !can((x) => !!x.heal && !x.raise)) {
@@ -333,7 +333,7 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   const lie = letsLie(p, opts) && striker(s, p, i), up = lie ? foes.filter((f) => !sleeps(s.monsters[f])) : [], near = up.filter((f) => canReach(s, c, f));
   const aim = up.length ? (lead !== undefined && up.includes(lead) ? lead : up[0]) : foe;
   const blade = near.length ? (lead !== undefined && near.includes(lead) ? lead : near[0]) : lead !== undefined && canReach(s, c, lead) ? lead : foes.find((f) => canReach(s, c, f)) ?? foe;
-  const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
+  const known = c.spells.map((id) => spell(s.tables.spells, id)).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
   const lines = mendLines(s, p, sees, answer), guard = breathGuard(s, p, sees, answer);
   const low = guard !== undefined ? { m: p.members[guard], j: guard } : p.members.map((m, j) => ({ m, j })).filter(({ m, j }) => !isDown(m) && m.hp < lines[j]).sort((a, b) => a.m.hp - b.m.hp)[0];
   const mend = known.filter((x) => x.heal && !x.raise).sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
@@ -341,7 +341,7 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   const took = (a: PartyAction): PartyAction | undefined => (partyAct(s, p, rng, a) ? a : undefined);
   let a: PartyAction | undefined;
   if (low && mend && (a = took({ type: 'cast', spellId: mend.id, target: low.j }))) return a;
-  const sleeper = wakeWith(p, c, answer);
+  const sleeper = wakeWith(s.tables.spells, p, c, answer);
   if (sleeper && (a = took({ type: 'cast', ...sleeper }))) return a;
   const burn = gateBurn(s, c, lie);
   if (burn && (a = took({ type: 'cast', ...burn }))) return a;

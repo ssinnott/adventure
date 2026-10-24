@@ -48,7 +48,7 @@ type Person = Extract<Feature, { kind: 'npc' }>;
 /** A company of the premade six, the first made `cls` at `level` with `tiers`, rich and whole. */
 function company(cls: ClassId, level: number, tiers?: Tiers, seed = 7): Party {
   const rng = makeRng(seed), p = defaultParty(TABLES, rng), c = p.members[0];
-  c.cls = cls; c.xp = xpForLevel(level); levelUp(c, rng);
+  c.cls = cls; c.xp = xpForLevel(level); levelUp(TABLES.spells, c, rng);
   if (tiers) c.tiers = tiers;
   for (const m of p.members) { m.hp = m.maxHp; m.sp = m.maxSp; }
   p.gold = 20000;
@@ -189,7 +189,7 @@ const trainerAt = (map: string): Trainer => MAP_DEFS.find((d) => d.id === map)!.
 function loft(): void {
   const g = headlessGame(4), p = g.party, rng = makeRng(5);
   const knight = p.members.findIndex((m) => linesOf(m.cls).join() === 'arms'), caster = p.members.findIndex((m) => linesOf(m.cls).join() === 'magic');
-  for (const i of [knight, caster]) { p.members[i].xp = xpForLevel(13); levelUp(p.members[i], rng); }
+  for (const i of [knight, caster]) { p.members[i].xp = xpForLevel(13); levelUp(TABLES.spells, p.members[i], rng); }
   p.gold = 5000;
   const k = p.members[knight], d = p.members[caster], hitWas = attackBonus(TABLES.items, k), multWas = rankMult(d);
   const loftF = trainerAt('saltmouth');
@@ -236,7 +236,7 @@ function master(): void {
   const person: Person = { kind: 'npc', x: 1, y: 1, name: 'Old Hand', lines: ['"Steel answers steel."'], mastery: m };
   const fighters = p.members.map((c, i) => (linesOf(c.cls).includes('arms') ? i : -1)).filter((i) => i >= 0), casters = p.members.filter((c) => !linesOf(c.cls).includes('arms'));
   const [a, b] = fighters;
-  for (const i of [a, b]) { p.members[i].xp = xpForLevel(25); levelUp(p.members[i], rng); }
+  for (const i of [a, b]) { p.members[i].xp = xpForLevel(25); levelUp(TABLES.spells, p.members[i], rng); }
   p.members[a].tiers = { arms: 'expert' };
   p.gold = 6000;
   const talk = (): void => { while (g.screens.length > 1) g.pop(); g.push(g.talkScreen(person)); drive(g, ['interact']); };
@@ -273,9 +273,9 @@ function master(): void {
 /** The sheet says the tier on the WEAPON line and before SPELLS, and nothing more without one. */
 function sheet(): void {
   const p = company('bard', 25), c = p.members[0];
-  const weapon = c.equipment.weapon ? 'WEAPON ' : '', w0 = weaponLine(TABLES.items, c), s0 = spellsLine(c);
+  const weapon = c.equipment.weapon ? 'WEAPON ' : '', w0 = weaponLine(TABLES, c), s0 = spellsLine(TABLES.spells, c);
   c.tiers = { arms: 'expert', magic: 'master' };
-  const w1 = weaponLine(TABLES.items, c), s1 = spellsLine(c);
+  const w1 = weaponLine(TABLES, c), s1 = spellsLine(TABLES.spells, c);
   ok(!!weapon && !w0.includes(',') && !s0.includes('(') && w1 === `${w0}, EXPERT` && s1 === s0.replace(/^SPELLS /, 'SPELLS (MASTER) '),
     `the sheet: "${w1}" and "${s1.slice(0, 40)}...", and without a tier "${w0}"`);
 }
@@ -368,7 +368,7 @@ function talked(): void {
   const g = headlessGame(4), p = g.party, rng = makeRng(9), FAVOUR = fxFlag('test_talk_favour'), st = g.world.state;
   for (const id of Object.keys(g.maps)) g.world.ensureMapState(id).explored.fill(-1);
   const who = p.members.findIndex((m) => linesOf(m.cls).join() === 'arms');
-  p.members[who].xp = xpForLevel(25); levelUp(p.members[who], rng); p.members[who].tiers = { arms: 'expert' };
+  p.members[who].xp = xpForLevel(25); levelUp(TABLES.spells, p.members[who], rng); p.members[who].tiers = { arms: 'expert' };
   p.gold = 50000; p.flags[FAVOUR] = 1;
   const person: Person = { kind: 'npc', x: st.x, y: st.y, name: 'Old Hand', lines: ['"Steel answers steel."'], mastery: { line: 'arms', tier: 'master', done: { flag: FAVOUR }, price: TIER_PRICES.master } };
   const here = g.maps[st.mapId].features as Feature[];
@@ -394,8 +394,8 @@ function pilot(): void {
   const g = headlessGame(4), p = g.party, rng = makeRng(8);
   for (const id of Object.keys(g.maps)) g.world.ensureMapState(id).explored.fill(-1);
   const knight = p.members.findIndex((m) => linesOf(m.cls).join() === 'arms'), ready = p.members.findIndex((m, i) => i !== knight);
-  p.members[knight].xp = xpForLevel(13); levelUp(p.members[knight], rng);
-  p.members[ready].xp = xpForLevel(12); levelUp(p.members[ready], rng); p.members[ready].xp = xpForLevel(13);
+  p.members[knight].xp = xpForLevel(13); levelUp(TABLES.spells, p.members[knight], rng);
+  p.members[ready].xp = xpForLevel(12); levelUp(TABLES.spells, p.members[ready], rng); p.members[ready].xp = xpForLevel(13);
   for (const m of p.members) { m.hp = m.maxHp; m.sp = m.maxSp; }
   p.gold = 50000; p.food = 60;
   const cost = trainPrice(p.members[ready]);

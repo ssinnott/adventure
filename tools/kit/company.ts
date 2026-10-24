@@ -237,7 +237,7 @@ function bear(p: Party, ids: readonly string[]): void {
  * `rules.tiers` asks, the tiers (`tier`), and where `rules.artifacts` does, the artifacts (`bear`); then whole.
  */
 function train(p: Party, level: number, rng: RngInstance, rules: Readonly<Rules>): Party {
-  for (const c of p.members) { c.xp = xpForLevel(level); levelUp(c, rng); outfit(c, level, rules); }
+  for (const c of p.members) { c.xp = xpForLevel(level); levelUp(HARNESS.spells, c, rng); outfit(c, level, rules); }
   p.bag.push(...KIT.filter(([at]) => at <= level).flatMap(([, ids]) => ids));
   prestige(p);
   if (rules.tiers) tier(p);

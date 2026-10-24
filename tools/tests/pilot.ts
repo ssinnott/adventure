@@ -192,7 +192,7 @@ function strategist(): void {
   const lostLine = said(from, 'Lost in'), cleared = lp.aim, given = [...lp.lost];
   const elder = lg.party.members[0];
   elder.xp = xpForLevel(elder.level + 1);
-  levelUp(elder, makeRng(4));
+  levelUp(TABLES.spells, elder, makeRng(4));
   drive(lg, [null]);
   ok(set?.kind === 'quest' && since > 0 && early === undefined && still === set && lostLine === 'Lost in the Foreland: three days, and no way on.' && cleared === null && given.length === 1 && given[0] === set.text
     && lp.aim?.kind === 'quest' && lp.aim.text === set.text && lp.lost.size === 0,

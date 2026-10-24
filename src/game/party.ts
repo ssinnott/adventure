@@ -5,7 +5,7 @@
 // (`armsBonus`, `tierSteps`), the premade party and the company drawn from a seed (`randomParty`,
 // rolled by `rollStats` and named from `SUGGESTED`), a ward borne (`immuneTo`, `WARDABLE`) and what
 // the clock's passing does to what is borne (`passClock`). Pure data and pure functions; the rng is
-// passed in so tests can pin it, and the item and spell tables are handed in (#973).
+// passed in so tests can pin it, and the item and spell tables are handed in (#973, #974).
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { makeRng } from '../lib/engine/rng.ts';
 import { item, REGEN_PART } from './items.ts';
@@ -309,7 +309,7 @@ export function createCharacter(tables: Tables, name: string, race: RaceId, cls:
   c.maxSp = cd.spStat ? Math.max(0, cd.spDie + bonus(stats[cd.spStat])) : 0;
   c.hp = c.maxHp; c.sp = c.maxSp;
   for (const id of cd.kit) equip(tables.items, c, id) || c.pack.push(id);
-  if (cd.spells) c.spells = spellsFor(cd.spells, 1).map((s) => s.id);
+  if (cd.spells) c.spells = spellsFor(tables.spells, cd.spells, 1).map((s) => s.id);
   void rng;
   return c;
 }
@@ -531,7 +531,7 @@ export function rest(c: Character): void {
  * Level up as many times as the xp allows, up to `cap` (MAX_LEVEL in play; tools that look past today's
  * cap pass their own); returns how many levels were gained.
  */
-export function levelUp(c: Character, rng: RngInstance, cap = MAX_LEVEL): number {
+export function levelUp(spells: Tables['spells'], c: Character, rng: RngInstance, cap = MAX_LEVEL): number {
   let gained = 0;
   while (c.level < cap && c.xp >= xpForLevel(c.level + 1)) {
     c.level++; gained++;
@@ -545,7 +545,7 @@ export function levelUp(c: Character, rng: RngInstance, cap = MAX_LEVEL): number
       c.maxSp += sp; c.sp += sp;
       // A new spell tier every two levels to tier 5 at level 8, then 6 and 7 at 15 and 23.
       const tier = spellTierAt(c.level, PRESTIGES[c.cls].calling === 'hybrid');
-      for (const s of spellsFor(cd.spells!, tier)) if (!c.spells.includes(s.id)) c.spells.push(s.id);
+      for (const s of spellsFor(spells, cd.spells!, tier)) if (!c.spells.includes(s.id)) c.spells.push(s.id);
     }
     // One stat point in the class's leaning, every other level.
     if (c.level % 2 === 0) {

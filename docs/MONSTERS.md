@@ -2054,8 +2054,9 @@ small creatures pull request in its family's module (EXPANSION.md §8.1), after 
 families register their kinds since #919. Each stands at 32, the band's top, as the road's bosses
 stand at theirs, and is judged at the lair's floor of 30 (#845; EXPANSION.md §5.2). Its numbers are
 set by its lair's gate, off the harness's line at the cap, with a word on its row that says so
-(`offLine`; §4.1, §4.2): the seven built have theirs, and the Old Chanter waits on Saltreach's lair
-(#830). So this names the role and the shape and no hit points. Where it can, a guardian answers
+(`offLine`; §4.1, §4.2): the seven built have theirs, and the Old Chanter, drawn and defined before
+its lair, stands on the line's boss at 32 with no word until Saltreach's lair (#830) sets its
+numbers. So this names the role and the shape and no hit points. Where it can, a guardian answers
 what its lair holds, and a company that has fought it knows what it has found. The lair's other
 groups are its brief's, from kinds already drawn.
 

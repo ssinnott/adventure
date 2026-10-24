@@ -22,7 +22,6 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
 /** The issues of #848's plan that clear today's crossings, each with what it does. */
 const KEYS = {
-  L3: 'the monsters and spells tables passed in',
   L4: 'the quests and the guild quests passed in',
   L5: 'the climates, stones, endings, maps and the atlas passed in',
   L6: 'the pilot moved to src/app',
@@ -34,10 +33,6 @@ type Key = keyof typeof KEYS;
 
 /** Today's crossings, each `importer > imported` under the issue that clears it; a cycle is `cycle: ` and its files. */
 const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
-  L3: [
-    'src/game/monsters.ts > src/content/index.ts',
-    'src/game/spells.ts > src/content/index.ts',
-  ],
   L4: [
     'src/game/guilds.ts > src/content/guilds.ts',
     'src/game/guilds.ts > src/content/index.ts',
