@@ -22,7 +22,7 @@ import type { Character, Party } from '../game/party.ts';
 import { groupLabels, crown, MARKER_RISE, LABEL_TOP } from './grouplabels.ts';
 import type { LabelLine } from './grouplabels.ts';
 import { seatRow } from './row.ts';
-import type { Items } from '../game/tables.ts';
+import type { Tables } from '../game/tables.ts';
 
 type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'element' | 'item' | 'itemTarget' | 'done';
 const MONSTER_DELAY = 22;
@@ -30,13 +30,13 @@ const MONSTER_DELAY = 22;
 const BOT_DELAY = 22;
 
 /** What a member may cast in a fight: the spells they know, then each artifact's they bear (#847), whatever they know. */
-export function castable(items: Items, c: Character): { id: string; from?: string }[] {
-  const arts = borne(items, c).filter((id) => item(items, id).casts && spell(item(items, id).casts!.spell).context !== 'explore').map((id) => ({ id: item(items, id).casts!.spell, from: id }));
+export function castable(tables: Tables, c: Character): { id: string; from?: string }[] {
+  const { items } = tables, arts = borne(items, c).filter((id) => item(items, id).casts && spell(item(items, id).casts!.spell).context !== 'explore').map((id) => ({ id: item(items, id).casts!.spell, from: id }));
   return [...c.spells.filter((x) => spell(x).context !== 'explore').map((id) => ({ id })), ...arts];
 }
 /** The fight's spell list: each row's words, a spell's cost or an artifact's castings left ("Grasping Roots (3 LEFT)"), and whether it is out of reach. */
-export const castRows = (items: Items, party: Party, c: Character): { label: string; disabled: boolean }[] => castable(items, c).map((e) => {
-  const left = e.from ? chargesLeft(items, party, e.from) : 0;
+export const castRows = (tables: Tables, party: Party, c: Character): { label: string; disabled: boolean }[] => castable(tables, c).map((e) => {
+  const left = e.from ? chargesLeft(tables.items, party, e.from) : 0;
   return { label: `${spell(e.id).name} (${e.from ? `${left} LEFT` : spell(e.id).sp})`, disabled: e.from ? left < 1 : spell(e.id).sp > c.sp };
 });
 
@@ -87,7 +87,7 @@ export class CombatScreen implements Screen {
   private options(g: Game, who: number): { label: string; key: string; disabled: boolean }[] {
     const c = g.party.members[who];
     const w = weaponOf(g.tables.items, c);
-    const spells = castable(g.tables.items, g.party.members[who]);
+    const spells = castable(g.tables, g.party.members[who]);
     const items = this.usable(g, who);
     return [
       { label: `Attack (${w.name})`, key: 'attack', disabled: !canAttackFromRow(g.tables.items, c, who) },
@@ -176,7 +176,7 @@ export class CombatScreen implements Screen {
       }
       case 'spell': {
         const c = g.party.members[who];
-        const list = castable(g.tables.items, g.party.members[who]);
+        const list = castable(g.tables, g.party.members[who]);
         if (is(a, 'cancel')) { this.mode = 'menu'; return; }
         if (is(a, 'up')) this.sub = (this.sub + list.length - 1) % list.length;
         else if (is(a, 'down')) this.sub = (this.sub + 1) % list.length;
@@ -323,7 +323,7 @@ export class CombatScreen implements Screen {
         drawText(ctx, 'TARGET', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, this.targets(g, t.i).map((mi) => `${s.monsters[mi].def.name} ${s.monsters[mi].hp}/${s.monsters[mi].def.hp}`), r.x + 8, y, this.sub);
       } else if (this.mode === 'spell') {
-        const rows = castRows(g.tables.items, g.party, c);
+        const rows = castRows(g.tables, g.party, c);
         drawText(ctx, `SPELL  (SP ${c.sp})`, r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, rows.map((x) => x.label), r.x + 8, y, this.sub, { disabled: rows.map((x) => x.disabled) });
       } else if (this.mode === 'element') {
