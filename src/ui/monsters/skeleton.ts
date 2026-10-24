@@ -11,6 +11,9 @@
 // in her blue and gold; her captain wears it under a cloak of her blue gone nearly black. The
 // Drowned Temples' priests are bones in sodden robes with the drowned god's collar at the throat,
 // the jaw open on the count; their Choirmaster is the same, taller and fuller, beating it on a bell.
+// The first of the chanters, the drowned mound's, is the same again, older and more: the robe the
+// colour of the fen under a mantle of weed, a crown of reeds, a staff of black bog oak, and the jaw
+// open on one long note, not a count.
 // The temples' own drowned man is their congregation: heavier, bowed, salt-crusted, hugging the
 // stone it roped to its neck. Cairnmoor's bog body is the dead the peat has kept, leather over bone
 // with a rope still round its neck; the Cairn King is the oldest of them, crowned, on his seat.
@@ -46,6 +49,7 @@ const DRAWERS: Partial<Record<MonsterSprite, Drawer>> = {
   skeleton, bone_knight: knight, ghoul, drowned, barrow_guard: guard, barrow_captain: captain, temple_drowned: templeDrowned,
   drowned_chanter: (ctx, x, y, h, p) => priest(ctx, x, y, h, p, CHANTER),
   choirmaster: (ctx, x, y, h, p) => priest(ctx, x, y, h, p, CHOIRMASTER),
+  old_chanter: oldChanter,
   bog_body: bogBody, cairn_king: cairnKing, ash_husk: ashHusk,
 } satisfies Record<keyof typeof SPRITES, Drawer>;
 
@@ -64,6 +68,7 @@ export const SPRITES = {
   temple_drowned: { draw, span: [0.34, 0.34] },
   drowned_chanter: { draw, span: [0.27, 0.28] },
   choirmaster: { draw, span: [0.32, 0.35] },
+  old_chanter: { draw, span: [0.31, 0.35] },
   bog_body: { draw, span: [0.23, 0.25] },
   cairn_king: { draw, span: [0.32, 0.35] },
   ash_husk: { draw, span: [0.23, 0.3] },
@@ -1384,6 +1389,244 @@ function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     ctx.beginPath(); ctx.ellipse(dx2, dy2 + t * h * (i % 3 ? 0.08 : 0.02), Math.max(0.6, h * 0.008), Math.max(0.8, h * 0.014), 0, 0, Math.PI * 2); ctx.fill();
   }
   void p.light;
+}
+
+// ------------------------------------------------------------ the Old Chanter ----
+/**
+ * The Old Chanter's frame, worked out once and handed to each of its layers: its rig; u is a hundredth
+ * of h, X and Y take those units from its foot and BY rides the breath; the bone, the cloth, the weed
+ * and the reeds, the god's bronze and its gilt, and the bog oak; the hem's stir, the song and the jaw
+ * on it, and how full the robe is below the waist; the elbows and the wrists; and the hood's centre.
+ */
+interface OldChanterFrame {
+  ctx: CanvasRenderingContext2D; p: Paint; R: Rig; x: number; y: number; h: number; u: number;
+  X: (v: number) => number; Y: (v: number) => number; BY: (v: number) => number; bn: string;
+  old: string; murk: string; robe: string; soaked: string; weed: string; moss: string; reed: string;
+  bronze: string; gilt: string; oak: string; oakL: string; sw: number; sing: number; jd: number;
+  F: number; nEl: Pt; fEl: Pt; nWr: Pt; fWr: Pt; hx: number; hy: number; hr: number;
+}
+
+/**
+ * The Old Chanter: the first of the chanters, who sang the tides when the god still sang and did not
+ * count them. The temples' priests are hers and she is theirs, older and more: the same bones in the
+ * same hooded robe, the god's collar at the throat, but the robe is the colour of the fen and soaked
+ * to the hip, with reeds grown up through its hem; a mantle of weed lies over the shoulders; and the
+ * reeds stand again from a circlet of the god's bronze on the skull, the bronze gone green and nearly
+ * all its gilt gone. Larger than the Choirmaster and with no bell: the near hand holds a staff of black
+ * bog oak, its foot worn round, standing on the ground beside her, and the far hand is held up open
+ * before the breast, as the chanters hold both. The jaw is wide and holds: not their quick count but one
+ * long note, swelling and easing, still going, and rings go out over the water at her feet. In hundredths
+ * of the height up from the ground line, the staff reaches 108 and the tallest reed 112.
+ */
+function oldChanter(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
+  const R = makeRig(x, y, h, p, { tilt: -0.006, hipTilt: 0.006, turn: 0.012, near: [0.08, 0.09, 0.1], far: [-0.08, -0.09, -0.1], toe: [0.6, -0.6] }, BONE);
+  const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u;
+  const lift = p.breathe * h * 0.006, BY = (v: number) => y + v * u - lift;   // the upper body rides the breath
+  const bn = shade('#d0c6ae', p.tone), old = shade('#9c927a', p.tone), murk = mix(old, INK, 0.78);
+  const robe = p.base, soaked = shade(mix(p.dark, '#0c1814', 0.45), 1), weed = shade(mix(p.dark, '#26361a', 0.6), 1);
+  const moss = shade(mix(p.dark, '#34421e', 0.5), 1), reed = shade(mix(p.base, '#7c8048', 0.45), 1);
+  const bronze = shade(mix(VERDIGRIS, '#1c3a30', 0.5), p.tone), gilt = shade(mix(GILT, VERDIGRIS, 0.55), p.tone);
+  const oak = shade('#2a231e', p.tone), oakL = mix(oak, '#9a9484', 0.35);
+  const sw = Math.sin(p.frame / 37) * 0.9;                                     // the wet hem barely stirs
+  // The song: one long note, the jaw dropping wide and holding, then easing and swelling again.
+  const sing = Math.pow(0.5 + 0.5 * Math.sin(p.frame / 21), 0.6);
+  const jd = 0.26 + 0.3 * sing;
+  const F = 1.24;                                                               // how full the robe is below the waist
+  // The joints: the near elbow at the side and its hand up on the staff, the far forearm raised before
+  // the breast and lifting on the note.
+  const nEl = { x: X(26), y: BY(-52) }, fEl = { x: X(-19.5), y: BY(-56) };
+  const nWr = { x: X(29), y: BY(-61) }, fWr = { x: X(-16.5), y: BY(-67 - sing * 3) };
+  // The hood's centre, on the skull.
+  const hx = R.hx + 0.4 * u, hy = R.hy + 0.1 * u, hr = R.hr;
+  groundShadow(ctx, x, y + 1, h * 0.8);
+  const O: OldChanterFrame = { ctx, p, R, x, y, h, u, X, Y, BY, bn, old, murk, robe, soaked, weed, moss, reed, bronze, gilt, oak, oakL, sw, sing, jd, F, nEl, fEl, nWr, fWr, hx, hy, hr };
+  oldChanterRings(O);
+  oldChanterRobe(O);
+  oldChanterHem(O);
+  oldChanterFar(O);
+  oldChanterHood(O);
+  oldChanterMantle(O);
+  oldChanterSkull(O);
+  oldChanterCrown(O);
+  oldChanterCollar(O);
+  oldChanterHand(O);
+  oldChanterNearArm(O);
+  oldChanterStaff(O);
+  oldChanterDrips(O);
+}
+
+/** Rings on the water at her feet, spreading and gone: she sang the fen in. */
+function oldChanterRings(O: OldChanterFrame): void {
+  const { ctx, p, x, y, u } = O;
+  if (!B.override) for (let i = 0; i < 2; i++) {
+    const t = (p.frame * 0.011 + i * 0.5) % 1, rx = (16 + t * 24) * u;
+    ctx.strokeStyle = B.col(rgba(shade('#bcd6d0', p.tone), 0.2 * (1 - t))); ctx.lineWidth = Math.max(1, 0.5 * u);
+    ctx.beginPath(); ctx.ellipse(x, y + 0.6, rx, Math.max(1, rx * 0.11), 0, 0, Math.PI * 2); ctx.stroke();
+  }
+}
+
+/**
+ * The robe: one mass from the shoulders to the ground, the hem torn in teeth, and the peat-black of
+ * the soaked cloth up to the hip.
+ */
+function oldChanterRobe(O: OldChanterFrame): void {
+  const { ctx, h, u, X, Y, BY, robe, soaked, sw, F } = O;
+  const hem = (k: number): number[] => [
+    X(23.5 * F + sw), Y(-1.4), X(19.5 * F), Y(-5.8), X(15.5 * F), Y(0.4), X(10.5 * F), Y(-4.8), X(5.5 * F), Y(0.8), X(0.5 * F), Y(-4.2),
+    X(-4.5 * F), Y(0.6), X(-9.5 * F), Y(-4.6), X(-14 * F), Y(0.2), X(-18 * F), Y(-5.4), X(-23 * F + sw), Y(-1.2), X(-20 * F), Y(-20 * k),
+  ];
+  const body = [X(-13), BY(-80), X(1), BY(-82), X(15), BY(-80), X(19), BY(-71), X(16.5), Y(-46), X(20 * F), Y(-22), ...hem(1), X(-16.5), Y(-46), X(-18), BY(-71)];
+  blob(ctx, B, robe, [{ k: 'curve', pts: body, wobble: 0.03, seed: 601, sub: 2 }], { h, tex: 'folds', seed: 601, amount: 0.9, formK: 0.45, spread: 0.8, creases: [
+    { x0: X(-6), y0: Y(-44), x1: X(-10 * F), y1: Y(-4), r: 1.7 * u, a: 0.4 },
+    { x0: X(5), y0: Y(-44), x1: X(9 * F), y1: Y(-4), r: 1.7 * u, a: 0.4 },
+    { x0: X(-0.5), y0: Y(-40), x1: X(0), y1: Y(-6), r: 1.2 * u, a: 0.3 },
+  ] });
+  blob(ctx, B, soaked, [{ k: 'curve', pts: [
+    X(16), Y(-46), X(19.7 * F), Y(-22), ...hem(0.98).slice(0, -2), X(-19.6 * F), Y(-22), X(-16), Y(-46),
+    X(-11), Y(-43.5), X(-6), Y(-48.5), X(-1), Y(-44), X(4), Y(-49.5), X(9), Y(-44.5), X(13), Y(-47),
+  ], wobble: 0.05, seed: 603, sub: 2 }], { h, tex: 'folds', seed: 603, amount: 0.7, formK: 0.4, spread: 0.7, outline: false });
+}
+
+/** Reeds grown up through the soaked cloth, and weed hanging heavy off the hem. */
+function oldChanterHem(O: OldChanterFrame): void {
+  const { ctx, h, u, X, Y, weed, reed, sw, F } = O;
+  const blades: Part[] = [];
+  for (const [bx, l, lean] of [[-14, 30, -0.1], [-8, 22, 0.05], [-2, 34, -0.04], [5, 24, 0.08], [11, 31, 0.12], [16, 18, 0.2]] as const) {
+    blades.push({ k: 'tube', pts: [X(bx * F), Y(-2), X(bx * F + lean * l * 0.5), Y(-2 - l * 0.55), X(bx * F + lean * l * 1.1 + sw * 0.3), Y(-2 - l)], r0: 1.0 * u, r1: 0.3 * u, wobble: 0.08, seed: 607 });
+  }
+  blob(ctx, B, reed, blades, { h, formK: 0.4, spread: 0.7 });
+  const strands: Part[] = [];
+  for (const [wx, wy, l] of [[-17 * F, -14, 12], [-11 * F, -9, 8], [-4 * F, -7, 7], [7 * F, -9, 8], [13 * F, -11, 11], [18 * F, -16, 15]] as const) {
+    strands.push({ k: 'tube', pts: [X(wx), Y(wy), X(wx + 0.7 + sw * 0.3), Y(wy + l * 0.55), X(wx + sw * 0.8), Y(wy + l)], r0: 1.2 * u, r1: 0.45 * u, wobble: 0.14, seed: 605 });
+  }
+  blob(ctx, B, weed, strands, { h, formK: 0.4, spread: 0.7 });
+}
+
+/** A wide sleeve that hangs heavy from the elbow, from the shoulder sh to the elbow el; s is 1 near and -1 far. */
+function oldChanterSleeve(O: OldChanterFrame, sh: Pt, el: Pt, s: number, seed: number): Part {
+  const { u } = O;
+  return { k: 'curve', pts: [
+    sh.x - s * 4 * u, sh.y - 3 * u, sh.x + s * 4.5 * u, sh.y - 1.5 * u, el.x + s * 5.5 * u, el.y - 2 * u, el.x + s * 6 * u, el.y + 7 * u,
+    el.x + s * 2 * u, el.y + 12 * u, el.x - s * 3.5 * u, el.y + 9 * u, el.x - s * 5 * u, el.y + 2 * u, sh.x - s * 5 * u, sh.y + 8 * u,
+  ], wobble: 0.05, seed, sub: 2 };
+}
+
+/** The far arm's sleeve, darker, behind; its forearm and its open hand come after the collar. */
+function oldChanterFar(O: OldChanterFrame): void {
+  const { ctx, R, h, robe, fEl } = O;
+  blob(ctx, B, shade(robe, 0.8), [oldChanterSleeve(O, R.sFar, fEl, -1, 611)], { h, tex: 'folds', seed: 611, amount: 0.5, formK: 0.45, spread: 0.7 });
+}
+
+/** The hood up behind the skull, its mouth a dark hollow. */
+function oldChanterHood(O: OldChanterFrame): void {
+  const { ctx, h, robe, murk, hx, hy, hr } = O;
+  blob(ctx, B, shade(robe, 0.84), [{ k: 'curve', pts: [
+    hx - hr * 1.5, hy + hr * 1.7, hx - hr * 1.62, hy + hr * 0.2, hx - hr * 1.28, hy - hr * 1.12, hx - hr * 0.2, hy - hr * 1.62,
+    hx + hr * 0.92, hy - hr * 1.34, hx + hr * 1.56, hy - hr * 0.3, hx + hr * 1.56, hy + hr * 1.7, hx, hy + hr * 2.0,
+  ], wobble: 0.03, seed: 615, sub: 2 }], { h, tex: 'folds', seed: 615, amount: 0.5, formK: 0.5, spread: 0.75 });
+  hollow(ctx, [hx - hr * 1.12, hy + hr * 1.5, hx - hr * 1.22, hy - hr * 0.2, hx - hr * 0.6, hy - hr * 1.18, hx + hr * 0.4, hy - hr * 1.24, hx + hr * 1.12, hy - hr * 0.4, hx + hr * 1.16, hy + hr * 1.5], murk, 0.03, 617);
+}
+
+/** The mantle of weed over both shoulders, shaggy, its lower edge in hanging tufts. */
+function oldChanterMantle(O: OldChanterFrame): void {
+  const { ctx, h, X, BY, moss } = O;
+  blob(ctx, B, moss, [{ k: 'curve', pts: [
+    X(-21), BY(-58), X(-23.5), BY(-70), X(-16), BY(-81), X(-2), BY(-85), X(14), BY(-82.5), X(23.5), BY(-71), X(22), BY(-57),
+    X(17), BY(-51.5), X(12), BY(-58), X(6), BY(-53), X(0), BY(-59.5), X(-6), BY(-52.5), X(-12), BY(-58), X(-17), BY(-52),
+  ], wobble: 0.05, spiky: 0.07, seed: 619, sub: 3 }], { h, tex: 'fur', seed: 619, amount: 0.8, formK: 0.45, spread: 0.8 });
+}
+
+/** The skull in the hood, the jaw wide and the head a little back, singing, and a crack down the brow, as old bone has. */
+function oldChanterSkull(O: OldChanterFrame): void {
+  const { ctx, p, h, u, bn, old, murk, sing, jd, hx, hy, hr } = O;
+  skull(ctx, hx, hy, hr * 0.93, -0.05 - 0.03 * sing, bn, old, h, jd, murk);
+  const glint = 0.5 + 0.5 * Math.sin(p.frame / 17), cold = mix('#8ae8cc', '#eafff8', 0.3 + 0.35 * glint);
+  eye(ctx, hx - hr * 0.39, hy + 0.1 * u, Math.max(0.8, 0.85 * u), cold, false);
+  eye(ctx, hx + hr * 0.37, hy - 0.2 * u, Math.max(0.8, 0.95 * u), cold, false);
+  if (!B.override) softLine(ctx, B, [hx - 1.6 * u, hy - hr * 0.92, hx - 0.6 * u, hy - hr * 0.5, hx - 2 * u, hy - hr * 0.22], murk, Math.max(1, 0.45 * u), 0.7);
+}
+
+/**
+ * The crown: the reeds of the fen standing from a circlet of the god's bronze, the tallest in the
+ * middle, each with its brown head.
+ */
+function oldChanterCrown(O: OldChanterFrame): void {
+  const { ctx, p, h, u, bronze, gilt, hx, hy, hr } = O;
+  const cb = (ox: number): number => hy - hr * 0.5 + Math.abs(ox) * 0.18 * u;    // the circlet's line across the brow, sagging to the temples
+  const stems: Part[] = [], heads: Part[] = [];
+  ([[-6.4, 6.2, -0.58], [-4.2, 8.2, -0.4], [-1.8, 10.4, -0.17], [0.6, 12, 0.02], [3, 9.8, 0.2], [5.2, 7.8, 0.4], [6.6, 5.8, 0.62]] as const).forEach(([ox, len, lean]) => {
+    const bx = hx + ox * u, by = cb(ox), tx = bx + Math.sin(lean * 1.35) * len * u, ty = by - Math.cos(lean) * len * u;
+    stems.push({ k: 'tube', pts: [bx, by, bx + Math.sin(lean * 0.7) * len * 0.5 * u, by - Math.cos(lean * 0.7) * len * 0.5 * u, tx, ty], r0: 1.1 * u, r1: 0.5 * u });
+    heads.push({ k: 'ell', x: tx + Math.sin(lean) * 1.1 * u, y: ty - Math.cos(lean) * 1.1 * u, rx: 1.3 * u, ry: 2.8 * u, rot: lean });
+  });
+  blob(ctx, B, shade('#8c8858', p.tone), stems, { h, formK: 0.4, spread: 0.7 });
+  blob(ctx, B, shade('#4e4234', p.tone), heads, { h, formK: 0.5, spread: 0.7, tex: 'stipple', seed: 621, amount: 0.4 });
+  blob(ctx, B, bronze, [{ k: 'tube', pts: [-7.2, -3.6, 0, 3.6, 7.2].flatMap((ox) => [hx + ox * u, cb(ox)]), r0: 1.25 * u, r1: 1.25 * u }], { h, tex: 'cracks', seed: 623, amount: 0.35, formK: 0.5, spread: 0.7 });
+  blob(ctx, B, gilt, [-3.6, 0, 3.6].map((ox): Part => ({ k: 'ball', x: hx + ox * u, y: cb(ox), r: 0.85 * u })), { h, formK: 0.5, spread: 0.7 });
+}
+
+/**
+ * The god's collar across the chest, broader than the chanters' and nearly all its gilt gone, with a
+ * disc of the same bronze hanging from it on a short chain.
+ */
+function oldChanterCollar(O: OldChanterFrame): void {
+  const { ctx, p, h, u, X, BY, murk, bronze, gilt } = O;
+  const cy0 = BY(-77), cy1 = BY(-66);
+  blob(ctx, B, bronze, [{ k: 'curve', pts: [
+    X(-16), cy0, X(-7), BY(-73.5), X(1), BY(-72.5), X(9), BY(-73.5), X(17), cy0,
+    X(18), BY(-71), X(11), cy1 + 2 * u, X(1), cy1, X(-9), cy1 + 2 * u, X(-17), BY(-71),
+  ], wobble: 0.02, seed: 625, sub: 2, gloss: 0.35 }], { h, tex: 'cracks', seed: 625, amount: 0.45, formK: 0.5, spread: 0.7 });
+  for (let i = 0; i < 7; i++) {
+    const t = (i - 3) / 3, sx = X(1 + t * 11), sy2 = cy1 + Math.abs(t) * 1.8 * u - 0.6 * u;
+    blob(ctx, B, gilt, [{ k: 'curve', pts: [sx - 2.1 * u, sy2 - 1 * u, sx, sy2 - 2.6 * u, sx + 2.1 * u, sy2 - 1 * u, sx + 1.6 * u, sy2 + 1.5 * u, sx, sy2 + 2.2 * u, sx - 1.6 * u, sy2 + 1.5 * u], wobble: 0.02, seed: 627 + i, sub: 2, gloss: 0.5 }], { h, formK: 0.5, spread: 0.7 });
+  }
+  ctx.strokeStyle = B.col(shade('#2a2018', p.tone)); ctx.lineWidth = Math.max(1, 0.6 * u); ctx.lineCap = 'round';
+  ctx.beginPath(); ctx.moveTo(X(1), cy1 + 2 * u); ctx.lineTo(X(1), cy1 + 6 * u); ctx.stroke();
+  blob(ctx, B, bronze, [{ k: 'ball', x: X(1), y: cy1 + 9 * u, r: 3.2 * u, gloss: 0.5 }], { h, tex: 'cracks', seed: 635, amount: 0.3, formK: 0.55, spread: 0.7 });
+  if (!B.override) { ctx.fillStyle = B.col(murk); ctx.beginPath(); ctx.arc(X(1), cy1 + 9 * u, Math.max(0.8, 1.1 * u), 0, Math.PI * 2); ctx.fill(); }
+}
+
+/** The far forearm, up from the elbow, and the hand open before the breast, held up on the note. */
+function oldChanterHand(O: OldChanterFrame): void {
+  const { ctx, h, u, old, fEl, fWr } = O;
+  blob(ctx, B, old, [shaft(fEl.x, fEl.y + 2 * u, fWr.x, fWr.y, 1.9 * u, 613)], { h, formK: 0.5 });
+  boneHand(ctx, fWr.x, fWr.y, -1.75, u, old, -1);
+}
+
+/** The near arm, in front: its sleeve, and the forearm up from the elbow to the hand on the staff. */
+function oldChanterNearArm(O: OldChanterFrame): void {
+  const { ctx, R, h, u, bn, murk, robe, nEl, nWr } = O;
+  blob(ctx, B, robe, [oldChanterSleeve(O, R.sNear, nEl, 1, 637)], { h, tex: 'folds', seed: 637, amount: 0.5, formK: 0.45, spread: 0.7 });
+  blob(ctx, B, bn, [shaft(nEl.x, nEl.y + 2 * u, nWr.x, nWr.y + 1 * u, 2.1 * u, 639)], { h, formK: 0.5 });
+  gap(ctx, nEl.x, nEl.y + 2 * u, nWr.x, nWr.y, 2 * u, murk, 0.5);
+}
+
+/**
+ * The staff of black bog oak in the near hand, leaning a little out at its foot: the foot worn round,
+ * a burr at the head and a knot or two, the grain running down it; then the fist closed on it.
+ */
+function oldChanterStaff(O: OldChanterFrame): void {
+  const { ctx, R, h, u, X, Y, bn, oak, oakL, nWr } = O;
+  blob(ctx, B, oak, [
+    { k: 'tube', pts: [X(30.4), Y(-1.4), X(29.6), Y(-40), X(28.6), Y(-75), X(27.4), Y(-107)], r0: 2.0 * u, r1: 1.5 * u, wobble: 0.05, seed: 641, gloss: 0.3 },
+    { k: 'ball', x: X(30.4), y: Y(-2.2), r: 2.5 * u },
+    { k: 'ell', x: X(27.7), y: Y(-101), rx: 2.5 * u, ry: 5 * u, rot: 0.05 },
+    { k: 'ball', x: X(29.9), y: Y(-27), r: 2.2 * u },
+    { k: 'ball', x: X(28.6), y: Y(-84), r: 1.9 * u },
+  ], { h, tex: 'cracks', seed: 641, amount: 0.5, formK: 0.5, spread: 0.7 });
+  if (!B.override) softLine(ctx, B, [X(30.8), Y(-8), X(30.1), Y(-40), X(29.1), Y(-76), X(28), Y(-104)], oakL, Math.max(1, 0.5 * u), 0.55);
+  fist(ctx, R, nWr, -Math.PI / 2 + 0.04, 645, { hex: bn, flip: 1, k: 0.85 });
+}
+
+/** Water still running off the hem, the sleeves and the weed. */
+function oldChanterDrips(O: OldChanterFrame): void {
+  const { ctx, p, h, u, X, Y, BY, F, nEl, fEl } = O;
+  if (!B.override) for (let i = 0; i < 5; i++) {
+    const t = ((p.frame * 0.02 + i * 0.23) % 1);
+    const dx2 = [X(-13 * F), nEl.x + 2 * u, fEl.x - 2 * u, X(12 * F), X(-12)][i], dy2 = [Y(-3), nEl.y + 12 * u, fEl.y + 12 * u, Y(-3), BY(-52)][i];
+    ctx.fillStyle = B.col(rgba(shade('#cfe4e0', p.tone), 0.45 * (1 - t)));
+    ctx.beginPath(); ctx.ellipse(dx2, dy2 + t * h * (i % 3 ? 0.08 : 0.02), Math.max(0.6, h * 0.008), Math.max(0.8, h * 0.014), 0, 0, Math.PI * 2); ctx.fill();
+  }
 }
 
 // ------------------------------------------------------------------ the bog body ----
