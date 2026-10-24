@@ -8,38 +8,13 @@ import { makeRng } from '../lib/engine/rng.ts';
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { panel, menu, paragraph } from './draw.ts';
 import { INK, BRASS, TEXT, TEXT_DIM, YELLOW, GREEN } from './palette.ts';
-import { RACES, CLASSES, TRAITS, STATS, createCharacter, createParty, defaultParty, bonus, NAME_MAX } from '../game/party.ts';
-import type { Character, RaceId, ClassId, Stats, Party } from '../game/party.ts';
+import { RACES, CLASSES, TRAITS, STATS, createCharacter, createParty, defaultParty, bonus, NAME_MAX, rollStats, SUGGESTED } from '../game/party.ts';
+import type { Character, RaceId, ClassId, Stats } from '../game/party.ts';
 
 type Step = 'intro' | 'name' | 'race' | 'class' | 'stats' | 'review';
 
 const RACE_IDS = Object.keys(RACES) as RaceId[];
 const CLASS_IDS = Object.keys(CLASSES) as ClassId[];
-const SUGGESTED = ['Bram', 'Idris', 'Wren', 'Ottilie', 'Maren', 'Cassian', 'Tamsin', 'Hollis', 'Aveline', 'Rook', 'Sable', 'Piran'];
-
-function rollStats(rng: RngInstance): Stats {
-  const s = {} as Stats;
-  for (const k of STATS) s[k] = 8 + rng.int(1, 4) + rng.int(1, 4);
-  return s;
-}
-
-/** The classes that mend in a fight: a company drawn at random has one at least. */
-const MENDERS: readonly ClassId[] = ['cleric', 'paladin', 'bard', 'druid'];
-
-/**
- * A company drawn from a seed alone, as P on the title musters one (epic #713, Decided 11): six of
- * the ten classes, one of them a mender, each with a people and a name drawn and its stats rolled as
- * this screen rolls them, the hardiest in the front row. Only the seed makes it, so a seed replays.
- */
-export function randomParty(seed: number): Party {
-  const rng = makeRng(seed);
-  const draw = <T>(from: readonly T[]): T[] => { const left = [...from], out: T[] = []; while (out.length < 6) out.push(left.splice(rng.int(0, left.length - 1), 1)[0]); return out; };
-  let classes = draw(CLASS_IDS);
-  while (!classes.some((c) => MENDERS.includes(c))) classes = draw(CLASS_IDS);
-  classes.sort((a, b) => CLASSES[b].hpDie - CLASSES[a].hpDie);
-  const names = draw(SUGGESTED);
-  return createParty(classes.map((cls, i) => createCharacter(names[i], RACE_IDS[rng.int(0, RACE_IDS.length - 1)], cls, rollStats(rng), rng)));
-}
 
 export class CreateScreen implements Screen {
   private step: Step = 'intro';

@@ -9,7 +9,7 @@
 // docs/areas/wrackholm.md §4.4 is its brief.
 import type { MapDef, Choice, Words } from '../../../../game/map.ts';
 import { NICK_DOWN } from './nicks_locker.ts';
-import { EAST } from '../../../../game/types.ts';
+import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 const BURNT = { seen: 'wrackholm_f6:f6_watch' };
@@ -45,6 +45,7 @@ export const WRACKHOLM_F6: MapDef = {
   band: [13, 14],
   region: 'wrackholm',
   start: { x: 0, y: 12, facing: EAST },
+  anchors: { from_smugglers_cove2: { x: 28, y: 9, facing: SOUTH }, from_tide_ship: { x: 14, y: 29, facing: NORTH } },
   rows: [
     ',,,,,,,,,,^,,,,,,__~~~~WWWWWWWWW',
     ',,,,,,,,,,,,,,,,,,,___~~WWWWWWWW',

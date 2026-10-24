@@ -7,6 +7,7 @@
 // When the Choirmaster falls the count stops, and the choir does not come back. Band 11-12;
 // docs/areas/saltreach.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { COUNT_STOPPED } from './drowned_temples.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
@@ -18,6 +19,7 @@ export const DROWNED_TEMPLES2: MapDef = {
   band: [11, 12],
   region: 'saltreach',
   start: { x: 7, y: 14, facing: NORTH },
+  anchors: { from_delta_b6: { x: 14, y: 1, facing: SOUTH } },
   palette: { wall: '#4a5652', wallDark: '#2c3432', floor: '#323c3a', ceiling: '#121a1a', door: '#3e3a2e', wallStyle: 'smooth', ceilingStyle: 'vault', banner: '#3a4a5a' },
   rows: [
     '################',
@@ -38,8 +40,8 @@ export const DROWNED_TEMPLES2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 14, to: 'drowned_temples', tx: 8, ty: 2, tf: SOUTH, label: 'You climb the stair back up to the nave.' },
-    { x: 14, y: 1, to: 'delta_b6', tx: 8, ty: 22, tf: NORTH, label: 'You climb the wet stair to the far roof\'s ledge.' },
+    anchored({ x: 7, y: 14, to: 'drowned_temples', at: 'from_drowned_temples2', label: 'You climb the stair back up to the nave.' }),
+    anchored({ x: 14, y: 1, to: 'delta_b6', at: 'from_drowned_temples2', label: 'You climb the wet stair to the far roof\'s ledge.' }),
   ],
   features: [
     // The stair's foot: the count loud ahead, until it stops.

@@ -6,7 +6,8 @@
 // that takes the Stone; the old working, which trains to 19; the inn, the mine-surgeon's and the
 // stores. No spell hall and no guild hall (#434's 8 and 9). docs/areas/kilns.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH } from '../../../../game/types.ts';
 import { FORGE, ANVIL_STONE_PRICE } from '../items.ts';
 import { NOVICE_TOLD, NOVICE_KEPT } from '../../whitespine/public.ts';
 import { CREW_OPEN } from '../../hearth/public.ts';
@@ -52,7 +53,7 @@ export const ANVILHALL: MapDef = {
   // Either side of the great hall's doors, and either side of the gate as you come in.
   banners: [{ x: 6, y: 1 }, { x: 8, y: 1 }, { x: 6, y: 15 }, { x: 8, y: 15 }],
   exits: [
-    { x: 7, y: 15, to: 'ironfells_n3', tx: 28, ty: 9, tf: SOUTH, label: 'You go out at the iron door, and the hammering shuts behind you.' },
+    anchored({ x: 7, y: 15, to: 'ironfells_n3', at: 'from_anvilhall', label: 'You go out at the iron door, and the hammering shuts behind you.' }),
   ],
   features: [
     // The great hall at the court's head: the room, the thane and his question, and the Lantern

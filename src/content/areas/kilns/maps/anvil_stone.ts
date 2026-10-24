@@ -8,6 +8,7 @@
 // Warden falls: its groups and O5's slaglings stop coming back, and it never does. Band 17-18;
 // docs/areas/kilns.md §4.10 is its brief.
 import type { Feature, MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { SLAG } from '../../../rifts/materials.ts';
@@ -62,7 +63,7 @@ export const ANVIL_STONE: MapDef = {
   ],
   exits: [
     // The tear, back up onto O5 beside it, facing away (TEAR, kilnsheart_o5.ts).
-    { x: 7, y: 14, to: 'kilnsheart_o5', tx: 12, ty: 15, tf: NORTH, label: SLAG.leave },
+    anchored({ x: 7, y: 14, to: 'kilnsheart_o5', at: 'from_anvil_stone', label: SLAG.leave }),
   ],
   features: [
     // Under the ridges, where the lanes begin.

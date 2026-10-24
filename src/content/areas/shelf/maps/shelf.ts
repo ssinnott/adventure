@@ -3,6 +3,7 @@
 // south, the caves at Brandy Hole in the south-west cliffs and the pass east to Thornmark, open,
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
 import type { MapDef, Answer } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { SAT } from './keep.ts';
 import { THRONE_REMOVED } from '../public.ts';
@@ -44,6 +45,13 @@ export const SHELF: MapDef = {
   band: [1, 5],
   region: 'shelf',
   start: { x: 16, y: 4, facing: NORTH },
+  anchors: {
+    from_harrow: { x: 16, y: 4, facing: SOUTH },
+    from_harrow_2: { x: 18, y: 4, facing: SOUTH },
+    from_greywater1: { x: 3, y: 28, facing: EAST },
+    from_downs_f2: { x: 1, y: 29, facing: EAST },
+    from_thornmark: { x: 30, y: 9, facing: WEST },
+  },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'M,,,,,,,,,,,,,BBBBB,,,,,,,,,,,,M',
@@ -82,11 +90,11 @@ export const SHELF: MapDef = {
     // After Act II the gate turns back a company with an orcblood member, and the harbour postern lets
     // it in: no story lock (#151, call 1; #157). Every verdict of the Council's but a failed case lifts it (#764),
     // and so does any ending (#765).
-    { x: 16, y: 3, to: 'harrow', tx: 7, ty: 14, tf: NORTH, label: 'You enter Helmstow.', shut: { flag: 'q_salt_done', member: { race: 'orcblood' } }, lifts: [...ENDED, { flag: THRONE_REMOVED }], blockedText: 'A sergeant steps into the gate: "No orcblood past the gate. Regent\'s orders."' },
-    { x: 18, y: 3, to: 'harrow', tx: 13, ty: 14, tf: NORTH, label: 'You come into Helmstow by the harbour postern, behind the fish carts.' },
-    { x: 31, y: 9, to: 'thornmark', tx: 1, ty: 9, tf: EAST, label: 'The pass opens onto old forest. Thornmark.' },
-    { x: 2, y: 28, to: 'greywater1', tx: 1, ty: 1, tf: SOUTH, label: 'A cave mouth in the cliff foot, half hidden by kelp. Brandy Hole.' },
-    { x: 0, y: 29, to: 'downs_f2', tx: 30, ty: 29, tf: WEST, label: 'The Salt Road climbs off the beach. Callow Downs.' },
+    anchored({ x: 16, y: 3, to: 'harrow', at: 'start', label: 'You enter Helmstow.', shut: { flag: 'q_salt_done', member: { race: 'orcblood' } }, lifts: [...ENDED, { flag: THRONE_REMOVED }], blockedText: 'A sergeant steps into the gate: "No orcblood past the gate. Regent\'s orders."' }),
+    anchored({ x: 18, y: 3, to: 'harrow', at: 'from_shelf', label: 'You come into Helmstow by the harbour postern, behind the fish carts.' }),
+    anchored({ x: 31, y: 9, to: 'thornmark', at: 'start', label: 'The pass opens onto old forest. Thornmark.' }),
+    anchored({ x: 2, y: 28, to: 'greywater1', at: 'start', label: 'A cave mouth in the cliff foot, half hidden by kelp. Brandy Hole.' }),
+    anchored({ x: 0, y: 29, to: 'downs_f2', at: 'from_shelf', label: 'The Salt Road climbs off the beach. Callow Downs.' }),
   ],
   features: [
     { kind: 'sign', x: 16, y: 4, text: 'North: Helmstow. South and east along the road: Ellerby farm.' },

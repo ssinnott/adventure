@@ -4,7 +4,8 @@
 // none of them comes back. A secret door behind the bier, hinted in the forecourt, opens his niche.
 // docs/areas/shelf.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { WEST } from '../../../../game/types.ts';
 
 const GUARD = ['barrow_guard', 'barrow_guard'];
 
@@ -35,7 +36,7 @@ export const BERTH: MapDef = {
     '################',
   ],
   exits: [
-    { x: 14, y: 7, to: 'downs_d2', tx: 12, ty: 12, tf: EAST, label: 'You climb out past the pulled stones onto the chalk.' },
+    anchored({ x: 14, y: 7, to: 'downs_d2', at: 'from_berth', label: 'You climb out past the pulled stones onto the chalk.' }),
   ],
   features: [
     { kind: 'event', x: 13, y: 7, id: 'berth_forecourt', once: true, text: 'The forecourt. Rope-scars on the lintel, and the prints of many boots. Whoever opened this came with horses, tools and time.' },

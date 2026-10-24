@@ -9,7 +9,8 @@
 // to his ledge on G11 (HOLE). Once the Stone is lit a sentry comes up the stair. Band 25, the area's
 // own; docs/areas/meridian_camp.md §4.1 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { STAIR } from '../public.ts';
@@ -21,6 +22,7 @@ export const MERIDIAN_CAMP: MapDef = {
   band: [25, 25],
   region: 'ashfall',
   start: { x: 16, y: 1, facing: SOUTH },
+  anchors: { from_firemount_g11: { x: 29, y: 30, facing: NORTH }, from_meridian_camp2: { x: 4, y: 29, facing: NORTH } },
   // Iron flues black with soot, smooth as a stove, and nothing hung on them.
   palette: { wall: '#4c4642', wallDark: '#2c2826', floor: '#38322e', ceiling: '#121010', door: '#5c3c26', wallStyle: 'smooth', ceilingStyle: 'vault', banner: '#7a2e1a' },
   bare: true,
@@ -60,9 +62,9 @@ export const MERIDIAN_CAMP: MapDef = {
   ],
   exits: [
     // The middle mouth, up the rungs onto G11's vents' front, facing away from them (VENTS).
-    { x: 16, y: 1, to: 'firemount_g11', tx: 27, ty: 16, tf: EAST, label: 'Up the rungs, out of the heat, and into the ash beside the mouths.' },
+    anchored({ x: 16, y: 1, to: 'firemount_g11', at: 'from_meridian_camp', label: 'Up the rungs, out of the heat, and into the ash beside the mouths.' }),
     // The scavenger's rope, up his hole onto his ledge on G11 (HOLE).
-    { x: 29, y: 30, to: 'firemount_g11', tx: 31, ty: 16, tf: WEST, label: 'Up the rope, hand over hand, onto the scavenger\'s ledge.' },
+    anchored({ x: 29, y: 30, to: 'firemount_g11', at: 'from_meridian_camp_2', label: 'Up the rope, hand over hand, onto the scavenger\'s ledge.' }),
     // The stair at the far end, down to the iron corridors (STAIR).
     STAIR,
   ],

@@ -7,9 +7,10 @@
 // cure), the yard that trains to 27, the Cartographers' second hall, the Compact's house and the
 // potter's. No spell hall: tier 7 is Rime Lodge's. docs/areas/ashfall.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH } from '../../../../game/types.ts';
 import { ARMOURER, CURES } from '../items.ts';
-import { GATE, FOUNDING_RAISED } from './cindercoast_g10.ts';
+import { FOUNDING_RAISED } from './cindercoast_g10.ts';
 import { SHOVEL_STORY } from './firemount_g11.ts';
 import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING, sells } from '../../../crossings.ts';
 import { MASON_PASSAGE } from '../../whitespine/public.ts';
@@ -65,7 +66,7 @@ export const CINDERPORT: MapDef = {
   // Either side of the gate, as a company comes in off the trading ground and as it goes out.
   banners: [{ x: 7, y: 15 }, { x: 9, y: 15 }],
   exits: [
-    { x: 8, y: 15, to: 'cindercoast_g10', tx: GATE.x, ty: GATE.y + 1, tf: SOUTH, label: 'You go out by the gate onto the Riders\' grass, and the ash beyond it.' },
+    anchored({ x: 8, y: 15, to: 'cindercoast_g10', at: 'start', label: 'You go out by the gate onto the Riders\' grass, and the ash beyond it.' }),
   ],
   features: [
     // Inside the gate: the gate-ward, the Riders' rail and the Rider who sells the ride west to Akordu

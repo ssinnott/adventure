@@ -5,6 +5,7 @@
 // with a flow that set; east, past more salamanders, the tube opens into the deepest chamber, its
 // floor all fire, where the Great Salamander lies. Band 17-18; docs/areas/kilns.md §4.11 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -39,7 +40,7 @@ export const LAVA_TUBES2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'lava_tubes', tx: 7, ty: 2, tf: SOUTH, label: 'You climb the steep floor of the tube, out of the worst of the heat.' },
+    anchored({ x: 7, y: 1, to: 'lava_tubes', at: 'from_lava_tubes2', label: 'You climb the steep floor of the tube, out of the worst of the heat.' }),
   ],
   features: [
     { kind: 'event', x: 7, y: 3, id: 'lt2_in', once: true, text: 'The steep floor levels out in tubes hotter than those above. Ahead the fire shows through the floor in the dark.' },

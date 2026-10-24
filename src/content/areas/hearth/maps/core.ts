@@ -6,7 +6,8 @@
 // knees by the west wall (3,9); and inside the door, once he has fallen, whoever stands with the company
 // there. Band 32, the cap; docs/areas/hearth_isle.md §4.8 is its brief.
 import type { Answer, Choice, MapDef } from '../../../../game/map.ts';
-import { SOUTH, NORTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH } from '../../../../game/types.ts';
 import { ENDINGS, ENDED } from '../../../endings.ts';
 import { THRONE_REMOVED, THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/public.ts';
 import { COMPACT_OVER } from '../../saltreach/public.ts';
@@ -88,7 +89,7 @@ export const CORE: MapDef = {
   ],
   exits: [
     // Back through the door onto the Stair's last landing, facing away from it (§4.8): it stays open now.
-    { x: 8, y: 15, to: 'underdeep2', tx: 16, ty: 2, tf: SOUTH, label: 'Back through the door at the stair\'s foot. It stays open behind you now.' },
+    anchored({ x: 8, y: 15, to: 'underdeep2', at: 'from_core', label: 'Back through the door at the stair\'s foot. It stays open behind you now.' }),
   ],
   features: [
     // One step in from the landing square, 8,14: an exit takes the company on arrival and fires no event

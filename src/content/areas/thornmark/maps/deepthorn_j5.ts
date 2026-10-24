@@ -4,7 +4,8 @@
 // where the Hand's boat lands by night and the sea cave it ships from. The Hearth across the water.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -51,7 +52,7 @@ export const DEEPTHORN_J5: MapDef = {
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
   ],
   exits: [
-    { x: 4, y: 0, to: 'deepthorn_j4', tx: 4, ty: 30, tf: NORTH },
+    anchored({ x: 4, y: 0, to: 'deepthorn_j4', at: 'from_deepthorn_j5' }),
   ],
   features: [
     // The head, from the glade road's end: the crown, the standing stone and the rubbing.

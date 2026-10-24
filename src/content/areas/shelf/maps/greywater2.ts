@@ -2,7 +2,8 @@
 // A ring of galleries around a sealed inner shrine. The iron key is in a vestry behind a secret
 // door in the north-east; the Deacon waits in the shrine with the cult's ledger. Band 3-5.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const GREYWATER2: MapDef = {
@@ -32,7 +33,7 @@ export const GREYWATER2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 1, to: 'greywater1', tx: 14, ty: 13, tf: NORTH, label: 'You climb back up to the caves.' },
+    anchored({ x: 1, y: 1, to: 'greywater1', at: 'from_greywater2', label: 'You climb back up to the caves.' }),
   ],
   features: [
     { kind: 'event', x: 1, y: 2, id: 'gw2_in', once: true, text: 'Dressed stone under the sea cliffs, old as the Ashcombe cellar. Water runs down the walls and the floor is ankle-deep in it.' },

@@ -11,8 +11,9 @@
 // temple's door, its champions on the west shelf, the moths by night and the rats come up from below.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/hearth_isle.md §4.2 is its brief (#753).
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
-import { NORTH } from '../../../../game/types.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { LAST_CROSSING, sells } from '../../../crossings.ts';
 import { COMPACT_OVER, COMPACT_WARDENS } from '../../saltreach/public.ts';
 import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/public.ts';
@@ -38,6 +39,7 @@ export const HEARTHISLE_H6: MapDef = {
   region: 'hearth',
   // Put down by the boat on the strand at the cleft's foot.
   start: { x: 20, y: 30, facing: NORTH },
+  anchors: { from_hearthfane: { x: 18, y: 15, facing: SOUTH } },
   rows: [
     'WWWWWWWWWW~~~~~rrrrrrrrrrrrrrrrr',
     'WWWWWWWWW~~~rrrrrrrrrrrrrrrrrrrr',
@@ -74,7 +76,7 @@ export const HEARTHISLE_H6: MapDef = {
   ],
   exits: [
     // Hearthfane's door in the mound's south face (#755): in at the nave's foot, facing up it.
-    { x: 18, y: 14, to: 'hearthfane', tx: 8, ty: 14, tf: NORTH, label: 'In at the temple\'s door, out of the light.' },
+    anchored({ x: 18, y: 14, to: 'hearthfane', at: 'start', label: 'In at the temple\'s door, out of the light.' }),
   ],
   features: [
     // The strand, where the last crossing grounds at 20,30 (LAST_CROSSING): its man in the stern, who

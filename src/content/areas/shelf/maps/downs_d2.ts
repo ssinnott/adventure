@@ -4,7 +4,8 @@
 // chalk pit, and the Black Dog by night. Cut from the atlas by tools/scaffold.ts; docs/areas/shelf.md
 // §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, WEST } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 
 /** The wolves on the chalk run until the den in the chalk pit is pulled down. */
@@ -19,6 +20,7 @@ export const DOWNS_D2: MapDef = {
   band: [4, 5],
   region: 'shelf',
   start: { x: 31, y: 12, facing: WEST },
+  anchors: { from_berth: { x: 12, y: 12, facing: EAST } },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'MMM^^^^^^^^^^^^^^^^^^^^^^^^^^^^^',
@@ -54,7 +56,7 @@ export const DOWNS_D2: MapDef = {
     ',,,,,^^^^^^^^^^^^^^^^^^^^^^^^^^,',
   ],
   exits: [
-    { x: 12, y: 12, to: 'berth', tx: 14, ty: 7, tf: WEST, label: 'You duck under the lintel into the Berth.' },
+    anchored({ x: 12, y: 12, to: 'berth', at: 'start', label: 'You duck under the lintel into the Berth.' }),
   ],
   features: [
     { kind: 'sign', x: 22, y: 11, text: 'The Berth, barrow of the Queens. By order of the Crown, let them lie.' },

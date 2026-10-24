@@ -1,6 +1,7 @@
 // The party: races, classes, characters, levelling, conditions. Pure data and pure functions; the
 // rng is passed in so tests can pin it.
 import type { RngInstance } from '../lib/engine/rng.ts';
+import { makeRng } from '../lib/engine/rng.ts';
 import { item, REGEN_PART } from './items.ts';
 import { MINUTES_PER_DAY, dateAt, sunTimes } from './calendar.ts';
 import { ITEMS } from '../content/index.ts';
@@ -594,4 +595,35 @@ export function defaultParty(rng: RngInstance): Party {
     createCharacter('Cassian', 'human', 'sorcerer', { intellect: 16, luck: 11, speed: 11 }, rng),
   ];
   return createParty(m);
+}
+
+/** The names the creation screen offers, of which a company drawn at random takes six. */
+export const SUGGESTED = ['Bram', 'Idris', 'Wren', 'Ottilie', 'Maren', 'Cassian', 'Tamsin', 'Hollis', 'Aveline', 'Rook', 'Sable', 'Piran'];
+
+/** A member's stats as the creation screen rolls them: 8 and two d4 each. */
+export function rollStats(rng: RngInstance): Stats {
+  const s = {} as Stats;
+  for (const k of STATS) s[k] = 8 + rng.int(1, 4) + rng.int(1, 4);
+  return s;
+}
+
+/** The classes that mend in a fight: a company drawn at random has one at least. */
+const MENDERS: readonly ClassId[] = ['cleric', 'paladin', 'bard', 'druid'];
+/** The peoples and the classes in their tables' order, as the creation screen lists them. */
+const RACE_IDS = Object.keys(RACES) as RaceId[];
+const CLASS_IDS = Object.keys(CLASSES) as ClassId[];
+
+/**
+ * A company drawn from a seed alone, as P on the title musters one (epic #713, Decided 11): six of
+ * the ten classes, one of them a mender, each with a people and a name drawn and its stats rolled as
+ * the creation screen rolls them, the hardiest in the front row. Only the seed makes it, so a seed replays.
+ */
+export function randomParty(seed: number): Party {
+  const rng = makeRng(seed);
+  const draw = <T>(from: readonly T[]): T[] => { const left = [...from], out: T[] = []; while (out.length < 6) out.push(left.splice(rng.int(0, left.length - 1), 1)[0]); return out; };
+  let classes = draw(CLASS_IDS);
+  while (!classes.some((c) => MENDERS.includes(c))) classes = draw(CLASS_IDS);
+  classes.sort((a, b) => CLASSES[b].hpDie - CLASSES[a].hpDie);
+  const names = draw(SUGGESTED);
+  return createParty(classes.map((cls, i) => createCharacter(names[i], RACE_IDS[rng.int(0, RACE_IDS.length - 1)], cls, rollStats(rng), rng)));
 }

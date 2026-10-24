@@ -16,7 +16,7 @@ export const RIFT_CLOSED: When = [{ slain: 'c5_rift:c5_rift_warden' }, STONE_HOM
 /** The brine Rift off the causeway (#165): brinelings in its rooms, and a tide elder at the tear's heart. */
 export const C5_RIFT = rift({
   id: 'c5_rift', template: 'ring', material: 'brine', seed: 6, band: [10, 11], region: 'saltreach',
-  out: { to: 'delta_c5', tx: 20, ty: 13, tf: SOUTH },
+  out: { to: 'delta_c5', at: 'from_c5_rift' },
   table: { groups: [['brineling', 'brineling', 'brineling']], warden: ['tide_elder', 'brineling'] },
   hoard: { gold: 150, items: ['potion_heal', 'potion_heal'] },
   until: RIFT_CLOSED,
@@ -30,6 +30,7 @@ export const DELTA_C5: MapDef = {
   band: [10, 11],
   region: 'saltreach',
   start: { x: 31, y: 3, facing: WEST },
+  anchors: { from_c5_rift: { x: 20, y: 13, facing: SOUTH } },
   rows: [
     'wwwwwww=wwwwwwwwwwwwww,,,,,,,,,,',
     '~wwwwww==wwwwwwwwwwwwww,,,,,,,,^',

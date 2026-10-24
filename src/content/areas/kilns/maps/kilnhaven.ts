@@ -7,7 +7,8 @@
 // on a parcel from the smelter (#56's 35). No spell hall and no guild hall (#434's 8 and 9), and no
 // fare halved for any guild. docs/areas/kilns.md §4.14 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { WEST } from '../../../../game/types.ts';
 import { FORGE, SMITH_PRICES } from '../items.ts';
 import { TAKEN } from './anvilhall.ts';
 import { FERRY, COMPACT_SHIP, DROVE_COACH, sells } from '../../../crossings.ts';
@@ -49,7 +50,7 @@ export const KILNHAVEN: MapDef = {
   // Either side of the east gate, as a company comes in and as it goes out.
   banners: [{ x: 15, y: 6 }, { x: 15, y: 8 }],
   exits: [
-    { x: 15, y: 7, to: 'kilnmouth_l6', tx: 29, ty: 4, tf: EAST, label: 'You go out by the east gate, and the gulls stay behind the wall.' },
+    anchored({ x: 15, y: 7, to: 'kilnmouth_l6', at: 'from_kilnhaven', label: 'You go out by the east gate, and the gulls stay behind the wall.' }),
   ],
   features: [
     // The inn yard inside the gate, where the coach for Rime Lodge stands and its coachman waits, and

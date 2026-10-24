@@ -7,7 +7,8 @@
 // cage in a shaft (the vaults' HOIST lands in it). Loaders and clerks at 26, the keeper at 27. It pays outside any area's budget (EXPANSION §5.2; Wrackholm's `outside`).
 // docs/areas/dead_drop.md §4.1 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
@@ -15,8 +16,8 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * onto the vaults' first square at 25,1, facing south; their way back up lands on 25,29, facing north, the
  * slope's head.
  */
-export const VAULT_STAIR: Exit = { x: 25, y: 30, to: 'dead_drop2', tx: 25, ty: 1, tf: SOUTH,
-  label: 'Down the rails\' slope a long way, into air that is dry and still.' };
+export const VAULT_STAIR: Exit = anchored({ x: 25, y: 30, to: 'dead_drop2', at: 'start',
+  label: 'Down the rails\' slope a long way, into air that is dry and still.' });
 
 export const DEAD_DROP: MapDef = {
   id: 'dead_drop',
@@ -25,6 +26,7 @@ export const DEAD_DROP: MapDef = {
   band: [26, 27],
   region: 'wrackholm',
   start: { x: 3, y: 1, facing: SOUTH },
+  anchors: { from_dead_drop2: { x: 25, y: 29, facing: NORTH }, from_dead_drop2_2: { x: 1, y: 10, facing: EAST } },
   // The stair's foot's stone, smooth and cold and lit from nowhere, all the way down.
   palette: { wall: '#8a8c90', wallDark: '#5e6064', floor: '#6a6c70', ceiling: '#4a4c50', door: '#5a5c60', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#3a3c40' },
   bare: true,
@@ -64,7 +66,7 @@ export const DEAD_DROP: MapDef = {
   ],
   exits: [
     // The way back up, onto the stair's foot in front of its far end, facing away from it.
-    { x: 3, y: 1, to: 'dead_drop_stair', tx: 4, ty: 2, tf: SOUTH, label: 'Up the long way, and the stair\'s foot again, cold and empty.' },
+    anchored({ x: 3, y: 1, to: 'dead_drop_stair', at: 'from_dead_drop', label: 'Up the long way, and the stair\'s foot again, cold and empty.' }),
     // The rails' slope at the far end, down to the vaults (VAULT_STAIR).
     VAULT_STAIR,
   ],

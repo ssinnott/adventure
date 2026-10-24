@@ -1,7 +1,8 @@
 // The Ashcombe cellar: the first dungeon and the tutorial Rift. Four rings of corridor around
 // four rooms; a locked door and a secret door decide the order the rings open in.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const MILL: MapDef = {
@@ -11,6 +12,7 @@ export const MILL: MapDef = {
   band: [2, 4],
   region: 'shelf',
   start: { x: 1, y: 1, facing: SOUTH },
+  anchors: { from_downs_e3: { x: 1, y: 1, facing: EAST } },
   palette: { wall: '#9a7a5a', wallDark: '#6a5240', floor: '#56463a', ceiling: '#4a3424', wallStyle: 'brick', ceilingStyle: 'beams', banner: '#8a2a22' },
   rows: [
     '################',
@@ -31,7 +33,7 @@ export const MILL: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 1, to: 'downs_e3', tx: 21, ty: 4, tf: WEST, label: 'You climb back into the farmyard.' },
+    anchored({ x: 1, y: 1, to: 'downs_e3', at: 'from_mill', label: 'You climb back into the farmyard.' }),
   ],
   features: [
     { kind: 'event', x: 1, y: 2, id: 'mill_in', once: true, text: 'The cellar is far larger than the house above it. The walls are older than the farm.' },

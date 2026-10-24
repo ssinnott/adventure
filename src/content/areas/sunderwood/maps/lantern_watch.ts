@@ -7,7 +7,8 @@
 // wall. By day, once the papers are read and the wall touched, Vask waits at the gate (#204).
 // docs/areas/sunderwood.md §4.8 is its brief.
 import type { MapDef, Words } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH } from '../../../../game/types.ts';
 import { LAMP_LIT, WALL_WALKED } from '../quests.ts';
 import { NEST_WATCH } from '../../whitespine/public.ts';
 import { ENDINGS } from '../../../endings.ts';
@@ -117,8 +118,8 @@ export const LANTERN_WATCH: MapDef = {
     '#######==#######',
   ],
   exits: [
-    { x: 7, y: 15, to: 'lanternwood_l2', tx: 12, ty: 17, tf: SOUTH, label: 'You go out under the gate onto the road, the lamp at your back.' },
-    { x: 8, y: 15, to: 'lanternwood_l2', tx: 12, ty: 17, tf: SOUTH, label: 'You go out under the gate onto the road, the lamp at your back.' },
+    anchored({ x: 7, y: 15, to: 'lanternwood_l2', at: 'from_lantern_watch', label: 'You go out under the gate onto the road, the lamp at your back.' }),
+    anchored({ x: 8, y: 15, to: 'lanternwood_l2', at: 'from_lantern_watch', label: 'You go out under the gate onto the road, the lamp at your back.' }),
   ],
   features: [
     // The tower's five doors: the gallery at the top, the prior's room, the stores, the refectory

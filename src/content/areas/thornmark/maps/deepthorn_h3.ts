@@ -4,7 +4,8 @@
 // survey team's camp is past the sign, short of the first group. Cut from the atlas by
 // tools/scaffold.ts; docs/areas/thornmark.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH, WEST } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 
@@ -19,6 +20,7 @@ export const DEEPTHORN_H3: MapDef = {
   band: [8, 10],
   region: 'thornmark',
   start: { x: 8, y: 1, facing: SOUTH },
+  anchors: { from_deepthorn_i3: { x: 30, y: 23, facing: WEST } },
   rows: [
     'W~~_tttt=ttttttTTTTTTTTTTTTTTTTT',
     'W~~_tttt=ttttttttTTTTTTTTTTTTTTT',
@@ -54,8 +56,8 @@ export const DEEPTHORN_H3: MapDef = {
     'WWWWWWWWWWWW~~,,,TT~~TTTTTTTTTTT',
   ],
   exits: [
-    { x: 8, y: 0, to: 'thornmark', tx: 8, ty: 30, tf: NORTH },
-    { x: 31, y: 23, to: 'deepthorn_i3', tx: 1, ty: 23, tf: EAST },
+    anchored({ x: 8, y: 0, to: 'thornmark', at: 'from_deepthorn_h3' }),
+    anchored({ x: 31, y: 23, to: 'deepthorn_i3', at: 'start' }),
   ],
   features: [
     // The way in, in the order the road meets it.

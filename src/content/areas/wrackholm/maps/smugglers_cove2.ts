@@ -4,6 +4,7 @@
 // the west wall, where the tide-mark stops short of the roof, lets out on the isle's shore: a way
 // out and not in. Band 12-14; docs/areas/wrackholm.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -37,8 +38,8 @@ export const SMUGGLERS_COVE2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 1, to: 'smugglers_cove', tx: 4, ty: 3, tf: SOUTH, label: 'You climb the ledge back up to the crews\' cave.' },
-    { x: 1, y: 14, to: 'wrackholm_f6', tx: 28, ty: 9, tf: SOUTH, label: 'You wade out of the dark onto the isle\'s east shore.' },
+    anchored({ x: 1, y: 1, to: 'smugglers_cove', at: 'from_smugglers_cove2', label: 'You climb the ledge back up to the crews\' cave.' }),
+    anchored({ x: 1, y: 14, to: 'wrackholm_f6', at: 'from_smugglers_cove2', label: 'You wade out of the dark onto the isle\'s east shore.' }),
   ],
   features: [
     { kind: 'event', x: 1, y: 2, id: 'kh2_in', once: true, text: 'The sea cave. The tide breathes in and out of it. Something in the dark at the back breathes with it, slower, and bigger.' },

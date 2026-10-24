@@ -6,7 +6,8 @@
 // bird keeps what shines. Band 30-32, the cap's, out of the Glasswold's figures; docs/areas/glasswold.md
 // §12.5 is its brief (#833).
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST } from '../../../../game/types.ts';
 
 export const KUSHDAG: MapDef = {
   id: 'kushdag',
@@ -36,7 +37,7 @@ export const KUSHDAG: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 3, to: 'wold_d7', tx: 18, ty: 24, tf: WEST, label: 'Back along the shelf and out of the Scarp\'s face, onto the lip and the grass.' },
+    anchored({ x: 1, y: 3, to: 'wold_d7', at: 'from_kushdag', label: 'Back along the shelf and out of the Scarp\'s face, onto the lip and the grass.' }),
   ],
   features: [
     // The shelf from the door, east along the face and down it: the wind, the foals' bones and a feather.

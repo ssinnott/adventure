@@ -24,7 +24,7 @@ import { frontier, suspects, explore } from '../../src/game/pilot/explore.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
 import { ChoiceScreen, InteriorScreen } from '../../src/ui/screens.ts';
-import { randomParty } from '../../src/ui/create.ts';
+import { randomParty } from '../../src/game/party.ts';
 import { CLASSES, RACES, companyLevel } from '../../src/game/party.ts';
 import type { RaceId } from '../../src/game/party.ts';
 import { ok, headlessGame, drive } from './lib.ts';

@@ -12,6 +12,7 @@
 // her press or to Tallis (#183).
 // docs/areas/saltreach.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { FERRY, sells } from '../../../crossings.ts';
 import { ENDINGS } from '../../../endings.ts';
@@ -47,9 +48,9 @@ export const SALTMOUTH: MapDef = {
     '#########WWWWWW#',
   ],
   exits: [
-    { x: 7, y: 0, to: 'saltings_c6', tx: 26, ty: 18, tf: NORTH, label: 'You leave Saltmouth by the land gate.' },
-    { x: 8, y: 0, to: 'saltings_c6', tx: 26, ty: 18, tf: NORTH, label: 'You leave Saltmouth by the land gate.' },
-    { x: 14, y: 3, to: 'saltings_c6', tx: 28, ty: 18, tf: NORTH, label: 'Down through the Keel\'s cellar, a barred door and a dark passage, and out onto the sand under the sea wall.' },
+    anchored({ x: 7, y: 0, to: 'saltings_c6', at: 'from_saltmouth', label: 'You leave Saltmouth by the land gate.' }),
+    anchored({ x: 8, y: 0, to: 'saltings_c6', at: 'from_saltmouth', label: 'You leave Saltmouth by the land gate.' }),
+    anchored({ x: 14, y: 3, to: 'saltings_c6', at: 'from_saltmouth_2', label: 'Down through the Keel\'s cellar, a barred door and a dark passage, and out onto the sand under the sea wall.' }),
   ],
   features: [
     { kind: 'inn', x: 4, y: 4, name: 'The Tide Table', price: 25, interior: 'saltmouth_inn' },

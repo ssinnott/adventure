@@ -8,6 +8,7 @@
 // four squares of sand on the west. The Kilns' bounds bring back K6, L7, P4, P5 and P6.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -19,6 +20,7 @@ export const KILNMOUTH_K6: MapDef = {
   band: [16, 18],
   region: 'kilns',
   start: { x: 31, y: 19, facing: WEST },
+  anchors: { from_seestollen: { x: 20, y: 17, facing: SOUTH } },
   rows: [
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
@@ -56,7 +58,7 @@ export const KILNMOUTH_K6: MapDef = {
   // The Seestollen, the enclave (#845): the grate in the slipway's dressed stone at 20,16, walked onto
   // from the slipway at 19,16 or the grass at 20,17.
   exits: [
-    { x: 20, y: 16, to: 'seestollen', tx: 7, ty: 1, tf: SOUTH, label: 'You lift the grate in the slipway and go down the rails into the rock. The sea booms somewhere under you.' },
+    anchored({ x: 20, y: 16, to: 'seestollen', at: 'start', label: 'You lift the grate in the slipway and go down the rails into the rock. The sea booms somewhere under you.' }),
   ],
   features: [
     // In from Kilnhaven's wall by the east edge, and the flat of the bay's south shore.

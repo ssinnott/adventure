@@ -2,7 +2,7 @@
 // a kill pays.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, SPELLS, MAP_DEFS } from '../../src/content/index.ts';
-import { defaultParty, createCharacter, CLASSES, xpForLevel, levelUp, equip, armorClass, canTrain, canTrainAt, spellTierAt, trainPrice, killPay, MAX_LEVEL, useItem, addCondition, hasCondition } from '../../src/game/party.ts';
+import { defaultParty, createCharacter, CLASSES, xpForLevel, levelUp, equip, armorClass, canTrain, canTrainAt, spellTierAt, trainPrice, killPay, MAX_LEVEL, useItem, addCondition, hasCondition, randomParty, STATS } from '../../src/game/party.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, victoryLine } from '../../src/game/combat.ts';
@@ -19,6 +19,15 @@ export function party(): void {
   ok(p.members[5].spells.includes('spark') && p.members[5].spells.includes('light'), 'the sorcerer knows the tier-1 spells');
   ok(p.members[5].equipment.weapon === 'sling' && p.members[5].pack.includes('dagger'), 'the sorcerer starts with a sling in hand and the dagger packed');
   ok(!p.members[5].spells.includes('sleep'), 'but not tier 2');
+  // The company drawn from a seed alone (#979), pinned as the creation screen's module drew it.
+  const drawn = randomParty(77).members.map((m) => `${m.name} ${m.race} ${m.cls} ${m.hp} ${STATS.map((k) => m.stats[k]).join('/')}`).join(', ');
+  ok(drawn === 'Sable elf knight 13 11/13/11/14/13/10/10, Aveline human monk 11 15/13/12/13/13/14/11, Bram dwarf paladin 12 14/13/13/17/12/14/12, Wren gnome thief 9 12/12/13/14/15/14/15, Piran gnome druid 8 11/11/11/12/11/13/14, Tamsin tidefolk sorcerer 8 14/12/15/16/13/12/10',
+    `a seed draws the company it always drew, its names, peoples, classes, hit points and stats (77: ${drawn})`);
+  // The mender rule: 191's first six have no mender and 25901's first twelve none, so each draws again;
+  // 5, 11, 20 and 38 each have one mender alone, a paladin, a druid, a cleric and a bard.
+  const mended = [191, 25901, 5, 11, 20, 38].map((n) => randomParty(n).members.map((m) => m.cls).join(' ')).join(', ');
+  ok(mended === 'knight monk ranger paladin cleric thief, knight monk ranger bard thief sorcerer, barbarian knight monk paladin thief sorcerer, barbarian monk ranger thief druid sorcerer, knight monk ranger cleric thief sorcerer, barbarian knight monk ranger bard thief',
+    `a company with no mender is drawn again until it has one, and each of the four menders counts (${mended})`);
   ok(xpForLevel(2) > 0 && xpForLevel(3) > xpForLevel(2), 'xp thresholds rise');
   const s = p.members[5];
   s.xp = xpForLevel(2);
