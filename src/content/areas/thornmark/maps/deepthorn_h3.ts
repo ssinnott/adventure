@@ -1,4 +1,4 @@
-// The Deepthorn, box H3: its edge, the way in. Country, band 8-10: the elves' road south out of the
+// The Deepthorn, box H3: its edge and the way in. Country, band 8-10: the elves' road south out of the
 // Grove's hollow under the light woods along the Wyke, the Dowrdu in at the east edge and out at the
 // south, its old ford where the road crosses, and east of it the first of the deep's oaks. The
 // survey team's camp is past the sign, short of the first group. Cut from the atlas by
