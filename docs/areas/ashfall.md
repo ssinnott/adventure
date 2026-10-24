@@ -3333,13 +3333,14 @@ Decided by the builder for #836, each the owner's to overturn:
     armour, pace, breath and fire kept, it is won 59% at 30 and 81% at 32 at the gate's 100 seeds
     and 60% and 83% over 400, where the precedents stand (the Stair's Catcher 57% and 80%, the
     Steiger 56% and 81%, Old Nick 57% and 81%). Its breath is the most of its fight: without it the
-    set row is won 96% at 30 and 100% at 32, in 8 and 7 rounds at the median. Few of its fights run
-    to the cap: of the gate's 100 at 30, 24 are lost and 17 broken off, and let run the company wins
-    61%; at 32, 10 are lost and 9 broken off, and let run it wins 82%. Of the rows searched, those
-    inside both aims at the gate's seeds fall out over 400 or run most of their fights to the cap
-    (2,400 hit points, attack 24 and 18d8+20: 64% and 93% at the gate and 65% and 91% over 400, with
-    61.5% of the harness's single fights at 30 broken off). Off the line, its row carries its own
-    `offLine` word (#897); it keeps the boss line's 20,373 xp at 32.
+    set row is won 96% at 30 and 100% at 32, in 8 and 7 rounds at the median. Its fights not won are
+    lost more often than broken off at the cap: of the gate's 100 at 30, 24 are lost and 17 broken
+    off, and let run the company wins 61%; at 32, 10 are lost and 9 broken off, and let run it wins
+    82%. Of the rows searched, those inside both aims at the gate's seeds fall out over 400 or run
+    most of their fights to the cap (2,400 hit points, attack 24 and 18d8+20: 64% and 93% at the
+    gate and 65% and 91% over 400, with 61.5% of the harness's single fights at 30 broken off). Off
+    the line, its row carries its own `offLine` word (#897); it keeps the boss line's 20,373 xp at
+    32.
 24. **Grim's Axe lies alone on the warlord's bier,** past the Grave Drake, with no gold beside it,
     as Holdfast lies alone on the ship's master: buried with him, as Petroc's rumour says. One in
     the world and sold nowhere; the walkthrough asserts that no other chest, cairn, statue or shop
