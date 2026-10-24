@@ -4,6 +4,7 @@
 // between rests, more past level 10 as its power grows but never fifteen, where a company must rest
 // once it has lost someone, once anyone is still under a quarter of their hit points after mending,
 // or once it is under a quarter of its spell points. No fight runs past fifteen rounds.
+//
 //   node tools/harness.ts                              each role's standard encounter, at every level made
 //   node tools/harness.ts --roles soldier,brute --levels 2,6,10 --seeds 400
 //   node tools/harness.ts --under 2                    the company two levels under the monsters

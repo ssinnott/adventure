@@ -27,7 +27,7 @@ export function lanes(): void {
     ['src/ui/paint/brush.ts', 'systems'], ['src/ui/monsters/kit/common.ts', 'systems'], ['src/ui/interiors/kit/trades/temple.ts', 'systems'],
     ['tools/lanes.ts', 'quality'], ['tools/tests/gate.ts', 'quality'], ['.github/workflows/checks.yml', 'quality'], ['.github/labels.json', 'quality'], ['src/content/shipped.json', 'quality'],
     ['package.json', 'quality'], ['tsconfig.json', 'quality'], ['types/globals.d.ts', 'quality'],
-    ['docs/SLICE.md', 'design'], ['docs/ISSUES.md', 'design'], ['README.md', 'design'], ['CLAUDE.md', 'design'],
+    ['docs/SYSTEMS.md', 'design'], ['docs/ISSUES.md', 'design'], ['README.md', 'design'], ['CLAUDE.md', 'design'],
     ['src/lib/engine/text.ts', 'none'], ['scripts/new.sh', 'none'],
   ];
   const wrong = cases.filter(([f, want]) => at(f) !== want).map(([f, want]) => `${f} is ${at(f)}, not ${want}`);
@@ -54,7 +54,7 @@ export function lanes(): void {
   ok(LANES.every((l) => named.includes(labelOf(l))) && held.length === LANES.length, `.github/labels.json holds the ${LANES.length} lane labels the table names, and no other (${held.join(', ')})`);
 
   // The report. A pull request that touches quality, design and two areas.
-  const files = ['tools/lanes.ts', 'docs/SLICE.md', 'src/content/areas/shelf/index.ts', 'src/content/areas/shelf/items.ts', 'docs/areas/ashfall.md'];
+  const files = ['tools/lanes.ts', 'docs/SYSTEMS.md', 'src/content/areas/shelf/index.ts', 'src/content/areas/shelf/items.ts', 'docs/areas/ashfall.md'];
   const said = (labels: string[] | null, ...lines: string[]): boolean => lines.every((l) => report(files, labels).includes(l));
   const lacks = (labels: string[] | null, ...lines: string[]): boolean => lines.every((l) => !report(files, labels).includes(l));
   ok(said(['lane: quality', 'lane: design', 'lane: area', 'approved'], 'The labels and the files agree.') && lacks(['lane: quality', 'lane: design', 'lane: area'], 'is missing', 'no file falls'),

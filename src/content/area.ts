@@ -1,5 +1,7 @@
 // The shape of an area: one step of the road of levels, with everything that is its own. Each lives
-// in src/content/areas/<area>/ and is listed once, in road order, in src/content/index.ts.
+// in src/content/areas/<area>/ and is listed once, in road order, in src/content/index.ts. `Area` is
+// the shape every area fills in, `Novelty` what it claims is new (held by tools/tests/pillars.ts) and
+// `Walkthrough` its end-to-end test.
 import type { MapDef, Terrain, Feature, Door, EncounterDef } from '../game/mapdef.ts';
 import type { MonsterDef } from '../game/monsters.ts';
 import type { Condition } from '../game/party.ts';

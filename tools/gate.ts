@@ -1,5 +1,6 @@
 // The level gates, measured: how often a company of a given level wins an area's fights, so a map's
 // band can be held against what its monsters actually do (docs/EXPANSION.md §2.2, §5.2).
+//
 //   node tools/gate.ts                                 every map with monsters, levels 1-8, 10, 12 and 14
 //   node tools/gate.ts --maps thornmark,grove2 --levels 2,3,4,5 --seeds 200
 //   node tools/gate.ts --road thornmark:tm_wolves1,tm_brigands2,tm_hounds,tm_zealots

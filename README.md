@@ -6,8 +6,12 @@ dependencies, and nothing compiled to disk during development.
 
 - [docs/DESIGN.md](docs/DESIGN.md) — the high-level design: pillars, world, party, combat, the main
   plot and three subplots, scope tiers and technical notes.
-- [docs/SLICE.md](docs/SLICE.md) — what the vertical slice (M0) contains, the Thornmark extension
-  that takes the party to level 10, and how the code is laid out.
+- [docs/SYSTEMS.md](docs/SYSTEMS.md) — how the game is put together: the layers and the folders,
+  the outdoors as one map, the calendar and the weather, the art kits and what is stubbed.
+- [docs/CODEMAP.md](docs/CODEMAP.md) — a row to each file and its header's first paragraph, made
+  by `node tools/codemap.ts`: a pull request edits the header of a file it adds or changes.
+- [docs/archive/](docs/archive/) — docs cut and kept whole as history: the slice's doc (#1023),
+  `docs/archive/SLICE-history.md`, with its Checks, its tools' usage and its hand-written code map.
 - [docs/STORY.md](docs/STORY.md) — the main quest told as a story, the company's own chronicle of
   it: how the five acts of DESIGN.md §9 should feel.
 - [docs/MONSTERS.md](docs/MONSTERS.md) — what the company fights down the road, area by area: the
@@ -52,7 +56,7 @@ from the Foreland to the Heart, and what levels 11 to 32 need (#18) is built. v1
   weapons whose blows carry lightning or fire, and four things that raise speed, accuracy, might or
   personality by 3 while borne; and in Saltmouth Pender's set of picks and the Map Room's chart;
 - the finishing touches (#54), line of sight among them: from lower ground a hill hides what lies
-  behind it, a group included; woods hide nothing (docs/SLICE.md);
+  behind it, a group included; woods hide nothing (docs/SYSTEMS.md);
 - the pilot (docs/PILOT.md), which plays for watching. It finishes The Quiet Farm, the Foreland's
   chapter, from a new game on most seeds and companies. It goes on into Thornmark's, where the fair
   pilot does not finish and the omniscient one fails too; the ten chapters after are not reached.
@@ -109,7 +113,7 @@ nothing; any key, or a tap, brings the title back.
 The outdoors is one map, laid out square for square as the world map charts it: the Foreland and
 Thornmark are zones of it, walked between without a seam. Where nothing is built yet the world ends:
 it is drawn as the world map paints it, the sea running on and the rim's mountains standing, and no
-company crosses it (see docs/SLICE.md, "The outdoors as one map").
+company crosses it (see docs/SYSTEMS.md, "The outdoors as one map").
 
 ## Deploying
 

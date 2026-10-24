@@ -728,7 +728,7 @@ at 13,6 (`berth_hint`); and the crabber's store's (downs_e4 10,2) the crab shell
 stack's foot at 9,2 (`e4_shells`); and the ledge in Hag Hole (hag_hole 3,3) the lamp smoke over the
 pool at 3,4 (`hh_smoke`).
 
-In more detail, as SLICE.md had it before the area docs:
+In more detail, as the slice's doc (docs/archive/SLICE-history.md) had it before the area docs:
 
 - **Helmstow** (town, 16×16): inn (rest, rations), temple (cure and raise, priced by level), shop
   (buy and sell), Lantern Guildhall (join, then buy tier-2 spells), Warden Drillyard (train a level
@@ -746,7 +746,7 @@ In more detail, as SLICE.md had it before the area docs:
   (the stone said at 20,4), and Gytha, its Lantern, sits at its foot (21,4): she gives a new company
   the lesson (`q_lodestone`), and her words change once Sylvane has spoken (`q_grove`) and again
   once she has the chisel (`q_grove_done`). The stone is its words and is not drawn, as the Grove
-  Stone is. It and Thornmark are played as one outdoors ([SLICE.md](../SLICE.md), "The outdoors as
+  Stone is. It and Thornmark are played as one outdoors ([SLICE-history.md](../../archive/SLICE-history.md), "The outdoors as
   one map").
 - **Ashcombe Cellar** (dungeon, 16×16, band 2–4), under the farmhouse in E3's north-east corner
   (#87): four rings, an iron key, a locked door, a secret door, the dead Lantern and her survey
