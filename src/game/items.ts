@@ -3,7 +3,11 @@
 // `bonus`; armour adds `ac`. A +N item's plus is counted in its `bonus` or `ac` already; a weapon's
 // adds to to-hit too (`attackBonus`). Past a plus, an item may raise a stat while it is borne
 // (`statOf`) and a weapon's blows may carry an element (an added die, `ELEMENT_DIE`). An artifact is
-// one marked so (#847): one in the world, never sold, past the ladder's top.
+// one marked so (#847): one in the world, never sold, past the ladder's top. What a shop pays for
+// one (`sellPrice`: half, a Merchant two thirds) and says to an artifact (`REFUSED`), the bounds of
+// an artifact's power (`ARTIFACT_RAISE`, `ARTIFACT_CASTINGS`, `ARTIFACT_LEVEL`, `REGEN_PART`) and
+// the castings left until dawn (`chargesLeft`) are here; the table is content's, handed in
+// (`item(items, id)`, #973).
 import type { Feature } from './mapdef.ts';
 import type { Condition, Party, Stat } from './party.ts';
 import type { Element } from './spells.ts';

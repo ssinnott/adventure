@@ -1360,7 +1360,7 @@ the road (#497), all seven built; this doc is #485. Its systems are #432's,
 all built: the curve's rows and
 the act's gear (#535), ash, ice and pine and a group placed on ice (#536), regeneration, curse and
 calls (#537), Kiln-script and Linguist (#538), the crossings with the drove road's coach (#539) and
-the bot (#541), which docs/SLICE.md, docs/MONSTERS.md §3 and §4.4 and EXPANSION §5.2 describe.
+the bot (#541), which docs/archive/SLICE-history.md, docs/MONSTERS.md §3 and §4.4 and EXPANSION §5.2 describe.
 Figures are measured on main at `6032251` (2 October 2026) with `worldGrid`
 (`src/game/atlas.ts`), for land without shallows or rivers; "walkable" is land that is not mountain,
 peak, cliff or chasm.

@@ -1955,10 +1955,10 @@ a member of the Compact (docs/areas/ashfall.md §9).
 The systems it waited on were the rest of #432's: ash and pine underfoot (#536, built: ash, `a`, on
 O6, slow going as hills are, and pine, `p`, on M3 and O3, a ground of its own where Sunderwood drew
 its pine as forest, docs/areas/sunderwood.md §9, #200's 1; the scaffold drafts both, and
-docs/SLICE.md says what was decided); Kiln-script and Linguist (#538, built: §4.1 says how a box
+docs/archive/SLICE-history.md says what was decided); Kiln-script and Linguist (#538, built: §4.1 says how a box
 writes an inscription, and §9 what was decided); the crossings, the ferry, the ship and the coach
-(#539, built: written above, and §9 and docs/SLICE.md say what was decided); the Anvil Stone
-counting for the Hearth (#540, #168, built: §9 and docs/SLICE.md say what was decided, and the Rift
+(#539, built: written above, and §9 and docs/archive/SLICE-history.md say what was decided); the Anvil Stone
+counting for the Hearth (#540, #168, built: §9 and docs/archive/SLICE-history.md say what was decided, and the Rift
 sets its flag, #465, §4.10); and the bot (#541, built: it puts cold on what fire does not
 touch once it has seen fire do nothing, as it has since #161, and its company takes its prestiges,
 MONSTERS §4.4). Regeneration, curse and calls (#537, built) are Cairnmoor's and Rimewater's; the

@@ -1,5 +1,6 @@
 // The bot that plays the party's turns in a fight: the gate's and the harness's measure of every map
 // (tools/gate.ts, tools/harness.ts) and the game's own auto-fight (ui/combat.ts, the pilot's, #713).
+//
 // It mends the weakest when someone is under 40%, or in the row a foe that sweeps would take under
 // the most one sweep could deal them, so that none of the front row falls to one sweep and it never
 // turns on the back row, and while a foe breathes, one of the front row fallen first, since a breath

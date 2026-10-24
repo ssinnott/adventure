@@ -1158,7 +1158,7 @@ Crowness Light.
 | Cutthroat | bandit | elite, 5 | the bandit camp on the west downs, two of them beside it; two on the road by the Delta, at the foot of Kestrel Edge | *A captain's sash on a thief's coat, and a knife for every pocket.* The camp's keepers |
 
 - **Fog on the coast road.** A lampman and four wreckers on a foggy night, when thick fog leaves
-  two squares of sight (SLICE.md). The first fight where the weather is a warning and not a
+  two squares of sight (SYSTEMS.md). The first fight where the weather is a warning and not a
   nuisance: the lamp is what the company sees first.
 - **Crows over wolves** in the stubble: the back row learns it can be reached.
 - **The Berth**: guards two by two down the passage, then the captain at the bier. It is the
