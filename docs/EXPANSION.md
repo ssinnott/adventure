@@ -321,7 +321,7 @@ floor and two above (its group marked `boss: true` in its map) and leaves it out
 and day; no zone's road walks it, for a road walks its zone's own maps. No step of the quest lies in
 it (§5.8). Its door says its band and how it feels to the company, as a border does (DESIGN.md §9),
 and the pilot keeps out of one whose floor is over its company. A fixture lair at 30–32 beside
-Saltreach, a band-10 area, holds these rules before any area places one (`tools/tests/enclave.ts`):
+Saltreach, a band-10 area, holds these rules beside the areas' own lairs (`tools/tests/enclave.ts`):
 on the Stair's ground and groups, it is won 95.2% at 30, its guardian 57% at 30 and 80% at 32; it
 fights 10.71 to a rest at 30 and 8.49 at 28, 74% of the floor's day; Saltreach's clear, band, pools
 and day are as they were without it; and it holds no step.
@@ -1269,7 +1269,9 @@ Decided by the builder for #897, each the owner's to overturn:
 11. **`BEHIND` takes a group only when every alternative of its `after` waits on a later area's flag**,
     as a list is any one of them. No group has two today.
 12. **Two tables are not an area's to carry: `BUILT` and `UNPLACED` in `tools/tests/items.ts`** (#911: the
-    three artifacts owed to #830, #831 and #833) go when the lairs place them, so they have no field.
+    three artifacts then owed to #830, #831 and #833; the Telstok alone, owed to #830, since the
+    Kilns' and the Glasswold's lairs placed theirs) go when the lairs place them, so they have no
+    field.
 13. **An `unplaced` id that is no monster and no room fails by its name**, and a field `AreaChecks` has
     not stops the run by its name: the run passed both over before.
 
