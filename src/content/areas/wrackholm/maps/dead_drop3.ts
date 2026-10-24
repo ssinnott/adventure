@@ -10,6 +10,7 @@
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DEAD_DROP3: MapDef = {
   id: 'dead_drop3',
@@ -81,9 +82,9 @@ export const DEAD_DROP3: MapDef = {
   ],
   encounters: [
     // A tally clerk by the rail, counting, a loader beside it holding its crate up: the day's one group.
-    { id: 'dd3_clerk', x: 12, y: 14, monsters: ['tally_clerk', 'loader'], aware: 2, respawn: 2880, roams: false },
+    { id: 'dd3_clerk', x: 12, y: 14, monsters: ['tally_clerk', 'loader'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // The Tallymaster at its desk, drawn with it, which fights only a company that steps to the desk (16,19).
-    { id: 'dd3_tallymaster', x: 16, y: 20, monsters: ['tallymaster'], aware: 1, roams: false,
+    { id: 'dd3_tallymaster', x: 16, y: 20, monsters: ['tallymaster'], aware: 1, roams: false, boss: true,
       slainText: 'The pens stop mid-line. The six lights across its brow go out one at a time, counting down.' },
   ],
 };

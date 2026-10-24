@@ -15,17 +15,10 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { FERRY, sells } from '../../../crossings.ts';
 import { ENDINGS } from '../../../endings.ts';
+import { COMPACT_WARDENS, COMPACT_OVER } from '../public.ts';
 
 // The Heart's three endings (#765; docs/areas/hearth_isle.md §12): the halls' words after each, first of all.
 const RELIT = { flag: ENDINGS.reignite.flag }, OPENED = { flag: ENDINGS.arrive.flag }, FINISHED = { flag: ENDINGS.finish.flag };
-
-/**
- * Ruan's choice at the Keel (#635), put once the Factor's rung is paid: the orders handed to the Wardens
- * or the Compact taken over. Either way it takes no more of the Tallymaster's orders (docs/areas/
- * dead_drop.md §5); each answer sets its own flag, and only Ruan's words read them.
- */
-export const COMPACT_WARDENS = 'q_compact_wardens';
-export const COMPACT_OVER = 'q_compact_over';
 
 export const SALTMOUTH: MapDef = {
   id: 'saltmouth',

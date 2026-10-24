@@ -22,7 +22,7 @@ import { CHAPTER } from './chapter.ts';
 import { QUESTS } from './quests.ts';
 import { GUILDS } from './guilds.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
 export const AREA = {
   id: 'wrackholm' as const,
@@ -41,5 +41,5 @@ export const AREA = {
     fogText: 'Fog comes in over the heather.', thunderText: 'Thunder breaks over the gulf.' },
   interiors: [] as const,
   novel: { families: ['devilfish'], terrain: ['heather'], mechanics: [], landmarks: ['wreck'] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;

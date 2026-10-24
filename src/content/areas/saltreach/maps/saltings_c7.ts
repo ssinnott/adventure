@@ -8,6 +8,7 @@
 // tools/scaffold.ts; docs/areas/saltreach.md §4.10 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SALTINGS_C7: MapDef = {
   id: 'saltings_c7',
@@ -82,7 +83,7 @@ export const SALTINGS_C7: MapDef = {
   secrets: [{ x: 30, y: 5, hint: 'c7_trodden' }],
   encounters: [
     // Salt crabs in the middle south pan; two bull toads in the last marsh, the box's hardest.
-    { id: 'c7_crabs', x: 22, y: 10, monsters: ['salt_crab', 'salt_crab', 'salt_crab', 'salt_crab'], aware: 3, respawn: 1440 },
-    { id: 'c7_toads', x: 6, y: 9, monsters: ['bull_toad', 'bull_toad'], aware: 3, respawn: 1440 },
+    { id: 'c7_crabs', x: 22, y: 10, monsters: ['salt_crab', 'salt_crab', 'salt_crab', 'salt_crab'], aware: 3, respawn: RESPAWN.day },
+    { id: 'c7_toads', x: 6, y: 9, monsters: ['bull_toad', 'bull_toad'], aware: 3, respawn: RESPAWN.day },
   ],
 };

@@ -8,6 +8,7 @@
 // figures; docs/areas/kilns.md §12.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SEESTOLLEN: MapDef = {
   id: 'seestollen',
@@ -58,11 +59,11 @@ export const SEESTOLLEN: MapDef = {
   secrets: [{ x: 12, y: 4, hint: 'ss_dry' }],
   encounters: [
     // Four menders at the pumps, the nearest and the gentlest, at 17.
-    { id: 'ss_menders', x: 5, y: 4, monsters: ['mender', 'mender', 'mender', 'mender'], aware: 3, roams: false, respawn: 2880 },
+    { id: 'ss_menders', x: 5, y: 4, monsters: ['mender', 'mender', 'mender', 'mender'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
     // The tally-room's tallyman with a mender and its knockers, at 18.5.
-    { id: 'ss_counters', x: 7, y: 11, monsters: ['tallyman', 'mender', 'knocker', 'knocker'], aware: 3, roams: false, respawn: 2880 },
+    { id: 'ss_counters', x: 7, y: 11, monsters: ['tallyman', 'mender', 'knocker', 'knocker'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
     // Two tallymen at the drowned quay with their knockers, still counting barges: the farthest and the
     // hardest, at 20.
-    { id: 'ss_tallymen', x: 11, y: 12, monsters: ['tallyman', 'tallyman', 'knocker', 'knocker', 'knocker'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'ss_tallymen', x: 11, y: 12, monsters: ['tallyman', 'tallyman', 'knocker', 'knocker', 'knocker'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

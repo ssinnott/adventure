@@ -7,8 +7,8 @@
 // docs/areas/sunderwood.md §4.10 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/keys.ts';
-import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
+import { CRACK_SEALED } from '../../hearth/public.ts';
 
 /** The den burnt: its brood stops coming. */
 const DEN_BURNT = denBurnt('lanternwood_l4', 'l4_den');
@@ -78,8 +78,8 @@ export const LANTERNWOOD_L4: MapDef = {
     // Two deathsheads and a moth on the bank by night, the gentlest by their mean; the den's brood on the bank below its track,
     // back a day after they fall until it is burnt; and the sow beside the den, the box's group at
     // 16, alone so that three bears never stand together.
-    { id: 'l4_night', x: 18, y: 7, monsters: ['deathshead', 'sunder_hound', 'sunder_hound'], aware: 4, respawn: 1440, when: { hours: 'night' }, until: { flag: CRACK_SEALED }, leaves: true },
-    { id: 'l4_brood', x: 13, y: 19, monsters: ['glass_bear', 'glass_bear'], aware: 4, respawn: 1440, until: DEN_BURNT },
+    { id: 'l4_night', x: 18, y: 7, monsters: ['deathshead', 'sunder_hound', 'sunder_hound'], aware: 4, respawn: RESPAWN.day, when: { hours: 'night' }, until: { flag: CRACK_SEALED }, leaves: true },
+    { id: 'l4_brood', x: 13, y: 19, monsters: ['glass_bear', 'glass_bear'], aware: 4, respawn: RESPAWN.day, until: DEN_BURNT },
     { id: 'l4_sow', x: 23, y: 21, monsters: ['glass_bear', 'glass_bear'], aware: 3, roams: false },
   ],
 };

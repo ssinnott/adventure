@@ -6,6 +6,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.15 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNMOUTH_M4: MapDef = {
   id: 'kilnmouth_m4',
@@ -76,6 +77,6 @@ export const KILNMOUTH_M4: MapDef = {
   secrets: [{ x: 22, y: 13, hint: 'm4_hearth' }],
   encounters: [
     // Two rock worms under the hills by the range, where the cattle will not graze: the box's group, at 17.
-    { id: 'm4_worms', x: 5, y: 21, monsters: ['rock_worm', 'rock_worm'], aware: 3, respawn: 2880, roams: false },
+    { id: 'm4_worms', x: 5, y: 21, monsters: ['rock_worm', 'rock_worm'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

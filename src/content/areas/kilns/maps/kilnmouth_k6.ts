@@ -9,6 +9,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNMOUTH_K6: MapDef = {
   id: 'kilnmouth_k6',
@@ -86,6 +87,6 @@ export const KILNMOUTH_K6: MapDef = {
   secrets: [{ x: 17, y: 14, hint: 'k6_rails' }],
   encounters: [
     // Two rock worms under the heath, in the rings of dead heather: the box's group, at 17.
-    { id: 'k6_worms', x: 17, y: 27, monsters: ['rock_worm', 'rock_worm'], aware: 3, respawn: 2880, roams: false },
+    { id: 'k6_worms', x: 17, y: 27, monsters: ['rock_worm', 'rock_worm'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

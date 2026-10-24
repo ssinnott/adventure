@@ -58,8 +58,7 @@ import type { ItemDef } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
 import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './testmonster.ts';
-import { quickening } from '../src/content/areas/ashfall/items.ts';
-import { areaRows, beside } from './checks.ts';
+import { areaRows, gather } from './checks.ts';
 import type { Role } from './testmonster.ts';
 import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor, letsLie, asWritten, type BotAnswer } from '../src/game/bot.ts';
 import type { BotOpts } from '../src/game/bot.ts';
@@ -130,6 +129,16 @@ export function edgeOf(c: Character, round: number, rules: Readonly<Rules> = RUL
   return e;
 }
 
+/** A ladder's rows: by a level, the items a company has by then. */
+type Rungs = readonly (readonly [number, readonly string[]])[];
+/** The areas' rungs (`AreaChecks.gear`), in road order. */
+const RUNGS = areaRows((c) => c.gear).map(([at, ids]) => [Number(at), ids] as const);
+/** What a company wears (a weapon, armour or a shield), as against what it carries in its bag. */
+const worn = (id: string): boolean => (ITEMS[id]?.slot ?? 'weapon') !== 'none';
+/** The areas' rungs of one kind, worn or carried, in the order of their levels. */
+const ladder = (wear: boolean): Rungs =>
+  RUNGS.map(([at, ids]) => [at, ids.filter((id) => worn(id) === wear)] as const).filter(([, ids]) => ids.length).sort((a, b) => a[0] - b[0]);
+
 /**
  * The ladder: what a company has in its hands by a level (EXPANSION.md §5.2). Its kit, then by 3
  * the band's gear from Mottram's and the kits' weapons with a plus from the Downs' first boxes, by
@@ -143,36 +152,11 @@ export function edgeOf(c: Character, round: number, rules: Readonly<Rules> = RUL
  * 28, found on Hearth Isle and never sold, each piece a point past the armourer's. Each member takes
  * the best its class can use of the kind it already carries, which flatters the company a little
  * (the Old Lantern's Staff is one staff, and every member it is the best for takes it). The
- * harness and the gate check both dress their company from it. An area holds its own rungs in its
- * checks.ts (`AreaChecks.gear`), read beside these (`GEAR`), a level in both refused (#897): the
- * Foreland's two are there.
+ * harness and the gate check both dress their company from it. Each rung is held by an area in
+ * its checks.ts (`AreaChecks.gear`), the last on the road whose items it holds (#968); a level given
+ * on two areas is refused (`RUNGS_TWICE`). Each member dresses from it (`outfit`).
  */
-const GEAR_ROWS: Rungs = [
-  [8, ['warhammer', 'battleaxe', 'greatsword', 'crossbow', 'elfbow', 'rune_dagger', 'grove_staff', 'runed_robe', 'brigandine', 'plate', 'tower_shield']],
-  [9, ['warhammer+1', 'rune_dagger+1', 'elfbow+1', 'grove_staff+1', 'greatsword+1', 'brigandine+1', 'brigandine+2', 'runed_robe+1']],
-  [10, ['warhammer+2', 'greatsword+2', 'elfbow+2', 'rune_dagger+2', 'runed_robe+2', 'brigandine+3', 'tower_shield+1', 'eldests_bough']],
-  [11, ['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe']],
-  [13, ['morning_star+1', 'stiletto+1', 'ironshod_staff+1', 'tidefolk_robe+1', 'horn_bow+1', 'plate+1', 'long_axe+1']],
-  [14, ['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield']],
-  [16, ['flail+1', 'ironwood_bow+1', 'plate+2', 'wardens_dirk+1', 'lanterns_staff', 'great_axe+1']],
-  [17, ['forge_hammer', 'seax', 'steel_bow', 'mattock', 'banded_staff', 'dwarf_mail', 'kiln_robe', 'forge_shield']],
-  [19, ['plate+3', 'forge_hammer+1', 'mattock+1', 'steel_bow+1', 'seax+1', 'kiln_robe+1', 'banded_staff+1']],
-  [21, ['ice_axe', 'skinning_knife', 'hunters_bow', 'bear_spear', 'guides_staff', 'bearskin', 'fur_robe']],
-  [22, ['ice_axe+1', 'skinning_knife+1', 'bear_spear+1', 'guides_staff+1', 'hunters_bow+1', 'plate+4']],
-  [25, ['slag_mace', 'marlinspike', 'ashwood_bow', 'flamberge', 'battle_staff', 'drakeskin', 'cinder_robe', 'basalt_shield']],
-  [28, ['grey_blade', 'grey_axe', 'grey_knife', 'grey_bow', 'grey_staff', 'old_lanterns_staff', 'grey_mail', 'grey_robe', 'grey_shield']],
-];
-/** A ladder's rows: by a level, the items a company has by then. */
-type Rungs = readonly (readonly [number, readonly string[]])[];
-/** The areas' rungs (`AreaChecks.gear`), in road order. */
-const RUNGS = areaRows((c) => c.gear).map(([at, ids]) => [Number(at), ids] as const);
-/** What a company wears (a weapon, armour or a shield), as against what it carries in its bag. */
-const worn = (id: string): boolean => (ITEMS[id]?.slot ?? 'weapon') !== 'none';
-/** A table's rows beside the areas' rungs of the same kind, worn or carried, in the order of their levels. */
-const ladder = (rows: Rungs, wear: boolean): Rungs =>
-  [...rows, ...RUNGS.map(([at, ids]) => [at, ids.filter((id) => worn(id) === wear)] as const).filter(([, ids]) => ids.length)].sort((a, b) => a[0] - b[0]);
-/** The ladder (GEAR_ROWS beside the areas' rungs): each member dresses from it (`outfit`). */
-export const GEAR: Rungs = ladder(GEAR_ROWS, true);
+export const GEAR: Rungs = ladder(true);
 /** The ladder's top: past it, gear grows only in a what-if (`Rules.gearGrows`). */
 export const GEAR_TOP = GEAR[GEAR.length - 1][0];
 
@@ -575,13 +559,12 @@ export function measure(level: number, monsters: Encounter, seeds: number, from 
 /**
  * What the company carries beside its gear, by a level: from 25 a Quickening Draught, the stone cure
  * Cinderport's chandler sells by the ladder's step (#546), for a glassed member no one standing can
- * absolve. tools/tests/ladder.ts holds it to the band's window.
+ * absolve: what the areas' rungs carry rather than wear. tools/tests/ladder.ts holds it to the band's
+ * window.
  */
-const KIT_ROWS: Rungs = [[25, [quickening.id]]];
-/** The kit (KIT_ROWS beside what the areas' rungs carry rather than wear). */
-export const KIT: Rungs = ladder(KIT_ROWS, false);
-/** The levels whose rung is given twice, in GEAR_ROWS or KIT_ROWS and on an area or on two areas: tools/tests/ladder.ts refuses them. */
-export const RUNGS_TWICE: readonly string[] = beside(Object.fromEntries([...GEAR_ROWS, ...KIT_ROWS]), RUNGS.map(([at, ids]) => [`${at}`, ids] as const)).twice;
+export const KIT: Rungs = ladder(false);
+/** The levels whose rung is given on two areas: tools/tests/ladder.ts refuses them. */
+export const RUNGS_TWICE: readonly string[] = gather(RUNGS.map(([at, ids]) => [`${at}`, ids] as const)).twice;
 
 /**
  * Between fights, stone first (#546): each member turned to glass is lifted by Absolve where a member

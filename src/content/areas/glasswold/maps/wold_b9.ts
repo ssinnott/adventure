@@ -13,6 +13,7 @@
 // Cut from the atlas by hand (tools/scaffold.ts refuses its glass); docs/areas/glasswold.md §4.8 is its brief (#530).
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The flag the watch's words set, said once: The Warning's last step on the Wold keys on it, or on `b9_glass` (#531). */
 export const WATCH = 'gap_watch';
@@ -144,10 +145,10 @@ export const WOLD_B9: MapDef = {
     // alone at the dunes' middle, the scorpions under the rim, and the two walkers at the gap, standing under
     // the mesa's face off the way to the gap's last square, the hardest, which a company need not fight to
     // see the Glass.
-    { id: 'b9_scorpions', x: 22, y: 8, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: 2880 },
-    { id: 'b9_vultures', x: 4, y: 11, monsters: ['vulture', 'vulture', 'vulture', 'vulture', 'vulture', 'vulture'], aware: 3, respawn: 2880 },
-    { id: 'b9_walker', x: 18, y: 14, monsters: ['glass_walker'], aware: 4, respawn: 2880 },
-    { id: 'b9_scorpions_rim', x: 14, y: 23, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: 2880 },
-    { id: 'b9_walkers', x: 25, y: 23, monsters: ['glass_walker', 'glass_walker'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'b9_scorpions', x: 22, y: 8, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'b9_vultures', x: 4, y: 11, monsters: ['vulture', 'vulture', 'vulture', 'vulture', 'vulture', 'vulture'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'b9_walker', x: 18, y: 14, monsters: ['glass_walker'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'b9_scorpions_rim', x: 14, y: 23, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'b9_walkers', x: 25, y: 23, monsters: ['glass_walker', 'glass_walker'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

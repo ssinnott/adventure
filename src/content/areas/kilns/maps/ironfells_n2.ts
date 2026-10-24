@@ -9,6 +9,7 @@
 // its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const IRONFELLS_N2: MapDef = {
   id: 'ironfells_n2',
@@ -106,8 +107,8 @@ export const IRONFELLS_N2: MapDef = {
   encounters: [
     // Fire beetles on the first ore-finders' spoil, nearest the way up; and rock worms in their two
     // adits, one in the knob of rock and a pair under the rim at the far end, the box's groups at 17.
-    { id: 'n2_beetles', x: 9, y: 25, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: 1440 },
-    { id: 'n2_worm_west', x: 2, y: 20, monsters: ['rock_worm'], aware: 2, respawn: 2880, roams: false },
-    { id: 'n2_worms_east', x: 29, y: 22, monsters: ['rock_worm', 'rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'n2_beetles', x: 9, y: 25, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: RESPAWN.day },
+    { id: 'n2_worm_west', x: 2, y: 20, monsters: ['rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'n2_worms_east', x: 29, y: 22, monsters: ['rock_worm', 'rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

@@ -32,11 +32,12 @@ export function changedFiles(base: string): string[] {
  * re-laid into the outdoors and its walls re-rolled, so the atlases count too. The scenery
  * (ui/scenery.ts) paints a map and the monsters do not: the scene the sweep paints draws none, so
  * neither the dispatcher (ui/sprites.ts) nor a family counts (#915). The one file of the folder it
- * does paint with is monsters/common.ts (`B` and `stroke`), so that counts; so does game/ink.ts,
- * how a cell is drawn (`drawnCell`), which the painter and the sweep's plan both read.
+ * does paint with is monsters/common.ts (`B` and `stroke`), so that counts, and the monsters' kit's
+ * common.ts it re-exports; so do the paint kit's brush and the ink its outline takes (#983); so does
+ * game/ink.ts, how a cell is drawn (`drawnCell`), which the painter and the sweep's plan both read.
  */
 const EVERY_MAP = [
-  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/monsters\/common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|ink)\.ts$/,
+  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/paint\/(brush|ink)\.ts$/, /^src\/ui\/monsters\/(kit\/)?common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|ink)\.ts$/,
   /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed|sweep|kit\/sweep)\.ts$/,
 ];
 const MAP_FILE = /^src\/content\/areas\/[^/]+\/maps\/[^/]+\.ts$/;
@@ -65,8 +66,12 @@ function atBase(base: string, file: string): string {
 }
 const now = (file: string): string => (existsSync(path.join(ROOT, file)) ? readFileSync(path.join(ROOT, file), 'utf8') : '');
 
-/** What paints every monster: the dispatcher, ui/brush.ts and the art library; and a shared brush, a module of ui/monsters/ that registers no kinds. */
-const EVERY_MONSTER = [/^src\/ui\/(sprites|brush)\.ts$/, /^src\/lib\/art\//];
+/**
+ * What paints every monster: the dispatcher, ui/brush.ts and the art library, the paint kit and the
+ * monsters' kit (src/ui/paint/, src/ui/monsters/kit/, #983); and a shared brush, a module of
+ * ui/monsters/ that registers no kinds.
+ */
+const EVERY_MONSTER = [/^src\/ui\/(sprites|brush)\.ts$/, /^src\/ui\/(paint|monsters\/kit)\//, /^src\/lib\/art\//];
 const FAMILY_FILE = /^src\/ui\/monsters\/([^/]+)\.ts$/;
 /** The barrel that merges the families' kinds and says which family registers each. */
 const BARREL = 'src/ui/monsters/index.ts';
@@ -107,8 +112,13 @@ export async function changedMonsters(files: readonly string[], base?: string): 
   return { all, monsters: [...out] };
 }
 
-/** What paints every room: the dispatcher, the kit and the shared props and rooms beside it, the brushes they borrow (ui/brush.ts, ui/monsters/gloss.ts), the art library and the pixel font (some rooms letter their signs). */
-const EVERY_INTERIOR = [/^src\/ui\/(interior|brush)\.ts$/, /^src\/ui\/interiors\/[^/]+\.ts$/, /^src\/ui\/monsters\/gloss\.ts$/, /^src\/lib\/art\//, /^src\/lib\/engine\/text\.ts$/];
+/**
+ * What paints every room: the dispatcher, the kit and the shared props and rooms beside it, the rooms'
+ * kit and the paint kit (src/ui/interiors/kit/, src/ui/paint/, #983), the brushes they borrow by their
+ * old paths (ui/brush.ts, ui/monsters/gloss.ts), the art library and the pixel font (some rooms letter
+ * their signs).
+ */
+const EVERY_INTERIOR = [/^src\/ui\/(interior|brush)\.ts$/, /^src\/ui\/interiors\/[^/]+\.ts$/, /^src\/ui\/(paint|interiors\/kit)\//, /^src\/ui\/monsters\/gloss\.ts$/, /^src\/lib\/art\//, /^src\/lib\/engine\/text\.ts$/];
 /** A file under an area's folder of rooms (src/ui/interiors/<area>/): its scenes, the helpers they share and the folder's registry. */
 const AREA_ROOMS = /^src\/ui\/interiors\/([^/]+)\//;
 const AREA_INDEX = /^src\/content\/areas\/([^/]+)\/(index|interiors)\.ts$/;
@@ -187,17 +197,34 @@ export type Lines = (file: string) => { removed: readonly string[]; added: reado
 const inert = (line: string): boolean => { const t = line.trim(); return !t || t.startsWith('import ') || t.startsWith('//') || t.startsWith('/*') || t.startsWith('*'); };
 
 /**
+ * The rungs of the ladder in a text of an area's checks.ts: its `gear` block, from the key to the brace
+ * that closes it, its comments and blanks left out; '' where it has none (#968).
+ */
+export function rungsIn(text: string): string {
+  const at = text.search(/^\s*gear\s*:/m);
+  if (at < 0) return '';
+  let depth = 0, end = text.length;
+  for (let i = text.indexOf('{', at); i >= 0 && i < text.length; i++) {
+    if (text[i] === '{') depth++;
+    else if (text[i] === '}' && !--depth) { end = i + 1; break; }
+  }
+  return text.slice(at, end).split('\n').filter((l) => !inert(l)).join('\n');
+}
+
+/**
  * The areas a diff reaches (#955): `files` its files, a rename at both ends; `removed(f)` the `-` lines
  * of `git diff -U0` of an area's items.ts or monsters.ts, null where the file is gone; `g` the runtime
- * import graph of the tree. A file
+ * import graph of the tree; `read(f)` a file as it stands and `was(f)` as it was at the merge base, ''
+ * where it was not or is not known, so that every rung then reads as changed. A file
  * 1. under src/content/areas/<area>/ reaches that area;
  * 2. that is an area's items.ts or monsters.ts with a line changed or removed that is no import or
  *    comment, or deleted, reaches every area: items dress every company of the ladder and monsters
  *    fight in other areas' groups. A def only added reaches its own area's gate alone, and every
  *    walkthrough (READS) (the `-` lines are all it reads: a line inserted into a def that spans lines
- *    reads as a def added, and no item of the ladder spans lines); an area's checks.ts that holds
- *    rungs of the ladder (`gear`), changed or deleted, reaches every area, as every company dresses
- *    from them;
+ *    reads as a def added, and no item of the ladder spans lines); an area's checks.ts whose rungs of
+ *    the ladder (`gear`, `rungsIn`) differ from the base's, or that is deleted, reaches every area, as
+ *    every company dresses from them, and a change elsewhere in it (a seam, an edge, a figure owed)
+ *    its own area alone (#968);
  * 3. that is any other of an area's files reaches also the areas whose files import it, and those
  *    whose files import theirs in turn, as far as the areas' own files go; and, where a line of it
  *    changed that is no import or comment, every walkthrough (READS), which an import does not show;
@@ -206,7 +233,7 @@ const inert = (line: string): boolean => { const t = line.trim(); return !t || t
  *    loads every area and one neither loads none; any other file, which the graph does not read, every
  *    area.
  */
-export function reachedAreas(files: readonly string[], lines: Lines, g: Graph, read: (file: string) => string): Reach {
+export function reachedAreas(files: readonly string[], lines: Lines, g: Graph, read: (file: string) => string, was: (file: string) => string = () => ''): Reach {
   const areas = new Map<string, string>(), walks = new Map<string, string>(), known = new Set(g.files), by = new Map<string, string[]>();
   const walkers = READERS(g.files).slice(1).map((f) => f.split('/')[3]);
   const walkAll = (): void => { for (const a of walkers) if (!walks.has(a)) walks.set(a, READS); };
@@ -226,8 +253,8 @@ export function reachedAreas(files: readonly string[], lines: Lines, g: Graph, r
         continue;
       }
       const changed = lines(f), felt = !changed || [...changed.removed, ...changed.added].some((l) => !inert(l));
-      if (felt && AREA_CHECKS.test(f) && (!changed || /\bgear\b/.test([read(f), ...changed.removed].join('\n'))))
-        return { all: { file: f, why: `${changed ? 'a line changed' : 'deleted'}, and its rungs of the ladder dress every company` }, areas, walks };
+      if (felt && AREA_CHECKS.test(f) && (!changed || rungsIn(was(f)) !== rungsIn(read(f))))
+        return { all: { file: f, why: `${changed ? 'a rung changed' : 'deleted'}, and its rungs of the ladder dress every company` }, areas, walks };
       if (felt) walkAll();
       for (const walk = [f], seen = new Set(walk); walk.length;) {
         const at = walk.pop()!;
@@ -257,7 +284,7 @@ export function changedAreas(base: string): Reach {
     const diff = git('diff', '-U0', '--no-renames', from, '--', f).filter((l) => !/^(--- (a\/|\/dev\/null)|\+\+\+ (b\/|\/dev\/null))/.test(l));
     return { removed: diff.filter((l) => l.startsWith('-')).map((l) => l.slice(1)), added: diff.filter((l) => l.startsWith('+')).map((l) => l.slice(1)) };
   };
-  return reachedAreas(changedPaths(base), lines, graph(treeFiles(), read), read);
+  return reachedAreas(changedPaths(base), lines, graph(treeFiles(), read), read, (f) => atBase(base, f));
 }
 
 /**

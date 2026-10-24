@@ -4,6 +4,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The tear closing, the Warden of the Cut's death: past it the Rift that came through stops coming back. */
 export const TEAR_CLOSED: When = { slain: 'grove2:g2_warden' };
@@ -68,18 +69,18 @@ export const GROVE2: MapDef = {
   ],
   secrets: [{ x: 6, y: 13, hint: 'g2_hint' }],
   encounters: [
-    { id: 'g2_ring1', x: 8, y: 1, monsters: ['wraith', 'wraith', 'bone_knight', 'bone_knight', 'bone_knight', 'bone_knight'], aware: 5, respawn: 2880 },
-    { id: 'g2_ring1b', x: 14, y: 8, monsters: ['rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: 1440, until: TEAR_CLOSED },
-    { id: 'g2_ring1c', x: 5, y: 14, monsters: ['zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'ashen_adept', 'ashen_adept'], aware: 5, respawn: 2880 },
-    { id: 'g2_ring2', x: 8, y: 3, monsters: ['bone_knight', 'bone_knight', 'bone_knight', 'bone_knight', 'bone_knight', 'bone_knight'], aware: 4, respawn: 2880 },
+    { id: 'g2_ring1', x: 8, y: 1, monsters: ['wraith', 'wraith', 'bone_knight', 'bone_knight', 'bone_knight', 'bone_knight'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'g2_ring1b', x: 14, y: 8, monsters: ['rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound'], aware: 6, respawn: RESPAWN.day, until: TEAR_CLOSED },
+    { id: 'g2_ring1c', x: 5, y: 14, monsters: ['zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot', 'ashen_adept', 'ashen_adept'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'g2_ring2', x: 8, y: 3, monsters: ['bone_knight', 'bone_knight', 'bone_knight', 'bone_knight', 'bone_knight', 'bone_knight'], aware: 4, respawn: RESPAWN.twoDays },
     { id: 'g2_keyguard', x: 12, y: 4, monsters: ['ashen_adept', 'ashen_adept', 'ashen_adept', 'ashen_adept', 'ashen_adept', 'ashen_adept', 'ashen_adept'], aware: 3, roams: false },
-    { id: 'g2_ring2b', x: 3, y: 8, monsters: ['riftling_elder', 'riftling_elder', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound'], aware: 5, respawn: 2880, until: TEAR_CLOSED },
-    { id: 'g2_ring2c', x: 8, y: 12, monsters: ['ogre', 'ogre', 'ogre', 'ogre'], aware: 4, respawn: 2880 },
-    { id: 'g2_ring3', x: 5, y: 7, monsters: ['wraith', 'wraith', 'wraith', 'wraith', 'wraith'], aware: 5, respawn: 2880 },
-    { id: 'g2_ring3b', x: 10, y: 6, monsters: ['riftling_elder', 'riftling_elder', 'riftling_elder', 'riftling_elder'], aware: 5, respawn: 2880, until: TEAR_CLOSED },
-    { id: 'g2_hand', x: 7, y: 7, monsters: ['ashen_hand', 'ashen_adept', 'ashen_adept'], aware: 2, roams: false },
+    { id: 'g2_ring2b', x: 3, y: 8, monsters: ['riftling_elder', 'riftling_elder', 'rift_hound', 'rift_hound', 'rift_hound', 'rift_hound'], aware: 5, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
+    { id: 'g2_ring2c', x: 8, y: 12, monsters: ['ogre', 'ogre', 'ogre', 'ogre'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'g2_ring3', x: 5, y: 7, monsters: ['wraith', 'wraith', 'wraith', 'wraith', 'wraith'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'g2_ring3b', x: 10, y: 6, monsters: ['riftling_elder', 'riftling_elder', 'riftling_elder', 'riftling_elder'], aware: 5, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
+    { id: 'g2_hand', x: 7, y: 7, monsters: ['ashen_hand', 'ashen_adept', 'ashen_adept'], aware: 2, roams: false, boss: true },
     // Said when it dies, not on a cell: whichever side of it the party fights from, this comes after.
-    { id: 'g2_warden', x: 8, y: 7, monsters: ['cut_warden', 'riftling_elder', 'riftling_elder'], aware: 1, roams: false,
+    { id: 'g2_warden', x: 8, y: 7, monsters: ['cut_warden', 'riftling_elder', 'riftling_elder'], aware: 1, roams: false, boss: true,
       slainText: 'With the Warden gone the tear closes like a mouth. The cut in the Stone stays; it will need a Lantern to mend. But nothing more comes through tonight.' },
   ],
 };

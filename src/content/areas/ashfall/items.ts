@@ -8,9 +8,9 @@
 // docs/areas/ashfall.md §8 and §9 have the sums.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY, ARTIFACT_PRICE } from '../../items.ts';
-import { ITEMS as SUNDERWOOD } from '../sunderwood/items.ts';
-import { hornBow } from '../saltreach/items.ts';
-import { dwarfMail, mattock } from '../kilns/items.ts';
+import { greatAxe } from '../sunderwood/public.ts';
+import { hornBow } from '../saltreach/public.ts';
+import { dwarfMail, mattock } from '../kilns/public.ts';
 
 // Sold at Cinderport's armourer (#512): a step past Rime Lodge's finds for every class, at 25.
 export const slagMace = W('slag_mace', 'Slag Mace', 2300, 2, 12, { bonus: 5, classes: [...MARTIAL, 'cleric'] });
@@ -35,7 +35,7 @@ export const quickening: ItemDef = { id: 'quickening', name: 'Quickening Draught
 export const CURES: readonly string[] = [quickening.id];
 
 /** The scavenger's find in his hole beside the vents (G11, #513; #56's 52), at 1,500: inside the window. */
-export const scavengersAxe = P(SUNDERWOOD.find((i) => i.id === 'great_axe')!, 2);
+export const scavengersAxe = P(greatAxe, 2);
 
 /** The find in the grave in the Cinder Hills (E10, #517): the brief's Horn Bow +2, Saltreach's bow with a plus. */
 export const graveBow = P(hornBow, 2);
@@ -86,15 +86,20 @@ export const faneMap: ItemDef = { id: 'fane_map', name: 'Fane\'s Map', slot: 'no
   'It is heavier than paper has any right to be.',
 ] };
 
+export const stokerFirebar: ItemDef = { id: 'stoker_firebar', name: 'Stoker\'s Firebar', slot: 'none', price: 0 };
+export const stokerBlade: ItemDef = { id: 'stoker_blade', name: 'Stoker\'s Shovel Blade', slot: 'none', price: 0 };
+export const walkerDamper: ItemDef = { id: 'walker_damper', name: 'Flue Walker\'s Damper', slot: 'none', price: 0 };
+export const walkerIron: ItemDef = { id: 'walker_iron', name: 'Flue Walker\'s Climbing Iron', slot: 'none', price: 0 };
+
 /**
  * The parts the machines shed, which no shop buys and no hand-in takes (MONSTERS §2): the stokers' on the
  * vents' furnace room's heap, and the flue walker's on the heap at the iron corridors' end (#22).
  */
 const PARTS: ItemDef[] = [
-  { id: 'stoker_firebar', name: 'Stoker\'s Firebar', slot: 'none', price: 0 },
-  { id: 'stoker_blade', name: 'Stoker\'s Shovel Blade', slot: 'none', price: 0 },
-  { id: 'walker_damper', name: 'Flue Walker\'s Damper', slot: 'none', price: 0 },
-  { id: 'walker_iron', name: 'Flue Walker\'s Climbing Iron', slot: 'none', price: 0 },
+  stokerFirebar,
+  stokerBlade,
+  walkerDamper,
+  walkerIron,
 ];
 
 /**

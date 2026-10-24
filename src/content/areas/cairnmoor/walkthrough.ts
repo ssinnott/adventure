@@ -51,15 +51,16 @@ import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
-import { GATE } from '../kilns/maps/ironfells_n3.ts';
-import { DOOR, NOTCH } from './maps/cairnfield_n8.ts';
+import { IRONFELLS_GATE, FOURTH_RANKS_OPEN } from '../kilns/public.ts';
+import { DOOR } from './maps/cairnfield_n8.ts';
+import { NOTCH } from './public.ts';
 import { CHAPTER } from './chapter.ts';
 import { MONSTERS } from './monsters.ts';
 import { GUILD_QUESTS, QUESTS } from '../../index.ts';
 import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take, rankOf } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
-import { FOURTH_RANKS_OPEN } from '../kilns/guilds.ts';
+import { RESPAWN } from '../../../game/keys.ts';
 
 /**
  * The Lanterns' fourth rank's ask on High Moor (DESIGN §8, #439), on a copy of the walk's company made
@@ -131,7 +132,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const corner = (along: (x: number, y: number) => boolean) => (x: number, y: number): boolean => along(x, y) || ((out.passable(x, y) === 'ok' || !out.zoneAt(x, y)) && [-1, 1].some((d) => along(x + d, y)) && [-1, 1].some((d) => along(x, y + d)));
   const [lx, ly] = ATLAS.sites.find((s) => s.name === 'Rime Lodge')!.at;
   const count = (sx: number, sy: number): { lodge: number; hall: number } => {
-    const hall = reach(sx, sy, corner(road)).get((n3.y + GATE.y + 1) * out.width + n3.x + GATE.x) ?? Infinity;
+    const hall = reach(sx, sy, corner(road)).get((n3.y + IRONFELLS_GATE.y + 1) * out.width + n3.x + IRONFELLS_GATE.x) ?? Infinity;
     const end = [...reach(sx, sy, corner(drove))].map(([k, n]) => ({ n, left: Math.abs(k % out.width - lx) + Math.abs(Math.floor(k / out.width) - ly) }))
       .reduce((a, b) => (b.left < a.left || (b.left === a.left && b.n < a.n) ? b : a));
     return { lodge: end.n + end.left, hall };
@@ -1243,7 +1244,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       return seen;
     };
     const groups = CF.encounters!.map((g) => `${g.id} ${g.x},${g.y} ${g.monsters.length} ${[...new Set(g.monsters)].join('+')}`).join('; ');
-    ok(groups === 'cf_bodies 9,3 6 bog_body; cf_wights 11,10 4 cairn_wight; cf_bears 4,10 2 ice_bear' && CF.encounters!.every((g) => g.respawn === 2880 && g.roams === false && !g.slainText)
+    ok(groups === 'cf_bodies 9,3 6 bog_body; cf_wights 11,10 4 cairn_wight; cf_bears 4,10 2 ice_bear' && CF.encounters!.every((g) => g.respawn === RESPAWN.twoDays && g.roams === false && !g.slainText)
       && !flood([7, 8], [9, 3]).has('12,3') && !flood([7, 8], [11, 10]).has('7,9') && !flood([7, 8], [4, 10]).has('1,10'),
       `six bog bodies at the tide's head, four cairn wights at the chamber's mouth and two ice bears in the end cell's, each back in two days, none roaming or a guardian, and none walked round (${groups})`);
     // Its three groups won at its floor, rising from the bodies to the bears; every sight; and the oldest

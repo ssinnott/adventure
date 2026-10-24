@@ -8,6 +8,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RING_SPOKE } from '../chapter.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const HIGHMOOR_O7: MapDef = {
   id: 'highmoor_o7',
@@ -149,9 +150,9 @@ export const HIGHMOOR_O7: MapDef = {
     // Ravens on the cairn; by night, round the ring, four bog lights with a moor hound running at
     // their front, the box's hardest group; bog bodies in the marsh at the tarn's head; and by night
     // on the first tor, alone, a tor troll. The ring itself holds no monster.
-    { id: 'o7_ravens', x: 2, y: 17, monsters: ['raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven'], aware: 4, respawn: 1440, roams: false },
-    { id: 'o7_lights', x: 1, y: 23, monsters: ['moor_hound', 'bog_light', 'bog_light', 'bog_light', 'bog_light'], leader: 'moor_hound', aware: 5, respawn: 2880, when: { hours: 'night' } },
-    { id: 'o7_bodies', x: 21, y: 28, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: 1440 },
-    { id: 'o7_troll', x: 25, y: 24, monsters: ['tor_troll'], aware: 3, respawn: 2880, roams: false, when: { hours: 'night' } },
+    { id: 'o7_ravens', x: 2, y: 17, monsters: ['raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven'], aware: 4, respawn: RESPAWN.day, roams: false },
+    { id: 'o7_lights', x: 1, y: 23, monsters: ['moor_hound', 'bog_light', 'bog_light', 'bog_light', 'bog_light'], leader: 'moor_hound', aware: 5, respawn: RESPAWN.twoDays, when: { hours: 'night' } },
+    { id: 'o7_bodies', x: 21, y: 28, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: RESPAWN.day },
+    { id: 'o7_troll', x: 25, y: 24, monsters: ['tor_troll'], aware: 3, respawn: RESPAWN.twoDays, roams: false, when: { hours: 'night' } },
   ],
 };

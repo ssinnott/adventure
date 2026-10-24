@@ -13,8 +13,9 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/hearth_isle.md §4.3 is its brief (#754).
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
-import { THRONE_REMOVED } from '../../shelf/maps/keep.ts';
+import { THRONE_REMOVED } from '../../shelf/public.ts';
 import { ELEVEN_KEPT, LOG_GIVEN } from './hearthfane2.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The Cleric's third (#763), The Eleven Kept: Hereswith asks a cleric of 27 with the second for the Crowness
@@ -133,11 +134,11 @@ export const HEARTHISLE_I6: MapDef = {
     // a fight; the moths over the yard by night; the camp's guard, the box's hardest, never roaming and
     // gone by the leave rule once Vask is gone from Helmstow (#747); and two at the stair's head. Off the
     // road (#794): champions on the east foot under the keel, and the Hand's watch over the Wyke.
-    { id: 'i6_rim', x: 0, y: 17, monsters: many(3, 'ashen_champion'), aware: 3, respawn: 2880 },
-    { id: 'i6_moths', x: 5, y: 20, monsters: many(12, 'hearth_moth'), aware: 3, respawn: 1440, when: { hours: 'night' } },
-    { id: 'i6_guard', x: 4, y: 24, monsters: [...many(3, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 3, roams: false, respawn: 2880, until: { flag: THRONE_REMOVED }, leaves: true },
-    { id: 'i6_guard2', x: 3, y: 26, monsters: many(2, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
-    { id: 'i6_foot', x: 10, y: 14, monsters: many(3, 'ashen_champion'), aware: 3, respawn: 2880 },
-    { id: 'i6_watch', x: 2, y: 1, monsters: many(4, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
+    { id: 'i6_rim', x: 0, y: 17, monsters: many(3, 'ashen_champion'), aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'i6_moths', x: 5, y: 20, monsters: many(12, 'hearth_moth'), aware: 3, respawn: RESPAWN.day, when: { hours: 'night' } },
+    { id: 'i6_guard', x: 4, y: 24, monsters: [...many(3, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 3, roams: false, respawn: RESPAWN.twoDays, until: { flag: THRONE_REMOVED }, leaves: true },
+    { id: 'i6_guard2', x: 3, y: 26, monsters: many(2, 'ashen_champion'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'i6_foot', x: 10, y: 14, monsters: many(3, 'ashen_champion'), aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'i6_watch', x: 2, y: 1, monsters: many(4, 'ashen_champion'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

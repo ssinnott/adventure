@@ -15,7 +15,8 @@
 // named country inside them; their borders follow the ridges, rivers and cliffs between them.
 //
 // This is the plan: the land, the areas of the road and what is not built yet. Each built area
-// charts its own zones, plates and sites in its folder (areas/<area>/atlas.ts), and
+// charts its own zones, plates and sites in its folder (areas/<area>/atlas.ts), and the links
+// between two of its own places (#968), so the plan's links are those between two areas; and
 // src/content/index.ts merges the two into ATLAS, which is what everything reads; a row an area
 // charts replaces the plan's row of the same id. A planned area may chart its rows in its folder
 // before it is listed, and the plan spreads them in where its own were.
@@ -280,44 +281,19 @@ export const PLAN: Atlas = {
   ],
   links: [
     { from: 'downs', to: 'delta', kind: 'road', a: [126, 100], b: [114, 116], note: 'down Kestrel Edge' },
-    { from: 'saltings', to: 'saltmouth', kind: 'enter', a: [98, 177] },
-    { from: 'delta', to: 'drowned_temples', kind: 'enter', a: [56, 170] },
     { from: 'saltmouth', to: 'wrackholm', kind: 'sea', b: [152, 172], note: 'smuggler boat' },
-    { from: 'wrackholm', to: 'smugglers_cove', kind: 'enter', a: [154, 170] },
-    { from: 'wrackholm', to: 'tide_ship', kind: 'enter', a: [182, 188] },
-    { from: 'thornmark', to: 'deepthorn', kind: 'road', a: [240, 60.5], b: [242, 66] },
     { from: 'thornmark', to: 'eaves', kind: 'road', a: [263.5, 40.5], b: [272, 39.5], note: 'the east road', noteAt: [290, 30] },
-    { from: 'eaves', to: 'lanternwood', kind: 'road', a: [330, 56], b: [346, 56], note: 'rope bridge' },
-    { from: 'eaves', to: 'the_sunder', kind: 'enter', a: [338, 70] },
-    { from: 'lanternwood', to: 'lantern_watch', kind: 'enter', a: [372, 46] },
     { from: 'lanternwood', to: 'ironfells', kind: 'road', a: [404, 70], b: [416, 84] },
-    { from: 'ironfells', to: 'anvilhall', kind: 'enter', a: [452, 70] },
-    { from: 'ironfells', to: 'deep_mines', kind: 'enter', a: [440, 96] },
-    { from: 'kilnsheart', to: 'anvil_stone', kind: 'enter', a: [468, 142] },
-    { from: 'kilnsheart', to: 'lava_tubes', kind: 'enter', a: [478, 178] },
-    { from: 'kilnmouth', to: 'kilnhaven', kind: 'enter', a: [388, 162] },
     { from: 'kilnsheart', to: 'highmoor', kind: 'road', a: [430, 196], b: [432, 212] },
-    { from: 'cairnfield', to: 'cairns', kind: 'enter', a: [430, 240] },
     { from: 'cairnfield', to: 'longmere', kind: 'road', a: [424, 250], b: [414, 262] },
-    { from: 'longmere', to: 'rime_lodge', kind: 'enter', a: [410, 262] },
-    { from: 'coldmere', to: 'sleepers_bay', kind: 'enter', a: [352, 284], note: 'under the ice' },
     { from: 'kilnhaven', to: 'rime_lodge', kind: 'coach', note: 'the drove road coach' },
-    { from: 'glacierfoot', to: 'ice_caves', kind: 'enter', a: [452, 326] },
     { from: 'coldmere', to: 'monksvale', kind: 'road', a: [334, 302], b: [318, 318], note: 'the high pass' },
-    { from: 'monksvale', to: 'monastery', kind: 'enter', a: [322, 342] },
     { from: 'kilnhaven', to: 'saltmouth', kind: 'sea', via: [[340, 150], [296, 160], [230, 146], [160, 150]], note: 'the ferry', noteAt: [230, 140] },
     { from: 'kilnhaven', to: 'cinderport', kind: 'sea', via: [[352, 162], [316, 168], [298, 198], [264, 220], [240, 254]], note: 'Compact ship', noteAt: [300, 210] },
-    { from: 'cindercoast', to: 'cinderport', kind: 'enter', a: [206, 288] },
     { from: 'cinderport', to: 'wold', kind: 'coach', b: [120, 250], note: 'a Rider\'s horse' },
-    { from: 'emberwaste', to: 'old_cinder', kind: 'enter', a: [187, 322] },
-    { from: 'firemount', to: 'meridian_camp', kind: 'enter', a: [226, 334] },
-    { from: 'emberwaste', to: 'ember_stone', kind: 'enter', a: [176, 342] },
     { from: 'emberwaste', to: 'wold', kind: 'road', a: [156, 312], b: [144, 300] },
-    { from: 'theglass', to: 'buried_tower', kind: 'enter', a: [84, 280] },
     { from: 'wold', to: 'saltings', kind: 'road', a: [80, 216], b: [80, 206], note: 'the Scarp stair' },
     { from: 'firemount', to: 'highspine', kind: 'road', a: [258, 306], b: [272, 306], note: 'the Giants\' Stair' },
     { from: 'cinderport', to: 'hearthisle', kind: 'sea', via: [[228, 236]], b: [252, 188], note: 'the last crossing' },
-    { from: 'hearthisle', to: 'underdeep', kind: 'deep', a: [250, 172] },
-    { from: 'underdeep', to: 'core', kind: 'deep' },
   ],
 };

@@ -8,20 +8,15 @@
 import type { Answer, Choice, MapDef } from '../../../../game/map.ts';
 import { SOUTH, NORTH } from '../../../../game/types.ts';
 import { ENDINGS, ENDED } from '../../../endings.ts';
-import { THRONE_REMOVED, THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/maps/keep.ts';
-import { COMPACT_OVER } from '../../saltreach/maps/saltmouth.ts';
+import { THRONE_REMOVED, THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/public.ts';
+import { COMPACT_OVER } from '../../saltreach/public.ts';
 import { TOKEN_TALLIS } from './hearthisle_h6.ts';
+import { VOICE_WHOLE, WENNA_HOME, SIGNET } from '../public.ts';
 
 /** Vask's fall, whichever of his two groups is fought: both set it, and everything after the fight keys on it (§9.1, 15). */
 export const VASK_FALLEN = 'q_vask_fallen';
-/** The voice at the panel, met (§4.8). */
-export const VOICE_WHOLE = 'q_voice_whole';
 /** Wenna at the panel, met: the ring is in the company's hand (§4.8). */
 export const RING_GIVEN = 'q_ring_given';
-/** Hild's at Gullwick after an ending (the road behind's, #765): Wenna stays at the Heart until it holds. */
-export const WENNA_HOME = 'q_wenna_home';
-/** The Queen's signet, off Vask's finger: every answer at the panel gives it (64). */
-export const SIGNET = 'queens_signet';
 /** Wenna's three answers' flags, the endings' own (src/content/endings.ts). */
 export const END_REIGNITE = ENDINGS.reignite.flag, END_ARRIVE = ENDINGS.arrive.flag, END_FINISH = ENDINGS.finish.flag;
 
@@ -156,7 +151,7 @@ export const CORE: MapDef = {
     // him, and the fight. Gone by the leave rule once the Council has removed him from Helmstow (#747), the
     // thinned group in its place, which never stands once he has fallen: the Council may sit after the fight.
     // Both set his fall; neither comes back.
-    { id: 'core_vask', x: 8, y: 5, monsters: ['vask', 'grey_hand', 'grey_hand', 'grey_hand'], leader: 'vask', aware: 2, roams: false, clock: CLOCK, choice: VASK, sets: VASK_FALLEN, slainText: SLAIN, until: { flag: THRONE_REMOVED }, leaves: true },
-    { id: 'core_vask_thinned', x: 8, y: 5, monsters: ['vask', 'grey_hand', 'grey_hand'], leader: 'vask', aware: 2, roams: false, clock: CLOCK, choice: VASK, sets: VASK_FALLEN, slainText: SLAIN, after: { flag: THRONE_REMOVED }, until: { flag: VASK_FALLEN }, leaves: true },
+    { id: 'core_vask', x: 8, y: 5, monsters: ['vask', 'grey_hand', 'grey_hand', 'grey_hand'], leader: 'vask', aware: 2, roams: false, boss: true, clock: CLOCK, choice: VASK, sets: VASK_FALLEN, slainText: SLAIN, until: { flag: THRONE_REMOVED }, leaves: true },
+    { id: 'core_vask_thinned', x: 8, y: 5, monsters: ['vask', 'grey_hand', 'grey_hand'], leader: 'vask', aware: 2, roams: false, boss: true, clock: CLOCK, choice: VASK, sets: VASK_FALLEN, slainText: SLAIN, after: { flag: THRONE_REMOVED }, until: { flag: VASK_FALLEN }, leaves: true },
   ],
 };

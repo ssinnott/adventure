@@ -7,6 +7,13 @@ import type { Den } from './dens.ts';
 import type { QuestCond } from './quests.ts';
 import type { GuildId } from '../content/guilds.ts';
 
+/**
+ * How soon a group comes back once beaten, in minutes (`EncounterDef.respawn`): half a day, a day
+ * (`MINUTES_PER_DAY`) or two. The maps name one; tools/tests/structure.ts holds every respawn to the
+ * first and the last (#968).
+ */
+export const RESPAWN = { half: 720, day: 1440, twoDays: 2880 } as const;
+
 /** The brood's `until`: the den burnt, by its map as written and its id. */
 export const denBurnt = (map: string, id: string): QuestCond => ({ seen: `${map}:${id}` });
 

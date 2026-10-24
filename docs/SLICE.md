@@ -289,11 +289,11 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   opens the void where it stands. Where it meets a built box, the two edges agree square for square
   on passable ground, water and road, and open a way between two areas only where the atlas joins
   them: one rule over every seam (`tools/tests/outdoors.ts`, #898), and a seam that disagrees as
-  built is a row of `SEAMS_AS_BUILT` with its reason. Where it meets the atlas, its water and
+  built is its area's `seamsAsBuilt` row with its reason. Where it meets the atlas, its water and
   roads carry on into the land beyond its edge (`tools/tests/pillars.ts`), and each edge that faces
-  no built box is open to a walker exactly where a row of `OPEN_ON_NOTHING` says, with the box it
-  faces and why that is unbuilt: the bounds' border check (#828) in embryo. The box's pull request
-  adds the rows for its own edges onto nothing and deletes those of the edges it now faces.
+  no built box is open to a walker exactly where a row of its area's `openOnNothing` says, with the
+  box it faces and why that is unbuilt: the bounds' border check (#828) in embryo. The box's pull
+  request adds the rows for its own edges onto nothing and deletes those of the edges it now faces.
 - **Around it.** The automap draws a map that fits the panel whole, as before, and for the outdoors
   a window of 33 by 33 squares round the party at the size a 32-square map is drawn. Quests still
   name zone maps: `visited: 'thornmark'` holds once the party has set foot in the zone
@@ -601,9 +601,13 @@ trainer one level past it, onto Act II's road:
 
 Everything is drawn at runtime from vector shapes; there are no bitmaps in the repo.
 
-- `ui/brush.ts` is a minimal `ShadeTarget`, so sprites and portraits paint with the engine's own
-  cel-shading helpers (`celBall`, `celCapsule`, `celPoly`, `band`) and share the sibling games' look:
-  1px ink outline, three tones, top-left light.
+- `ui/paint/brush.ts` is a minimal `ShadeTarget`, so sprites and portraits paint with the engine's
+  own cel-shading helpers (`celBall`, `celCapsule`, `celPoly`, `band`) and share the sibling games'
+  look: 1px ink outline, three tones, top-left light. It is the paint kit's (`ui/paint/`, #983),
+  with the gloss, one `INK` and `rod`, the forms (`ring`, `tube`, the unit frame) and the flame:
+  what every drawing in `ui` paints with. It, the monsters' kit and the rooms' are the systems
+  lane's; the old paths (`ui/brush.ts` and the rest) re-export them, and a family or a scene takes a
+  kit when it is next edited (EXPANSION §8.1).
 - `ui/portraits.ts` builds a front-facing portrait per character from the name, race and class
   (head shape, ears, skin, hair, beard, class headgear), with the expression following the
   character's state, cached to an offscreen canvas.
@@ -613,16 +617,18 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   signature. Each family registers the kinds it draws in its `SPRITES`, each with its drawer, its span
   and any part drawn apart, and `ui/monsters/index.ts` merges the 28, refusing by name a kind two
   families register or one no area names; `FAMILY`, `SPAN` and the smoke test's `DETACHED` are read
-  off it, so a new kind of a family is its family's file alone (#915). `common.ts` has the brush
-  and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits, the cult and
-  the skeletons stand on. Every monster def names a sprite kind no other
-  def uses (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands,
-  smugglers, wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
+  off it, so a new kind of a family is its family's file alone (#915). The monsters' kit,
+  `ui/monsters/kit/`, has the brush and the small shape helpers (`common.ts`), the measured humanoid
+  frame the bandits, the cult and the skeletons stand on (`figure.ts`) and the chisel's mark
+  (`chisel.ts`, which `knockers.ts` re-exports); `common.ts` and `figure.ts` beside it
+  re-export it. Every monster def names a sprite kind no other def uses (`tools/tests/art.ts`
+  holds it), so the variants that share a family (the archers, brigands, smugglers,
+  wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
   and the Barrow Guard and Captain, the dire wolf, rift hound and Black Dog, the thorn spider, shore
   crab and rift crawler, the crow and the great owl, the elder and the two wardens, the bramble,
   rootwalker, heartwood and the Eldest) are drawn with their own gear, anatomy and glow rather than
   a recolour.
-- `ui/monsters/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
+- `ui/paint/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
   look: `blob()` paints every part of one material (a wolf's fur, a robe, a hide) as a single
   mass, with one ink outline around the union, one rendered gradient across the whole (a bright
   core toward the light, a deep band at the far edge), then, clipped inside, a soft volume per
@@ -637,7 +643,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   acolyte's censer, the lampman's lantern, the adept's hand flame, the rift hound's and the Hand of
   Ash's embers, the wraith's fading cloth), and stands inside the view where a fight seats it, its
   foot 184 px below the view's top (`seatFoot`), and within its span (below); the smoke test holds
-  both.
+  both. The old path, `ui/monsters/gloss.ts`, re-exports it.
 - Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
   monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
   three and four taper down, five is the old flat size and six goes under it. Across the view the
@@ -664,9 +670,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   black cloth. The farm kitchen is Ellerby's store (#87). Saltreach's eight, Lantern Watch's five,
   Anvilhall's six, Kilnhaven's six and Rime Lodge's six are painted beside them, each in its built
   town (docs/areas/kilns.md §3 and docs/areas/rimewater.md §3 describe the last three). No people:
-  the rooms are backdrops. `kit.ts` has the walls, floors, windows and
-  light, `props.ts` the furniture and goods; each scene is a file in `ui/interiors/<area>/`, and
-  what both towns' scenes of a trade use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`.
+  the rooms are backdrops. The rooms' kit, `ui/interiors/kit/`, has the walls, floors,
+  windows and light (`stage.ts`), the furniture and goods (`props.ts`) and a trade's
+  own (`trades/`, the temple's and the smithy's), which `kit.ts` and `props.ts` beside
+  it re-export; each scene is a file in `ui/interiors/<area>/`, and what both towns'
+  scenes of a trade use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`.
   A scene is painted once into an offscreen canvas and multiplied by a light map (the ambient for
   the hour plus a pool round every lamp, fire and window it put down), so the corners fall dark on
   their own; flames, glows and drifting motes are drawn over it every frame. Windows and the two
@@ -745,7 +753,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   the view, splashing only on floor the party can see; snow as flakes that sway and blow, nearly
   flat in a blizzard; fog banks drifting low; and the flash of a strike. Particles take their
   positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
-  unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
+  unrelated to its y (`hash()` in `ui/paint/brush.ts` does not). All of it costs a fraction of a
   millisecond a frame.
 
 ## Stubbed or absent
@@ -1019,8 +1027,8 @@ over content broken on purpose too, and two tools to theirs:
   every map (#915).
 - `layers` (§8.1, #900): the runtime imports of `src/` and `tools/`, read from the files in about
   0.2 s, held to the layers: no cycle among `src`'s, nothing in `src/game` taking content, the UI or
-  the app, nothing in the UI the app, no area another's files but its `public.ts`, and the
-  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 241 crossings are the
+  the app, nothing in the UI the app, no area another's files but its `public.ts` (#992), and the
+  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 146 crossings are the
   rows of its `KNOWN`, each under the issue that clears it; a new crossing fails, and so does a row
   that no longer crosses, so the table only shrinks.
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
@@ -1115,13 +1123,14 @@ does.
 | `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
 | `game/mastery.ts` | the weapon and magic tiers: who takes which line, the levels and prices (`TIER_PRICES`), each member's bar, the offers (a trainer's Expert, a Master's person's) and teaching a tier; what a tier does is `party.ts`'s (`armsBonus`, `tierSteps`); pure |
 | `game/skills.ts` | the secondary skills (`SKILLS`, all twelve, Linguist the first): a member's list, who has one (learnt, or born to it by people or class) and who does its work for the company (`skilled`, a carried item too), the skills a guild's halls teach, the menu's two levels (a hall's skills, then a skill's six), each member's bar, and learning one; pure |
+| `game/services.ts` | the town's services (#971): an inn's night (`nightCost`; `stay` pays, rests the company, sleeps the world to morning and counts the night) and its ten rations (`buyRations`), a temple's cure (`cure`, at `templePrice`) and the donation (`donate`), selling back (`sell`, handed the item table: an artifact refused), a spell hall's fee, offers and purchase (`payFee`, `hallOffers`, `learnSpell` at `spellPrice`) and a trainer's visit (`train`: one level a visit for `trainPrice`, never past the trainer, to those `mayTrain` takes). Each returns whether it was done, what it charged and the screen's line (`Served`); the screens and the walkthroughs call them, and `tools/tests/services.ts` holds them; pure |
 | `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`, given on from `game/keys.ts`) and the places the world map pins once read (`readMarks`); pure |
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), where the Hearth burns, the atlas's `hearth` site or a throw (`hearthIn`, #945), its bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds, half once its `half` does and half again for a Navigator), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
 | `game/guilds.ts`, `game/ranks.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`; `rankOf`, ranks.ts's, which reads the content alone); what a hall offers (a quest may wait for a flag, `after`), taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`, a raise borne, a blow's element, an artifact's mark and its spell, regeneration or ward; `MonsterDef`, `SpellDef`) and their lookups; a weapon's measure (`hits`) and what a shop pays (`sellPrice`: half, a Merchant two thirds) and says to an artifact (`REFUSED`), and the bounds of an artifact's power (the most it raises a stat, `ARTIFACT_RAISE`; the most castings a day of its spell, `ARTIFACT_CASTINGS`; the level that spell rolls at, `ARTIFACT_LEVEL`; regeneration's share, `REGEN_PART`) and the castings left until dawn (`chargesLeft`); a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen; a save that will not load gives its reason (`load`, #945) |
-| `game/keys.ts` | the keys a save keeps things by, each spelt once: a den's look (`lookKey`), the ids a feature is spent and an inscription read by (`spentId`, `readId`), a seeking quest's id (`seekId`), the flags of a spell hall paid (`guildFlag`), of the glove's line (`GLOVE_FLAG`) and of a guild quest taken and done and a rank kept (`takenFlag`, `doneFlag`, `rankFlag`); and a den's brood's `until` (`denBurnt`), which the maps import. It imports only types, so any module may load it first; each old home gives its keys on (#896) |
+| `game/keys.ts` | the keys a save keeps things by, each spelt once: a den's look (`lookKey`), the ids a feature is spent and an inscription read by (`spentId`, `readId`), a seeking quest's id (`seekId`), the flags of a spell hall paid (`guildFlag`), of the glove's line (`GLOVE_FLAG`) and of a guild quest taken and done and a rank kept (`takenFlag`, `doneFlag`, `rankFlag`); and a den's brood's `until` (`denBurnt`), which the maps import, and the respawn figures they name (`RESPAWN`, #968). It imports only types, so any module may load it first; each old home gives its keys on (#896) |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct` (a spell cast from an artifact, `from`, for a charge), and the log's lines, the glove's once a game (`GLOVE_FLAG`, given on from `game/keys.ts`); pure and seeded |
 | `game/bot.ts` | the bot that plays a fight, the gate's and the game's: `botTurn` (the action the resolver took; `gateTurn` the same with the action dropped), its two readings of the monsters (`asWritten`, every trait as written, the gate's; `asSeen`, only what the fight's log has shown, the auto-fight's), the answers a tool may turn (`ANSWER`, frozen: a tool passes another as `answer`, #946), the three it may play (`BotOpts`: bless, sleep and drink, off unless given; `PLAYED`, the game's, read from level 11 by `optsFor`, with its guards `striker` and `letsLie`) and the rest rule (`mustRest`); pure |
 | `game/ink.ts` | what a cell is drawn as (`drawnCell`: a secret door outdoors among mountain, rock or trees as they are), which the view, the automap and the pilot's fair view share; pure |
@@ -1130,24 +1139,24 @@ does.
 | `game/game.ts` | `Game` (screen stack, save/load, interactions, the offer of rest, a den's choice to burn, attract mode: a new game the pilot plays, saved nowhere, until a key) and `ExploreScreen` |
 | `game/wilds.ts` | the wilderness features: what a feature gives (`giftOf`) and the id it is spent by (`spentId`, given on from `game/keys.ts`), the shrine, the cairn, the statue's answer and when the party may rest; pure |
 | `game/dens.ts` | dens: the look's key (`lookKey`, given on from `game/keys.ts`; the brood's `until`, `denBurnt`, is imported from there), the pace, the approach, the burning and its hoard, the look on first sight; pure |
-| `game/rifts.ts` | the Rift generator: a 12 by 12 Rift from a template, a Stone's material, an area's table and a seed (turned one of eight ways, its groups in its slots, its looks on their squares), its groups stopping and its tear going quiet once `until` holds; `riftWay`, the tear on a zone map that leads in, walked through as an exit is; pure |
+| `game/rifts.ts` | the Rift generator: a 12 by 12 Rift from a template, a Stone's material, an area's table and a seed (turned one of eight ways, its groups in its slots, its looks on their squares and its warden a boss where the table says so, #968), its groups stopping and its tear going quiet once `until` holds; `riftWay`, the tear on a zone map that leads in, walked through as an exit is; pure |
 | `ui/viewport.ts` | the depth-layered first-person compositor, the hills and the ground drawn past one seen from below it (`standsAt`), the farmland's fields and hedges and the trees about the woods, the dead wood and the pinewoods, the glass trees and the chasm's drop, the ash and the ice through the year, a group drawn under the ice, the peaks and cliffs, the steppe, the dunes, the vines' hung trees and the volcano and its vents, a landmark drawn tall over its building's square and seen out to `LANDMARK_REACH` (Crowness Light, its lamp lit by night once its flag is held; a monastery, its bell towers over a wall and no lamp), the tents of a felt palette ('tent': a low felt wall under a pitched felt roof to a crown, its door a flap), the wall dressing and its rates (`DRESSING_RATES`, held by `tools/tests/art.ts`), the sky, the end of the world drawn as its look (pink where it has none) and the weather drawn over it |
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse; the groups the automap marks (`markedGroups`: in view or near, and what Spirit Sense and Danger Sense mark) |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
-| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it and a piece's words as it is taken up, the skills a member has, an artifact's power on its slot's line or a carried one's own, the column laid out by `sheetRows` above `SHEET_FOOT`), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`), a guild's work at its hall and its skills there (`skillMenu`, two levels) or from a person (`learnerMenu`), and the visit that frames them (`InteriorScreen`) |
-| `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
+| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it and a piece's words as it is taken up, the skills a member has, an artifact's power on its slot's line or a carried one's own, the column laid out by `sheetRows` above `SHEET_FOOT`), spell picker, inn/temple/shop/guild/trainer (each draws its menu and says what its rule in `game/services.ts` returns, with no sum of its own), a business's first menu (`businessEntries`), a guild's work at its hall and its skills there (`skillMenu`, two levels) or from a person (`learnerMenu`), and the visit that frames them (`InteriorScreen`) |
+| `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the rooms' kit (`kit/`: the stage, the props and a trade's own in `trades/`), a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver), its monsters where `ui/row.ts` seats them; the spells an artifact borne casts beside a member's own, with the castings left; the auto-fight (`auto`: `game/bot.ts` plays the company's turns by what the fight has shown (the three from level 11, `PLAYED`) and leaves the finished fight, until a key takes it back) |
 | `ui/row.ts` | the fight's row: each monster's place across the view and the height it is drawn, spaced by the drawings' spans, every one whole inside the view and none over more than a third of the next (`seatRow`, `OVERLAP`); pure |
 | `ui/grouplabels.ts` | the labels over a fight: each group's kinds, each with its count of the living (a lone proper name none), laid out inside the view; pure |
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
-| `ui/scenery.ts`, `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, each registering its kinds with their spans (`SPRITES`, merged by `ui/monsters/index.ts`), the dispatcher, and the shared brush and helpers |
+| `ui/scenery.ts`, `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, each registering its kinds with their spans (`SPRITES`, merged by `ui/monsters/index.ts`), the dispatcher, and the monsters' kit (`ui/monsters/kit/`: the brush, the helpers, the humanoid frame and the chisel's mark) on the paint kit (`ui/paint/`: the brush and its hash, the gloss, the ink, the forms and the flame) |
 | `ui/create.ts` | party creation |
 | `ui/title.ts` | the title screen: new game or continue, why a save will not load in the note's two lines (#945), the Hearth over the saved company and attract mode's idle (untouched for 45 seconds, the pilot plays a new game) |
 | `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests and guild quests, climates, rooms; the monsters and items read-only by type, #945), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
 | `content/guilds.ts` | the four guilds (`GUILDS`: names, a short name where a hall's menu row would cut the whole, and ranks), a guild quest's flags (given on from `game/keys.ts`) and its side of the quest log |
 | `content/area.ts` | `Area`, the shape every area fills in, and `Novelty`, what it claims is new (held by `tools/tests/pillars.ts`); `Walkthrough`, an area's end-to-end test |
-| `content/areas/<area>/` | an area: its maps, monsters, items, chapter of the one quest (`chapter.ts`), side quests (`quests.ts`), climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
+| `content/areas/<area>/` | an area: its maps, monsters, items, chapter of the one quest (`chapter.ts`), side quests (`quests.ts`), climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); and the one file another area takes, `public.ts`: the flags and exits the others take, and every item by name (#992). Each has a doc in [docs/areas/](areas/) |
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key), the helpers the areas' tables are written with and an artifact's price (`ARTIFACT_PRICE`), and the spells |
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/rifts/` | the eight Rift templates and the four materials (ember, brine, black glass and slag, MONSTERS §2.1), `rift` for an area to place one by ids, and `RIFT_SAMPLES`, each template dressed once for the tests and the contact sheet (`--rifts`) |
@@ -1208,3 +1217,24 @@ Decided by the builder for #945, each the owner's to overturn:
 9. **The smoke's torch search keeps to squares the Foreland's zones hold:** the sky it fixes is the
    Foreland's and its message says "no square of the Foreland"; it painted squares no zone holds
    under the lent sky. The ground and Rift samples name the Foreland, the sky they had.
+
+Decided by the builder for #971, each the owner's to overturn:
+
+1. **Each service returns `{ done, paid, line }`** (`Served`), as `learn` returns its line: `done`
+   because the hall's fee screen goes on to the offers only once paid, `paid` because the
+   walkthroughs print what was charged; `line` is empty where the screen says nothing.
+2. **`train` charges a purse** (`Pick<Party, 'gold'>`) and takes the trainer's level. A walkthrough
+   that trained a copy and charged nobody (Ashfall's, the Kilns' two, Rimewater's) hands it a copy
+   of the purse, so the company walks on as it was; Sunderwood's charged the company and still does.
+3. **`train` refuses, saying nothing, one the trainer does not take** (`mayTrain`: ready by the xp,
+   under the trainer's level and standing): the screen bars the row by the same rule.
+4. **The donation short of gold says nothing,** as the chapel did; every other refusal says the
+   screen's own line.
+5. **`sell` takes the item table first,** as #973 passes every table; `sellPrice` still finds a
+   Merchant through `skilled`, and the hall reads `spellsFor` and `spell`, as the screen did: #973's
+   and #974's to pass in.
+6. **`stay` returns the flag of the night it counts** (`set`), which Rimewater's four nights check;
+   `stayNight` stays in `party.ts`, where a camp's nights call it too.
+7. **The walkthroughs take the night's price from `nightCost` and the spell from `hallOffers`** (the
+   caster's offer of it) before `learnSpell`, and every `ok` line reads as it did. The pilot's
+   `INN_RATIONS` keeps its name and is the rule's `RATIONS_PRICE`.

@@ -7,6 +7,7 @@
 // §4.11 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const UPPERWATER_B3: MapDef = {
   id: 'upperwater_b3',
@@ -76,8 +77,8 @@ export const UPPERWATER_B3: MapDef = {
   encounters: [
     // The barge lying up at the quay: a master and three bargemen, the Hand's, who break when he
     // falls, and two herons off the willows in their back rank.
-    { id: 'b3_quay', x: 9, y: 13, monsters: ['barge_master', 'bargeman', 'bargeman', 'bargeman', 'grey_heron', 'grey_heron'], back: 2, leader: 'barge_master', aware: 2, roams: false, respawn: 2880 },
+    { id: 'b3_quay', x: 9, y: 13, monsters: ['barge_master', 'bargeman', 'bargeman', 'bargeman', 'grey_heron', 'grey_heron'], back: 2, leader: 'barge_master', aware: 2, roams: false, respawn: RESPAWN.twoDays },
     // A bull toad alone in the carr past the ford, the farthest and the hardest.
-    { id: 'b3_toad', x: 4, y: 25, monsters: ['bull_toad'], aware: 4, respawn: 1440 },
+    { id: 'b3_toad', x: 4, y: 25, monsters: ['bull_toad'], aware: 4, respawn: RESPAWN.day },
   ],
 };

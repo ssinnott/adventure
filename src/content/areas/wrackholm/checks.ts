@@ -3,4 +3,9 @@
 // row, left it once Nick's Locker, its lair, placed it (#835).
 import type { AreaChecks } from '../../area.ts';
 
-export const CHECKS = {} satisfies AreaChecks;
+export const CHECKS = {
+  // Its rungs of the ladder (tools/harness.ts): the same with a plus from Saltreach's and Wrackholm's boxes by 13.
+  gear: {
+    13: ['morning_star+1', 'stiletto+1', 'ironshod_staff+1', 'tidefolk_robe+1', 'horn_bow+1', 'plate+1', 'long_axe+1'],
+  },
+} satisfies AreaChecks;

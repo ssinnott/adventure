@@ -13,6 +13,7 @@
 // is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const HIGHSPINE_I12: MapDef = {
   id: 'highspine_i12',
@@ -86,6 +87,6 @@ export const HIGHSPINE_I12: MapDef = {
   encounters: [
     // The box's one fight: the snow trolls lying up where the pines stop under the rim, two together,
     // the hardest and the only group.
-    { id: 'i12_trolls', x: 12, y: 18, monsters: ['snow_troll', 'snow_troll'], aware: 3, respawn: 2880, roams: false },
+    { id: 'i12_trolls', x: 12, y: 18, monsters: ['snow_troll', 'snow_troll'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

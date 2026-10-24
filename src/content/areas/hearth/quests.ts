@@ -15,11 +15,10 @@ import { PILGRIMS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './maps/hearthi
 import { KEPT_ASKED } from './maps/hearthisle_i6.ts';
 import { LAMPS, LAMPS_OUT, LAMPS_WRONG, LAMPS_KEY, PILLARS } from './maps/hearthfane.ts';
 import { ELEVEN_KEPT, LOG_GIVEN } from './maps/hearthfane2.ts';
-import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE } from './maps/underdeep.ts';
+import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE, SIGNET, WENNA_HOME } from './public.ts';
 import { KNOT_LAST } from './maps/underdeep2.ts';
-import { SIGNET, WENNA_HOME } from './maps/core.ts';
 import { ENDED } from '../../endings.ts';
-import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../shelf/maps/keep.ts';
+import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../shelf/public.ts';
 
 /** The rearguard on the Stair's first landing, slain: 57's end where no claimant's people hold it (#758). */
 const REARGUARD = 'underdeep2:ud2_rearguard';

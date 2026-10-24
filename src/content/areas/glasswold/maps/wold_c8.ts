@@ -10,6 +10,8 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/glasswold.md §4.6 is its brief (#528).
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
+import { ORDERS_ASKED, ORDERS_BURNED } from '../public.ts';
 
 /**
  * Orders on the Scarp Stair (#56's 54, #532): sent up the stair by Hendra, the Compact's factor at
@@ -17,8 +19,7 @@ import { SOUTH } from '../../../../game/types.ts';
  * and at Akordu gives them to the eldest sealed (`ORDERS_SEALED`), tells her what they say
  * (`ORDERS_TOLD`) or burns them (`ORDERS_BURNED`), when the runner climbs again.
  */
-export const ORDERS_ASKED = 'q_scarp', ORDERS_CARRIED = 'q_scarp_carried';
-export const ORDERS_SEALED = 'q_scarp_sealed', ORDERS_TOLD = 'q_scarp_told', ORDERS_BURNED = 'q_scarp_burned';
+export const ORDERS_CARRIED = 'q_scarp_carried';
 
 export const WOLD_C8: MapDef = {
   id: 'wold_c8',
@@ -111,8 +112,8 @@ export const WOLD_C8: MapDef = {
   encounters: [
     // From the stair's head: the vultures on the lip's updraught, the pride at its lie in the grass with
     // vultures waiting over it, and the basilisk alone in the hills at the box's east, the hardest at 27.
-    { id: 'c8_vultures', x: 27, y: 3, monsters: ['vulture', 'vulture', 'vulture', 'vulture', 'vulture', 'vulture'], aware: 3, respawn: 2880 },
-    { id: 'c8_pride', x: 12, y: 19, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: 2880 },
-    { id: 'c8_basilisk', x: 28, y: 27, monsters: ['basilisk', 'basilisk'], aware: 5, respawn: 2880 },
+    { id: 'c8_vultures', x: 27, y: 3, monsters: ['vulture', 'vulture', 'vulture', 'vulture', 'vulture', 'vulture'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'c8_pride', x: 12, y: 19, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'c8_basilisk', x: 28, y: 27, monsters: ['basilisk', 'basilisk'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

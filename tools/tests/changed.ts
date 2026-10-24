@@ -5,7 +5,7 @@ import { changedMaps, changedMonsters, changedInteriors, familiesIn, reachedArea
 import { graph, treeFiles } from '../kit/graph.ts';
 import { AREAS, MONSTERS } from '../../src/content/index.ts';
 import { execFileSync } from 'node:child_process';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { FAMILY_OF } from '../../src/ui/monsters/index.ts';
 import { ok } from './lib.ts';
 
@@ -13,8 +13,8 @@ import { ok } from './lib.ts';
 function reaches(): void {
   const text = (f: string): string => readFileSync(new URL(`../../${f}`, import.meta.url), 'utf8');
   const g = graph(treeFiles(), text);
-  const reach = (files: string[], removed: Record<string, readonly string[] | null> = {}, added: Record<string, readonly string[]> = {}): Reach =>
-    reachedAreas(files, (f) => (removed[f] === null ? null : { removed: removed[f] ?? [], added: added[f] ?? [] }), g, text);
+  const reach = (files: string[], removed: Record<string, readonly string[] | null> = {}, added: Record<string, readonly string[]> = {}, was: Record<string, string> = {}): Reach =>
+    reachedAreas(files, (f) => (removed[f] === null ? null : { removed: removed[f] ?? [], added: added[f] ?? [] }), g, text, (f) => was[f] ?? '');
   const def = (f: string, id: string): string => text(f).split('\n').find((l) => l.includes(`id: '${id}'`)) ?? `no def ${id}`;
   // 2: a table's line changed or removed reaches every area; a def only added, its own area alone.
   const bones = 'src/content/areas/shelf/monsters.ts', axe = 'src/content/areas/sunderwood/items.ts';
@@ -41,12 +41,22 @@ function reaches(): void {
   ok(others.length === AREAS.length - 1 && !others.includes('kilns') && others.includes('thornmark') && [...map.areas.keys()].join() === 'kilns' && !note.walks.size && [...note.areas.keys()].join() === 'kilns',
     `a line of a Kilns map changed reaches the Kilns and every other walkthrough (${others.length}); a comment changed, the Kilns alone`);
   // A def only added to a table reaches every walkthrough too, as Rimewater's reads every monster's
-  // drops; a rung of the ladder (the Foreland's checks.ts) reaches every area; another area's rows its own.
+  // drops; a rung of the ladder (the Foreland's checks.ts) reaches every area; another area's rows its own,
+  // in a checks.ts that holds no rung (the Glasswold's: the Kilns' holds 17 since #968).
   const bred = reach([bones], {}, { [bones]: ["  { id: 'mut', name: 'Mut', plural: 'Muts', sprite: 'bandit', kind: 'person', level: 2, hp: 10 },"] });
   const rung = 'src/content/areas/shelf/checks.ts', laddered = reach([rung], { [rung]: ["    3: ['longsword', 'axe'],"] }, { [rung]: ["    3: ['longsword+2', 'axe'],"] });
-  const seams = 'src/content/areas/kilns/checks.ts', own = reach([seams], { [seams]: ['  seamsAsBuilt: [],'] });
-  ok(!bred.all && bred.walks.has('rimewater') && bred.walks.size === AREAS.length - 1 && laddered.all?.file === rung && !own.all && [...own.areas.keys()].join() === 'kilns',
-    `a def only added reaches every walkthrough (${bred.walks.size}); a rung of the ladder changed reaches every area (${describeReach(laddered)}); a row of the Kilns' own, the Kilns`);
+  const seams = 'src/content/areas/glasswold/checks.ts', own = reach([seams], { [seams]: ['  seamsAsBuilt: [],'] });
+  ok(!bred.all && bred.walks.has('rimewater') && bred.walks.size === AREAS.length - 1 && laddered.all?.file === rung && !own.all && [...own.areas.keys()].join() === 'glasswold',
+    `a def only added reaches every walkthrough (${bred.walks.size}); a rung of the ladder changed reaches every area (${describeReach(laddered)}); a row of the Glasswold's own, the Glasswold`);
+  // In a checks.ts that holds a rung (the Kilns', 17 since #968) a seam changed reaches its own area
+  // alone; a rung changed, the rungs added or the file deleted, every area (`was`, the file at the base).
+  const kilns = 'src/content/areas/kilns/checks.ts', kText = text(kilns), kLines = kText.split('\n');
+  const kSeam = kLines.find((l) => l.includes("seam: 'kilnsheart_n4|kilnsheart_o4'"))!, kRung = kLines.find((l) => /^\s*17: \[/.test(l))!, kOld = kRung.replace('forge_hammer', 'warhammer');
+  const seamed = reach([kilns], { [kilns]: [kSeam] }, { [kilns]: [kSeam.replace("walk: '14'", "walk: '13-14'")] }, { [kilns]: kText });
+  const stepped = reach([kilns], { [kilns]: [kOld] }, { [kilns]: [kRung] }, { [kilns]: kText.replace(kRung, kOld) });
+  const opened = reach([kilns], {}, { [kilns]: ['  gear: {', kRung, '  },'] }, { [kilns]: kText.replace(/^ {2}gear: \{\n[\s\S]*?^ {2}\},\n/m, '') });
+  ok(!seamed.all && [...seamed.areas.keys()].join() === 'kilns' && stepped.all?.file === kilns && opened.all?.file === kilns && reach([kilns], { [kilns]: null }).all?.why.startsWith('deleted') === true,
+    `a seam of the Kilns, whose checks.ts holds a rung, reaches the Kilns alone (${describeReach(seamed)}); a rung of it changed, its rungs added or the file deleted, every area (${describeReach(stepped)})`);
   const index = reach(['src/content/areas/hearth/index.ts']);
   ok(!index.all && index.areas.size < AREAS.length, `the walk stops at the files outside the areas, as src/content/index.ts imports every area's (${describeReach(index)})`);
   // 4: elsewhere.
@@ -73,6 +83,10 @@ export async function changed(): Promise<void> {
   ok((await changedMaps(['src/ui/scenery.ts'])).all && !scenery.all && !scenery.monsters.length, 'the scenery counts every map and no monster');
   ok(!(await changedMaps(['src/ui/sprites.ts'])).all && !(await changedMaps(['src/ui/monsters/wolf.ts', 'src/ui/monsters/index.ts'])).all, 'the dispatcher, a family and the barrel count no map');
   ok((await changedMaps(['src/ui/monsters/common.ts'])).all, 'ui/monsters/common.ts, whose B and stroke the scenery paints with, counts every map');
+  // The kits count what the files they came from counted (#983), and the old paths that re-export them still do.
+  const rig = 'src/ui/monsters/kit/figure.ts', plumbing = 'src/ui/monsters/kit/common.ts';
+  ok((await changedMaps([plumbing])).all && (await changedMonsters([plumbing])).all && (await changedMonsters([rig])).all && !(await changedMaps([rig])).all,
+    "a file of the monsters' kit counts every monster, and its common.ts, where B and stroke are, every map too");
   // A change to the barrel counts the families it merges that its base did not, read from its import lines.
   const barrel = readFileSync(new URL('../../src/ui/monsters/index.ts', import.meta.url), 'utf8'), registered = [...new Set(Object.values(FAMILY_OF))];
   ok(familiesIn(barrel).sort().join() === registered.sort().join() && familiesIn("import { SPRITES as wolf } from './wolf.ts';\nimport type { Sprite } from './common.ts';").join() === 'wolf',
@@ -101,12 +115,19 @@ export async function changed(): Promise<void> {
   } else console.log('  skip: the checks against HEAD, as Thornmark\'s monsters or index, or the barrel, differ from it');
   ok((await changedMonsters(['src/ui/brush.ts'])).all && (await changedInteriors(['src/ui/brush.ts'])).all, 'ui/brush.ts counts every monster and every interior');
   ok((await changedInteriors(['src/ui/monsters/gloss.ts'])).all, 'ui/monsters/gloss.ts, which the scenes borrow, counts every interior');
+  const brush = 'src/ui/paint/brush.ts', gloss = 'src/ui/paint/gloss.ts';
+  ok((await changedMaps([brush])).all && (await changedMonsters([brush])).all && (await changedInteriors([brush])).all && (await changedMaps(['src/ui/paint/ink.ts'])).all,
+    "the paint kit's brush counts every map, every monster and every interior, and its ink, B's outline, every map too");
+  ok((await changedMonsters([gloss])).all && (await changedInteriors([gloss])).all && !(await changedMaps([gloss])).all, "the paint kit's gloss counts every monster and every interior, and no map");
   // A file under an area's folder of rooms counts every room of the area, as the folder's registry keys them: the helpers its
   // scenes share (kilns/hold.ts, kilns/port.ts, rimewater/lodge.ts) have no room of their own to be found by, and a scene may
   // borrow from another (shelf/throne_room.ts from warden_drillyard.ts), which no file's name says.
   const roomsOf = (area: string): string[] => [...AREAS.find((a) => a.id === area)!.interiors];
   const counts = (c: { all: boolean; interiors: string[] }, want: string[]): boolean => want.length > 0 && !c.all && c.interiors.length === want.length && want.every((i) => c.interiors.includes(i));
-  const folders = readdirSync(new URL('../../src/ui/interiors/', import.meta.url), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
+  // The rooms' kit (kit/, #983) is the one folder that is no area's: it registers no room, so it has no index.ts, and a
+  // registry put there is checked as any folder's is, and fails as no area's.
+  const kitIndex = new URL('../../src/ui/interiors/kit/index.ts', import.meta.url);
+  const folders = readdirSync(new URL('../../src/ui/interiors/', import.meta.url), { withFileTypes: true }).filter((d) => d.isDirectory() && (d.name !== 'kit' || existsSync(kitIndex))).map((d) => d.name);
   const adrift: string[] = [];
   for (const folder of folders) {
     const registry = ((await import(new URL(`../../src/ui/interiors/${folder}/index.ts`, import.meta.url).href)) as { SCENES: Record<string, unknown> }).SCENES;
@@ -124,6 +145,8 @@ export async function changed(): Promise<void> {
   ok(!stray.all && !stray.interiors.length, 'a folder that is no area\'s, with no registry, counts no room');
   ok(counts(await changedInteriors(['src/ui/interiors/kilns/hold.ts', 'src/ui/interiors/rimewater/lodge.ts']), [...roomsOf('kilns'), ...roomsOf('rimewater')]), 'two areas\' helpers together count the rooms of both, each once');
   ok((await changedInteriors(['src/ui/interiors/kit.ts'])).all, 'the kit counts every interior');
+  const stage = await changedInteriors(['src/ui/interiors/kit/stage.ts']), props = await changedMonsters(['src/ui/interiors/kit/props.ts']);
+  ok(stage.all && !stage.interiors.length && !props.all && !props.monsters.length, "a file of the rooms' kit counts every interior, as no area's folder, and no monster");
   ok((await changedInteriors(['src/lib/engine/text.ts'])).all, 'the pixel font, which letters signs in some rooms, counts every interior');
   ok(!(await changedInteriors(['src/ui/monsters/wolf.ts'])).all, 'a monster drawing counts no interior');
 }

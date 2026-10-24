@@ -24,7 +24,7 @@ import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { CHAPTER } from './chapter.ts';
 import { INTERIORS } from './interiors.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
 import { QUESTS } from './quests.ts';
 
@@ -50,5 +50,5 @@ export const AREA = {
   interiors: INTERIORS,
   // The cats and a group on ice with M9 (#486); the keepers with the bay (#490).
   novel: { families: ['cats', 'keepers'], terrain: [], mechanics: ['encounter:under'], landmarks: [] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;

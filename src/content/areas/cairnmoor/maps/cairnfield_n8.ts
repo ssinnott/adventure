@@ -7,7 +7,9 @@
 // Lodge, taken onto M9 (#486, NOTCH).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
+import { EAST, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
+import { NOTCH } from '../public.ts';
 
 /**
  * The way into Carn Dubh (#480): the door of slabs in the biggest cairn's west side, 6,18, onto the
@@ -16,15 +18,6 @@ import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
  */
 export const DOOR: Exit = { x: 6, y: 18, to: 'cairns', tx: 1, ty: 8, tf: EAST,
   label: 'The slabs of the door grind back, and you stoop in under the cairn.' };
-
-/**
- * The way down to Rime Lodge (#438): N8 and Rimewater's M9 meet only at a corner, and M8 between them
- * is parked, so the drove road is not walked across but taken: the notch at 0,28 (the atlas's 424,250)
- * leads onto M9's road at 22,8 (414,262), facing west for the lodge. M9 (#486) lists it in this map's
- * exits; its way back (M9's UP) lands on 1,28, facing east, the road's last square. The label leaves
- * the loch's name to the crossing line said after it (World's `crossing`, #166).
- */
-export const NOTCH: Exit = { x: 0, y: 28, to: 'longmere_m9', tx: 22, ty: 8, tf: WEST, label: 'Down through the notch to the frozen loch.' };
 
 export const CAIRNFIELD_N8: MapDef = {
   id: 'cairnfield_n8',
@@ -136,10 +129,10 @@ export const CAIRNFIELD_N8: MapDef = {
     // Ravens on the cairns by the road and bog bodies out of the frozen pool, the box's at 18; cairn
     // wights at the open cairn and at the Watcher's grave, cursing (#537), the hardest by day; and at
     // the road's head by night, the hounds.
-    { id: 'n8_ravens', x: 12, y: 9, monsters: ['raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven'], aware: 4, respawn: 1440, roams: false },
-    { id: 'n8_wights_open', x: 12, y: 24, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 3, respawn: 1440, roams: false },
-    { id: 'n8_bodies', x: 17, y: 9, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: 1440 },
-    { id: 'n8_wights_grave', x: 20, y: 27, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 3, respawn: 1440, roams: false },
-    { id: 'n8_hounds', x: 3, y: 25, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 5, respawn: 2880, when: { hours: 'night' } },
+    { id: 'n8_ravens', x: 12, y: 9, monsters: ['raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven'], aware: 4, respawn: RESPAWN.day, roams: false },
+    { id: 'n8_wights_open', x: 12, y: 24, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'n8_bodies', x: 17, y: 9, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: RESPAWN.day },
+    { id: 'n8_wights_grave', x: 20, y: 27, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'n8_hounds', x: 3, y: 25, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 5, respawn: RESPAWN.twoDays, when: { hours: 'night' } },
   ],
 };

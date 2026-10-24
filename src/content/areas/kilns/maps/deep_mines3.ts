@@ -8,7 +8,8 @@
 // of the ceiling. Band 17-18; docs/areas/kilns.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
-import { CREW_OPEN } from '../../hearth/maps/underdeep.ts';
+import { CREW_OPEN } from '../../hearth/public.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DEEP_MINES3: MapDef = {
   id: 'deep_mines3',
@@ -75,12 +76,12 @@ export const DEEP_MINES3: MapDef = {
   secrets: [{ x: 5, y: 10, hint: 'dm3_tracks' }],
   encounters: [
     // The clean corridor: six knockers and a mender, twice (MONSTERS §7.1's first fight).
-    { id: 'dm3_knockers1', x: 9, y: 11, monsters: ['knocker', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker', 'mender'], aware: 3, respawn: 2880, roams: false },
-    { id: 'dm3_knockers2', x: 1, y: 6, monsters: ['knocker', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker', 'mender'], aware: 3, respawn: 2880, roams: false },
+    { id: 'dm3_knockers1', x: 9, y: 11, monsters: ['knocker', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker', 'mender'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'dm3_knockers2', x: 1, y: 6, monsters: ['knocker', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker', 'mender'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
     // The road behind (#765): the door marked CREW ONLY opened from the Ways and left open, three of the
     // corridor's own knockers come up into it, and come back.
-    { id: 'ud_mines', x: 6, y: 3, monsters: ['knocker', 'knocker', 'knocker'], aware: 3, respawn: 2880, roams: false, after: { flag: CREW_OPEN } },
+    { id: 'ud_mines', x: 6, y: 3, monsters: ['knocker', 'knocker', 'knocker'], aware: 3, respawn: RESPAWN.twoDays, roams: false, after: { flag: CREW_OPEN } },
     // The Foreman before the door: it never comes back, and the door stays shut when it falls.
-    { id: 'dm3_foreman', x: 11, y: 3, monsters: ['foreman'], aware: 2, roams: false, slainText: 'The Foreman folds down over its slate, the stylus at a box it never ticked. Behind it the door stays shut.' },
+    { id: 'dm3_foreman', x: 11, y: 3, monsters: ['foreman'], aware: 2, roams: false, boss: true, slainText: 'The Foreman folds down over its slate, the stylus at a box it never ticked. Behind it the door stays shut.' },
   ],
 };

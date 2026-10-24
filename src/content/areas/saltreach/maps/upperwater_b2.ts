@@ -5,6 +5,7 @@
 // written in; docs/areas/saltreach.md §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const UPPERWATER_B2: MapDef = {
   id: 'upperwater_b2',
@@ -62,6 +63,6 @@ export const UPPERWATER_B2: MapDef = {
   encounters: [
     // A bull toad in the mire under the spring and an eel come up the Long Water to its head, the box's
     // one fight, kept to the mire as the eel is.
-    { id: 'b2_toad', x: 24, y: 16, monsters: ['bull_toad', 'fen_eel'], aware: 4, roams: false, respawn: 1440 },
+    { id: 'b2_toad', x: 24, y: 16, monsters: ['bull_toad', 'fen_eel'], aware: 4, roams: false, respawn: RESPAWN.day },
   ],
 };

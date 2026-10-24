@@ -6,6 +6,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const HIGHMOOR_N7: MapDef = {
   id: 'highmoor_n7',
@@ -101,9 +102,9 @@ export const HIGHMOOR_N7: MapDef = {
   encounters: [
     // Ravens on the first cairn; bog bodies out of the peat in the marsh beside the road, two groups;
     // and on the road's southern reach by night, three moor hounds, the box's group at 19.
-    { id: 'n7_ravens', x: 11, y: 22, monsters: ['raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven'], aware: 4, respawn: 1440, roams: false },
-    { id: 'n7_bodies_north', x: 9, y: 26, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: 1440 },
-    { id: 'n7_bodies_south', x: 13, y: 29, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: 1440 },
-    { id: 'n7_hounds', x: 7, y: 31, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 5, respawn: 2880, when: { hours: 'night' } },
+    { id: 'n7_ravens', x: 11, y: 22, monsters: ['raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven', 'raven'], aware: 4, respawn: RESPAWN.day, roams: false },
+    { id: 'n7_bodies_north', x: 9, y: 26, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: RESPAWN.day },
+    { id: 'n7_bodies_south', x: 13, y: 29, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: RESPAWN.day },
+    { id: 'n7_hounds', x: 7, y: 31, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 5, respawn: RESPAWN.twoDays, when: { hours: 'night' } },
   ],
 };

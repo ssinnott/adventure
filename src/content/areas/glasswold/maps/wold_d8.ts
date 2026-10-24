@@ -11,22 +11,14 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
 import { RIDERS_RIDE, sells } from '../../../crossings.ts';
-import { CURES } from '../../ashfall/items.ts';
-import { LIT } from '../../ashfall/maps/ember_stone.ts';
-import { ROAD_WEST } from '../../ashfall/maps/emberwaste_e10.ts';
+import { CURES, LIT, ROAD_WEST } from '../../ashfall/public.ts';
 import { WATCH } from './wold_b9.ts';
 import { LION_ASKED, LION_HUNT, LION_LEFT, LION_TOLD, LION_TAKEN, LION_DOWN } from './wold_b8.ts';
-import { ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from './wold_c8.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
+import { ROAD_EAST, HORSE_BROKEN, GARDEN_LIFTED, GARDEN_DRAUGHT, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from '../public.ts';
 
 /** The flag the eldest's telling sets, said once: The Warning's step at Akordu keys on it (#531). */
 export const STORY = 'akordu_story';
-
-/**
- * The Warning's done flag (#531), set at the horse-lines once the eldest and the watch are heard and the
- * Glass is seen from the gap: the company turned east for Cinderport and the last crossing. Phase 1.5's
- * chapter starts on it.
- */
-export const ROAD_EAST = 'q_road_east';
 
 /**
  * The Horse That Came Back (#56's 51, #532): asked at the Chart House in Cinderport (`HORSE_ASKED`), the
@@ -36,9 +28,8 @@ export const ROAD_EAST = 'q_road_east';
  * whose priest takes him in (`GARDEN_BROUGHT`) and lifts the stone (`GARDEN_LIFTED`), or a draught does
  * (`GARDEN_DRAUGHT`).
  */
-export const HORSE_ASKED = 'q_horse', HORSE_BROKEN = 'q_horse_broken', HORSE_CARRIED = 'q_horse_carried', HORSE_WHOLE = 'q_horse_whole';
-export const GARDEN_ASKED = 'q_garden', GARDEN_CARRIED = 'q_garden_carried', GARDEN_BROUGHT = 'q_garden_brought';
-export const GARDEN_LIFTED = 'q_garden_lifted', GARDEN_DRAUGHT = 'q_garden_draught';
+export const HORSE_CARRIED = 'q_horse_carried';
+export const GARDEN_ASKED = 'q_garden', GARDEN_CARRIED = 'q_garden_carried';
 
 /** Akkush's rumour (#846, #833), DESIGN §9's words: the eldest's two lines more at a meeting after the oldest story, while the bird lives. Words only; it marks nothing on the world map. */
 const BOW_RUMOUR = [
@@ -212,8 +203,8 @@ export const WOLD_D8: MapDef = {
     // glass scorpions hole up in the broken ground under the mesa's east face; and in its shade on the
     // north side the basilisk alone, the box's hardest at 27. The vultures over the garden are seen, not
     // fought: they wait for what does not die.
-    { id: 'd8_pride', x: 4, y: 21, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: 2880, when: { hours: 'night' } },
-    { id: 'd8_scorpions', x: 22, y: 17, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: 2880 },
-    { id: 'd8_basilisk', x: 13, y: 12, monsters: ['basilisk'], aware: 3, respawn: 2880 },
+    { id: 'd8_pride', x: 4, y: 21, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: RESPAWN.twoDays, when: { hours: 'night' } },
+    { id: 'd8_scorpions', x: 22, y: 17, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'd8_basilisk', x: 13, y: 12, monsters: ['basilisk'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

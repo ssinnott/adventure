@@ -76,7 +76,8 @@ import { meet, heard, answer, barred, handIns, personFlags } from '../../../game
 import { questLog, holds } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item, hits, ELEMENT_DIE } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition, createCharacter, takePrestige, className, rankMult, RANK_STEP, PRESTIGES } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, rest, templePrice, addCondition, createCharacter, takePrestige, className, rankMult, RANK_STEP, PRESTIGES } from '../../../game/party.ts';
+import { nightCost, stay, train } from '../../../game/services.ts';
 import { teach, barOf } from '../../../game/prestige.ts';
 import { seekId, sought } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
@@ -93,29 +94,27 @@ import { CURVE } from '../../progression.ts';
 import { ARMOURER, CURES } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { GATE, FOUNDING_RAISED, ELDEST_HEARD } from './maps/cindercoast_g10.ts';
-import { ROAD_WEST } from './maps/emberwaste_e10.ts';
+import { ROAD_WEST, VENTS, STAIR, STAIR2, ROPE, LIT } from './public.ts';
 import { CHAPTER } from './chapter.ts';
-import { STAIR_TOP } from '../whitespine/maps/highspine_i10.ts';
+import { STAIR_TOP } from '../whitespine/public.ts';
 import { stonesRestored } from '../../../game/stones.ts';
-import { VENTS, HOLE, SHOVEL_STORY, BROOD_ASKED, BROOD, AXE_RUMOUR } from './maps/firemount_g11.ts';
+import { HOLE, SHOVEL_STORY, BROOD_ASKED, BROOD, AXE_RUMOUR } from './maps/firemount_g11.ts';
 import { SPRINGS_BREAK, SPRINGS_LEFT, SPRINGS_COLD } from './maps/cindercoast_h10.ts';
 import { FOUNDING_UP, FOUNDING_LEFT, SHOVEL_THANE, SHOVEL_WARDENS, SHOVEL_KEPT, CIPHER_TAKEN } from './maps/cinderport.ts';
-import { ORDERS_ASKED } from '../glasswold/maps/wold_c8.ts';
-import { STAIR } from './maps/meridian_camp.ts';
-import { STAIR2 } from './maps/meridian_camp2.ts';
-import { ROPE } from './maps/meridian_camp3.ts';
+import { ORDERS_ASKED } from '../glasswold/public.ts';
 import { CRATER, STONE } from './maps/emberwaste_f11.ts';
-import { LIT, LIGHTS, SOCKETS, SEEDLING, SEEDLING_ASKED, SEEDLING_TAKEN, SEEDLING_PLANTED } from './maps/ember_stone.ts';
+import { LIGHTS, SOCKETS, SEEDLING, SEEDLING_ASKED, SEEDLING_TAKEN, SEEDLING_PLANTED } from './maps/ember_stone.ts';
 import { LAMP_ASKED, LAMP_LIT } from './maps/old_cinder2.ts';
 import { ROLL_GIVEN } from './maps/old_cinder.ts';
 import { QUESTS } from './quests.ts';
 import { masterOffers, favourDone, teachTier, TIER_PRICES } from '../../../game/mastery.ts';
-import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
+import { SLEEPERS_SEEN } from '../rimewater/public.ts';
 import { ENDINGS, ENDED } from '../../endings.ts';
 import { BLACKDRAW } from './maps/blackdraw.ts';
 import { GRIMS_HOWE } from './maps/grims_howe.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
+import { RESPAWN } from '../../../game/keys.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
 const person = (name: string, d = G10): Person => d.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -1397,7 +1396,7 @@ function mountainBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void
   ok(meet(watcher, w.party, heard(w.world, watcher)).text.includes('Leave the hollows be'), 'the drake-watcher at the pines\' edge says where the drakes lay, and to leave the hollows be');
   listen(w);
   // Each box's one group, won at its floor: six drakelings, the mountain's youngest, the band's top.
-  ok([H11, H12, G12].every((d) => d.encounters!.length === 1 && d.encounters!.every((g) => g.monsters.length === 6 && g.monsters.every((m) => m === 'drakeling') && !g.after && g.respawn === 2880)),
+  ok([H11, H12, G12].every((d) => d.encounters!.length === 1 && d.encounters!.every((g) => g.monsters.length === 6 && g.monsters.every((m) => m === 'drakeling') && !g.after && g.respawn === RESPAWN.twoDays)),
     'each box\'s one fight is six drakelings, the mountain\'s youngest, at the band\'s top');
   for (const g of H11.encounters!) fight(w, `${H11.id}:${g.id}`);
   // The secret: an old axe-head driven into a rock on the slope, and behind the rock the war-chest.
@@ -1947,16 +1946,14 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   ok(PORT.exits!.length === 1 && PORT.exits!.every((e) => !e.shut && !e.needFlag), 'nothing shuts the gate');
   listen(w);
 
-  // A night at the inn, as the business's screen does it (src/ui/screens.ts).
+  // A night at the inn, by the rule its screen serves (src/game/services.ts).
   ok(here('inn').length === 1 && here('temple').length === 1 && here('trainer').length === 1 && here('shop').length === 2 && !here('guild').length
     && INTERIORS.every((id) => PORT.features!.some((f) => 'interior' in f && f.interior === id)),
     'Cinderport has its eight businesses, each opening into its room: the inn, the temple, the armourer\'s, the chandler\'s, the yard, the two halls and the potter\'s; and no spell hall');
   w.party.gold = 60000;
-  const inn = here('inn')[0], night = inn.price * w.party.members.length;
+  const inn = here('inn')[0], night = nightCost(inn, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
-  w.party.gold -= night;
-  for (const m of w.party.members) rest(m);
-  w.world.sleepUntilMorning();
+  stay(w.party, w.world, inn);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 60000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
 
   // The armourer's sells the act's one step (#542), each class its rung at 25, at list price; the
@@ -1977,12 +1974,11 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   glassed.level = 25; addCondition(glassed, 'stoned');
   ok(templePrice(glassed) === cure.price && here('temple')[0].interior === 'cinderport_temple', `${here('temple')[0].name} lifts the stone from a member of 25 for ${templePrice(glassed)} gold, the cure's price`);
 
-  // Training to 27 at the yard, on a copy, so the company walks on as it was.
+  // Training to 27 at the yard, a copy from a copy of the purse, so the company walks on as it was.
   const yard = here('trainer')[0], trainee = structuredClone(w.party.members[0]);
   trainee.level = 26; trainee.xp = xpForLevel(27);
   ok(yard.maxLevel === 27 && yard.interior === 'cinderport_yard' && canTrainAt(trainee, yard.maxLevel), `${yard.name} will train a member of 26`);
-  const fee = trainPrice(trainee);
-  levelUp(trainee, makeRng(1), 27);
+  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), yard.maxLevel);
   ok(trainee.level === 27 && !canTrainAt(trainee, yard.maxLevel), `who trains to 27 for ${fee} gold, and no further`);
 
   // The two halls (#443, call 7), each a room: the Chart House the Cartographers' second, and the
@@ -2526,7 +2522,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     w.level = 27;
     const [first, last] = [BD.encounters!.find((g) => g.id === 'bd_walker')!, BD.encounters!.find((g) => g.id === 'bd_inspector')!];
     ok(BD.encounters!.length === 2 && first.monsters.join() === 'flue_walker' && last.monsters.join() === 'inspector,deep_knocker' && !!MONSTERS.inspector.calls?.monsters.includes('deep_knocker')
-      && BD.encounters!.every((g) => g.respawn === 2880 && !g.slainText && g.roams === false), 'a flue walker in the flue and an inspector with a deep knocker, which it calls more of, at the furnace\'s mouth; no guardian');
+      && BD.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && g.roams === false), 'a flue walker in the flue and an inspector with a deep knocker, which it calls more of, at the furnace\'s mouth; no guardian');
     for (const g of BD.encounters!) fight(w, `${BD.id}:${g.id}`);
     for (const id of ['bd_mouth', 'bd_plates', 'bd_irons', 'bd_furnace', 'bd_flow', 'bd_stoker']) see(w, `${BD.id}:${id}`);
     const flue = new GameMap(BD), key = (x: number, y: number): string => `${x},${y}`, [plate] = BD.secrets!;

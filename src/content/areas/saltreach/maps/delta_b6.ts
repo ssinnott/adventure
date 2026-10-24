@@ -8,8 +8,10 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { When } from '../../../../game/quests.ts';
-import { BELL_HUNG, COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
+import { COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
+import { BELL_HUNG } from '../public.ts';
 import { ENDINGS } from '../../../endings.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** Both of Stienwierde's Rifts gone quiet (B5), or the Tide Stone home (#191): their spill stops coming down the channel. */
 export const RIFTS_CLOSED: When = [{ slain: ['b5_rift_n:b5_rift_n_warden', 'b5_rift_s:b5_rift_s_warden'] }, STONE_HOME];
@@ -113,8 +115,8 @@ export const DELTA_B6: MapDef = {
   encounters: [
     // The last fen toads, on the causeway in; brinelings in the channel by night, B5's Rifts' spill,
     // until both are quiet; two bull toads on the flats beyond the far roof.
-    { id: 'b6_toads', x: 16, y: 3, monsters: ['fen_toad', 'fen_toad', 'fen_toad', 'fen_toad', 'fen_toad'], aware: 3, roams: false, respawn: 1440 },
-    { id: 'b6_brine', x: 27, y: 13, when: { hours: 'night' }, until: RIFTS_CLOSED, monsters: ['brineling', 'brineling', 'brineling', 'brineling', 'brineling'], aware: 4, respawn: 1440 },
-    { id: 'b6_bulls', x: 13, y: 27, monsters: ['bull_toad', 'bull_toad'], aware: 4, respawn: 1440 },
+    { id: 'b6_toads', x: 16, y: 3, monsters: ['fen_toad', 'fen_toad', 'fen_toad', 'fen_toad', 'fen_toad'], aware: 3, roams: false, respawn: RESPAWN.day },
+    { id: 'b6_brine', x: 27, y: 13, when: { hours: 'night' }, until: RIFTS_CLOSED, monsters: ['brineling', 'brineling', 'brineling', 'brineling', 'brineling'], aware: 4, respawn: RESPAWN.day },
+    { id: 'b6_bulls', x: 13, y: 27, monsters: ['bull_toad', 'bull_toad'], aware: 4, respawn: RESPAWN.day },
   ],
 };

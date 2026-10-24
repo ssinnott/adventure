@@ -8,6 +8,7 @@
 // outside any area's budget (EXPANSION §5.2; Wrackholm's `outside`). docs/areas/dead_drop.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, EAST, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The way down to the writer's room (dead_drop3, #22's third level): the steps at the people's vault's end,
@@ -104,11 +105,11 @@ export const DEAD_DROP2: MapDef = {
   secrets: [{ x: 14, y: 28, hint: 'dd2_chains' }],
   encounters: [
     // A loader on the rails, its crate held up; two at the racks; four deep knockers at the door, knocking.
-    { id: 'dd2_loader', x: 22, y: 8, monsters: ['loader'], aware: 2, respawn: 1440 },
-    { id: 'dd2_loaders', x: 10, y: 8, monsters: ['loader', 'loader'], aware: 2, respawn: 2880, roams: false },
-    { id: 'dd2_knockers', x: 5, y: 8, monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker', 'deep_knocker'], aware: 2, respawn: 2880, roams: false },
+    { id: 'dd2_loader', x: 22, y: 8, monsters: ['loader'], aware: 2, respawn: RESPAWN.day },
+    { id: 'dd2_loaders', x: 10, y: 8, monsters: ['loader', 'loader'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'dd2_knockers', x: 5, y: 8, monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker', 'deep_knocker'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // The hold keepers at the pens, carrying water to nobody.
-    { id: 'dd2_keepers', x: 16, y: 18, monsters: ['hold_keeper', 'hold_keeper', 'hold_keeper'], aware: 2, respawn: 2880, roams: false },
-    { id: 'dd2_keepers2', x: 16, y: 24, monsters: ['hold_keeper', 'hold_keeper', 'hold_keeper', 'hold_keeper'], aware: 2, respawn: 2880, roams: false },
+    { id: 'dd2_keepers', x: 16, y: 18, monsters: ['hold_keeper', 'hold_keeper', 'hold_keeper'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'dd2_keepers2', x: 16, y: 24, monsters: ['hold_keeper', 'hold_keeper', 'hold_keeper', 'hold_keeper'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

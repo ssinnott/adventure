@@ -7,6 +7,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LONGMERE_N9: MapDef = {
   id: 'longmere_n9',
@@ -70,7 +71,7 @@ export const LONGMERE_N9: MapDef = {
   encounters: [
     // Three snow lynxes in the pines round the shoulder, the nearer; and a pair of ice bears at the cave
     // in the ice wall's foot, the box's hardest.
-    { id: 'n9_lynx', x: 8, y: 12, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'n9_bears', x: 25, y: 22, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
+    { id: 'n9_lynx', x: 8, y: 12, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'n9_bears', x: 25, y: 22, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

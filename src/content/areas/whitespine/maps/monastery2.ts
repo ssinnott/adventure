@@ -6,6 +6,7 @@
 // eleven, and the monks' things laid by. Band 23-24; docs/areas/whitespine.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const MONASTERY2: MapDef = {
   id: 'monastery2',
@@ -53,8 +54,8 @@ export const MONASTERY2: MapDef = {
   encounters: [
     // The chapter house: brothers in front of two bell-ringers, the bells holding the front row while the
     // brothers close (MONSTERS §8.1).
-    { id: 'hc2_chapter', x: 7, y: 6, monsters: ['brother', 'brother', 'bell_ringer', 'bell_ringer'], aware: 2, respawn: 2880, roams: false },
+    { id: 'hc2_chapter', x: 7, y: 6, monsters: ['brother', 'brother', 'bell_ringer', 'bell_ringer'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // The Abbot on its seat: it never comes back, and its robe falls open as it falls.
-    { id: 'hc2_abbot', x: 7, y: 9, monsters: ['abbot'], aware: 2, roams: false, slainText: 'The Abbot falls, and its robe falls open on grey plate. Overhead the bells ring the hour all the same.' },
+    { id: 'hc2_abbot', x: 7, y: 9, monsters: ['abbot'], aware: 2, roams: false, boss: true, slainText: 'The Abbot falls, and its robe falls open on grey plate. Overhead the bells ring the hour all the same.' },
   ],
 };

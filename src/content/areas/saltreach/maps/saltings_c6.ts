@@ -6,6 +6,7 @@
 // docs/areas/saltreach.md §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SALTINGS_C6: MapDef = {
   id: 'saltings_c6',
@@ -102,9 +103,9 @@ export const SALTINGS_C6: MapDef = {
   secrets: [{ x: 28, y: 19, hint: 'c6_rope' }],
   encounters: [
     // The quay: bargemen by day, their master behind them; the Hand's smugglers by night, under the sea wall.
-    { id: 'c6_bargemen', x: 26, y: 5, monsters: ['bargeman', 'bargeman', 'bargeman', 'bargeman', 'barge_master'], leader: 'barge_master', back: 1, aware: 3, respawn: 1440, when: { hours: 'day' } },
-    { id: 'c6_smugglers', x: 31, y: 15, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, respawn: 1440, when: { hours: 'night' } },
+    { id: 'c6_bargemen', x: 26, y: 5, monsters: ['bargeman', 'bargeman', 'bargeman', 'bargeman', 'barge_master'], leader: 'barge_master', back: 1, aware: 3, respawn: RESPAWN.day, when: { hours: 'day' } },
+    { id: 'c6_smugglers', x: 31, y: 15, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, respawn: RESPAWN.day, when: { hours: 'night' } },
     // The first salt crabs, at the pans' edge.
-    { id: 'c6_crabs', x: 24, y: 27, monsters: ['salt_crab', 'salt_crab', 'salt_crab', 'salt_crab'], aware: 3, respawn: 1440 },
+    { id: 'c6_crabs', x: 24, y: 27, monsters: ['salt_crab', 'salt_crab', 'salt_crab', 'salt_crab'], aware: 3, respawn: RESPAWN.day },
   ],
 };

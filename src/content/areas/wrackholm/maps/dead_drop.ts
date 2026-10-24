@@ -8,6 +8,7 @@
 // docs/areas/dead_drop.md §4.1 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The way down to the vaults (dead_drop2, #22's second level): the rails' slope at the drop's far end, 25,30,
@@ -95,18 +96,18 @@ export const DEAD_DROP: MapDef = {
   ],
   encounters: [
     // The first, out of sight of the way in, round the corner: a loader on the rails, its crate held up.
-    { id: 'dd_loader1', x: 11, y: 15, monsters: ['loader'], aware: 2, respawn: 1440, roams: false },
+    { id: 'dd_loader1', x: 11, y: 15, monsters: ['loader'], aware: 2, respawn: RESPAWN.day, roams: false },
     // The clerks at their posts, each calling two loaders; the loaders on the rails and at the stacks, the
     // large shards taking two.
-    { id: 'dd_clerk1', x: 14, y: 13, monsters: ['tally_clerk'], aware: 3, respawn: 1440, roams: false },
-    { id: 'dd_loader2', x: 18, y: 15, monsters: ['loader'], aware: 2, respawn: 1440 },
-    { id: 'dd_clerk2', x: 22, y: 13, monsters: ['tally_clerk'], aware: 3, respawn: 1440, roams: false },
-    { id: 'dd_loader3', x: 12, y: 19, monsters: ['loader'], aware: 2, respawn: 1440, roams: false },
-    { id: 'dd_pair', x: 18, y: 19, monsters: ['loader', 'loader'], aware: 2, respawn: 2880, roams: false },
-    { id: 'dd_loader4', x: 28, y: 19, monsters: ['loader'], aware: 2, respawn: 1440 },
-    { id: 'dd_clerk3', x: 4, y: 25, monsters: ['tally_clerk'], aware: 3, respawn: 1440, roams: false },
-    { id: 'dd_clerk4', x: 8, y: 27, monsters: ['tally_clerk'], aware: 3, respawn: 1440, roams: false },
+    { id: 'dd_clerk1', x: 14, y: 13, monsters: ['tally_clerk'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'dd_loader2', x: 18, y: 15, monsters: ['loader'], aware: 2, respawn: RESPAWN.day },
+    { id: 'dd_clerk2', x: 22, y: 13, monsters: ['tally_clerk'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'dd_loader3', x: 12, y: 19, monsters: ['loader'], aware: 2, respawn: RESPAWN.day, roams: false },
+    { id: 'dd_pair', x: 18, y: 19, monsters: ['loader', 'loader'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'dd_loader4', x: 28, y: 19, monsters: ['loader'], aware: 2, respawn: RESPAWN.day },
+    { id: 'dd_clerk3', x: 4, y: 25, monsters: ['tally_clerk'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'dd_clerk4', x: 8, y: 27, monsters: ['tally_clerk'], aware: 3, respawn: RESPAWN.day, roams: false },
     // At the far end, a hold keeper come up from the vaults to fill its pails, the level's top at 27.
-    { id: 'dd_keeper', x: 25, y: 27, monsters: ['hold_keeper'], aware: 2, respawn: 2880, roams: false },
+    { id: 'dd_keeper', x: 25, y: 27, monsters: ['hold_keeper'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

@@ -8,6 +8,7 @@
 // docs/areas/kilns.md §12.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNMOUTH_L7: MapDef = {
   id: 'kilnmouth_l7',
@@ -77,7 +78,7 @@ export const KILNMOUTH_L7: MapDef = {
   encounters: [
     // Four fire beetles at the ore spill, the nearest and the gentlest, at 16; and in the dunes behind the
     // strand a lone rock worm, the hardest, at 17, where the country's worms go in pairs.
-    { id: 'l7_beetles', x: 22, y: 3, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: 1440 },
-    { id: 'l7_worm', x: 10, y: 2, monsters: ['rock_worm'], aware: 3, respawn: 2880, roams: false },
+    { id: 'l7_beetles', x: 22, y: 3, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'l7_worm', x: 10, y: 2, monsters: ['rock_worm'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

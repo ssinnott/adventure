@@ -10,6 +10,7 @@
 import type { MapDef, Choice, Words } from '../../../../game/map.ts';
 import { NICK_DOWN } from './nicks_locker.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 const BURNT = { seen: 'wrackholm_f6:f6_watch' };
 
@@ -148,10 +149,10 @@ export const WRACKHOLM_F6: MapDef = {
   // the watch, the box's hardest; the rats at the stores on the east shore; the devilfish in the
   // pools under the cliff by night, at the far end. Each at the line's standard size.
   encounters: [
-    { id: 'f6_gulls', x: 14, y: 4, monsters: new Array(8).fill('wrack_gull'), aware: 4, respawn: 1440 },
-    { id: 'f6_crew', x: 9, y: 20, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, respawn: 2880, until: BURNT },
+    { id: 'f6_gulls', x: 14, y: 4, monsters: new Array(8).fill('wrack_gull'), aware: 4, respawn: RESPAWN.day },
+    { id: 'f6_crew', x: 9, y: 20, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, respawn: RESPAWN.twoDays, until: BURNT },
     { id: 'f6_keepers', x: 17, y: 15, monsters: ['ashen_overseer', 'ashen_overseer', 'ashen_gleaner', 'ashen_gleaner'], aware: 2, roams: false },
-    { id: 'f6_rats', x: 24, y: 22, monsters: new Array(8).fill('bilge_rat'), aware: 2, respawn: 1440 },
-    { id: 'f6_devilfish', x: 20, y: 29, when: { hours: 'night' }, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'f6_rats', x: 24, y: 22, monsters: new Array(8).fill('bilge_rat'), aware: 2, respawn: RESPAWN.day },
+    { id: 'f6_devilfish', x: 20, y: 29, when: { hours: 'night' }, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

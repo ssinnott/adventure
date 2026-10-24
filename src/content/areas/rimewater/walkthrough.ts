@@ -57,13 +57,15 @@ import { LOCKS } from '../../locks.ts';
 import { ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { DROVE_COACH } from '../../crossings.ts';
 import { buy, item, hits, ELEMENT_DIE } from '../../../game/items.ts';
-import { CLASSES, canTrainAt, xpForLevel, rest, stayNight, trainPrice, levelUp, guildFlag } from '../../../game/party.ts';
+import { CLASSES, canTrainAt, xpForLevel } from '../../../game/party.ts';
+import { nightCost, stay, payFee, hallOffers, learnSpell, train } from '../../../game/services.ts';
 import { spellsFor } from '../../../game/spells.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
 import { FURRIER } from './items.ts';
 import { INTERIORS } from './interiors.ts';
-import { NIGHTS, WENNA_UP, WENNA_LODGE } from './maps/rime_lodge.ts';
+import { NIGHTS, WENNA_UP } from './maps/rime_lodge.ts';
+import { WENNA_LODGE } from './public.ts';
 import { CHAPTER } from './chapter.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -77,7 +79,7 @@ import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { readMarks } from '../../../game/inscriptions.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import type { Person } from '../../../game/people.ts';
-import { NOTCH } from '../cairnmoor/maps/cairnfield_n8.ts';
+import { NOTCH } from '../cairnmoor/public.ts';
 import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
 import { DOOR } from './maps/coldmere_k9.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
@@ -85,7 +87,8 @@ import { GUILD_QUESTS } from '../../index.ts';
 import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take, rankOf } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
-import { FOURTH_RANKS_OPEN } from '../kilns/guilds.ts';
+import { FOURTH_RANKS_OPEN } from '../kilns/public.ts';
+import { RESPAWN } from '../../../game/keys.ts';
 
 /**
  * The Wardens' fourth rank's ask at the ice-hole (DESIGN §8, #439), on a copy of the walk's company made
@@ -272,7 +275,7 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
 
   // A company of 20 rests, buys the act's last step at the furrier's, studies to the seventh tier at
-  // the Lanterns' fourth hall and trains to 23, each as the business's screen does it (src/ui/screens.ts).
+  // the Lanterns' fourth hall and trains to 23, each by the rule its business's screen serves (src/game/services.ts).
   ok(business('inn').length === 1 && business('temple').length === 1 && business('guild').length === 1 && business('trainer').length === 1 && business('shop').length === 2
     && INTERIORS.every((id) => TOWN.features!.some((f) => 'interior' in f && f.interior === id)), 'Rime Lodge has its six businesses, each opening into its room: the inn, the hall, the temple, the furrier\'s, the provisioner\'s and the yard');
   w.party.gold = 40000;
@@ -285,18 +288,17 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(hall.hall === 'lanterns' && hall.interior === 'rime_hall' && hall.maxTier === 7, `the Lanterns' fourth hall teaches to the seventh tier (${hall.name})`);
   const caster = w.party.members.find((m) => CLASSES[m.cls].spells && hall.classes.includes(m.cls))!;
   const seventh = spellsFor(CLASSES[caster.cls].spells!, hall.maxTier!).find((sp) => sp.level === 7 && !caster.spells.includes(sp.id))!;
-  // The fee to study, once, then the spell at the hall's price for its tier (spellPrice: 40 doubling a tier).
-  const before = w.party.gold, price = 40 * 2 ** (seventh.level - 1);
-  w.party.gold -= hall.fee; w.party.flags[guildFlag(hall.name)] = 1;
-  w.party.gold -= price; caster.spells.push(seventh.id);
+  // The fee to study, once, then the spell as the hall offers it, at its price for the tier (spellPrice).
+  const before = w.party.gold;
+  payFee(w.party, hall);
+  const { paid: price } = learnSpell(w.party, hallOffers(w.party, hall).find((o) => w.party.members[o.who] === caster && o.id === seventh.id)!);
   ok(w.party.gold === before - hall.fee - price && caster.spells.includes(seventh.id), `${caster.name} pays the hall's fee of ${hall.fee} and learns ${seventh.name} for ${price}`);
   const drill = business('trainer')[0];
-  // Trained on a copy, so the company walks on as it was.
+  // Trained on a copy, from a copy of the purse, so the company walks on as it was.
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 22; trainee.xp = xpForLevel(23);
   ok(drill.maxLevel === 23 && drill.interior === 'rime_yard' && canTrainAt(trainee, drill.maxLevel), `${drill.name} will train a member of 22`);
-  const fee = trainPrice(trainee);
-  levelUp(trainee, makeRng(1), 23);
+  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), drill.maxLevel);
   ok(trainee.level === 23 && !canTrainAt(trainee, drill.maxLevel), `who trains to 23 for ${fee} gold, and no further`);
 
   // The coach (#539): Rime Lodge's end lands in the coach house, and its coachman there sells the run
@@ -306,18 +308,15 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!!ours.landing && !ours.owed && TOWN.rows[ours.landing.y][ours.landing.x] === ':' && (coachman.passage ?? []).length === (far.landing ? 1 : 0),
     `the coach lands in the coach house at ${ours.landing?.x},${ours.landing?.y}, and its coachman sells the run once Kilnhaven lands (${far.owed ?? 'landed'})`);
 
-  // The four nights: a stay at the inn each, as its screen does it, and the morning after the night's
+  // The four nights: a stay at the inn each, by the rule its screen serves, and the morning after the night's
   // arrivals in the yard outside its door; the hole's fight, up on M9's ice, comes on the fourth only.
-  const inn = business('inn')[0], night = inn.price * w.party.members.length;
+  const inn = business('inn')[0], night = nightCost(inn, w.party);
   const hole = M9.encounters!.find((e) => e.id === 'm9_night_4')!, girl = person(M9, 'A girl out of the hole');
   const risen = (): boolean => { w.world.travel('longmere_m9', hole.x, hole.y - 1); return w.world.walks(hole, m9.x + hole.x, m9.y + hole.y); };
   ok(inn.interior === 'rime_inn' && JSON.stringify(inn.nights) === JSON.stringify(NIGHTS), `${inn.name} counts the nights, ${NIGHTS.join(', ')}`);
   for (const [i, flag] of NIGHTS.entries()) {
     ok(!risen(), `before the ${['first', 'second', 'third', 'fourth'][i]} night, nothing on the ice at the hole but its fire`);
-    w.party.gold -= night;
-    for (const m of w.party.members) rest(m);
-    w.world.sleepUntilMorning();
-    const set = stayNight(w.party, inn.nights);
+    const { set } = stay(w.party, w.world, inn);
     ok(set === flag && NIGHTS.every((n, j) => !!w.party.flags[n] === j <= i), `a night at ${inn.name} for ${night} gold sets ${set}, and only the nights so far`);
     w.world.travel('rime_lodge', inn.x + 1, inn.y);
     const morning = w.world.eventsHere();
@@ -1107,17 +1106,14 @@ const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level
 const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
 
 /**
- * The four nights: a stay at the inn each, paid from the purse at its price as its screen pays it, and
+ * The four nights: a stay at the inn each, paid from the purse by the rule its screen serves, and
  * the morning in the yard. Each night's entry is written as its flag is set, and no more.
  */
 const NIGHTS_STOOD: Step = { name: 'the four nights', play: (w) => {
-  const inn = business('inn')[0], night = inn.price * w.party.members.length;
+  const inn = business('inn')[0], night = nightCost(inn, w.party);
   for (const [i, flag] of NIGHTS.entries()) {
     const purse = w.party.gold;
-    w.party.gold -= night;
-    for (const m of w.party.members) rest(m);
-    w.world.sleepUntilMorning();
-    const set = stayNight(w.party, inn.nights);
+    const { set } = stay(w.party, w.world, inn);
     w.world.travel('rime_lodge', inn.x + 1, inn.y);
     w.world.eventsHere();
     listen(w);
@@ -1408,7 +1404,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   w.level = 22;
   const groups = CF.encounters!, eagles = groups.find((g) => g.id === 'cf_eagles')!, trolls = groups.find((g) => g.id === 'cf_trolls')!;
   ok(groups.length === 2 && eagles.monsters.join() === 'spine_eagle,spine_eagle,spine_eagle,spine_eagle' && trolls.monsters.join() === 'snow_troll,snow_troll'
-    && eagles.respawn === 1440 && trolls.respawn === 2880 && groups.every((g) => g.roams === false && !g.slainText), 'four spine eagles in the neck and two snow trolls in the passage to the cave\'s back, and no guardian');
+    && eagles.respawn === RESPAWN.day && trolls.respawn === RESPAWN.twoDays && groups.every((g) => g.roams === false && !g.slainText), 'four spine eagles in the neck and two snow trolls in the passage to the cave\'s back, and no guardian');
   const hold = new GameMap(CF), [wall] = CF.secrets!;
   const walked = (live: readonly { x: number; y: number }[], can: Can): Set<string> => {
     const seen = new Set<string>(), todo: [number, number][] = [[CF.start.x, CF.start.y]];

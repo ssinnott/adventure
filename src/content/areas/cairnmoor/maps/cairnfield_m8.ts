@@ -8,6 +8,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CAIRNFIELD_M8: MapDef = {
   id: 'cairnfield_m8',
@@ -82,7 +83,7 @@ export const CAIRNFIELD_M8: MapDef = {
   encounters: [
     // The ravens on the crags by the way in from N8, two tor trolls come down under them (#865), and by
     // night the lone tor's troll, up beside its rise, mended each round unless burned (#537).
-    { id: 'm8_ravens', x: 26, y: 21, monsters: ['raven', 'raven', 'tor_troll', 'tor_troll'], aware: 4, respawn: 1440, roams: false },
-    { id: 'm8_troll', x: 17, y: 16, monsters: ['tor_troll'], aware: 3, respawn: 2880, roams: false, when: { hours: 'night' } },
+    { id: 'm8_ravens', x: 26, y: 21, monsters: ['raven', 'raven', 'tor_troll', 'tor_troll'], aware: 4, respawn: RESPAWN.day, roams: false },
+    { id: 'm8_troll', x: 17, y: 16, monsters: ['tor_troll'], aware: 3, respawn: RESPAWN.twoDays, roams: false, when: { hours: 'night' } },
   ],
 };

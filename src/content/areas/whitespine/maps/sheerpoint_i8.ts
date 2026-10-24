@@ -14,7 +14,9 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
-import { WENNA_LODGE } from '../../rimewater/maps/rime_lodge.ts';
+import { WENNA_LODGE } from '../../rimewater/public.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
+import { MASON_PASSAGE } from '../public.ts';
 
 /** Wenna taken from the camp on the night the company rests at her fire (§5, §9's 2; #505 reads it). */
 export const WENNA_TAKEN = 'q_wenna_taken';
@@ -27,7 +29,7 @@ const WENNA_THERE = { flag: WENNA_LODGE, visited: 'sheerpoint_i8' };
  * (he stands in Cinderport's inn after it); or the tally's page swapped, a count chalked short, and he
  * goes back to the causeway with it, so the Hand sends for the wrong count.
  */
-export const MASON_PASSAGE = 'q_mason_passage', MASON_SWAPPED = 'q_mason_swapped';
+export const MASON_SWAPPED = 'q_mason_swapped';
 
 /**
  * The Thief's third (#448): Hereward has asked a thief of 27 with the second for a set of the Compact's
@@ -176,9 +178,9 @@ export const SHEERPOINT_I8: MapDef = {
     // Spine eagles over the tip at the foot of the masons' track, the nearest; the Ashen masons at the
     // causeway's root, and on its end the second group with their foreman, at work, the box's hardest;
     // and by night a snow troll come down to the shore. The Hand never breaks (MONSTERS §8.1).
-    { id: 'i8_eagles', x: 18, y: 9, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: 1440 },
-    { id: 'i8_masons', x: 17, y: 7, monsters: ['ashen_mason', 'ashen_mason', 'ashen_mason'], aware: 3, respawn: 2880 },
-    { id: 'i8_foreman', x: 17, y: 2, monsters: ['ashen_mason', 'ashen_mason', 'ashen_mason', 'ashen_mason', 'ashen_mason'], leader: 'ashen_mason', aware: 3, respawn: 2880, roams: false },
-    { id: 'i8_troll', x: 29, y: 8, monsters: ['snow_troll'], when: { hours: 'night' }, aware: 3, respawn: 2880, roams: false },
+    { id: 'i8_eagles', x: 18, y: 9, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: RESPAWN.day },
+    { id: 'i8_masons', x: 17, y: 7, monsters: ['ashen_mason', 'ashen_mason', 'ashen_mason'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'i8_foreman', x: 17, y: 2, monsters: ['ashen_mason', 'ashen_mason', 'ashen_mason', 'ashen_mason', 'ashen_mason'], leader: 'ashen_mason', aware: 3, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'i8_troll', x: 29, y: 8, monsters: ['snow_troll'], when: { hours: 'night' }, aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

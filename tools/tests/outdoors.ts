@@ -16,151 +16,45 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { EAST, FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { findWeather, weatherAt, weatherSight } from '../../src/game/weather.ts';
 import { daylightAt } from '../../src/game/calendar.ts';
-import { areaRows, areaLists, beside, once } from '../checks.ts';
+import { areaRows, areaLists, gather, once } from '../checks.ts';
 import { ok, owed, local, stopsWalk } from './lib.ts';
 import { logLines } from '../../src/ui/frame.ts';
 
 /**
- * Zone maps laid before the map that joins them to the rest, and whose map that is: their squares
- * are reported as that issue's while none can be walked to, and fail once they all can, so the
- * entry is dropped here. Henlys, I4, is reached through I3 (#215), as H4 between it and H3 is cut.
- * Wrackholm's isle is reached by the smugglers' boat from Saltmouth (#177), a crossing's landing, and
- * Ashfall, begun by sea (#443, call 6), by the Compact's ship to Cinderport and out at its gate (#512).
- * The Wold's steppe, D9, met E10 only corner to corner until the mesas, D10 (#527), joined the two; it
- * is reached from Akordu's box, D8, over its north edge too (#526), D8 by the Riders' ride from
- * Cinderport to its landing there (#547). The Scarp's edge, C8, is reached over D8's west edge and up the
- * Scarp stair from the Saltings' C7 (#528); the Wold's heart, B8, over C8's west edge (#529); the Glass's
- * edge, B9, over B8's south edge (#530).
+ * Zone maps laid before the map that joins them to the rest, owed by their areas to the issue whose map
+ * that is (`Owes.cutOff`): their squares are reported as that issue's while none can be walked to, and
+ * fail once they all can, so the row is dropped; a map owed twice is refused.
  */
-const CUT_OFF: Record<string, string> = {};
-/** CUT_OFF beside what the areas owe (`Owes.cutOff`), a map in both refused (#897). */
-const cutOff = beside(CUT_OFF, areaRows((c) => c.owes?.cutOff));
+const cutOff = gather(areaRows((c) => c.owes?.cutOff));
 
 /** What a seam can fail: passable ground, water, road, and a way between two areas the atlas does not join. */
 const SEAM_KINDS = ['walk', 'water', 'road', 'way'] as const;
 type SeamKind = (typeof SEAM_KINDS)[number];
 
 /**
- * The seams of built boxes that disagree as they were built (#898), each with its reason. Along the
- * edge two touching boxes share, passable ground, water and road agree square for square, and a way
- * between two areas opens only where the atlas joins them (`seams`); these squares do not. `a|b` is
- * a's east edge against b's west and `a/b` a's south edge against b's north, a square counted from the
- * north or the west, 0 to 31. Each kind lists exactly the squares that fail it, so a square that comes
- * to agree is refused, and so is a row no seam needs. A box built since draws its edges to agree and
- * adds no row. A row may stand on its area instead (`AreaChecks.seamsAsBuilt`), the area of the first
- * box its key names, and then stands here no longer (#897): the Foreland's do.
+ * The seams of built boxes that disagree as they were built (#898), each with its reason, held by the
+ * area of the first box its key names (`AreaChecks.seamsAsBuilt`). Along the edge two touching boxes
+ * share, passable ground, water and road agree square for square, and a way between two areas opens
+ * only where the atlas joins them (`seams`); these squares do not. `a|b` is a's east edge against b's
+ * west and `a/b` a's south edge against b's north, a square counted from the north or the west, 0 to 31.
+ * Each kind lists exactly the squares that fail it, so a square that comes to agree is refused, and so
+ * is a row no seam needs. A box built since draws its edges to agree and adds no row.
  */
-const SEAMS_AS_BUILT: readonly AsBuilt[] = [
-  // Thornmark and the Deepthorn.
-  { seam: 'thornmark/deepthorn_h3', walk: '3-7 9-14', water: '0-2', why: 'Thornmark\'s ring stands against the Deepthorn\'s water, sand and woods as mountains, with the elves\' road through a gap at 8' },
-  { seam: 'deepthorn_i3/deepthorn_i4', road: '12', why: 'the road out of I3 goes on into I4 as a dirt track' },
-  { seam: 'deepthorn_i4|deepthorn_j4', walk: '18-19', why: 'J4\'s clearing runs two squares further south than I4\'s, into I4\'s trees' },
-  { seam: 'deepthorn_i5|deepthorn_j5', walk: '18-19', why: 'I5\'s sand starts two squares north of J5\'s, against J5\'s trees' },
-  { seam: 'deepthorn_i5/hearthisle_i6', walk: '0-2', way: '3-4', why: 'the Deepthorn\'s rock stands against the isle\'s grass and hills; the shallows meet at 3 and 4, but on I5\'s side they are a pocket of seven squares shut by rock and deep water, so no company reaches the isle by them' },
-  { seam: 'deepthorn_j4|lanternwood_k4', walk: '17', water: '18-31', why: 'K4\'s rock stands against J4\'s shore and its sea, so no way opens between Thornmark and the Sunderwood here' },
-  // Saltreach.
-  { seam: 'delta_c5|delta_d5', walk: '17-20', water: '17-20', road: '0-1 3-4', why: 'the road crosses the line on a slant, and the shore steps across it, C5\'s sand against D5\'s shallows' },
-  { seam: 'upperwater_c2|downs_d2', walk: '2', why: 'the mountain at the north end runs a square further down D2\'s side, against C2\'s hills' },
-  { seam: 'upperwater_c2/upperwater_c3', walk: '26 29-31', why: 'the end of C3\'s ring stands as mountains against C2\'s grass, C2\'s own mountain meeting it at 27 and 28' },
-  { seam: 'upperwater_c3|downs_d3', walk: '0-10', why: 'the Upper Water\'s ring stands as mountains against D3\'s grass under the cliff' },
-  { seam: 'upperwater_c3/delta_c4', walk: '31', why: 'C3\'s ring\'s mountain at its corner stands over C4\'s grass' },
-  { seam: 'saltings_c7/wold_c8', walk: '28-30', why: 'the steppe where the Scarp\'s lip bends north at C8\'s east end lies under C7\'s ring' },
-  { seam: 'upperwater_b3|upperwater_c3', water: '12', why: 'Rietum\'s diep runs in from B3 against the sluice-house on C3\'s west edge' },
-  { seam: 'upperwater_b3/delta_b4', walk: '12-13 15', water: '13 15', why: 'the stream steps a square east at the line, and B3\'s trees end a square after B4\'s' },
-  { seam: 'delta_b4|delta_c4', walk: '8', water: '8', why: 'the shore steps a square at the line, B4\'s shallows against C4\'s sand' },
-  // The Sunderwood.
-  { seam: 'eaves_i2/deepthorn_i3', walk: '4-9 13-15', why: 'I2\'s mountains stand over I3\'s hills and woods, the stream going on between them at 3' },
-  { seam: 'eaves_j2|eaves_k2', walk: '23 26-27 29', road: '23', why: 'the road, two squares wide on J2\'s side, meets the rope bridge\'s one, and J2\'s trees face K2\'s dead wood south of it' },
-  { seam: 'lanternwood_l2|lanternwood_m2', water: '31', why: 'the river at L2\'s corner meets M2\'s trees' },
-  { seam: 'lanternwood_l2/lanternwood_l3', water: '31', why: 'the river at L2\'s corner meets L3\'s trees' },
-  { seam: 'lanternwood_m2|ironfells_n2', walk: '20-31', why: 'N2\'s hills and fell under the rim stand against M2\'s range' },
-  { seam: 'lanternwood_m2/ironfells_m3', walk: '3-4 27-31', why: 'M3\'s pines beside the road and its hills at the east end stand against the ridge on M2\'s side' },
-  { seam: 'lanternwood_l3/lanternwood_l4', walk: '16-18', why: 'L3\'s woods west of the river stand against L4\'s trees, the path going on east of it' },
-  // The Kilns.
-  { seam: 'ironfells_n3|ironfells_o3', walk: '9-16', why: 'the hall\'s crag runs down O3\'s west edge against N3\'s terraces, so nothing comes at the gate from this side' },
-  { seam: 'kilnsheart_n4|kilnsheart_o4', walk: '14', why: 'N4\'s hills start a square north of O4\'s, against O4\'s crag' },
-  { seam: 'kilnsheart_n5|kilnsheart_o5', walk: '5 15-16', why: 'the mountain between them steps a square at the line' },
-  { seam: 'ironfells_o3/kilnsheart_o4', walk: '2 26', why: 'the rock and the mountain at the pines\' east end each step a square at the line' },
-  { seam: 'kilnsheart_o4/kilnsheart_o5', walk: '10-12 27-30', why: 'O4\'s hills meet O5\'s mountain at 10 to 12, and O5\'s hills run on under O4\'s mountain at the east end' },
-  // Cairnmoor.
-  { seam: 'cairnfield_n8/longmere_n9', walk: '2-31', why: 'the Rimefells stand along N9\'s north against N8\'s hills and heather' },
-  { seam: 'cairnfield_m8|cairnfield_n8', walk: '28-29', why: 'M8\'s crags close the notch\'s west side against N8\'s hills' },
-  // Rimewater.
-  { seam: 'longmere_m9|longmere_n9', walk: '7-8 11-29', why: 'the glacier\'s edge stands down M9\'s east against N9\'s pines but at 9 and 10, its only way in' },
-  { seam: 'longmere_m9/longmere_m10', walk: '30-31', why: 'M10\'s pines stand under M9\'s closed corner' },
-  { seam: 'longmere_l9/longmere_l10', walk: '11 17', why: 'the ridge\'s tail steps a square east at the line' },
-  { seam: 'coldmere_k11|longmere_l11', walk: '7-8', water: '7-8', why: 'K11\'s shore ice meets L11\'s open water' },
-  { seam: 'longmere_l10/longmere_l11', walk: '5 17', water: '5', why: 'the lake\'s shore ice and the ridge each step a square at the line' },
-  { seam: 'longmere_m10/longmere_m11', walk: '25', why: 'the ridge widens by a square across the line' },
-  // The Whitespine.
-  { seam: 'monksvale_j11|coldmere_k11', walk: '0', why: 'J11\'s mountain at its corner meets K11\'s pines' },
-  { seam: 'monksvale_j11/monksvale_j12', walk: '18', why: 'J12\'s mountain runs a square further east than J11\'s' },
-  { seam: 'highspine_i11/highspine_i12', walk: '26', why: 'the mountain steps a square at the line' },
-  { seam: 'highspine_i10/highspine_i11', walk: '25 28', why: 'the mountain closing the Stone\'s ring above the trail meets I10\'s pines, and the Stone at I11\'s 28,0 stands under I10\'s mountain' },
-  { seam: 'sheerpoint_i9|coldmere_j9', walk: '1-7', why: 'I9\'s mountain stands against J9\'s pines' },
-  { seam: 'monksvale_j10|coldmere_k10', walk: '13-17 20-22 31', why: 'K10\'s pass, its shoulder and its walls either side of the road, stand against J10\'s pines, and J10\'s corner against K10\'s' },
-  // Ashfall.
-  { seam: 'cindercoast_g10|cindercoast_h10', road: '11', why: 'H10\'s shore track comes out onto G10\'s vines' },
-  { seam: 'cindercoast_g10/firemount_g11', walk: '5 21-22', why: 'Fire Mountain\'s foot is wider on G11\'s side, each as the atlas cuts it' },
-  { seam: 'firemount_g11|firemount_h11', walk: '12-13 16-17', why: 'Grimsforge\'s wall stands against H11\'s ash, and H11\'s rocks against G11\'s ash, so the hole is shut to H11' },
-  { seam: 'emberwaste_e10|emberwaste_f10', walk: '31', why: 'F10\'s rock at its corner meets E10\'s ash' },
-  { seam: 'emberwaste_e10/emberwaste_e11', walk: '31', why: 'E11\'s rock at its corner meets E10\'s ash' },
-  { seam: 'cindercoast_f9|cindercoast_g9', walk: '19', water: '19', why: 'the shore steps a square at the line' },
-  { seam: 'cindercoast_g9/cindercoast_g10', walk: '4', water: '6-12', why: 'G9\'s grass meets Cinderport\'s wall at 4, and the wall stands against the sea wall\'s moles and the harbour' },
-  { seam: 'cindercoast_h9|sheerpoint_i9', walk: '6-16', water: '5', why: 'the Sheer stands down H9\'s east against I9\'s shallows, sand and pines, so the Stair stays the only way over by land' },
-  { seam: 'cindercoast_h9/cindercoast_h10', walk: '30', why: 'the Sheer is a square wider on H10\'s side' },
-  { seam: 'emberwaste_e11|emberwaste_f11', walk: '16-18 21-25', why: 'F11\'s rock, the Waste\'s and the builders\', stands against E11\'s ash either side of the way at 19 and 20' },
-  // The Glasswold.
-  { seam: 'wold_d10|emberwaste_e10', walk: '0-5', why: 'the great mesa\'s east face stands against E10\'s steppe and hills' },
-  { seam: 'wold_d9/wold_d10', walk: '24-26 30-31', why: 'the scree under the mesa\'s north face meets D9\'s rock, and the mesa\'s rock D9\'s steppe' },
-  { seam: 'wold_e8/wold_e9', walk: '20-21', water: '20-21', why: 'the shore steps two squares at the line' },
-  // Hearth Isle.
-  { seam: 'hearthisle_h6|hearthisle_i6', walk: '0-1 19-20 24 27-28', why: 'the rim\'s rock and the Bowl\'s grass each step at the line, and the pocket behind the tally-house at 24 is shut against H6\'s rock' },
-];
-
+const seamsOn = areaLists((c) => c.seamsAsBuilt);
 /**
  * The open squares of every edge of a built box that faces no built box (#898), exactly, each row with
- * the box it faces and why that is unbuilt. Past such an edge is the void, which refuses every company,
- * so a square open on it is the world's end in reach. `edge` is a map and its side, `'delta_b5 west'`, a
- * square counted from the north or the west, 0 to 31; an edge with no open square has no row. A square
- * open that no row holds is refused, a square a row holds that is shut, and a row whose edge faces a
- * built box: the box built there meets the seam rule, and its pull request deletes the row. The border
- * check of the bounds (#828) in embryo, which will allow open squares only onto the reach and the crumbs.
- * A row may stand on its area instead (`AreaChecks.openOnNothing`), the area whose box the edge is, and
- * then stands here no longer (#897): the Foreland's do.
+ * the box it faces and why that is unbuilt, held by the area whose box the edge is
+ * (`AreaChecks.openOnNothing`). Past such an edge is the void, which refuses every company, so a square
+ * open on it is the world's end in reach. `edge` is a map and its side, `'delta_b5 west'`, a square
+ * counted from the north or the west, 0 to 31; an edge with no open square has no row. A square open
+ * that no row holds is refused, a square a row holds that is shut, and a row whose edge faces a built
+ * box: the box built there meets the seam rule, and its pull request deletes the row. The border check
+ * of the bounds (#828) in embryo, which will allow open squares only onto the reach and the crumbs.
  */
-const OPEN_ON_NOTHING: readonly OnNothing[] = [
-  // Thornmark.
-  { edge: 'deepthorn_h3 south', open: '14-16', why: 'H4 is a crumb, left unbuilt (#828)' },
-  // The Kilns.
-  { edge: 'kilnmouth_l6 north', open: '29-31', why: 'L5 is the sea along here, where #828 plans no box' },
-  { edge: 'kilnmouth_m5 west', open: '24-31', why: 'L5 is the sea along here, where #828 plans no box' },
-  { edge: 'ironfells_o3 north', open: '2-7', why: 'O2 is a crumb, left unbuilt (#828)' },
-  // Cairnmoor.
-  { edge: 'highmoor_o8 south', open: '0-27', why: 'O9 is Glacier Foot, the reach, shut until Phase 1.6' },
-  { edge: 'cairnfield_l8 west', open: '31', why: 'K8 is the sea, where #828 plans no box' },
-  // Rimewater.
-  { edge: 'coldmere_k9 north', open: '29-31', why: 'K8 is the sea, where #828 plans no box' },
-  { edge: 'longmere_m10 east', open: '0-31', why: 'N10 is Glacier Foot, the reach, shut until Phase 1.6' },
-  { edge: 'longmere_m11 east', open: '0-4 18', why: 'N11 is Glacier Foot, the reach, shut until Phase 1.6' },
-  // Ashfall.
-  { edge: 'emberwaste_e11 south', open: '12-13', why: 'E12 is the world\'s end, the void and a mountain, where #828 plans no box' },
-  { edge: 'emberwaste_e11 west', open: '0-10', why: 'D11 is the Glass, the reach, shut until Phase 1.6' },
-  // The Glasswold.
-  { edge: 'wold_d10 south', open: '0-31', why: 'D11 is the Glass, the reach, shut until Phase 1.6' },
-  { edge: 'wold_d10 west', open: '0-14 23-31', why: 'C10 is the Glass, the reach, shut until Phase 1.6' },
-  { edge: 'wold_d9 west', open: '0-31', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
-  { edge: 'wold_c8 south', open: '0-31', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
-  { edge: 'wold_b9 east', open: '0-13 27', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
-  // Hearth Isle.
-  { edge: 'hearthisle_h6 south', open: '19-27', why: 'H7 is the sea, where #828 plans no box' },
-];
-
-/** The rows of SEAMS_AS_BUILT and OPEN_ON_NOTHING that stand on their areas, each with its area's id, in road order (#897). */
-const seamsOn = areaLists((c) => c.seamsAsBuilt), edgesOn = areaLists((c) => c.openOnNothing);
-/** Every seam as built and every edge open on nothing: the tables' rows, then the areas'. */
-const AS_BUILT: readonly AsBuilt[] = [...SEAMS_AS_BUILT, ...seamsOn.map(([, r]) => r)];
-const ON_NOTHING: readonly OnNothing[] = [...OPEN_ON_NOTHING, ...edgesOn.map(([, r]) => r)];
+const edgesOn = areaLists((c) => c.openOnNothing);
+/** Every seam as built and every edge open on nothing, the areas' in road order. */
+const AS_BUILT: readonly AsBuilt[] = seamsOn.map(([, r]) => r);
+const ON_NOTHING: readonly OnNothing[] = edgesOn.map(([, r]) => r);
 
 /** The rows on an area that are another's, by their keys: a seam (`a|b`, `a/b`) or an edge (`a east`) is the area's of the first box it names. */
 export const notTheirs = (rows: readonly (readonly [string, string])[], areas: readonly Pick<Area, 'id' | 'maps'>[] = AREAS): string[] =>
@@ -182,7 +76,8 @@ interface Seam { key: string; name: string; areas: readonly [string, string]; jo
  * square, the two sides disagree on passable ground (open to a company with no skill), on water (never
  * the void, which stays the void for every rule) or on road; or, between two areas no road joins (a
  * map's exits and the atlas's links, `zoneEdges`), a walker, a climber, a swimmer or a floater crosses.
- * The other declared crossing, `ONE_CROSSING` (tools/tests/weather.ts), is a dungeon's door, no seam.
+ * The other declared crossing, the door marked as one (`Exit.crosses`, tools/tests/weather.ts), is a
+ * dungeon's door, no seam.
  */
 function seams(out: GameMap, atlas: Atlas, defs: readonly MapDef[]): Seam[] {
   const boxes = new Map(out.zones.map((z) => [`${z.x},${z.y}`, z]));
@@ -240,7 +135,7 @@ function judgeSeams(list: readonly Seam[], rows: readonly AsBuilt[]): { verdicts
       for (const i of got) if (!want.includes(i)) wrong.push(k === 'way'
         ? `square ${i} opens a way between ${seam.areas.join(' and ')}, which the atlas does not join, '${mine[i]}' against '${theirs[i]}'`
         : `square ${i} disagrees on ${FAILS[k]}, '${mine[i]}' against '${theirs[i]}'`);
-      for (const i of want) if (!got.includes(i)) wrong.push(`SEAMS_AS_BUILT holds square ${i} for ${FAILS[k]}, which the seam no longer fails`);
+      for (const i of want) if (!got.includes(i)) wrong.push(`seamsAsBuilt holds square ${i} for ${FAILS[k]}, which the seam no longer fails`);
     }
     return { seam, wrong };
   });
@@ -286,8 +181,8 @@ function edgesOnNothing(out: GameMap, atlas: Atlas): Bare[] {
 function judgeEdges(list: readonly Bare[], rows: readonly OnNothing[], laid: readonly MapZone[]): { verdicts: { edge: Bare; wrong: string[] }[]; faced: string[]; stray: string[] } {
   const verdicts = list.map((edge) => {
     const want = squaresOf(rows.find((r) => r.edge === edge.key)?.open), wrong: string[] = [];
-    for (const i of edge.open) if (!want.includes(i)) wrong.push(`square ${i} is open, '${edge.line[i]}', which no OPEN_ON_NOTHING row holds`);
-    for (const i of want) if (!edge.open.includes(i)) wrong.push(`OPEN_ON_NOTHING holds square ${i} open, which is shut, '${edge.line[i]}'`);
+    for (const i of edge.open) if (!want.includes(i)) wrong.push(`square ${i} is open, '${edge.line[i]}', which no openOnNothing row holds`);
+    for (const i of want) if (!edge.open.includes(i)) wrong.push(`openOnNothing holds square ${i} open, which is shut, '${edge.line[i]}'`);
     return { edge, wrong };
   });
   const bare = new Set(list.map((e) => e.key)), side = (r: OnNothing): MapZone | undefined => {
@@ -351,7 +246,7 @@ export function outdoors(): void {
   ok(pink === 0, `no walkable outdoor square has the pink in view, four squares ahead and three to a side (${pink})`);
   // The seams (#898): every two built boxes that share an edge, found from their places, agree along it
   // square for square, on passable ground, water and road, and open a way between two areas only where
-  // the atlas joins them. SEAMS_AS_BUILT holds what disagrees as built, each row with its reason.
+  // the atlas joins them. The areas' seamsAsBuilt hold what disagrees as built, each row with its reason.
   const all = seams(out, ATLAS, MAP_DEFS), { verdicts, stray } = judgeSeams(all, AS_BUILT);
   const held = AS_BUILT.reduce((n, r) => n + new Set(SEAM_KINDS.flatMap((k) => squaresOf(r[k]))).size, 0);
   ok(all.length >= 153, `the seam rule takes every pair of built boxes that share an edge: ${all.length} pairs, ${all.filter((s) => s.areas[0] !== s.areas[1]).length} of them between two areas, ${all.reduce((n, s) => n + s.edge[0].length, 0)} squares, ${held} of them as built in ${AS_BUILT.length} rows`);
@@ -361,9 +256,9 @@ export function outdoors(): void {
     const as = row ? `, but as built (${SEAM_KINDS.filter((k) => row[k]).map((k) => `${k} ${row[k]}`).join(', ')})` : '';
     ok(!wrong.length, `seam ${s.name}, ${s.key}: passable ground, water and road agree square for square${between}${as}${wrong.length ? `: ${wrong.join('; ')}` : ''}`);
   }
-  ok(!stray.length, `every SEAMS_AS_BUILT row names a seam of two built boxes that touch, once, with its squares in order and its reason${stray.length ? ` (not ${stray.join(', ')})` : ''}`);
+  ok(!stray.length, `every seamsAsBuilt row names a seam of two built boxes that touch, once, with its squares in order and its reason${stray.length ? ` (not ${stray.join(', ')})` : ''}`);
   // The edges on nothing: every edge of a built box that faces no built box is open to a walker exactly
-  // where OPEN_ON_NOTHING holds it, each row with the box it faces and why that is unbuilt; the border
+  // where an area's openOnNothing holds it, each row with the box it faces and why that is unbuilt; the border
   // check of the bounds (#828) in embryo.
   const bare = edgesOnNothing(out, ATLAS), edged = judgeEdges(bare, ON_NOTHING, out.zones);
   ok(4 * out.zones.length === 2 * all.length + bare.length, `every side of a built box is a seam's or faces no built box: ${bare.length} edges on nothing, ${bare.reduce((n, e) => n + e.line.length, 0)} squares, ${bare.reduce((n, e) => n + e.open.length, 0)} of them open in ${ON_NOTHING.length} rows`);
@@ -371,14 +266,9 @@ export function outdoors(): void {
     const row = ON_NOTHING.find((r) => r.edge === e.key);
     ok(!wrong.length, `edge ${e.name}, ${e.key}, facing no built box (${e.faces}): shut to a walker${row ? `, but as built (open ${row.open})` : ''}${wrong.length ? `: ${wrong.join('; ')}` : ''}`);
   }
-  ok(!edged.faced.length, `no OPEN_ON_NOTHING row names an edge that faces a built box, which the seam rule holds: the box's pull request deletes the row${edged.faced.length ? ` (not ${edged.faced.join(', ')})` : ''}`);
-  ok(!edged.stray.length, `every OPEN_ON_NOTHING row names an edge of a built box, once, with its squares in order and its reason${edged.stray.length ? ` (not ${edged.stray.join(', ')})` : ''}`);
-  // A seam's row and an edge's stand in their table or on their area, not both nor on two areas, and on the
-  // area of the first box they name (#897).
-  const keyed = <R>(rows: readonly R[], key: (r: R) => string): Record<string, R> => Object.fromEntries(rows.map((r) => [key(r), r]));
-  ok(...once('every seam as built and edge open on nothing is held once, in SEAMS_AS_BUILT or OPEN_ON_NOTHING or on its area', [
-    ...beside(keyed(SEAMS_AS_BUILT, (r) => r.seam), seamsOn.map(([, r]) => [r.seam, r] as const)).twice,
-    ...beside(keyed(OPEN_ON_NOTHING, (r) => r.edge), edgesOn.map(([, r]) => [r.edge, r] as const)).twice]));
+  ok(!edged.faced.length, `no openOnNothing row names an edge that faces a built box, which the seam rule holds: the box's pull request deletes the row${edged.faced.length ? ` (not ${edged.faced.join(', ')})` : ''}`);
+  ok(!edged.stray.length, `every openOnNothing row names an edge of a built box, once, with its squares in order and its reason${edged.stray.length ? ` (not ${edged.stray.join(', ')})` : ''}`);
+  // A seam's row and an edge's stand on the area of the first box they name (#897).
   const astray = notTheirs([...seamsOn.map(([id, r]) => [id, r.seam] as const), ...edgesOn.map(([id, r]) => [id, r.edge] as const)]);
   ok(!astray.length, `and each on an area is the area's of the first box it names${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
   ok(notTheirs([['shelf', 'downs_d4/delta_d5'], ['saltreach', 'downs_d4/delta_d5'], ['saltreach', 'upperwater_c2|downs_d2'], ['shelf', 'downs_d4 east'], ['saltreach', 'downs_d4 east']]).join() === 'downs_d4/delta_d5 on saltreach,downs_d4 east on saltreach',
@@ -400,17 +290,20 @@ export function outdoors(): void {
       return w.length ? [`${name}: ${w.join('; ')}`] : [];
     };
     const said = judgeSeams(seams(laid, ATLAS, broken), AS_BUILT).verdicts.flatMap((v) => fresh(v.seam.key, v.seam.name, v.wrong)).sort();
-    ok(said.join(' / ') === "C4|D4: square 5 disagrees on passable ground, ',' against '#' / I5/I6: SEAMS_AS_BUILT holds square 0 for passable ground, which the seam no longer fails; square 0 opens a way between Thornmark and Hearth Isle, which the atlas does not join, ',' against ','",
+    ok(said.join(' / ') === "C4|D4: square 5 disagrees on passable ground, ',' against '#' / I5/I6: seamsAsBuilt holds square 0 for passable ground, which the seam no longer fails; square 0 opens a way between Thornmark and Hearth Isle, which the atlas does not join, ',' against ','",
       `a wall where the neighbour has grass fails the seam rule, and so do a way the atlas does not draw and a row no seam needs, there alone (${said.join(' / ')})`);
     const opened = judgeEdges(edgesOnNothing(laid, ATLAS), ON_NOTHING, laid.zones).verdicts.flatMap((v) => fresh(v.edge.key, v.edge.name, v.wrong));
-    ok(opened.join(' / ') === "G2 north: square 12 is open, ',', which no OPEN_ON_NOTHING row holds / I5 west: square 31 is open, ',', which no OPEN_ON_NOTHING row holds",
+    ok(opened.join(' / ') === "G2 north: square 12 is open, ',', which no openOnNothing row holds / I5 west: square 31 is open, ',', which no openOnNothing row holds",
       `a square opened onto the world's end, on an edge that faces no built box, fails there alone, the shelf's and I5's corner, which faces H5, unbuilt (${opened.join(' / ')})`);
     const sloppy = AS_BUILT.map((r) => (r.seam === 'downs_f2|shelf' ? { ...r, walk: '30-31 1-28' } : r));
     const extra = judgeSeams(all, [...sloppy, { seam: 'shelf|downs_f2', walk: '0', why: 'Fixture.' }]).stray;
     ok(extra.join() === 'downs_f2|shelf,shelf|downs_f2', `a row with its squares out of order is refused, and so is one naming no seam of two built boxes that touch (${extra.join(', ')})`);
     const misnamed = judgeEdges(bare, [...ON_NOTHING, { edge: 'downs_d4 west', open: '0', why: 'Fixture.' }, { edge: 'shelf up', open: '0', why: 'Fixture.' }], out.zones);
     ok(misnamed.faced.join() === 'downs_d4 west' && misnamed.stray.join() === 'shelf up',
-      `an OPEN_ON_NOTHING row naming an edge that faces a built box is refused, and so is one naming no edge of a built box (${misnamed.faced.join(', ')}; ${misnamed.stray.join(', ')})`);
+      `an openOnNothing row naming an edge that faces a built box is refused, and so is one naming no edge of a built box (${misnamed.faced.join(', ')}; ${misnamed.stray.join(', ')})`);
+    const doubled = [judgeSeams(all, [...AS_BUILT, AS_BUILT[0]]).stray, judgeEdges(bare, [...ON_NOTHING, ON_NOTHING[0]], out.zones).stray];
+    ok(doubled.map((s) => s.join()).join(' / ') === `${AS_BUILT[0].seam} / ${ON_NOTHING[0].edge}`,
+      `a seam's or an edge's row given twice, on one area or two, is refused by its own check (${doubled.map((s) => s.join(', ')).join('; ')})`);
   }
   const sh = out.zones.find((z) => z.id === 'shelf')!, th = out.zones.find((z) => z.id === 'thornmark')!;
   // The ways: every one lands on open ground; none joins one zone to the next, which is walked, but the
@@ -489,7 +382,7 @@ export function outdoors(): void {
   }
   ok(sh.enter?.thornmark === 'Back through the pass to the Foreland.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
   { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void or the chasm,
-    // but for a zone map laid before the one that joins it (CUT_OFF). A crossing a person sells
+    // but for a zone map laid before the one that joins it (`Owes.cutOff`). A crossing a person sells
     // (game/passage.ts) puts the company down on its landing, so each landing on a zone map is
     // walked from too, and so is a town's way out onto one where the landing is in the town, as G10 is
     // reached through Cinderport (#512): the gate counts each a way in (`landings`, tools/tests/gate.ts).
@@ -522,7 +415,7 @@ export function outdoors(): void {
     }
     ok(open > 1500 && got === open, `every open square of the outdoors is reachable from its start (${got} of ${open})`);
     for (const [id, t] of cut) owed(t.open > 0 && t.got === t.open, `every open square of ${id} is reachable from the outdoors' start (${t.got} of ${t.open})`, cutOff.all[id]);
-    ok(...once('every zone map owed its joining is owed once, in CUT_OFF or by its area', cutOff.twice));
+    ok(...once('every zone map owed its joining is owed once', cutOff.twice));
   }
   // The composer refuses what the outdoors cannot hold: two zones keeping state under one id, or two zone maps on one square.
   const refusal = (f: () => unknown): string => { try { f(); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } };

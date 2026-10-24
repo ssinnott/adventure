@@ -5,6 +5,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNMOUTH_M6: MapDef = {
   id: 'kilnmouth_m6',
@@ -76,8 +77,8 @@ export const KILNMOUTH_M6: MapDef = {
   encounters: [
     // Fire beetles in the warm kilns at either end of the row, and a rock worm under the fields
     // past the river, the box's top.
-    { id: 'm6_beetles_east', x: 25, y: 19, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: 1440 },
-    { id: 'm6_beetles_west', x: 17, y: 19, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: 1440 },
-    { id: 'm6_worm', x: 6, y: 12, monsters: ['rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'm6_beetles_east', x: 25, y: 19, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: RESPAWN.day },
+    { id: 'm6_beetles_west', x: 17, y: 19, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: RESPAWN.day },
+    { id: 'm6_worm', x: 6, y: 12, monsters: ['rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

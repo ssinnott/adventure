@@ -7,17 +7,11 @@
 // Stone's third part, a heap of the walker's parts and the stair down to the camp (STAIR2). Once the Stone is
 // lit a sentry comes up that stair. Band 26, the area's top, its nest and
 // its elite at 27; docs/areas/meridian_camp.md §4.2 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
-
-/**
- * The way down to the camp (meridian_camp3, #22's third level): the stair at the corridors' end, 4,30,
- * onto the camp's first square at 4,1, facing south; its way back up lands on 4,29, facing north, the
- * stair's head.
- */
-export const STAIR2: Exit = { x: 4, y: 30, to: 'meridian_camp3', tx: 4, ty: 1, tf: SOUTH,
-  label: 'Down the steps out of the heat, into a cold that takes the breath.' };
+import { RESPAWN } from '../../../../game/keys.ts';
+import { STAIR2 } from '../public.ts';
 
 export const MERIDIAN_CAMP2: MapDef = {
   id: 'meridian_camp2',
@@ -102,9 +96,10 @@ export const MERIDIAN_CAMP2: MapDef = {
     // The flue walker on its round with a stoker and a cinder drake in its heat; in the nest two drakelings,
     // and behind them the Brood Drake on its eggs, the level's top at 27, still, the Barbarian's quarry
     // (#448); and, once the Ember Stone is lit, a sentry come up the stair from below.
-    { id: 'mc2_walker', x: 16, y: 11, monsters: ['flue_walker', 'stoker', 'cinder_drake'], aware: 3, respawn: 1440 },
-    { id: 'mc2_drakelings', x: 14, y: 23, monsters: ['drakeling', 'drakeling'], aware: 2, respawn: 2880, roams: false },
-    { id: 'mc2_brood', x: 14, y: 21, monsters: ['brood_drake'], aware: 2, roams: false, slainText: 'The Brood Drake dies over its eggs, its wings still spread round them. The clinker under it goes grey.' },
-    { id: 'mc2_sentry', x: 5, y: 28, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
+    { id: 'mc2_walker', x: 16, y: 11, monsters: ['flue_walker', 'stoker', 'cinder_drake'], aware: 3, respawn: RESPAWN.day },
+    { id: 'mc2_drakelings', x: 14, y: 23, monsters: ['drakeling', 'drakeling'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    // The Brood Drake on its eggs in the nest off Meridian Camp's iron corridors, under Fire Mountain (#22).
+    { id: 'mc2_brood', x: 14, y: 21, monsters: ['brood_drake'], aware: 2, roams: false, boss: true, slainText: 'The Brood Drake dies over its eggs, its wings still spread round them. The clinker under it goes grey.' },
+    { id: 'mc2_sentry', x: 5, y: 28, monsters: ['sentry'], aware: 4, respawn: RESPAWN.twoDays, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
   ],
 };

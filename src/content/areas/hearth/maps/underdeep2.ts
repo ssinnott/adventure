@@ -7,8 +7,9 @@
 // (13,1). Band 30-31; docs/areas/hearth_isle.md §4.7 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
-import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/maps/keep.ts';
+import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/public.ts';
 import { HELD, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './hearthisle_h6.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The last frame's word (59), the end of her knots: `ud2_word`, once. */
 export const KNOT_LAST = 'underdeep2:ud2_word';
@@ -121,21 +122,21 @@ export const UNDERDEEP2: MapDef = {
   ],
   encounters: [
     // Knockers at the head's wall, standing: the first group past the way in, the gentlest (#794).
-    { id: 'ud2_knockers2', x: 18, y: 30, monsters: many(3, 'deep_knocker'), aware: 2, roams: false, respawn: 2880 },
+    { id: 'ud2_knockers2', x: 18, y: 30, monsters: many(3, 'deep_knocker'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
     // The Hand's rearguard on the first landing, where the claimant's people are not: gone once a verdict or
     // a token holds it, standing or not (#747). 57 is done on it slain, so it never comes back.
     { id: 'ud2_rearguard', x: 16, y: 26, monsters: many(3, 'hand_rearguard'), aware: 2, roams: false, until: HELD, leaves: true },
-    { id: 'ud2_rats', x: 14, y: 23, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
+    { id: 'ud2_rats', x: 14, y: 23, monsters: many(12, 'deep_rat'), aware: 3, respawn: RESPAWN.day },
     // And at the second landing's east wall, standing (#794).
-    { id: 'ud2_knockers3', x: 19, y: 22, monsters: [...many(3, 'deep_knocker'), 'keeper'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'ud2_knockers3', x: 19, y: 22, monsters: [...many(3, 'deep_knocker'), 'keeper'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
     // The crawlers from the third flight down, off the ceiling.
-    { id: 'ud2_crawlers1', x: 16, y: 20, monsters: many(2, 'deep_crawler'), aware: 3, respawn: 2880 },
-    { id: 'ud2_keepers', x: 16, y: 16, monsters: many(4, 'keeper'), aware: 2, respawn: 2880 },
+    { id: 'ud2_crawlers1', x: 16, y: 20, monsters: many(2, 'deep_crawler'), aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'ud2_keepers', x: 16, y: 16, monsters: many(4, 'keeper'), aware: 2, respawn: RESPAWN.twoDays },
     // The sixth flight's, two crawlers where the brief has three: with three a day here broke off at 7.85
     // fights, past the gate's limit of 9 (#758).
-    { id: 'ud2_crawlers2', x: 16, y: 12, monsters: many(2, 'deep_crawler'), aware: 3, respawn: 2880 },
-    { id: 'ud2_knockers', x: 16, y: 8, monsters: [...many(3, 'deep_knocker'), 'keeper'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'ud2_crawlers2', x: 16, y: 12, monsters: many(2, 'deep_crawler'), aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'ud2_knockers', x: 16, y: 8, monsters: [...many(3, 'deep_knocker'), 'keeper'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
     // The Catcher at the foot, among the ones it caught: it drops nothing and never comes back.
-    { id: 'ud2_catcher', x: 16, y: 4, monsters: ['catcher', ...many(2, 'deep_crawler')], leader: 'catcher', aware: 3, roams: false, slainText: 'It comes off the ceiling all at once, and lies on the steps among the ones it caught. Nothing is moving above you now.' },
+    { id: 'ud2_catcher', x: 16, y: 4, monsters: ['catcher', ...many(2, 'deep_crawler')], leader: 'catcher', aware: 3, roams: false, boss: true, slainText: 'It comes off the ceiling all at once, and lies on the steps among the ones it caught. Nothing is moving above you now.' },
   ],
 };

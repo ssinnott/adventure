@@ -3,9 +3,7 @@
 // Lantern hall; the Wardens, through the cousin's captains at the Drillyard, want to know what the
 // night carts carry down. Cairnmoor and Rimewater hold the rest of the fourth ranks.
 import type { GuildQuest } from '../../../game/guilds.ts';
-
-/** Act II done: Act III opens the fourth ranks, and Captain Ordgar keeps the Drillyard (#455). */
-export const FOURTH_RANKS_OPEN = 'q_salt_done';
+import { FOURTH_RANKS_OPEN } from './public.ts';
 
 /** The words over the dead, read by a reader on either level of the Tiefzeche (game/inscriptions.ts). */
 const COPIED = [{ seen: 'deep_mines:dm1_niche' }, { seen: 'deep_mines2:dm2_niche' }];

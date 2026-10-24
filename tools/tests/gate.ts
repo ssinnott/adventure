@@ -31,8 +31,6 @@ import { FIXTURE, LAIR, GUARDIAN } from './enclave.ts';
 import { featureFlags } from './quests.ts';
 import { groupFlags } from '../../src/game/people.ts';
 import type { QuestCond } from '../../src/game/quests.ts';
-import type { AtlasZone } from '../../src/game/atlas.ts';
-import { once } from '../checks.ts';
 import { ok, owed, withDefs, asked } from './lib.ts';
 
 /**
@@ -86,118 +84,21 @@ const DAYS = 300;
 const BACK_DAYS = 100;
 
 /**
- * The boss groups, by the zone they are met from (a dungeon's under the zone it opens from), as the
- * game names a group, 'map:id': each is judged at its own map's floor and two levels above it, and
- * left out of its map's day. An area's are all its zones' together. A boss whose floor leaves fewer than
- * two levels to the cap is judged at the cap (at its floor alone where the floor is the cap); and a map that holds nothing but its boss (the Heart:
+ * An area's boss groups, those of its maps that say they are one (`EncounterDef.boss`), as the game
+ * names a group, 'map:id': each is judged at its own map's floor and two levels above it, and left out
+ * of its map's day. A boss whose floor leaves fewer than two levels to the cap is judged at the cap (at
+ * its floor alone where the floor is the cap); and a map that holds nothing but its boss (the Heart:
  * Vask's group, or its twin the Council thins) is judged on the boss's odds, with no floor of fights to
- * pool and no day (#759). A group may say it is one itself (`EncounterDef.boss`), and then is named
- * here no longer (#897): the Foreland's are.
+ * pool and no day (#759).
  */
-export const BOSSES: Record<string, readonly string[]> = {
-  thornmark: ['grove2:g2_hand', 'grove2:g2_warden'],
-  deepthorn: ['deepthorn_j5:j5_eldest'],
-  // The Tallymaster at its desk in the Dead-Drop's counting house, down the stair from the Tide Ship's hold (#22).
-  wrackholm: ['smugglers_cove2:kh2_great_devilfish', 'tide_ship_rift:tide_ship_rift_warden', 'dead_drop3:dd3_tallymaster'],
-  eaves: ['the_sunder2:su2_warden'],
-  delta: ['drowned_temples2:dt2_choirmaster'],
-  kilnsheart: ['deep_mines3:dm3_foreman', 'anvil_stone:as_warden', 'lava_tubes2:lt2_great_salamander'],
-  cairnfield: ['cairns2:cd2_king'],
-  coldmere: ['sleepers_bay2:sb2_matron'],
-  monksvale: ['monastery2:hc2_abbot'],
-  // The Stair-king at the Stair's head, who asks the toll first; the bot refuses (#502).
-  highspine: ['highspine_i10:i10_king'],
-  // The Brood Drake on its eggs in the nest off Meridian Camp's iron corridors, under Fire Mountain (#22).
-  firemount: ['meridian_camp2:mc2_brood'],
-  // The Old Drake asleep on Old Cinder's square, down off F11's crater (#515); the Sentinel up through
-  // the Ember Stone's door the moment it lights, down inside the Stone on F11 (#516).
-  emberwaste: ['old_cinder:oc1_drake', 'ember_stone:es_sentinel'],
-  // The Grey Lion alone on his ground between the mesas, under the rim (#529).
-  wold: ['wold_b8:b8_grey_lion'],
-  // The Catcher at the Stair's foot, down the Ways under the temple's crypt (#758); Vask at the Heart's panel
-  // on the clock, the Hands killed first, below it, and his group as the Council thins it (#759).
-  hearthisle: ['underdeep2:ud2_catcher', 'core:core_vask', 'core:core_vask_thinned'],
-};
-
-/**
- * Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one,
- * here or on its zone (`AtlasZone.road`) and not both (#897): the Foreland's are on theirs.
- */
-export const ROADS: Record<string, readonly string[]> = {
-  thornmark: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'],
-  deepthorn: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'],
-  wrackholm: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'],
-  eaves: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2', 'eaves_j2:j2_bears', 'eaves_j2:j2_hounds', 'eaves_k2:k2_hounds', 'eaves_k2:k2_bears'],
-  lanternwood: ['lanternwood_l2:l2_lamp_moths', 'lanternwood_l2:l2_bears', 'lanternwood_m2:m2_hounds'],
-  // On to the fork, where the bull toad sees the company, and up the spur past the barge (#171).
-  delta: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad', 'delta_c4:c4_barge'],
-  // Up the last of the spur past the herons in the stubble, onto the mound and the quay by day (#172).
-  upperwater: ['upperwater_c3:c3_herons', 'upperwater_c3:c3_quay'],
-  saltings: ['saltings_c6:c6_bargemen', 'saltings_c6:c6_smugglers', 'saltings_c6:c6_crabs'],
-  // Over the pass and down the trail past the spoil heap's beetles (#457), then up the spur past the
-  // low heap by the road and the high one under the crag's working, to Anvilhall's gate (#458).
-  ironfells: ['ironfells_m3:m3_beetles1', 'ironfells_m3:m3_beetles2', 'ironfells_n3:n3_spoil_low', 'ironfells_n3:n3_spoil_high'],
-  // On down the trail past the fresh spoil below the Tiefzeche's shaft: the beetles at its head and
-  // the salamanders at its warm end (#461).
-  kilnsheart: ['kilnsheart_n4:n4_beetles', 'kilnsheart_n4:n4_salamanders'],
-  // Up the branch from N6's fork past the warm kilns' east end, where the beetles overlook the road (#467).
-  kilnmouth: ['kilnmouth_m6:m6_beetles_east'],
-  // Over the low hills and down the drove road past the ravens on the first cairn, the bog bodies in
-  // the marsh beside it and, on its southern reach by night, the hounds (#476).
-  // On O7 (#477), the peat-cutter's track east to the ring past the lights that go round it by night.
-  highmoor: ['highmoor_n7:n7_ravens', 'highmoor_n7:n7_bodies_north', 'highmoor_n7:n7_hounds', 'highmoor_o7:o7_lights'],
-  // Down the drove road past the ravens on the first cairns, the wights at the open cairn below Carn
-  // Dubh and, at the road's head by night, the hounds (#479).
-  cairnfield: ['cairnfield_n8:n8_ravens', 'cairnfield_n8:n8_wights_open', 'cairnfield_n8:n8_hounds'],
-  // Down from the notch past the lynxes in the pines at the road's foot to the lodge's gate, and out
-  // on the ice from the lake wall to the hole past the pike under it (#486).
-  longmere: ['longmere_m9:m9_lynx_pines', 'longmere_m9:m9_pike_wall'],
-  // In from L9 under the pines past the lynxes there, and down the shore past the lynxes at the
-  // loch's foot to the crack in the ice and the door (#489).
-  coldmere: ['coldmere_k9:k9_lynx_pines', 'coldmere_k9:k9_lynx_foot'],
-  // Down off the pass past the brothers at its foot, and on down the road to the gate past the brothers
-  // walking it (#499).
-  monksvale: ['monksvale_j11:j11_brothers_foot', 'monksvale_j11:j11_brothers_road'],
-  // Down the Giants' Stair past the beetles at its foot (#510), then out of Cinderport's gate and south
-  // over the ash past the beetles below the ground to the salamanders where it warms toward the mountain
-  // (#511).
-  cindercoast: ['cindercoast_h10:h10_beetles_foot', 'cindercoast_g10:g10_beetles', 'cindercoast_g10:g10_salamanders'],
-  // Down the track off the coast past the salamanders on the slope to the stokers at the vents' mouths,
-  // the way down to Meridian Camp (#513).
-  firemount: ['firemount_g11:g11_salamanders', 'firemount_g11:g11_stokers'],
-  // West out of G10 onto the Waste's ash past the beetles below the vines and the drake on the rocks
-  // where the road turns west, and over the Cinder Hills past the drakes at their far end (#517).
-  emberwaste: ['emberwaste_f10:f10_beetles', 'emberwaste_f10:f10_drake', 'emberwaste_e10:e10_drakes'],
-  // Onto the mesas over E10's west edge, past the pride at its kill by the way in and the south pride in
-  // the grass, along the great mesa's foot to the mesa fight in the scree under its north face, out to the
-  // scorpions at the dunes' edge and the basilisk alone under the small mesa (#527); then onto the steppe
-  // over its south edge, past the pride at its kill, west along the road past the scorpions at the dunes'
-  // edge to the glass walker at the far south-west, and north up the Riders' track past the north pride (#525).
-  wold: ['wold_d10:d10_pride', 'wold_d10:d10_pride_south', 'wold_d10:d10_mesa', 'wold_d10:d10_scorpions', 'wold_d10:d10_basilisk',
-    'wold_d9:d9_pride', 'wold_d9:d9_scorpions', 'wold_d9:d9_walker', 'wold_d9:d9_pride_north'],
-  // Up the cleft from the strand where the last crossing grounds, past the Hand's pickets in it and at
-  // its head, and over the Bowl to the preacher's group before the temple's door (#753); then out of the
-  // Bowl's east pocket past the champions where the rim's path begins, by Anchorhold's yard and down the
-  // rim's east foot to the Hand's camp, its guard and the two at the stair's head (#754).
-  hearthisle: ['hearthisle_h6:h6_picket1', 'hearthisle_h6:h6_picket2', 'hearthisle_h6:h6_sermon',
-    'hearthisle_i6:i6_rim', 'hearthisle_i6:i6_guard', 'hearthisle_i6:i6_guard2'],
-  // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
-  // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
-  // snow short of the head (#502).
-  highspine: ['highspine_i11:i11_brothers', 'highspine_i10:i10_stair'],
-  // North along the ridge trail from the Stair's head, past the snow trolls lying in the gully off it
-  // and the masons on its end (#503), and down off the trail's end to the Point's shore, past the
-  // eagles over the tip, to the masons at the causeway's root and their foreman's on its end (#504).
-  sheerpoint: ['sheerpoint_i9:i9_trolls', 'sheerpoint_i9:i9_masons', 'sheerpoint_i8:i8_eagles', 'sheerpoint_i8:i8_masons', 'sheerpoint_i8:i8_foreman'],
-};
-
-/** A zone's road, named here or on the zone. */
-const roadOf = (z: AtlasZone): readonly string[] | undefined => ROADS[z.id] ?? z.road;
-/** An area's boss groups: its zones' rows here, then the groups of its maps that say they are one. */
-const bossesOf = (area: Pick<Area, 'maps' | 'atlas'>): string[] =>
-  [...area.atlas.zones.flatMap((z) => BOSSES[z.id] ?? []), ...area.maps.flatMap((d) => (d.encounters ?? []).filter((g) => g.boss).map((g) => `${d.id}:${g.id}`))];
+const bossesOf = (area: Pick<Area, 'maps'>): string[] =>
+  area.maps.flatMap((d) => (d.encounters ?? []).filter((g) => g.boss).map((g) => `${d.id}:${g.id}`));
 /** What an area is called in the check, apart from the map it shares an id with: its name on the atlas, as a zone's is. */
-const nameOf = (id: string): string => zoneName(ATLAS.areas.find((a) => a.id === id)?.name ?? id);
+const nameOf = (id: string): string => {
+  const area = ATLAS.areas.find((a) => a.id === id);
+  if (!area) throw new Error(`the atlas names no area '${id}'`);
+  return zoneName(area.name);
+};
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -401,7 +302,7 @@ function judgeMap(d: Fought, areaFloor: number, bosses: readonly string[], own: 
     if (!boss) continue;
     const at = rate(boss, d.band[0]);
     // The sentries' lever (#752): Vask's own group with the clock let run (the bots take the called first) is
-    // won a quarter to a third of the time, the plan's figure, which holds only on the sentries at 890 (OFF_LINE).
+    // won a quarter to a third of the time, the plan's figure, which holds only on the sentries at 890 (`MonsterDef.offLine`).
     if (b === 'core:core_vask') {
       const run = winRate(d.band[0], boss, SEEDS, ROUND_CAP, gateOpts(boss), { answer: { ...ANSWER, clock: 'called' } });
       ok(run >= 0.2 && run <= 0.45, `${b}: the clock let run at ${d.band[0]}: ${pc(run)} won (the plan's quarter to a third, on the sentries at 890: 20% to 45%)`);
@@ -654,11 +555,6 @@ function fixed(): void {
       `and misses its aim where one map does not hold: too hard at its floor (${pc(hard.through ?? 0)}), or too soft two under it (${pc(soft.back ?? 0)})`);
     ok(areaPools([], 1).through === null, 'an area with no groups has no figure to judge');
   }
-  const zoneIds = new Set(ATLAS.zones.map((z) => z.id)), astray = [...Object.keys(ROADS), ...Object.keys(BOSSES)].filter((k) => !zoneIds.has(k));
-  ok(!astray.length, `every key of ROADS and BOSSES is a zone${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
-  const twice = [...ATLAS.zones.filter((z) => ROADS[z.id] && z.road).map((z) => `${z.id}'s road`),
-    ...Object.values(BOSSES).flat().filter((ref) => { const [map, id] = ref.split(':'); return MAP_DEFS.find((d) => d.id === map)?.encounters?.find((g) => g.id === id)?.boss; })];
-  ok(...once('every road and boss is named once, in ROADS or BOSSES or on its zone or group', twice));
   // The road behind's groups (BEHIND): each names a group of a built map that waits on an `after`, so no
   // group a company at its floor can meet is left out; and leaving them out drops that group alone.
   const unbehind = BEHIND.filter((ref) => { const [map, id] = ref.split(':'); return !MAP_DEFS.find((d) => d.id === map)?.encounters?.find((e) => e.id === id)?.after; });
@@ -705,7 +601,7 @@ function judgeArea(only: string): void {
 
     // The area against the curve: each group at its own map's floor, and two under a floor.
     const name = nameOf(id);
-    const lost = [...bosses, ...zones.flatMap((z) => roadOf(z) ?? [])].filter((ref) => !find(ref));
+    const lost = [...bosses, ...zones.flatMap((z) => z.road ?? [])].filter((ref) => !find(ref));
     ok(!lost.length, `${name}: its bosses and its roads are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
     const pools = areaPools(pooled, band[0], rate, band[0] < GATE.dayFrom);
     if (pools.through === null) console.log(`  n/a:  ${name} has no groups yet`);
@@ -723,8 +619,8 @@ function judgeArea(only: string): void {
       const maps = z.maps!.map((m) => fought.find((d) => d.id === m.map)).filter((d): d is (typeof fought)[number] => !!d);
       if (!maps.length) continue;
       const zn = zoneName(z.name), floor = Math.min(...maps.map((d) => d.band[0]));
-      const refs = roadOf(z), own = new Set(z.maps!.map((m) => m.map)), astray = (refs ?? []).filter((ref) => !own.has(ref.split(':')[0]));
-      ok(!!refs?.length, `${zn}: its road is named${refs?.length ? '' : ` (ROADS has no '${z.id}')`}`);
+      const refs = z.road, own = new Set(z.maps!.map((m) => m.map)), astray = (refs ?? []).filter((ref) => !own.has(ref.split(':')[0]));
+      ok(!!refs?.length, `${zn}: its road is named${refs?.length ? '' : ` ('${z.id}' names none)`}`);
       ok(!astray.length, `${zn}: its road runs on its own maps${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
       const way = (refs ?? []).map(find);
       if (refs?.length && way.every((g) => g)) {

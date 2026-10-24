@@ -16,7 +16,7 @@ import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { CHAPTER } from './chapter.ts';
 import { QUESTS } from './quests.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
 export const AREA = {
   id: 'whitespine' as const,
@@ -44,5 +44,5 @@ export const AREA = {
   // its causeway over the water and the person taken from its shore (#504) have none either: the
   // causeway's stone is the Kilns' pier's, and a cave on the atlas is on the road before.
   novel: { families: ['giants'], terrain: ['peak', 'cliff'], mechanics: [], landmarks: ['monastery'] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;

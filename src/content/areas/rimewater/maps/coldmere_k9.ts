@@ -10,8 +10,9 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
-import { WENNA_UP, WENNA_LODGE } from './rime_lodge.ts';
-import { SLEEPERS_SEEN } from '../chapter.ts';
+import { WENNA_UP } from './rime_lodge.ts';
+import { WENNA_LODGE, SLEEPERS_SEEN } from '../public.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The way down to the Sleepers' Bay (#490): the door in the wall of grey at the crack's foot, 24,30,
@@ -121,13 +122,13 @@ export const COLDMERE_K9: MapDef = {
     // Snow lynxes in the shore's pines, by the way in and by the arm's foot, on the north shore and the
     // far one; ice pike under the arm's ice, and over the tower by night (#56's 42 walks over them);
     // and on the far shore and its hills the ice bears in pairs, the box's hardest.
-    { id: 'k9_lynx_pines', x: 29, y: 16, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'k9_lynx_foot', x: 30, y: 27, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'k9_pike_tower', x: 21, y: 18, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: 1440, under: 'ice', when: { hours: 'night' } },
-    { id: 'k9_pike_arm', x: 19, y: 10, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: 1440, under: 'ice' },
-    { id: 'k9_lynx_north', x: 9, y: 11, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'k9_lynx_far', x: 2, y: 15, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'k9_bears_shore', x: 4, y: 21, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
-    { id: 'k9_bears_hills', x: 6, y: 28, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
+    { id: 'k9_lynx_pines', x: 29, y: 16, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'k9_lynx_foot', x: 30, y: 27, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'k9_pike_tower', x: 21, y: 18, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice', when: { hours: 'night' } },
+    { id: 'k9_pike_arm', x: 19, y: 10, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice' },
+    { id: 'k9_lynx_north', x: 9, y: 11, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'k9_lynx_far', x: 2, y: 15, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'k9_bears_shore', x: 4, y: 21, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'k9_bears_hills', x: 6, y: 28, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

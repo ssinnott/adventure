@@ -10,6 +10,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LONGMERE_L9: MapDef = {
   id: 'longmere_l9',
@@ -94,9 +95,9 @@ export const LONGMERE_L9: MapDef = {
     // Snow lynxes in the pines, two groups, by the road and by the meadow, leaping at the back row; ice
     // pike under the loch's ice off the woodcutters' camp; and on the ridge's far side the box's hardest,
     // an ice bear alone.
-    { id: 'l9_lynx_road', x: 20, y: 21, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'l9_lynx_meadow', x: 22, y: 12, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'l9_pike', x: 5, y: 1, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: 1440, under: 'ice' },
-    { id: 'l9_bear', x: 5, y: 24, monsters: ['ice_bear'], aware: 3, respawn: 2880 },
+    { id: 'l9_lynx_road', x: 20, y: 21, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'l9_lynx_meadow', x: 22, y: 12, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'l9_pike', x: 5, y: 1, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice' },
+    { id: 'l9_bear', x: 5, y: 24, monsters: ['ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

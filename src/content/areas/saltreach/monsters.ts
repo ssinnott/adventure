@@ -27,7 +27,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // again by #806, against the company with its first prestige), and paid as one fight, not the line's
   // boss, to keep the temples to their share; it blesses its group each round it can, and the Tide
   // Bell it beats time on falls with it
-  { id: 'choirmaster', name: 'The Choirmaster', plural: 'Choirmasters', sprite: 'choirmaster', kind: 'dead', look: 'The choir\'s master, beating time on a bell.', level: 12, hp: 825, ac: 20, attack: 11, dice: 11, sides: 8, bonus: 15, speed: 13, xp: 1565, gold: [60, 120], cast: { spells: ['bless'], chance: 1 }, drops: [{ item: 'tide_bell', chance: 1 }], tint: '#4a6a6e', size: 1.1 },
+  { id: 'choirmaster', name: 'The Choirmaster', plural: 'Choirmasters', sprite: 'choirmaster', kind: 'dead', look: 'The choir\'s master, beating time on a bell.', level: 12, hp: 825, ac: 20, attack: 11, dice: 11, sides: 8, bonus: 15, speed: 13, xp: 1565, gold: [60, 120], cast: { spells: ['bless'], chance: 1 }, drops: [{ item: 'tide_bell', chance: 1 }], offLine: 'the Drowned Temples\' boss, set by their gate (#175) and its hit points set again against the company with its first prestige (#806)', tint: '#4a6a6e', size: 1.1 },
   // the river and the fen's water (#261), a skirmisher on MONSTERS §4.4's line at 10
   { id: 'fen_eel', name: 'Fen Eel', plural: 'Fen Eels', sprite: 'fen_eel', kind: 'beast', look: "A back as thick as a man's leg, turning in the reeds.", level: 10, hp: 89, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 15, xp: 393, gold: [0, 0], tint: '#3c4228', size: 0.75 },
   // the Delta (#223), a controller on MONSTERS §4.4's line at 10: its sweat poisons

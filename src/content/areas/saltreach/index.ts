@@ -28,7 +28,7 @@ import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
 import { INTERIORS } from './interiors.ts';
 import { GUILDS } from './guilds.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { CHAPTER } from './chapter.ts';
 
 export const AREA = {
@@ -54,5 +54,5 @@ export const AREA = {
     fogText: 'Fog comes in off the gulf.', thunderText: 'Thunder rolls over the fen.' },
   interiors: INTERIORS,
   novel: { families: ['longbodies', 'toads'], terrain: ['salt'], mechanics: [], landmarks: [] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;

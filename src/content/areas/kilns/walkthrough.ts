@@ -82,7 +82,7 @@ import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, kneel, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
-import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, ATLAS } from '../../index.ts';
+import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, ATLAS, THE_QUEST } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
@@ -91,7 +91,8 @@ import { LOCKS } from '../../locks.ts';
 import { meet, heard, answer, barred, SHORT } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, createCharacter, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, rest, createCharacter, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
+import { nightCost, stay, train } from '../../../game/services.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { questLog } from '../../../game/quests.ts';
@@ -101,14 +102,13 @@ import { rankFlag } from '../../guilds.ts';
 import type { GuildId } from '../../guilds.ts';
 import { offered, take, rankOf } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
-import { FOURTH_RANKS_OPEN } from './guilds.ts';
+import { FOURTH_RANKS_OPEN, IRONFELLS_GATE, HYMN_SUNG } from './public.ts';
 import { readLine, markLine, readMarks } from '../../../game/inscriptions.ts';
 import { answerRiddle } from '../../../game/wilds.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
 import { roadPlace } from '../../../../tools/tests/pillars.ts';
 import { FORGE, ANVIL_STONE_PRICE, SMITH_PRICES, quarterMore } from './items.ts';
-import { GATE } from './maps/ironfells_n3.ts';
-import { VERSE_READ, BOUGHT, TAKEN, HYMN_SUNG } from './maps/anvilhall.ts';
+import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
 import { MOUTH } from './maps/kilnsheart_n4.ts';
 import { TEAR } from './maps/kilnsheart_o5.ts';
 import { ADIT } from './maps/kilnsheart_o6.ts';
@@ -122,8 +122,11 @@ import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
 import { World, HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { CHAPTER } from './chapter.ts';
-import { CHAPTER as RING } from '../cairnmoor/chapter.ts';
-import { CREW_OPEN, CREW_SHUT } from '../hearth/maps/underdeep.ts';
+import { CREW_OPEN, CREW_SHUT } from '../hearth/public.ts';
+import { RESPAWN } from '../../../game/keys.ts';
+
+// Another area's chapter, taken from the quest by its id and not from its file (#992).
+const RING = THE_QUEST.chapters.find((c) => c.id === 'ring')!;
 
 const M3 = MAP_DEFS.find((d) => d.id === 'ironfells_m3')!, N3 = MAP_DEFS.find((d) => d.id === 'ironfells_n3')!, N4 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n4')!;
 const N2 = MAP_DEFS.find((d) => d.id === 'ironfells_n2')!;
@@ -250,9 +253,9 @@ export const walkthrough: Walkthrough = (ok) => {
     }
     return d;
   };
-  const front = (n3.y + GATE.y + 1) * out.width + n3.x + GATE.x;
+  const front = (n3.y + IRONFELLS_GATE.y + 1) * out.width + n3.x + IRONFELLS_GATE.x;
   const spur = steps(n3.x, n3.y + 27, (x, y) => out.at(x, y).ch === '=' && x >= n3.x && x < n3.x + n3.w && y >= n3.y && y < n3.y + n3.h).get(front);
-  ok(spur === 46 && !!N3.exits?.includes(GATE) && GATE.to === 'anvilhall' && out.at(n3.x + GATE.x, n3.y + GATE.y).door === 'door',
+  ok(spur === 46 && !!N3.exits?.includes(IRONFELLS_GATE) && IRONFELLS_GATE.to === 'anvilhall' && out.at(n3.x + IRONFELLS_GATE.x, n3.y + IRONFELLS_GATE.y).door === 'door',
     `the spur runs ${spur} squares of road from the trail to the forecourt, and the gate before it is a door, the way into Anvilhall`);
   // Counted along the trails, as the stones are: from the road beside the stone, on the road.
   const stone = M3.features!.find((f) => f.kind === 'event' && f.id === 'm3_milestone')!;
@@ -608,7 +611,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // a square past the road's end before it.
   const roadish = (x: number, y: number): boolean => out.at(x, y).ch === '=' || (out.passable(x, y) === 'ok' && [-1, 1].some((d) => out.at(x + d, y).ch === '=') && [-1, 1].some((d) => out.at(x, y + d).ch === '='));
   const byRoad = steps(n6.x + 4, n6.y + 18, roadish);
-  const toHall = byRoad.get((n3.y + GATE.y + 1) * out.width + n3.x + GATE.x) ?? Infinity, toPort = (byRoad.get((l6.y + HAVEN_GATE.y) * out.width + l6.x + HAVEN_GATE.x + 1) ?? Infinity) + 1;
+  const toHall = byRoad.get((n3.y + IRONFELLS_GATE.y + 1) * out.width + n3.x + IRONFELLS_GATE.x) ?? Infinity, toPort = (byRoad.get((l6.y + HAVEN_GATE.y) * out.width + l6.x + HAVEN_GATE.x + 1) ?? Infinity) + 1;
   const mile = N6.features!.find((f) => f.kind === 'event' && f.id === 'n6_milestone')!;
   ok(mile.kind === 'event' && mile.x === 4 && mile.y === 18 && mile.text.includes(`ANVILHALL ${Math.round(toHall / 13)} `) && mile.text.includes(`KILNHAVEN ${Math.round(toPort / 13)} `),
     `the milestone at the fork says ANVILHALL ${Math.round(toHall / 13)} and KILNHAVEN ${Math.round(toPort / 13)}: ${toHall} squares along the roads to Anvilhall's gate and ${toPort} to Kilnhaven's`);
@@ -686,7 +689,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // along the roads as the stones are.
   ok(!!L6.exits?.includes(HAVEN_GATE) && out.at(l6.x + HAVEN_GATE.x, l6.y + HAVEN_GATE.y).door === 'door' && HAVEN_GATE.to === 'kilnhaven' && HAVEN_GATE.x === 28 && HAVEN_GATE.y === 4 && out.at(l6.x + 29, l6.y + 4).ch === '=',
     'the road runs from the east edge to Kilnhaven\'s gate in the wall at 28,4, and the gate is a door, the way into the town');
-  const fromStone = steps(l6.x + 30, l6.y + 4, roadish), toHall6 = fromStone.get((n3.y + GATE.y + 1) * out.width + n3.x + GATE.x) ?? Infinity;
+  const fromStone = steps(l6.x + 30, l6.y + 4, roadish), toHall6 = fromStone.get((n3.y + IRONFELLS_GATE.y + 1) * out.width + n3.x + IRONFELLS_GATE.x) ?? Infinity;
   const stone6 = L6.features!.find((f) => f.kind === 'event' && f.id === 'l6_milestone')!;
   ok(stone6.kind === 'event' && stone6.x === 30 && stone6.y === 4 && stone6.text.includes(`ANVILHALL ${Math.round(toHall6 / 13)} `), `the milestone before Kilnhaven's gate says ANVILHALL ${Math.round(toHall6 / 13)}: ${toHall6} squares along the roads to Anvilhall's gate`);
   see(w, 'kilnmouth_l6:l6_yard');
@@ -985,7 +988,7 @@ function ironhide(ok: (cond: boolean, msg: string) => void): void {
 function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   // In at N3's gate, by the door in the hill, and out by it again onto the forecourt before it,
   // whatever the thane was told: nothing shuts it.
-  w.world.travel('ironfells_n3', GATE.x, GATE.y + 1, NORTH);
+  w.world.travel('ironfells_n3', IRONFELLS_GATE.x, IRONFELLS_GATE.y + 1, NORTH);
   const step = w.world.move('forward'), inside = step.kind === 'moved' ? step.messages : [];
   ok(w.world.state.mapId === 'anvilhall' && w.world.state.x === TOWN.start.x && w.world.state.y === TOWN.start.y && w.world.state.facing === NORTH, 'N3\'s gate lets the company in at the foot of the court, facing up it');
   ok(inside.join() === 'A door in the hill, iron-bound, and the hammering behind it. Over the lintel, words cut deep and painted red.', `going in, the door in the hill and the words cut over it (${inside.join(' / ')})`);
@@ -994,20 +997,18 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   w.world.travel('anvilhall', TOWN.start.x, TOWN.start.y, SOUTH);
   const back = w.world.move('forward');
-  ok(back.kind === 'moved' && w.world.zone?.id === 'ironfells_n3' && w.world.state.x - w.world.zone.x === GATE.x && w.world.state.y - w.world.zone.y === GATE.y + 1 && w.world.state.facing === SOUTH,
+  ok(back.kind === 'moved' && w.world.zone?.id === 'ironfells_n3' && w.world.state.x - w.world.zone.x === IRONFELLS_GATE.x && w.world.state.y - w.world.zone.y === IRONFELLS_GATE.y + 1 && w.world.state.facing === SOUTH,
     'and out again onto the forecourt before the gate, facing down the spur');
   ok(TOWN.exits!.length === 1 && TOWN.exits!.every((e) => !e.shut && !e.needFlag), 'nothing shuts the gate, either way');
   listen(w);
 
-  // A company of 16 rests, buys the act's first step and trains to 19, each as the business's screen
-  // does it (src/ui/screens.ts).
+  // A company of 16 rests, buys the act's first step and trains to 19, each by the rule its business's
+  // screen serves (src/game/services.ts).
   ok(business('inn').length === 1 && business('temple').length === 1, 'Anvilhall has an inn to rest at and a mine-surgeon who cures');
   w.party.gold = 30000;
-  const inn = business('inn')[0], night = inn.price * w.party.members.length;
+  const inn = business('inn')[0], night = nightCost(inn, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
-  w.party.gold -= night;
-  for (const m of w.party.members) rest(m);
-  w.world.sleepUntilMorning();
+  stay(w.party, w.world, inn);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 30000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
   const rung = ACT_III.find((r) => r.level === 17)!;
   ok(FORGE_SHOP.stock.length === FORGE.length && FORGE.every((id) => FORGE_SHOP.stock.includes(id)), `the smiths' forge sells the act's first step, all ${FORGE.length} wares and nothing else`);
@@ -1015,12 +1016,11 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const stores = business('shop').find((f) => f.interior === 'anvilhall_stores')!;
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => stores.stock.includes(id)) && !stores.stock.some((id) => FORGE.includes(id)), 'the stores sell provisions and lamp oil, and no steel');
   const yard = business('trainer')[0];
-  // Trained on a copy, so the company walks on as it was.
+  // Trained on a copy, from a copy of the purse, so the company walks on as it was.
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 18; trainee.xp = xpForLevel(19);
   ok(business('trainer').length === 1 && yard.maxLevel === 19 && yard.interior === 'anvilhall_training_hall' && canTrainAt(trainee, yard.maxLevel), `${yard.name} will train a member of 18`);
-  const fee = trainPrice(trainee);
-  levelUp(trainee, makeRng(1), 19);
+  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), yard.maxLevel);
   ok(trainee.level === 19 && !canTrainAt(trainee, yard.maxLevel), `who trains to 19 for ${fee} gold, and no further`);
 
   // The verse. With no reader of its own the company sees it at the great hall's doors, and the
@@ -1135,14 +1135,12 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   ok(HAVEN.exits!.length === 1 && HAVEN.exits!.every((e) => !e.shut && !e.needFlag), 'nothing shuts the gate');
   listen(w);
 
-  // A night at the inn, as the business's screen does it (src/ui/screens.ts).
+  // A night at the inn, by the rule its screen serves (src/game/services.ts).
   ok(here('inn').length === 1 && here('temple').length === 1 && here('trainer').length === 1, 'Kilnhaven has an inn to rest at, a chapel that cures and a shed that trains');
   w.party.gold = 30000;
-  const inn = here('inn')[0], night = inn.price * w.party.members.length;
+  const inn = here('inn')[0], night = nightCost(inn, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
-  w.party.gold -= night;
-  for (const m of w.party.members) rest(m);
-  w.world.sleepUntilMorning();
+  stay(w.party, w.world, inn);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 30000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
 
   // The smith sells the act's first step at a quarter more than Anvilhall's forge (#535), each class
@@ -1163,13 +1161,12 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   taker.world.travel('kilnhaven', SMITHY.x, SMITHY.y);
   ok(taker.world.present(SMITHY) && taker.world.present(DIETMAR) && !taker.world.present(FORGE_SHOP) && says(taker, DIETMAR).includes('Mine is open'), 'the Stone taken, Anvilhall\'s forge is shut, and the smith is open still and says so');
 
-  // Training to 19 at the ore shed, on a copy, so the company walks on as it was.
+  // Training to 19 at the ore shed, a copy from a copy of the purse, so the company walks on as it was.
   const shed = here('trainer')[0];
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 18; trainee.xp = xpForLevel(19);
   ok(shed.maxLevel === 19 && shed.interior === 'kilnhaven_training_hall' && canTrainAt(trainee, shed.maxLevel), `${shed.name} will train a member of 18`);
-  const fee = trainPrice(trainee);
-  levelUp(trainee, makeRng(1), 19);
+  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), shed.maxLevel);
   ok(trainee.level === 19 && !canTrainAt(trainee, shed.maxLevel), `who trains to 19 for ${fee} gold, and no further`);
 
   // The manifests, read by the harbourmaster in her office: iron to Cinderport, and the Compact's
@@ -1947,7 +1944,7 @@ function crewOpen(ok: (cond: boolean, msg: string) => void): void {
     v.party.flags[CREW_OPEN] = 1;
     v.level = L3.band![0];
     const look = said(v);
-    ok(up.monsters.join() === 'knocker,knocker,knocker' && MONSTERS.knocker.level === 16 && up.respawn === 2880 && live(v) && look.join() === 'They came up through the door you left open.',
+    ok(up.monsters.join() === 'knocker,knocker,knocker' && MONSTERS.knocker.level === 16 && up.respawn === RESPAWN.twoDays && live(v) && look.join() === 'They came up through the door you left open.',
       `the door left open, three of the corridor's own knockers at 6,3, level 16, and before them: ${look.join(' ')}`);
     fight(v, 'deep_mines3:ud_mines');
     const dead = !live(v);
@@ -2034,7 +2031,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   see(w, `${K6.id}:k6_rings`);
   kneel(w, `${K6.id}:k6_boles`);
   for (const g of K6.encounters!) fight(w, `${K6.id}:${g.id}`);
-  ok(K6.encounters!.every((g) => g.monsters.join() === 'rock_worm,rock_worm' && g.respawn === 2880), 'the heath holds one group, a pair of rock worms at the top of the band, back after two days');
+  ok(K6.encounters!.every((g) => g.monsters.join() === 'rock_worm,rock_worm' && g.respawn === RESPAWN.twoDays), 'the heath holds one group, a pair of rock worms at the top of the band, back after two days');
 
   // The secret: the old rails rubbed bright to the winch-house wall, the search there and the strongroom
   // behind it. Walked, waded, climbed or floated, it is never reached but through the wall.
@@ -2156,7 +2153,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   for (const g of L7.encounters!) fight(w, `${L7.id}:${g.id}`);
   const [spill, dunes] = L7.encounters!, fire = L7.features!.find((f) => f.kind === 'camp')!;
-  ok(L7.encounters!.length === 2 && spill.monsters.join() === 'fire_beetle,fire_beetle,fire_beetle,fire_beetle' && spill.respawn === 1440 && dunes.monsters.join() === 'rock_worm' && dunes.respawn === 2880 && dunes.roams === false,
+  ok(L7.encounters!.length === 2 && spill.monsters.join() === 'fire_beetle,fire_beetle,fire_beetle,fire_beetle' && spill.respawn === RESPAWN.day && dunes.monsters.join() === 'rock_worm' && dunes.respawn === RESPAWN.twoDays && dunes.roams === false,
     'the shore holds four fire beetles at the spill, back after a day, and a lone rock worm in the dunes, back after two and staying where it is');
   ok(L7.encounters!.every((g) => Math.max(Math.abs(g.x - fire.x), Math.abs(g.y - fire.y)) > 4), 'the driftwood fire stands more than four squares clear of both groups, so a company can rest at it');
 

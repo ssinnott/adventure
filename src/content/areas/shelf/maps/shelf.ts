@@ -4,8 +4,10 @@
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
 import type { MapDef, Answer } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
-import { SAT, THRONE_REMOVED } from './keep.ts';
+import { SAT } from './keep.ts';
+import { THRONE_REMOVED } from '../public.ts';
 import { ENDED } from '../../../endings.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 // The Signet (64, #765; docs/areas/hearth_isle.md §6): after an ending the Council's clerk waits by the
 // gate to ask where the ring goes, until it has gone; once the Council has sat, into the chair's keeping.
@@ -205,14 +207,14 @@ export const SHELF: MapDef = {
     ] } },
   ],
   encounters: [
-    { id: 'road_rats', x: 16, y: 7, monsters: ['rat', 'rat', 'rat'], aware: 4, respawn: 1440 },
-    { id: 'wood_wolves', x: 5, y: 8, monsters: ['wolf', 'wolf'], aware: 5, respawn: 1440 },
-    { id: 'wood_boar', x: 7, y: 13, monsters: ['boar'], aware: 3, respawn: 2880 },
-    { id: 'road_bandits', x: 13, y: 12, monsters: ['bandit', 'bandit', 'bandit_archer'], aware: 5, respawn: 2880 },
-    { id: 'hill_wolves', x: 24, y: 11, monsters: ['wolf', 'wolf', 'wolf'], aware: 5, respawn: 1440 },
-    { id: 'marsh_spiders', x: 7, y: 23, monsters: ['spider', 'spider', 'spider', 'spider'], aware: 4, respawn: 1440 },
-    { id: 'beach_crabs', x: 9, y: 28, monsters: ['shore_crab', 'shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: 1440 },
-    { id: 'cliff_smugglers', x: 5, y: 26, monsters: ['smuggler', 'smuggler', 'smuggler', 'smuggler_bowman'], aware: 5, respawn: 2880 },
-    { id: 'coast_bandits', x: 20, y: 27, monsters: ['bandit', 'bandit', 'bandit', 'bandit_archer', 'bandit_archer'], aware: 5, respawn: 2880 },
+    { id: 'road_rats', x: 16, y: 7, monsters: ['rat', 'rat', 'rat'], aware: 4, respawn: RESPAWN.day },
+    { id: 'wood_wolves', x: 5, y: 8, monsters: ['wolf', 'wolf'], aware: 5, respawn: RESPAWN.day },
+    { id: 'wood_boar', x: 7, y: 13, monsters: ['boar'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'road_bandits', x: 13, y: 12, monsters: ['bandit', 'bandit', 'bandit_archer'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'hill_wolves', x: 24, y: 11, monsters: ['wolf', 'wolf', 'wolf'], aware: 5, respawn: RESPAWN.day },
+    { id: 'marsh_spiders', x: 7, y: 23, monsters: ['spider', 'spider', 'spider', 'spider'], aware: 4, respawn: RESPAWN.day },
+    { id: 'beach_crabs', x: 9, y: 28, monsters: ['shore_crab', 'shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: RESPAWN.day },
+    { id: 'cliff_smugglers', x: 5, y: 26, monsters: ['smuggler', 'smuggler', 'smuggler', 'smuggler_bowman'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'coast_bandits', x: 20, y: 27, monsters: ['bandit', 'bandit', 'bandit', 'bandit_archer', 'bandit_archer'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

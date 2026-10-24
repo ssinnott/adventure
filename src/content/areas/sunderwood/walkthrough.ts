@@ -48,21 +48,18 @@ import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, gone, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { CHAPTER } from './chapter.ts';
-import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
-import { CHAPTER as GROVE } from '../thornmark/chapter.ts';
 import { STEPS as FORELAND_STEPS, hired } from '../shelf/walkthrough.ts';
 import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
-import { CHAPTER as TIDE } from '../saltreach/chapter.ts';
-import { CHAPTER as WRACK } from '../wrackholm/chapter.ts';
 import { STEPS as TIDE_STEPS } from '../saltreach/walkthrough.ts';
 import { STEPS as WRACK_STEPS } from '../wrackholm/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
-import { MAP_DEFS } from '../../index.ts';
+import { MAP_DEFS, THE_QUEST } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, EncounterDef } from '../../../game/map.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, CLASSES, rest, guildFlag, trainPrice, levelUp, countItem, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, CLASSES, countItem, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
+import { nightCost, stay, payFee, hallOffers, learnSpell, train } from '../../../game/services.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { questLog } from '../../../game/quests.ts';
@@ -76,8 +73,14 @@ import { approach, burn, burnt } from '../../../game/dens.ts';
 import { answerRiddle, useShrine } from '../../../game/wilds.ts';
 import type { Den } from '../../../game/dens.ts';
 import type { Person } from '../../../game/people.ts';
-import { CRACK_SEALED, CRACK_WIDE } from '../hearth/maps/underdeep.ts';
+import { CRACK_SEALED, CRACK_WIDE } from '../hearth/public.ts';
 import { ENDINGS } from '../../endings.ts';
+
+// Other areas' chapters, taken from the quest by their ids and not from their files (#992).
+const FORELAND = THE_QUEST.chapters.find((c) => c.id === 'ashcombe')!;
+const GROVE = THE_QUEST.chapters.find((c) => c.id === 'grove')!;
+const TIDE = THE_QUEST.chapters.find((c) => c.id === 'tide')!;
+const WRACK = THE_QUEST.chapters.find((c) => c.id === 'wrack')!;
 
 const I2 = MAP_DEFS.find((d) => d.id === 'eaves_i2')!;
 const WOODCUTTER = I2.features!.find((f) => f.kind === 'npc' && f.name === 'A woodcutter') as Person;
@@ -364,16 +367,14 @@ export const walkthrough: Walkthrough = (ok) => {
   walkThrough(w, 'lantern_watch', 7, 14, SOUTH, 'lanternwood_l2');
   ok(w.world.zone?.id === 'lanternwood_l2' && w.world.state.x - w.world.zone.x === 12 && w.world.state.y - w.world.zone.y === 17, 'and out again onto the spur before the gate');
 
-  // A company of 14 rests, buys the band's gear, studies to the sixth tier and trains to 17, each as
-  // the business's screen does it (src/ui/screens.ts). No temple: Sunderfall's shrine cures.
+  // A company of 14 rests, buys the band's gear, studies to the sixth tier and trains to 17, each by
+  // the rule its business's screen serves (src/game/services.ts). No temple: Sunderfall's shrine cures.
   const business = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => WATCH.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
   ok(business('inn').length === 1 && !business('temple').length, 'the Watch has a refectory to rest in, and no temple');
   w.party.gold = 20000;
-  const refectory = business('inn')[0], night = refectory.price * w.party.members.length;
+  const refectory = business('inn')[0], night = nightCost(refectory, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
-  w.party.gold -= night;
-  for (const m of w.party.members) rest(m);
-  w.world.sleepUntilMorning();
+  stay(w.party, w.world, refectory);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 20000 - night, `a night in the refectory for ${night} gold, and the company wakes whole in the morning`);
   const stores = business('shop').find((f) => f.interior === 'watch_stores')!;
   const rung = ACT_II.find((r) => r.level === 14)!;
@@ -383,18 +384,17 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(business('guild').length === 1 && hall.hall === 'lanterns' && hall.interior === 'watch_hall' && hall.maxTier === 6, `the Lantern hall is the Lanterns' hall and teaches to the sixth tier (${hall.name})`);
   const caster = w.party.members.find((m) => CLASSES[m.cls].spells && hall.classes.includes(m.cls))!;
   const sixth = spellsFor(CLASSES[caster.cls].spells!, hall.maxTier!).find((sp) => sp.level === 6 && !caster.spells.includes(sp.id))!;
-  // The fee to study, once, then the spell at the hall's price for its tier (spellPrice: 40 doubling a tier).
-  const before = w.party.gold, price = 40 * 2 ** (sixth.level - 1);
-  w.party.gold -= hall.fee; w.party.flags[guildFlag(hall.name)] = 1;
-  w.party.gold -= price; caster.spells.push(sixth.id);
+  // The fee to study, once, then the spell as the hall offers it, at its price for the tier (spellPrice).
+  const before = w.party.gold;
+  payFee(w.party, hall);
+  const { paid: price } = learnSpell(w.party, hallOffers(w.party, hall).find((o) => w.party.members[o.who] === caster && o.id === sixth.id)!);
   ok(!!sixth && w.party.gold === before - hall.fee - price && caster.spells.includes(sixth.id), `${caster.name} pays the hall's fee of ${hall.fee} and learns ${sixth.name} for ${price}`);
   const gallery = business('trainer')[0];
-  // Trained on a copy, so the company walks on as it was.
+  // Trained on a copy, so the company walks on as it was; the company pays.
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 16; trainee.xp = xpForLevel(17);
   ok(gallery.maxLevel === 17 && gallery.interior === 'watch_gallery' && canTrainAt(trainee, gallery.maxLevel), 'the Lamp Gallery will train a member of 16');
-  const fee = trainPrice(trainee);
-  w.party.gold -= fee; levelUp(trainee, makeRng(1), 17);
+  const { paid: fee } = train(w.party, trainee, makeRng(1), gallery.maxLevel);
   ok(trainee.level === 17 && !canTrainAt(trainee, gallery.maxLevel), `who trains to 17 for ${fee} gold, and no further`);
 
   // The papers read (#201): the Reader in the prior's room, once she has met the company, reads it

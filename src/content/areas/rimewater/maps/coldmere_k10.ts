@@ -14,6 +14,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The pilgrims gone from below the pass, up with the brother or back to the lodge (#56's 44, #494). */
 const GONE: When = [{ flag: 'q_pilgrims_up' }, { flag: 'q_pilgrims_back' }];
@@ -123,13 +124,13 @@ export const COLDMERE_K10: MapDef = {
     // Snow lynxes in the pines by the bridge, by the lamp and south of the pass's foot; ice pike under
     // the lake's shore ice, by the river's mouth and down the shore; and the ice bears in pairs, the
     // box's hardest, on the pass's shoulder, under its south wall and in the south pines.
-    { id: 'k10_lynx_bridge', x: 25, y: 4, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'k10_pike_head', x: 26, y: 10, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: 1440, under: 'ice' },
-    { id: 'k10_lynx_lamp', x: 20, y: 13, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'k10_pike_shore', x: 24, y: 22, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: 1440, under: 'ice' },
-    { id: 'k10_lynx_south', x: 10, y: 24, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'k10_bears_shoulder', x: 5, y: 10, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
-    { id: 'k10_bears_south', x: 16, y: 27, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
-    { id: 'k10_bears_wall', x: 3, y: 26, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
+    { id: 'k10_lynx_bridge', x: 25, y: 4, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'k10_pike_head', x: 26, y: 10, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice' },
+    { id: 'k10_lynx_lamp', x: 20, y: 13, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'k10_pike_shore', x: 24, y: 22, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice' },
+    { id: 'k10_lynx_south', x: 10, y: 24, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'k10_bears_shoulder', x: 5, y: 10, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'k10_bears_south', x: 16, y: 27, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'k10_bears_wall', x: 3, y: 26, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

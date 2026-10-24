@@ -6,6 +6,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DEEPTHORN_J5: MapDef = {
   id: 'deepthorn_j5',
@@ -110,11 +111,11 @@ export const DEEPTHORN_J5: MapDef = {
   // until beaten whichever the company does first (MONSTERS §5.4). The rest of the old wood sleeps
   // once the tear is closed.
   encounters: [
-    { id: 'j5_owls', x: 3, y: 3, when: { hours: 'night' }, monsters: ['great_owl', 'great_owl', 'great_owl', 'great_owl'], aware: 5, respawn: 1440, until: TEAR_CLOSED },
-    { id: 'j5_rootwalkers', x: 3, y: 8, monsters: ['rootwalker', 'rootwalker', 'rootwalker'], aware: 3, respawn: 2880, until: TEAR_CLOSED },
-    { id: 'j5_heartwood', x: 4, y: 12, monsters: ['heartwood', 'bramble', 'bramble'], aware: 1, roams: false, respawn: 2880, until: TEAR_CLOSED },
-    { id: 'j5_landing', x: 2, y: 21, when: { hours: 'night' }, monsters: ['ashen_adept', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot'], aware: 3, respawn: 1440 },
-    { id: 'j5_eldest', x: 6, y: 22, monsters: ['eldest', 'heartwood', 'heartwood'], aware: 2, roams: false,
+    { id: 'j5_owls', x: 3, y: 3, when: { hours: 'night' }, monsters: ['great_owl', 'great_owl', 'great_owl', 'great_owl'], aware: 5, respawn: RESPAWN.day, until: TEAR_CLOSED },
+    { id: 'j5_rootwalkers', x: 3, y: 8, monsters: ['rootwalker', 'rootwalker', 'rootwalker'], aware: 3, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
+    { id: 'j5_heartwood', x: 4, y: 12, monsters: ['heartwood', 'bramble', 'bramble'], aware: 1, roams: false, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
+    { id: 'j5_landing', x: 2, y: 21, when: { hours: 'night' }, monsters: ['ashen_adept', 'zealot', 'zealot', 'zealot', 'zealot', 'zealot'], aware: 3, respawn: RESPAWN.day },
+    { id: 'j5_eldest', x: 6, y: 22, monsters: ['eldest', 'heartwood', 'heartwood'], aware: 2, roams: false, boss: true,
       slainText: 'The Eldest stops. Its roots go slack, its crown settles, and a bough comes down at your feet. It is not dead. It is asleep, as it was before anything living was born.' },
   ],
 };

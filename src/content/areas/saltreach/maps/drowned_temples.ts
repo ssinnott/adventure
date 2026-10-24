@@ -8,15 +8,14 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { QuestCond, When } from '../../../../game/quests.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
+import { BELL_HUNG } from '../public.ts';
 
 /** The Choirmaster fallen, and the count with it (level two). */
 export const COUNT_STOPPED: QuestCond = { slain: 'drowned_temples2:dt2_choirmaster' };
 
 /** The Tide Stone set back on its plinth (#191): the god sings again, and the fen's Rifts go quiet. */
 export const STONE_HOME: QuestCond = { flag: 'q_tide_home' };
-
-/** The Tide Bell back on its frame: the priestess's hand-in at B6's dry door (#56's 23). */
-export const BELL_HUNG: QuestCond = { flag: 'q_tide_bell_done' };
 
 /** The nave's head, x 5 to 10 of row 3: the squares every way to the apse's stair crosses. */
 const SINGS = [5, 6, 7, 8, 9, 10];
@@ -80,7 +79,7 @@ export const DROWNED_TEMPLES: MapDef = {
   encounters: [
     // Two drowned men in the nave's dry strip; and two bull toads in the north-east chapel, come in with
     // the fen through the sunk north chapels, the level's hardest at 12.
-    { id: 'dt1_nave', x: 8, y: 6, monsters: ['temple_drowned', 'temple_drowned'], aware: 2, roams: false, respawn: 2880 },
-    { id: 'dt1_chapel', x: 13, y: 3, monsters: ['bull_toad', 'bull_toad'], aware: 4, roams: false, respawn: 2880 },
+    { id: 'dt1_nave', x: 8, y: 6, monsters: ['temple_drowned', 'temple_drowned'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'dt1_chapel', x: 13, y: 3, monsters: ['bull_toad', 'bull_toad'], aware: 4, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

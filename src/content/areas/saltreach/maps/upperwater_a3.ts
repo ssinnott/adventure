@@ -6,6 +6,7 @@
 // atlas by hand, its void written in; docs/areas/saltreach.md §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const UPPERWATER_A3: MapDef = {
   id: 'upperwater_a3',
@@ -61,6 +62,6 @@ export const UPPERWATER_A3: MapDef = {
   secrets: [{ x: 25, y: 27, hint: 'a3_willow' }],
   encounters: [
     // A bull toad and a heron off the willows, the corner's one fight, kept to it.
-    { id: 'a3_toad', x: 28, y: 24, monsters: ['bull_toad', 'grey_heron'], aware: 4, roams: false, respawn: 1440 },
+    { id: 'a3_toad', x: 28, y: 24, monsters: ['bull_toad', 'grey_heron'], aware: 4, roams: false, respawn: RESPAWN.day },
   ],
 };

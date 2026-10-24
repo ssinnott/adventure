@@ -9,6 +9,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/glasswold.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const WOLD_D9: MapDef = {
   id: 'wold_d9',
@@ -94,9 +95,9 @@ export const WOLD_D9: MapDef = {
     // scorpions at the dunes' edge; the glass walker alone at the far south-west, the box's hardest at 27;
     // and the north pride by the track, the vultures with it. The vultures land where something is about
     // to die, so they are in the prides' fights.
-    { id: 'd9_pride', x: 27, y: 25, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: 2880 },
-    { id: 'd9_scorpions', x: 7, y: 26, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: 2880 },
-    { id: 'd9_walker', x: 1, y: 30, monsters: ['glass_walker'], aware: 5, respawn: 2880 },
-    { id: 'd9_pride_north', x: 23, y: 6, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: 2880 },
+    { id: 'd9_pride', x: 27, y: 25, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'd9_scorpions', x: 7, y: 26, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'd9_walker', x: 1, y: 30, monsters: ['glass_walker'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'd9_pride_north', x: 23, y: 6, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: RESPAWN.twoDays },
   ],
 };

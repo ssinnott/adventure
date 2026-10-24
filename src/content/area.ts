@@ -7,7 +7,7 @@ import type { ItemDef } from '../game/items.ts';
 import type { QuestDef, Chapter } from '../game/quests.ts';
 import type { GuildQuest } from '../game/guilds.ts';
 import type { Climate } from '../game/weather.ts';
-import type { AtlasZone, AtlasPlace, AtlasSite, SiteIcon } from '../game/atlas.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink, SiteIcon } from '../game/atlas.ts';
 
 export interface Area {
   /** Also the region its maps name for their weather (`MapDef.region`). */
@@ -52,9 +52,10 @@ export interface Area {
   novel: Novelty;
   /**
    * Its part of the world map: its zones (a built one lists its maps, each at its box of the
-   * grid), the plates of its towns and dungeons, and its sites. Merged into ATLAS with the plan (atlas.ts).
+   * grid), the plates of its towns and dungeons, its sites, and the links whose two ends are both its
+   * own (a link between two areas is the plan's). Merged into ATLAS with the plan (atlas.ts).
    */
-  atlas: { zones: readonly AtlasZone[]; places: readonly AtlasPlace[]; sites: readonly AtlasSite[] };
+  atlas: { zones: readonly AtlasZone[]; places: readonly AtlasPlace[]; sites: readonly AtlasSite[]; links?: readonly AtlasLink[] };
 }
 
 /**
@@ -62,7 +63,7 @@ export interface Area {
  * checks.ts, which nothing in the game imports, found by its file as the runner finds a walkthrough
  * (tools/checks.ts). What describes one zone, group, monster or exit is a field of that instead
  * (`AtlasZone.road`, `reach` and `maxGroup`, `EncounterDef.boss`, `MonsterDef.offLine`, `Exit.crosses`).
- * Each suite reads these beside its own table and refuses a row in both, so a row moves one way (#897).
+ * Each suite reads these alone: the tables they moved from are gone (#969).
  */
 export interface AreaChecks {
   /** What it owes, each row with the issue that pays it: reported as that issue's, not failed, until it holds. */
@@ -73,11 +74,11 @@ export interface AreaChecks {
    * is whole on the last area on the road whose items it holds (tools/tests/ladder.ts).
    */
   gear?: Readonly<Record<number, readonly string[]>>;
-  /** How far over the next floor its clear leaves a company, held as built (`OVER_ROAD`, tools/tests/curve.ts). */
+  /** How far over the next floor its clear leaves a company, held as built (tools/tests/curve.ts). */
   overRoad?: { level: number; why: string };
-  /** Its seams as built, each row as `SEAMS_AS_BUILT` writes it (tools/tests/outdoors.ts): a seam is the area's of the first box its key names. */
+  /** Its seams as built (tools/tests/outdoors.ts): a seam is the area's of the first box its key names. */
   seamsAsBuilt?: readonly SeamAsBuilt[];
-  /** Its edges open on nothing, each row as `OPEN_ON_NOTHING` writes it (tools/tests/outdoors.ts): an edge is the area's whose box it is. */
+  /** Its edges open on nothing (tools/tests/outdoors.ts): an edge is the area's whose box it is. */
   openOnNothing?: readonly OpenOnNothing[];
 }
 
@@ -87,22 +88,22 @@ export interface SeamAsBuilt { seam: string; walk?: string; water?: string; road
 /** An edge of a built box that faces no built box: the box's map and its side, the squares along it open to a walker, and why. */
 export interface OpenOnNothing { edge: string; open: string; why: string }
 
-/** What an area owes, by the table each kind of row stood in until it moved onto its area. */
+/** What an area owes, each kind of row by the suite that reads it. */
 export interface Owes {
   /** What a clear falls short of (`AreaCurve.owed`): `xp` (a member's share) and `gold` what a clear gives today, a floor. */
   curve?: { whose: string; why: string; xp?: number; gold?: number };
-  /** A monster no map places yet, or a room no business opens into, by its id (`UNPLACED`, tools/tests/maps.ts). */
+  /** A monster no map places yet, or a room no business opens into, by its id (tools/tests/maps.ts). */
   unplaced?: Readonly<Record<string, string>>;
-  /** A flag a condition reads before anything sets it, by the flag (`UNSET`, tools/tests/quests.ts). */
+  /** A flag a condition reads before anything sets it, by the flag (tools/tests/quests.ts). */
   unset?: Readonly<Record<string, string>>;
-  /** A zone map the outdoors' start does not reach yet, by its id (`CUT_OFF`, tools/tests/outdoors.ts). */
+  /** A zone map the outdoors' start does not reach yet, by its id (tools/tests/outdoors.ts). */
   cutOff?: Readonly<Record<string, string>>;
   /**
-   * Squares where a map and the atlas disagree, by the issue whose fix they wait on (`EDGES_OWED`,
-   * tools/tests/pillars.ts): an issue may be owed by several areas, a square by one.
+   * Squares where a map and the atlas disagree, by the issue whose fix they wait on
+   * (tools/tests/pillars.ts): an issue may be owed by several areas, a square by one.
    */
   edges?: Readonly<Record<string, readonly string[]>>;
-  /** Locks someone else fixes, by the issue that fixes them (`LOCKS_OWED`, tools/tests/pillars.ts): an issue may be owed by several areas, a lock by one. */
+  /** Locks someone else fixes, by the issue that fixes them (tools/tests/pillars.ts): an issue may be owed by several areas, a lock by one. */
   locks?: Readonly<Record<string, readonly string[]>>;
 }
 

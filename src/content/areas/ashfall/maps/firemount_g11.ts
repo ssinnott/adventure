@@ -19,6 +19,8 @@
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
+import { VENTS } from '../public.ts';
 
 /** The Barbarian's third (#448): the warlord's heir has asked for what nests down the vents killed. */
 export const BROOD_ASKED = 'q_brood';
@@ -40,14 +42,6 @@ export const AXE_RUMOUR = [
   '"Grim\'s axe was made at this anvil. When he lifted it, the mountain threw its stones for him."',
   '"They buried him with it, and the mountain closed the grave."',
 ];
-
-/**
- * The way down to Meridian Camp (#22): the middle of the vents' three mouths, 26,16, open ash between
- * the two still breathing, onto the vents' flue hall at 16,1, facing south; the way back up lands on
- * 27,16, facing east, the vents' front.
- */
-export const VENTS: Exit = { x: 26, y: 16, to: 'meridian_camp', tx: 16, ty: 1, tf: SOUTH,
-  label: 'Down into the middle mouth on rungs hot through the glove, and a drop at the end onto iron.' };
 
 /**
  * The scavenger's way down (#56's 52): the far end of his hole, 31,17, onto the vents behind the stokers'
@@ -170,10 +164,10 @@ export const FIREMOUNT_G11: MapDef = {
     // more on the cone's shoulder; the vents' fight at the mouths, two stokers with ember salamanders,
     // where fire is useless; a cinder drake alone on the south-east flow; and, once the Ember Stone is
     // lit, a sentry come up through the doors below, walking in from the Waste: the box's top, at 26.
-    { id: 'g11_salamanders', x: 30, y: 6, monsters: ['ember_salamander', 'ember_salamander', 'ember_salamander', 'ember_salamander'], aware: 3, respawn: 1440 },
-    { id: 'g11_slope', x: 16, y: 11, monsters: ['ember_salamander', 'ember_salamander', 'ember_salamander'], aware: 3, respawn: 1440 },
-    { id: 'g11_stokers', x: 28, y: 19, monsters: ['stoker', 'ember_salamander', 'stoker', 'ember_salamander'], aware: 3, respawn: 1440 },
-    { id: 'g11_drake', x: 28, y: 22, monsters: ['cinder_drake'], aware: 5, respawn: 2880 },
-    { id: 'g11_sentry', x: 4, y: 24, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
+    { id: 'g11_salamanders', x: 30, y: 6, monsters: ['ember_salamander', 'ember_salamander', 'ember_salamander', 'ember_salamander'], aware: 3, respawn: RESPAWN.day },
+    { id: 'g11_slope', x: 16, y: 11, monsters: ['ember_salamander', 'ember_salamander', 'ember_salamander'], aware: 3, respawn: RESPAWN.day },
+    { id: 'g11_stokers', x: 28, y: 19, monsters: ['stoker', 'ember_salamander', 'stoker', 'ember_salamander'], aware: 3, respawn: RESPAWN.day },
+    { id: 'g11_drake', x: 28, y: 22, monsters: ['cinder_drake'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'g11_sentry', x: 4, y: 24, monsters: ['sentry'], aware: 4, respawn: RESPAWN.twoDays, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
   ],
 };

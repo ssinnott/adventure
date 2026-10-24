@@ -9,6 +9,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DELTA_A6: MapDef = {
   id: 'delta_a6',
@@ -67,8 +68,8 @@ export const DELTA_A6: MapDef = {
   secrets: [{ x: 18, y: 10, hint: 'a6_slit' }],
   encounters: [
     // Two drowned men walked out of the temples into the fen, the nearest.
-    { id: 'a6_drowned', x: 27, y: 18, monsters: ['temple_drowned', 'temple_drowned'], aware: 4, roams: false, respawn: 1440 },
+    { id: 'a6_drowned', x: 27, y: 18, monsters: ['temple_drowned', 'temple_drowned'], aware: 4, roams: false, respawn: RESPAWN.day },
     // Two bull toads at the fen's south end, the farthest and the hardest.
-    { id: 'a6_toads', x: 26, y: 27, monsters: ['bull_toad', 'bull_toad'], aware: 4, respawn: 1440 },
+    { id: 'a6_toads', x: 26, y: 27, monsters: ['bull_toad', 'bull_toad'], aware: 4, respawn: RESPAWN.day },
   ],
 };

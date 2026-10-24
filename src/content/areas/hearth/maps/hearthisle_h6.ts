@@ -14,8 +14,9 @@ import type { MapDef } from '../../../../game/map.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { LAST_CROSSING, sells } from '../../../crossings.ts';
-import { COMPACT_OVER, COMPACT_WARDENS } from '../../saltreach/maps/saltmouth.ts';
-import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/maps/keep.ts';
+import { COMPACT_OVER, COMPACT_WARDENS } from '../../saltreach/public.ts';
+import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/public.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The once-event at the boat's grounding, the cleft's foot: the chapter's first step (§5). */
 export const STRAND = 'hearthisle_h6:h6_strand';
@@ -158,12 +159,12 @@ export const HEARTHISLE_H6: MapDef = {
     // at its head; the preacher's group before the temple's door, the box's hardest, never roaming; the
     // champions on the west shelf; the moths over the Bowl's north by night; and the rats come up from
     // below in the Bowl's south-east. Nothing by the camp. None thins here.
-    { id: 'h6_moths1', x: 18, y: 30, monsters: many(12, 'hearth_moth'), aware: 3, respawn: 1440, when: { hours: 'night' } },
-    { id: 'h6_picket1', x: 20, y: 25, monsters: many(2, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
-    { id: 'h6_picket2', x: 20, y: 22, monsters: many(3, 'ashen_champion'), aware: 3, respawn: 2880 },
-    { id: 'h6_moths2', x: 26, y: 12, monsters: many(12, 'hearth_moth'), aware: 3, respawn: 1440, when: { hours: 'night' } },
-    { id: 'h6_sermon', x: 19, y: 13, monsters: [...many(2, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 3, roams: false, respawn: 2880 },
-    { id: 'h6_rim', x: 9, y: 24, monsters: many(2, 'ashen_champion'), aware: 4, roams: true, respawn: 2880 },
-    { id: 'h6_rats', x: 28, y: 21, monsters: many(8, 'deep_rat'), aware: 3, respawn: 1440 },
+    { id: 'h6_moths1', x: 18, y: 30, monsters: many(12, 'hearth_moth'), aware: 3, respawn: RESPAWN.day, when: { hours: 'night' } },
+    { id: 'h6_picket1', x: 20, y: 25, monsters: many(2, 'ashen_champion'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'h6_picket2', x: 20, y: 22, monsters: many(3, 'ashen_champion'), aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'h6_moths2', x: 26, y: 12, monsters: many(12, 'hearth_moth'), aware: 3, respawn: RESPAWN.day, when: { hours: 'night' } },
+    { id: 'h6_sermon', x: 19, y: 13, monsters: [...many(2, 'ashen_champion'), 'ashen_preacher'], back: 1, aware: 3, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'h6_rim', x: 9, y: 24, monsters: many(2, 'ashen_champion'), aware: 4, roams: true, respawn: RESPAWN.twoDays },
+    { id: 'h6_rats', x: 28, y: 21, monsters: many(8, 'deep_rat'), aware: 3, respawn: RESPAWN.day },
   ],
 };

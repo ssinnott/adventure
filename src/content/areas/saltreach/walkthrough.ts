@@ -46,8 +46,6 @@ import { newWalk, walkThrough, fight, listen, see, kneel, meetWho, playChapter, 
 import { headlessGame, drive } from '../../../../tools/tests/lib.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { CHAPTER } from './chapter.ts';
-import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
-import { CHAPTER as GROVE } from '../thornmark/chapter.ts';
 import { STEPS as FORELAND_STEPS, hired, ledgerGiven } from '../shelf/walkthrough.ts';
 import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -72,7 +70,7 @@ import { World } from '../../../game/world.ts';
 import { buildMaps } from '../../maps.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { ACT_II } from '../../../../tools/tests/ladder.ts';
-import { MAP_DEFS, GUILD_QUESTS } from '../../index.ts';
+import { MAP_DEFS, GUILD_QUESTS, THE_QUEST } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { businessEntries, ChoiceScreen } from '../../../ui/screens.ts';
 import { optionParts, columnLabelWidth } from '../../../ui/draw.ts';
@@ -80,6 +78,10 @@ import { SIDE_W } from '../../../ui/frame.ts';
 import { measureText } from '../../../lib/engine/text.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
+
+// Other areas' chapters, taken from the quest by their ids and not from their files (#992).
+const FORELAND = THE_QUEST.chapters.find((c) => c.id === 'ashcombe')!;
+const GROVE = THE_QUEST.chapters.find((c) => c.id === 'grove')!;
 
 const D5 = MAP_DEFS.find((d) => d.id === 'delta_d5')!;
 const C5 = MAP_DEFS.find((d) => d.id === 'delta_c5')!;

@@ -1,11 +1,11 @@
 // Thornmark's part of the world map: its zones (a built one listing its maps, each at its box of the
 // grid, and the planned), the plates of its towns and dungeons, and its sites. src/content/index.ts
 // merges them into ATLAS with the rest of the world, which is planned (src/content/atlas.ts).
-import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'thornmark', name: 'Thornmark', area: 'thornmark', maps: [{ map: 'thornmark', at: [232, 30] }] },
-  { id: 'deepthorn', name: 'The Deepthorn', area: 'thornmark', band: [8, 10], maps: [{ map: 'deepthorn_h3', at: [232, 62] }, { map: 'deepthorn_i3', at: [264, 62] }, { map: 'deepthorn_i4', at: [264, 94] }, { map: 'deepthorn_i5', at: [264, 126] }, { map: 'deepthorn_j4', at: [296, 94] }, { map: 'deepthorn_j5', at: [296, 126] }], seeds: [[262, 80], [250, 70], [284, 128]], label: [270, 98] },
+  { id: 'thornmark', name: 'Thornmark', area: 'thornmark', maps: [{ map: 'thornmark', at: [232, 30] }], road: ['thornmark:tm_wolves1', 'thornmark:tm_brigands2', 'thornmark:tm_hounds', 'thornmark:tm_zealots'] },
+  { id: 'deepthorn', name: 'The Deepthorn', area: 'thornmark', band: [8, 10], maps: [{ map: 'deepthorn_h3', at: [232, 62] }, { map: 'deepthorn_i3', at: [264, 62] }, { map: 'deepthorn_i4', at: [264, 94] }, { map: 'deepthorn_i5', at: [264, 126] }, { map: 'deepthorn_j4', at: [296, 94] }, { map: 'deepthorn_j5', at: [296, 126] }], seeds: [[262, 80], [250, 70], [284, 128]], label: [270, 98], road: ['deepthorn_h3:h3_brambles', 'deepthorn_h3:h3_rootwalkers'], maxGroup: 8 },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
@@ -24,4 +24,8 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Henlys', icon: 'hold', map: 'deepthorn_i4', at: [10.5, 10.5], label: 'below' }, // the oldest hold, the Deepthorn's step
   { name: 'Penspern', icon: 'stone', map: 'deepthorn_j5', at: [3.5, 18.5], label: 'left' }, // the head, its standing stone
   { name: 'Lyngwyn', icon: 'water', at: [268, 53] }, // the still lake
+];
+
+export const LINKS: readonly AtlasLink[] = [
+  { from: 'thornmark', to: 'deepthorn', kind: 'road', a: [240, 60.5], b: [242, 66] },
 ];

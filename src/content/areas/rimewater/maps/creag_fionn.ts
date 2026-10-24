@@ -7,6 +7,7 @@
 // docs/areas/rimewater.md §12.4 is its brief (#832).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CREAG_FIONN: MapDef = {
   id: 'creag_fionn',
@@ -58,9 +59,9 @@ export const CREAG_FIONN: MapDef = {
   encounters: [
     // Four spine eagles in the neck behind the cave's mouth, every way down past them: the nearer and the
     // gentler, at 22.
-    { id: 'cf_eagles', x: 7, y: 6, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 3, roams: false, respawn: 1440 },
+    { id: 'cf_eagles', x: 7, y: 6, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 3, roams: false, respawn: RESPAWN.day },
     // Two snow trolls in the one passage to the cave's back, past the hall, where the hoard lies: the
     // farther and the hardest, at 23.
-    { id: 'cf_trolls', x: 7, y: 12, monsters: ['snow_troll', 'snow_troll'], aware: 3, roams: false, respawn: 2880 },
+    { id: 'cf_trolls', x: 7, y: 12, monsters: ['snow_troll', 'snow_troll'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
   ],
 };
