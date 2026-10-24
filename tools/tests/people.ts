@@ -21,6 +21,8 @@ import { measureText as measure } from '../../src/lib/engine/text.ts';
 import { SAY_W, SAY_LINES, ASK_LINES, ASK_SIDE_LINES, SIDE_W } from '../../src/ui/frame.ts';
 import { onAutomap } from '../../src/game/ink.ts';
 import { ok, withDefs, fxKey, fxMap } from './lib.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Tables } from '../../src/game/tables.ts';
 
 /** The three hand-ins of Act I, by the item each takes. */
 const THREE = ['survey_wand', 'greywater_ledger', 'ashen_chisel'];
@@ -28,7 +30,7 @@ const THREE = ['survey_wand', 'greywater_ledger', 'ashen_chisel'];
 export function people(): void {
   const all: { map: string; p: Person }[] = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? [{ map: d.id, p: f }] : []));
   const givers = all.filter((x) => handIns(x.p).length);
-  const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(TABLES, rng); return { party, world: new World(TABLES, buildMaps(), party, rng) }; };
+  const fresh = (t: Tables = TABLES): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(t, rng); return { party, world: new World(t, buildMaps(), party, rng) }; };
   // The log's pages begun, a side quest or a chapter of the one quest each, keyed by their ids.
   const pages = (s: { party: Party; world: World }): { id: string; page: PageView }[] =>
     questLog(s.world.state, s.party).flatMap((v) => v.pages.filter((p) => p.begun).map((page) => ({ id: v.def.chapters ? `${v.def.id}/${page.def.id}` : v.def.id, page })));
@@ -167,8 +169,9 @@ export function boxFaults(p: Person, inBusiness = true): string[] {
 const LETTER = { id: 'fx_letter', name: 'A Sealed Letter', slot: 'none' as const, price: 0, text: ['To Captain Hale, at the pass.', '"The riders cross the ford by night. Send men."'] };
 
 /** What #76 lets a person do, on people nobody places: each case as a consumer will write it. */
-function fixtures(fresh: () => { party: Party; world: World }, all: readonly { map: string; p: Person }[]): void {
-  withDefs(ITEMS, [LETTER], () => {
+function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: readonly { map: string; p: Person }[]): void {
+  {
+    const lent = tablesWith([LETTER]);
     const at = { x: 1, y: 1 };
 
     // A question whose answer sets a flag and hands over a letter; words that change with the answer.
@@ -183,55 +186,55 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
         { after: { flag: 'fx_keep' }, lines: ['"Not a word to Hale."'] },
       ],
     };
-    const s = fresh(), first = meet(captain, s.party, heard(s.world, captain));
+    const s = fresh(lent), first = meet(captain, s.party, heard(s.world, captain));
     ok(first.text === captain.lines.join('\n\n') && first.choice === captain.choice && !!s.party.flags.fx_met, 'a first meeting ends in its question, and hires');
     ok(meet(captain, s.party, heard(s.world, captain)).choice === captain.choice, 'a question not answered (Esc) is put again');
-    const wrote = answer(TABLES.items, captain.choice!.answers[0], s.party);
+    const wrote = answer(lent.items, captain.choice!.answers[0], s.party);
     ok(wrote === 'He writes, and seals it.\n\n(A Sealed Letter.)' && !!s.party.flags.fx_write && countItem(s.party, LETTER.id) === 1, 'an answer sets its flag, hands over its item and says so');
     const next = meet(captain, s.party, heard(s.world, captain));
     ok(next.text === '"Hale will have it by now."' && !next.choice, 'after the answer, its words, and the question is not put again');
-    const bare = { ...captain, says: undefined }, once = fresh();
+    const bare = { ...captain, says: undefined }, once = fresh(lent);
     meet(bare, once.party, heard(once.world, bare));
-    answer(TABLES.items, captain.choice!.answers[1], once.party);
+    answer(lent.items, captain.choice!.answers[1], once.party);
     const again = meet(bare, once.party, heard(once.world, bare));
     ok(again.text === captain.lines.join('\n\n') && !again.choice, 'with no words for it, the first lines again, and the question answered is not put again');
-    const kept = fresh();
+    const kept = fresh(lent);
     meet(captain, kept.party, heard(kept.world, captain));
-    answer(TABLES.items, captain.choice!.answers[1], kept.party);
+    answer(lent.items, captain.choice!.answers[1], kept.party);
     ok(meet(captain, kept.party, heard(kept.world, captain)).text === '"Not a word to Hale."' && !countItem(kept.party, LETTER.id), 'the other answer, its own words, and no letter');
 
     // An answer that pays: the gold to the company, the xp split among the living, and the line says both.
-    const paid = fresh(), purse = paid.party.gold, xp = paid.party.members.map((m) => m.xp);
+    const paid = fresh(lent), purse = paid.party.gold, xp = paid.party.members.map((m) => m.xp);
     paid.party.members[5].conditions.push('dead');
     const fee: Answer = { label: 'Sell it', sets: 'fx_sold', gives: LETTER.id, pay: { gold: 300, xp: 500 }, says: ['He counts it out.'] };
-    const sold = answer(TABLES.items, fee, paid.party);
+    const sold = answer(lent.items, fee, paid.party);
     ok(sold.startsWith('He counts it out.\n\n(300 gold, 500 experience, A Sealed Letter.)') && paid.party.gold === purse + 300 && !!paid.party.flags.fx_sold && countItem(paid.party, LETTER.id) === 1,
       `an answer that pays: the gold to the company, the item handed over and the line says both (${sold.split('\n\n')[1]})`);
     ok(paid.party.members.every((m, i) => m.xp === xp[i] + (i < 5 ? 100 : 0)), 'its xp is split among the living, as a fight\'s is: 100 each to five, none to the dead');
-    ok(answerNote(TABLES.items, { label: 'x', says: [] }).length === 0 && answerNote(TABLES.items, { label: 'x', pay: { xp: 60 }, says: [] }).join() === '(60 experience.)', 'an answer that pays nothing says no line, and one of xp alone says only that');
+    ok(answerNote(lent.items, { label: 'x', says: [] }).length === 0 && answerNote(lent.items, { label: 'x', pay: { xp: 60 }, says: [] }).join() === '(60 experience.)', 'an answer that pays nothing says no line, and one of xp alone says only that');
 
     // An answer with a price, sold as a ware is: listed at it, barred to a company with less, which
     // it changes nothing for; paid as it is answered, and the line says so.
     const deed: Answer = { label: 'Buy it', sets: 'fx_bought', price: 5000, says: ['He counts it.'] };
     const dear: Choice = { ask: '"Five thousand."', answers: [deed, { label: 'Take it', sets: 'fx_taken', says: ['He shrugs.'] }] };
-    const poor = fresh();
+    const poor = fresh(lent);
     poor.party.gold = 4999;
     ok(answerLabel(deed) === 'Buy it\t5000g' && answerLabel(dear.answers[1]) === 'Take it' && asked(dear, poor.party) === '"Five thousand." (4999 gold.)' && asked(captain.choice!, poor.party) === captain.choice!.ask,
       `an answer with a price is listed at it, and its question puts the purse after it (${asked(dear, poor.party)} | ${answerLabel(deed).replace('\t', ' | ')})`);
-    ok(barred(deed, poor.party) && !barred(dear.answers[1], poor.party) && answer(TABLES.items, deed, poor.party) === SHORT && poor.party.gold === 4999 && !poor.party.flags.fx_bought,
+    ok(barred(deed, poor.party) && !barred(dear.answers[1], poor.party) && answer(lent.items, deed, poor.party) === SHORT && poor.party.gold === 4999 && !poor.party.flags.fx_bought,
       'a company short of the price is barred from it, and answered anyway, nothing changes');
     poor.party.gold = 5000;
-    const bought = answer(TABLES.items, deed, poor.party);
+    const bought = answer(lent.items, deed, poor.party);
     ok(!barred(deed, { ...poor.party, gold: 5000 }) && bought === 'He counts it.\n\n(5000 gold paid.)' && poor.party.gold === 0 && !!poor.party.flags.fx_bought,
       `with the price, it is paid, its flag set and the line says so (${bought.split('\n\n')[1]})`);
 
     // An answer that takes an item, as a toll may (#544): barred to a company without it, which it
     // changes nothing for; given, it leaves the pack, and the line says so.
     const coin: Answer = { label: 'Give him the letter', sets: 'fx_given', takes: LETTER.id, says: ['He weighs it.'] };
-    const empty = fresh();
-    ok(barred(coin, empty.party) && answer(TABLES.items, coin, empty.party) === NONE && !empty.party.flags.fx_given, 'an answer that takes an item is barred to a company without it, and answered anyway, nothing changes');
+    const empty = fresh(lent);
+    ok(barred(coin, empty.party) && answer(lent.items, coin, empty.party) === NONE && !empty.party.flags.fx_given, 'an answer that takes an item is barred to a company without it, and answered anyway, nothing changes');
     empty.party.bag.push(LETTER.id);
-    const handed = !barred(coin, empty.party) && answer(TABLES.items, coin, empty.party);
+    const handed = !barred(coin, empty.party) && answer(lent.items, coin, empty.party);
     ok(handed === 'He weighs it.\n\n(A Sealed Letter given.)' && !countItem(empty.party, LETTER.id) && !!empty.party.flags.fx_given, `with it, it is taken, its flag set and the line says so: ${String(handed).split('\n\n')[1]}`);
 
     // The log reads the answer's flag: a quest done either way, and the entry of the road taken.
@@ -264,7 +267,7 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
       && !refusable({ choice: { ask: 'Well?', answers: [refuse, { ...pass, sets: undefined }] } }), 'a refusal alone with no slain text (the walk past lost), no refusal at all and a walk past that sets nothing may not');
 
     // A letter read from the pack.
-    ok(readText(TABLES.items, LETTER.id) === LETTER.text && readText(TABLES.items, 'rations') === undefined, 'a letter has words to read, and rations none');
+    ok(readText(lent.items, LETTER.id) === LETTER.text && readText(lent.items, 'rations') === undefined, 'a letter has words to read, and rations none');
 
     // Words by flag, furthest along first; words that set a flag.
     const hild: Person = {
@@ -274,13 +277,13 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
         { after: { flag: 'fx_a' }, lines: ['"You did the first."'], sets: 'fx_wenna' },
       ],
     };
-    const h = fresh(), say = (): string => meet(hild, h.party, heard(h.world, hild)).text;
+    const h = fresh(lent), say = (): string => meet(hild, h.party, heard(h.world, hild)).text;
     ok(say() === '"Who are you?"' && !!h.party.flags.fx_hild && !!h.party.flags.fx_hild2, 'a first meeting sets every flag it lists');
     h.party.flags.fx_a = 1;
     ok(say() === '"You did the first."' && !!h.party.flags.fx_wenna, 'once a flag holds, the words for it, which set their own');
     h.party.flags.fx_b = 1;
     ok(say() === '"And the second."', 'furthest along first: with both flags, the later words');
-    const cold = fresh();
+    const cold = fresh(lent);
     cold.party.flags.fx_a = 1;
     ok(meet(hild, cold.party, heard(cold.world, hild)).text === '"You did the first."' && !cold.party.flags.fx_hild, 'a first meeting that knows what the company has done says so, and does not hire');
 
@@ -298,7 +301,7 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
 
     // Words by the hours and until a flag, read as a group's presence is.
     const alwin: Person = { kind: 'npc', ...at, name: 'Alwin', lines: ['"Good day."'], says: [{ when: { hours: 'night' }, until: { flag: 'fx_gone' }, lines: ['"Not by day, I said."'] }] };
-    const n = fresh(), day = Math.floor(n.world.state.minutes / 1440) * 1440;
+    const n = fresh(lent), day = Math.floor(n.world.state.minutes / 1440) * 1440;
     n.world.state.minutes = day + 12 * 60;
     const noon = meet(alwin, n.party, heard(n.world, alwin)).text;
     n.world.state.minutes = day + 24 * 60;
@@ -314,7 +317,7 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
         { item: LETTER.id, reward: 0, setFlag: 'fx_q_letter', done: ['"A letter from the ford."'] },
       ],
     };
-    const g = fresh();
+    const g = fresh(lent);
     g.party.bag.push('fx_ledger', LETTER.id);
     const gold = g.party.gold;
     const talk = (x: Person): string => meet(x, g.party, heard(g.world, x)).text;
@@ -322,7 +325,7 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     ok(one === '"The ledger."\n\n(400 gold.)' && two === '"A letter from the ford."' && g.party.gold === gold + 400 && !g.party.bag.includes('fx_ledger') && !g.party.bag.includes(LETTER.id), 'two hand-ins carried: one a meeting, in order, before words that hold, the second paying nothing and saying no gold line');
     ok(three === '"Anything else?"' && four === '"The pass is yours."', 'then words that hold, and without them the after-lines of the last done that has any');
     ok(personFlags(hale).join() === 'fx_q_ledger,fx_q_letter', "a person's flags are every hand-in's");
-  });
+  }
   presence();
 }
 

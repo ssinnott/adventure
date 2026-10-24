@@ -107,7 +107,7 @@ export function prestige(): void {
   heavyThief.equipment.weapon = 'axe';
   const bowRanger = member('ranger', 27), bladeRanger = member('ranger', 27);
   bowRanger.equipment.weapon = 'longbow'; bladeRanger.equipment.weapon = 'longsword';
-  ok([member('knight', 10), member('knight', 11), member('knight', 19), member('knight', 27)].map(blowsOf).join() === '1,2,2,3' && blowsOf(TABLES.items, member('barbarian', 27)) === 3 && blowsOf(TABLES.items, member('paladin', 11)) === 2,
+  ok([member('knight', 10), member('knight', 11), member('knight', 19), member('knight', 27)].map((m) => blowsOf(TABLES.items, m)).join() === '1,2,2,3' && blowsOf(TABLES.items, member('barbarian', 27)) === 3 && blowsOf(TABLES.items, member('paladin', 11)) === 2,
     'a knight strikes 1, 2, 2 and 3 times at 10, 11, 19 and 27; a barbarian and a paladin as it does');
   ok(blowsOf(TABLES.items, staffMonk) === 3 && blowsOf(TABLES.items, steelMonk) === 1 && blowsOf(TABLES.items, lightThief) === 2 && blowsOf(TABLES.items, heavyThief) === 1 && blowsOf(TABLES.items, bowRanger) === 3 && blowsOf(TABLES.items, bladeRanger) === 1 && blowsOf(TABLES.items, member('cleric', 27)) === 1 && item(TABLES.items, 'staff').kind === 'staff',
     'a monk with a staff or bare hands, a thief with a light weapon and a ranger with a bow; with anything else one blow, and a cleric always one');

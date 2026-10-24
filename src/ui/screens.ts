@@ -14,7 +14,6 @@ import type { Feature, Interior } from '../game/map.ts';
 import { item, priceIn, buy, sellPrice } from '../game/items.ts';
 import type { ItemDef } from '../game/items.ts';
 import { readText } from '../game/people.ts';
-import { ITEMS } from '../content/index.ts';
 import { spell } from '../game/spells.ts';
 import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, useItem, templePrice, isDown, hasCondition, xpForLevel, canTrain, trainPrice, MAX_LEVEL, className, resists, statOf, borne } from '../game/party.ts';
 import { nightCost, stay, buyRations, RATIONS, RATIONS_PRICE, cure, donate, DONATION, sell, joined, payFee, hallOffers, learnSpell, mayTrain, train } from '../game/services.ts';
@@ -262,7 +261,7 @@ export class SheetScreen implements Screen {
         pickMember(g, `Use ${d.name} on whom?`, (i) => {
           if (i < 0) return;
           // The line says where it lies: one listed from the bag comes from the bag, though the member's pack holds one too.
-          for (const l of useItem(ITEMS, g.party, it.from === 'pack' ? c : null, it.id, g.party.members[i]) ?? []) g.say(l);
+          for (const l of useItem(g.tables.items, g.party, it.from === 'pack' ? c : null, it.id, g.party.members[i]) ?? []) g.say(l);
         });
       } else if (readText(g.tables.items, it.id)) g.push(new MessageScreen(readText(g.tables.items, it.id)!.join('\n\n'), undefined, d.name));
       else g.say(`${d.name}: nothing to do with it here.`);
@@ -651,7 +650,7 @@ function shop(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
 }
 
 function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
-  const names = f.stock.map((id) => `${item(g.tables.items, id).name}\t${priceIn(g.tables.items, f, id)}g\t${describe(id)}`);
+  const names = f.stock.map((id) => `${item(g.tables.items, id).name}\t${priceIn(g.tables.items, f, id)}g\t${describe(g.tables.items, id)}`);
   const s: ChoiceScreen = new ChoiceScreen(`What will it be? (${g.party.gold} gold.)`, [...names, 'Done'], (i) => {
     if (i < 0 || i === names.length) return;
     const d = buy(g.tables.items, g.party, f, f.stock[i]);
@@ -674,14 +673,14 @@ function sellScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
   return new ChoiceScreen('"Let me see it."', [...entries.map((e) => e.label), 'Done'], (i) => {
     if (i < 0 || i === entries.length) return;
     const e = entries[i];
-    g.say(sell(ITEMS, g.party, e.owner, e.id).line);
+    g.say(sell(g.tables.items, g.party, e.owner, e.id).line);
     g.push(sellScreen(g, f));
   }, f.name);
 }
 
 /** A ware as a shop shows it: a weapon's dice and the element its blows carry, armour's AC, a draught's use; then the stats it raises. */
-export function describe(id: string): string {
-  const d = ITEMS[id];
+export function describe(items: Items, id: string): string {
+  const d = items[id];
   const raises = STATS.filter((s) => d.stat?.[s]).map((s) => ` ${s}${signed(d.stat?.[s] ?? 0)}`).join('');
   if (d.slot === 'weapon') return `${d.dice}d${d.sides}${d.bonus ? '+' + d.bonus : ''}${d.ranged ? ' ranged' : ''}${d.twoHanded ? ' 2h' : ''}${d.element ? ' ' + d.element : ''}${raises}`;
   if (d.ac) return `AC+${d.ac}${raises}`;

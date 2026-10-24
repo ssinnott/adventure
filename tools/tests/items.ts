@@ -10,7 +10,7 @@ import { ARTIFACT_PRICE } from '../../src/content/items.ts';
 import { giftOf } from '../../src/game/wilds.ts';
 import { personGives } from '../../src/game/people.ts';
 import type { ItemDef } from '../../src/game/items.ts';
-import { defaultParty, createCharacter, equip, armorClass, attackBonus, spellHeal, statOf, itemsChanged, addCondition, hasCondition, mendOf, dawnOf, rankMult, STATS, CLASSES, WARDABLE, MAX_LEVEL } from '../../src/game/party.ts';
+import { defaultParty, createCharacter, equip, armorClass, attackBonus, spellHeal, statOf, addCondition, hasCondition, mendOf, dawnOf, rankMult, STATS, CLASSES, WARDABLE, MAX_LEVEL } from '../../src/game/party.ts';
 import type { Party, Stat, ClassId } from '../../src/game/party.ts';
 import { SKILLS } from '../../src/game/skills.ts';
 import { MINUTES_PER_DAY } from '../../src/game/calendar.ts';
@@ -30,8 +30,10 @@ import type { ChoiceScreen } from '../../src/ui/screens.ts';
 import { FONT_CHARS, measureText, lineHeight } from '../../src/lib/engine/text.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
-import { ok, owed, withDefs } from './lib.ts';
+import { ok, owed } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Tables } from '../../src/game/tables.ts';
 
 /** The stats a fight reads; endurance, intellect and luck have no live effect (DESIGN §5). */
 const LIVE: readonly Stat[] = ['might', 'accuracy', 'speed', 'personality'];
@@ -93,11 +95,11 @@ const RESISTANT = target('test_resistant', { resist: ['lightning'] }), WEAK = ta
 const MENDER = target('test_mender', { regen: 5 }), FIREPROOF = target('test_fireproof', { regen: 5, immune: ['fire'] });
 
 /** Bram, the knight, strikes the target once in the fight's first round, every other turn braced or the target's own: what his blow did. */
-function strike(seed: number, def: MonsterDef, dress: (p: Party) => void): { s: CombatState; dmg: number } {
-  const p = defaultParty(TABLES, makeRng(1)), rng = makeRng(seed);
+function strike(tables: Tables, seed: number, def: MonsterDef, dress: (p: Party) => void): { s: CombatState; dmg: number } {
+  const p = defaultParty(tables, makeRng(1)), rng = makeRng(seed);
   for (const c of p.members) c.hp = c.maxHp = 999;
   dress(p);
-  const s = startCombat(TABLES, p, [{ id: 'a', monsters: [def] }], rng);
+  const s = startCombat(tables, p, [{ id: 'a', monsters: [def] }], rng);
   for (let guard = 0; guard < 50 && s.outcome === 'ongoing'; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t) break;
@@ -107,7 +109,7 @@ function strike(seed: number, def: MonsterDef, dress: (p: Party) => void): { s: 
   }
   throw new Error('Bram never struck');
 }
-const wield = (w: ItemDef) => (p: Party): void => { equip(TABLES.items, p.members[0], w.id); };
+const wield = (tables: Tables, w: ItemDef) => (p: Party): void => { equip(tables.items, p.members[0], w.id); };
 
 export function items(): void {
   // The content, to the shape alone: whatever an area adds must be a stat a fight reads, a whole raise, an element on a weapon.
@@ -120,26 +122,25 @@ export function items(): void {
   caught({ ...STORM, element: 'wind' as Element }, `${STORM.id}: 'wind' is no element`);
   ok(faults(COAT).length + faults(STORM).length + faults(CHARMS.might).length === 0, 'and the fixtures are of the shape');
 
-  // The raisers are worked out before the fixtures come, as in a run of every suite: the fixtures'
-  // raises count only once `itemsChanged` says the table has changed, and again once they go.
+  // The raisers are worked out for content's table first, as in a run of every suite: the fixtures'
+  // table is another, its raises worked out for it alone (#973).
   statOf(TABLES.items, defaultParty(TABLES, makeRng(1)).members[0], 'speed');
-  withDefs(ITEMS, FIXTURES, () => {
-    raised();
-    blows();
-    shown();
-    sold();
-    artifacts();
-  });
+  const lent = tablesWith(FIXTURES);
+  raised(lent);
+  blows(lent);
+  shown(lent);
+  sold(lent);
+  artifacts(lent);
 }
 
 /** A +3 speed coat moves AC and the turn's order while worn, not in the pack or the bag; each read a fight makes takes the raise; a save holds none. */
-function raised(): void {
-  const bare = (): Party => { const p = defaultParty(TABLES, makeRng(1)); p.members[0].equipment.armor = null; return p; };
-  const p = bare(), c = p.members[0], own = { ...c.stats }, ac = armorClass(TABLES.items, c);
-  equip(TABLES.items, c, TWIN.id); const twin = armorClass(TABLES.items, c);
-  equip(TABLES.items, c, COAT.id); const worn = armorClass(TABLES.items, c), quick = statOf(TABLES.items, c, 'speed');
-  c.equipment.armor = null; c.pack.push(COAT.id); const packed = armorClass(TABLES.items, c);
-  c.pack = c.pack.filter((id) => id !== COAT.id && id !== TWIN.id); p.bag.push(COAT.id); const bagged = armorClass(TABLES.items, c);
+function raised(lent: Tables): void {
+  const bare = (): Party => { const p = defaultParty(lent, makeRng(1)); p.members[0].equipment.armor = null; return p; };
+  const p = bare(), c = p.members[0], own = { ...c.stats }, ac = armorClass(lent.items, c);
+  equip(lent.items, c, TWIN.id); const twin = armorClass(lent.items, c);
+  equip(lent.items, c, COAT.id); const worn = armorClass(lent.items, c), quick = statOf(lent.items, c, 'speed');
+  c.equipment.armor = null; c.pack.push(COAT.id); const packed = armorClass(lent.items, c);
+  c.pack = c.pack.filter((id) => id !== COAT.id && id !== TWIN.id); p.bag.push(COAT.id); const bagged = armorClass(lent.items, c);
   ok(twin === ac + 2 && worn === twin + 1 && quick === own.speed + 3 && packed === ac && bagged === ac,
     `a +3 speed coat worn adds a step of AC to its own (${ac} bare, ${twin} in a plain coat, ${worn} in the quick one); in the pack or the bag, nothing (${packed}, ${bagged})`);
   ok(JSON.stringify(c.stats) === JSON.stringify(own), 'and the member\'s own stats are as they were');
@@ -147,29 +148,29 @@ function raised(): void {
   // Worn on any slot: a +3 speed shield adds a step of AC, a +3 accuracy blade in hand a step of to-hit.
   const q0 = bare(), b = q0.members[0];
   b.equipment.weapon = null; b.equipment.shield = null;
-  const acBare = armorClass(TABLES.items, b), shielded = equip(TABLES.items, b, SHIELD.id), acShield = armorClass(TABLES.items, b);
-  equip(TABLES.items, b, PLAIN.id); const hitPlain = attackBonus(TABLES.items, b);
-  equip(TABLES.items, b, TRUE.id); const hitTrue = attackBonus(TABLES.items, b);
-  ok(shielded && acShield === acBare + 1 && hitTrue === hitPlain + 1 && statOf(TABLES.items, b, 'speed') === b.stats.speed + 3 && statOf(TABLES.items, b, 'accuracy') === b.stats.accuracy + 3,
+  const acBare = armorClass(lent.items, b), shielded = equip(lent.items, b, SHIELD.id), acShield = armorClass(lent.items, b);
+  equip(lent.items, b, PLAIN.id); const hitPlain = attackBonus(lent.items, b);
+  equip(lent.items, b, TRUE.id); const hitTrue = attackBonus(lent.items, b);
+  ok(shielded && acShield === acBare + 1 && hitTrue === hitPlain + 1 && statOf(lent.items, b, 'speed') === b.stats.speed + 3 && statOf(lent.items, b, 'accuracy') === b.stats.accuracy + 3,
     `a +3 speed shield worn adds a step of AC (${acBare} -> ${acShield}), a +3 accuracy blade in hand a step of to-hit (${hitPlain} -> ${hitTrue})`);
 
   // The turn's order: Bram, three slower than Idris, goes first now and then bare, about half the time in the coat and as bare with it in the bag.
   const order = (seed: number, dress: (q: Party) => void): number[] => {
     const q = bare(); q.members[0].stats.speed = 10; q.members[1].stats.speed = 13; dress(q);
-    const rng = makeRng(seed), s = startCombat(TABLES, q, [{ id: 'a', monsters: [NEUTRAL] }], rng);
+    const rng = makeRng(seed), s = startCombat(lent, q, [{ id: 'a', monsters: [NEUTRAL] }], rng);
     currentTurn(s, q, rng);
     return s.order.filter((r) => r.side === 'party').map((r) => r.i);
   };
   const seeds = Array.from({ length: 100 }, (_, i) => i + 1), first = (o: number[]): boolean => o.indexOf(0) < o.indexOf(1);
-  const bareOrders = seeds.map((n) => order(n, () => {})), wornOrders = seeds.map((n) => order(n, (q) => { equip(TABLES.items, q.members[0], COAT.id); }));
+  const bareOrders = seeds.map((n) => order(n, () => {})), wornOrders = seeds.map((n) => order(n, (q) => { equip(lent.items, q.members[0], COAT.id); }));
   const bagOrders = seeds.map((n) => order(n, (q) => { q.bag.push(COAT.id); }));
   const nBare = bareOrders.filter(first).length, nWorn = wornOrders.filter(first).length;
   ok(nWorn >= nBare + 25 && bagOrders.every((o, i) => o.join() === bareOrders[i].join()),
     `the coat worn puts Bram before Idris, three faster, in ${nWorn} of 100 first rounds against ${nBare} bare; in the bag it changes no round's order`);
 
   // Each read a fight makes takes the raise: might in the blow, accuracy in to-hit, personality in a heal; from the pack, never the bag.
-  const might = (where: 'pack' | 'bag' | null) => (q: Party): void => { wield(PLAIN)(q); if (where) (where === 'pack' ? q.members[0].pack : q.bag).push(CHARMS.might.id); };
-  const struck = [1, 2, 3, 4, 5, 6].map((n) => [strike(n, NEUTRAL, might(null)).dmg, strike(n, NEUTRAL, might('pack')).dmg, strike(n, NEUTRAL, might('bag')).dmg]).filter(([b]) => b > 0);
+  const might = (where: 'pack' | 'bag' | null) => (q: Party): void => { wield(lent, PLAIN)(q); if (where) (where === 'pack' ? q.members[0].pack : q.bag).push(CHARMS.might.id); };
+  const struck = [1, 2, 3, 4, 5, 6].map((n) => [strike(lent, n, NEUTRAL, might(null)).dmg, strike(lent, n, NEUTRAL, might('pack')).dmg, strike(lent, n, NEUTRAL, might('bag')).dmg]).filter(([b]) => b > 0);
   ok(struck.length >= 3 && struck.every(([b, packed, bagged]) => packed === b + 1 && bagged === b),
     `a +3 might charm in the pack adds a step to each blow, in the bag nothing (${struck.map((x) => x.join('/')).join(', ')})`);
   const step = (s: Stat, read: (m: Party['members'][number]) => number): boolean => {
@@ -178,21 +179,21 @@ function raised(): void {
     m.pack.push(CHARMS[s].id);
     return bagged === before && read(m) === before + 1;
   };
-  ok(step('accuracy', attackBonus) && step('personality', (m) => spellHeal(TABLES.items, m, 10)) && step('speed', armorClass),
+  ok(step('accuracy', (m) => attackBonus(lent.items, m)) && step('personality', (m) => spellHeal(lent.items, m, 10)) && step('speed', (m) => armorClass(lent.items, m)),
     'a +3 charm of accuracy, personality or speed in the pack adds a step to to-hit, a heal and AC; in the bag, nothing');
 
   // A save holds no raise: the coat is saved worn, the stats as the member's own.
   const g = headlessGame(4), m = g.party.members[0];
   m.equipment.armor = null;
   const mine = { ...m.stats };
-  equip(TABLES.items, m, COAT.id);
+  equip(lent.items, m, COAT.id);
   const back = deserialize(serialize(g.world.state, g.party, 0)).party.members[0];
-  ok(JSON.stringify(m.stats) === JSON.stringify(mine) && JSON.stringify(back.stats) === JSON.stringify(mine) && back.equipment.armor === COAT.id && statOf(TABLES.items, back, 'speed') === mine.speed + 3,
-    `a save holds the coat worn and the stats as the member's own (speed ${back.stats.speed}, ${statOf(TABLES.items, back, 'speed')} in the coat)`);
+  ok(JSON.stringify(m.stats) === JSON.stringify(mine) && JSON.stringify(back.stats) === JSON.stringify(mine) && back.equipment.armor === COAT.id && statOf(lent.items, back, 'speed') === mine.speed + 3,
+    `a save holds the coat worn and the stats as the member's own (speed ${back.stats.speed}, ${statOf(lent.items, back, 'speed')} in the coat)`);
 }
 
 /** A lightning blade's blow adds its die through what the monster is, the steel landing as ever; fire stops a mender; the company sees it. */
-function blows(): void {
+function blows(lent: Tables): void {
   ok(hits(STORM) === hits(PLAIN) + (ELEMENT_DIE + 1) / 2 && hits(STORM) - hits(PLAIN) === 3.5, `a weapon's measure counts its element's die at 3.5 (${hits(PLAIN)} plain, ${hits(STORM)} with lightning)`);
   ok([NEUTRAL, MENDER].every((d) => elementMult(d, 'lightning') === 1 && elementMult(d, 'fire') === 1) && elementMult(IMMUNE, 'lightning') === 0 && elementMult(RESISTANT, 'lightning') < 1 && elementMult(WEAK, 'lightning') > 1,
     'the targets: one lightning does its all to, and ones it does nothing to, half to and half again to');
@@ -200,7 +201,7 @@ function blows(): void {
   const seen: string[] = [];
   for (let n = 1; n <= 30; n++) {
     const extra = (d: MonsterDef): { steel: number; extra: number; s: CombatState } => {
-      const plain = strike(n, d, wield(PLAIN)), storm = strike(n, d, wield(STORM));
+      const plain = strike(lent, n, d, wield(lent, PLAIN)), storm = strike(lent, n, d, wield(lent, STORM));
       if (plain.s.seen[d.id]) seen.push(`a plain blade taught ${d.id}`);
       if (storm.dmg > 0 && storm.s.seen[d.id]?.lightning !== elementMult(d, 'lightning')) seen.push(`${d.id} on seed ${n}`);
       return { steel: plain.dmg, extra: storm.dmg - plain.dmg, s: storm.s };
@@ -218,43 +219,43 @@ function blows(): void {
   ok(!seen.length, `the element goes into what the company has seen, as a spell's does, and a plain blade's blow teaches nothing${seen.length ? ' -> ' + seen.join(', ') : ''}`);
 
   // Fire that lands marks a mender burnt, as a spell's does; lightning does not, nor fire on one it cannot hurt.
-  const burnt = (d: MonsterDef, w: ItemDef): boolean[] => [1, 2, 3, 4, 5, 6, 7, 8].map((n) => strike(n, d, wield(w))).filter((r) => r.dmg > 0).map((r) => !!r.s.monsters[0].burnt);
+  const burnt = (d: MonsterDef, w: ItemDef): boolean[] => [1, 2, 3, 4, 5, 6, 7, 8].map((n) => strike(lent, n, d, wield(lent, w))).filter((r) => r.dmg > 0).map((r) => !!r.s.monsters[0].burnt);
   const fire = burnt(MENDER, BRAND), storm = burnt(MENDER, STORM), plain = burnt(MENDER, PLAIN), proof = burnt(FIREPROOF, BRAND);
   ok(fire.length >= 4 && fire.every(Boolean) && [...storm, ...plain, ...proof].every((b) => !b),
     `a fire blade's blow burns a mender, so it mends not this round (${fire.length} of ${fire.length}); a lightning or a plain blade does not, nor fire on one immune to it`);
 }
 
 /** The sheet prints the total with the raise and the weapon's element, in the font's glyphs and inside its column; a shop says both. */
-function shown(): void {
-  const p = defaultParty(TABLES, makeRng(1)), c = p.members[0];
+function shown(lent: Tables): void {
+  const p = defaultParty(lent, makeRng(1)), c = p.members[0];
   c.equipment.armor = null;
-  const plain = statText(TABLES.items, c, 'speed');
-  equip(TABLES.items, c, COAT.id); equip(TABLES.items, c, STORM.id);
-  const quick = statText(TABLES.items, c, 'speed'), other = statText(TABLES.items, c, 'might');
-  const w0 = weaponLine(TABLES.items, c);
+  const plain = statText(lent.items, c, 'speed');
+  equip(lent.items, c, COAT.id); equip(lent.items, c, STORM.id);
+  const quick = statText(lent.items, c, 'speed'), other = statText(lent.items, c, 'might');
+  const w0 = weaponLine(lent.items, c);
   c.tiers = { arms: 'expert' };
-  const w1 = weaponLine(TABLES.items, c);
+  const w1 = weaponLine(lent.items, c);
   ok(plain[1] === '' && quick[0] === String(c.stats.speed + 3) && quick[1] === '(+3)' && other[1] === '' && other[0] === String(c.stats.might),
     `the sheet prints the total a fight reads and the raise, SPE ${quick.join('')} (bare ${plain.join('')}), and a stat not raised as ever (MIG ${other.join('')})`);
   ok(w0 === 'WEAPON Storm Blade, LIGHTNING' && w1 === 'WEAPON Storm Blade, LIGHTNING, EXPERT', `the WEAPON line says the element, before the tier: "${w1}"`);
-  ok(describe(STORM.id) === '1d6 lightning' && describe(COAT.id) === 'AC+2 speed+3' && describe(CHARMS.might.id) === 'might+3' && describe(PLAIN.id) === '1d6' && describe(TWIN.id) === 'AC+2',
-    `a shop says the element and the raise: "${describe(STORM.id)}", "${describe(COAT.id)}", "${describe(CHARMS.might.id)}"; plain wares as ever`);
+  ok(describe(lent.items, STORM.id) === '1d6 lightning' && describe(lent.items, COAT.id) === 'AC+2 speed+3' && describe(lent.items, CHARMS.might.id) === 'might+3' && describe(lent.items, PLAIN.id) === '1d6' && describe(lent.items, TWIN.id) === 'AC+2',
+    `a shop says the element and the raise: "${describe(lent.items, STORM.id)}", "${describe(lent.items, COAT.id)}", "${describe(lent.items, CHARMS.might.id)}"; plain wares as ever`);
 
   // In the font's glyphs, and inside the sheet's columns (src/ui/screens.ts: labels at 100, totals flush
   // to 140 with the raise a glyph's gap on, the left column from 20, the items column at 340).
   const glyphs = (t: string): boolean => [...t.toUpperCase()].every((ch) => ch === ' ' || FONT_CHARS.includes(ch));
   const label = 100 + measureText('SPE'), total = 140 - measureText(quick[0]), end = 141 + measureText(quick[1]);
-  ok([w1, quick.join(''), describe(STORM.id), describe(COAT.id)].every(glyphs) && label < total && end <= LEFT_END,
+  ok([w1, quick.join(''), describe(lent.items, STORM.id), describe(lent.items, COAT.id)].every(glyphs) && label < total && end <= LEFT_END,
     `in the font's glyphs; the raise ends at ${end}, and the label at ${label}, short of the total at ${total}`);
   // Every elemental weapon's WEAPON line, with the widest tier, ends inside the left column.
   const tier = (Object.keys(TIER_NAMES) as Tier[]).reduce((a, b) => (measureText(TIER_NAMES[b]) > measureText(TIER_NAMES[a]) ? b : a));
-  const endOf = (d: ItemDef): number => { const m = defaultParty(TABLES, makeRng(1)).members[0]; m.equipment.weapon = d.id; m.tiers = { arms: tier }; return 20 + measureText(weaponLine(TABLES.items, m)); };
+  const endOf = (d: ItemDef, u: Tables = lent): number => { const m = defaultParty(u, makeRng(1)).members[0]; m.equipment.weapon = d.id; m.tiers = { arms: tier }; return 20 + measureText(weaponLine(u.items, m)); };
   const elemental = Object.values(ITEMS).filter((d) => d.slot === 'weapon' && d.element), over = elemental.filter((d) => endOf(d) > LEFT_END);
-  ok(elemental.length >= 2 && !over.length, `every elemental weapon's WEAPON line, ${TIER_NAMES[tier]} at arms, ends by ${LEFT_END} (the widest at ${Math.max(...elemental.map(endOf))})${over.length ? ' -> ' + over.map((d) => `${d.name} at ${endOf(d)}`).join(', ') : ''}`);
+  ok(elemental.length >= 2 && !over.length, `every elemental weapon's WEAPON line, ${TIER_NAMES[tier]} at arms, ends by ${LEFT_END} (the widest at ${Math.max(...elemental.map((d) => endOf(d)))})${over.length ? ' -> ' + over.map((d) => `${d.name} at ${endOf(d)}`).join(', ') : ''}`);
   // The cap on an elemental weapon's name, exact: with lightning, the widest element, and the widest tier.
   const named = (n: number): number => {
     const blade: ItemDef = { ...STORM, id: 'test_long_blade', name: 'A'.repeat(n) };
-    return withDefs(ITEMS, [blade], () => endOf(blade));
+    return endOf(blade, tablesWith([blade], lent));
   };
   const widest = ELEMENTS.reduce((a, e) => (measureText(e) > measureText(a) ? e : a));
   ok(widest === STORM.element && named(NAME_CAP) <= LEFT_END && named(NAME_CAP + 1) > LEFT_END,
@@ -266,9 +267,9 @@ const LEFT_END = 340 - 6;
 const NAME_CAP = 26;
 
 /** What a shop pays: half the price, rounded down, nothing for what is priced at nothing; and the sell screen pays just that. */
-function sold(): void {
+function sold(lent: Tables): void {
   const g = headlessGame(4), p = g.party;
-  ok(sellPrice(TABLES.items, p, 40) === 20 && sellPrice(TABLES.items, p, 25) === 12 && sellPrice(TABLES.items, p, 1) === 0 && sellPrice(TABLES.items, p, 0) === 0, 'a shop pays half an item\'s price, rounded down: 20 for 40, 12 for 25, nothing for 1 or 0');
+  ok(sellPrice(lent.items, p, 40) === 20 && sellPrice(lent.items, p, 25) === 12 && sellPrice(lent.items, p, 1) === 0 && sellPrice(lent.items, p, 0) === 0, 'a shop pays half an item\'s price, rounded down: 20 for 40, 12 for 25, nothing for 1 or 0');
   const shop = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f): f is Extract<Feature, { kind: 'shop' }> => f.kind === 'shop')!;
   const sell = (id: string): number => {
     while (g.screens.length > 1) g.pop();
@@ -280,7 +281,7 @@ function sold(): void {
     return p.gold - gold;
   };
   const coat = sell(COAT.id), coatGone = !p.bag.includes(COAT.id), blade = sell(PLAIN.id);
-  ok(coat === sellPrice(TABLES.items, p, COAT.price) && coat === 20 && coatGone && blade === 0 && p.bag.includes(PLAIN.id),
+  ok(coat === sellPrice(lent.items, p, COAT.price) && coat === 20 && coatGone && blade === 0 && p.bag.includes(PLAIN.id),
     `${shop.name} pays ${coat} for the coat of ${COAT.price} and takes it; a blade priced at nothing it will not buy (${blade})`);
 }
 
@@ -326,7 +327,7 @@ const placesOf = (id: string, area = ''): { at: string; lair: boolean }[] => {
 };
 
 /** The bounds' artifacts (#847): of the shape, one in the world in its lair, sold nowhere, their powers as any item's, refused by a shop and said on the sheet. */
-function artifacts(): void {
+function artifacts(lent: Tables): void {
   const want = Object.keys(BUILT).sort().join(), have = ARTS.map((d) => d.id).sort().join();
   ok(have === want, `the artifacts in the item tables are DESIGN §9's eight, ${want} (${have})`);
   const caught = (d: ItemDef, want: string): void => { const got = artifactFaults(d).join('; '); ok(got === want, `the artifact's check catches ${want} (${got || 'nothing'})`); };
@@ -360,27 +361,27 @@ function artifacts(): void {
   ok(!stale.length, `every artifact waiting for its lair is one${stale.length ? ' -> ' + stale.join(', ') : ''}`);
 
   // Each kind works for an artifact as for a found item: its twin without the mark does just the same.
-  const p = defaultParty(TABLES, makeRng(1)), [bram, , wren] = p.members;
+  const p = defaultParty(lent, makeRng(1)), [bram, , wren] = p.members;
   bram.equipment.armor = null;
-  const own = bram.stats.speed, bare = armorClass(TABLES.items, bram);
-  equip(TABLES.items, bram, erz.id); const worn = armorClass(TABLES.items, bram), quick = statOf(TABLES.items, bram, 'speed');
-  equip(TABLES.items, bram, TWINS.erzhemd.id); const twinAc = armorClass(TABLES.items, bram), twinQuick = statOf(TABLES.items, bram, 'speed');
+  const own = bram.stats.speed, bare = armorClass(lent.items, bram);
+  equip(lent.items, bram, erz.id); const worn = armorClass(lent.items, bram), quick = statOf(lent.items, bram, 'speed');
+  equip(lent.items, bram, TWINS.erzhemd.id); const twinAc = armorClass(lent.items, bram), twinQuick = statOf(lent.items, bram, 'speed');
   ok(quick === own + 5 && worn >= bare + (erz.ac ?? 0) && worn === twinAc && quick === twinQuick,
     `the Erzhemd worn raises speed by 5 (${own} -> ${quick}) and gives AC ${worn} where bare is ${bare}, as its twin without the mark does (${twinQuick}, ${twinAc})`);
-  const hit0 = attackBonus(TABLES.items, wren), aim0 = statOf(TABLES.items, wren, 'accuracy');
-  equip(TABLES.items, wren, akk.id); const hit = attackBonus(TABLES.items, wren), aim = statOf(TABLES.items, wren, 'accuracy');
-  equip(TABLES.items, wren, TWINS.akkush.id); const twinHit = attackBonus(TABLES.items, wren);
+  const hit0 = attackBonus(lent.items, wren), aim0 = statOf(lent.items, wren, 'accuracy');
+  equip(lent.items, wren, akk.id); const hit = attackBonus(lent.items, wren), aim = statOf(lent.items, wren, 'accuracy');
+  equip(lent.items, wren, TWINS.akkush.id); const twinHit = attackBonus(lent.items, wren);
   ok(aim === aim0 + 5 && hit === twinHit && hits(akk) === hits(TWINS.akkush),
     `Akkush in Wren's hands raises accuracy by 5 (${aim0} -> ${aim}) and her to-hit to +${hit} (+${hit0} with her own bow), as its twin's does (+${twinHit})`);
   const hold = (w: ItemDef) => (q: Party): void => { q.members[0].equipment.shield = null; q.members[0].equipment.weapon = w.id; };
-  const struck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => [strike(n, NEUTRAL, hold(tel)).dmg, strike(n, NEUTRAL, hold(TWINS.telstok)).dmg, strike(n, NEUTRAL, hold(BARE_STAFF)).dmg]).filter(([, , b]) => b > 0);
+  const struck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => [strike(lent, n, NEUTRAL, hold(tel)).dmg, strike(lent, n, NEUTRAL, hold(TWINS.telstok)).dmg, strike(lent, n, NEUTRAL, hold(BARE_STAFF)).dmg]).filter(([, , b]) => b > 0);
   ok(struck.length >= 6 && struck.every(([a, t, b]) => a === t && a - b >= 1 && a - b <= ELEMENT_DIE),
     `the Telstok's blow that lands adds a d${ELEMENT_DIE} of holy to the steel, as its twin's does (${struck.map(([a, , b]) => a - b).join(' ')})`);
   const g0 = headlessGame(4), m0 = g0.party.members[0], mine = { ...m0.stats };
-  equip(TABLES.items, m0, erz.id);
+  equip(lent.items, m0, erz.id);
   const back = deserialize(serialize(g0.world.state, g0.party, 0)).party.members[0];
-  ok(JSON.stringify(back.stats) === JSON.stringify(mine) && back.equipment.armor === erz.id && statOf(TABLES.items, back, 'speed') === mine.speed + 5,
-    `a save holds the Erzhemd worn and the stats as the member's own (speed ${back.stats.speed}, ${statOf(TABLES.items, back, 'speed')} in it)`);
+  ok(JSON.stringify(back.stats) === JSON.stringify(mine) && back.equipment.armor === erz.id && statOf(lent.items, back, 'speed') === mine.speed + 5,
+    `a save holds the Erzhemd worn and the stats as the member's own (speed ${back.stats.speed}, ${statOf(lent.items, back, 'speed')} in it)`);
   powers();
 
   // No shop takes one: offered at Mottram's, it shows no price and is refused, and the company keeps it;
@@ -396,7 +397,7 @@ function artifacts(): void {
     return { paid: g.party.gold - gold, kept: g.party.bag.includes(id), said: g.log.at(-1) ?? '', row };
   };
   const art = offer(tel.id), twin = offer(TWINS.telstok.id);
-  ok(art.paid === 0 && art.kept && art.said === REFUSED && !art.row.includes('\t') && twin.paid === sellPrice(TABLES.items, g.party, tel.price) && twin.paid > 0 && !twin.kept,
+  ok(art.paid === 0 && art.kept && art.said === REFUSED && !art.row.includes('\t') && twin.paid === sellPrice(lent.items, g.party, tel.price) && twin.paid > 0 && !twin.kept,
     `${shop.name} will not take the Telstok, shown with no price: ${art.said} Its twin without the mark it buys for ${twin.paid}`);
   sheet();
 }
@@ -417,10 +418,10 @@ function powers(): void {
     'the Hagstone carried keeps paralysis off Bram, not off Ottilie beside him; the Wakerobe worn keeps sleep off Maren; and the stone lifts no paralysis taken before');
   // A ward, in a fight: a foe whose every blow holds fast, the same seeds with the stone on everyone and on no one.
   const HOLDER = target('test_holder', { attack: 99, dice: 1, sides: 1, inflict: { cond: 'paralysed', chance: 1 } });
-  const held = (seed: number, carry: string | null): number => {
-    const q = defaultParty(TABLES, makeRng(1)), rng = makeRng(seed);
+  const held = (seed: number, carry: string | null, u: Tables = TABLES): number => {
+    const q = defaultParty(u, makeRng(1)), rng = makeRng(seed);
     for (const c of q.members) { c.hp = c.maxHp = 999; if (carry) c.pack.push(carry); }
-    const s = startCombat(TABLES, q, [{ id: 'a', monsters: [HOLDER, HOLDER] }], rng);
+    const s = startCombat(u, q, [{ id: 'a', monsters: [HOLDER, HOLDER] }], rng);
     for (let guard = 0; guard < 40 && s.outcome === 'ongoing'; guard++) {
       const t = currentTurn(s, q, rng);
       if (!t) break;
@@ -428,7 +429,7 @@ function powers(): void {
     }
     return q.members.filter((c) => hasCondition(c, 'paralysed')).length;
   };
-  const seeds = [1, 2, 3, 4, 5, 6], bare = seeds.map((n) => held(n, null)), warded = seeds.map((n) => held(n, stone.id)), twin = withDefs(ITEMS, [{ ...stone, id: 'test_stone_twin', artifact: undefined }], () => seeds.map((n) => held(n, 'test_stone_twin')));
+  const seeds = [1, 2, 3, 4, 5, 6], bare = seeds.map((n) => held(n, null)), warded = seeds.map((n) => held(n, stone.id)), twinned = tablesWith([{ ...stone, id: 'test_stone_twin', artifact: undefined }]), twin = seeds.map((n) => held(n, 'test_stone_twin', twinned));
   ok(bare.every((n) => n >= 1) && warded.every((n) => n === 0) && twin.every((n) => n === 0),
     `in a fight with a foe whose blows hold fast, seeded, the company is held ${bare.join(' ')} without the Hagstone and never with it, nor with its twin without the mark`);
 

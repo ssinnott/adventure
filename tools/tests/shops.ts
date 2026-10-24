@@ -12,6 +12,8 @@ import { businessEntries } from '../../src/ui/screens.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ok, withDefs } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Items } from '../../src/game/tables.ts';
 
 type Shop = Extract<Feature, { kind: 'shop' }>;
 /** A company of the road's, with a Merchant standing if asked: Cassian, the sixth, learnt it. */
@@ -67,19 +69,20 @@ export function shops(): void {
   // A Merchant standing is paid two thirds of an item's price, rounded down; nobody with it, or the
   // Merchant down or dead, half; and the sell screen pays just that (#857).
   const fallen = road(true); fallen.members[5].conditions.push('unconscious');
-  const pays = (p: Party): string => [40, 25, 3, 1, 0].map((n) => sellPrice(TABLES.items, p, n)).join(' ');
+  const pays = (p: Party, items: Items = TABLES.items): string => [40, 25, 3, 1, 0].map((n) => sellPrice(items, p, n)).join(' ');
   ok(pays(road(true)) === '26 16 2 0 0' && pays(road(false)) === '20 12 1 0 0' && pays(fallen) === '20 12 1 0 0',
     `a shop pays a Merchant standing two thirds, rounded down, and anyone else half, for 40, 25, 3, 1 and 0 (Merchant ${pays(road(true))}; none ${pays(road(false))}; the Merchant down ${pays(fallen)})`);
   // A set of scales carried, a fixture item that does a Merchant's work (`ItemDef.skill`), is paid as a
   // Merchant is: sellPrice asks `skilled`, as the world does.
   const scales: ItemDef = { id: 'fx_scales', name: 'Scales', slot: 'none', price: 100, skill: 'merchant' };
-  withDefs(ITEMS, [scales], () => {
+  {
+    const lent = tablesWith([scales]);
     const carried = road(false);
     carried.members[2].pack.push(scales.id);
-    const held = [road(true), road(false), fallen, carried].every((p) => (sellPrice(TABLES.items, p, 30) === 20) === !!skilled(TABLES.items, p, 'merchant'));
-    ok(pays(carried) === '26 16 2 0 0' && skilled(TABLES.items, carried, 'merchant')?.name === 'Wren' && held,
-      `a set of scales carried is paid two thirds, as a Merchant is (${pays(carried)}), and sellPrice reads the Merchant as skilled() does, standing, down or carried`);
-  });
+    const held = [road(true), road(false), fallen, carried].every((p) => (sellPrice(lent.items, p, 30) === 20) === !!skilled(lent.items, p, 'merchant'));
+    ok(pays(carried, lent.items) === '26 16 2 0 0' && skilled(lent.items, carried, 'merchant')?.name === 'Wren' && held,
+      `a set of scales carried is paid two thirds, as a Merchant is (${pays(carried, lent.items)}), and sellPrice reads the Merchant as skilled() does, standing, down or carried`);
+  }
   const g = headlessGame(4), harrow = MAP_DEFS.find((m) => m.id === 'harrow')!.features!.find((f): f is Shop => f.kind === 'shop')!;
   const sold = (merchantToo: boolean): number => {
     while (g.screens.length > 1) g.pop();

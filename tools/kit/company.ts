@@ -11,8 +11,9 @@ import type { Tier, Tiers } from '../../src/game/mastery.ts';
 import { blowsOf } from '../../src/game/combat.ts';
 import type { Edge } from '../../src/game/combat.ts';
 import { item, hits } from '../../src/game/items.ts';
-import { ITEMS } from '../../src/content/index.ts';
+import { TABLES } from '../../src/content/index.ts';
 import type { ItemDef } from '../../src/game/items.ts';
+import type { Tables } from '../../src/game/tables.ts';
 import { line } from './line.ts';
 import { areaRows, gather } from './checks.ts';
 import { type BotAnswer } from '../../src/game/bot.ts';
@@ -69,12 +70,23 @@ export function edgeOf(c: Character, round: number, rules: Readonly<Rules> = RUL
   return e;
 }
 
+/**
+ * The harness's own items (#973): content's, and the copies `forge` makes for a what-if, which `unforge`
+ * takes out again. Content's table is never written.
+ */
+const OWN: Record<string, ItemDef> = { ...TABLES.items };
+/**
+ * The tables the harness and the gate hand to src/game: content's, but for the items, the harness's own.
+ * A worker builds its own as it loads this file, as it builds its rules.
+ */
+export const HARNESS: Tables = { ...TABLES, items: OWN };
+
 /** A ladder's rows: by a level, the items a company has by then. */
 type Rungs = readonly (readonly [number, readonly string[]])[];
 /** The areas' rungs (`AreaChecks.gear`), in road order. */
 const RUNGS = areaRows((c) => c.gear).map(([at, ids]) => [Number(at), ids] as const);
 /** What a company wears (a weapon, armour or a shield), as against what it carries in its bag. */
-const worn = (id: string): boolean => (ITEMS[id]?.slot ?? 'weapon') !== 'none';
+const worn = (id: string): boolean => (OWN[id]?.slot ?? 'weapon') !== 'none';
 /** The areas' rungs of one kind, worn or carried, in the order of their levels. */
 export const ladder = (wear: boolean): Rungs =>
   RUNGS.map(([at, ids]) => [at, ids.filter((id) => worn(id) === wear)] as const).filter(([, ids]) => ids.length).sort((a, b) => a[0] - b[0]);
@@ -100,31 +112,29 @@ export const GEAR: Rungs = ladder(true);
 /** The ladder's top: past it, gear grows only in a what-if (`Rules.gearGrows`). */
 export const GEAR_TOP = GEAR[GEAR.length - 1][0];
 
-/** The ids `forge` has put in the item table, for `unforge` to take out. */
+/** The ids `forge` has put in the harness's items, for `unforge` to take out. */
 const forged: string[] = [];
 
-/** A copy of an item with more to it, for a what-if: kept in the item table under its own id until `unforge`. */
+/** A copy of an item with more to it, for a what-if: kept in the harness's items (`HARNESS`) under its own id until `unforge`. */
 function forge(base: ItemDef, more: { bonus?: number; ac?: number; hit?: number }, plus: number): string {
   const id = `${base.id}+${plus}${more.hit ? `^${more.hit}` : ''}`;
-  if (!ITEMS[id]) {
+  if (!OWN[id]) {
     const copy: ItemDef = { ...base, id, name: `${base.name} +${plus}` };
     if (more.bonus !== undefined) copy.bonus = (base.bonus ?? 0) + more.bonus;
     if (more.ac !== undefined) copy.ac = (base.ac ?? 0) + more.ac;
     if (more.hit !== undefined) copy.plus = (base.plus ?? 0) + more.hit;
-    // The item table is read-only by type (#945): `forge` and `unforge` write it by this cast, as `withDefs` does.
-    (ITEMS as Record<string, ItemDef>)[id] = copy;
+    OWN[id] = copy;
     forged.push(id);
   }
   return id;
 }
 
 /**
- * Takes every copy `forge` made out of the item table again, and the companies kept that were dressed
+ * Takes every copy `forge` made out of the harness's items again, and the companies kept that were dressed
  * in them (made under `gearGrows`), so a what-if's gear is left behind nowhere (#946).
  */
 export function unforge(): void {
-  // Read-only by type: taken out by the cast `forge` put them in by (#945).
-  for (const id of forged.splice(0)) delete (ITEMS as Record<string, ItemDef>)[id];
+  for (const id of forged.splice(0)) delete OWN[id];
   for (const key of [...companies.keys()]) if (/^(newer:)?\d+:\d+:gear/.test(key)) companies.delete(key);
 }
 
@@ -134,7 +144,7 @@ export function unforge(): void {
  * grows as the line's hit points do, and the armour a point every two levels, as the line's to-hit does.
  */
 export function outfit(c: Character, level: number, rules: Readonly<Rules> = RULES): void {
-  const pool = GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids).map(item).filter((d) => !d.classes || d.classes.includes(c.cls));
+  const pool = GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids).map((id) => item(HARNESS.items, id)).filter((d) => !d.classes || d.classes.includes(c.cls));
   const w = weaponOf(HARNESS.items, c), shielded = !!c.equipment.shield;
   const weapon = pool.filter((d) => d.slot === 'weapon' && !!d.ranged === !!w.ranged && !(shielded && d.twoHanded) && hits(d) > hits(w)).sort((a, b) => hits(b) - hits(a))[0];
   if (weapon) equip(HARNESS.items, c, weapon.id);
@@ -172,7 +182,7 @@ function prestige(p: Party): void {
     for (let n = prestigesAt(c.level); prestigeOf(c) < n;) takePrestige(c);
     const want = BLOWS_WANT[c.cls];
     if (want && prestigeOf(c)) {
-      const held = weaponOf(HARNESS.items, c), best = GEAR.filter(([at]) => at <= c.level).flatMap(([, ids]) => ids).concat(want.kit).map(item)
+      const held = weaponOf(HARNESS.items, c), best = GEAR.filter(([at]) => at <= c.level).flatMap(([, ids]) => ids).concat(want.kit).map((id) => item(HARNESS.items, id))
         .filter((d) => d.kind === want.kind && !!d.ranged === !!held.ranged && (!d.classes || d.classes.includes(c.cls))).sort((a, b) => hits(b) - hits(a))[0];
       if (best && blowsOf(HARNESS.items, { ...c, equipment: { ...c.equipment, weapon: best.id } }) * hits(best) > blowsOf(HARNESS.items, c) * hits(held)) equip(HARNESS.items, c, best.id);
     }
@@ -197,7 +207,7 @@ function tier(p: Party): void {
 }
 
 /** The artifacts in the item tables (`ItemDef.artifact`, #847): one of each in the world, on no rung of the ladder. */
-export const artifactIds = (): string[] => Object.values(ITEMS).filter((d) => d.artifact).map((d) => d.id);
+export const artifactIds = (): string[] => Object.values(OWN).filter((d) => d.artifact).map((d) => d.id);
 
 /**
  * The artifacts a company bears where `rules.artifacts` asks (#847; off unless `--artifacts`): each,

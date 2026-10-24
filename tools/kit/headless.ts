@@ -6,14 +6,17 @@ import type { Party } from '../../src/game/party.ts';
 import type { Action } from '../../src/input.ts';
 import { drainTyped } from '../../src/input.ts';
 import { SAVE_KEY } from '../../src/game/save.ts';
+import type { ItemDef } from '../../src/game/items.ts';
+import type { Tables } from '../../src/game/tables.ts';
 import { TABLES } from '../../src/content/index.ts';
 
 /**
  * A Game under Node, on a new game at `seed` with the premade company, or with `party` (#723: the
- * company P on the title draws, `randomParty(seed)`), with the pilot off.
+ * company P on the title draws, `randomParty(seed)`), with the pilot off; on `tables`, content's unless
+ * a suite plays its own (#973).
  */
-export function headlessGame(seed = 4, party?: Party): Game {
-  const g = typing(new Game(TABLES, null));
+export function headlessGame(seed = 4, party?: Party, tables: Tables = TABLES): Game {
+  const g = typing(new Game(tables, null));
   g.newGame(seed, party);
   return g;
 }
@@ -22,11 +25,20 @@ export function headlessGame(seed = 4, party?: Party): Game {
  * A Game under Node loaded from a save's text (`serialize`), as F9 loads one (`Game.loadGame`), with
  * the pilot off: the full run's save point before a chapter, played again (#723).
  */
-export function headlessLoad(save: string): Game {
-  const g = typing(new Game(TABLES, { getItem: (key) => (key === SAVE_KEY ? save : null), setItem: () => {}, removeItem: () => {} }));
+export function headlessLoad(save: string, tables: Tables = TABLES): Game {
+  const g = typing(new Game(tables, { getItem: (key) => (key === SAVE_KEY ? save : null), setItem: () => {}, removeItem: () => {} }));
   const loaded = g.loadGame();
   if (loaded !== true) throw new Error(`the save would not load: ${loaded}`);
   return g;
+}
+
+/**
+ * Content's tables with `defs` lent among the items (#973): a table of the suite's own to play, each def
+ * under its id over any there, and content's never written. On `base` where it is another's: the
+ * harness's (`HARNESS`, tools/kit/company.ts) for the gate's company.
+ */
+export function tablesWith(defs: readonly ItemDef[], base: Tables = TABLES): Tables {
+  return { ...base, items: { ...base.items, ...Object.fromEntries(defs.map((d) => [d.id, d])) } };
 }
 
 /** The keyboard's text mode without a keyboard: what is typed (the pilot's riddle words, #721) is drained as Input drains it. */

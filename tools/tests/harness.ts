@@ -52,7 +52,7 @@ export async function harness(): Promise<void> {
   ok(blows.join() === '1,2,2,3' && traits[5].blows === 1 && traits[3].damage === 14 && later === 0 && perks.every((e) => e.damage === 7 && e.ac === 7) && edgeOf(companyAt(24, 37).members[0], 1).blows === 1, `with --level-traits the knight strikes once more a turn with each promotion (${blows.join(', ')} blows at 10, 11, 28 and 29) and at 24 a sneak attack adds 14 in the first round only; with --level-bonus every member gains 7 at 24; without, none`);
   // The prestiges are play's: every company takes them at 11, 19 and 27, with their blows, and with
   // them its spell ranks: a caster's spells 15% a rank, a hybrid's half that, a fighter's none.
-  const taken = [10, 11, 19, 27].map((l) => companyAt(l, 37).members[0]), blowsAt = taken.map(blowsOf);
+  const taken = [10, 11, 19, 27].map((l) => companyAt(l, 37).members[0]), blowsAt = taken.map((c) => blowsOf(HARNESS.items, c));
   const at12 = companyAt(12, 37), at28 = companyAt(28, 37);
   const ranks = [at12.members[5], at28.members[5], at28.members[1], at28.members[0], companyAt(10, 37).members[5]].map((c) => rankMult(c).toFixed(3));
   ok(taken.map((c) => c.prestige ?? 0).join() === '0,1,2,3' && blowsAt.join() === '1,2,2,3' && className(taken[3]) === 'Knight Paramount' && ranks.join() === '1.150,1.450,1.225,1.000,1.000',

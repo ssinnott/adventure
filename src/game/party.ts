@@ -4,7 +4,6 @@ import type { RngInstance } from '../lib/engine/rng.ts';
 import { makeRng } from '../lib/engine/rng.ts';
 import { item, REGEN_PART } from './items.ts';
 import { MINUTES_PER_DAY, dateAt, sunTimes } from './calendar.ts';
-import { ITEMS } from '../content/index.ts';
 import type { ItemDef } from './items.ts';
 import { spellsFor, ELEMENTS } from './spells.ts';
 import type { SpellList, Element } from './spells.ts';
@@ -374,19 +373,21 @@ export function resists(items: Items, c: Character): Element[] {
   return ELEMENTS.filter((el) => ids.some((id) => item(items, id).resist?.includes(el)) || c.blessed.some((b) => b.element === el));
 }
 /**
- * Whether any slotted item raises a stat, and any slotless one: worked out from `ITEMS` the first
- * time a stat is read, so that `statOf` looks nothing up where nothing could raise it. The tables
- * are fixed once loaded, so in play this is exact. Anything that puts an item with a `stat` into
- * `ITEMS` later, or takes one out (a test's fixture), calls `itemsChanged()` after it does.
+ * Whether any slotted item of a table raises a stat, and any slotless one: worked out the first time a
+ * stat is read with that table, so that `statOf` looks nothing up where nothing could raise it. Kept
+ * by the table (#973): play has one, and a suite that lends an item plays a table of its own, so an
+ * entry of its own. A table is fixed once built; the harness's `forge` adds copies of items it holds,
+ * which raise what theirs do.
  */
-let raisers: { slotted: boolean; slotless: boolean } | null = null;
-export function itemsChanged(): void { raisers = null; }
-function raisersNow(): { slotted: boolean; slotless: boolean } {
-  if (!raisers) {
-    const all = Object.values(ITEMS);
-    raisers = { slotted: all.some((d) => !!d.stat && d.slot !== 'none'), slotless: all.some((d) => !!d.stat && d.slot === 'none') };
+const raisers = new WeakMap<Items, { slotted: boolean; slotless: boolean }>();
+function raisersOf(items: Items): { slotted: boolean; slotless: boolean } {
+  let r = raisers.get(items);
+  if (!r) {
+    const all = Object.values(items);
+    r = { slotted: all.some((d) => !!d.stat && d.slot !== 'none'), slotless: all.some((d) => !!d.stat && d.slot === 'none') };
+    raisers.set(items, r);
   }
-  return raisers;
+  return r;
 }
 /**
  * A stat as a member stands: their own, raised by what they bear (`ItemDef.stat`), counted by
@@ -394,7 +395,7 @@ function raisersNow(): { slotted: boolean; slotless: boolean } {
  * their own, so a save holds no raise.
  */
 export function statOf(items: Items, c: Character, s: Stat): number {
-  const r = raisersNow();
+  const r = raisersOf(items);
   let n = c.stats[s];
   if (r.slotted) {
     const { weapon, armor, shield } = c.equipment;

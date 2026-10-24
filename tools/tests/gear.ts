@@ -7,16 +7,18 @@ import { ITEMS, TABLES } from '../../src/content/index.ts';
 import { P, PLUS_PRICE, core } from '../../src/content/items.ts';
 import { defaultParty, createCharacter, attackBonus, armorClass } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, toHit } from '../../src/game/combat.ts';
-import { ok, withDefs } from './lib.ts';
+import { ok } from './lib.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Tables } from '../../src/game/tables.ts';
 
 const throws = (f: () => unknown): boolean => { try { f(); return false; } catch { return true; } };
 
 export function gear(): void {
   const plus = [P(ITEMS.longsword, 1), P(ITEMS.scale, 1), P(ITEMS.buckler, 1), P(ITEMS.robe, 1)];
-  withDefs(ITEMS, plus.filter((d) => !(d.id in ITEMS)), check);
+  check(tablesWith(plus.filter((d) => !(d.id in ITEMS))));
 }
 
-function check(): void {
+function check(lent: Tables): void {
   // The helper.
   const sword = P(ITEMS.longsword, 1);
   ok(sword.id === 'longsword+1' && sword.name === 'Long Sword +1' && sword.plus === 1, `the helper makes ${sword.id}, "${sword.name}"`);
@@ -31,22 +33,22 @@ function check(): void {
   ok(throws(() => P(ITEMS.torch, 1)) && throws(() => P(sword, 1)) && throws(() => P(ITEMS.dagger, 0)), 'no plus on a torch, on a plus or of 0');
 
   // To-hit, exactly one better.
-  const mk = (cls: Parameters<typeof createCharacter>[3]) => createCharacter(TABLES, 'T', 'human', cls, {}, makeRng(3));
-  const kn = mk('knight'); kn.equipment.weapon = 'longsword'; const hitBase = attackBonus(TABLES.items, kn);
+  const mk = (cls: Parameters<typeof createCharacter>[3]) => createCharacter(lent, 'T', 'human', cls, {}, makeRng(3));
+  const kn = mk('knight'); kn.equipment.weapon = 'longsword'; const hitBase = attackBonus(lent.items, kn);
   kn.equipment.weapon = sword.id;
-  ok(attackBonus(TABLES.items, kn) === hitBase + 1, `a knight's to-hit with a Long Sword +1 (${hitBase} -> ${attackBonus(TABLES.items, kn)})`);
+  ok(attackBonus(lent.items, kn) === hitBase + 1, `a knight's to-hit with a Long Sword +1 (${hitBase} -> ${attackBonus(lent.items, kn)})`);
 
   // Damage, exactly one more: the same blow at a wraith on the same seed, the sword the only change.
   // The chance the fight rolls to hit is the one `attackBonus` gives, so the plus counts once.
   let rolled = true;
   const blow = (weapon: string, seed: number): number | null => {
-    const rng = makeRng(seed), party = defaultParty(TABLES, rng);
+    const rng = makeRng(seed), party = defaultParty(lent, rng);
     party.members = [party.members[0]]; party.members[0].equipment.weapon = weapon;
-    const s = startCombat(TABLES, party, [{ id: 'a', monsters: ['wraith'] }], rng);
+    const s = startCombat(lent, party, [{ id: 'a', monsters: ['wraith'] }], rng);
     for (let i = 0; i < 20; i++) {
       const t = currentTurn(s, party, rng); if (!t) return null;
       if (t.side !== 'party') { monsterAct(s, party, rng); continue; }
-      const c = party.members[0], want = toHit(attackBonus(TABLES.items, c), s.monsters[0].def.ac), chance = rng.chance.bind(rng);
+      const c = party.members[0], want = toHit(attackBonus(lent.items, c), s.monsters[0].def.ac), chance = rng.chance.bind(rng);
       let p: number | null = null;
       rng.chance = (q) => { p ??= q; return chance(q); };
       partyAct(s, party, rng, { type: 'attack', target: 0 });
@@ -66,15 +68,15 @@ function check(): void {
   ok(rolled, 'the fight rolls to hit at the chance its to-hit gives, with the plus counted once');
 
   // Armour class, one a point, on armour and a shield alike.
-  const k2 = mk('knight'); k2.equipment.armor = 'scale'; k2.equipment.shield = 'buckler'; const ac0 = armorClass(TABLES.items, k2);
-  k2.equipment.armor = P(ITEMS.scale, 1).id; const ac1 = armorClass(TABLES.items, k2);
-  k2.equipment.shield = P(ITEMS.buckler, 1).id; const ac2 = armorClass(TABLES.items, k2);
+  const k2 = mk('knight'); k2.equipment.armor = 'scale'; k2.equipment.shield = 'buckler'; const ac0 = armorClass(lent.items, k2);
+  k2.equipment.armor = P(ITEMS.scale, 1).id; const ac1 = armorClass(lent.items, k2);
+  k2.equipment.shield = P(ITEMS.buckler, 1).id; const ac2 = armorClass(lent.items, k2);
   ok(ac1 === ac0 + 1 && ac2 === ac0 + 2, `Scale Mail +1 and a Buckler +1 add one each (${ac0} -> ${ac1} -> ${ac2})`);
 
   // A robe with a plus is still a robe.
-  const monk = mk('monk'); monk.equipment.armor = 'robe'; const robe = armorClass(TABLES.items, monk);
+  const monk = mk('monk'); monk.equipment.armor = 'robe'; const robe = armorClass(lent.items, monk);
   monk.equipment.armor = P(ITEMS.robe, 1).id;
-  ok(armorClass(TABLES.items, monk) === robe + 1, `a monk in a Robe +1 keeps Unarmoured Defence (${robe} -> ${armorClass(TABLES.items, monk)})`);
+  ok(armorClass(lent.items, monk) === robe + 1, `a monk in a Robe +1 keeps Unarmoured Defence (${robe} -> ${armorClass(lent.items, monk)})`);
   monk.equipment.armor = 'leather';
-  ok(armorClass(TABLES.items, monk) === 10 + ITEMS.leather.ac!, 'but not in leather');
+  ok(armorClass(lent.items, monk) === 10 + ITEMS.leather.ac!, 'but not in leather');
 }

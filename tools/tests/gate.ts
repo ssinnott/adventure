@@ -37,6 +37,8 @@ import { groupFlags } from '../../src/game/people.ts';
 import type { QuestCond } from '../../src/game/quests.ts';
 import { ok, owed, withDefs, asked } from './lib.ts';
 import { GATE, landings } from '../kit/rules/gate.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Tables } from '../../src/game/tables.ts';
 
 /** Which side of a line a figure is: inside its aim ('aim'), off it but inside its limit ('off'), past its limit ('past'). */
 export type Judged = 'aim' | 'off' | 'past';
@@ -321,14 +323,14 @@ function fixed(): void {
   {
     const charm: ItemDef = { id: 'test_gate_charm', name: 'Frost Charm', slot: 'none', price: 0, resist: ['cold'] };
     const frost: MonsterDef = { ...MONSTERS.bandit, id: 'test_gate_frost', name: 'Frost Adept', plural: 'Frost Adepts', hp: 400, level: 10, cast: { spells: ['killing_frost'], chance: 1 } };
-    const taken = (carry: boolean): number[] => {
+    const taken = (carry: boolean, t: Tables): number[] => {
       const p = gateCompany(12, 7);
       for (const c of p.members) c.hp = c.maxHp = 9999;
       if (carry) p.members[0].pack.push(charm.id);
-      gateFight(p, [frost], 7, 3);
+      gateFight(p, [frost], 7, 3, {}, undefined, t);
       return p.members.map((c) => 9999 - c.hp);
     };
-    const [bare, held] = withDefs(ITEMS, [charm], () => [taken(false), taken(true)] as const);
+    const lent = tablesWith([charm], HARNESS), [bare, held] = [taken(false, lent), taken(true, lent)] as const;
     ok(bare[0] > 0 && held[0] < bare[0] && held[0] >= bare[0] / 2 && held.slice(1).join() === bare.slice(1).join(), `the gate's company plays a resistance: its bearer takes ${held[0]} from a frost-caster's spells, against ${bare[0]} without`);
   }
   // The gate's company plays Act III's abilities (#537), each on its test monsters' standard encounter

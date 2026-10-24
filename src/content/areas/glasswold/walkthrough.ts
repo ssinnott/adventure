@@ -358,7 +358,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // cure (#546) and the Riders' own leather, at list price, nothing of steel; and nothing else is sold or
   // taught at Akordu (#443, call 7).
   const trader = D8.features!.find((f): f is Extract<Feature, { kind: 'shop' }> => f.kind === 'shop')!;
-  const wares = trader.stock.map(item);
+  const wares = trader.stock.map((id) => item(TABLES.items, id));
   ok(D8.features!.filter((f) => 'interior' in f && f.interior).length === 1 && trader.interior === 'akordu_trader' && ch8(trader.x, trader.y) === 'D' && !trader.prices
     && CURES.every((id) => trader.stock.includes(id)) && wares.every((d) => d.slot === 'none' || d.id === 'leather_coat') && trader.stock.includes('leather_coat'),
     `the trader's tent sells the band's consumables, the stone's cure and the Riders' leather at list price, and nothing of steel (${wares.map((d) => d.name).join(', ')})`);

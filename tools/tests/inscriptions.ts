@@ -22,6 +22,8 @@ import { readerOf, readMarks, signLine, readLine, markLine, isInscription, marks
 import { ATLAS, MAP_DEFS, ITEMS, TABLES } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../kit/shipped.ts';
 import { ok, withDefs, fxMap, fxKey } from './lib.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Tables } from '../../src/game/tables.ts';
 
 const STORE = 'Cut over the wall, the dwarves\' words for plenty.', BREATH = 'The dwarves\' words for the mountain\'s breath.';
 
@@ -37,7 +39,7 @@ const FIXTURE: MapDef = {
   ],
 };
 
-const fresh = (setup?: (p: Party) => void, def: MapDef = FIXTURE): { world: World; party: Party } => {
+const fresh = (setup?: (p: Party) => void, def: MapDef = FIXTURE, t: Tables = TABLES): { world: World; party: Party } => {
   const rng = makeRng(7), party = defaultParty(TABLES, rng);
   setup?.(party);
   return { world: new World(TABLES, { [def.id]: new GameMap(def) }, party, rng), party };
@@ -101,14 +103,15 @@ export function inscriptions(): void {
   // member reads by it; in a pack, its carrier does; put down, nobody.
   {
     const book: ItemDef = { id: 'fx_copybook', name: 'A Copybook', slot: 'none', price: 0, skill: 'linguist' };
-    withDefs(ITEMS, [book], () => {
-      const { world, party } = fresh((p) => { p.bag.push(book.id); });
-      ok(readerOf(TABLES.items, party) === party.members[0] && stand(world, 2, 1)[1] === readLine('Bram', 'STORE.'), 'with the copybook in the bag the first standing member reads by it');
+    {
+      const lent = tablesWith([book]);
+      const { world, party } = fresh((p) => { p.bag.push(book.id); }, FIXTURE, lent);
+      ok(readerOf(lent.items, party) === party.members[0] && stand(world, 2, 1)[1] === readLine('Bram', 'STORE.'), 'with the copybook in the bag the first standing member reads by it');
       party.bag.splice(party.bag.indexOf(book.id), 1); party.members[2].pack.push(book.id);
-      ok(readerOf(TABLES.items, party) === party.members[2], 'in a member\'s pack, its carrier reads');
+      ok(readerOf(lent.items, party) === party.members[2], 'in a member\'s pack, its carrier reads');
       party.members[2].pack.pop();
-      ok(!readerOf(TABLES.items, party), 'and put down, nobody does');
-    });
+      ok(!readerOf(lent.items, party), 'and put down, nobody does');
+    }
   }
   // The marks: none before the reading; read, its two places, said once; a plain sign is kept by nothing.
   {

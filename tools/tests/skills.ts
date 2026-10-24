@@ -45,6 +45,8 @@ import { SKILLS, SKILL_PRICE, SPIRIT_REACH, STRANGER, LEAVE_SKILLS, skillsOf, ha
 import type { SkillId } from '../../src/game/skills.ts';
 import { ok, withDefs } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Tables } from '../../src/game/tables.ts';
 
 /** DESIGN §8's table: the skills each guild teaches, three to a guild, twelve in all (DESIGN §5). */
 const TAUGHT: Record<GuildId, readonly string[]> = {
@@ -534,12 +536,12 @@ function cartographer(): void {
   const chart: ItemDef = { id: 'fx_chart', name: 'A Chart', slot: 'none', price: 400, skill: 'cartographer' };
   const NIGHT = (_: unknown, m: number): boolean => daylightAt(m) < 0.1;
   /** How many squares west of the company the automap takes, for a company `how` on `def` at a time `when` finds. */
-  const reach = (def: MapDef, when: (wx: Parameters<typeof weatherSight>[0], m: number) => boolean, how: 'none' | 'learnt' | 'down' | 'chart'): number => {
-    const rng = makeRng(41), q = defaultParty(TABLES, rng);
+  const reach = (def: MapDef, when: (wx: Parameters<typeof weatherSight>[0], m: number) => boolean, how: 'none' | 'learnt' | 'down' | 'chart', t: Tables = TABLES): number => {
+    const rng = makeRng(41), q = defaultParty(t, rng);
     if (how === 'learnt' || how === 'down') q.members[0].skills = ['cartographer'];
     if (how === 'down') q.members[0].conditions.push('dead');
     if (how === 'chart') q.members[3].pack.push(chart.id);
-    const w = new World(TABLES, { [def.id]: new GameMap(def) }, q, rng);
+    const w = new World(t, { [def.id]: new GameMap(def) }, q, rng);
     w.state.minutes = findWeather(w.state.weatherSeed!, w.state.minutes, CLIMATES.shelf, when);
     w.mapState.explored.fill(0);
     w.travel(def.id, 5, 5, NORTH);
@@ -547,18 +549,19 @@ function cartographer(): void {
     while (d < 4 && w.explored(4 - d, 5)) d++;
     return d;
   };
-  withDefs(ITEMS, [chart], () => {
+  {
+    const lent = tablesWith([chart]);
     const hows = ['none', 'learnt', 'down', 'chart'] as const;
-    const row = (def: MapDef, when: Parameters<typeof reach>[1]): string => hows.map((h) => reach(def, when, h)).join('/');
+    const row = (def: MapDef, when: Parameters<typeof reach>[1]): string => hows.map((h) => reach(def, when, h, lent)).join('/');
     const day = row(open, DAY), night = row(open, NIGHT), under = row(hall, DAY);
     ok(day === '2/3/2/3' && night === '1/2/1/2' && under === '1/2/1/2',
       `a Cartographer standing, or a chart carried, maps a square further: on open ground by day ${day}, by night ${night}, in a dungeon ${under} (none / learnt / down / a chart)`);
     // West of 3,3 open floor, east a closed door, north an unfound secret door; facing the wall south.
     const doors: MapDef = { id: 'fx_chart_doors', name: 'Chart doors', kind: 'dungeon', region: 'shelf', start: { x: 3, y: 3, facing: SOUTH }, rows: ['#######', '###.###', '###S###', '#...D.#', '#######'] };
     const past = (learnt: boolean): string => {
-      const rng = makeRng(43), q = defaultParty(TABLES, rng);
+      const rng = makeRng(43), q = defaultParty(lent, rng);
       if (learnt) q.members[0].skills = ['cartographer'];
-      const w = new World(TABLES, { fx_chart_doors: new GameMap(doors) }, q, rng);
+      const w = new World(lent, { fx_chart_doors: new GameMap(doors) }, q, rng);
       w.mapState.explored.fill(0);
       w.travel('fx_chart_doors', 3, 3, SOUTH);
       return [[1, 3], [5, 3], [3, 1]].map(([x, y]) => (w.explored(x, y) ? 'mapped' : '-')).join('/');
@@ -566,7 +569,7 @@ function cartographer(): void {
     const sighted = past(true), blind = past(false);
     ok(sighted === 'mapped/-/-' && blind === '-/-/-',
       `the extra square follows sight: two squares off past open floor it is mapped, past a closed door and past an unfound secret door it is not (floor / door / secret door: ${sighted}; without the skill ${blind})`);
-  });
+  }
 }
 
 /**
@@ -580,8 +583,8 @@ function lockedChest(): void {
   const chest = { kind: 'chest', x: 2, y: 1, id: 'fx_locked', gold: 40, items: ['torch'], locked: true } as const satisfies Feature;
   const plain = { kind: 'chest', x: 2, y: 1, id: 'fx_plain', gold: 40, items: ['torch'] } as const satisfies Feature;
   /** For the company `setup` makes, stood on the chest and Space pressed twice: what is said, the gold gained, the keys left, and whether it is spent. */
-  const opens = (setup: (p: Party) => void, f: Extract<Feature, { kind: 'chest' }> = chest): string => {
-    const g = headlessGame(4), p = g.party;
+  const opens = (setup: (p: Party) => void, f: Extract<Feature, { kind: 'chest' }> = chest, t: Tables = TABLES): string => {
+    const g = headlessGame(4, undefined, t), p = g.party;
     g.maps.fx_coffer = new GameMap({ id: 'fx_coffer', name: 'Coffer', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['####', '#..#', '####'], features: [{ ...f, items: [...f.items] }] });
     setup(p);
     g.world.travel('fx_coffer', 2, 1, EAST);
@@ -593,7 +596,8 @@ function lockedChest(): void {
   };
   const thiefDown = (p: Party): void => { p.members[3].conditions.push('dead'); };
   const got = `You open the chest: 40 gold, ${ITEMS.torch.name}. The chest is empty. | 40`;
-  withDefs(ITEMS, [picks], () => {
+  {
+    const lent = tablesWith([picks]);
     const cases: [string, (p: Party) => void, string][] = [
       ['the thief standing, born to Lockpick, no key', () => undefined, `A locked chest. Ottilie picks the lock. ${got} | 0 | spent`],
       ['the thief standing, a key carried', (p) => { p.bag.push('key_iron'); }, `A locked chest. Ottilie picks the lock. ${got} | 1 | spent`],
@@ -602,9 +606,9 @@ function lockedChest(): void {
       ['the thief down, Lockpick learnt by the knight', (p) => { thiefDown(p); p.members[0].skills = ['lockpick']; }, `A locked chest. Bram picks the lock. ${got} | 0 | spent`],
       ['the thief down, a set of picks in the cleric\'s pack and a key', (p) => { thiefDown(p); p.members[4].pack.push(picks.id); p.bag.push('key_iron'); }, `A locked chest. Maren picks the lock. ${got} | 1 | spent`],
     ];
-    const wrong = cases.flatMap(([who, setup, want]) => { const said = opens(setup); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
+    const wrong = cases.flatMap(([who, setup, want]) => { const said = opens(setup, chest, lent); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
     ok(!wrong.length, `a locked chest opens to a Lockpick standing or a set of picks carried, keeping the key, or to a key, spent, and to nothing else: "Locked." (${cases.map(([who]) => who).join('; ')})${wrong.length ? ' -> ' + wrong.join('; ') : ''}`);
-  });
+  }
   const unlocked = opens((p) => { p.members[3].conditions.push('dead'); p.bag.push('key_iron'); }, plain);
   ok(unlocked === `A chest. Space opens it. ${got} | 1 | spent`, `a chest with no lock opens as before, the key untouched ("${unlocked}")`);
   // Skilled, as the world asks it: the thief standing, born to it; a set of picks, carried by one standing.
