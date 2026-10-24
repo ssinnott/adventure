@@ -828,11 +828,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   the cores where N is left out. A suite that exports `parts()` runs as its parts, `suite:part`, in
   one process too: the gate's are `fixed` (its workings on fixtures and the tables' checks) and one
   to each area the run asks for, Saltreach's with the enclave's fixture, each with its own figures
-  off their aim and its own owed entries, 701 checks in thirteen runs; the bot's own on fixtures, 21,
-  are the `gatebot` suite's. `outdoors`, `pillars`, `quests` and `movement` have parts too, the
-  headings their blocks carry (#1016): `node tools/test.ts outdoors:seams` runs the seams and nothing
-  else, the table gives each part its seconds and its count, and what two parts read is built where
-  it is first asked for and kept for the run (`lazy`, `lib.ts`). The runs over three seconds
+  off their aim and its own owed entries, 701 checks in thirteen runs; the bot's own on fixtures,
+  21, are the `gatebot` suite's. `outdoors`, `pillars`, `quests` and `movement` have parts too, the
+  headings their blocks carry (#1016): `node tools/test.ts outdoors:seams` runs the seams and
+  nothing else; the table gives each part its seconds and its count; what two parts read is built
+  where it is first asked for and kept for the run (`lazy`, `lib.ts`). The runs over three seconds
   (`DEAR`, or `TEST_DEAR=a,b`) are a process each, started dearest first once the rest, packed into
   one process in the run's order, has started; `--jobs 1` runs every run alone, one after another. A
   run's lines are held in its process and print whole at its turn in the run's order, so the output
@@ -1321,20 +1321,23 @@ Decided by the builder for #1016, each the owner's to overturn:
 2. **`movement`'s body is cut at every heading, not only the five the issue names** (`steps`,
    `pass`, `portal`, `stair`, `gatehouse`, `chasm`, `spells` and `tide`, then the seven functions),
    so a whole run prints in the old order. Each begins its own company and world as the body began
-   them (`begin()`, seed 7), since each walks its world and changes it: eight worlds where there was one.
-3. **`pillars:edges` opens with the two checks of the owed rows** (a square or a lock owed once, an
-   issue owed by two areas read from both), which the issue gave to #969 and #969 left: they read the
-   rows the edges and the locks read.
+   them (`begin()`, seed 7), since each walks its world and changes it: eight worlds where there
+   was one.
+3. **`pillars:edges` opens with the two checks of the owed rows** (a square or a lock owed once,
+   an issue owed by two areas read from both), which the issue gave to #969 and #969 left: they
+   read the rows the edges and the locks read.
 4. **`quests:goalmap` holds the four checks between the owed flags and the conditions:** goalMap,
-   finishedBy (#979, after the issue's count, so 1,073 checks), a reading kept by its id and what can
-   stop holding. The helpers two parts call, and the shore fixture `owed` and `goalmap` both read,
-   move to the top of the file unchanged.
+   finishedBy (#979, after the issue's count, so 1,073 checks), a reading kept by its id and what
+   can stop holding. The helpers two parts call and the shore fixture that `owed` and `goalmap`
+   both read move to the top of the file unchanged.
 5. **What two parts read is a `lazy` value** (`lib.ts`): built where it is first asked for and kept
-   for the run, nothing kept if it throws. Only `outdoors` has any: the outdoors, its seams and its edges.
-6. **`gatebot` takes the 21 checks of the bot, its company and the walk; `gate:fixed` keeps the 11
-   that call the gate suite's own figures** (a figure judged and listed, the way in, a den's reading,
-   an area's pools): the layers check holds a suite to src and tools/kit/, and no row is added. The
-   issue counted 29 where the base printed 32, three of them `check`'s own lines.
+   for the run, nothing kept if it throws. Only `outdoors` has any: the outdoors, its seams and its
+   edges.
+6. **`gatebot` takes the 21 checks of the bot, its company and the walk; `gate:fixed` keeps the
+   11 lines that call the gate suite's own figures** (a figure judged and listed, the way in, a
+   den's reading, an area's pools): the layers check holds a suite to src and tools/kit/, and no
+   row is added. The issue counted 29 where the base printed 32, three of them `check`'s own
+   lines, so 8 of its 29 stay here.
 7. **`DEAR` names `quests:goals` where it named `quests`:** the part that holds nearly all its
    seconds stays a process of its own under `--jobs`.
 8. **A part a suite has no name for throws** (`the outdoors has no part named x`), as the gate's
