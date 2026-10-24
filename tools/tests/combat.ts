@@ -8,7 +8,7 @@ import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World } from '../../src/game/world.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
-import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists, rest, attackBonus, armorClass, canAct, spellTierAt, isDown, lift, templePrice } from '../../src/game/party.ts';
+import { defaultParty, equip, addCondition, hasCondition, killPay, spellHeal, rankMult, resists, rest, attackBonus, armorClass, canAct, spellTierAt, isDown, useItem, templePrice } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, castOnAlly, castOnParty, frontStands, monsterAc, monsterHit, canCall, WARD_AC, BLESS_HIT, BREAK_LINE, ROUT_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, panelStands, DIM_LINE, THREAD_LINE, STAND_LINE, GLOVE_LINE, GLOVE_FLAG, MAX_MONSTERS, MAX_GROUPS, SWEEP_LINE, STONE_LINE } from '../../src/game/combat.ts';
 import type { CombatState, CombatGroup, PartyAction } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
@@ -761,10 +761,11 @@ function stone(): void {
   const t = startCombat(q, [{ id: 'b', monsters: [{ ...basilisk, inflict: undefined }] }], makeRng(98)), rng = makeRng(98);
   for (let guard = 0; guard < 50 && currentTurn(t, q, rng)?.side === 'monster'; guard++) monsterAct(t, q, rng);
   partyAct(t, q, rng, { type: 'use', itemId: draught.id, target: 0 });
-  const out = structuredClone(glassed);
+  // On the walk the sheet uses it by the same rule (`useItem`), from a bag of its own.
+  const out = structuredClone(glassed), walk = { bag: [draught.id], food: 0 };
   out.hp = 0; out.conditions = ['stoned'];
   ok(draught.slot === 'none' && draught.use?.cure?.join() === 'stoned' && !hasCondition(glassed, 'stoned') && t.log.includes(`${glassed.name} is flesh again.`) && !q.bag.includes(draught.id)
-    && lift(out, draught.use.cure) && hasCondition(out, 'unconscious') && !hasCondition(out, 'stoned'), `a Quickening Draught lifts it, in a fight and on the walk, one at no hit points coming back out cold (${t.log.at(-1)})`);
+    && useItem(ITEMS, walk, null, draught.id, out)?.join() === `${out.name} is flesh again.` && !walk.bag.length && hasCondition(out, 'unconscious') && !hasCondition(out, 'stoned'), `a Quickening Draught lifts it, in a fight and on the walk, one at no hit points coming back out cold (${t.log.at(-1)})`);
   // Absolve lifts it at tier 7, and any temple for a company with neither: 80 gold a level, a member
   // of 27 dearer there than the draught, which is the temple's price for one of 25.
   addCondition(glassed, 'stoned');

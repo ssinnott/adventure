@@ -2,7 +2,8 @@
 // a kill pays.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, SPELLS, MAP_DEFS } from '../../src/content/index.ts';
-import { defaultParty, createCharacter, CLASSES, xpForLevel, levelUp, equip, armorClass, canTrain, canTrainAt, spellTierAt, trainPrice, killPay, MAX_LEVEL } from '../../src/game/party.ts';
+import { defaultParty, createCharacter, CLASSES, xpForLevel, levelUp, equip, armorClass, canTrain, canTrainAt, spellTierAt, trainPrice, killPay, MAX_LEVEL, useItem, addCondition, hasCondition } from '../../src/game/party.ts';
+import type { ItemDef } from '../../src/game/items.ts';
 import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, victoryLine } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
@@ -98,4 +99,37 @@ export function party(): void {
   const st = won(mixed, meek(11), 8), got = mixed.members.map((m, i) => m.xp - xpForLevel(i < 3 ? 10 : 12));
   ok(got.join() === '115,115,115,70,70,70' && st.log.at(-1) === victoryLine(st.loot!) && st.log.at(-1) === 'Victory! 70 to 115 experience by level, 0 gold.',
     `members of 10 and 12 take ${got.join(', ')} of a level-11 kill, and the log says so (${st.log.at(-1)})`);
+
+  // One use of an item, the fight's and the sheet's (#978): out of the holder's pack, else the bag, each
+  // effect in its words. A table of the suite's own lends a tonic that does all four, to show their order.
+  const tonic: ItemDef = { id: 'test_tonic', name: 'Tonic', slot: 'none', price: 1, use: { heal: 5, sp: 5, cure: ['poisoned'], food: 2 } };
+  const table = { ...ITEMS, [tonic.id]: tonic }, u = defaultParty(makeRng(9)), [a, b, cc] = u.members;
+  for (const m of u.members) m.pack = [];
+  a.pack.push('potion_heal'); u.bag = ['potion_heal', 'potion_sp', 'antidote', 'rations', 'club', tonic.id];
+  // Room for the whole draught, then a member 3 short of the most: its 15 and the cap.
+  a.maxHp = 40; a.hp = 1;
+  const healed = useItem(table, u, a, 'potion_heal', a);
+  ok(healed?.join() === `${a.name} recovers 15.` && a.hp === 16 && !a.pack.length && u.bag.includes('potion_heal'), `a Healing Draught comes out of the holder's pack before the bag, 15 hit points (${healed})`);
+  a.hp = 37;
+  const again = useItem(table, u, a, 'potion_heal', a);
+  ok(again?.join() === `${a.name} recovers 3.` && a.hp === 40 && !u.bag.includes('potion_heal'), `and with none in the pack, out of the bag, to the most (${again})`);
+  b.maxSp = 20; b.sp = 5;
+  const sharp = useItem(table, u, null, 'potion_sp', b);
+  ok(sharp?.join() === `${b.name} feels sharper.` && b.sp === 15, `a Blue Vial gives 10 spell points (${sharp} ${b.sp}/20)`);
+  addCondition(cc, 'poisoned');
+  const clean = useItem(table, u, null, 'antidote', cc);
+  ok(clean?.join() === `${cc.name} is cleansed.` && !hasCondition(cc, 'poisoned'), `an Antidote lifts the poison (${clean})`);
+  const food = u.food, fed = useItem(table, u, null, 'rations', a);
+  ok(fed?.join() === "The party's food grows by 5." && u.food === food + 5 && !u.bag.includes('rations'), `Rations go to the stores, the sheet's and now the fight's (${fed})`);
+  addCondition(cc, 'poisoned'); cc.hp = cc.maxHp - 5; cc.maxSp = 10; cc.sp = 8;
+  const all = useItem(table, u, null, tonic.id, cc);
+  ok(all?.join(' ') === `${cc.name} recovers 5. ${cc.name} feels sharper. ${cc.name} is cleansed. The party's food grows by 2.` && cc.sp === 10, `a tonic that does all four says them in that order, its spell points to the most (${all?.join(' ')})`);
+  const kept = JSON.stringify(u);
+  ok(useItem(table, u, a, 'potion_heal', a) === null && useItem(table, u, a, 'club', a) === null && JSON.stringify(u) === kept, 'a draught nobody holds and a club, which has no use, are refused, and nothing changes');
+  // So in a fight: `partyAct` refuses the use, says nothing and keeps the turn.
+  const fight = startCombat(u, [{ id: 'm', monsters: [meek(1)] }], makeRng(4)), frng = makeRng(4);
+  for (let k = 0; k < 20 && currentTurn(fight, u, frng)?.side === 'monster'; k++) monsterAct(fight, u, frng);
+  const turn = JSON.stringify(currentTurn(fight, u, frng)), logged = fight.log.length;
+  ok(!partyAct(fight, u, frng, { type: 'use', itemId: 'potion_heal', target: 0 }) && !partyAct(fight, u, frng, { type: 'use', itemId: 'club', target: 0 })
+    && JSON.stringify(currentTurn(fight, u, frng)) === turn && fight.log.length === logged, 'and in a fight the same two are refused, with the turn kept');
 }
