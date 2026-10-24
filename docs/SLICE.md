@@ -789,8 +789,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   its own, under which its runs keep the goals they walk (`everyGoalWalked`), so one passes alone as
   in the full run. After every suite the runner finds the item and monster tables as they were, each
   entry by identity, and fails a suite that leaves one added, removed or replaced, by name (#946); a
-  suite lends a monster through `withDefs` (`lib.ts`) and an item by a table of its own
-  (`tablesWith`, `tools/kit/headless.ts`, #973), content's never written. `layers` holds the
+  suite lends an item or a monster by a table of its own (`tablesWith`, `tools/kit/headless.ts`,
+  #973, #974), content's never written. `layers` holds the
   imports to the layers (EXPANSION §8.1, #900). Each area's
   `checks.ts`, found by its file as its walkthrough is (`tools/kit/checks.ts`), holds the rows the suites
   keep of it that are its own and no part of the game, what it owes, its rungs of the ladder, its lead
@@ -1147,7 +1147,7 @@ does.
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), where the Hearth burns, the atlas's `hearth` site or a throw (`hearthIn`, #945), its bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds, half once its `half` does and half again for a Navigator), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
 | `game/guilds.ts`, `game/ranks.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`; `rankOf`, ranks.ts's, which reads the content alone); what a hall offers (a quest may wait for a flag, `after`), taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
-| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`, a raise borne, a blow's element, an artifact's mark and its spell, regeneration or ward; `MonsterDef`, `SpellDef`) and their lookups; a weapon's measure (`hits`) and what a shop pays (`sellPrice`: half, a Merchant two thirds) and says to an artifact (`REFUSED`), and the bounds of an artifact's power (the most it raises a stat, `ARTIFACT_RAISE`; the most castings a day of its spell, `ARTIFACT_CASTINGS`; the level that spell rolls at, `ARTIFACT_LEVEL`; regeneration's share, `REGEN_PART`) and the castings left until dawn (`chargesLeft`); a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's, handed in (`item(items, id)`, #973) |
+| `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`, a raise borne, a blow's element, an artifact's mark and its spell, regeneration or ward; `MonsterDef`, `SpellDef`) and their lookups, each taking its table first (`item(items, id)`, `monster(monsters, id)`, `spell(spells, id)`, #973, #974); a weapon's measure (`hits`) and what a shop pays (`sellPrice`: half, a Merchant two thirds) and says to an artifact (`REFUSED`), and the bounds of an artifact's power (the most it raises a stat, `ARTIFACT_RAISE`; the most castings a day of its spell, `ARTIFACT_CASTINGS`; the level that spell rolls at, `ARTIFACT_LEVEL`; regeneration's share, `REGEN_PART`) and the castings left until dawn (`chargesLeft`); a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's, handed in (`item(items, id)`, #973) |
 | `game/tables.ts` | the tables src/game takes (`Tables`: items, monsters, spells, quests, guild quests, guilds, climates, stones, endings, the atlas and the maps), as content builds them and read-only; content fills them (`TABLES`) and the app hands them in, the game, the world and the fight carrying them (`g.tables`, `w.tables`, `CombatState.tables`, #973); types alone |
 | `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen; a save that will not load gives its reason (`load`, #945) |
 | `game/keys.ts` | the keys a save keeps things by, each spelt once: a den's look (`lookKey`), the ids a feature is spent and an inscription read by (`spentId`, `readId`), a seeking quest's id (`seekId`), the flags of a spell hall paid (`guildFlag`), of the glove's line (`GLOVE_FLAG`) and of a guild quest taken and done and a rank kept (`takenFlag`, `doneFlag`, `rankFlag`), each a `Flag` (#995); and a den's brood's `until` (`denBurnt`), which the maps import, and the respawn figures they name (`RESPAWN`, #968). It imports only types, so any module may load it first; each old home gives its keys on (#896) |
@@ -1251,8 +1251,8 @@ Decided by the builder for #971, each the owner's to overturn:
 4. **The donation short of gold says nothing,** as the chapel did; every other refusal says the
    screen's own line.
 5. **`sell` takes the item table first,** as #973 passes every table; `sellPrice` still finds a
-   Merchant through `skilled`, and the hall reads `spellsFor` and `spell`, as the screen did: #973's
-   and #974's to pass in.
+   Merchant through `skilled`, and the hall reads `spellsFor` and `spell`, as the screen did: #973
+   and #974 passed them in (`hallOffers`, `learnSpell` and `train` take the spells).
 6. **`stay` returns the flag of the night it counts** (`set`), which Rimewater's four nights check;
    `stayNight` stays in `party.ts`, where a camp's nights call it too.
 7. **The walkthroughs take the night's price from `nightCost` and the spell from `hallOffers`** (the
@@ -1273,7 +1273,7 @@ Decided by the builder for #978, each the owner's to overturn:
    for nothing. No fight names them: the menu leaves food out, the bot draws on heal and cure.
 5. **The well and the explore spells are `drinkWell` and `castExplore` in `wilds.ts`,** which now
    takes `spells.ts` and `combat.ts` (`castOnParty`) at run time, with no cycle. `castExplore` reads
-   `spell(id)` as `Game` did: #974's to pass in.
+   `spell(id)` as `Game` did, until #974 passed the spells in (`world.tables.spells`).
 6. **`Game.castExplore` goes.** The spell screen calls the rule, says its lines and calls
    `enterCell` where the party moved, as the method did after a portal or a return to the mark.
 7. **`meetCalled` sits in `combat.ts` beside `call`,** taking `Pick<World, 'meet'>` by a type
