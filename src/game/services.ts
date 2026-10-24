@@ -4,8 +4,8 @@
 // each returns whether it was done, the gold that changed hands and the line the screen says, as `learn`
 // (game/skills.ts) returns its line. The screens (ui/screens.ts) draw the menus and say the line, and
 // the walkthroughs call the same rules instead of writing them out again. Each changes only what it is
-// handed, so a test serves as the game does, without a Game; it still reads the item and spell tables
-// through `sellPrice`, `spell`, `spellsFor` and `levelUp` until #973 and #974 pass them in.
+// handed, so a test serves as the game does, without a Game; it still reads the spell table through
+// `spell`, `spellsFor` and `levelUp` until #974 passes it in.
 import type { Feature } from './map.ts';
 import type { World } from './world.ts';
 import type { Character, Party } from './party.ts';

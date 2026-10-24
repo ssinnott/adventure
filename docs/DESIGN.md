@@ -423,7 +423,8 @@ Decided by the builder for #855, each the owner's to overturn:
 1. A raise is borne as a resistance is: `borne` states the rule and `resists` reads it; `statOf`
    counts by it without making the list, since every blow and every AC reads it, and looks nothing
    up while no slotted or no slotless item raises a stat (kept by the table it is handed, so a
-   test's fixture, a table of its own, has its own, #973). Reading every slot cost the gate 15% more time.
+   test's fixture, a table of its own, has its own, #973). Reading every slot cost the gate 15%
+   more time.
 2. A level gained reads the bare stat, Endurance's hit points and the spell stat's points alike: a
    raise lasts while it is borne, and a gain made with it would outlast it.
 3. A blow's die never pierces: a sorcerer's piercing is its spells' (§7 Ranks).

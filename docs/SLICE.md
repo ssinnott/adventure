@@ -790,8 +790,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   in the full run. After every suite the runner finds the item and monster tables as they were, each
   entry by identity, and fails a suite that leaves one added, removed or replaced, by name (#946); a
   suite lends a monster through `withDefs` (`lib.ts`) and an item by a table of its own
-  (`tablesWith`, `tools/kit/headless.ts`, #973), content's never written. `layers` holds the imports to the layers
-  (EXPANSION §8.1, #900). Each area's
+  (`tablesWith`, `tools/kit/headless.ts`, #973), content's never written. `layers` holds the
+  imports to the layers (EXPANSION §8.1, #900). Each area's
   `checks.ts`, found by its file as its walkthrough is (`tools/kit/checks.ts`), holds the rows the suites
   keep of it that are its own and no part of the game, what it owes, its rungs of the ladder, its lead
   over the road, its seams as built and its edges open on nothing (`AreaChecks`); what describes a

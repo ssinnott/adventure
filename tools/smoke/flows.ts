@@ -358,11 +358,10 @@ export async function questlog({ page, ok }: Run): Promise<void> {
 // first answer hands over a letter, which is read from the pack. Nothing of it stays.
 export async function asked({ page, ok }: Run): Promise<void> {
   const top = (): Promise<{ screen: string; text: string; title: string }> => page.evaluate(() => { const t = window.__game!.game!.top as Shown; return { screen: t.constructor.name, text: t.text ?? '', title: t.title ?? '' }; });
-  await page.evaluate(async () => {
-    const load: Load = (p) => import(p);
-    const C = await load<typeof import('../../src/content/index.ts')>('/src/content/index.ts');
-    (C.ITEMS as Record<string, (typeof C.ITEMS)[string]>).fx_letter = { id: 'fx_letter', name: 'A Sealed Letter', slot: 'none', price: 0, text: ['To Captain Hale, at the pass.', '"The riders cross the ford by night."'] };
+  await page.evaluate(() => {
     const g = window.__game!.game!, fx = (f: string): Flag => f as Flag;
+    // The letter is lent on a table of the game's own (#973): content's is never written.
+    (g as { tables: typeof g.tables }).tables = { ...g.tables, items: { ...g.tables.items, fx_letter: { id: 'fx_letter', name: 'A Sealed Letter', slot: 'none', price: 0, text: ['To Captain Hale, at the pass.', '"The riders cross the ford by night."'] } } };
     g.world.travel('harrow', 9, 6, 0);
     // Words after a flag nobody has set are not said: the first lines are.
     g.talk({ kind: 'npc', x: 9, y: 5, name: 'Captain Fixture', lines: ['"Riders, by night."'], says: [{ after: { flag: fx('fx_never') }, lines: ['"Not yet."'] }],
@@ -390,7 +389,7 @@ export async function asked({ page, ok }: Run): Promise<void> {
     // Whatever went wrong above, the rest of the run starts in the street.
     while (g.screens.length > 1) g.pop();
     if (g.party.bag.includes('fx_letter')) g.party.bag.splice(g.party.bag.indexOf('fx_letter'), 1);
-    delete g.party.flags.fx_write; delete (C.ITEMS as Record<string, (typeof C.ITEMS)[string]>).fx_letter;
+    delete g.party.flags.fx_write; (g as { tables: typeof g.tables }).tables = C.TABLES;
     return top;
   });
   ok(words.screen === 'MessageScreen' && words.text === '"Riders, by night."' && question.screen === 'ChoiceScreen' && question.text === 'Shall I write to Hale?' && choiceColours > 20,

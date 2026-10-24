@@ -1033,11 +1033,12 @@ Decided by the builder for #900, each the owner's to overturn:
 4. **A row is `importer > imported`,** however often the import is written, under the first rule it
    breaks: the walkthroughs' and the suites', the layers, the areas. A cycle is one row, `cycle: `
    and its files sorted, a strongly connected component of `src`'s graph.
-5. **The keys are the plan's:** L3 the monsters and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
-   `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
-   imports of `src/input.ts`; H8 a walkthrough taking another's chain (`STEPS`, and Saltreach's
-   two orders of play), keyed K8 until #985 moved `tools/walk.ts` into the kit. L8 and L9 hold
-   none: `src/game` takes a screen only in the pilot and `game.ts`.
+5. **The keys are the plan's:** L3 the monsters and spells, L4 the guilds and ranks, L5 the
+   climates, stones, endings and `quests.ts` (its `MAP_DEFS` goes with the atlas, the last table);
+   L6 the pilot's; L7 `game.ts`'s and the screens' imports of `src/input.ts`; H8 a walkthrough
+   taking another's chain (`STEPS`, and Saltreach's two orders of play), keyed K8 until #985 moved
+   `tools/walk.ts` into the kit. L8 and L9 hold none: `src/game` takes a screen only in the pilot
+   and `game.ts`.
 6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
    `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
    modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).

@@ -425,9 +425,8 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       s.log.push(`${c.name} braces.`);
       break;
     case 'use': {
-      // The fight carries no item table until #973 hands it one: it reads the item as the rest of it does and lends `useItem` that.
       const d = item(s.tables.items, action.itemId), target = party.members[action.target];
-      const said = target ? useItem({ [d.id]: d }, party, c, d.id, target) : null;
+      const said = target ? useItem(s.tables.items, party, c, d.id, target) : null;
       if (!said) return false;
       s.log.push(...said);
       break;
