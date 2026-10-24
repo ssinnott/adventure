@@ -1092,6 +1092,7 @@ does.
 | `game/prestige.ts` | a prestige's trainer: who the company has of the class, each one's bar (the level, the prestige before, the third's quest, the gold), and teaching it; pure |
 | `game/mastery.ts` | the weapon and magic tiers: who takes which line, the levels and prices (`TIER_PRICES`), each member's bar, the offers (a trainer's Expert, a Master's person's) and teaching a tier; what a tier does is `party.ts`'s (`armsBonus`, `tierSteps`); pure |
 | `game/skills.ts` | the secondary skills (`SKILLS`, all twelve, Linguist the first): a member's list, who has one (learnt, or born to it by people or class) and who does its work for the company (`skilled`, a carried item too), the skills a guild's halls teach, the menu's two levels (a hall's skills, then a skill's six), each member's bar, and learning one; pure |
+| `game/services.ts` | the town's services (#971): an inn's night (`nightCost`; `stay` pays, rests the company, sleeps the world to morning and counts the night) and its ten rations (`buyRations`), a temple's cure (`cure`, at `templePrice`) and the donation (`donate`), selling back (`sell`, handed the item table: an artifact refused), a spell hall's fee, offers and purchase (`payFee`, `hallOffers`, `learnSpell` at `spellPrice`) and a trainer's visit (`train`: one level a visit for `trainPrice`, never past the trainer, to those `mayTrain` takes). Each returns whether it was done, what it charged and the screen's line (`Served`); the screens and the walkthroughs call them, and `tools/tests/services.ts` holds them; pure |
 | `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`, given on from `game/keys.ts`) and the places the world map pins once read (`readMarks`); pure |
 | `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds, half once its `half` does and half again for a Navigator), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
@@ -1112,7 +1113,7 @@ does.
 | `ui/frame.ts` | layout constants, status strip (time, date, the sky and its glyph), automap (whole, or a window round the party on the outdoors; a spent feature gone from it, a den standing or burnt), party cards, log, purse; the groups the automap marks (`markedGroups`: in view or near, and what Spirit Sense and Danger Sense mark) |
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
-| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it and a piece's words as it is taken up, the skills a member has, an artifact's power on its slot's line or a carried one's own, the column laid out by `sheetRows` above `SHEET_FOOT`), spell picker, inn/temple/shop/guild/trainer, a business's first menu (`businessEntries`), a guild's work at its hall and its skills there (`skillMenu`, two levels) or from a person (`learnerMenu`), and the visit that frames them (`InteriorScreen`) |
+| `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it and a piece's words as it is taken up, the skills a member has, an artifact's power on its slot's line or a carried one's own, the column laid out by `sheetRows` above `SHEET_FOOT`), spell picker, inn/temple/shop/guild/trainer (each draws its menu and says what its rule in `game/services.ts` returns, with no sum of its own), a business's first menu (`businessEntries`), a guild's work at its hall and its skills there (`skillMenu`, two levels) or from a person (`learnerMenu`), and the visit that frames them (`InteriorScreen`) |
 | `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver), its monsters where `ui/row.ts` seats them; the spells an artifact borne casts beside a member's own, with the castings left; the auto-fight (`auto`: `game/bot.ts` plays the company's turns by what the fight has shown (the three from level 11, `PLAYED`) and leaves the finished fight, until a key takes it back) |
 | `ui/row.ts` | the fight's row: each monster's place across the view and the height it is drawn, spaced by the drawings' spans, every one whole inside the view and none over more than a third of the next (`seatRow`, `OVERLAP`); pure |
@@ -1157,3 +1158,23 @@ Decided by the builder for #896, each the owner's to overturn:
    climbs and swims by them only while the learner stands.
 6. **The fifteen loads start at once,** each in its own process, as the structure suite begins, and are
    read at its end; the areas' indexes are found from `AREAS`.
+
+Decided by the builder for #971, each the owner's to overturn:
+
+1. **Each service returns `{ done, paid, line }`** (`Served`), as `learn` returns its line: `done`
+   because the hall's fee screen goes on to the offers only once paid, `paid` because the walkthroughs
+   print what was charged, and `line` empty where the screen says nothing.
+2. **`train` charges a purse** (`Pick<Party, 'gold'>`) and takes the trainer's level. A walkthrough
+   that trained a copy and charged nobody (Ashfall's, the Kilns' two, Rimewater's) hands it a copy of
+   the purse, so the company walks on as it was; Sunderwood's, which charged the company, hands it that.
+3. **`train` refuses, saying nothing, one the trainer does not take** (`mayTrain`: ready by the xp,
+   under the trainer's level and standing), the rule the screen bars the row by; the screen reads it.
+4. **The donation short of gold says nothing,** as the chapel did; every other refusal says the
+   screen's own line.
+5. **`sell` is handed the item table;** `sellPrice` still finds a Merchant through `skilled`, and the
+   hall reads `spellsFor` and `spell`, as the screen did: L2's and L3's to pass in.
+6. **`stay` returns the flag of the night it counts** (`set`), which Rimewater's four nights check;
+   `stayNight` stays in `party.ts`, where a camp's nights call it too.
+7. **The walkthroughs take the night's price from `nightCost` and the spell from `hallOffers`** (the
+   caster's offer of it) before `learnSpell`, and every `ok` line reads as it did. The pilot's
+   `INN_RATIONS` keeps its name and is the rule's `RATIONS_PRICE`.
