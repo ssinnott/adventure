@@ -29,8 +29,7 @@ const KEYS = {
   L6: 'the pilot moved to src/app',
   L7: 'Game, its screen stack and input moved to src/app, the screens given a Host',
   split: 'the big modules split: party.ts into its tables, conditions and levels, so skills.ts loads no items',
-  K7: 'tools/kit/: the walk, the fights and the company the walkthroughs and suites take',
-  K8: "the walkthroughs as scenes: a chain takes an area's steps.ts, not its walkthrough",
+  K8: "the walkthroughs as scenes: a chain takes an area's steps.ts, not its walkthrough, and the walk (tools/walk.ts) the walkthroughs and three suites take goes into tools/kit/",
 } as const;
 type Key = keyof typeof KEYS;
 
@@ -101,32 +100,30 @@ const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
   split: [
     'cycle: src/game/items.ts src/game/party.ts src/game/skills.ts',
   ],
-  K7: [
+  K8: [
     'src/content/areas/ashfall/walkthrough.ts > tools/walk.ts',
     'src/content/areas/cairnmoor/walkthrough.ts > tools/walk.ts',
     'src/content/areas/glasswold/walkthrough.ts > tools/walk.ts',
     'src/content/areas/hearth/walkthrough.ts > tools/walk.ts',
     'src/content/areas/kilns/walkthrough.ts > tools/walk.ts',
     'src/content/areas/rimewater/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/saltreach/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/shelf/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/sunderwood/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/thornmark/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/whitespine/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/wrackholm/walkthrough.ts > tools/walk.ts',
-    'tools/tests/monsters.ts > tools/walk.ts',
-    'tools/tests/pilot.ts > tools/walk.ts',
-    'tools/tests/survival.ts > tools/walk.ts',
-  ],
-  K8: [
     'src/content/areas/saltreach/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
     'src/content/areas/saltreach/walkthrough.ts > src/content/areas/thornmark/walkthrough.ts',
+    'src/content/areas/saltreach/walkthrough.ts > tools/walk.ts',
+    'src/content/areas/shelf/walkthrough.ts > tools/walk.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/saltreach/walkthrough.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/thornmark/walkthrough.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/wrackholm/walkthrough.ts',
+    'src/content/areas/sunderwood/walkthrough.ts > tools/walk.ts',
     'src/content/areas/thornmark/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
+    'src/content/areas/thornmark/walkthrough.ts > tools/walk.ts',
+    'src/content/areas/whitespine/walkthrough.ts > tools/walk.ts',
     'src/content/areas/wrackholm/walkthrough.ts > src/content/areas/saltreach/walkthrough.ts',
+    'src/content/areas/wrackholm/walkthrough.ts > tools/walk.ts',
+    'tools/tests/monsters.ts > tools/walk.ts',
+    'tools/tests/pilot.ts > tools/walk.ts',
+    'tools/tests/survival.ts > tools/walk.ts',
   ],
 };
 
