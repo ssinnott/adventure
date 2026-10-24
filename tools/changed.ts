@@ -34,11 +34,12 @@ export function changedFiles(base: string): string[] {
  * neither the dispatcher (ui/sprites.ts) nor a family counts (#915). The one file of the folder it
  * does paint with is monsters/common.ts (`B` and `stroke`), so that counts, and the monsters' kit's
  * common.ts it re-exports; so do the paint kit's brush and the ink its outline takes (#983); so does
- * game/ink.ts, how a cell is drawn (`drawnCell`), which the painter and the sweep's plan both read.
+ * game/ink.ts, how a cell is drawn (`drawnCell`), which the painter and the sweep's plan both read;
+ * and tools/kit/browser.ts, the Chromium and the page the smoke's sweep paints in (#986).
  */
 const EVERY_MAP = [
   /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/paint\/(brush|ink)\.ts$/, /^src\/ui\/monsters\/(kit\/)?common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|ink)\.ts$/,
-  /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed|sweep|kit\/sweep)\.ts$/,
+  /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed|sweep|kit\/(sweep|browser))\.ts$/,
 ];
 const MAP_FILE = /^src\/content\/areas\/[^/]+\/maps\/[^/]+\.ts$/;
 
