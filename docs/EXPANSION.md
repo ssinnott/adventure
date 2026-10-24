@@ -1115,6 +1115,48 @@ Decided by the builder for #983, each the owner's to overturn:
 7. **The rooms' kit is no area's folder:** the changed suite's check that each folder of
    `src/ui/interiors/` is an area's, its registry keying the area's rooms, skips `kit/` by name.
 
+The tools that open the game in Chromium (the smoke, the sheet, the gallery, the interiors, the
+world map and `shot.ts`) start it in one place, `tools/kit/browser.ts` (#986), which imports
+Playwright by name as the pinned dependency it is (§8.3), launches it once with its fallback and
+opens the game on a page, its errors gathered and, for the smoke and the sheet, its `Math.random`
+pinned. The sheet, the gallery, the interiors and the world map read their command lines strictly by
+`tools/kit/args.ts`, which `tools/tests/args.ts` holds. `types/globals.d.ts` types the page's game,
+so the tools read it as the `Game` it is.
+
+Decided by the builder for #986, each the owner's to overturn:
+
+1. **Each tool serves the tree and hands the port in:** the kit takes src only, so `browser.ts`
+   cannot take `tools/server.ts`. Each of the six keeps its three lines that start the server on a
+   port of its own, and `node tools/server.ts` (`npm run dev`) is as it was; moving the server's
+   library into the kit would move the file `npm run dev` names to save three lines a tool.
+2. **A page's errors are gathered one way,** a page error or a console error, each named so
+   (`pageerror: `, `console: `), as the smoke and the sheet had them; the gallery, the interiors,
+   the world map and `shot.ts` took page errors alone, unnamed. The game writes no console error of
+   its own (`src/` has none outside `src/lib/`), so their runs print what they did. The full
+   Chromium of the fallback asks for `/favicon.ico`, which the tree lacks, and its 404 is a console
+   error: the kit answers it with nothing.
+3. **The four tools' tables stand in `tools/kit/args.ts` beside the reading,** not in the tools: a
+   suite takes no tool and a tool runs as it loads, so the suite reads them there. Each tool keeps
+   its defaults (its output path among them) and the meaning of each flag; the sheet's usage line
+   and refusals are word for word.
+4. **The output path is the one word that is neither a flag nor a flag's value, wherever it
+   stands.** The gallery and the interiors took the first word that was not a flag, so a flag's
+   value could be the path: `gallery.ts --family wolf` wrote a file named `wolf` and
+   `interiors.ts --only green_man out.png` one named `green_man`; the interiors also passed over a
+   path starting with a digit (`interiors.ts 2x.png --only green_man` wrote `green_man` too). The
+   first now writes the default and the others their path. Every line in the form of the usage lines
+   reads as it did, which the suite holds against each tool's old reading.
+5. **A page's import is typed by `Load`, a type in `tools/kit/browser.ts`:** a page function cannot
+   close over the tool's, so each binds it (`const load: Load = (p) => import(p);`) and each call
+   names the module's type, its path a literal as before.
+6. **The smoke names what it reaches into, all of it erased before the page sees it:** `Shown`, the
+   fields it reads off a screen that `Screen` does not name; casts that write what the game keeps
+   read-only (a map's features and landmarks, the item table and the painted flames); the world's
+   private cached sky and the input's queue by their names (`w['cached']`, `['queue']`), the sky set
+   to `null` where it was `undefined`, as a flag set to `true` is now `1`: the game tests both for
+   truth. Its five lines left with `any` (the lighthouse's and the tents' records and an early
+   return's `wold`) are H9's.
+
 ### 8.2 The recipe for a zone map
 
 1. **Brief**, in `docs/areas/<area>.md`: purpose, band, landmarks, the secret and its hint, the
