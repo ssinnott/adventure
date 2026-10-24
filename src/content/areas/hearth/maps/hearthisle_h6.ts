@@ -26,7 +26,7 @@ export const PILGRIMS = 'q_bowl_pilgrims';
 /** The pilgrims' tokens, each carried down for its claimant (57): a piece at the Council, and the fallback for the Stair and the core. */
 export const TOKEN_COUSIN = 'q_token_cousin', TOKEN_HOLD = 'q_token_hold', TOKEN_TALLIS = 'q_token_tallis';
 /** Whoever holds the Stair's first landing: the Council's verdict for a claimant, or a pilgrim's token (§4.1). */
-export const HELD: readonly QuestCond[] = [THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS].map((flag) => ({ flag }));
+export const HELD: readonly QuestCond[] = ([THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS] as const).map((flag) => ({ flag }));
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 

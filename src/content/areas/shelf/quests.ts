@@ -9,9 +9,10 @@
 import type { QuestDef } from '../../../game/quests.ts';
 import { CASES, CASE_COUSIN, CASE_FAILED, CASE_HOLD, CASE_NOBODY, CASE_TALLIS, CASE_WENNA, EARLY, LATE, SAT, THRONE_COUNCIL, THRONE_WENNA } from './maps/keep.ts';
 import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from './public.ts';
+import type { Flag } from '../../index.ts';
 
 /** A verdict's entries: as the Council sat, or as its twin did after the relit or the finished ending. */
-const verdict = (id: string, flag: string, chair: string) => [
+const verdict = (id: string, flag: Flag, chair: string): QuestDef['entries'] => [
   { id, when: { flag: [flag, EARLY] }, text: `The Council sat, and ${chair}. The Regent was not in the keep when they came for him.` },
   { id: `${id}_irons`, when: { flag: [flag, LATE] }, text: `The Council sat, and ${chair}. Vask stood before it in irons.` },
 ];

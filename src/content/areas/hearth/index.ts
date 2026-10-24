@@ -2,6 +2,7 @@
 // isle, the temple, its crypt, the Underdeep's Ways and Stair and the Heart. docs/areas/hearth.md
 // is its state, and docs/areas/hearth/ holds its plan and decisions.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { HEARTHISLE_H6 } from './maps/hearthisle_h6.ts';
 import { HEARTHISLE_I6 } from './maps/hearthisle_i6.ts';
 import { HEARTHFANE } from './maps/hearthfane.ts';
@@ -17,6 +18,7 @@ import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
 
 export const MAPS = [HEARTHISLE_H6, HEARTHISLE_I6, HEARTHFANE, HEARTHFANE2, UNDERDEEP, UNDERDEEP2, CORE] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'hearth' as const,
@@ -25,6 +27,7 @@ export const AREA = {
   // altar (#756); the Ways, through the crypt's grey door (#757); the Stair, through the Ways' last door
   // (#758); the Heart, through the Stair's last door (#759).
   maps: MAPS,
+  flags: FLAGS,
   // Drawn ahead of the area (#761), and placed from the isle on: the hearth moth, the ashen champion and
   // preacher and the deep rat first (#753).
   monsters: MONSTERS,

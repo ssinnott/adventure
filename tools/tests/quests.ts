@@ -23,7 +23,7 @@ import type { MapDef } from '../../src/game/map.ts';
 import { FIXTURE, LAIR } from '../kit/rules/enclave.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { once } from '../kit/checks.ts';
-import { ok, owed, fxMap, fxKey } from './lib.ts';
+import { ok, owed, fxMap, fxKey, fxFlag } from './lib.ts';
 import { condFaults, featureFlags, unset } from '../kit/rules/quests.ts';
 
 /**
@@ -60,11 +60,11 @@ export function quests(): void {
   const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap(featureFlags)));
   for (const [f, whose] of Object.entries(unset.all)) owed(setBy.has(f), `flag ${f} is set by someone`, whose);
   ok(...once('every flag owed its setting is owed once', unset.twice));
-  ok(!condFaults({ flag: Object.keys(unset.all)[0] }).length && condFaults({ flag: 'fx_never_set' }).join() === 'flag fx_never_set',
+  ok(!condFaults({ flag: fxFlag(Object.keys(unset.all)[0]) }).length && condFaults({ flag: fxFlag('fx_never_set') }).join() === 'flag fx_never_set',
     'a flag owed to an issue names something real, and one nobody sets or owes does not');
   const crossing: MapDef = { id: 'fx_shore', name: 'Fixture', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH }, rows: [',,'],
-    features: [{ kind: 'event', x: 0, y: 0, id: 'fx_crossing', text: 'Riders.', once: true, sets: 'fx_crossed' }] };
-  ok(!condFaults({ flag: 'fx_crossed' }, [crossing]).length && condFaults({ flag: 'fx_crossed' }, []).join() === 'flag fx_crossed',
+    features: [{ kind: 'event', x: 0, y: 0, id: 'fx_crossing', text: 'Riders.', once: true, sets: fxFlag('fx_crossed') }] };
+  ok(!condFaults({ flag: fxFlag('fx_crossed') }, [crossing]).length && condFaults({ flag: fxFlag('fx_crossed') }, []).join() === 'flag fx_crossed',
     'a flag an event sets names something real, as one a person sets does');
   // goalMap (#720): the map the shown goal is done on, read back from the goal, as the chapter moves.
   const shelf = AREAS.find((a) => a.id === 'shelf')!.chapter!, gp = defaultParty(makeRng(4)), gw = new World(buildMaps(), gp, makeRng(4));
@@ -78,8 +78,8 @@ export function quests(): void {
   ok(hired.length === 2 && firstGoal.length === 2 && firstGoal.every((v) => v.goal === shelf.goals[0].text) && firstAt.every((m) => m === shelf.goals[0].at) && hiredAt.every((m) => m === named) && named !== shelf.goals[0].at,
     `goalMap gives the map the shown goal names, in the one quest and in a quest of its own: ${hiredAt.join(' and ')} once hired, then ${firstAt.join(' and ')} for the chapter's first goal (${shelf.goals[0].at})`);
   // finishedBy (#979): the quest or chapter whose end names a flag, as the world map letters a gate.
-  const side: QuestDef = { id: 'fx_side', title: 'The Side', start: { flag: 'fx_side' }, done: [{ item: 'fx_key' }, { flag: ['fx_seal', 'fx_side_done'] }], entries: [], goals: [] };
-  const chapter: Chapter = { ...shelf, id: 'fx_chapter', title: 'The Chapter', done: { flag: 'fx_chapter_done' } };
+  const side: QuestDef = { id: 'fx_side', title: 'The Side', start: { flag: fxFlag('fx_side') }, done: [{ item: 'fx_key' }, { flag: [fxFlag('fx_seal'), fxFlag('fx_side_done')] }], entries: [], goals: [] };
+  const chapter: Chapter = { ...shelf, id: 'fx_chapter', title: 'The Chapter', done: { flag: fxFlag('fx_chapter_done') } };
   // Of two whose ends name a flag, the first: three end on q_tide_home, and its gate takes the first's title.
   const later: QuestDef = { ...side, id: 'fx_later', title: 'The Later' };
   const ends: readonly LogQuest[] = [{ id: 'fx_whole', title: 'Whole', chapters: [chapter] }, side, later];
@@ -168,9 +168,9 @@ export function quests(): void {
   { // Five chapters (#167): each reads on its own page or pages, in road order and headed by its own
     // numeral, title and goal; J opens on the newest, the goal's, and the earlier are turned back to.
     const chapter = (i: number, n = 2): Chapter => ({
-      id: `fx_c${i}`, title: `Chapter ${i}`, start: { flag: `fx_c${i}` }, done: { flag: `fx_c${i}_done` },
-      entries: Array.from({ length: n }, (_, k) => ({ id: `fx_c${i}_e${k}`, when: { flag: `fx_c${i}` }, text: `Chapter ${i}, entry ${k}: ${THE_QUEST.chapters[0].entries[0].text}` })),
-      goals: [{ when: { flag: `fx_c${i}` }, text: `Go on with chapter ${i}.`, at: 'harrow' }],
+      id: `fx_c${i}`, title: `Chapter ${i}`, start: { flag: fxFlag(`fx_c${i}`) }, done: { flag: fxFlag(`fx_c${i}_done`) },
+      entries: Array.from({ length: n }, (_, k) => ({ id: `fx_c${i}_e${k}`, when: { flag: fxFlag(`fx_c${i}`) }, text: `Chapter ${i}, entry ${k}: ${THE_QUEST.chapters[0].entries[0].text}` })),
+      goals: [{ when: { flag: fxFlag(`fx_c${i}`) }, text: `Go on with chapter ${i}.`, at: 'harrow' }],
     });
     const five = { id: 'fx_five', title: THE_QUEST.title, chapters: [chapter(1), chapter(2), chapter(3, 14), chapter(4), chapter(5)] };
     const rng = makeRng(167), party = defaultParty(rng), world = new World(buildMaps(), party, rng);

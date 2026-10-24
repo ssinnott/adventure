@@ -11,7 +11,7 @@ import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, personFlags, personGives, groupFlags } from '../../src/game/people.ts';
 import { areaRows, gather, once, unknownFields } from '../kit/checks.ts';
-import { ok, owed, stopsWalk, fxMap } from './lib.ts';
+import { ok, owed, stopsWalk, fxMap, fxFlag } from './lib.ts';
 
 /**
  * What is drawn before the map that places it, owed by its area to the issue whose map places it
@@ -235,18 +235,18 @@ export function maps(): void {
   const unset = unsetGates(MAP_DEFS);
   ok(!unset.length, `every gated exit's flag is set by some person, group or event${unset.length ? ' -> ' + unset.join('; ') : ''}`);
   { // The rule on a fixture (#749): a flag a group's fall or an event sets counts, one nothing sets fails.
-    const fx = (more: Partial<MapDef>): MapDef => ({ id: 'fx_gated', name: 'Fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: fxMap('fx_gated'), tx: 1, ty: 1, needFlag: 'fx_flag' }], ...more });
-    ok(!unsetGates([fx({ encounters: [{ id: 'fx_g', x: 2, y: 1, monsters: ['rat'], sets: 'fx_flag' }] })]).length, 'a gated exit whose flag a group\'s fall sets passes');
-    ok(!unsetGates([fx({ features: [{ kind: 'event', x: 2, y: 1, id: 'fx_e', text: 'Hm.', sets: 'fx_flag' }] })]).length, 'and so does one whose flag an event sets');
+    const fx = (more: Partial<MapDef>): MapDef => ({ id: 'fx_gated', name: 'Fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: fxMap('fx_gated'), tx: 1, ty: 1, needFlag: fxFlag('fx_flag') }], ...more });
+    ok(!unsetGates([fx({ encounters: [{ id: 'fx_g', x: 2, y: 1, monsters: ['rat'], sets: fxFlag('fx_flag') }] })]).length, 'a gated exit whose flag a group\'s fall sets passes');
+    ok(!unsetGates([fx({ features: [{ kind: 'event', x: 2, y: 1, id: 'fx_e', text: 'Hm.', sets: fxFlag('fx_flag') }] })]).length, 'and so does one whose flag an event sets');
     ok(unsetGates([fx({})]).length === 1, 'and one whose flag nothing sets fails');
-    ok(!unsetGates([fx({ features: [{ kind: 'camp', x: 2, y: 1, text: 'Ashes.', nights: [{ sets: 'fx_flag' }] }] })]).length, 'and so does one whose flag a camp\'s night sets (#730)');
+    ok(!unsetGates([fx({ features: [{ kind: 'camp', x: 2, y: 1, text: 'Ashes.', nights: [{ sets: fxFlag('fx_flag') }] }] })]).length, 'and so does one whose flag a camp\'s night sets (#730)');
   }
   { // The nights a camp counts (#730): each sets a flag of its own and says no blank line.
     const camp = (nights: Extract<Feature, { kind: 'camp' }>['nights']): MapDef => ({ id: 'fx_camp', name: 'Fixture', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH }, rows: [',,'], features: [{ kind: 'camp', x: 1, y: 0, text: 'Ashes.', nights }] });
     const faults = MAP_DEFS.flatMap(nightFaults), counting = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'camp' && f.nights?.length)).length;
     ok(!faults.length, `every night a camp counts sets a flag of its own and says no blank line (${counting} camps count nights)${faults.length ? ' -> ' + faults.join('; ') : ''}`);
-    ok(!nightFaults(camp(undefined)).length && !nightFaults(camp([])).length && !nightFaults(camp([{ sets: 'fx_one', says: ['Rain.'] }, { sets: 'fx_two', after: { flag: 'fx_one' } }])).length, 'a camp with no nights, none or two of its own passes');
-    ok(nightFaults(camp([{ sets: ' ' }])).length === 1 && nightFaults(camp([{ sets: 'fx_one' }, { sets: 'fx_one' }])).length === 1 && nightFaults(camp([{ sets: 'fx_one', says: ['Rain.', ' '] }])).length === 1, 'and a night that sets no flag, two that set the same and one that says a blank line each fail');
+    ok(!nightFaults(camp(undefined)).length && !nightFaults(camp([])).length && !nightFaults(camp([{ sets: fxFlag('fx_one'), says: ['Rain.'] }, { sets: fxFlag('fx_two'), after: { flag: fxFlag('fx_one') } }])).length, 'a camp with no nights, none or two of its own passes');
+    ok(nightFaults(camp([{ sets: fxFlag(' ') }])).length === 1 && nightFaults(camp([{ sets: fxFlag('fx_one') }, { sets: fxFlag('fx_one') }])).length === 1 && nightFaults(camp([{ sets: fxFlag('fx_one'), says: ['Rain.', ' '] }])).length === 1, 'and a night that sets no flag, two that set the same and one that says a blank line each fail');
   }
   // The Deepthorn's monsters are harder, not more: no group on its maps is above eight, as its zone says
   // (`AtlasZone.maxGroup`).
@@ -288,16 +288,16 @@ export function maps(): void {
     const keeper: Feature = { ...person, name: 'The Keeper', interior: INTERIORS[1] };
     const town = (features: Feature[]): GameMap => new GameMap({ id: 'fx_town', name: 'Fixture', kind: 'town', start: { x: 1, y: 2, facing: NORTH }, rows: ['#####', '#,D,#', '#,,,#', '#####'], features });
     ok(!doorwayFaults(town([inn, person, event])).length && !doorwayFaults(town([keeper, person])).length, 'a person or an event after the business on its doorway passes, a tavern keeper who is the business too');
-    ok(doorwayFaults(town([person, inn])).length > 0 && doorwayFaults(town([inn, keeper])).length === 1 && doorwayFaults(town([person])).length === 1 && doorwayFaults(town([{ ...keeper, until: { flag: 'fx_gone' } }, person])).length === 1,
+    ok(doorwayFaults(town([person, inn])).length > 0 && doorwayFaults(town([inn, keeper])).length === 1 && doorwayFaults(town([person])).length === 1 && doorwayFaults(town([{ ...keeper, until: { flag: fxFlag('fx_gone') } }, person])).length === 1,
       'a person before the business, a second business, a doorway with no business and a business that comes and goes each fail');
-    const shut = { flag: 'fx_shut' }, notice: Feature = { ...event, id: 'fx_notice', text: 'Shut.', after: shut };
+    const shut = { flag: fxFlag('fx_shut') }, notice: Feature = { ...event, id: 'fx_notice', text: 'Shut.', after: shut };
     ok(!doorwayFaults(town([{ ...inn, until: shut }, notice])).length && !doorwayFaults(town([{ ...inn, until: shut }, { ...inn, price: 2, after: shut }, person])).length,
       'a business gone with a shut door\'s word after it passes, and so does one with a twin that takes its square on the same flag');
-    ok(doorwayFaults(town([{ ...inn, until: shut }, { ...notice, after: { flag: 'fx_other' } }])).length === 1 && doorwayFaults(town([{ ...inn, until: shut }, { ...inn, after: { flag: 'fx_other' } }])).length === 2,
+    ok(doorwayFaults(town([{ ...inn, until: shut }, { ...notice, after: { flag: fxFlag('fx_other') } }])).length === 1 && doorwayFaults(town([{ ...inn, until: shut }, { ...inn, after: { flag: fxFlag('fx_other') } }])).length === 2,
       'but not with the word or the twin on another flag');
     // A chain (#764, #765): the twin goes in its turn, as the inn does back to 12 gold once the Council has
     // sat; and a business may be back after a shut door's word, as the Chapel is for the hold's verdict.
-    const [one, two, three] = [{ flag: 'fx_one' }, { flag: 'fx_two' }, { flag: 'fx_three' }];
+    const [one, two, three] = [{ flag: fxFlag('fx_one') }, { flag: fxFlag('fx_two') }, { flag: fxFlag('fx_three') }];
     const b1 = { ...inn, until: one }, b2 = { ...inn, price: 2, after: one, until: two }, b3 = { ...inn, price: 3, after: two };
     const b3goes = { ...b3, until: three }, b4 = { ...inn, price: 4, after: three }, word: Feature = { ...event, id: 'fx_word', text: 'Shut.', after: one, until: two };
     ok(!doorwayFaults(town([b1, b2, b3, person])).length && !doorwayFaults(town([b1, b2, b3goes, b4, person])).length,

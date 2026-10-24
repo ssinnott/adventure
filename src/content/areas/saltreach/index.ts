@@ -2,6 +2,7 @@
 // the sea, the Tide Stone's country with its Stone gone, and Saltmouth. docs/areas/saltreach.md is
 // its brief.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { DELTA_D5 } from './maps/delta_d5.ts';
 import { DELTA_C5, C5_RIFT } from './maps/delta_c5.ts';
 import { DELTA_C4 } from './maps/delta_c4.ts';
@@ -32,6 +33,7 @@ import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { CHAPTER } from './chapter.ts';
 
 export const MAPS = [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4, UPPERWATER_C3, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, DROWNED_TEMPLES, DROWNED_TEMPLES2, SALTINGS_C6, SALTMOUTH, SALTINGS_C7, UPPERWATER_B3, DELTA_B4, UPPERWATER_C2, UPPERWATER_B2, UPPERWATER_A3, DELTA_A4, DELTA_A5, DELTA_A6, SALTINGS_B7, SALTINGS_D6] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'saltreach' as const,
@@ -42,6 +44,7 @@ export const AREA = {
   // then the fen's west shore and the fen under the rim, then the Scarp's foot west of the pans and the
   // plate's old place off Saltmouth.
   maps: MAPS,
+  flags: FLAGS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

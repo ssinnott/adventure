@@ -9,6 +9,7 @@ import type { QuestCond } from '../../../../game/quests.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { ENDED, ENDINGS } from '../../../endings.ts';
 import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, THRONE_REMOVED } from '../public.ts';
+import type { Flag } from '../../../index.ts';
 
 // The Empty Throne's end, the Council of Helmstow (#764; docs/areas/hearth.md §6): the case the
 // company makes to Wiglaf, and the verdicts. Every verdict but a failed case removes Vask.
@@ -16,9 +17,9 @@ export const CASE_COUSIN = 'q_case_cousin', CASE_HOLD = 'q_case_hold', CASE_TALL
 export const THRONE_WENNA = 'q_throne_wenna', THRONE_COUNCIL = 'q_throne_council';
 export const CASE_FAILED = 'q_case_failed';
 /** A case made: Wiglaf has written it down. */
-export const CASES: readonly QuestCond[] = [CASE_COUSIN, CASE_HOLD, CASE_TALLIS, CASE_WENNA, CASE_NOBODY].map((flag) => ({ flag }));
+export const CASES: readonly QuestCond[] = ([CASE_COUSIN, CASE_HOLD, CASE_TALLIS, CASE_WENNA, CASE_NOBODY] as const).map((flag) => ({ flag }));
 /** The Council has sat: any of its six verdicts. */
-export const SAT: readonly QuestCond[] = [THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, THRONE_WENNA, THRONE_COUNCIL, CASE_FAILED].map((flag) => ({ flag }));
+export const SAT: readonly QuestCond[] = ([THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, THRONE_WENNA, THRONE_COUNCIL, CASE_FAILED] as const).map((flag) => ({ flag }));
 
 // Wenna's three answers at the Heart (#759 sets them): the relit and the finished bring Vask up the stair in irons.
 const IRONS: readonly QuestCond[] = [{ flag: ENDINGS.reignite.flag }, { flag: ENDINGS.finish.flag }];
@@ -35,7 +36,7 @@ const both = (a: readonly QuestCond[], b: readonly QuestCond[]): QuestCond[] =>
   a.flatMap((x) => b.map((y) => ({ flag: [...[x.flag ?? []].flat(), ...[y.flag ?? []].flat()] })));
 
 /** A case carried: its flag and any two of the claimant's pieces (a piece may be one of several flags), or the signet given to the claimant. */
-function carried(made: string, pieces: readonly (readonly string[])[], signet?: string): QuestCond[] {
+function carried(made: Flag, pieces: readonly (readonly Flag[])[], signet?: Flag): QuestCond[] {
   const pairs = pieces.flatMap((a, i) => pieces.slice(i + 1).flatMap((b) => a.flatMap((x) => b.map((y) => ({ flag: [made, x, y] })))));
   return signet ? [...pairs, { flag: [made, signet] }] : pairs;
 }
@@ -65,7 +66,7 @@ const BY_DAY = { hours: 'day' } as const;
 export const EARLY = 'q_council_early', LATE = 'q_council_late';
 
 /** A verdict carried: its first words, and its twin's after the relit or the finished ending. */
-const sat = (carry: readonly QuestCond[], verdict: string, text: string): Words[] => [
+const sat = (carry: readonly QuestCond[], verdict: Flag, text: string): Words[] => [
   { after: carry, until: IRONS, sets: [verdict, THRONE_REMOVED, EARLY], lines: [`${text} The Regent is not in the keep when they come for him.`] },
   { after: both(carry, IRONS), sets: [verdict, THRONE_REMOVED, LATE], lines: [`${text} Vask stands before the Council in irons.`] },
 ];

@@ -2,7 +2,7 @@
 // area is its folder under areas/ and its line in AREAS (with the import above it); its drawings
 // and rooms are src/ui's (SPRITES in ui/monsters/index.ts, SCENES in ui/interior.ts), which the typecheck
 // holds to the lists here. The unions the game types its content with (MonsterSprite, Interior,
-// RegionId, MapId) are made from the areas, so nobody edits them by hand. The one quest is joined here
+// RegionId, MapId, Flag) are made from the areas, so nobody edits them by hand. The one quest is joined here
 // from the areas' chapters. The maps as played, with the outdoors laid out, are in ./maps.ts.
 import type { MapDef } from '../game/map.ts';
 import { landExits } from '../game/map.ts';
@@ -11,23 +11,24 @@ import type { ItemDef } from '../game/items.ts';
 import type { SpellDef } from '../game/spells.ts';
 import type { LogQuest, ChapteredQuest } from '../game/quests.ts';
 import type { GuildQuest } from '../game/guilds.ts';
-import type { Area } from './area.ts';
+import type { Area, Flags } from './area.ts';
 import { guildQuestDef } from './guilds.ts';
 import type { Climate } from '../game/weather.ts';
 import type { Atlas } from '../game/atlas.ts';
-import { AREA as shelf, MAPS as shelfMaps } from './areas/shelf/index.ts';
-import { AREA as thornmark, MAPS as thornmarkMaps } from './areas/thornmark/index.ts';
-import { AREA as saltreach, MAPS as saltreachMaps } from './areas/saltreach/index.ts';
-import { AREA as wrackholm, MAPS as wrackholmMaps } from './areas/wrackholm/index.ts';
-import { AREA as sunderwood, MAPS as sunderwoodMaps } from './areas/sunderwood/index.ts';
-import { AREA as kilns, MAPS as kilnsMaps } from './areas/kilns/index.ts';
-import { AREA as cairnmoor, MAPS as cairnmoorMaps } from './areas/cairnmoor/index.ts';
-import { AREA as rimewater, MAPS as rimewaterMaps } from './areas/rimewater/index.ts';
-import { AREA as whitespine, MAPS as whitespineMaps } from './areas/whitespine/index.ts';
-import { AREA as ashfall, MAPS as ashfallMaps } from './areas/ashfall/index.ts';
-import { AREA as glasswold, MAPS as glasswoldMaps } from './areas/glasswold/index.ts';
-import { AREA as hearth, MAPS as hearthMaps } from './areas/hearth/index.ts';
+import { AREA as shelf, MAPS as shelfMaps, FLAGS as shelfFlags } from './areas/shelf/index.ts';
+import { AREA as thornmark, MAPS as thornmarkMaps, FLAGS as thornmarkFlags } from './areas/thornmark/index.ts';
+import { AREA as saltreach, MAPS as saltreachMaps, FLAGS as saltreachFlags } from './areas/saltreach/index.ts';
+import { AREA as wrackholm, MAPS as wrackholmMaps, FLAGS as wrackholmFlags } from './areas/wrackholm/index.ts';
+import { AREA as sunderwood, MAPS as sunderwoodMaps, FLAGS as sunderwoodFlags } from './areas/sunderwood/index.ts';
+import { AREA as kilns, MAPS as kilnsMaps, FLAGS as kilnsFlags } from './areas/kilns/index.ts';
+import { AREA as cairnmoor, MAPS as cairnmoorMaps, FLAGS as cairnmoorFlags } from './areas/cairnmoor/index.ts';
+import { AREA as rimewater, MAPS as rimewaterMaps, FLAGS as rimewaterFlags } from './areas/rimewater/index.ts';
+import { AREA as whitespine, MAPS as whitespineMaps, FLAGS as whitespineFlags } from './areas/whitespine/index.ts';
+import { AREA as ashfall, MAPS as ashfallMaps, FLAGS as ashfallFlags } from './areas/ashfall/index.ts';
+import { AREA as glasswold, MAPS as glasswoldMaps, FLAGS as glasswoldFlags } from './areas/glasswold/index.ts';
+import { AREA as hearth, MAPS as hearthMaps, FLAGS as hearthFlags } from './areas/hearth/index.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
+import { FLAGS as CORE_FLAGS } from './flags.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
 
@@ -53,14 +54,34 @@ export type Interior = AnyArea['interiors'][number];
 type AreaMaps = typeof shelfMaps | typeof thornmarkMaps | typeof saltreachMaps | typeof wrackholmMaps | typeof sunderwoodMaps | typeof kilnsMaps
   | typeof cairnmoorMaps | typeof rimewaterMaps | typeof whitespineMaps | typeof ashfallMaps | typeof glasswoldMaps | typeof hearthMaps;
 export type MapId = AreaMaps[number]['id'];
+/**
+ * The flags by whose declaration holds them: each area's, of the flags it sets (its flags.ts), and the
+ * code's own, for the whole (./flags.ts). Made of the declarations, not of AREAS, as MapId is (#995).
+ */
+type Declared = {
+  shelf: keyof typeof shelfFlags; thornmark: keyof typeof thornmarkFlags; saltreach: keyof typeof saltreachFlags;
+  wrackholm: keyof typeof wrackholmFlags; sunderwood: keyof typeof sunderwoodFlags; kilns: keyof typeof kilnsFlags;
+  cairnmoor: keyof typeof cairnmoorFlags; rimewater: keyof typeof rimewaterFlags; whitespine: keyof typeof whitespineFlags;
+  ashfall: keyof typeof ashfallFlags; glasswold: keyof typeof glasswoldFlags; hearth: keyof typeof hearthFlags;
+  core: keyof typeof CORE_FLAGS;
+};
+/** A flag a save keeps, as the twelve fields that set or read one name it: one some declaration holds. */
+export type Flag = Declared[keyof Declared];
+/** The flags two of the declarations hold, each declaration's against the rest's: none, for the content's. */
+export type Twice<D extends Record<string, string>> = { [K in keyof D]: D[K] & D[Exclude<keyof D, K>] }[keyof D];
+/** `true` while no flag is declared twice, else the flags that are, so the typecheck names them. */
+export type Once<D extends Record<string, string>> = [Twice<D>] extends [never] ? true : Twice<D>;
 
 // The unions stay lists of names only while every area keeps its literals (`satisfies Area`, not
 // `: Area`, and each map `MapDef<'id'>`). Widened to string, SPRITES and SCENES would stop catching a
-// missing drawing or room and an exit a missing map, so a widened union fails the typecheck here.
+// missing drawing or room, an exit a missing map and a field a flag nobody declares, so a widened
+// union fails the typecheck here.
 type Narrow<T extends string> = string extends T ? false : true;
-export const NARROW: [Narrow<RegionId>, Narrow<MonsterSprite>, Narrow<Interior>, Narrow<MapId>] = [true, true, true, true];
+export const NARROW: [Narrow<RegionId>, Narrow<MonsterSprite>, Narrow<Interior>, Narrow<MapId>, Narrow<Flag>] = [true, true, true, true, true];
 /** Every area's maps are in MapId: an area left out of AreaMaps fails the typecheck here. */
 export const LISTED: [Exclude<AnyArea['maps'][number]['id'], MapId>] extends [never] ? true : false = true;
+/** No flag is declared twice: one that is fails the typecheck here, by name, and the load below (#995). */
+export const ONCE: Once<Declared> = true;
 
 /** Rows keyed by id, in order, refusing an id given twice: two areas' 'wolf' would otherwise quietly become one. */
 function byId<T extends { id: string }>(what: string, rows: readonly T[]): Record<string, T> {
@@ -78,6 +99,22 @@ function once<T>(what: string, rows: readonly T[], key: (r: T) => string): reado
 }
 
 once('area', AREAS, (a) => a.id);
+
+/**
+ * Every flag declared, by whose declaration holds it, refusing one declared twice by name (#995): the
+ * typecheck refuses it first (`ONCE`), and this where the declarations are a list made at run time.
+ */
+export function flagOwners(owners: readonly { id: string; flags: Flags }[]): Readonly<Record<string, string>> {
+  const out: Record<string, string> = {};
+  for (const o of owners) for (const f of Object.keys(o.flags)) {
+    if (Object.hasOwn(out, f)) throw new Error(`flag '${f}' is declared by ${out[f]} and ${o.id}`);
+    out[f] = o.id;
+  }
+  return out;
+}
+
+/** Every flag, by the area that declares it, or `core` for the code's own (./flags.ts). */
+export const FLAG_OWNERS = flagOwners([...AREAS, { id: 'core', flags: CORE_FLAGS }]);
 
 /**
  * The maps as written, in road order, Helmstow first. The outdoor ones are zones the atlas places.

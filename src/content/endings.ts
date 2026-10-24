@@ -4,13 +4,14 @@
 // three to an ending, and held to that screen rather than to the log's three lines (tools/tests/pillars.ts).
 // The Hearth each leaves behind is game/stones.ts's.
 import type { QuestCond } from '../game/quests.ts';
+import type { Flag } from './index.ts';
 
 /** The three endings, in the order Wenna's answers put them. */
 export type EndingId = 'reignite' | 'arrive' | 'finish';
 
 export interface Ending {
   /** The flag the answer sets: the ending is taken, and the world after it reads it. */
-  flag: string;
+  flag: Flag;
   /** Its name, over every page. */
   title: string;
   /** Its pages, read one at a time. */

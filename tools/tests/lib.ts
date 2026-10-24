@@ -9,7 +9,7 @@ import { itemsChanged } from '../../src/game/party.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { ITEMS } from '../../src/content/index.ts';
-import type { MapId } from '../../src/content/index.ts';
+import type { MapId, Flag } from '../../src/content/index.ts';
 import type { MapKey } from '../../src/game/keys.ts';
 
 /**
@@ -57,6 +57,11 @@ let failures = 0, held = 0;
 export const fxMap = (id: string): MapId => id as MapId;
 /** A thing on a fixture's map, `'map:id'`, or a key the game must refuse: handed on as `fxMap` hands a map. */
 export const fxKey = (key: string): MapKey => key as MapKey;
+/**
+ * A flag only a suite's fixture has (`fx_flag`), which no area declares, or one a check reads off any map
+ * as a string: the fixture's wider type, handed to the game as a flag (#995). A declared flag needs none.
+ */
+export const fxFlag = (flag: string): Flag => flag as Flag;
 
 export const ok = (cond: boolean, msg: string): void => {
   if (cond) held++; else failures++;

@@ -17,7 +17,7 @@ import { CLIMATES, MONSTERS } from '../../src/content/index.ts';
 import { restRefused } from '../../src/game/wilds.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { newWalk, gone } from '../kit/walk.ts';
-import { ok, withDefs } from './lib.ts';
+import { ok, withDefs, fxFlag } from './lib.ts';
 
 export function monsters(): void {
   const rng = makeRng(3);
@@ -100,7 +100,7 @@ export function monsters(): void {
     ok(b && !c && there(either), 'of a list any entry will do, and an entry\'s parts all hold');
   }
   {
-    const { w } = beside({ after: { flag: 'test_flag' } });
+    const { w } = beside({ after: { flag: fxFlag('test_flag') } });
     ok(!there(w) && !fights(w), 'a group with an after is not there before it holds');
     w.party.flags.test_flag = 1;
     const g = w.liveGroups().find((x) => x.def.id === 'test_rats');
@@ -109,11 +109,11 @@ export function monsters(): void {
   // A group's fall sets its flags (#636): in the call that marks it dead, before any step, kept in a
   // save as any flag is, and read at the very next look by the groups held until or after one.
   {
-    const { w } = beside({ sets: 'test_flag' }, {
-      test_list: { sets: ['test_a', 'test_b'], slainText: 'The test falls.' },
+    const { w } = beside({ sets: fxFlag('test_flag') }, {
+      test_list: { sets: [fxFlag('test_a'), fxFlag('test_b')], slainText: 'The test falls.' },
       test_plain: { respawn: 60 },
-      test_held: { respawn: 60, until: { flag: 'test_flag' } },
-      test_after: { after: { flag: 'test_flag' } },
+      test_held: { respawn: 60, until: { flag: fxFlag('test_flag') } },
+      test_after: { after: { flag: fxFlag('test_flag') } },
     });
     const flags = (x: World): string => Object.keys(x.party.flags).filter((f) => f.startsWith('test_')).sort().join();
     const live = (x: World): string => x.liveGroups().map((g) => g.def.id).filter((id) => id.startsWith('test_')).sort().join();
@@ -129,10 +129,10 @@ export function monsters(): void {
   // The leave rule (#747): a group that leaves is gone once its `until` holds, standing or killed,
   // while one beside it that does not stays standing. Leaving is no kill, and nothing is saved.
   {
-    const { w } = beside({ leaves: true, until: { flag: 'test_flag' }, sets: 'test_fell', slainText: 'The test falls.' }, {
-      test_stays: { until: { flag: 'test_flag' } },
-      test_back: { leaves: true, respawn: 60, until: { flag: 'test_flag' } },
-      test_swarm: { leaves: true, after: { flag: 'test_wrong' }, until: { flag: 'test_flag' } },
+    const { w } = beside({ leaves: true, until: { flag: fxFlag('test_flag') }, sets: fxFlag('test_fell'), slainText: 'The test falls.' }, {
+      test_stays: { until: { flag: fxFlag('test_flag') } },
+      test_back: { leaves: true, respawn: 60, until: { flag: fxFlag('test_flag') } },
+      test_swarm: { leaves: true, after: { flag: fxFlag('test_wrong') }, until: { flag: fxFlag('test_flag') } },
     });
     const live = (x: World): string => x.liveGroups().map((g) => g.def.id).filter((id) => id.startsWith('test_')).sort().join();
     const seen = (): boolean => w.groupsInSight().some((g) => g.def.id === 'test_rats');
@@ -153,8 +153,8 @@ export function monsters(): void {
     const w = newWalk(ok), world = w.world, { x, y } = world.state, h = world.maps.harrow.def, rats = world.maps[OUTDOORS].encounters[0];
     const word = 'Word comes up the street. The guard goes with it.';
     world.maps.harrow = new GameMap({ ...h,
-      features: [...(h.features ?? []), { kind: 'event', id: 'test_word', x, y, once: true, text: word, sets: 'test_word' }],
-      encounters: [...(h.encounters ?? []), { ...rats, id: 'test_guard', x, y: y - 1, roams: false, respawn: undefined, leaves: true, until: { flag: 'test_word' }, sets: 'test_fell', slainText: 'The guard falls.' }] });
+      features: [...(h.features ?? []), { kind: 'event', id: 'test_word', x, y, once: true, text: word, sets: fxFlag('test_word') }],
+      encounters: [...(h.encounters ?? []), { ...rats, id: 'test_guard', x, y: y - 1, roams: false, respawn: undefined, leaves: true, until: { flag: fxFlag('test_word') }, sets: fxFlag('test_fell'), slainText: 'The guard falls.' }] });
     world.ensureMapState('harrow');
     ok(world.adjacentGroups().includes('test_guard') && !!restRefused(world), 'the guard stands beside the company in Helmstow, in the way of a rest');
     const said = world.eventsHere();

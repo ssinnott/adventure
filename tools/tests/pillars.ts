@@ -26,7 +26,7 @@ import { ENDINGS } from '../../src/content/endings.ts';
 import type { Ending } from '../../src/content/endings.ts';
 import { PAGE, pageLines } from '../../src/ui/ending.ts';
 import { areaRows, gatherLists, once } from '../kit/checks.ts';
-import { ok, owed, familyModules, withDefs, fxMap } from './lib.ts';
+import { ok, owed, familyModules, withDefs, fxMap, fxFlag } from './lib.ts';
 import { lineFaults, texts, hintFaults, missingGlyphs, americanisms, MOST_LINES, LOOK_LINES, LONGEST_NAME } from '../kit/rules/pillars.ts';
 
 /**
@@ -405,7 +405,7 @@ export async function pillars(): Promise<void> {
     const faults = endingFaults(), widest = Object.values(ENDINGS).flatMap((e) => e.pages).reduce((a, p) => Math.max(a, logLines(p).length), 0);
     ok(!faults.length && widest > MOST_LINES, `each ending has ${ENDING_PAGES} pages, each within the ${PAGE.lines} lines of its screen (${Object.values(ENDINGS).map((e) => e.pages.map((p) => pageLines(p).length).join('+')).join(', ')}), though one takes ${widest} of the log${faults.length ? ' -> ' + faults.join('; ') : ''}`);
     const page = 'A fixture page, and short.', long = Array(30).fill('and the page goes on').join(' ');
-    const fx = (pages: string[], flag = 'fx_end'): Record<string, Ending> => ({ fx: { flag, title: 'Fixture', pages }, ...(flag === 'fx_end' ? {} : { other: { flag, title: 'Other', pages } }) });
+    const fx = (pages: string[], flag = 'fx_end'): Record<string, Ending> => ({ fx: { flag: fxFlag(flag), title: 'Fixture', pages }, ...(flag === 'fx_end' ? {} : { other: { flag: fxFlag(flag), title: 'Other', pages } }) });
     ok(!endingFaults(fx([page, page, page])).length && endingFaults(fx([page, page])).length === 1 && endingFaults(fx([page, page, long])).length === 1 && endingFaults(fx([page, page, page], 'fx_twice')).length === 1,
       'a fixture ending of three short pages passes; of two, with a page longer than its screen, or setting another\'s flag, it fails');
   }
@@ -426,8 +426,8 @@ export async function pillars(): Promise<void> {
     const trio = (night: Partial<Presence>): MapDef => at([{ kind: 'event', x: 1, y: 1, id: 'day', text: two, when: { hours: 'day' } }, { kind: 'sign', x: 1, y: 1, text: 'The ford.' }, { kind: 'event', x: 1, y: 1, id: 'night', text: two, ...night }]);
     ok(logLines(signLine('The ford.')).length + 2 * logLines(two).length > LOG_LINES && !lineFaults(trio({ when: { hours: 'night' } })).length && lineFaults(trio({})).length === 1,
       'a text by day and one by night on a square are not added together, but three that can all be said are');
-    const lamp = (lit: Partial<Presence>): MapDef => at([{ kind: 'event', x: 1, y: 1, id: 'dark', text: two + ' ' + two, until: { flag: 'q_lit' } }, { kind: 'event', x: 1, y: 1, id: 'lit', text: two + ' ' + two, ...lit }]);
-    ok(2 * logLines(two + ' ' + two).length > LOG_LINES && !lineFaults(lamp({ after: { flag: 'q_lit' } })).length && lineFaults(lamp({})).length === 1,
+    const lamp = (lit: Partial<Presence>): MapDef => at([{ kind: 'event', x: 1, y: 1, id: 'dark', text: two + ' ' + two, until: { flag: fxFlag('q_lit') } }, { kind: 'event', x: 1, y: 1, id: 'lit', text: two + ' ' + two, ...lit }]);
+    ok(2 * logLines(two + ' ' + two).length > LOG_LINES && !lineFaults(lamp({ after: { flag: fxFlag('q_lit') } })).length && lineFaults(lamp({})).length === 1,
       'a text until a flag and one after it are not added together, but one with no presence is');
     // An inscription (#538) is measured as a reader with the longest name hears it the first time:
     // its words, its reading and its mark, three entries that are said together.
@@ -671,7 +671,7 @@ export async function pillars(): Promise<void> {
     const across = room([{ x: 3, y: 1, to: second.maps[0].id, tx: 1, ty: 1, needFlag: 'q_seal' }]);
     ok(lockFaults(within(across), [lock()], of).some((f) => f.text.includes('between')), 'a lock between areas fails, even signed in');
     // An exit there `after` the company's answer is an appearance, no lock, between areas too (#749).
-    const answered = room([{ x: 3, y: 1, to: second.maps[0].id, tx: 1, ty: 1, after: [{ flag: 'q_open' }, { flag: 'q_shut' }] }]);
+    const answered = room([{ x: 3, y: 1, to: second.maps[0].id, tx: 1, ty: 1, after: [{ flag: fxFlag('q_open') }, { flag: fxFlag('q_shut') }] }]);
     ok(!within(answered).length && !lockFaults(within(answered), [], of).length, 'an exit that is there after a flag is found as no lock, though it leads into another area');
     const door = room([], [{ kind: 'npc', x: 2, y: 1, name: 'Fixture', lines: ['Hm.'], quest: { item: 'rations', needFlag: 'q_hired', reward: 1, done: ['Ta.'], setFlag: 'q_fx', after: ['Ta.'] } }] as unknown as MapDef['features']);
     ok(within(door)[0]?.kind === 'hand-in' && lockFaults(within(door), [], of).length === 1, 'a hand-in that withholds its item on a flag fails');
@@ -694,7 +694,7 @@ export async function pillars(): Promise<void> {
     const only = room([{ x: 3, y: 1, to, tx: 1, ty: 1, shut: { flag: 'q_seal' } }]);
     ok(lockFaults(within(only).filter((f) => f.key.endsWith('shut')), [], of).length === 1, 'and fails with no other way from its map into the map it leads to');
     ok(!!within(turned)[0]?.way && !lockFaults(within(turned), [], of).length, 'and passes while another way from its map into that one stays open');
-    const later = room([{ x: 3, y: 1, to, tx: 1, ty: 1, shut: { flag: 'q_seal' }, lifts: { flag: 'q_free' } }, { x: 1, y: 1, to, tx: 1, ty: 1, after: { flag: 'q_open' } }]);
+    const later = room([{ x: 3, y: 1, to, tx: 1, ty: 1, shut: { flag: 'q_seal' }, lifts: { flag: fxFlag('q_free') } }, { x: 1, y: 1, to, tx: 1, ty: 1, after: { flag: fxFlag('q_open') } }]);
     ok(lockFaults(within(later).filter((f) => f.key.endsWith('shut')), [], of).length === 1, 'a shut that lifts is still found, and an exit not there yet is no way beside it');
     const shutUp = room([], [{ kind: 'temple', x: 2, y: 1, name: 'Fixture', interior: first.interiors[0], until: { flag: 'q_seal' } }] as unknown as MapDef['features']);
     const lonely = findLocks([{ id: first.id, maps: [shutUp] }]).filter((f) => f.kind === 'service');

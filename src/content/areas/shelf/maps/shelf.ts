@@ -13,7 +13,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 // The Signet (64, #765; docs/areas/hearth.md §6): after an ending the Council's clerk waits by the
 // gate to ask where the ring goes, until it has gone; once the Council has sat, into the chair's keeping.
 const RING = 'queens_signet';
-const RING_GONE = ['q_signet_cousin', 'q_signet_hold', 'q_signet_tallis', 'q_signet_sea'].map((flag) => ({ flag }));
+const RING_GONE = (['q_signet_cousin', 'q_signet_hold', 'q_signet_tallis', 'q_signet_sea'] as const).map((flag) => ({ flag }));
 const CLERK = [
   'The Council\'s clerk at the gate, with his book, as if he had been waiting there since the light came back.',
   '"The Queen\'s signet. The Council is told you have it. The Council would like, very much, to know where it goes."',

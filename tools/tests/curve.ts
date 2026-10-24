@@ -26,7 +26,7 @@ import { handIns, choices } from '../../src/game/people.ts';
 import { xpForLevel, killPay, MAX_LEVEL } from '../../src/game/party.ts';
 import { FIXTURE, LAIR } from '../kit/rules/enclave.ts';
 import { CHECKS, once } from '../kit/checks.ts';
-import { ok, owed, withDefs, fxMap, fxKey } from './lib.ts';
+import { ok, owed, withDefs, fxMap, fxKey, fxFlag } from './lib.ts';
 import { stepsFrom } from '../kit/rules/curve.ts';
 
 /** Spearman's rank correlation, ties given their mean rank; 0 where either side does not vary. */
@@ -365,7 +365,7 @@ export function curve(): void {
   // A twin pair counts once, at the lesser (#792), as the Heart's Vask does, whole before the Council has sat and
   // thinned after. Else each group counts: ones that merely share a square, or whose conditions differ, or that both
   // stand `after`; an `until` group that stays till it is killed; a third on the square.
-  const [fxc, fxd] = [{ flag: 'fx_c' }, { flag: 'fx_d' }];
+  const [fxc, fxd] = [{ flag: fxFlag('fx_c') }, { flag: fxFlag('fx_d') }];
   const gone = { until: fxc, leaves: true }, later = { after: fxc };
   const hands = (id: string, n: number, when: Pick<EncounterDef, 'until' | 'after' | 'leaves'> = {}, at: [number, number] = [1, 1]): EncounterDef =>
     ({ id, x: at[0], y: at[1], monsters: Array<string>(n).fill('grey_hand'), ...when });
@@ -389,8 +389,8 @@ export function curve(): void {
   // deed names a map of another area. Not a quest of the area's own, a question that pays nothing in some answer (the
   // clear counts the least), nor a guild quest whose deed is a flag, an item or on the area's own maps.
   const ask = (...answers: [xp: number, sets: string][]): Feature => ({ kind: 'npc', x: 1, y: 1, name: 'A priest', lines: ['.'],
-    choice: { ask: '?', answers: answers.map(([xp, sets], i) => ({ label: `${i}`, sets, pay: { xp }, says: ['.'] })) } });
-  const quest = (title: string, flag: string): Pick<QuestDef, 'title' | 'done'> => ({ title, done: { flag } });
+    choice: { ask: '?', answers: answers.map(([xp, sets], i) => ({ label: `${i}`, sets: fxFlag(sets), pay: { xp }, says: ['.'] })) } });
+  const quest = (title: string, flag: string): Pick<QuestDef, 'title' | 'done'> => ({ title, done: { flag: fxFlag(flag) } });
   const lands: Country[] = [{ id: 'fx_a', maps: [{ id: 'fx_a1' }], quests: [quest('The Home', 'fx_home')] },
     { id: 'fx_b', maps: [{ id: 'fx_b1' }], quests: [quest('The Away', 'fx_away')], chapter: quest('The Road', 'fx_road') }];
   const booked = (...features: Feature[]): string => crossBooked('fx_a', [{ id: 'fx_a1', name: 'Fx Home', features }], [], lands).join('|');
@@ -400,16 +400,16 @@ export function curve(): void {
   const shared = ask([600, 'fx_away']);
   ok(!booked(ask([600, 'fx_home'])) && !booked(ask([0, 'fx_away'])) && !booked(ask([600, 'fx_away'], [0, 'fx_nowhere'])) && booked(shared, shared) === booked(shared),
     'and one for the area\'s own quest, one that pays nothing in some answer, or none at all, is not printed, and one two people share is printed once');
-  const take = (reward: number, setFlag: string): Feature => ({ kind: 'npc', x: 1, y: 1, name: 'A priest', lines: ['.'], quest: { item: 'fx_letter', reward, done: ['.'], setFlag } });
+  const take = (reward: number, setFlag: string): Feature => ({ kind: 'npc', x: 1, y: 1, name: 'A priest', lines: ['.'], quest: { item: 'fx_letter', reward, done: ['.'], setFlag: fxFlag(setFlag) } });
   ok(booked(take(500, 'fx_away')) === 'fx_a: its clear counts the Away\'s 500 gold, fx_b\'s quest paid at Fx Home by a priest' && booked(take(300, 'fx_home'), take(500, 'fx_away')) === booked(take(500, 'fx_away'))
     && !booked(take(300, 'fx_away'), take(500, 'fx_home')) && !booked(take(0, 'fx_away')),
     'and so is a hand-in\'s reward, at the larger of two people who take the item, and not a reward of nothing');
   const deed = (goal: GuildQuest['goal'], pay: GuildQuest['pay'] = { xp: 600, gold: 40 }): string =>
     crossBooked('fx_a', [], [{ id: 'fx_q', guild: 'compact', rank: 0, offer: [], goal, paid: [], pay, title: 'The Errand', entries: [], goals: [] }], lands).join('|');
   ok(deed({ seen: fxKey('fx_b1:x') }) === 'fx_a: its clear counts the Errand\'s 100 xp a member and 40 gold, the Salt Compact\'s quest paid at any hall, its deed in fx_b'
-    && !!deed({ slain: [fxKey('fx_a1:g'), fxKey('fx_b1:h')] }) && !!deed({ visited: fxMap('fx_b1') }) && !!deed([{ flag: 'fx_f' }, { seen: fxKey('fx_b1:x') }]),
+    && !!deed({ slain: [fxKey('fx_a1:g'), fxKey('fx_b1:h')] }) && !!deed({ visited: fxMap('fx_b1') }) && !!deed([{ flag: fxFlag('fx_f') }, { seen: fxKey('fx_b1:x') }]),
     'a guild quest whose deed is seen, slain or visited on a map of another area is counted in the clear of the area whose file holds it, with its xp a member and its gold');
-  ok(!deed({ seen: fxKey('fx_a1:x') }) && !deed({ flag: 'fx_f' }) && !deed({ item: 'fx_i' }) && !deed(undefined) && !deed({ seen: fxKey('fx_nowhere:x') }) && !deed({ seen: fxKey('fx_b1:x') }, { items: ['fx_i'] }),
+  ok(!deed({ seen: fxKey('fx_a1:x') }) && !deed({ flag: fxFlag('fx_f') }) && !deed({ item: 'fx_i' }) && !deed(undefined) && !deed({ seen: fxKey('fx_nowhere:x') }) && !deed({ seen: fxKey('fx_b1:x') }, { items: ['fx_i'] }),
     'and one whose deed is on the area\'s own maps, a flag, an item, none or no map at all, or that pays no xp or gold, is not printed');
   // The road's last area reads its deep places' bands with its zone's (docs/areas/hearth.md §9,
   // call 2): its isle laid at 28-29 reads 28-32 with the Underdeep and the Core, and 28-29 without.
