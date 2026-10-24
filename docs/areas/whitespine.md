@@ -58,8 +58,8 @@ crest the year round, wind, cloud below the peaks; clear and bitter at night.
 
 Eleven maps (`src/content/areas/whitespine/maps/`), a row each: its id and name, kind, size and
 band; what is there, with its groups (the gate's count); and its secret, a door at the squares
-given, with the hint on its near side that finds it (the map's `secrets`). Ten maps have one and
-J12 two.
+given, with the hint on its near side that finds it (the map's `secrets`). Nine maps have one, J12
+two and Highcell's upper house none.
 
 | Map | Kind, size, band | What is there | Secret, and its hint |
 |---|---|---|---|

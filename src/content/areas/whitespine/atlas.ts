@@ -1,5 +1,5 @@
 // The Whitespine's part of the world map: its three zones, the plates of its one dungeon's two levels,
-// and its sites. docs/areas/whitespine.md is its brief (#498).
+// and its sites. docs/areas/whitespine/plan.md holds its brief (#498).
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 import { laid } from '../../../game/atlas.ts';
 import { PLAN } from '../../atlas.ts';

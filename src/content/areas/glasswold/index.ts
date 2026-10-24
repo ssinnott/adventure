@@ -1,6 +1,6 @@
 // The Glasswold, the steppe round the Glass (band 26-28): the Wold, on the road, and the Glass, the reach
-// (DESIGN §9), the third area of Act IV, the far side of the Cinder Hills. docs/areas/glasswold.md is its
-// state, and docs/areas/glasswold/ holds its plan and decisions.
+// (DESIGN §9), the third area of Act IV, the far side of the Cinder Hills. docs/areas/glasswold.md
+// is its state, and docs/areas/glasswold/ holds its plan and decisions.
 import type { Area } from '../../area.ts';
 import { WOLD_D9 } from './maps/wold_d9.ts';
 import { WOLD_D10 } from './maps/wold_d10.ts';

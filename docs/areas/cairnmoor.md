@@ -101,9 +101,10 @@ puts (the plan's §6 has #56's table and the words as built):
 - **The Faces on the Tors** (`faces`): the stonecutter on O8; home to Rime Lodge, or the last face
   finished, when its tor's troll never stands again; 1,800 xp.
 
-The coach's quest on N8 (#56's 40) is Rimewater's (#494). The guilds' (`guilds.ts`): the Lanterns'
-fourth rank, **What the Ring Said** (`lanterns_ring`), offered at every Lantern hall once Act II is
-done and paid at any once `q_ring_spoke` holds; 300 gold and 2,400 xp.
+The coach's quest on N8 (#56's 40) is Rimewater's (#494). The guilds'
+(`src/content/areas/cairnmoor/guilds.ts`): the Lanterns' fourth rank, **What the Ring Said**
+(`lanterns_ring`), offered at every Lantern hall once Act II is done and paid at any once
+`q_ring_spoke` holds; 300 gold and 2,400 xp.
 
 **Torhide** (#846), the bounds' artifact: in the old man's kist in Bearn Liath, behind the Rim Troll
 (boss, 32: 2,700 hit points, attack 22), found and never told. The rumour is the drover's on N7, at
