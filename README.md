@@ -11,12 +11,16 @@ dependencies, and nothing compiled to disk during development.
 - [docs/CODEMAP.md](docs/CODEMAP.md) — a row to each file and its header's first paragraph, made
   by `node tools/codemap.ts`: a pull request edits the header of a file it adds or changes.
 - [docs/archive/](docs/archive/) — docs cut and kept whole as history: the slice's doc (#1023),
-  `docs/archive/SLICE-history.md`, with its Checks, its tools' usage and its hand-written code map.
+  `docs/archive/SLICE-history.md`, with its Checks, its tools' usage and its hand-written code map;
+  MONSTERS' rosters, its §5 to §13, `docs/archive/MONSTERS-rosters.md`, and the harness's runs of
+  its §4.4, `docs/archive/harness-log.md` (#1024).
 - [docs/STORY.md](docs/STORY.md) — the main quest told as a story, the company's own chronicle of
   it: how the five acts of DESIGN.md §9 should feel.
-- [docs/MONSTERS.md](docs/MONSTERS.md) — what the company fights down the road, area by area: the
-  five kinds of monster, what each area's monsters carry of the story, the numbers they start from,
-  and what the combat resolver has yet to learn.
+- [docs/MONSTERS.md](docs/MONSTERS.md) — what the monsters are for: the five kinds of monster, what
+  a monster can do and what the road asks of it, and the numbers they are made from: the line, the
+  roles, the pay and the test monster.
+- [docs/ROSTER.md](docs/ROSTER.md) — each monster as its def makes it, by area in road order, and
+  the families, made by `node tools/roster.ts`: a pull request that adds or changes a monster runs it.
 - [docs/EXPANSION.md](docs/EXPANSION.md) — how the rest of Caldera gets built: the decisions v1
   waits on, the checks every map, monster and quest must pass, how the work splits so sessions do
   not collide, and the order of work.

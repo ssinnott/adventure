@@ -1281,6 +1281,7 @@ A monster or an interior goes the same way: a brief, the drawing, the gallery or
 the checks, the sheet. A new kind of an existing family touches its family's file (its entry in the
 family's `SPRITES`: the drawer, the span the smoke test prints and any part drawn apart) and its
 area's monsters and index, and its sheet draws that family alone (#915).
+A monster's pull request runs `node tools/roster.ts`, which writes its row in `docs/ROSTER.md`.
 
 Decided by the builder for #915, each the owner's to overturn:
 
