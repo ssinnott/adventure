@@ -1,5 +1,5 @@
 // Wrackholm's walkthrough. First its chapter, The Stone Carried Home (#191), played a step at a
-// time (tools/walk.ts) on from Saltreach's runs, which leave the company on the landing. In order:
+// time (tools/kit/walk.ts) on from Saltreach's runs, which leave the company on the landing. In order:
 // the Foreland, the Grove and the Tide Stone played from a new game; Kelp Hole's crates, east over
 // the moor at 13 and out to the ship by night; the decks at 12, the captain's table, Hale freed and
 // the Warden at 14 for the Stone; and home by the boat and the fen to the plinth, which ends the Tide

@@ -1,5 +1,5 @@
 // The Foreland's walkthrough: its chapter of the one quest, The Quiet Farm, played from a new game by
-// the game's own moves and checked a step at a time (tools/walk.ts); Thornmark's plays the chain.
+// the game's own moves and checked a step at a time (tools/kit/walk.ts); Thornmark's plays the chain.
 // Then a new company walks out of Helmstow to the Lodestone, and Gytha gives it the lesson, and
 // her later words as Thornhold's news reaches her. Then its side quests, each choice both ways: the
 // log reads true and the people stand where it says. Then Helmstow before and after Act II (#157).

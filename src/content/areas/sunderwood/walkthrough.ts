@@ -1,5 +1,5 @@
 // Sunderwood's walkthrough. First its chapter, The Wall (#204), the last of Act II, played three
-// ways, each a step at a time (tools/walk.ts). In order, at 15: the Foreland, the Grove, the Tide
+// ways, each a step at a time (tools/kit/walk.ts). In order, at 15: the Foreland, the Grove, the Tide
 // Stone and the Stone Carried Home played from a new game, the papers carried from the Tide Ship
 // and the Stone home beginning the Wall (#191), then over the bridge, down the Sunder to the wall,
 // the papers read at the Watch and Vask at its gate the next morning, answered no. The Watch first,

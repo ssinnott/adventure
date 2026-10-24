@@ -1,6 +1,6 @@
 // Thornmark's walkthrough: the chain of the one quest, the Foreland's chapter and then its own, The
 // Grove Stone, played from a new game by the game's own moves and checked a step at a time
-// (tools/walk.ts); then played again with Thornmark taken early, before Vask's hire and after it
+// (tools/kit/walk.ts); then played again with Thornmark taken early, before Vask's hire and after it
 // but before the wand, where the log must still read true and end the same; and with the treaty in
 // Henlys seen before the Stone, where the chisel, found after, makes the match. Then its side
 // quests on the built maps (#219) and in the Deepthorn, each from its giver to its choice and both

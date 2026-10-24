@@ -1,5 +1,5 @@
 // Saltreach's walkthrough. First its chapter, The Tide Stone (#180), played a step at a time
-// (tools/walk.ts). In order, at 10 and 11: the Foreland and the Grove played from a new game, then
+// (tools/kit/walk.ts). In order, at 10 and 11: the Foreland and the Grove played from a new game, then
 // down off the Edge into the Delta, up the spur to Wytske on Rietum's quay, west to the empty
 // plinth, south to the priestess at the temples' dry door and in, and down to Saltmouth, where the
 // Warden has the news of Hale and Kitto the ship; then the boat out to Wrackholm, where the goal
