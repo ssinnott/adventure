@@ -14,7 +14,7 @@ const at = (file: string): string => { const p = laneOf(file); return p.lane ===
 export function lanes(): void {
   const root = new URL('../../', import.meta.url);
   // A sample file under each line of the table, and under each place the lines must tell apart: the
-  // shipped files (an area's, and the central one), the interiors' dispatcher and their folder, an
+  // shipped files (an area's, and the central one), the interiors' dispatcher and their folder, the three kits, an
   // area's doc and the rest of docs/, a place's doc named for its area.
   const cases: [string, string][] = [
     ['src/game/save.ts', 'systems'], ['src/game/pilot/index.ts', 'systems'], ['src/ui/viewport.ts', 'systems'], ['src/ui/interior.ts', 'systems'],
@@ -22,6 +22,7 @@ export function lanes(): void {
     ['src/content/areas/shelf/maps/shelf.ts', 'area: shelf'], ['src/content/areas/shelf/shipped.json', 'area: shelf'], ['docs/areas/ashfall.md', 'area: ashfall'],
     ['docs/areas/hearth_isle.md', 'area: hearth'], ['docs/areas/dead_drop.md', 'area: wrackholm'], ['docs/areas/meridian_camp.md', 'area: ashfall'],
     ['src/ui/monsters/wolf.ts', 'creatures'], ['src/ui/monsters/common.ts', 'creatures'], ['src/ui/interiors/shelf/index.ts', 'interiors'],
+    ['src/ui/paint/brush.ts', 'systems'], ['src/ui/monsters/kit/common.ts', 'systems'], ['src/ui/interiors/kit/trades/temple.ts', 'systems'],
     ['tools/lanes.ts', 'quality'], ['tools/tests/gate.ts', 'quality'], ['.github/workflows/checks.yml', 'quality'], ['.github/labels.json', 'quality'], ['src/content/shipped.json', 'quality'],
     ['package.json', 'quality'], ['tsconfig.json', 'quality'], ['types/globals.d.ts', 'quality'],
     ['docs/SLICE.md', 'design'], ['docs/ISSUES.md', 'design'], ['README.md', 'design'], ['CLAUDE.md', 'design'],

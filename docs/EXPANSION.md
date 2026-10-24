@@ -993,7 +993,7 @@ there, where repetition is the design, rather than on the map.
 
 | Lane | Touches | At once |
 |---|---|---|
-| Systems | `src/game/`, `src/ui/` outside the art modules, the save format, the shape of the registries | one |
+| Systems | `src/game/`, `src/ui/` outside the art modules, the kits (`src/ui/paint/`, `src/ui/monsters/kit/`, `src/ui/interiors/kit/`), the save format, the shape of the registries | one |
 | Area | `src/content/areas/<area>/`, `docs/areas/<area>.md` | one per area in flight |
 | Creatures | `src/ui/monsters/<family>.ts` | one per family |
 | Interiors | `src/ui/interiors/<area>/` | one per area |
@@ -1079,6 +1079,40 @@ Decided by the builder for #899, each the owner's to overturn:
    imports `node:` modules alone, which the check does not follow), and `tools/lanes.ts` is the
    command line that takes it. The job and the docs still name `node tools/lanes.ts`, and no `KNOWN`
    row is added.
+
+The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; it, the monsters' kit
+(`src/ui/monsters/kit/`) and the rooms' (`src/ui/interiors/kit/`) are the systems lane's, as
+`tools/kit/` is quality's (#983). A family or a scene takes a kit's helper when it is next edited,
+not in a sweep, and a helper a third family or a third scene wants goes into the kit by a small pull
+request of its own, not into a copy in a third file: the rule of three.
+
+Decided by the builder for #983, each the owner's to overturn:
+
+1. **Which file holds what.** The paint kit: `brush.ts` and `gloss.ts` moved whole, `ink.ts` (`INK`,
+   `rod`), `forms.ts` (`Pt`, the unit frame `F`, `ring`, `tube`) and `flame.ts`; the monsters' kit:
+   `common.ts` and `figure.ts` moved whole, and `chisel.ts`; the rooms' kit: `stage.ts`
+   (the old `kit.ts`, a name that says nothing in `kit/`), `props.ts` and `trades/`.
+   A moved file keeps its name.
+2. **The glow goes with the flame:** `smudge`, which `drawFlame` lights with, moves into `flame.ts`,
+   as the paint kit takes nothing from the rooms'. The stage imports `INK`, `smudge` and `drawFlame`
+   and re-exports none; the old `kit.ts` does, so each name has one home in the kits.
+3. **The trades are the props the issue names:** the temple's stained glass, altar, pew and
+   Lanterns' ring (eight scenes take one) and the smithy's armour stand, mail and anvil (six).
+   `pillar` stays in `props.ts`, as the throne room stands on it beside two temples, and so
+   do the weapons and shields.
+4. **The unit frame is `F`, as its nine copies name it,** beside `Pt`, so a family taking
+   it deletes its own declaration and changes no other line; the four with an `h` and
+   the crawlers' `H` need more.
+5. **The brush's default and `B` take `INK`,** as the issue asks; the eye's pupil in `common.ts`,
+   the file's other `'#120c14'`, is a copy and stays until the file is next edited.
+6. **What a kit's file counts (`tools/changed.ts`) goes by folder:** any of `src/ui/paint/` every
+   monster and room, and `brush.ts` and `ink.ts` (the viewport's `hash`, `B`'s outline)
+   every map too; any of `src/ui/monsters/kit/` every monster, its `common.ts` every map
+   too; any of `src/ui/interiors/kit/` every room. A new kit file is counted with no edit;
+   `chisel.ts` counts every monster, where `knockers.ts` counted the knockers alone for a
+   mark three other families cut.
+7. **The rooms' kit is no area's folder:** the changed suite's check that each folder of
+   `src/ui/interiors/` is an area's, its registry keying the area's rooms, skips `kit/` by name.
 
 ### 8.2 The recipe for a zone map
 
