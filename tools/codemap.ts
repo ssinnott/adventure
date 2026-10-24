@@ -1,5 +1,5 @@
-// The code map (#1023): the command line of tools/kit/codemap.ts, which makes docs/CODEMAP.md from the
-// headers of the files of src/ (not src/lib/), tools/ and types/, a row to each, sorted by path.
+// The code map (#1023): the command line of tools/kit/codemap.ts, which makes docs/CODEMAP.md from
+// the headers of the files of src/ (not src/lib/), tools/ and types/, a row to each, by path.
 //   node tools/codemap.ts           writes docs/CODEMAP.md and says how many rows changed
 //   node tools/codemap.ts --check   writes nothing, and exits 1 naming each row that differs
 // Either exits 1 naming each file whose header has no first paragraph, and then writes nothing.

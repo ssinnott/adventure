@@ -1,8 +1,8 @@
 // The code map (tools/kit/codemap.ts, #1023): every file of src/ (not src/lib/), tools/ and types/
-// has a header with a first paragraph, which is its row, and the committed docs/CODEMAP.md is what the
-// headers make. Both fail on a copy of the tree with a header taken off and with one changed; a file
-// added outside a collapsed folder is a row the map lacks, and one added to an area's folder changes
-// that folder's count and writes no row.
+// has a header with a first paragraph, which is its row, and the committed docs/CODEMAP.md is what
+// the headers make. Both fail on a copy of the tree with a header taken off and with one changed; a
+// file added outside a collapsed folder is a row the map lacks, one added to an area's folder
+// changes no row, and a new area's folder changes the row that names the areas.
 import { COLLAPSED, MAP_FILE, header, headless, render, rows, stale, treeSources, written, type Source } from '../kit/codemap.ts';
 import { ok } from './lib.ts';
 
@@ -22,7 +22,7 @@ export function codemap(): void {
   ok(tree.length > 600 && !none.length, `every one of the ${tree.length} files of src/ (not src/lib/), tools/ and types/ has a header with a first paragraph${none.length ? '; none in ' + none.join(', ') : ''}`);
   const made = render(rows(tree)), off = stale(written(), made);
   ok(!off.length, `${MAP_FILE} is what the headers make, ${rows(tree).length} rows${off.length ? '; run node tools/codemap.ts: ' + off.join('; ') : ''}`);
-  ok(COLLAPSED.every((f) => made.includes(`| \`${f.row}\` | `)), `each of the ${COLLAPSED.length} collapsed folders is one row with its count (${COLLAPSED.map((f) => f.row).join(', ')})`);
+  ok(COLLAPSED.every((f) => made.includes(`| \`${f.row}\` | `)), `each of the ${COLLAPSED.length} collapsed folders is one row (${COLLAPSED.map((f) => f.row).join(', ')})`);
 
   // A copy of the tree: a header taken off, a header changed, a file added beside them and one in a box.
   const copy = (f: (s: Source) => Source, ...more: Source[]): Source[] => [...tree.map(f), ...more];
@@ -35,6 +35,9 @@ export function codemap(): void {
     'a copy with a header changed fails the map, the row named');
   const area = tree.find((s) => s.path.startsWith('src/content/areas/'))!.path.split('/')[3];
   const added = copy((s) => s, { path: 'src/game/added.ts', text: '// A file added.\n' }, { path: `src/content/areas/${area}/maps/added.ts`, text: '// A box added.\n' });
-  ok(rows(added).length === rows(tree).length + 1 && stale(made, render(rows(added))).join('; ') === 'src/content/areas/<area>/: the row is not what its header says; src/game/added.ts: no row',
-    `a file added is a row the map lacks, named; one added to an area's folder (${area}'s) changes its folder's count and writes no row`);
+  ok(rows(added).length === rows(tree).length + 1 && stale(made, render(rows(added))).join('; ') === 'src/game/added.ts: no row',
+    `a file added is a row the map lacks, named; one added to an area's folder (${area}'s) changes no row`);
+  const opened = copy((s) => s, { path: 'src/content/areas/zz_added/index.ts', text: '// An area added.\n' });
+  ok(stale(made, render(rows(opened))).join('; ') === 'src/content/areas/<area>/: the row is not what its header says',
+    'a new area\'s folder changes the row that names the areas, and no other');
 }

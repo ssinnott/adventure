@@ -24,21 +24,21 @@ in `docs/areas/`. Cut from the slice's doc by #1023, which keeps that doc whole 
 The `layers` suite (`tools/tests/layers.ts`, EXPANSION §8.1, #900) reads the runtime imports of
 `src/` and `tools/` and holds them to the layers: no cycle among `src`'s, nothing in `src/game`
 taking content, the UI or the app, nothing in the UI the app, no area another's files but its
-`public.ts` (#992), and the walkthroughs and the suites taking `src` and `tools/kit/` alone.
-Today's crossings are the rows of its `KNOWN`, each under the issue that clears it; a new crossing
-fails, and so does a row that no longer crosses.
+`src/content/areas/<area>/public.ts` (#992) and the walkthroughs and the suites taking `src` and
+`tools/kit/` alone. Today's crossings are the rows of its `KNOWN`, each under the issue that clears
+it; a new crossing fails, and so does a row that no longer crosses.
 
 ## The outdoors as one map
 
 The world map (M) charts Caldera as one land of 512 by 384 squares, divided into areas, the steps of
 the road of levels, and the zones inside them (`src/game/atlas.ts`; the plan in
-`src/content/atlas.ts`, each built area's part in its own `atlas.ts`, merged as `ATLAS` in
-`src/content/index.ts`). The game walks it that way too: the outdoors is one map, `caldera`, the
-size of the world, square for square with the painted map (`src/game/outdoors.ts`, which
-`src/content/maps.ts` runs once to make `PLAYED_DEFS`, the maps as played).
+`src/content/atlas.ts`, each built area's part in `src/content/areas/<area>/atlas.ts`, merged as
+`ATLAS` in `src/content/index.ts`). The game walks it that way too: the outdoors is one map,
+`caldera`, the size of the world, square for square with the painted map (`src/game/outdoors.ts`,
+which `src/content/maps.ts` runs once to make `PLAYED_DEFS`, the maps as played).
 
 - **Zones in a grid.** Every outdoor map the atlas places is a zone, laid in 1:1 at its box of the
-  grid. The zone maps are written as maps of their own in their areas' `maps/` folders, in their
+  grid. The zone maps are written in `src/content/areas/<area>/maps/` as maps of their own, in their
   own coordinates; laying them in moves their features, groups and exits to where they sit and
   leads every town's and dungeon's way out onto the outdoors. Outdoors the party's zone says where
   it is: the name on the status strip and the almanac, the level band, the region whose weather it
@@ -57,16 +57,16 @@ size of the world, square for square with the painted map (`src/game/outdoors.ts
   on to the horizon and the rim's mountains stand. A ring is drawn as the mountain it closes with,
   but where the atlas has water, so the coast runs on. A void with no look is pink empty space and
   says "The world ends here."; no walkable square has one in view (`tools/tests/outdoors.ts`).
-- **Building more.** A new box is a map in its area's `maps/` and `index.ts`, marked `density` core
-  or country, and a line in its zone's `maps` in its area's `atlas.ts`; `node tools/scaffold.ts`
-  cuts its first draft from the atlas. Laid in, it opens the void where it stands. Where it meets a
-  built box the two edges agree square for square on passable ground, water and road, and open a
-  way between two areas only where the atlas joins them (`tools/tests/outdoors.ts`, #898; a seam
-  that disagrees as built is its area's `seamsAsBuilt` row, with its reason). Where it meets the
-  atlas its water and roads carry on beyond its edge (`tools/tests/pillars.ts`), and each edge that
-  faces no built box is open to a walker exactly where its area's `openOnNothing` says, with the box
-  it faces and why that is unbuilt. The box's pull request adds the rows for its own edges onto
-  nothing and deletes those of the edges it now faces.
+- **Building more.** A new box is a map in `src/content/areas/<area>/maps/` and its area's index,
+  marked `density` core or country, and a line in its zone's `maps` in its area's atlas;
+  `node tools/scaffold.ts` cuts its first draft from the atlas. Laid in, it opens the void where it
+  stands. Where it meets a built box the two edges agree square for square on passable ground, water
+  and road, and open a way between two areas only where the atlas joins them (#898,
+  `tools/tests/outdoors.ts`; a seam that disagrees as built is its area's `seamsAsBuilt` row, with
+  its reason). Where it meets the atlas its water and roads carry on beyond its edge
+  (`tools/tests/pillars.ts`), and each edge that faces no built box is open to a walker exactly
+  where its area's `openOnNothing` says, with the box it faces and why that is unbuilt. Its pull
+  request adds the rows of its edges onto nothing and deletes those of the edges it now faces.
 - **Around it.** The automap draws a map that fits the panel whole, and for the outdoors a window
   of 33 by 33 squares round the party. Quests still name zone maps: `visited: 'thornmark'` holds
   once the party has set foot in the zone (`WorldState.zones`).
@@ -89,10 +89,10 @@ size of the world, square for square with the painted map (`src/game/outdoors.ts
   it never draws on the gameplay rng: a fight replays the same in any weather. Snow lying and
   standing water are the same function run over the ten days before. A new game draws seeds until
   its first morning is dry and free of fog.
-- **Regions.** A region is an area, with its `climate` in its `index.ts`. Each map names its region
-  (`MapDef.region`; the laid outdoors names none, its zones do); towns and dungeons share their
-  region's weather. No sky is lent: a World asked the sky of a square no zone or map gives a region
-  throws, naming both (`regionOf`, #945).
+- **Regions.** A region is an area, with its `climate` in `src/content/areas/<area>/index.ts`. Each
+  map names its region (`MapDef.region`; the laid outdoors names none, its zones do); towns and
+  dungeons share their region's weather. No sky is lent: a World asked the sky of a square no zone
+  or map gives a region throws, naming both (`regionOf`, #945).
 - **What it does to play.** Thick fog or a blizzard leaves two squares of sight, thinner fog, a
   downpour or heavy snow three; underground nothing changes. Snow lying deep adds two minutes to an
   outdoor step, as hills do (`HILL_DRAG` in `src/game/map.ts`). In a downpour, heavy snow or thick
@@ -117,11 +117,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   register or one no area names, so a new kind of a family is its family's file alone (#915).
   `src/ui/sprites.ts` dispatches a kind to its family; every monster def names a sprite kind no
   other def uses (`tools/tests/art.ts`).
-- **The rooms' kit**, `src/ui/interiors/kit/`: the walls, floors, windows and light (`stage.ts`),
-  the furniture and goods (`props.ts`) and a trade's own (`trades/`). Each scene is a file in
-  `src/ui/interiors/<area>/`, named by the `interior` on a business's map feature
-  (`src/ui/interior.ts`); it is painted once into an offscreen canvas and multiplied by a light
-  map, with its flames, glows and drifting motes drawn over it every frame.
+- **The rooms' kit**, `src/ui/interiors/kit/`: the walls, floors, windows and light, the furniture
+  and goods and a trade's own. Each scene is a file in `src/ui/interiors/<area>/`, named by the
+  `interior` on a business's map feature (`src/ui/interior.ts`); it is painted once into an
+  offscreen canvas and multiplied by a light map, with its flames, glows and drifting motes drawn
+  over it every frame.
 - The kits are the systems lane's; the old paths (`src/ui/brush.ts` and the rest) re-export them,
   and a family or a scene takes a kit when it is next edited (EXPANSION §8.1).
 - **The rest:** `src/ui/portraits.ts` paints a portrait to each character from the name, race and
@@ -142,8 +142,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `node tools/codemap.ts`. A pull request that adds a file or changes what one owns says so in the
   file's header and runs the tool; the `codemap` suite names the rows of a stale map.
 - **The checks:** `npm run check` runs the typecheck, the suites and the smoke test, each able to
-  fail; EXPANSION §5 says what they hold. Each suite's header says what it holds, `--list` prints
-  every `ok` line, and the runner's flags are `tools/test.ts`'s header.
+  fail; EXPANSION §5 says what they hold. Each suite's header says what it holds and `--list` prints
+  every `ok` line; the runner's flags are `tools/test.ts`'s header.
 - **The tools:** each tool's usage is its header (`tools/sheet.ts`, `tools/gate.ts` and the rest).
 - **Each area:** its doc in `docs/areas/`, with its decisions and its plan beside it.
 - **The history:** [archive/SLICE-history.md](archive/SLICE-history.md), the slice's doc whole: its

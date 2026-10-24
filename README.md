@@ -10,8 +10,8 @@ dependencies, and nothing compiled to disk during development.
   the outdoors as one map, the calendar and the weather, the art kits and what is stubbed.
 - [docs/CODEMAP.md](docs/CODEMAP.md) — a row to each file and its header's first paragraph, made
   by `node tools/codemap.ts`: a pull request edits the header of a file it adds or changes.
-- [docs/archive/](docs/archive/) — docs cut and kept whole as history: `SLICE-history.md`, the
-  slice's doc (#1023), with its Checks, its tools' usage and its hand-written code map.
+- [docs/archive/](docs/archive/) — docs cut and kept whole as history: the slice's doc (#1023),
+  `docs/archive/SLICE-history.md`, with its Checks, its tools' usage and its hand-written code map.
 - [docs/STORY.md](docs/STORY.md) — the main quest told as a story, the company's own chronicle of
   it: how the five acts of DESIGN.md §9 should feel.
 - [docs/MONSTERS.md](docs/MONSTERS.md) — what the company fights down the road, area by area: the

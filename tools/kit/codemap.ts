@@ -1,16 +1,17 @@
 // The code map (#1023, part of #848): docs/CODEMAP.md, made from the files' headers. A row to each
-// file of src/ (not src/lib/, game-engine, vendored), tools/ and types/, sorted by path: its path and
-// its header's first paragraph, the comment it opens on up to its first blank comment line, the marks
-// off and the lines joined by a space. A folder where a box adds files is one row with its count
-// (COLLAPSED). The map holds nothing that changes without a file changing, so it is made again byte
-// for byte. The library of tools/codemap.ts, the command line, and a file of tools/kit/, which takes
-// src only (the layers check, tools/tests/layers.ts): so its suite, tools/tests/codemap.ts, takes it
-// and not the tool.
+// file of src/ (not src/lib/, game-engine, vendored), tools/ and types/, sorted by path: its path
+// and its header's first paragraph, the comment it opens on up to its first blank comment line, the
+// marks off and the lines joined by a space. A folder where a box adds files is one row, which
+// counts nothing (COLLAPSED). The map holds nothing that changes without a file changing, so it is
+// made again byte for byte. The library of tools/codemap.ts, the command line, and a file of
+// tools/kit/, which takes src only (the layers check, tools/tests/layers.ts): so its suite,
+// tools/tests/codemap.ts, takes it and not the tool.
 //
 // The header is the row: a pull request that adds a file, or changes what one owns, says so in the
 // file's header and runs `node tools/codemap.ts`, and the suite names the rows of a stale map. A
-// conflict in docs/CODEMAP.md is mended by running the tool, never by hand. A file is a .ts file; the
-// data beside them (the shipped files, tools/kit/line.json) is named by the code that writes it.
+// conflict in docs/CODEMAP.md is mended by running the tool, never by hand. A file is a .ts file;
+// the data beside them (the shipped files, tools/kit/line.json) is named by the code that writes
+// it.
 import { readFileSync, readdirSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -34,11 +35,13 @@ export interface Row { path: string; text: string }
 export interface Folder { row: string; under: string; except?: readonly string[]; what: string }
 
 /**
- * The folders collapsed to one row, with their count. Each is a folder where a box adds files: an
- * area's own and its businesses' rooms, and the monsters' drawings, a family to a file, since a
- * monster goes the way of a zone map (EXPANSION §8.2). So a box adds no row: a row to each of their
- * files would have every box write rows, which the map is made to end, and their headers are the
- * areas' and the drawings' notes, which a row would not shorten. `<area>` is each folder of
+ * The folders collapsed to one row. Each is a folder where a box adds files: an area's own and its
+ * businesses' rooms, and the monsters' drawings, a family to a file, since a monster goes the way of
+ * a zone map (EXPANSION §8.2). So a box adds no row: a row to each of their files would have every
+ * box write rows, which the map is made to end, and their headers are the areas' and the drawings'
+ * notes, which a row would not shorten. The row names the areas whose folders it holds and counts
+ * no file, so a box changes nothing of the map: two boxes merged side by side would each write the
+ * same count and leave the merged map stale (#1023's review). `<area>` is each folder of
  * src/content/areas/; what one holds is its index.ts's header and the area's doc. Every other file
  * is a row: the kits (src/ui/interiors/kit/ and src/ui/monsters/kit/ among them), which the systems
  * lane writes, and src/ui/monsters/index.ts, which merges the families.
@@ -90,24 +93,22 @@ function folderOf(file: string, areas: ReadonlySet<string>): { folder: Folder; a
   return undefined;
 }
 
-/** The map's rows, sorted by path: a row to each file, and one to each collapsed folder with its count. */
+/** The map's rows, sorted by path: a row to each file, and one to each collapsed folder, naming its areas. */
 export function rows(sources: readonly Source[]): Row[] {
   const files = sources.filter((s) => mapped(s.path));
   const areas = areasOf(files.map((s) => s.path));
   const out: Row[] = [];
-  const folded = new Map<Folder, { files: number; areas: Set<string> }>();
+  const folded = new Map<Folder, Set<string>>();
   for (const s of files) {
     const at = folderOf(s.path, areas);
     if (!at) { out.push({ path: s.path, text: header(s.text) }); continue; }
-    const f = folded.get(at.folder) ?? { files: 0, areas: new Set<string>() };
-    f.files++;
-    if (at.area) f.areas.add(at.area);
-    folded.set(at.folder, f);
+    const held = folded.get(at.folder) ?? new Set<string>();
+    if (at.area) held.add(at.area);
+    folded.set(at.folder, held);
   }
-  for (const [folder, f] of folded) {
-    const names = [...f.areas].sort(byPath);
-    const where = names.length ? ` in ${names.length} folders, one to an area (${names.join(', ')})` : '';
-    out.push({ path: folder.row, text: `${f.files} files${where}: ${folder.what}` });
+  for (const [folder, held] of folded) {
+    const names = [...held].sort(byPath);
+    out.push({ path: folder.row, text: names.length ? `A folder to an area (${names.join(', ')}): ${folder.what}` : folder.what });
   }
   return out.sort((a, b) => byPath(a.path, b.path));
 }
@@ -120,11 +121,11 @@ const INTRO = [
   '# Code map',
   '',
   "Made by `node tools/codemap.ts` from the files' headers (#1023); never edited by hand. A row to each",
-  'file of `src/` (not `src/lib/`, game-engine, vendored), `tools/` and `types/`, sorted by path, and its',
-  "header's first paragraph; a folder where a box adds files is one row, with its count. A pull request",
-  "that adds a file, or changes what one owns, says so in the file's header and runs the tool: the",
-  '`codemap` suite names the rows of a stale map, and a conflict here is mended by running the tool. How',
-  'the game is put together is [SYSTEMS.md](SYSTEMS.md).',
+  'file of `src/` (not `src/lib/`, game-engine, vendored), `tools/` and `types/`, sorted by path, and',
+  "its header's first paragraph; a folder where a box adds files is one row. A pull request that adds",
+  "a file, or changes what one owns, says so in the file's header and runs the tool: the `codemap`",
+  'suite names the rows of a stale map, and a conflict here is mended by running the tool. How the game',
+  'is put together is [SYSTEMS.md](SYSTEMS.md).',
   '',
   '| File | What its header says first |',
   '|---|---|',
