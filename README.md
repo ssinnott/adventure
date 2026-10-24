@@ -18,11 +18,13 @@ dependencies, and nothing compiled to disk during development.
   not collide, and the order of work.
 - [docs/ISSUES.md](docs/ISSUES.md) — how that work is filed: issue types, labels, epics, the
   Dependencies section every issue carries, and the sections of an issue.
-- [docs/areas/](docs/areas/) — each area's own doc: where the atlas puts it, what is built, what
-  is still to build and what is left to decide. The Foreland's is the first; Thornmark's,
-  Saltreach's, Wrackholm's, Sunderwood's, the Kilns', Cairnmoor's, Rimewater's, the Whitespine's,
-  Ashfall's, the Glasswold's, Meridian Camp's, the Dead-Drop's and Hearth Isle's follow, and each
-  is built.
+- [docs/areas/](docs/areas/) — each area's own doc: `docs/areas/<area>.md`, its current state in
+  250 lines at most, read first (where the atlas puts it, what is built, its secrets, what is open),
+  with its decisions and its plan beside it in its folder, `docs/areas/<area>/` (EXPANSION §8.2).
+  The Foreland's is the first, and the first in that shape; Thornmark's, Saltreach's, Wrackholm's,
+  Sunderwood's, the Kilns', Cairnmoor's, Rimewater's, the Whitespine's, Ashfall's, the Glasswold's,
+  Meridian Camp's, the Dead-Drop's and Hearth Isle's follow, each built and each waiting for D3 to
+  move it to the shape.
 - [docs/NAMES.md](docs/NAMES.md) — how places are named: each people's tongue, the few old names
   the first crew left, and the rules a rename follows.
 - [docs/PILOT.md](docs/PILOT.md) — the pilot that plays the game for watching: P and T, the why
