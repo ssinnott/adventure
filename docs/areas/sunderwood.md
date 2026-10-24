@@ -29,7 +29,7 @@ I3, I4 and J4, are the Deepthorn's, built whole by Thornmark.
   from the start and the only way between the two areas.
 - **South: Sunder Bay,** and the Deepthorn's shore running on into the dead wood at K4; Penspern
   across the water.
-- **East: the Iron Fells,** the Kilns' first zone (16–18, Act III), the east road running on into
+- **East: the Iron Fells** (16–17), the Kilns' first zone (Act III), the east road running on into
   M3, its first box; south of the Fells, Kilnmouth over the mountains, with no way through.
 
 The Sunder runs north to south through K1 to K4, a gorge of chasm with dead wood and crystal along
