@@ -12,7 +12,7 @@
 // place. Every goal of every chapter has to come up in some run (`everyGoalWalked`).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST } from '../../src/content/index.ts';
+import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST, TABLES } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import { World } from '../../src/game/world.ts';
 import type { MoveResult } from '../../src/game/world.ts';
@@ -49,8 +49,8 @@ export interface Walk {
 export interface Step { name: string; play: (w: Walk) => void; }
 
 export function newWalk(ok: Ok, seed = 4): Walk {
-  const rng = makeRng(seed), party = defaultParty(rng);
-  const world = new World(buildMaps(), party, rng);
+  const rng = makeRng(seed), party = defaultParty(TABLES, rng);
+  const world = new World(TABLES, buildMaps(), party, rng);
   return { world, party, news: [], level: 1, ok, marks: questMarks(questLog(world.state, party)) };
 }
 
@@ -332,7 +332,7 @@ export function answerTo(w: Walk, map: string, p: Person, by: string | null | { 
   const label = by !== null && typeof by === 'object' ? by.label : undefined;
   const a = m.choice?.answers.find((x) => label !== undefined ? x.label === label : (x.sets ?? null) === by);
   w.ok(!!a, label !== undefined ? `${name} asks, and '${label}' is an answer (${asked})` : `${name} asks, and an answer sets ${by ?? 'nothing'} (${asked})`);
-  const said = a ? answer(a, w.party) : '';
+  const said = a ? answer(TABLES.items, a, w.party) : '';
   listen(w);
   return said;
 }

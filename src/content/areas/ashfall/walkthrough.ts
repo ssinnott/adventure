@@ -67,7 +67,7 @@ import { zone, square, ALL, reach, shut, reached, spread, each, row, col, cell, 
 import type { Walk, Step } from '../../../../tools/kit/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
-import { ATLAS, MAP_DEFS, MONSTERS, GUILD_QUESTS } from '../../index.ts';
+import { ATLAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, TABLES } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
@@ -369,9 +369,9 @@ export const walkthrough: Walkthrough = (ok) => {
   // shop buys.
   see(w, 'meridian_camp:mc1_furnace');
   const part = MC.features!.find((f) => f.kind === 'chest' && f.id === 'mc1_part'), heap = MC.features!.find((f) => f.kind === 'chest' && f.id === 'mc1_heap');
-  ok(part?.kind === 'chest' && part.items.join() === 'ember_part1' && item('ember_part1').slot === 'none' && !item('ember_part1').price, 'in the furnace\'s mouth the Ember Stone\'s first part, a quest item');
+  ok(part?.kind === 'chest' && part.items.join() === 'ember_part1' && item(TABLES.items, 'ember_part1').slot === 'none' && !item(TABLES.items, 'ember_part1').price, 'in the furnace\'s mouth the Ember Stone\'s first part, a quest item');
   if (part?.kind === 'chest') { w.world.travel('meridian_camp', part.x, part.y); w.world.markUsed(part.id); w.party.bag.push(...part.items); }
-  ok(heap?.kind === 'chest' && heap.items.length === 2 && heap.items.every((i) => item(i).slot === 'none' && !item(i).price), 'beside it a heap of the stokers\' parts, which no shop buys');
+  ok(heap?.kind === 'chest' && heap.items.length === 2 && heap.items.every((i) => item(TABLES.items, i).slot === 'none' && !item(TABLES.items, i).price), 'beside it a heap of the stokers\' parts, which no shop buys');
   listen(w);
 
   // Meridian Camp's second level, the iron corridors (#22), at 26, its floor. Down the vents' stair onto the
@@ -396,7 +396,7 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('meridian_camp2', camps2[0].x, camps2[0].y);
   ok(restRefused(w.world) === '', 'and a company may rest at it');
   const kit = MC2.features!.find((f) => f.kind === 'chest' && f.id === 'mc2_kit');
-  ok(kit?.kind === 'chest' && kit.items.join() === 'meridian_mail' && item('meridian_mail').slot === 'armor' && item('meridian_mail').price <= 5500,
+  ok(kit?.kind === 'chest' && kit.items.join() === 'meridian_mail' && item(TABLES.items, 'meridian_mail').slot === 'armor' && item(TABLES.items, 'meridian_mail').price <= 5500,
     'in it the Company\'s kit, a named coat of mail inside the window');
   const grave2 = MC2.features!.find((f) => f.kind === 'event' && f.id === 'mc2_grave');
   ok(grave2?.kind === 'event' && grave2.text.includes('chain pin') && grave2.text.includes('note'), 'a grave with a Guild chain pin at its head and a note tied to it');
@@ -418,9 +418,9 @@ export const walkthrough: Walkthrough = (ok) => {
   // walker's parts, which no shop buys; and the stair down to the camp (STAIR2), its square open and among
   // the exits, and its line said at its head the once.
   const part3 = MC2.features!.find((f) => f.kind === 'chest' && f.id === 'mc2_part'), heap2 = MC2.features!.find((f) => f.kind === 'chest' && f.id === 'mc2_heap');
-  ok(part3?.kind === 'chest' && part3.items.join() === 'ember_part3' && item('ember_part3').slot === 'none' && !item('ember_part3').price, 'at the corridors\' end the Ember Stone\'s third part, a quest item');
+  ok(part3?.kind === 'chest' && part3.items.join() === 'ember_part3' && item(TABLES.items, 'ember_part3').slot === 'none' && !item(TABLES.items, 'ember_part3').price, 'at the corridors\' end the Ember Stone\'s third part, a quest item');
   if (part3?.kind === 'chest') { w.world.travel('meridian_camp2', part3.x, part3.y); w.world.markUsed(part3.id); w.party.bag.push(...part3.items); }
-  ok(heap2?.kind === 'chest' && heap2.items.length === 2 && heap2.items.every((i) => item(i).slot === 'none' && !item(i).price), 'beside it a heap of the walker\'s parts, which no shop buys');
+  ok(heap2?.kind === 'chest' && heap2.items.length === 2 && heap2.items.every((i) => item(TABLES.items, i).slot === 'none' && !item(TABLES.items, i).price), 'beside it a heap of the walker\'s parts, which no shop buys');
   const stair2 = MC2.features!.find((f) => f.kind === 'event' && f.id === 'mc2_stair');
   ok(STAIR2.to === 'meridian_camp3' && (MC2.exits ?? []).includes(STAIR2) && new GameMap(MC2).passable(STAIR2.x, STAIR2.y) === 'ok'
     && stair2?.kind === 'event' && !!stair2.once && stair2.x === STAIR2.x && stair2.y === STAIR2.y - 1,
@@ -467,7 +467,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(map3.passable(door3.x + 1, door3.y) !== 'ok' && map3.at(door3.x + 1, door3.y).door === 'door' && !!win.once && !/hull|ship|orbit|voyage|Custodian/i.test(win.text),
     'the door at the gallery\'s end is a wall that opens for nobody; the window says what the eyes see, the once');
   const kit3 = MC3.features!.find((f) => f.kind === 'chest' && f.id === 'mc3_kit');
-  ok(kit3?.kind === 'chest' && kit3.items.join() === 'meridian_staff' && item('meridian_staff').slot === 'weapon' && item('meridian_staff').price <= 5500,
+  ok(kit3?.kind === 'chest' && kit3.items.join() === 'meridian_staff' && item(TABLES.items, 'meridian_staff').slot === 'weapon' && item(TABLES.items, 'meridian_staff').price <= 5500,
     'in the tents the Company\'s kit, a named staff inside the window');
 
   // Fane's fire, the third of the Company's camps and the only warm one, the level's one rest, with Oriel
@@ -487,8 +487,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok([readWords, plainWords].every((m) => m.text.includes('You took your time')) && readWords.text.includes('somebody read me') && plainWords.text.includes(had ? 'somebody read me' : 'as if counting')
     && !!readWords.choice && readWords.choice === plainWords.choice,
     `Fane at the first meeting: "You took your time"; to a company that had the first journal read, that somebody read him; his map held out to both (${had ? 'read' : 'not read'})`);
-  const given3 = answer(plainWords.choice!.answers[0], w.party);
-  ok(!!w.party.flags.meridian_map && w.party.bag.includes('fane_map') && item('fane_map').slot === 'none' && !item('fane_map').price && given3.includes('Fane\'s Map'),
+  const given3 = answer(TABLES.items, plainWords.choice!.answers[0], w.party);
+  ok(!!w.party.flags.meridian_map && w.party.bag.includes('fane_map') && item(TABLES.items, 'fane_map').slot === 'none' && !item(TABLES.items, 'fane_map').price && given3.includes('Fane\'s Map'),
     `he gives his map, a quest item sewn shut, and its giving sets meridian_map (${given3})`);
   ok(meet(fane, w.party, heard(w.world, fane)).text.includes('fire to keep') && !meet(fane, w.party, heard(w.world, fane)).choice, 'after, he keeps his fire, and asks nothing');
   listen(w);
@@ -842,7 +842,7 @@ function oldCinder(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   see(w, 'old_cinder2:oc2_cellars');
   see(w, 'old_cinder2:oc2_niche');
   const stone = feature(L2, 'oc2_stone');
-  ok(stone?.kind === 'chest' && stone.items.join() === 'founding_stone' && item('founding_stone').slot === 'none' && reached(L2, [L2.start.x, L2.start.y], [stone.x, stone.y]) && w.world.used('oc2_niche'),
+  ok(stone?.kind === 'chest' && stone.items.join() === 'founding_stone' && item(TABLES.items, 'founding_stone').slot === 'none' && reached(L2, [L2.start.x, L2.start.y], [stone.x, stone.y]) && w.world.used('oc2_niche'),
     'in a niche off the west cellar, the town\'s founding stone, a cup cut in its face');
   const [cellar] = L2.encounters!;
   ok(L2.encounters!.length === 1 && cellar.monsters.join() === 'ash_husk,ash_husk,ash_husk,ash_husk' && !!cellar.respawn && cellar.roams === false, 'four husks stand in the cellars');
@@ -857,7 +857,7 @@ function oldCinder(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(lamp?.kind === 'event' && !lamp.once && lit.every((said) => said.includes(lamp.text)) && L2.rows[lamp.y + 1][lamp.x] === 'o', 'at the bottom of the walk the lamp, cold, and so each time');
   see(w, 'old_cinder2:oc2_set');
   const part = feature(L2, 'oc2_part');
-  ok(part?.kind === 'chest' && part.items.join() === 'ember_part2' && item('ember_part2').name === 'Ember Stone\'s Second Part' && beside(part, lamp!.x, lamp!.y + 1) && reached(L2, [L2.start.x, L2.start.y], [part.x, part.y]),
+  ok(part?.kind === 'chest' && part.items.join() === 'ember_part2' && item(TABLES.items, 'ember_part2').name === 'Ember Stone\'s Second Part' && beside(part, lamp!.x, lamp!.y + 1) && reached(L2, [L2.start.x, L2.start.y], [part.x, part.y]),
     'set in the floor beside the lamp, the Ember Stone\'s second part, reached with nothing searched for');
 
   // The secret: a stair fallen against the walk's wall, the oil channel running on under it; searched
@@ -872,7 +872,7 @@ function oldCinder(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
   ok(found && into.every((r) => r.kind === 'moved') && w.world.used('oc2_keeper'), 'searched where the channel runs under the fallen stair, it gives on the lamp-keeper\'s cellar');
   const keepers = feature(L2, 'oc2_keepers');
-  ok(keepers?.kind === 'chest' && keepers.items.join() === 'hearth_symbol,plate+2' && keepers.gold > 0 && !!item('hearth_symbol').resist?.includes('fire'),
+  ok(keepers?.kind === 'chest' && keepers.items.join() === 'hearth_symbol,plate+2' && keepers.gold > 0 && !!item(TABLES.items, 'hearth_symbol').resist?.includes('fire'),
     'in it his Holy Symbol of the Hearth, which its bearer carries against fire, and a Plate Mail +2');
 
   // Back up the stair, out at the hall's door onto the square.
@@ -953,7 +953,7 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const put = (p: Person): string => {
     w.world.travel(ES.id, p.x, p.y);
     const [a] = meet(p, w.party, heard(w.world, p)).choice?.answers ?? [];
-    return a ? answer(a, w.party) : '';
+    return a ? answer(TABLES.items, a, w.party) : '';
   };
   const without = structuredClone(w.party);
   without.bag = without.bag.filter((i) => !i.startsWith('ember_part'));
@@ -994,7 +994,7 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
   ok(found && into.every((r) => r.kind === 'moved') && w.world.used('es_lower'), 'searched where the chain pin is driven in, the foot gives on steps down to the lower gallery and the Company\'s bedrolls');
   open(w, `${ES.id}:es_journal`, 'skip', false);
-  ok(journal.kind === 'chest' && journal.items.join() === 'meridian_journal4' && w.party.bag.includes('meridian_journal4') && item('meridian_journal4').slot === 'none' && !item('meridian_journal4').price && w.world.used('es_journal'),
+  ok(journal.kind === 'chest' && journal.items.join() === 'meridian_journal4' && w.party.bag.includes('meridian_journal4') && item(TABLES.items, 'meridian_journal4').slot === 'none' && !item(TABLES.items, 'meridian_journal4').price && w.world.used('es_journal'),
     'and in it the fourth Meridian journal, in Fane\'s hand');
   listen(w);
 
@@ -1018,10 +1018,10 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(offered('cartographers', j.party).map((o) => o.id).join() === q.id && !q.item && ['Map Room', 'Chart House'].every((h) => q.goals[0].text.includes(h)),
     'then it is offered alone at any hall of the Guild, Saltmouth\'s Map Room or the Chart House, and takes nothing');
   const purse = j.party.gold, xp = xpOf(j.party), before = shelf(j);
-  ok(!take(q, j.world.state, j.party).length && !report('cartographers', j.world.state, j.party).length && rankOf('cartographers', j.party) === 2, 'taken with the journal unfound, the hall pays nothing');
+  ok(!take(TABLES, q, j.world.state, j.party).length && !report(TABLES, 'cartographers', j.world.state, j.party).length && rankOf('cartographers', j.party) === 2, 'taken with the journal unfound, the hall pays nothing');
   open(j, `${ES.id}:es_journal`, 'skip', false);
   j.world.travel('cinderport', chart.x, chart.y);
-  const paid = report('cartographers', j.world.state, j.party), after = shelf(j);
+  const paid = report(TABLES, 'cartographers', j.world.state, j.party), after = shelf(j);
   ok(paid.length === 2 && paid[0].startsWith(q.paid[0]) && j.party.gold === purse + 500 && xpOf(j.party) >= xp + 3600 - j.party.members.length && rankOf('cartographers', j.party) === 3
     && !!j.party.flags[doneFlag(q.id)] && j.party.bag.includes('meridian_journal4'),
     `the journal found, the Chart House pays 500 gold and 3,600 xp, the book stays in the pack and the company are Mapmakers (${paid.join(' ').replace(/\n+/g, ' ')})`);
@@ -1029,7 +1029,7 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const late = surveyors();
   late.party.flags[SLEEPERS_SEEN] = 1;
   open(late, `${ES.id}:es_journal`, 'skip', false);
-  const lateGold = late.party.gold, early = take(q, late.world.state, late.party);
+  const lateGold = late.party.gold, early = take(TABLES, q, late.world.state, late.party);
   ok(early.length === 2 && early[0].startsWith(q.early![0]) && late.party.gold === lateGold + 500 && rankOf('cartographers', late.party) === 3,
     `a company that had found the journal is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
 
@@ -1049,7 +1049,7 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
     return v;
   };
   /** The Surveyor's rung paid with the fourth journal found first, so the company are Mapmakers. */
-  const surveyed = (v: Walk): void => { open(v, `${ES.id}:es_journal`, 'skip', false); take(q, v.world.state, v.party); };
+  const surveyed = (v: Walk): void => { open(v, `${ES.id}:es_journal`, 'skip', false); take(TABLES, q, v.world.state, v.party); };
   const m = mapmakers();
   ok(offered('cartographers', m.party).map((o) => o.id).join() === q.id && fq.rank === 3 && !fq.item,
     `${fq.title} waits behind ${q.title}: a Surveyor with the Sleepers seen is offered the fourth journal alone`);
@@ -1057,21 +1057,21 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const said = word(m), pack = m.party.bag.join(), purse2 = m.party.gold, xp2 = xpOf(m.party);
   ok(rankOf('cartographers', m.party) === 3 && offered('cartographers', m.party).map((o) => o.id).join() === fq.id && ['Map Room', 'Chart House'].every((h) => fq.goals[0].text.includes(h)),
     'the Surveyor\'s paid, the company are Mapmakers and it is offered alone at any hall of the Guild, Saltmouth\'s Map Room or the Chart House, and takes nothing');
-  ok(!take(fq, m.world.state, m.party).length && !report('cartographers', m.world.state, m.party).length && rankOf('cartographers', m.party) === 3, 'taken with the fire unseen, the hall pays nothing');
+  ok(!take(TABLES, fq, m.world.state, m.party).length && !report(TABLES, 'cartographers', m.world.state, m.party).length && rankOf('cartographers', m.party) === 3, 'taken with the fire unseen, the hall pays nothing');
   see(m, FIRE);
   m.world.travel('cinderport', chart.x, chart.y);
-  const mapped = report('cartographers', m.world.state, m.party), pinned = word(m);
+  const mapped = report(TABLES, 'cartographers', m.world.state, m.party), pinned = word(m);
   ok(mapped.length === 2 && mapped[0].startsWith(fq.paid[0]) && m.party.gold === purse2 + 800 && xpOf(m.party) >= xp2 + 4800 - m.party.members.length && rankOf('cartographers', m.party) === 4
     && !!m.party.flags[doneFlag(fq.id)] && m.party.bag.join() === pack && m.party.bag.includes('fane_map'),
     `the fire seen, the Chart House pays 800 gold and 4,800 xp, the pack as it was with Fane's map in it, and the company are Geographers (${mapped.join(' ').replace(/\n+/g, ' ')})`);
-  ok(!report('cartographers', m.world.state, m.party).length && !offered('cartographers', m.party).length && m.party.gold === purse2 + 800,
+  ok(!report(TABLES, 'cartographers', m.world.state, m.party).length && !offered('cartographers', m.party).length && m.party.gold === purse2 + 800,
     'and it is paid the once: a second report pays nothing, and nothing is offered');
   ok(said.includes('no further') && pinned.includes('a pin in the map past the vents') && !pinned.includes('no further'),
     'and Cador Lusk, who had the Company no further than the vents, has a pin in the map past them');
   const soon = mapmakers();
   surveyed(soon);
   see(soon, FIRE);
-  const soonGold = soon.party.gold, hasty = take(fq, soon.world.state, soon.party);
+  const soonGold = soon.party.gold, hasty = take(TABLES, fq, soon.world.state, soon.party);
   ok(hasty.length === 2 && hasty[0].startsWith(fq.early![0]) && soon.party.gold === soonGold + 800 && rankOf('cartographers', soon.party) === 4,
     `a company that had seen the fire first is paid at the taking, with the early words (${hasty.join(' ').replace(/\n+/g, ' ')})`);
 }
@@ -1431,15 +1431,15 @@ function wasteBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  */
 function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
-  w.party.members[2] = createCharacter('Ragna', 'human', 'barbarian', { might: 15, endurance: 14, speed: 12 }, makeRng(19));
-  w.party.members[3] = createCharacter('Bryn', 'human', 'druid', { intellect: 14, personality: 15 }, makeRng(23));
+  w.party.members[2] = createCharacter(TABLES, 'Ragna', 'human', 'barbarian', { might: 15, endurance: 14, speed: 12 }, makeRng(19));
+  w.party.members[3] = createCharacter(TABLES, 'Bryn', 'human', 'druid', { intellect: 14, personality: 15 }, makeRng(23));
   for (const c of w.party.members) { c.xp = xpForLevel(27); c.level = 27; takePrestige(c); takePrestige(c); }
   w.level = 27;
   const [idris, ragna, bryn] = [1, 2, 3].map((i) => w.party.members[i]);
   const [F10, F11, L1, L2, MC, MC2, ES, TM] = ['emberwaste_f10', 'emberwaste_f11', 'old_cinder', 'old_cinder2', 'meridian_camp', 'meridian_camp2', 'ember_stone', 'thornmark'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
   const entered = (id: string): string[] => log(w, id)?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? [];
   const talk = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
-  const ask = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const [a] = meet(p, w.party, heard(w.world, p)).choice?.answers ?? []; const said = a ? answer(a, w.party) : ''; listen(w); return said; };
+  const ask = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const [a] = meet(p, w.party, heard(w.world, p)).choice?.answers ?? []; const said = a ? answer(TABLES.items, a, w.party) : ''; listen(w); return said; };
   const old = person('Wystan, an old Lightbearer', F11), heir = person('Petroc, the warlord\'s heir', G11), druid = person('Kenver, the Archdruid', F10);
   const sent = sought(questLog(w.world.state, w.party));
   ok(([[F11, old, idris], [G11, heir, ragna], [F10, druid, bryn]] as const).every(([d, p, c]) => sent.find((s) => s.at === d.id)?.who.includes(c.name) && p.teaches?.prestige === 3 && p.teaches.seek?.includes(PRESTIGES[c.cls].titles[2])),
@@ -1496,7 +1496,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   ok(!w.world.present(oak) && !w.world.present(bed), 'before the ask, nothing grows under the Grove\'s oaks to lift, and the bed asks nothing');
   asked(F10, druid, 3, SEEDLING_ASKED, 'seedling', 'Bring me one from the Grove');
   const lifted = ask(TM, oak);
-  ok(lifted.includes('roots and earth') && w.party.bag.includes(SEEDLING) && !!w.party.flags[SEEDLING_TAKEN] && !w.world.present(oak) && item(SEEDLING).slot === 'none' && !item(SEEDLING).price,
+  ok(lifted.includes('roots and earth') && w.party.bag.includes(SEEDLING) && !!w.party.flags[SEEDLING_TAKEN] && !w.world.present(oak) && item(TABLES.items, SEEDLING).slot === 'none' && !item(TABLES.items, SEEDLING).price,
     `under the Grove's oldest oaks a seedling, lifted once with its earth, a quest item no shop buys (${lifted.replace(/\n+/g, ' ')})`);
   const empty = structuredClone(w.party);
   empty.bag = empty.bag.filter((i) => i !== SEEDLING);
@@ -1629,7 +1629,7 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
   openChest(w, `${E11.id}:e11_roll`);
   const holders = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'chest' && f.items.includes('town_roll')));
   const sold = JSON.stringify([MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'shop')), INTERIORS, ARMOURER, CURES]);
-  ok(w.party.bag.includes('town_roll') && holders.length === 1 && !sold.includes('town_roll') && !Object.values(MONSTERS).some((mo) => mo.drops?.some((d) => d.item === 'town_roll')) && item('town_roll').price === 0 && item('town_roll').slot === 'none',
+  ok(w.party.bag.includes('town_roll') && holders.length === 1 && !sold.includes('town_roll') && !Object.values(MONSTERS).some((mo) => mo.drops?.some((d) => d.item === 'town_roll')) && item(TABLES.items, 'town_roll').price === 0 && item(TABLES.items, 'town_roll').slot === 'none',
     'in the chest at its end, the town\'s roll: the one place it is found, a quest item that no shop sells and no monster drops');
 
   // Back to her: the roll taken and the flag set, her words, nothing paid either way; then Master for 5,000,
@@ -1840,16 +1840,16 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   ok(armourer.stock.length === ARMOURER.length && ARMOURER.every((id) => armourer.stock.includes(id)) && !armourer.prices, `${armourer.name} sells the act's step, all ${ARMOURER.length} wares and nothing else, at list price`);
   for (const m of w.party.members) for (const id of ACT_IV[0].classes[m.cls]) {
     const before = w.party.gold;
-    ok(!!buy(w.party, armourer, id) && before - w.party.gold === item(id).price, `${m.name} buys a ${item(id).name} at the armourer's for ${item(id).price} gold`);
+    ok(!!buy(TABLES.items, w.party, armourer, id) && before - w.party.gold === item(TABLES.items, id).price, `${m.name} buys a ${item(TABLES.items, id).name} at the armourer's for ${item(TABLES.items, id).price} gold`);
   }
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote', ...CURES].every((id) => chandler.stock.includes(id)) && !chandler.stock.some((id) => ARMOURER.includes(id)) && !chandler.prices,
     'the chandler\'s sells the provisions, lamp oil and the Quickening Draught at list price, and no steel');
-  const cure = item(CURES[0]), gold = w.party.gold;
-  ok(!!buy(w.party, chandler, cure.id) && gold - w.party.gold === cure.price && w.party.bag.includes(cure.id), `a ${cure.name} bought at the chandler's for ${cure.price} gold`);
+  const cure = item(TABLES.items, CURES[0]), gold = w.party.gold;
+  ok(!!buy(TABLES.items, w.party, chandler, cure.id) && gold - w.party.gold === cure.price && w.party.bag.includes(cure.id), `a ${cure.name} bought at the chandler's for ${cure.price} gold`);
 
   // The temple lifts the stone at 80 gold a level: for a member of 25, the cure's own price (#546).
   const glassed = structuredClone(w.party.members[0]);
-  glassed.level = 25; addCondition(glassed, 'stoned');
+  glassed.level = 25; addCondition(TABLES.items, glassed, 'stoned');
   ok(templePrice(glassed) === cure.price && ofKind(PORT, 'temple')[0].interior === 'cinderport_temple', `${ofKind(PORT, 'temple')[0].name} lifts the stone from a member of 25 for ${templePrice(glassed)} gold, the cure's price`);
 
   // Training to 27 at the yard, a copy from a copy of the purse, so the company walks on as it was.
@@ -1865,16 +1865,16 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   ok(chart.hall === 'cartographers' && house.hall === 'compact', `${chart.name} is the Cartographers' hall and ${house.name} the Compact's`);
   for (const g of ['cartographers', 'compact'] as const) {
     const p = structuredClone(w.party), [first] = offered(g, p);
-    ok(!!first && first.rank === 0 && !take(first, w.world.state, p).length && inHand(g, p).some((q) => q.id === first.id), `a new company joins the ${g} ladder here: ${first?.title} offered and taken`);
+    ok(!!first && first.rank === 0 && !take(TABLES, first, w.world.state, p).length && inHand(g, p).some((q) => q.id === first.id), `a new company joins the ${g} ladder here: ${first?.title} offered and taken`);
   }
   // The Fence's rung (#635), offered to the Compact's rank 2 and paid at the factor's house once the
   // Dead-Drop's stair is gone down, as at the Keel.
   const fence = GUILD_QUESTS.find((q) => q.id === 'compact_fence')!, f = newWalk(ok);
   f.party.flags[rankFlag('compact')] = 2;
-  ok(offered('compact', f.party).some((q) => q.id === fence.id) && !take(fence, f.world.state, f.party).length, `${fence.title} offered to a company of the Compact's rank 2, and taken`);
+  ok(offered('compact', f.party).some((q) => q.id === fence.id) && !take(TABLES, fence, f.world.state, f.party).length, `${fence.title} offered to a company of the Compact's rank 2, and taken`);
   see(f, 'dead_drop_stair:dd_foot');
   f.world.travel('cinderport', house.x, house.y);
-  const purse = f.party.gold, paid = report('compact', f.world.state, f.party);
+  const purse = f.party.gold, paid = report(TABLES, 'compact', f.world.state, f.party);
   ok(paid.length >= 1 && f.party.gold === purse + (fence.pay.gold ?? 0) && rankOf('compact', f.party) === 3, `and paid at ${house.name} (${paid.join(' ').replace(/\n+/g, ' ')})`);
 
   // The Compact's ship (#547): sold on Kilnhaven's quay to the Compact's steps here for its whole fare,
@@ -1896,7 +1896,7 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
     `the ship ties up at Cinderport and puts the company on the Compact's steps under the factor's house (${sailed.lines.join(' ')})`);
   ok(sailed.lines.join() === steps.label && ashore.some((t) => t.startsWith('The Compact\'s steps')) && s.world.day === day + 2 && s.world.hour === 16,
     `with Cinderport's own line and the steps said, two days on at 16:00 (${ashore.join(' / ')}; day ${day} to day ${s.world.day})`);
-  const kept = deserialize(serialize(s.world.state, s.party, 0)), loaded = new World(buildMaps(), kept.party, makeRng(1), kept.world);
+  const kept = deserialize(serialize(s.world.state, s.party, 0)), loaded = new World(TABLES, buildMaps(), kept.party, makeRng(1), kept.world);
   ok(loaded.state.mapId === 'cinderport' && loaded.state.x === 13 && loaded.state.y === 2, 'a save made on the steps loads there');
   const [back, ...others] = JAGO.passage ?? [];
   ok(!!back && !others.length && back.to === 'kilnhaven' && back.x === home.x && back.y === home.y && back.fare === COMPACT_SHIP.fare && back.days === COMPACT_SHIP.days,
@@ -2037,7 +2037,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
   // smith's counter in Cinderport; the smith asks, and the shovel-head goes to the thane's agent for
   // 1,000 gold or to the Wardens for 600, or is hafted, the Grey Shovel +3. Each way 1,800 xp, 300 a member.
   const GORRAN = npc('cinderport', 'Gorran, the smith'), SCAV = npc('firemount_g11', 'A scavenger'), MOVED = npc('cinderport', 'A scavenger off the mountain');
-  const SHOVEL = item('grey_shovel');
+  const SHOVEL = item(TABLES.items, 'grey_shovel');
   ok(SHOVEL.slot === 'weapon' && SHOVEL.plus === 3 && SHOVEL.price <= 5500, `the shovel hafted is a weapon with a plus of ${SHOVEL.plus}, at ${SHOVEL.price} inside Ashfall's window`);
   for (const [how, sets, gold] of [['thane', SHOVEL_THANE, 1000], ['wardens', SHOVEL_WARDENS, 600], ['kept', SHOVEL_KEPT, 0]] as const) {
     const w = walkAt(ok, 26);
@@ -2110,7 +2110,7 @@ const corridors = (camp: 'none' | 'looked' | 'passed'): Step => ({ name: camp ==
   see(w, 'meridian_camp3:mc3_fire');
   w.world.travel('meridian_camp3', FANE.x, FANE.y);
   const met = meet(FANE, w.party, heard(w.world, FANE)), take = met.choice?.answers.find((a) => a.label === 'Take it.');
-  if (take) answer(take, w.party);
+  if (take) answer(TABLES.items, take, w.party);
   listen(w);
   if (camp === 'looked') see(w, 'meridian_camp3:mc3_window');
   const looked = written(w, CHAPTER).includes('window');
@@ -2125,7 +2125,7 @@ const SET: Step = { name: 'the parts set', play: (w) => {
     if (!w.party.bag.includes(`ember_part${i + 1}`)) return;
     w.world.travel('ember_stone', p.x, p.y);
     const [a] = meet(p, w.party, heard(w.world, p)).choice?.answers ?? [];
-    said.push(a ? answer(a, w.party) : '');
+    said.push(a ? answer(TABLES.items, a, w.party) : '');
   });
   listen(w);
   const now = stonesRestored(w.world.state, w.party);
@@ -2385,7 +2385,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('kindler')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'bd_locker' && f.items?.includes('kindler'))))
       && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'kindler')),
       'in the stokers\' locker by the furnace, 400 gold and Kindler; no shop sells it, no other chest or cairn holds it and no monster drops it');
-    const spike = item('kindler'), plain = item('marlinspike'), knife = item('grey_knife');
+    const spike = item(TABLES.items, 'kindler'), plain = item(TABLES.items, 'marlinspike'), knife = item(TABLES.items, 'grey_knife');
     const rung = (rows: readonly { level: number; classes: Partial<Record<string, readonly string[]>> }[], level: number, id: string): boolean =>
       rows.some((r) => r.level === level && ['thief', 'bard'].every((c) => r.classes[c]?.includes(id)));
     ok(spike.element === 'lightning' && !spike.artifact && spike.price <= CURVE.glasswold.price && hits(spike) === hits(plain) + (ELEMENT_DIE + 1) / 2 && hits(spike) > hits(knife)
@@ -2450,13 +2450,13 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     // and no monster drops it.
     const bier = GH.features!.find((f) => f.kind === 'chest' && f.id === 'gh_bier')!;
     const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('grims_axe')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== bier && !!f.items?.includes('grims_axe')) || (f.kind === 'statue' && !!f.gift?.items?.includes('grims_axe'));
-    ok(bier.kind === 'chest' && bier.gold === 0 && bier.items.join() === 'grims_axe' && !!item('grims_axe').artifact
+    ok(bier.kind === 'chest' && bier.gold === 0 && bier.items.join() === 'grims_axe' && !!item(TABLES.items, 'grims_axe').artifact
       && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'grims_axe')),
       'on the warlord\'s bier, Grim\'s Axe; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
     // The secret: one stone of the wall behind the bier cut with a smoking mountain, as under the name on the axe's
     // cheek, the search there and the war-band's offerings in the niche behind it, never reached but through the stone.
     const [stone] = GH.secrets!, shutWalked = flood({}, [stone.x, stone.y]), shut = flood(ALL, [stone.x, stone.y]);
-    ok(stone.hint === 'gh_mark' && shutWalked.size === shut.size && shut.has('7,12') && shut.has('10,12') && !['7,14', '6,14'].some((k) => shut.has(k)) && !!item('grims_axe').text?.[1]?.includes('smoking mountain'),
+    ok(stone.hint === 'gh_mark' && shutWalked.size === shut.size && shut.has('7,12') && shut.has('10,12') && !['7,14', '6,14'].some((k) => shut.has(k)) && !!item(TABLES.items, 'grims_axe').text?.[1]?.includes('smoking mountain'),
       `the niche is shut but for its stone: a walker reaches ${shutWalked.size} of Grim's Howe's squares, a wader, climber or floater no more, and none of them the niche`);
     see(w, `${GH.id}:gh_mark`);
     w.world.travel(GH.id, stone.x, stone.y - 1, SOUTH);

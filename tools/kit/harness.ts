@@ -17,7 +17,7 @@ import type { Role } from './line.ts';
 import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor, letsLie, asWritten } from '../../src/game/bot.ts';
 import type { BotOpts } from '../../src/game/bot.ts';
 import { ROUND_CAP, playOut, type Bot } from './fight.ts';
-import { type Rules, RULES, edgeOf, fielded } from './company.ts';
+import { type Rules, RULES, edgeOf, fielded, HARNESS } from './company.ts';
 
 /**
  * How many standard encounters at its own level a company should manage between rests: six or seven
@@ -35,10 +35,10 @@ const spellDamage = (c: Character, sp: SpellDef, rules: Readonly<Rules>): number
 
 /** A turn's weapon blows' expected damage on a monster; `capped` counts no more than the monster has left. */
 function weaponDamage(s: CombatState, p: Party, c: Character, m: MonsterInst, rules: Readonly<Rules>, capped = true): number {
-  const w = weaponOf(c), e = edgeOf(c, s.round, rules), at = p.members.indexOf(c);
-  const chance = toHit(attackBonus(c) + buffHit(s, p, at) - (w.ranged && !(c.cls === 'ranger' && prestigeOf(c) >= 2) ? s.rangedPenalty : 0), monsterAc(s, m));
-  const blow = Math.max(0, hits(w) + (w.ranged ? 0 : bonus(statOf(c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + songDamage(p) + e.damage);
-  return (blowsOf(c) + e.blows - 1) * chance * (capped ? Math.min(m.hp, blow) : blow);
+  const w = weaponOf(s.tables.items, c), e = edgeOf(c, s.round, rules), at = p.members.indexOf(c);
+  const chance = toHit(attackBonus(s.tables.items, c) + buffHit(s, p, at) - (w.ranged && !(c.cls === 'ranger' && prestigeOf(c) >= 2) ? s.rangedPenalty : 0), monsterAc(s, m));
+  const blow = Math.max(0, hits(w) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + songDamage(p) + e.damage);
+  return (blowsOf(s.tables.items, c) + e.blows - 1) * chance * (capped ? Math.min(m.hp, blow) : blow);
 }
 
 /** What the monsters still standing deal the company in a round, on average: all of them, or those of `only`. */
@@ -48,7 +48,7 @@ function incoming(s: CombatState, p: Party, rules: Readonly<Rules>, only?: reado
   for (const f of only ?? aliveMonsters(s)) {
     const d = s.monsters[f].def, reach = d.ranged || !front.length ? up : front;
     if (!reach.length) continue;
-    const ac = reach.reduce((a, { c }) => a + armorClass(c) + edgeOf(c, s.round, rules).ac, 0) / reach.length;
+    const ac = reach.reduce((a, { c }) => a + armorClass(s.tables.items, c) + edgeOf(c, s.round, rules).ac, 0) / reach.length;
     // A sweeper's turn is, at its chance, a blow at each of the row it would take.
     const many = d.sweep ? 1 + d.sweep.chance * (sweptRow(p, s.monsters[f]).length - 1) : 1;
     total += toHit(monsterHit(s, s.monsters[f]), ac) * Math.max(0, (d.dice * (d.sides + 1)) / 2 + d.bonus) * many;
@@ -59,7 +59,7 @@ function incoming(s: CombatState, p: Party, rules: Readonly<Rules>, only?: reado
 /** What a caster's spell point is worth in hit points: what its best mend gives for one, or one if it has none. */
 function mendRate(c: Character, rules: Readonly<Rules>): number {
   let best = 1;
-  for (const x of c.spells.map(spell)) if (x.heal && x.target === 'ally' && !x.raise) best = Math.max(best, spellHeal(c, x.heal, rules.rankStep) / x.sp);
+  for (const x of c.spells.map(spell)) if (x.heal && x.target === 'ally' && !x.raise) best = Math.max(best, spellHeal(HARNESS.items, c, x.heal, rules.rankStep) / x.sp);
   return best;
 }
 
@@ -85,7 +85,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   const c = p.members[i], o = optsFor(c, opts), answer = rules.answer ?? ANSWER;
   const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
   // The artifacts' spells it bears with a charge left (#847): weighed as its own, at no cost in points.
-  const charged = borne(c).filter((id) => item(id).casts && chargesLeft(p, id) > 0).map((from) => ({ from, x: spell(item(from).casts!.spell) }));
+  const charged = borne(s.tables.items, c).filter((id) => item(s.tables.items, id).casts && chargesLeft(s.tables.items, p, id) > 0).map((from) => ({ from, x: spell(item(s.tables.items, from).casts!.spell) }));
   // Mending reaches the fallen as well as the standing; only the dead are past it.
   const living = p.members.map((m, j) => ({ m, j })).filter(({ m }) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned'));
   const everyone = known.filter((x) => x.heal && x.target === 'party').sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
@@ -97,7 +97,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   if (worst && mends.length) {
     // The cheapest mend that closes half the wound, else the biggest there is.
     const wound = worst.m.maxHp - worst.m.hp;
-    const pick = mends.filter((x) => spellHeal(c, x.heal ?? 0, rules.rankStep) >= wound / 2).sort((a, b) => a.sp - b.sp)[0] ?? mends.sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
+    const pick = mends.filter((x) => spellHeal(s.tables.items, c, x.heal ?? 0, rules.rankStep) >= wound / 2).sort((a, b) => a.sp - b.sp)[0] ?? mends.sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
     if (partyAct(s, p, rng, { type: 'cast', spellId: pick.id, target: worst.j })) return;
   }
   const sleeper = wakeWith(p, c, answer);
@@ -112,8 +112,8 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   const reach = foes.filter((f) => canReach(s, c, f)), awake = reach.filter((f) => up.includes(f)), near = awake.length ? awake : reach;
   const lead = markOf(s, foes, asWritten, answer), pick = up.length ? up : foes, mark = lead !== undefined && pick.includes(lead) ? lead : undefined;
   const weakest = lead !== undefined && near.includes(lead) ? lead : (near.length ? near : foes).reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a));
-  const armed = canAttackFromRow(c, i), blow = armed ? weaponDamage(s, p, c, s.monsters[weakest], rules) : 0;
-  const weapons = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(s, p, m, s.monsters[weakest], rules, false) : 0), 0);
+  const armed = canAttackFromRow(s.tables.items, c, i), blow = armed ? weaponDamage(s, p, c, s.monsters[weakest], rules) : 0;
+  const weapons = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(s.tables.items, m, j) ? weaponDamage(s, p, m, s.monsters[weakest], rules, false) : 0), 0);
   const rate = incoming(s, p, rules) / Math.max(1, weapons);
   // How much of each pool is left above the rest line, as a share of all there is above it.
   const t = pools(p), spare = (left: number, whole: number): number => (left - whole * REST_AT) / (whole * (1 - REST_AT));
@@ -125,7 +125,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   const bless = o.bless ? blessWith(s, p, i) : undefined;
   if (bless) {
     const runs = { ...s, bless: bless.turns ?? 1 }, target = s.monsters[weakest];
-    const more = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(m, j) ? weaponDamage(runs, p, m, target, rules, false) - weaponDamage(s, p, m, target, rules, false) : 0), 0);
+    const more = p.members.reduce((a, m, j) => a + (!isDown(m) && canAttackFromRow(s.tables.items, m, j) ? weaponDamage(runs, p, m, target, rules, false) - weaponDamage(s, p, m, target, rules, false) : 0), 0);
     const v = pays(bless, more * Math.min(bless.turns ?? 1, left()) * rate);
     if (v > worth) { worth = v; best = { type: 'cast', spellId: bless.id, target: i }; }
   }
@@ -184,7 +184,7 @@ export interface Outcome { won: boolean; cost: number; hp: number; sp: number; r
 /** One fight to its end from however the company stands, under the what-ifs `rules`, the bot playing it with the options `rules.bot` asks: the fight as it ended, to read. */
 export function play(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty, rules: Readonly<Rules> = RULES): CombatState {
   const edge = rules.levelTraits || rules.levelBonus ? (c: Character, cs: CombatState): Edge => edgeOf(c, cs.round, rules) : undefined;
-  const rng = makeRng(seed), s = startCombat(p, [asGroup('harness', monsters)], rng, { spellsGrowTo: rules.spellsGrowTo, rankStep: rules.rankStep, edge });
+  const rng = makeRng(seed), s = startCombat(HARNESS, p, [asGroup('harness', monsters)], rng, { spellsGrowTo: rules.spellsGrowTo, rankStep: rules.rankStep, edge });
   return playOut(s, p, rng, bot, rules, ROUND_CAP);
 }
 
@@ -235,12 +235,12 @@ export function measure(level: number, monsters: Encounter, seeds: number, from 
  * pack's. One with neither waits for a temple, and the company must rest (`mustRest`).
  */
 export function unstone(p: Party, rules: Readonly<Rules> = RULES): void {
-  const absolve = spell('absolve'), cures = (id: string): boolean => !!item(id).use?.cure?.includes('stoned');
+  const absolve = spell('absolve'), cures = (id: string): boolean => !!item(HARNESS.items, id).use?.cure?.includes('stoned');
   for (const m of p.members.filter((x) => hasCondition(x, 'stoned'))) {
     const caster = p.members.find((c) => !isDown(c) && c.spells.includes(absolve.id) && c.sp >= absolve.sp);
-    if (caster) { caster.sp -= absolve.sp; castOnAlly(caster, absolve, m, rules.rankStep); continue; }
+    if (caster) { caster.sp -= absolve.sp; castOnAlly(HARNESS.items, caster, absolve, m, rules.rankStep); continue; }
     const holder = [p.bag, ...p.members.map((c) => c.pack)].find((h) => h.some(cures)), id = holder?.find(cures);
-    if (holder && id) { holder.splice(holder.indexOf(id), 1); lift(m, item(id).use?.cure ?? []); }
+    if (holder && id) { holder.splice(holder.indexOf(id), 1); lift(HARNESS.items, m, item(HARNESS.items, id).use?.cure ?? []); }
   }
 }
 
@@ -253,8 +253,8 @@ export function mendBetween(p: Party, rules: Readonly<Rules> = RULES): void {
     const healers = p.members.filter((c) => !isDown(c)).map((c) => ({ c, known: c.spells.map(spell).filter((x) => x.context === 'any' && x.heal && !x.raise && x.sp <= c.sp) }));
     const all = healers.flatMap(({ c, known }) => known.filter((x) => x.target === 'party').map((x) => ({ c, x }))).sort((a, b) => a.x.sp - b.x.sp)[0];
     const one = healers.flatMap(({ c, known }) => known.filter((x) => x.target === 'ally').map((x) => ({ c, x }))).sort((a, b) => a.x.sp - b.x.sp)[0];
-    if (all && hurt.length >= 2) { all.c.sp -= all.x.sp; castOnParty(all.c, all.x, p, rules.rankStep); }
-    else if (one) { one.c.sp -= one.x.sp; castOnAlly(one.c, one.x, hurt[0], rules.rankStep); }
+    if (all && hurt.length >= 2) { all.c.sp -= all.x.sp; castOnParty(HARNESS.items, all.c, all.x, p, rules.rankStep); }
+    else if (one) { one.c.sp -= one.x.sp; castOnAlly(HARNESS.items, one.c, one.x, hurt[0], rules.rankStep); }
     else return;
   }
 }

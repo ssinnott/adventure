@@ -4,12 +4,12 @@
 // adds to to-hit too (`attackBonus`). Past a plus, an item may raise a stat while it is borne
 // (`statOf`) and a weapon's blows may carry an element (an added die, `ELEMENT_DIE`). An artifact is
 // one marked so (#847): one in the world, never sold, past the ladder's top.
-import { ITEMS } from '../content/index.ts';
 import type { Feature } from './mapdef.ts';
 import type { Condition, Party, Stat } from './party.ts';
 import type { Element } from './spells.ts';
 import type { SkillId } from './skills.ts';
 import { skilled } from './skills.ts';
+import type { Items } from './tables.ts';
 
 export type ItemSlot = 'weapon' | 'armor' | 'shield' | 'none';
 
@@ -77,8 +77,8 @@ export interface ItemDef {
   skill?: SkillId;
 }
 
-export function item(id: string): ItemDef {
-  const d = ITEMS[id];
+export function item(items: Items, id: string): ItemDef {
+  const d = items[id];
   if (!d) throw new Error(`unknown item '${id}'`);
   return d;
 }
@@ -95,7 +95,7 @@ export const ARTIFACT_LEVEL = 10;
 /** Regeneration's share of the most hit points, mended each whole hour (`ItemDef.regen`): a tenth, the trolls' (MONSTERS §3.3). */
 export const REGEN_PART = 10;
 /** The castings of an artifact's spell left until dawn (`ItemDef.casts`): its number less those the company has spent. */
-export const chargesLeft = (party: Pick<Party, 'spent'>, id: string): number => Math.max(0, (item(id).casts?.times ?? 0) - (party.spent?.[id] ?? 0));
+export const chargesLeft = (items: Items, party: Pick<Party, 'spent'>, id: string): number => Math.max(0, (item(items, id).casts?.times ?? 0) - (party.spent?.[id] ?? 0));
 /** What a shop says to an artifact offered it (`ItemDef.artifact`): it takes none. */
 export const REFUSED = '"Keep it. There is no price on a thing like that."';
 
@@ -108,8 +108,8 @@ export const hits = (d: ItemDef): number => ((d.dice ?? 1) * ((d.sides ?? 4) + 1
 type Shop = Extract<Feature, { kind: 'shop' }>;
 
 /** What a shop charges for an item: its own price for it, or else the item's. */
-export function priceIn(shop: Shop, id: string): number {
-  return shop.prices?.[id] ?? item(id).price;
+export function priceIn(items: Items, shop: Shop, id: string): number {
+  return shop.prices?.[id] ?? item(items, id).price;
 }
 
 /**
@@ -117,13 +117,13 @@ export function priceIn(shop: Shop, id: string): number {
  * nothing is never bought; two thirds, rounded down, with a Merchant standing or an item that does
  * a Merchant's work carried (`skilled`, #857).
  */
-export function sellPrice(party: Party, price: number): number {
-  return skilled(party, 'merchant') ? Math.floor((price * 2) / 3) : Math.floor(price / 2);
+export function sellPrice(items: Items, party: Party, price: number): number {
+  return skilled(items, party, 'merchant') ? Math.floor((price * 2) / 3) : Math.floor(price / 2);
 }
 
 /** Buy an item from a shop: null when the party is short of gold; food goes to the stores, the rest to the bag. */
-export function buy(party: Party, shop: Shop, id: string): ItemDef | null {
-  const d = item(id), price = priceIn(shop, id);
+export function buy(items: Items, party: Party, shop: Shop, id: string): ItemDef | null {
+  const d = item(items, id), price = priceIn(items, shop, id);
   if (party.gold < price) return null;
   party.gold -= price;
   if (d.use?.food) party.food += d.use.food;

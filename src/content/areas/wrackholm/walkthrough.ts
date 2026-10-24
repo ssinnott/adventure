@@ -49,7 +49,7 @@ import { questLog } from '../../../game/quests.ts';
 import type { Person, Meeting } from '../../../game/people.ts';
 import { take } from '../../../game/passage.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
-import { MAP_DEFS, GUILD_QUESTS, AREAS, ATLAS, MONSTERS, THE_QUEST } from '../../index.ts';
+import { MAP_DEFS, GUILD_QUESTS, AREAS, ATLAS, MONSTERS, THE_QUEST, TABLES } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take as takeWork, report, offered, rankOf } from '../../../game/guilds.ts';
@@ -336,8 +336,8 @@ function hollowLocked(ok: (cond: boolean, msg: string) => void): void {
  * measure is named.
  */
 function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
-  const [blade, coat] = [item('corposant'), item('runners_coat')];
-  const [star, plus, flail, shark] = [item('morning_star'), item('morning_star+1'), item('flail'), item('sharkskin')];
+  const [blade, coat] = [item(TABLES.items, 'corposant'), item(TABLES.items, 'runners_coat')];
+  const [star, plus, flail, shark] = [item(TABLES.items, 'morning_star'), item(TABLES.items, 'morning_star+1'), item(TABLES.items, 'flail'), item(TABLES.items, 'sharkskin')];
   ok(blade.slot === 'weapon' && blade.element === 'lightning' && !blade.stat && !blade.plus && blade.dice === star.dice && blade.sides === star.sides && blade.bonus === star.bonus && same(blade.classes, star.classes) && blade.name.length <= 26,
     `Corposant is the Morning Star's steel with lightning on it, for the Morning Star's classes, its name ${blade.name.length} characters of the sheet's 26`);
   ok(hits(blade) - hits(star) === 3.5 && hits(star) < hits(plus) && hits(blade) > hits(plus) && hits(blade) > hits(flail),
@@ -347,10 +347,10 @@ function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
   // Priced, in the window, never sold, off the ladder, sold back at half.
   const stocked = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : []))));
   const ladder = new Set(GEAR.flatMap(([, ids]) => ids)), dropped = new Set(Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)));
-  const limit = CURVE.wrackholm.price, six = defaultParty(makeRng(1));
+  const limit = CURVE.wrackholm.price, six = defaultParty(TABLES, makeRng(1));
   for (const d of [blade, coat]) {
-    ok(d.price > 0 && d.price <= limit && !stocked.has(d.id) && !ladder.has(d.id) && !dropped.has(d.id) && sellPrice(six, d.price) === d.price / 2,
-      `${d.name} costs ${d.price} of Wrackholm's window of ${limit}, is sold by no shop, worn by no rung of the ladder and dropped by no monster, and sells back at ${sellPrice(six, d.price)}`);
+    ok(d.price > 0 && d.price <= limit && !stocked.has(d.id) && !ladder.has(d.id) && !dropped.has(d.id) && sellPrice(TABLES.items, six, d.price) === d.price / 2,
+      `${d.name} costs ${d.price} of Wrackholm's window of ${limit}, is sold by no shop, worn by no rung of the ladder and dropped by no monster, and sells back at ${sellPrice(TABLES.items, six, d.price)}`);
   }
   // Where they lie: the hollow's two chests, the iron-bound one the area's only locked chest.
   const chests = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f): f is Chest => f.kind === 'chest').map((f) => ({ map: d.id, f })));
@@ -360,14 +360,14 @@ function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
     && chest(WRACKHOLM_F6, 'f6_hollow_locked').gold === 0 && chest(WRACKHOLM_F6, 'f6_hollow_chest').gold === 0,
     `Corposant lies in the iron-bound chest and the coat in the sea chest beside it, no gold with either, and the iron-bound chest is the only locked one the isle places (${locked.join() || 'none'})`);
   // The raise and the blow, on the real items: worn, the coat adds 3 to speed and not to the bare stat, carried it adds nothing, and the classes that cannot wear it or wield the blade are refused.
-  const crew = defaultParty(makeRng(1)), thief = crew.members.find((m) => m.cls === 'thief')!, knight = crew.members.find((m) => m.cls === 'knight')!;
-  const bare = statOf(thief, 'speed');
+  const crew = defaultParty(TABLES, makeRng(1)), thief = crew.members.find((m) => m.cls === 'thief')!, knight = crew.members.find((m) => m.cls === 'knight')!;
+  const bare = statOf(TABLES.items, thief, 'speed');
   thief.pack.push(coat.id);
-  const carried = statOf(thief, 'speed');
+  const carried = statOf(TABLES.items, thief, 'speed');
   thief.pack.pop();
-  ok(equip(thief, coat.id) && carried === bare && statOf(thief, 'speed') === bare + 3 && thief.stats.speed === bare
-    && equip(knight, blade.id) && knight.equipment.weapon === blade.id && !equip(crew.members.find((m) => m.cls === 'sorcerer')!, blade.id) && !equip(crew.members.find((m) => m.cls === 'cleric')!, coat.id),
-    `worn, the coat raises the thief's speed ${bare} to ${statOf(thief, 'speed')} (carried, nothing) and the knight wields the blade; the sorcerer cannot wield it nor the cleric wear the coat`);
+  ok(equip(TABLES.items, thief, coat.id) && carried === bare && statOf(TABLES.items, thief, 'speed') === bare + 3 && thief.stats.speed === bare
+    && equip(TABLES.items, knight, blade.id) && knight.equipment.weapon === blade.id && !equip(TABLES.items, crew.members.find((m) => m.cls === 'sorcerer')!, blade.id) && !equip(TABLES.items, crew.members.find((m) => m.cls === 'cleric')!, coat.id),
+    `worn, the coat raises the thief's speed ${bare} to ${statOf(TABLES.items, thief, 'speed')} (carried, nothing) and the knight wields the blade; the sorcerer cannot wield it nor the cleric wear the coat`);
   // Lightning against what the isle places: none of its monsters is immune or resists it; the weak are named.
   const wrack = AREAS.find((a) => a.id === 'wrackholm')!;
   const placed = [...new Set(wrack.maps.flatMap((m) => (m.encounters ?? []).flatMap((e) => e.monsters)))].map((id) => MONSTERS[id]).filter((m) => m.level > 10);
@@ -591,13 +591,13 @@ function fence(w: Walk): void {
   w.ok(!offered('compact', runner).some((o) => o.id === q.id) && offered('compact', p).map((o) => o.id).join() === q.id,
     `${q.title}: a Runner is not offered it, and a Fence is, alone`);
   const gold = p.gold;
-  w.ok(!takeWork(q, w.world.state, p).length && !report('compact', w.world.state, p).length && rankOf('compact', p) === 2,
+  w.ok(!takeWork(TABLES, q, w.world.state, p).length && !report(TABLES, 'compact', w.world.state, p).length && rankOf('compact', p) === 2,
     'taken with the stair\'s foot unseen, the hall pays nothing');
   see(w, `${DEAD_DROP_STAIR.id}:dd_foot`);
-  const said = report('compact', w.world.state, p);
+  const said = report(TABLES, 'compact', w.world.state, p);
   w.ok(said.length === 2 && said[0].startsWith(q.paid[0]) && /not yet/i.test(said[0]) && said[1] === 'Your rank with the Salt Compact is now Factor.' && p.gold === gold + 200 && rankOf('compact', p) === 3,
     `the foot seen, the hall pays 200 gold, says not yet and makes the company a Factor (${said.join(' ').replace(/\n+/g, ' ')})`);
-  const late = fenced(), early = takeWork(q, w.world.state, late);
+  const late = fenced(), early = takeWork(TABLES, q, w.world.state, late);
   w.ok(early.length === 2 && early[0].startsWith(q.early![0]) && /not yet/i.test(early[0]) && late.gold === gold + 200 && rankOf('compact', late) === 3,
     `a company that had seen the foot is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
 }
@@ -638,21 +638,21 @@ function factor(w: Walk): void {
   fence.party.flags[SLEEPERS_SEEN] = 1;
   w.ok(offered('compact', fence.party).map((o) => o.id).join() === 'compact_fence', 'a Fence, the Sleepers seen, is offered the Fence\'s rung and not this one');
   const runner = ruanSays(a);
-  w.ok(!takeWork(q, a.world.state, a.party).length && !report('compact', a.world.state, a.party).length && rankOf('compact', a.party) === 3 && !runner.choice && runner.text.startsWith('"Runner."'),
+  w.ok(!takeWork(TABLES, q, a.world.state, a.party).length && !report(TABLES, 'compact', a.world.state, a.party).length && rankOf('compact', a.party) === 3 && !runner.choice && runner.text.startsWith('"Runner."'),
     'taken with no orders in the pack, the hall pays nothing, and Ruan has her Runner\'s words and no question');
 
   // The orders carried up: paid at the Keel, once, and the orders stay in the pack.
   a.party.bag.push('compact_orders');
   const purse = a.party.gold, xp = xpOf(a.party), pack = a.party.bag.join();
   a.world.travel('saltmouth', ruan.x, ruan.y);
-  const paid = report('compact', a.world.state, a.party);
+  const paid = report(TABLES, 'compact', a.world.state, a.party);
   w.ok(paid.length === 2 && paid[0].startsWith(q.paid[0]) && paid[1] === 'Your rank with the Salt Compact is now Partner.' && a.party.gold === purse + 800 && xpOf(a.party) >= xp + 4800 - a.party.members.length
     && rankOf('compact', a.party) === 4 && !!a.party.flags[done] && a.party.bag.join() === pack,
     `the orders in the pack, the Keel pays 800 gold and 4,800 xp, leaves them in the pack and makes the company Partners (${paid.join(' ').replace(/\n+/g, ' ')})`);
-  w.ok(!report('compact', a.world.state, a.party).length && !offered('compact', a.party).length && a.party.gold === purse + 800, 'and it is paid the once: a second report pays nothing, and nothing is offered');
+  w.ok(!report(TABLES, 'compact', a.world.state, a.party).length && !offered('compact', a.party).length && a.party.gold === purse + 800, 'and it is paid the once: a second report pays nothing, and nothing is offered');
   const late = factors(true);
   late.party.flags[SLEEPERS_SEEN] = 1;
-  const lateGold = late.party.gold, hasty = takeWork(q, late.world.state, late.party);
+  const lateGold = late.party.gold, hasty = takeWork(TABLES, q, late.world.state, late.party);
   w.ok(hasty.length === 2 && hasty[0].startsWith(q.early![0]) && late.party.gold === lateGold + 800 && rankOf('compact', late.party) === 4 && late.party.bag.includes('compact_orders'),
     `a company that carried the orders before it took the rung is paid at the taking, with the early words (${hasty.join(' ').replace(/\n+/g, ' ')})`);
 
@@ -666,7 +666,7 @@ function factor(w: Walk): void {
     'the rung paid, Ruan puts it at the Keel with the company already Partners, and puts it again if it is not answered');
   for (const [how, sets, other] of [['the orders to the Wardens', COMPACT_WARDENS, COMPACT_OVER], ['the Compact taken over', COMPACT_OVER, COMPACT_WARDENS]] as const) {
     const v = sets === COMPACT_OVER ? factors(true) : a;
-    if (v !== a) { v.party.flags[SLEEPERS_SEEN] = 1; takeWork(q, v.world.state, v.party); }
+    if (v !== a) { v.party.flags[SLEEPERS_SEEN] = 1; takeWork(TABLES, q, v.world.state, v.party); }
     const gold = v.party.gold, xpNow = xpOf(v.party);
     const said = answerTo(v, 'saltmouth', ruan, sets), next = ruanSays(v);
     w.ok(!!v.party.flags[sets] && !v.party.flags[other] && v.party.gold === gold && xpOf(v.party) === xpNow && rankOf('compact', v.party) === 4 && next.text === words(ruan, sets) && !next.choice,
@@ -714,7 +714,7 @@ function drop(w: Walk): void {
     && groups.every((g) => !!g.respawn && !g.after),
     `loaders and tally clerks, ${groups.length - 1} groups, and at the far end a hold keeper come up from the vaults`);
   for (const g of groups) fight(w, `${D.id}:${g.id}`);
-  w.ok(open(w, `${D.id}:dd_heap`, 'any', false).every((i) => item(i).slot === 'none' && !item(i).price), 'where the rails end, a loader\'s parts, which no shop buys');
+  w.ok(open(w, `${D.id}:dd_heap`, 'any', false).every((i) => item(TABLES.items, i).slot === 'none' && !item(TABLES.items, i).price), 'where the rails end, a loader\'s parts, which no shop buys');
   const gold = w.party.gold;
   open(w, `${D.id}:dd_strongbox`, 'any', false);
   w.ok(w.party.gold - gold >= 1000, `under the counting floor's posts, the Compact's drop coin, heavy (${w.party.gold - gold} gold)`);
@@ -776,9 +776,9 @@ function vaults(w: Walk): void {
   open(w, `${V.id}:dd2_box1`, 'any', false);
   open(w, `${V.id}:dd2_box2`, 'any', false);
   w.ok(w.party.gold - gold >= 1000, `by the rails, the Compact's drop coin, heavy (${w.party.gold - gold} gold)`);
-  w.ok(open(w, `${V.id}:dd2_heap`, 'any', false).every((i) => item(i).slot === 'none' && !item(i).price), 'in a pen, a keeper\'s parts, which no shop buys');
+  w.ok(open(w, `${V.id}:dd2_heap`, 'any', false).every((i) => item(TABLES.items, i).slot === 'none' && !item(TABLES.items, i).price), 'in a pen, a keeper\'s parts, which no shop buys');
   const piece = open(w, `${V.id}:dd2_straw`, 'any', false);
-  w.ok(piece.length === 1 && !!item(piece[0]).plus && item(piece[0]).price <= 6000, `in another pen's straw, a named piece inside the band's window (${piece.map((i) => `${item(i).name}, ${item(i).price}`).join()})`);
+  w.ok(piece.length === 1 && !!item(TABLES.items, piece[0]).plus && item(TABLES.items, piece[0]).price <= 6000, `in another pen's straw, a named piece inside the band's window (${piece.map((i) => `${item(TABLES.items, i).name}, ${item(TABLES.items, i).price}`).join()})`);
 
   // The hoist: its chains go into the wall by the count; a search there, and the cage takes the company up
   // beside the drop's crates. Nothing on the drop leads down it.
@@ -873,13 +873,13 @@ function countingHouse(w: Walk): void {
   w.ok(/countersigned/.test(letters.text) && /Helmstow seal/.test(letters.text) && !/Regent/i.test(said),
     'in the in-tray letters in the hand that countersigned the customs seal, its owner never named');
   for (const id of ['dd3_intray', 'dd3_outtray', 'dd3_coin', 'dd3_nibs']) see(w, `${C.id}:${id}`);
-  const taken = open(w, `${C.id}:dd3_orders`, 'any', false), read = item('compact_orders');
+  const taken = open(w, `${C.id}:dd3_orders`, 'any', false), read = item(TABLES.items, 'compact_orders');
   w.ok(taken.join() === 'compact_orders' && read.slot === 'none' && !read.price && !!read.text?.length && w.party.bag.includes('compact_orders'),
     `from the out-tray the Compact's orders, read from the pack (${read.name})`);
   const gold = w.party.gold;
   open(w, `${C.id}:dd3_strongbox`, 'any', false);
   w.ok(w.party.gold - gold >= 1000, `by the desk, the Compact's drop coin, heavy (${w.party.gold - gold} gold)`);
-  w.ok(open(w, `${C.id}:dd3_heap`, 'any', false).every((i) => item(i).slot === 'none' && !item(i).price), 'in a bin of spent nibs, a clerk\'s frame and a nib, which no shop buys');
+  w.ok(open(w, `${C.id}:dd3_heap`, 'any', false).every((i) => item(TABLES.items, i).slot === 'none' && !item(TABLES.items, i).price), 'in a bin of spent nibs, a clerk\'s frame and a nib, which no shop buys');
 
   for (const g of groups) fight(w, `${C.id}:${g.id}`);
   w.ok((C.exits ?? []).length === 1 && C.exits![0].to === V.id && !C.secrets?.length, 'and no way on down: the counting house\'s one way out is back up the steps');
@@ -1210,7 +1210,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       `the master's strongbox is shut but for the wall by the plank: none of the Brokenback's ${done.seen.size} squares walked, waded, climbed or floated reaches it`);
     see(w, `${WB.id}:wb_plank`);
     ok(search(w, WB.id, wall.x - 1, wall.y, EAST, 'wb_under'), 'searched where the plank is worn bright, the wall gives, and the hollow under the deck can be walked into');
-    const axe = item('keelhaul'), great = item('great_axe'), plus = item('great_axe+1');
+    const axe = item(TABLES.items, 'keelhaul'), great = item(TABLES.items, 'great_axe'), plus = item(TABLES.items, 'great_axe+1');
     ok(stock(WB, 'wb_strongbox') === '300 keelhaul'
       && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('keelhaul')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'wb_strongbox' && f.items?.includes('keelhaul'))))
       && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'keelhaul')),
@@ -1276,7 +1276,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     // no monster drops it.
     const belt = NL.features!.find((f) => f.kind === 'chest' && f.id === 'nl_belt')!;
     const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('holdfast')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== belt && !!f.items?.includes('holdfast')) || (f.kind === 'statue' && !!f.gift?.items?.includes('holdfast'));
-    ok(belt.kind === 'chest' && belt.gold === 0 && belt.items.join() === 'holdfast' && !!item('holdfast').artifact
+    ok(belt.kind === 'chest' && belt.gold === 0 && belt.items.join() === 'holdfast' && !!item(TABLES.items, 'holdfast').artifact
       && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'holdfast')),
       'on her master, Holdfast; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
     // The secret: kelp grown green behind her bows where no wave comes, the search there and the master's sea chest in

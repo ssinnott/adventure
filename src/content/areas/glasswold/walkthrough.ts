@@ -68,7 +68,7 @@ import { HORSE_CARRIED, GARDEN_CARRIED } from './maps/wold_d8.ts';
 import { HORSE_ASKED, HORSE_BROKEN, HORSE_WHOLE, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED, ROAD_EAST } from './public.ts';
 import { ORDERS_CARRIED } from './maps/wold_c8.ts';
 import { QUESTS } from './quests.ts';
-import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST } from '../../index.ts';
+import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST, TABLES } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -212,8 +212,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(up && onto.every((r) => r.kind === 'moved') && w.world.used('d10_nest'), 'searched in the scree where the arrow points, a notch, and up it the nest among the glassed bones');
   listen(w);
   const hoard = feature10('d10_hoard');
-  ok(hoard.kind === 'chest' && hoard.gold > 0 && hoard.items.join() === 'basalt_shield+2,quickening' && item('basalt_shield+2').slot === 'shield' && item('basalt_shield+2').plus === 2
-    && item('basalt_shield+2').price < 6000 && item('quickening').use?.cure?.includes('stoned') === true,
+  ok(hoard.kind === 'chest' && hoard.gold > 0 && hoard.items.join() === 'basalt_shield+2,quickening' && item(TABLES.items, 'basalt_shield+2').slot === 'shield' && item(TABLES.items, 'basalt_shield+2').plus === 2
+    && item(TABLES.items, 'basalt_shield+2').price < 6000 && item(TABLES.items, 'quickening').use?.cure?.includes('stoned') === true,
     'beside it the hoard the glassed carried: gold, Cinderport\'s Basalt Shield with a plus of 2, and a Quickening Draught');
   const ring = feature10('d10_ring'), view = feature10('d10_view');
   ok(ring.kind === 'event' && d10.x + ring.x === 132 && d10.y + ring.y === 289 && top.size > 0 && view.kind === 'event' && view.text.includes('Glass') && view.text.includes('crown')
@@ -225,9 +225,9 @@ export const walkthrough: Walkthrough = (ok) => {
   // Stone, first spent here (#546): the draught from the hoard lifts it where a member stands glassed, and
   // any temple, Cinderport's the nearest, lifts it for 80 gold a level.
   const glassed = structuredClone(w.party.members[0]);
-  addCondition(glassed, 'stoned');
+  addCondition(TABLES.items, glassed, 'stoned');
   const price = templePrice(glassed);
-  ok(lift(glassed, item('quickening').use!.cure!) && !hasCondition(glassed, 'stoned') && price === 80 * 26,
+  ok(lift(TABLES.items, glassed, item(TABLES.items, 'quickening').use!.cure!) && !hasCondition(glassed, 'stoned') && price === 80 * 26,
     `the draught lifts a member's stone, and a temple asks ${price} gold for one of 26`);
 
   // The steppe (D9, #525), walked onto up the road from the mesas: the way in on its south edge, where D10's
@@ -316,7 +316,7 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const hollow = feature('d9_hollow');
   ok(hollow.kind === 'chest' && hollow.gold > 0 && hollow.items.includes('elixir') && hollow.items.includes('etched_glass') && hollow.x === mound.x - 2 && hollow.y === mound.y
-    && item('etched_glass').slot === 'none' && !item('etched_glass').price,
+    && item(TABLES.items, 'etched_glass').slot === 'none' && !item(TABLES.items, 'etched_glass').price,
     'in the hollow of his chest gold, an elixir and a piece of etched glass, which no shop buys');
 
   // Akordu, the Riders' camp (D8, #526): on the Wold's row at 104,222, north of the steppe, core, at
@@ -358,7 +358,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // cure (#546) and the Riders' own leather, at list price, nothing of steel; and nothing else is sold or
   // taught at Akordu (#443, call 7).
   const trader = D8.features!.find((f): f is Extract<Feature, { kind: 'shop' }> => f.kind === 'shop')!;
-  const wares = trader.stock.map(item);
+  const wares = trader.stock.map((id) => item(TABLES.items, id));
   ok(D8.features!.filter((f) => 'interior' in f && f.interior).length === 1 && trader.interior === 'akordu_trader' && ch8(trader.x, trader.y) === 'D' && !trader.prices
     && CURES.every((id) => trader.stock.includes(id)) && wares.every((d) => d.slot === 'none' || d.id === 'leather_coat') && trader.stock.includes('leather_coat'),
     `the trader's tent sells the band's consumables, the stone's cure and the Riders' leather at list price, and nothing of steel (${wares.map((d) => d.name).join(', ')})`);
@@ -366,8 +366,8 @@ export const walkthrough: Walkthrough = (ok) => {
     'the camp sells and teaches nothing else, and takes nothing in by hand; its questions are the side quests\' (#532, `woldQuests`)');
   w.party.gold += 5000;
   const purse = w.party.gold;
-  ok(!!buy(w.party, trader, 'quickening') && !!buy(w.party, trader, 'leather_coat') && purse - w.party.gold === item('quickening').price + item('leather_coat').price,
-    `the Quickening Draught bought for ${item('quickening').price} gold and a Leather Coat for ${item('leather_coat').price}`);
+  ok(!!buy(TABLES.items, w.party, trader, 'quickening') && !!buy(TABLES.items, w.party, trader, 'leather_coat') && purse - w.party.gold === item(TABLES.items, 'quickening').price + item(TABLES.items, 'leather_coat').price,
+    `the Quickening Draught bought for ${item(TABLES.items, 'quickening').price} gold and a Leather Coat for ${item(TABLES.items, 'leather_coat').price}`);
 
   // The Rider at the horse-lines sells the ride to Cinderport's gate, a fare and a day, open from the
   // start; the Rider by Cinderport's gate sells it back, and it sets a company down beside him here.
@@ -439,7 +439,7 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const hoard8 = feature8('d8_hoard');
   ok(hoard8.kind === 'chest' && hoard8.gold > 0 && hoard8.items.join() === 'leather_coat+2' && hoard8.x === dry.x - 1 && hoard8.y === dry.y - 1
-    && item('leather_coat+2').ac === (item('leather_coat').ac ?? 0) + 2 && item('leather_coat+2').price <= CURVE.glasswold.price - 400,
+    && item(TABLES.items, 'leather_coat+2').ac === (item(TABLES.items, 'leather_coat').ac ?? 0) + 2 && item(TABLES.items, 'leather_coat+2').price <= CURVE.glasswold.price - 400,
     `in the hoard ${hoard8.kind === 'chest' ? hoard8.gold : 0} gold and a Leather Coat +2, the Riders' own make, inside the band's window`);
 
   // The Scarp's edge (C8, #528): on the Wold's row at 72,222, west of Akordu's box, country, at 26-27.
@@ -533,7 +533,7 @@ export const walkthrough: Walkthrough = (ok) => {
   listen(w);
   const drops = featureC8('c8_drops');
   ok(drops.kind === 'chest' && drops.gold > 0 && drops.items.join() === 'cipher_letter' && drops.y === cleft.y - 1 && Math.abs(drops.x - cleft.x) === 1
-    && item('cipher_letter').slot === 'none' && !item('cipher_letter').price,
+    && item(TABLES.items, 'cipher_letter').slot === 'none' && !item(TABLES.items, 'cipher_letter').price,
     `the Compact's last three drops: ${drops.kind === 'chest' ? drops.gold : 0} gold and a Letter in Cipher, which nobody on the Wold reads and no shop buys`);
 
   // Over the east edge the grass runs on into Akordu's box, one land, and nothing is said.
@@ -754,7 +754,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const inDune = dugB9 ? [w.world.move('forward'), w.world.move('forward')] : [];
   ok(dugB9 && inDune.every((m) => m.kind === 'moved') && w.world.used('b9_walker'), 'searched where the sand slides off, the crust gives, and under it a walker where it stopped, its chest open to the sand');
   listen(w);
-  const cache = featureB9('b9_cache'), light = item('glass_light');
+  const cache = featureB9('b9_cache'), light = item(TABLES.items, 'glass_light');
   ok(cache.kind === 'chest' && cache.gold > 0 && cache.items.join() === 'glass_light' && cache.x === dune.x - 2 && cache.y === dune.y
     && light.slot === 'none' && !light.price && light.text?.length === 2 && !light.use && !light.skill && !light.resist,
     `in the walker's chest ${cache.kind === 'chest' ? cache.gold : 0} gold and a piece of glass with a light in it, which no shop buys and which does nothing in the hand: the scholar in the gap asks for it (#807)`);
@@ -959,7 +959,7 @@ function fanesMap(ok: (cond: boolean, msg: string) => void): void {
   walkThrough(w, 'meridian_camp2', STAIR2.x, STAIR2.y - 1, SOUTH, 'meridian_camp3', 1);
   won('meridian_camp3');
   w.world.travel('meridian_camp3', fane.x, fane.y);
-  const held = meet(fane, w.party, heard(w.world, fane)).choice?.answers[0], given = held ? answer(held, w.party) : '';
+  const held = meet(fane, w.party, heard(w.world, fane)).choice?.answers[0], given = held ? answer(TABLES.items, held, w.party) : '';
   listen(w);
   ok(!!w.party.flags.meridian_map && w.party.bag.includes('fane_map') && given.includes('Fane\'s Map') && log('scout_map')?.goal === 'Take Fane\'s map up Kushtash to Aysu.'
     && !!log('scout_map')?.pages[0].entries.some((e) => e.id === 'fane'),
@@ -968,7 +968,7 @@ function fanesMap(ok: (cond: boolean, msg: string) => void): void {
 
   // On Kushtash: the map in the pack, her question; given, she takes it and the third is taught for it.
   const gold = w.party.gold, asked = talk(), give = asked.choice?.answers.find((a) => a.takes === 'fane_map');
-  const handed = give ? answer(give, w.party) : '';
+  const handed = give ? answer(TABLES.items, give, w.party) : '';
   listen(w);
   const lost = log('meridian', [...w.party.bag, 'meridian_journal']);
   ok(!!give && !w.party.bag.includes('fane_map') && !!w.party.flags[MAP_GIVEN] && !!w.party.flags.meridian_map && lost?.done === true && log('scout_map')?.done === true && log('scout_map')?.goal === null,
@@ -1005,7 +1005,7 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
   /** A company of 27, or `LEVEL`, whose sorcerer has the second, or, `none`, with a druid in the sorcerer's place. */
   const company = (none = false, LEVEL = 27): { w: Walk; log: (id: string) => ReturnType<typeof questLog>[number] | undefined } => {
     const w = newWalk(ok);
-    if (none) w.party.members[5] = createCharacter('Cassian', 'human', 'druid', {}, makeRng(807));
+    if (none) w.party.members[5] = createCharacter(TABLES, 'Cassian', 'human', 'druid', {}, makeRng(807));
     w.level = LEVEL;
     for (const m of w.party.members) { m.level = LEVEL; m.xp = xpForLevel(LEVEL); }
     if (!none) { takePrestige(w.party.members[5]); takePrestige(w.party.members[5]); }
@@ -1022,7 +1022,7 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
   };
   /** His question with the light in the pack, and the light given. */
   const giveLight = (w: Walk): { ask?: string; said: string; give?: Answer } => {
-    const m = talk(w), give = m.choice?.answers.find((a) => a.takes === 'glass_light'), said = give ? answer(give, w.party) : '';
+    const m = talk(w), give = m.choice?.answers.find((a) => a.takes === 'glass_light'), said = give ? answer(TABLES.items, give, w.party) : '';
     listen(w);
     return { ask: m.choice?.ask, said, give };
   };
@@ -1089,7 +1089,7 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
     const { w, log } = company(false, 26), cassian = w.party.members[5];
     loot(w, 'wold_d9', hollow);
     loot(w, 'wold_b9', cache);
-    const took = talk(w), wait = talk(w), no = wait.choice?.answers.find((a) => !a.takes), kept = no ? answer(no, w.party) : '';
+    const took = talk(w), wait = talk(w), no = wait.choice?.answers.find((a) => !a.takes), kept = no ? answer(TABLES.items, no, w.party) : '';
     const { give } = giveLight(w);
     ok(took.text === hand.done.join('\n\n') && wait.choice?.ask === 'Give him the glass with a light?' && !!no && kept === no.says.join('\n\n') && !!give && !!w.party.flags[ETCHING_READ]
       && !log('walkers_carried') && !log(seekId(5, 3)) && !!barOf(teaching, cassian, w.party, w.world.state),
@@ -1192,7 +1192,7 @@ function woldQuests(ok: (cond: boolean, msg: string) => void): void {
   }
 
   // Orders on the Scarp Stair (#56's 54), at 27: 1,500 xp whichever of the three, 250 a member.
-  const HENDRA = npc('cinderport', 'Hendra, the Compact\'s factor'), RUNNER = npc('wold_c8', 'A Compact runner'), orders = item('riders_orders');
+  const HENDRA = npc('cinderport', 'Hendra, the Compact\'s factor'), RUNNER = npc('wold_c8', 'A Compact runner'), orders = item(TABLES.items, 'riders_orders');
   for (const [how, sets] of [['sealed', ORDERS_SEALED], ['told', ORDERS_TOLD], ['burned', ORDERS_BURNED]] as const) {
     const w = walkAt(ok, 27);
     ok(hear(w, 'cinderport', HENDRA).includes('Carry them the rest of the way') && began(w, 'Orders on the Scarp Stair') && /runner on the Scarp stair/.test(goal(w, 'scarp_orders')),
@@ -1225,10 +1225,10 @@ function woldQuests(ok: (cond: boolean, msg: string) => void): void {
     ok(there(w, 'cinderport', PRIEST) && !w.party.bag.includes('glass_boy') && !!w.party.flags[GARDEN_BROUGHT] && took.includes('eighty a level'),
       `${how}: at the Harbour Temple a priest takes him in (${took.split('\n\n')[0]})`);
     const stoned = structuredClone(w.party.members[0]);
-    addCondition(stoned, 'stoned');
+    addCondition(TABLES.items, stoned, 'stoned');
     const price = PRIEST.says?.flatMap((s) => s.choice?.answers ?? []).find((a) => a.sets === GARDEN_LIFTED)?.price ?? 0;
     const gold = w.party.gold, xp = xpOf(w.party), woke = answerTo(w, 'cinderport', PRIEST, sets);
-    ok(price === templePrice(stoned) && xpOf(w.party) - xp === 1800 && woke.includes('a crown standing up in the Glass') && !!item('quickening').use?.cure?.includes('stoned')
+    ok(price === templePrice(stoned) && xpOf(w.party) - xp === 1800 && woke.includes('a crown standing up in the Glass') && !!item(TABLES.items, 'quickening').use?.cure?.includes('stoned')
       && (how === 'lifted' ? w.party.gold === gold - price : w.party.gold === gold && !w.party.bag.includes('quickening')),
       `${how}: ${how === 'lifted' ? `the stone lifted at the temple's price, ${price} gold, 80 a level at 28` : 'a Quickening Draught lifts the stone'}, 1,800 xp between the six, and he wakes (${woke.split('\n\n')[1]})`);
     ok(hear(w, 'cinderport', PRIEST).includes('went home') && hear(w, 'wold_d8', MOTHER).includes('her son beside her') && !/hull|ship|orbit|voyage|custodian/i.test(woke),
@@ -1384,7 +1384,7 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   const there = w.world.featureHere();
   const gold = p.gold;
   if (there?.kind === 'chest') g.interact(there);
-  ok(there?.kind === 'chest' && there.id === 'e9_drill_bow' && p.bag.includes('drill_bow') && p.gold === gold && w.world.used('e9_drill_bow') && item('drill_bow').slot === 'none' && !item('drill_bow').price
+  ok(there?.kind === 'chest' && there.id === 'e9_drill_bow' && p.bag.includes('drill_bow') && p.gold === gold && w.world.used('e9_drill_bow') && item(TABLES.items, 'drill_bow').slot === 'none' && !item(TABLES.items, 'drill_bow').price
     && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('drill_bow')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'e9_drill_bow' && f.items.includes('drill_bow'))))
     && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'drill_bow')),
     'the chest gives the bow and no gold; no shop sells it, no other chest holds it and no monster drops it');
@@ -1766,7 +1766,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     // it, no shop sells it and no monster drops it.
     const bow = feature(KD, 'kd_chest');
     const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('akkush')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== bow && f.items.includes('akkush')) || (f.kind === 'statue' && !!f.gift?.items?.includes('akkush'));
-    ok(bow.kind === 'chest' && bow.gold === 0 && bow.items.join() === 'akkush' && !!item('akkush').artifact && flood([]).has(`${bow.x},${bow.y}`)
+    ok(bow.kind === 'chest' && bow.gold === 0 && bow.items.join() === 'akkush' && !!item(TABLES.items, 'akkush').artifact && flood([]).has(`${bow.x},${bow.y}`)
       && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'akkush')),
       'at the nest\'s edge, the Rider\'s chest with Akkush in it; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
     // The secret: the buckle wedged in the rock behind the nest, the search there and the cleft behind it,

@@ -56,7 +56,7 @@ import { LINE_FILE, lineJson, ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, 
 import type { Role } from './kit/line.ts';
 import { ANSWER, REST_AT, type BotAnswer } from '../src/game/bot.ts';
 import { ROUND_CAP, winRate, gateOpts } from './kit/fight.ts';
-import { type Rules, writeRefusal, PROMOTIONS, PRESTIGES, GEAR_TOP, artifactIds, NEWER, fielded, ladder } from './kit/company.ts';
+import { type Rules, writeRefusal, PROMOTIONS, PRESTIGES, GEAR_TOP, artifactIds, NEWER, fielded, ladder, HARNESS } from './kit/company.ts';
 import { fightsPerRest, CAP, thrifty, spent, type Encounter, type Outcome, play, outcomeOf, fight, measure, type Why, day, days, bossFloor, longest, WORST, slowest, type Point, calibrate, refit, type Cell, fieldedAt, type Job, onCores, cellsOnCores } from './kit/harness.ts';
 
 // ---- the command line ------------------------------------------------------------------------
@@ -119,7 +119,7 @@ async function main(): Promise<void> {
     const all = artifactIds(), asked = bears === 'all' ? all : bears.split(',');
     if (!asked.length || asked.some((x) => !all.includes(x)) || new Set(asked).size < asked.length) throw new Error(`--artifacts takes all, or the artifacts' ids, each once, with commas between: ${all.join(', ')}`);
     rules.artifacts = asked;
-    console.log(`What if: the company bears ${and(asked.map((x) => item(x).name.replace(/^The /, 'the ')))}, each by the first member who may (#847), found past the ladder's top and on no rung of it.`);
+    console.log(`What if: the company bears ${and(asked.map((x) => item(HARNESS.items, x).name.replace(/^The /, 'the ')))}, each by the first member who may (#847), found past the ladder's top and on no rung of it.`);
   }
   const row = (label: string, cells: readonly string[]): void => console.log(label.padEnd(14) + cells.map((c) => c.padStart(6)).join(''));
   if (levels.some((l) => !(l >= 1 && l <= CAP)) || roles.some((r) => !ROLES[r])) throw new Error(`levels run from 1 to ${CAP}; roles are ${ROLE_IDS.join(', ')}`);
@@ -206,7 +206,7 @@ async function main(): Promise<void> {
     // Act IV's stone (#546), where the road first meets it: the mesas at 27.
     console.log(`The mesa: the test controller, its hold a stone at ${BASILISK_STONE} a hit and its gaze reaching the back row, behind three of the test skirmisher.`);
     const glassed = (fs: { p: Party }[]): number => fs.filter(({ p }) => p.members.some((m) => hasCondition(m, 'stoned'))).length;
-    const uncured = (p: Party): Party => { forget((x) => x.id !== 'absolve')(p); p.bag = p.bag.filter((id) => !item(id).use?.cure?.includes('stoned')); return p; };
+    const uncured = (p: Party): Party => { forget((x) => x.id !== 'absolve')(p); p.bag = p.bag.filter((id) => !item(HARNESS.items, id).use?.cure?.includes('stoned')); return p; };
     for (const l of opt('levels') ? levels : [27]) {
       const enc = basiliskEncounter(l), held = enc.map((m): MonsterDef => (m.inflict?.cond === 'stoned' ? { ...m, inflict: { cond: 'paralysed', chance: BASILISK_STONE } } : m));
       const fs = fights(l, enc), cureless = Array.from({ length: seeds }, (_, n) => day(l, [enc], n + 1, 30, uncured, rules)).reduce((t, d) => t + d.fights, 0) / seeds;
@@ -315,7 +315,7 @@ async function main(): Promise<void> {
   if (rules.tiers || rules.company || rules.artifacts) {
     // The company the what-ifs make, as it stands at each level it fights from: each member's title, tiers and artifacts.
     const tiersOf = (t: Tiers): string => (['master', 'expert'] as const).map((x) => ({ x, on: LINES.filter((l) => t[l] === x) })).filter(({ on }) => on.length).map(({ x, on }) => `${TIER_NAMES[x]} ${on.map((l) => LINE_NAMES[l]).join(' and ')}`).join(', ');
-    const arts = (m: Character): string => borne(m).filter((id) => item(id).artifact).map((id) => item(id).name).join(' and ');
+    const arts = (m: Character): string => borne(HARNESS.items, m).filter((id) => item(HARNESS.items, id).artifact).map((id) => item(HARNESS.items, id).name).join(' and ');
     console.log(`\nThe company${rules.tiers ? ' and its tiers' : ''}${rules.artifacts ? ' and who bears the artifacts' : ''}, at each level it fights from:`);
     for (const l of [...new Set(roles.flatMap((r) => levels.map((v) => fieldedAt(r, v, under))))].sort((a, b) => a - b)) {
       console.log(`  L${l}: ${fielded(l, 1, rules).members.map((m) => `${m.name} ${className(m)}${m.tiers ? `, ${tiersOf(m.tiers)}` : ''}${arts(m) ? `, ${arts(m)}` : ''}`).join('; ')}`);

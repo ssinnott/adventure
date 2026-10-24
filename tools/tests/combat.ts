@@ -4,7 +4,7 @@
 // that goes into a machine like a hand into a glove; sweep (#545); and the Core's clock and those that obey (#748).
 import { createHash } from 'node:crypto';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { ITEMS, MONSTERS, SPELLS } from '../../src/content/index.ts';
+import { ITEMS, MONSTERS, SPELLS, TABLES } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World } from '../../src/game/world.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
@@ -27,15 +27,17 @@ import { logLines } from '../../src/ui/frame.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
-import { ok, withDefs } from './lib.ts';
+import { ok } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Tables } from '../../src/game/tables.ts';
 
 export function combat(): void {
   // A scripted policy: everyone attacks the first living monster, casters cast when they can.
   const run = (seed: number): { log: string[]; rounds: number; party: Party; state: CombatState } => {
     const rng = makeRng(seed);
-    const party = defaultParty(rng);
-    const state = startCombat(party, [{ id: 'g', monsters: ['rat', 'rat', 'rat', 'wolf'] }], rng);
+    const party = defaultParty(TABLES, rng);
+    const state = startCombat(TABLES, party, [{ id: 'g', monsters: ['rat', 'rat', 'rat', 'wolf'] }], rng);
     let guard = 0;
     while (state.outcome === 'ongoing' && guard++ < 500) {
       const t = currentTurn(state, party, rng);
@@ -44,7 +46,7 @@ export function combat(): void {
       const c = party.members[t.i];
       const target = aliveMonsters(state)[0];
       if (c.cls === 'sorcerer' && c.sp >= 2) partyAct(state, party, rng, { type: 'cast', spellId: 'spark', target });
-      else if (canAttackFromRow(c, t.i)) partyAct(state, party, rng, { type: 'attack', target });
+      else if (canAttackFromRow(TABLES.items, c, t.i)) partyAct(state, party, rng, { type: 'attack', target });
       else partyAct(state, party, rng, { type: 'defend' });
     }
     return { log: state.log, rounds: state.round, party, state };
@@ -62,29 +64,29 @@ export function combat(): void {
   ok(a.party.gold >= 200, 'gold is added to the party');
   // The cap.
   const rng = makeRng(1);
-  const big = startCombat(defaultParty(rng), [{ id: 'a', monsters: new Array(8).fill('rat') }, { id: 'b', monsters: new Array(8).fill('rat') }], rng);
+  const big = startCombat(TABLES, defaultParty(TABLES, rng), [{ id: 'a', monsters: new Array(8).fill('rat') }, { id: 'b', monsters: new Array(8).fill('rat') }], rng);
   ok(big.monsters.length === 12, `a fight never has more than 12 monsters (${big.monsters.length})`);
   // Back row cannot attack in melee; the ranger with a bow can.
-  const p = defaultParty(makeRng(2));
-  ok(!canAttackFromRow(p.members[3], 3) === !ITEMS[p.members[3].equipment.weapon!].ranged, 'back row melee is refused, back row ranged allowed');
-  equip(p.members[3], 'sling');
-  ok(canAttackFromRow(p.members[3], 3), 'a sling lets the thief attack from the back row');
-  ok(canAttackFromRow(p.members[5], 5), 'the sorcerer starts with a sling, so it has a shot from the back row');
+  const p = defaultParty(TABLES, makeRng(2));
+  ok(!canAttackFromRow(TABLES.items, p.members[3], 3) === !ITEMS[p.members[3].equipment.weapon!].ranged, 'back row melee is refused, back row ranged allowed');
+  equip(TABLES.items, p.members[3], 'sling');
+  ok(canAttackFromRow(TABLES.items, p.members[3], 3), 'a sling lets the thief attack from the back row');
+  ok(canAttackFromRow(TABLES.items, p.members[5], 5), 'the sorcerer starts with a sling, so it has a shot from the back row');
   // Fleeing eventually works and ends the fight.
   let fled = false;
   for (let seed = 1; seed < 20 && !fled; seed++) {
-    const r = makeRng(seed); const pp = defaultParty(r);
-    const s = startCombat(pp, [{ id: 'g', monsters: ['slime'] }], r);
+    const r = makeRng(seed); const pp = defaultParty(TABLES, r);
+    const s = startCombat(TABLES, pp, [{ id: 'g', monsters: ['slime'] }], r);
     for (let i = 0; i < 20 && s.outcome === 'ongoing'; i++) { const t = currentTurn(s, pp, r); if (!t) break; if (t.side === 'party') partyAct(s, pp, r, { type: 'flee' }); else monsterAct(s, pp, r); }
     fled = s.outcome === 'fled';
   }
   ok(fled, 'fleeing from a slime succeeds within a few tries');
   // Tier 4-5 spells: an all-target spell hits every foe; Ward and Haste set their timers; Revive raises the dead.
   {
-    const r = makeRng(21); const pp = defaultParty(r);
+    const r = makeRng(21); const pp = defaultParty(TABLES, r);
     const sorc = pp.members[5], cler = pp.members[4];
     sorc.level = 8; sorc.spells.push('lightning', 'meteor'); sorc.sp = 60; cler.spells.push('ward', 'revive', 'wrath'); cler.sp = 60;
-    const s = startCombat(pp, [{ id: 'a', monsters: ['ogre', 'ogre'] }, { id: 'b', monsters: ['wraith', 'wraith', 'wraith'] }], r);
+    const s = startCombat(TABLES, pp, [{ id: 'a', monsters: ['ogre', 'ogre'] }, { id: 'b', monsters: ['wraith', 'wraith', 'wraith'] }], r);
     let cast = 0, warded = false;
     for (let i = 0; i < 60 && s.outcome === 'ongoing' && cast < 2; i++) {
       const t = currentTurn(s, pp, r); if (!t) break;
@@ -96,10 +98,10 @@ export function combat(): void {
     }
     ok(warded, 'Ward sets the party shield for five rounds');
     ok(WARD_AC > 0 && s.log.some((l) => /ward settles/.test(l)), 'the ward is logged');
-    const dead = pp.members[0]; addCondition(dead, 'dead'); dead.hp = -10;
-    const line = castOnAlly(cler, spell('revive'), dead);
+    const dead = pp.members[0]; addCondition(TABLES.items, dead, 'dead'); dead.hp = -10;
+    const line = castOnAlly(TABLES.items, cler, spell('revive'), dead);
     ok(!hasCondition(dead, 'dead') && dead.hp === 10 && /draws breath/.test(line), `Revive brings a dead member back at 10 hp (${line})`);
-    ok(/not dead/.test(castOnAlly(cler, spell('revive'), dead)), 'Revive on the living does nothing');
+    ok(/not dead/.test(castOnAlly(TABLES.items, cler, spell('revive'), dead)), 'Revive on the living does nothing');
     ok(spell('haste').buff === 'haste' && spell('town_portal').explore === 'town_portal', 'Haste and Town Portal exist at tier 4 and 5');
   }
   // Slumber: the dead never sleep, nor what shrugs it off of its own nature (the slime, the crab, the
@@ -108,9 +110,9 @@ export function combat(): void {
     const slept = (d: typeof MONSTERS[string]): number => {
       let n = 0;
       for (let seed = 1; seed <= 8; seed++) {
-        const r = makeRng(seed), pp = defaultParty(r), sorc = pp.members.find((m) => m.cls === 'sorcerer')!;
+        const r = makeRng(seed), pp = defaultParty(TABLES, r), sorc = pp.members.find((m) => m.cls === 'sorcerer')!;
         sorc.spells = [...sorc.spells, 'sleep']; sorc.sp = sorc.maxSp = 99;
-        const s = startCombat(pp, [{ id: 'a', monsters: new Array(6).fill(d) }], r);
+        const s = startCombat(TABLES, pp, [{ id: 'a', monsters: new Array(6).fill(d) }], r);
         for (let i = 0; i < 40 && s.outcome === 'ongoing'; i++) {
           const t = currentTurn(s, pp, r); if (!t) break;
           if (t.side === 'monster') monsterAct(s, pp, r);
@@ -134,8 +136,8 @@ export function combat(): void {
     const rate = (penalty: number): number => {
       let hit = 0, miss = 0;
       for (let seed = 1; seed <= 60; seed++) {
-        const r = makeRng(seed), pp = defaultParty(r);
-        const s = startCombat(pp, [{ id: 'a', monsters: new Array(6).fill('bandit_archer') }], r, { rangedPenalty: penalty });
+        const r = makeRng(seed), pp = defaultParty(TABLES, r);
+        const s = startCombat(TABLES, pp, [{ id: 'a', monsters: new Array(6).fill('bandit_archer') }], r, { rangedPenalty: penalty });
         for (let i = 0; i < 60 && s.outcome === 'ongoing'; i++) { const t = currentTurn(s, pp, r); if (!t) break; if (t.side === 'monster') monsterAct(s, pp, r); else partyAct(s, pp, r, { type: 'defend' }); }
         hit += s.log.filter((l) => l.startsWith('Bandit Archer hits')).length; miss += s.log.filter((l) => l.startsWith('Bandit Archer misses')).length;
       }
@@ -144,19 +146,19 @@ export function combat(): void {
     const dry = rate(0), wet = rate(RANGED_PENALTY);
     ok(wet < dry - 0.05, `archers hit less often in a downpour (${(wet * 100).toFixed(0)}% against ${(dry * 100).toFixed(0)}%)`);
   }
-  const noted = startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4), { rangedPenalty: RANGED_PENALTY, note: 'The downpour spoils every archer\'s aim.' });
+  const noted = startCombat(TABLES, defaultParty(TABLES, makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4), { rangedPenalty: RANGED_PENALTY, note: 'The downpour spoils every archer\'s aim.' });
   ok(noted.rangedPenalty === RANGED_PENALTY && noted.log[1] === 'The downpour spoils every archer\'s aim.', 'a fight in the weather carries the penalty and says why');
-  ok(startCombat(defaultParty(makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4)).rangedPenalty === 0, 'and a fight with no word of the weather has none');
+  ok(startCombat(TABLES, defaultParty(TABLES, makeRng(4)), [{ id: 'a', monsters: ['rat'] }], makeRng(4)).rangedPenalty === 0, 'and a fight with no word of the weather has none');
   // A group fought from under the ice (#536) reaches one square: the front row over it and never the
   // back, bows or none; with the front row down, nobody. Bowmen on dry ground reach anyone.
   {
     const struck = (under: 'ice' | undefined, frontDown: boolean): { back: number; all: number } => {
       let back = 0, all = 0;
       for (let seed = 1; seed <= 20; seed++) {
-        const r = makeRng(seed), pp = defaultParty(r), rear = pp.members.slice(3).map((c) => ` ${c.name}`);
+        const r = makeRng(seed), pp = defaultParty(TABLES, r), rear = pp.members.slice(3).map((c) => ` ${c.name}`);
         for (const c of pp.members) c.hp = c.maxHp = 999;
-        if (frontDown) for (const c of pp.members.slice(0, 3)) addCondition(c, 'unconscious');
-        const s = startCombat(pp, [{ id: 'pike', monsters: new Array(6).fill('smuggler_bowman'), under }], r);
+        if (frontDown) for (const c of pp.members.slice(0, 3)) addCondition(TABLES.items, c, 'unconscious');
+        const s = startCombat(TABLES, pp, [{ id: 'pike', monsters: new Array(6).fill('smuggler_bowman'), under }], r);
         for (let i = 0; i < 40 && s.outcome === 'ongoing'; i++) { const t = currentTurn(s, pp, r); if (!t) break; if (t.side === 'monster') monsterAct(s, pp, r); else partyAct(s, pp, r, { type: 'defend' }); }
         for (const l of s.log) if (/^Smuggler Bowman (hits|misses) /.test(l)) { all++; if (rear.some((n) => l.includes(n))) back++; }
       }
@@ -194,7 +196,7 @@ function play(s: CombatState, party: Party, seed: number, aim: (s: CombatState, 
     if (!t) break;
     if (t.side === 'monster') { monsterAct(s, party, rng); continue; }
     const target = aim(s, t.i);
-    if (target === undefined || !canAttackFromRow(party.members[t.i], t.i) || !partyAct(s, party, rng, { type: 'attack', target })) partyAct(s, party, rng, { type: 'defend' });
+    if (target === undefined || !canAttackFromRow(s.tables.items, party.members[t.i], t.i) || !partyAct(s, party, rng, { type: 'attack', target })) partyAct(s, party, rng, { type: 'defend' });
   }
 }
 
@@ -203,12 +205,12 @@ function ranks(): void {
   const drowned: MonsterDef = { ...MONSTERS.skeleton, id: 'test_drowned', name: 'Drowned Man', plural: 'Drowned Men', hp: 12, attack: 0, dice: 1, sides: 3, bonus: 0 };
   const chanter: MonsterDef = { ...MONSTERS.skeleton, id: 'test_chanter', name: 'Chanter', plural: 'Chanters', hp: 6, attack: 0, dice: 1, sides: 3, bonus: 0 };
   const choir: CombatGroup = { id: 'choir', monsters: [drowned, drowned, chanter, chanter, chanter, chanter], back: 4 };
-  const fresh = (): { s: CombatState; p: Party } => { const p = defaultParty(makeRng(5)); return { s: startCombat(p, [choir], makeRng(5)), p }; };
+  const fresh = (): { s: CombatState; p: Party } => { const p = defaultParty(TABLES, makeRng(5)); return { s: startCombat(TABLES, p, [choir], makeRng(5)), p }; };
   {
     const { s, p } = fresh(), knight = p.members[0], back = s.monsters.map((m, i) => ({ m, i })).filter(({ m }) => m.back).map(({ i }) => i);
     ok(back.length === 4 && s.monsters.filter((m) => m.back).every((m) => m.def === chanter) && new Set(s.monsters.map((m) => m.group)).size === 2, 'the choir stands in two ranks, its four chanters behind');
     ok(!ITEMS[knight.equipment.weapon!].ranged && back.every((i) => !canReach(s, knight, i)) && s.monsters.every((m, i) => m.back || canReach(s, knight, i)), 'a blade in the front row reaches the drowned men and not the chanters');
-    const bow = p.members[3]; equip(bow, 'sling');
+    const bow = p.members[3]; equip(TABLES.items, bow, 'sling');
     ok(back.every((i) => canReach(s, bow, i)), 'a sling reaches the chanters');
     // A blade aimed past the front does nothing; Spark reaches the back.
     const rng = makeRng(6);
@@ -244,7 +246,7 @@ function morale(): void {
   const bargeman: MonsterDef = { ...MONSTERS.bandit, id: 'test_bargeman', name: 'Bargeman', plural: 'Bargemen', hp: 500, xp: 50, gold: [10, 10] };
   const atMaster = (s: CombatState): number | undefined => { const up = aliveMonsters(s); return up.find((f) => s.monsters[f].def === master) ?? up[0]; };
   {
-    const p = defaultParty(makeRng(8)), s = startCombat(p, [{ id: 'barge', monsters: [master, bargeman, bargeman, bargeman, bargeman, bargeman], leader: master.id }], makeRng(8));
+    const p = defaultParty(TABLES, makeRng(8)), s = startCombat(TABLES, p, [{ id: 'barge', monsters: [master, bargeman, bargeman, bargeman, bargeman, bargeman], leader: master.id }], makeRng(8));
     play(s, p, 8, atMaster);
     const died = s.log.findIndex((l) => l.includes('Barge Master dies.'));
     ok(s.outcome === 'victory' && s.monsters.filter((m) => m.fled).length === 5 && s.log[died + 1] === BREAK_LINE('5 Bargemen', false), `a barge crew leaves when its master dies, and the log says so (${s.log[died + 1]})`);
@@ -253,27 +255,27 @@ function morale(): void {
   }
   {
     // A crew in a group of its own breaks at the master's fall in the next.
-    const p = defaultParty(makeRng(9)), s = startCombat(p, [{ id: 'master', monsters: [master], leader: master.id }, { id: 'crew', monsters: [bargeman, bargeman] }], makeRng(9));
+    const p = defaultParty(TABLES, makeRng(9)), s = startCombat(TABLES, p, [{ id: 'master', monsters: [master], leader: master.id }, { id: 'crew', monsters: [bargeman, bargeman] }], makeRng(9));
     play(s, p, 9, atMaster);
     ok(s.monsters.filter((m) => m.fled).length === 2, 'a crew in another group breaks at its master\'s fall too');
   }
   {
     // The Hand stands; so do people with no leader, the dead and the Rift.
-    const hand = startCombat(defaultParty(makeRng(10)), [{ id: 'h', monsters: [master, MONSTERS.cultist, MONSTERS.cultist, bargeman], leader: master.id }], makeRng(10));
+    const hand = startCombat(TABLES, defaultParty(TABLES, makeRng(10)), [{ id: 'h', monsters: [master, MONSTERS.cultist, MONSTERS.cultist, bargeman], leader: master.id }], makeRng(10));
     hand.monsters[0].hp = 0;
-    partyAct(hand, defaultParty(makeRng(10)), makeRng(10), { type: 'defend' });
+    partyAct(hand, defaultParty(TABLES, makeRng(10)), makeRng(10), { type: 'defend' });
     ok(hand.monsters.filter((m) => m.fled).map((m) => m.def.id).join() === bargeman.id && MONSTERS.cultist.steady === true, 'at the master\'s fall the bargeman breaks and the Hand\'s cultists stand');
-    const leaderless = startCombat(defaultParty(makeRng(11)), [{ id: 'b', monsters: ['bandit', 'bandit', 'bandit', 'bandit'] }], makeRng(11));
+    const leaderless = startCombat(TABLES, defaultParty(TABLES, makeRng(11)), [{ id: 'b', monsters: ['bandit', 'bandit', 'bandit', 'bandit'] }], makeRng(11));
     leaderless.monsters.slice(0, 3).forEach((m) => { m.hp = 0; });
-    const dead = startCombat(defaultParty(makeRng(11)), [{ id: 'd', monsters: ['skeleton', 'skeleton', 'skeleton', 'skeleton'], leader: 'skeleton' }], makeRng(11));
+    const dead = startCombat(TABLES, defaultParty(TABLES, makeRng(11)), [{ id: 'd', monsters: ['skeleton', 'skeleton', 'skeleton', 'skeleton'], leader: 'skeleton' }], makeRng(11));
     dead.monsters.slice(0, 3).forEach((m) => { m.hp = 0; });
-    for (const s of [leaderless, dead]) { const p = defaultParty(makeRng(11)); for (let k = 0; k < 3 && s.outcome === 'ongoing'; k++) { const t = currentTurn(s, p, makeRng(k)); if (t?.side === 'monster') monsterAct(s, p, makeRng(k)); else partyAct(s, p, makeRng(k), { type: 'defend' }); } }
+    for (const s of [leaderless, dead]) { const p = defaultParty(TABLES, makeRng(11)); for (let k = 0; k < 3 && s.outcome === 'ongoing'; k++) { const t = currentTurn(s, p, makeRng(k)); if (t?.side === 'monster') monsterAct(s, p, makeRng(k)); else partyAct(s, p, makeRng(k), { type: 'defend' }); } }
     ok(!leaderless.monsters.some((m) => m.fled) && !dead.monsters.some((m) => m.fled), 'people with no leader, and the dead, never break');
   }
   {
     // A pack runs at three in four down; three rats are too few to.
     const rout = (n: number): CombatState => {
-      const p = defaultParty(makeRng(12)), s = startCombat(p, [{ id: 'r', monsters: new Array(n).fill('rat') }], makeRng(12));
+      const p = defaultParty(TABLES, makeRng(12)), s = startCombat(TABLES, p, [{ id: 'r', monsters: new Array(n).fill('rat') }], makeRng(12));
       play(s, p, 12, (cs) => aliveMonsters(cs)[0]);
       return s;
     };
@@ -307,9 +309,9 @@ function elements(): void {
   ok(elementMult({ ...MONSTERS.rat, resist: ['fire'] }, 'fire') === 0.5, 'a monster that resists an element takes half');
   // The same fight, the same rolls: Chain Lightning on brinelings and on the same glass with no weakness; Hailstorm on brinelings.
   const cast = (def: MonsterDef, spellId: string): { took: number[]; s: CombatState } => {
-    const r = makeRng(31), p = defaultParty(r), sorc = p.members[5];
+    const r = makeRng(31), p = defaultParty(TABLES, r), sorc = p.members[5];
     sorc.level = 10; sorc.spells.push(spellId); sorc.sp = 99;
-    const s = startCombat(p, [{ id: 'b', monsters: [def, def, def, def] }], r);
+    const s = startCombat(TABLES, p, [{ id: 'b', monsters: [def, def, def, def] }], r);
     for (let guard = 0; guard < 100 && s.outcome === 'ongoing'; guard++) {
       const t = currentTurn(s, p, r); if (!t) break;
       if (t.side === 'monster') { monsterAct(s, p, r); continue; }
@@ -324,9 +326,9 @@ function elements(): void {
   ok(hail.took.length === 4 && hail.took.every((d) => d === 0) && hail.s.log.some((l) => /Hailstorm: 0 damage/.test(l)), 'and nothing from Hailstorm');
   ok(hail.s.seen.brineling?.cold === 0 && bitten.s.seen.brineling?.lightning === 1.5, 'and the company has seen both');
   // The gate bot casts the widest, strongest spell until it has seen what the elements do; then the one the foe is weakest to.
-  const r = makeRng(32), p = defaultParty(r), sorc = p.members[5];
+  const r = makeRng(32), p = defaultParty(TABLES, r), sorc = p.members[5];
   sorc.level = 10; sorc.spells.push('lightning', 'meteor'); sorc.sp = 99;
-  const s = startCombat(p, [{ id: 'b', monsters: [brine, brine, brine] }], r);
+  const s = startCombat(TABLES, p, [{ id: 'b', monsters: [brine, brine, brine] }], r);
   const first = gateBlast(s, sorc)?.id;
   s.seen.brineling = { lightning: 1.5 };
   const then = gateBlast(s, sorc)?.id;
@@ -341,7 +343,7 @@ function casting(): void {
   ok(MONSTERS.drowned_chanter.cast?.spells.includes('sleep') === true, 'the drowned chanter sings Slumber');
   const sure: MonsterDef = { ...MONSTERS.drowned_chanter, cast: { spells: ['sleep'], chance: 1 } };
   {
-    const p = defaultParty(makeRng(40)), s = startCombat(p, [{ id: 'c', monsters: [sure] }], makeRng(40));
+    const p = defaultParty(TABLES, makeRng(40)), s = startCombat(TABLES, p, [{ id: 'c', monsters: [sure] }], makeRng(40));
     untilActs(s, p, 40, 0);
     const line = s.log.find((l) => l.startsWith('Drowned Chanter casts Slumber')) ?? '';
     const asleep = p.members.filter((c) => hasCondition(c, 'asleep'));
@@ -351,7 +353,7 @@ function casting(): void {
     // Over a few fights the chanter as the table has it sings someone to sleep.
     let slept = 0;
     for (let seed = 41; seed < 51; seed++) {
-      const p = defaultParty(makeRng(seed)), s = startCombat(p, [{ id: 'c', monsters: ['drowned_chanter', 'drowned_chanter', 'drowned_chanter'] }], makeRng(seed));
+      const p = defaultParty(TABLES, makeRng(seed)), s = startCombat(TABLES, p, [{ id: 'c', monsters: ['drowned_chanter', 'drowned_chanter', 'drowned_chanter'] }], makeRng(seed));
       for (let k = 0; k < 6; k++) untilActs(s, p, seed * 10 + k, k % 3);
       if (s.log.some((l) => /^Drowned Chanter casts Slumber: .* asleep\.$/.test(l))) slept++;
     }
@@ -359,8 +361,8 @@ function casting(): void {
   }
   {
     // A hit wakes a sleeper; a sleeper it fells stays down.
-    const p = defaultParty(makeRng(42)), s = startCombat(p, [{ id: 'w', monsters: [{ ...MONSTERS.wolf, attack: 99, dice: 1, sides: 1, bonus: 0 }] }], makeRng(42));
-    for (const c of p.members) addCondition(c, 'asleep');
+    const p = defaultParty(TABLES, makeRng(42)), s = startCombat(TABLES, p, [{ id: 'w', monsters: [{ ...MONSTERS.wolf, attack: 99, dice: 1, sides: 1, bonus: 0 }] }], makeRng(42));
+    for (const c of p.members) addCondition(TABLES.items, c, 'asleep');
     untilActs(s, p, 42, 0);
     const line = s.log.find((l) => l.startsWith('Wolf hits')) ?? '';
     const struck = p.members.find((c) => line.startsWith(`Wolf hits ${c.name} `));
@@ -368,10 +370,10 @@ function casting(): void {
   }
   {
     // Sleep is the fight's: its sleepers wake once it is won. The bots wake a sleeper of the front row first.
-    const p = defaultParty(makeRng(53)), s = startCombat(p, [{ id: 'r', monsters: ['rat'] }], makeRng(53));
+    const p = defaultParty(TABLES, makeRng(53)), s = startCombat(TABLES, p, [{ id: 'r', monsters: ['rat'] }], makeRng(53));
     const maren = p.members[4];
     maren.spells.push('cure'); maren.sp = 20;
-    addCondition(p.members[3], 'asleep'); addCondition(p.members[1], 'asleep');
+    addCondition(TABLES.items, p.members[3], 'asleep'); addCondition(TABLES.items, p.members[1], 'asleep');
     const pick = wakeWith(p, maren);
     ok(pick?.spellId === 'cure' && pick.target === 1, `the bots wake Idris, of the front row, before Ottilie, of the back, with Cleanse (${JSON.stringify(pick)})`);
     s.monsters[0].hp = 0;
@@ -380,8 +382,8 @@ function casting(): void {
     // Or fled.
     let fled = false;
     for (let seed = 1; seed < 30 && !fled; seed++) {
-      const r = makeRng(seed), q = defaultParty(r), f = startCombat(q, [{ id: 's', monsters: ['slime'] }], r);
-      addCondition(q.members[0], 'asleep');
+      const r = makeRng(seed), q = defaultParty(TABLES, r), f = startCombat(TABLES, q, [{ id: 's', monsters: ['slime'] }], r);
+      addCondition(TABLES.items, q.members[0], 'asleep');
       for (let i = 0; i < 20 && f.outcome === 'ongoing'; i++) { const t = currentTurn(f, q, r); if (!t) break; if (t.side === 'party') partyAct(f, q, r, { type: 'flee' }); else monsterAct(f, q, r); }
       fled = f.outcome === 'fled' && !hasCondition(q.members[0], 'asleep');
     }
@@ -389,8 +391,8 @@ function casting(): void {
   }
   {
     // A hit that fells a sleeper leaves them down, and says no waking.
-    const p = defaultParty(makeRng(55)), s = startCombat(p, [{ id: 'w', monsters: [{ ...MONSTERS.wolf, attack: 99, dice: 1, sides: 1, bonus: 200 }] }], makeRng(55));
-    for (const c of p.members) addCondition(c, 'asleep');
+    const p = defaultParty(TABLES, makeRng(55)), s = startCombat(TABLES, p, [{ id: 'w', monsters: [{ ...MONSTERS.wolf, attack: 99, dice: 1, sides: 1, bonus: 200 }] }], makeRng(55));
+    for (const c of p.members) addCondition(TABLES.items, c, 'asleep');
     for (let k = 55; k < 70 && !s.log.some((l) => l.startsWith('Wolf hits')); k++) untilActs(s, p, k, 0);
     const line = s.log.find((l) => l.startsWith('Wolf hits')) ?? '';
     const felled = p.members.find((c) => line.startsWith(`Wolf hits ${c.name} `));
@@ -400,15 +402,15 @@ function casting(): void {
     // A mender mends the most hurt of its group; a priest blesses and wards it, and not again while it lasts.
     const mender: MonsterDef = { ...MONSTERS.bandit, id: 'test_mender', name: 'Mender', plural: 'Menders', level: 12, cast: { spells: ['heal'], chance: 1 } };
     const fellow: MonsterDef = { ...MONSTERS.bandit, hp: 100 };
-    const p = defaultParty(makeRng(43)), s = startCombat(p, [{ id: 'm', monsters: [mender, fellow] }], makeRng(43));
+    const p = defaultParty(TABLES, makeRng(43)), s = startCombat(TABLES, p, [{ id: 'm', monsters: [mender, fellow] }], makeRng(43));
     s.monsters[1].hp = 2;
     untilActs(s, p, 43, 0);
     ok(s.monsters[1].hp === 2 + 8 + 10 && s.log.some((l) => l === `Mender casts Mend: Bandit recovers ${8 + 10}.`), `a mender mends its hurt fellow by the spell and its level held to 10 (${s.monsters[1].hp})`);
-    const whole = startCombat(defaultParty(makeRng(44)), [{ id: 'm', monsters: [mender, MONSTERS.bandit] }], makeRng(44));
-    untilActs(whole, defaultParty(makeRng(44)), 44, 0);
+    const whole = startCombat(TABLES, defaultParty(TABLES, makeRng(44)), [{ id: 'm', monsters: [mender, MONSTERS.bandit] }], makeRng(44));
+    untilActs(whole, defaultParty(TABLES, makeRng(44)), 44, 0);
     ok(!whole.log.some((l) => l.includes('casts Mend')), 'and with nobody hurt it strikes instead');
     const priest: MonsterDef = { ...MONSTERS.bandit, id: 'test_priest', name: 'Priest', plural: 'Priests', cast: { spells: ['bless', 'ward'], chance: 1 } };
-    const pp = defaultParty(makeRng(45)), b = startCombat(pp, [{ id: 'p', monsters: [priest, MONSTERS.bandit] }, { id: 'q', monsters: [MONSTERS.bandit] }], makeRng(45));
+    const pp = defaultParty(TABLES, makeRng(45)), b = startCombat(TABLES, pp, [{ id: 'p', monsters: [priest, MONSTERS.bandit] }, { id: 'q', monsters: [MONSTERS.bandit] }], makeRng(45));
     untilActs(b, pp, 45, 0);
     ok(b.foeBless[0] === 5 && b.foeBless[1] === 0 && monsterHit(b, b.monsters[1]) === MONSTERS.bandit.attack + BLESS_HIT && monsterHit(b, b.monsters[2]) === MONSTERS.bandit.attack, 'a priest blesses its own group and not the next');
     const round = b.round;
@@ -420,17 +422,17 @@ function casting(): void {
     // A caster in the back rank casts while the front stands; one without a bow that fails its chance holds.
     const singer: MonsterDef = { ...sure, id: 'test_singer', ranged: false };
     const choir: CombatGroup = { id: 'choir', monsters: [MONSTERS.skeleton, MONSTERS.skeleton, singer], back: 1 };
-    const p = defaultParty(makeRng(47)), s = startCombat(p, [choir], makeRng(47));
+    const p = defaultParty(TABLES, makeRng(47)), s = startCombat(TABLES, p, [choir], makeRng(47));
     ok(untilActs(s, p, 47, 2) && frontStands(s) && s.log.some((l) => l.startsWith('Drowned Chanter casts Slumber')), 'a chanter in the back rank sings while the drowned men stand');
     const quiet: MonsterDef = { ...singer, cast: { spells: ['sleep'], chance: 0 } };
-    const q = defaultParty(makeRng(48)), t = startCombat(q, [{ ...choir, monsters: [MONSTERS.skeleton, MONSTERS.skeleton, quiet] }], makeRng(48));
+    const q = defaultParty(TABLES, makeRng(48)), t = startCombat(TABLES, q, [{ ...choir, monsters: [MONSTERS.skeleton, MONSTERS.skeleton, quiet] }], makeRng(48));
     untilActs(t, q, 48, 2);
     ok(!t.log.some((l) => l.startsWith('Drowned Chanter')), 'and one that does not sing holds its place, and strikes no one');
   }
   {
     // Fire Bolt falls on a row; Meteor Swarm on the whole party.
     const bolt: MonsterDef = { ...MONSTERS.bandit, id: 'test_bolt', name: 'Adept', plural: 'Adepts', level: 14, cast: { spells: ['firebolt'], chance: 1 } };
-    const p = defaultParty(makeRng(49)), s = startCombat(p, [{ id: 'a', monsters: [bolt] }], makeRng(49));
+    const p = defaultParty(TABLES, makeRng(49)), s = startCombat(TABLES, p, [{ id: 'a', monsters: [bolt] }], makeRng(49));
     const before = p.members.map((c) => c.hp);
     untilActs(s, p, 49, 0);
     const hurt = p.members.map((c, k) => before[k] - c.hp);
@@ -442,7 +444,7 @@ function casting(): void {
 function drain(): void {
   // The leech is #174's; this is its shape, a controller on the line at 10.
   const leech: MonsterDef = { ...MONSTERS.fen_eel, id: 'test_leech', name: 'Leech', plural: 'Leeches', attack: 99, drain: 'hp' };
-  const p = defaultParty(makeRng(50)), s = startCombat(p, [{ id: 'l', monsters: [leech] }], makeRng(50));
+  const p = defaultParty(TABLES, makeRng(50)), s = startCombat(TABLES, p, [{ id: 'l', monsters: [leech] }], makeRng(50));
   s.monsters[0].hp = 40;
   untilActs(s, p, 50, 0);
   const line = s.log.find((l) => l.startsWith('Leech hits')) ?? '', took = Number(/for (\d+)/.exec(line)?.[1]);
@@ -453,7 +455,7 @@ function drain(): void {
   {
     // On a member near death it drinks only what the member had to lose.
     const deep: MonsterDef = { ...leech, dice: 1, sides: 1, bonus: 49 };
-    const q = defaultParty(makeRng(54)), t = startCombat(q, [{ id: 'l', monsters: [deep] }], makeRng(54));
+    const q = defaultParty(TABLES, makeRng(54)), t = startCombat(TABLES, q, [{ id: 'l', monsters: [deep] }], makeRng(54));
     for (const c of q.members) c.hp = 3;
     t.monsters[0].hp = 10;
     for (let k = 54; k < 60 && t.monsters[0].hp === 10; k++) untilActs(t, q, k, 0);
@@ -461,10 +463,10 @@ function drain(): void {
     ok(!!bitten && t.monsters[0].hp === 10 + 3 - bitten.hp, `a leech's blow of 50 on a member with 3 drinks ${3 - (bitten?.hp ?? 3)}, what they lost (${t.monsters[0].hp} hp)`);
   }
   const light: MonsterDef = { ...leech, id: 'test_light', name: 'Bog Light', plural: 'Bog Lights', ranged: true, drain: 'sp', dice: 1, sides: 1, bonus: 9 };
-  const q = defaultParty(makeRng(52)), cassian = q.members[5];
-  for (const c of q.members) if (c !== cassian) addCondition(c, 'unconscious');
+  const q = defaultParty(TABLES, makeRng(52)), cassian = q.members[5];
+  for (const c of q.members) if (c !== cassian) addCondition(TABLES.items, c, 'unconscious');
   cassian.sp = 15; cassian.hp = 30; cassian.maxHp = 30;
-  const t = startCombat(q, [{ id: 'b', monsters: [light] }], makeRng(52));
+  const t = startCombat(TABLES, q, [{ id: 'b', monsters: [light] }], makeRng(52));
   untilActs(t, q, 52, 0);
   ok(cassian.sp === 5 && cassian.hp === 30 && t.log.includes('Bog Light hits Cassian for 10 spell points.'), `a bog light takes spell points before hit points (${cassian.sp} sp, ${cassian.hp} hp)`);
   for (let k = 53; k < 60 && cassian.sp > 0; k++) untilActs(t, q, k, 0);
@@ -484,9 +486,9 @@ function pastTen(): void {
   // A rank lifts a damage spell's dice and a mend's heal, a hybrid's half as much, and nothing else.
   const tough: MonsterDef = { ...MONSTERS.bandit, id: 'test_wall', hp: 9999 };
   const blast = (prestige: number): number => {
-    const r = makeRng(60), p = defaultParty(r), sorc = p.members[5];
+    const r = makeRng(60), p = defaultParty(TABLES, r), sorc = p.members[5];
     sorc.level = 16; sorc.spells.push('hoarfrost'); sorc.sp = 99; sorc.prestige = prestige;
-    const s = startCombat(p, [{ id: 'w', monsters: [tough] }], r);
+    const s = startCombat(TABLES, p, [{ id: 'w', monsters: [tough] }], r);
     for (let guard = 0; guard < 60; guard++) {
       const t = currentTurn(s, p, r); if (!t) break;
       if (t.side === 'monster') monsterAct(s, p, r);
@@ -497,8 +499,8 @@ function pastTen(): void {
   };
   const bare = blast(0) - 2, third = blast(3) - 2;
   ok(bare > 0 && third === Math.round(bare * 1.45), `the third rank lifts Hoarfrost's roll by 45%, Spellfire on top (${bare} and ${third}, each and 2)`);
-  const p = defaultParty(makeRng(61)), maren = p.members[4], idris = p.members[1], bram = p.members[0];
-  const mend = (c: typeof maren, n: number): number => { c.prestige = n; const h = spellHeal(c, 30); c.prestige = 0; return h; };
+  const p = defaultParty(TABLES, makeRng(61)), maren = p.members[4], idris = p.members[1], bram = p.members[0];
+  const mend = (c: typeof maren, n: number): number => { c.prestige = n; const h = spellHeal(TABLES.items, c, 30); c.prestige = 0; return h; };
   ok(mend(maren, 2) === mend(maren, 0) + Math.round(30 * 1.3) - 30 && mend(idris, 2) === mend(idris, 0) + Math.round(30 * 1.15) - 30, `a cleric's second rank lifts a mend of 30 by 30%, a paladin's by 15% (${mend(maren, 2)}, ${mend(idris, 2)})`);
   bram.prestige = 3;
   ok(rankMult(bram) === 1, 'and a knight\'s prestiges are no ranks');
@@ -506,9 +508,9 @@ function pastTen(): void {
   {
     const glass: MonsterDef = { ...tough, id: 'test_glass', resist: ['cold'], immune: ['lightning'] };
     const hit = (prestige: number, spellId: string): number => {
-      const r = makeRng(67), q = defaultParty(r), sorc = q.members[5];
+      const r = makeRng(67), q = defaultParty(TABLES, r), sorc = q.members[5];
       sorc.level = 16; sorc.spells.push(spellId); sorc.sp = 99; sorc.prestige = prestige;
-      const s = startCombat(q, [{ id: 'g', monsters: [glass] }], r);
+      const s = startCombat(TABLES, q, [{ id: 'g', monsters: [glass] }], r);
       for (let guard = 0; guard < 60; guard++) {
         const t = currentTurn(s, q, r); if (!t) break;
         if (t.side === 'monster') monsterAct(s, q, r);
@@ -522,9 +524,9 @@ function pastTen(): void {
   }
   // Grasping Roots holds a group, a hit does not free it, and each held monster tears free in time.
   {
-    const r = makeRng(62), q = defaultParty(r), druid = q.members[2];
+    const r = makeRng(62), q = defaultParty(TABLES, r), druid = q.members[2];
     druid.spells.push('roots'); druid.sp = 99;
-    const s = startCombat(q, [{ id: 'b', monsters: [tough, tough, tough, tough] }], r);
+    const s = startCombat(TABLES, q, [{ id: 'b', monsters: [tough, tough, tough, tough] }], r);
     for (let guard = 0; guard < 60 && !s.log.some((l) => l.includes('Grasping Roots')); guard++) {
       const t = currentTurn(s, q, r); if (!t) break;
       if (t.side === 'monster') monsterAct(s, q, r); else if (t.i === 2) partyAct(s, q, r, { type: 'cast', spellId: 'roots', target: 0 }); else partyAct(s, q, r, { type: 'defend' });
@@ -546,9 +548,9 @@ function pastTen(): void {
   {
     const adept: MonsterDef = { ...MONSTERS.bandit, id: 'test_adept', name: 'Adept', plural: 'Adepts', level: 10, cast: { spells: ['firebolt'], chance: 1 } };
     const burn = (glass: boolean): number => {
-      const r = makeRng(63), q = defaultParty(r), maren = q.members[4];
+      const r = makeRng(63), q = defaultParty(TABLES, r), maren = q.members[4];
       maren.spells.push('lampglass'); maren.sp = 99;
-      const s = startCombat(q, [{ id: 'a', monsters: [adept] }], r);
+      const s = startCombat(TABLES, q, [{ id: 'a', monsters: [adept] }], r);
       if (glass) s.glass = { element: 'fire', rounds: 5 };
       const before = q.members.reduce((t, c) => t + c.hp, 0);
       untilActs(s, q, 64, 0);
@@ -556,9 +558,9 @@ function pastTen(): void {
     };
     const bare = burn(false), dimmed = burn(true);
     ok(dimmed > 0 && dimmed < bare, `under Lampglass against fire an adept's Fire Bolt does less (${dimmed} against ${bare})`);
-    const r = makeRng(65), q = defaultParty(r), maren = q.members[4];
+    const r = makeRng(65), q = defaultParty(TABLES, r), maren = q.members[4];
     maren.spells.push('lampglass'); maren.sp = 99;
-    const s = startCombat(q, [{ id: 'a', monsters: ['rat'] }], r);
+    const s = startCombat(TABLES, q, [{ id: 'a', monsters: ['rat'] }], r);
     let refused = false, cast = false;
     for (let guard = 0; guard < 40 && !cast; guard++) {
       const t = currentTurn(s, q, r); if (!t) break;
@@ -573,44 +575,45 @@ function pastTen(): void {
   {
     const charm = { id: 'test_frost_charm', name: 'Frost Charm', slot: 'none' as const, price: 0, resist: ['cold' as const] };
     const coat = { id: 'test_frost_coat', name: 'Frost Coat', slot: 'armor' as const, price: 0, ac: 1, resist: ['cold' as const] };
-    withDefs(ITEMS, [charm, coat], () => {
+    {
+      const lent = tablesWith([charm, coat]);
       const frost: MonsterDef = { ...MONSTERS.bandit, id: 'test_frost', name: 'Frost Adept', plural: 'Frost Adepts', level: 10, cast: { spells: ['killing_frost'], chance: 1 } };
       const chill = (dress: (q: Party) => void, glass = false): number[] => {
-        const r = makeRng(71), q = defaultParty(r);
+        const r = makeRng(71), q = defaultParty(lent, r);
         for (const c of q.members) c.hp = c.maxHp = 999;
         dress(q);
-        const s = startCombat(q, [{ id: 'a', monsters: [frost] }], r);
+        const s = startCombat(lent, q, [{ id: 'a', monsters: [frost] }], r);
         if (glass) s.glass = { element: 'cold', rounds: 5 };
         untilActs(s, q, 72, 0);
         return q.members.map((c) => 999 - c.hp);
       };
       const bare = chill(() => {}), half = (d: number[]): number[] => d.map((x) => Math.ceil(x / 2));
       const carried = chill((q) => { q.members[0].pack.push(charm.id); });
-      const worn = chill((q) => { equip(q.members[1], coat.id); });
+      const worn = chill((q) => { equip(lent.items, q.members[1], coat.id); });
       const unworn = chill((q) => { q.members[1].pack.push(coat.id); });
       const bagged = chill((q) => { q.bag.push(charm.id); });
       const blessed = chill((q) => { q.members[2].blessed.push({ element: 'cold', until: 'rest' }); });
       const glass = chill(() => {}, true), both = chill((q) => { q.members[0].pack.push(charm.id); }, true);
       ok(bare[0] > 1 && carried[0] === half(bare)[0] && carried.slice(1).join() === bare.slice(1).join(), `a member carrying a charm against cold takes half from a cold spell, the rest whole (${carried[0]} against ${bare[0]})`);
-      ok(worn[1] === half(bare)[1] && (() => { const c = defaultParty(makeRng(73)).members[1]; equip(c, coat.id); c.pack.push(charm.id); return resists(c).join() === 'cold'; })(), `armour against cold halves it worn (${worn[1]} against ${bare[1]})`);
+      ok(worn[1] === half(bare)[1] && (() => { const c = defaultParty(lent, makeRng(73)).members[1]; equip(lent.items, c, coat.id); c.pack.push(charm.id); return resists(lent.items, c).join() === 'cold'; })(), `armour against cold halves it worn (${worn[1]} against ${bare[1]})`);
       ok(unworn.join() === bare.join() && bagged.join() === bare.join(), 'armour in the pack and a charm in the bag resist nothing');
       ok(blessed[2] === half(bare)[2] && blessed.filter((_, i) => i !== 2).join() === bare.filter((_, i) => i !== 2).join(), `a member a blessing keeps the cold off takes half from a cold spell (${blessed[2]} against ${bare[2]})`);
       ok(glass.join() === half(bare).join() && both.join() === glass.join(), `under Lampglass a member with a resistance to the same element still takes half, not a quarter (${both[0]} against ${glass[0]})`);
-    });
+    }
   }
   // Cleansing Light and Greening on everyone; Absolve on stone and curse.
   {
-    const q = defaultParty(makeRng(66)), maren = q.members[4];
-    for (const c of q.members) { addCondition(c, 'poisoned'); addCondition(c, 'diseased'); c.hp = 5; }
-    addCondition(q.members[0], 'paralysed');
-    const clean = castOnParty(maren, SPELLS.cleansing_light, q);
+    const q = defaultParty(TABLES, makeRng(66)), maren = q.members[4];
+    for (const c of q.members) { addCondition(TABLES.items, c, 'poisoned'); addCondition(TABLES.items, c, 'diseased'); c.hp = 5; }
+    addCondition(TABLES.items, q.members[0], 'paralysed');
+    const clean = castOnParty(TABLES.items, maren, SPELLS.cleansing_light, q);
     ok(q.members.every((c) => !hasCondition(c, 'poisoned') && !hasCondition(c, 'paralysed') && c.hp === 5) && clean === 'Maren casts Cleansing Light. The party is cleansed.', `Cleansing Light lifts every affliction from everyone and heals nothing (${clean})`);
-    for (const c of q.members) addCondition(c, 'poisoned');
-    const green = castOnParty(maren, SPELLS.greening, q);
+    for (const c of q.members) addCondition(TABLES.items, c, 'poisoned');
+    const green = castOnParty(TABLES.items, maren, SPELLS.greening, q);
     ok(q.members.every((c) => !hasCondition(c, 'poisoned') && c.hp > 5) && green === 'Maren casts Greening. The party is healed and cleansed.', `Greening heals everyone and draws out poison (${green})`);
     const bram = q.members[0];
-    addCondition(bram, 'stoned'); addCondition(bram, 'cursed');
-    const both = castOnAlly(maren, SPELLS.absolve, bram), none = castOnAlly(maren, SPELLS.absolve, bram);
+    addCondition(TABLES.items, bram, 'stoned'); addCondition(TABLES.items, bram, 'cursed');
+    const both = castOnAlly(TABLES.items, maren, SPELLS.absolve, bram), none = castOnAlly(TABLES.items, maren, SPELLS.absolve, bram);
     ok(!hasCondition(bram, 'stoned') && !hasCondition(bram, 'cursed') && both === 'Maren casts Absolve: Bram is flesh again, and the curse lifts.' && none === 'Maren casts Absolve, but Bram needs no absolving.', `Absolve lifts stone and curse (${both})`);
   }
 }
@@ -631,9 +634,9 @@ function throughRound(s: CombatState, p: Party, seed: number, act?: (i: number) 
 function regeneration(): void {
   const troll: MonsterDef = { ...MONSTERS.ogre, id: 'test_troll', name: 'Troll', plural: 'Trolls', hp: 200, regen: 20, attack: 0, dice: 1, sides: 2, bonus: 0 };
   const fresh = (seed: number, defs: readonly MonsterDef[] = [troll]): { s: CombatState; p: Party } => {
-    const p = defaultParty(makeRng(seed)), mage = p.members[5];
+    const p = defaultParty(TABLES, makeRng(seed)), mage = p.members[5];
     mage.spells.push('firebolt'); mage.sp = mage.maxSp = 99;
-    return { s: startCombat(p, [{ id: 't', monsters: defs }], makeRng(seed)), p };
+    return { s: startCombat(TABLES, p, [{ id: 't', monsters: defs }], makeRng(seed)), p };
   };
   const cassian = (spellId: string) => (i: number): PartyAction | undefined => (i === 5 ? { type: 'cast', spellId, target: 0 } : undefined);
   {
@@ -697,23 +700,23 @@ function regeneration(): void {
 /** Curse (MONSTERS §3.3, #537): a wight's hit curses, and the curse outlasts the fight, a rest and a raising until a cure lifts it; it takes nothing in a fight. */
 function curse(): void {
   const wight: MonsterDef = { ...MONSTERS.wraith, id: 'test_wight', name: 'Wight', plural: 'Wights', attack: 99, dice: 1, sides: 1, bonus: 0, inflict: { cond: 'cursed', chance: 1 } };
-  const p = defaultParty(makeRng(90)), s = startCombat(p, [{ id: 'w', monsters: [wight] }], makeRng(90));
+  const p = defaultParty(TABLES, makeRng(90)), s = startCombat(TABLES, p, [{ id: 'w', monsters: [wight] }], makeRng(90));
   untilActs(s, p, 90, 0);
   const line = s.log.find((l) => l.startsWith('Wight hits')) ?? '', hit = p.members.find((c) => line.startsWith(`Wight hits ${c.name} `));
   ok(!!hit && hasCondition(hit, 'cursed') && line === `Wight hits ${hit.name} for 1. ${hit.name} is cursed!`, `a wight's hit curses (${line})`);
   if (!hit) return;
   {
     // Faith keeps it off a cleric, and the line claims none; a curse already taken is not said again.
-    const q = defaultParty(makeRng(91)), maren = q.members[4];
-    for (const c of q.members) if (c !== maren) addCondition(c, 'unconscious');
-    const t = startCombat(q, [{ id: 'w', monsters: [wight] }], makeRng(91));
+    const q = defaultParty(TABLES, makeRng(91)), maren = q.members[4];
+    for (const c of q.members) if (c !== maren) addCondition(TABLES.items, c, 'unconscious');
+    const t = startCombat(TABLES, q, [{ id: 'w', monsters: [wight] }], makeRng(91));
     untilActs(t, q, 91, 0);
     const l = t.log.find((x) => x.startsWith('Wight hits Maren')) ?? '';
     ok(l === 'Wight hits Maren for 1.' && !hasCondition(maren, 'cursed'), `Faith keeps a curse off a cleric, and the log claims none (${l})`);
     const bram = q.members[0];
     bram.conditions = ['cursed'];
     for (const c of q.members) if (c !== bram) c.conditions = ['unconscious'];
-    const u = startCombat(q, [{ id: 'w', monsters: [wight] }], makeRng(92));
+    const u = startCombat(TABLES, q, [{ id: 'w', monsters: [wight] }], makeRng(92));
     untilActs(u, q, 92, 0);
     const again = u.log.find((x) => x.startsWith('Wight hits Bram')) ?? '';
     ok(again === 'Wight hits Bram for 1.', `and a curse already taken is not said again (${again})`);
@@ -725,19 +728,19 @@ function curse(): void {
   rest(hit);
   ok(hasCondition(hit, 'cursed'), 'and a rest');
   const maren = p.members[4];
-  addCondition(hit, 'dead');
-  castOnAlly(maren, spell('revive'), hit);
+  addCondition(TABLES.items, hit, 'dead');
+  castOnAlly(TABLES.items, maren, spell('revive'), hit);
   ok(!hasCondition(hit, 'dead') && hasCondition(hit, 'cursed'), 'and a raising');
   // Restore lifts it at tier 4 and Absolve at tier 7, which a cleric learns at 23 (DESIGN §7).
-  const lifted = castOnAlly(maren, spell('restore'), hit);
+  const lifted = castOnAlly(TABLES.items, maren, spell('restore'), hit);
   ok(!hasCondition(hit, 'cursed') && spell('restore').level === 4, `Restore lifts it (${lifted})`);
-  addCondition(hit, 'cursed');
-  const absolved = castOnAlly(maren, spell('absolve'), hit);
+  addCondition(TABLES.items, hit, 'cursed');
+  const absolved = castOnAlly(TABLES.items, maren, spell('absolve'), hit);
   ok(!hasCondition(hit, 'cursed') && absolved === `Maren casts Absolve: the curse lifts from ${hit.name}.` && spell('absolve').level === 7 && spellTierAt(22) === 6 && spellTierAt(23) === 7, `and Absolve, of tier 7, which comes at 23 (${absolved})`);
   // It takes nothing in a fight: a cursed member strikes, wears its armour and acts as it did.
-  const plain = defaultParty(makeRng(94)).members[0], cursed = structuredClone(plain);
-  addCondition(cursed, 'cursed');
-  ok(attackBonus(cursed) === attackBonus(plain) && armorClass(cursed) === armorClass(plain) && canAct(cursed), 'and a curse takes nothing in a fight: what it costs is the cure');
+  const plain = defaultParty(TABLES, makeRng(94)).members[0], cursed = structuredClone(plain);
+  addCondition(TABLES.items, cursed, 'cursed');
+  ok(attackBonus(TABLES.items, cursed) === attackBonus(TABLES.items, plain) && armorClass(TABLES.items, cursed) === armorClass(TABLES.items, plain) && canAct(cursed), 'and a curse takes nothing in a fight: what it costs is the cure');
 }
 
 /**
@@ -746,7 +749,7 @@ function curse(): void {
  */
 function stone(): void {
   const basilisk: MonsterDef = { ...MONSTERS.wraith, id: 'test_basilisk', name: 'Basilisk', plural: 'Basilisks', attack: 99, dice: 1, sides: 1, bonus: 0, inflict: { cond: 'stoned', chance: 1 } };
-  const p = defaultParty(makeRng(95)), s = startCombat(p, [{ id: 'b', monsters: [basilisk] }], makeRng(95));
+  const p = defaultParty(TABLES, makeRng(95)), s = startCombat(TABLES, p, [{ id: 'b', monsters: [basilisk] }], makeRng(95));
   untilActs(s, p, 95, 0);
   const line = s.log.find((l) => l.startsWith('Basilisk hits')) ?? '', hit = p.members.find((c) => line.startsWith(`Basilisk hits ${c.name} `));
   ok(!!hit && hasCondition(hit, 'stoned') && line === `Basilisk hits ${hit.name} for 1. ${STONE_LINE(hit.name)}` && logLines(line).length <= 2, `a basilisk's hit turns a member to glass, and the log says so and not a fall (${line})`);
@@ -761,9 +764,9 @@ function stone(): void {
   rest(hit);
   ok(s.outcome === 'victory' && hasCondition(hit, 'stoned') && hit.hp === hp, 'it outlasts the fight and a rest, which mends nothing in it');
   // The draught lifts it, in a fight from the bag as on the walk; one glassed at no hit points comes back out cold.
-  const draught = ITEMS.quickening, q = defaultParty(makeRng(98)), glassed = q.members[0];
-  addCondition(glassed, 'stoned'); q.bag.push(draught.id);
-  const t = startCombat(q, [{ id: 'b', monsters: [{ ...basilisk, inflict: undefined }] }], makeRng(98)), rng = makeRng(98);
+  const draught = ITEMS.quickening, q = defaultParty(TABLES, makeRng(98)), glassed = q.members[0];
+  addCondition(TABLES.items, glassed, 'stoned'); q.bag.push(draught.id);
+  const t = startCombat(TABLES, q, [{ id: 'b', monsters: [{ ...basilisk, inflict: undefined }] }], makeRng(98)), rng = makeRng(98);
   for (let guard = 0; guard < 50 && currentTurn(t, q, rng)?.side === 'monster'; guard++) monsterAct(t, q, rng);
   partyAct(t, q, rng, { type: 'use', itemId: draught.id, target: 0 });
   // On the walk the sheet uses it by the same rule (`useItem`), from a bag of its own.
@@ -773,8 +776,8 @@ function stone(): void {
     && useItem(ITEMS, walk, null, draught.id, out)?.join() === `${out.name} is flesh again.` && !walk.bag.length && hasCondition(out, 'unconscious') && !hasCondition(out, 'stoned'), `a Quickening Draught lifts it, in a fight and on the walk, one at no hit points coming back out cold (${t.log.at(-1)})`);
   // Absolve lifts it at tier 7, and any temple for a company with neither: 80 gold a level, a member
   // of 27 dearer there than the draught, which is the temple's price for one of 25.
-  addCondition(glassed, 'stoned');
-  const absolved = castOnAlly(q.members[4], SPELLS.absolve, glassed), at = (level: number): number => templePrice({ ...glassed, level, conditions: ['stoned'] });
+  addCondition(TABLES.items, glassed, 'stoned');
+  const absolved = castOnAlly(TABLES.items, q.members[4], SPELLS.absolve, glassed), at = (level: number): number => templePrice({ ...glassed, level, conditions: ['stoned'] });
   ok(!hasCondition(glassed, 'stoned') && absolved === `Maren casts Absolve: ${glassed.name} is flesh again.` && SPELLS.absolve.level === 7, `Absolve lifts it (${absolved})`);
   ok(at(27) === 2160 && at(25) === draught.price && templePrice({ ...glassed, conditions: [] }) === 0, `and a temple, for ${at(27)} gold at 27, where the draught is ${draught.price} anywhere it is sold`);
 }
@@ -786,7 +789,7 @@ function calls(): void {
   const tallyman: MonsterDef = { ...MONSTERS.bandit, id: 'test_tallyman', name: 'Tallyman', plural: 'Tallymen', kind: 'machine', hp: 80, xp: 100, calls: { monsters: [knocker, knocker, knocker], chance: 1 } };
   const six = [knocker, knocker, knocker, knocker, knocker, knocker];
   {
-    const p = defaultParty(makeRng(100)), s = startCombat(p, [{ id: 'hole', monsters: [tallyman, ...six] }], makeRng(100));
+    const p = defaultParty(TABLES, makeRng(100)), s = startCombat(TABLES, p, [{ id: 'hole', monsters: [tallyman, ...six] }], makeRng(100));
     ok(canCall(s, s.monsters[0]) && markOf(s, aliveMonsters(s)) === 0, 'a tallyman beside six knockers may call, and the bots aim at it first');
     untilActs(s, p, 100, 0);
     const come = s.monsters.filter((m) => m.band === 1);
@@ -802,11 +805,11 @@ function calls(): void {
   {
     // Those down count: nine with three of them fallen leave room for a call of three, not four.
     const four: MonsterDef = { ...tallyman, calls: { monsters: [knocker, knocker, knocker, knocker], chance: 1 } };
-    const p = defaultParty(makeRng(103)), s = startCombat(p, [{ id: 'hole', monsters: [tallyman, ...six, knocker, knocker] }], makeRng(103)), t = startCombat(p, [{ id: 'hole', monsters: [four, ...six, knocker, knocker] }], makeRng(103));
+    const p = defaultParty(TABLES, makeRng(103)), s = startCombat(TABLES, p, [{ id: 'hole', monsters: [tallyman, ...six, knocker, knocker] }], makeRng(103)), t = startCombat(TABLES, p, [{ id: 'hole', monsters: [four, ...six, knocker, knocker] }], makeRng(103));
     for (const f of [s, t]) f.monsters.slice(1, 4).forEach((m) => { m.hp = 0; });
     ok(canCall(s, s.monsters[0]) && !canCall(t, t.monsters[0]), `a fight of nine with three fallen has room for a call of three and none for four (${MAX_MONSTERS} at most, the fallen counted)`);
     // Three groups are the most: a fight that starts with three never grows.
-    const three = startCombat(p, [{ id: 'a', monsters: [tallyman] }, { id: 'b', monsters: [knocker] }, { id: 'c', monsters: [knocker] }], makeRng(104));
+    const three = startCombat(TABLES, p, [{ id: 'a', monsters: [tallyman] }, { id: 'b', monsters: [knocker] }, { id: 'c', monsters: [knocker] }], makeRng(104));
     ok(MAX_GROUPS === 3 && !canCall(three, three.monsters[0]), 'and a fight of three groups has room for none');
   }
   {
@@ -814,19 +817,19 @@ function calls(): void {
     const loader: MonsterDef = { ...knocker, id: 'test_loader', name: 'Loader', plural: 'Loaders' };
     const clerk: MonsterDef = { ...knocker, id: 'test_clerk', name: 'Tally Clerk', plural: 'Tally Clerks', calls: { monsters: [loader, loader], chance: 1 } };
     const master: MonsterDef = { ...tallyman, id: 'test_master', name: 'The Tallymaster', plural: 'Tallymasters', calls: { monsters: [clerk, clerk], chance: 1 } };
-    const p = defaultParty(makeRng(105)), s = startCombat(p, [{ id: 'desk', monsters: [master] }], makeRng(105));
+    const p = defaultParty(TABLES, makeRng(105)), s = startCombat(TABLES, p, [{ id: 'desk', monsters: [master] }], makeRng(105));
     for (let k = 0; k < 4 && s.outcome === 'ongoing'; k++) throughRound(s, p, 105 + k);
     ok(s.groupIds.length === MAX_GROUPS && s.log.includes(CALL_LINE('The Tallymaster', '2 Tally Clerks', false)) && s.log.includes(CALL_LINE('Tally Clerk', '2 Loaders', false)) && s.log.filter((l) => / calls, /.test(l)).length === 2,
       `the Tallymaster calls its clerks, a clerk its loaders, and then the fight is full (${s.monsters.length} monsters in ${s.groupIds.length} groups)`);
   }
   {
     // A caller in the back rank calls while the front stands, rather than wait.
-    const p = defaultParty(makeRng(106)), s = startCombat(p, [{ id: 'hole', monsters: [knocker, knocker, tallyman], back: 1 }], makeRng(106));
+    const p = defaultParty(TABLES, makeRng(106)), s = startCombat(TABLES, p, [{ id: 'hole', monsters: [knocker, knocker, tallyman], back: 1 }], makeRng(106));
     ok(untilActs(s, p, 106, 2) && frontStands(s) && s.groupIds.length === 2, 'a tallyman in the back rank calls while its knockers stand before it');
   }
   {
     // The called are fought as the rest are: slain, they pay.
-    const p = defaultParty(makeRng(107)), s = startCombat(p, [{ id: 'hole', monsters: [tallyman] }], makeRng(107));
+    const p = defaultParty(TABLES, makeRng(107)), s = startCombat(TABLES, p, [{ id: 'hole', monsters: [tallyman] }], makeRng(107));
     untilActs(s, p, 107, 0);
     for (const m of s.monsters) m.hp = 0;
     partyAct(s, p, makeRng(108), { type: 'defend' });
@@ -853,7 +856,7 @@ function clock(): void {
     return at;
   };
   {
-    const p = defaultParty(makeRng(120)), s = startCombat(p, [heart()], makeRng(120));
+    const p = defaultParty(TABLES, makeRng(120)), s = startCombat(TABLES, p, [heart()], makeRng(120));
     ok(markOf(s, aliveMonsters(s)) === 1, 'the bots aim at the panel first');
     const at = rounds(s, p, 6, 120), come = s.monsters.slice(3);
     ok(at.join() === '2,4,6' && come.every((m) => m.def === sentry && m.band === 1 && m.group === come[0].group && !m.back) && s.groupIds.length === 2 && s.log.filter((l) => l === CALL_LINE('Lord', 'Sentry', true)).length === 3,
@@ -867,30 +870,30 @@ function clock(): void {
   }
   {
     const eager: MonsterDef = { ...lord, calls: { monsters: [sentry, sentry], chance: 1 } };
-    const p = defaultParty(makeRng(130)), s = startCombat(p, [heart({ monsters: [eager, hand, hand] })], makeRng(130));
+    const p = defaultParty(TABLES, makeRng(130)), s = startCombat(TABLES, p, [heart({ monsters: [eager, hand, hand] })], makeRng(130));
     ok(!rounds(s, p, 1, 130).length && s.monsters.length === 3, 'one whose own call is sure never calls on its own chance under the clock');
   }
   {
-    const p = defaultParty(makeRng(131)), s = startCombat(p, [heart(), { id: 'b', monsters: [hand] }, { id: 'c', monsters: [hand] }], makeRng(131));
+    const p = defaultParty(TABLES, makeRng(131)), s = startCombat(TABLES, p, [heart(), { id: 'b', monsters: [hand] }, { id: 'c', monsters: [hand] }], makeRng(131));
     rounds(s, p, 4, 131);
     ok(s.groupIds.length === MAX_GROUPS + 1 && s.monsters.slice(5).length === 2 && s.monsters.slice(5).every((m) => m.band === MAX_GROUPS), `a fight of three groups still grows by the clock, its calls in one fourth group (${s.groupIds.length} groups)`);
   }
   {
-    const p = defaultParty(makeRng(132)), s = startCombat(p, [heart({ clock: { calls: sentry, every: 1, dims: 8, panel: [hand.id] } })], makeRng(132));
+    const p = defaultParty(TABLES, makeRng(132)), s = startCombat(TABLES, p, [heart({ clock: { calls: sentry, every: 1, dims: 8, panel: [hand.id] } })], makeRng(132));
     const at = rounds(s, p, 11, 132);
     ok(s.monsters.length === MAX_MONSTERS && at.length === MAX_MONSTERS - 3, `a call every round stops at ${MAX_MONSTERS} monsters (${at.length} calls)`);
     s.monsters[5].hp = 0;
     ok(!rounds(s, p, 2, 143).length && s.monsters.length === MAX_MONSTERS, 'and a sentry down makes no room: the fallen count');
   }
   {
-    const p = defaultParty(makeRng(134)), s = startCombat(p, [heart()], makeRng(134)), steps: number[] = [];
+    const p = defaultParty(TABLES, makeRng(134)), s = startCombat(TABLES, p, [heart()], makeRng(134)), steps: number[] = [];
     for (let k = 0; k < 14 && s.outcome === 'ongoing'; k++) { throughRound(s, p, 134 + k); steps.push(s.clock!.dim); }
     ok(steps.join() === '1,2,3,4,5,6,7,8,8,8,8,8,8,8' && s.outcome === 'ongoing', `the light dims a step a round to eight and holds there, and ends nothing (${steps.join(', ')}; ${s.outcome})`);
     ok(s.log.filter((l) => l === DIM_LINE).length === 2 && s.log.filter((l) => l === THREAD_LINE).length === 1 && s.log.indexOf(THREAD_LINE) > s.log.lastIndexOf(DIM_LINE), 'and the log says it at the third step and the sixth, and holds at a thread at the last');
   }
   {
     const engine: MonsterDef = { ...sentry, id: 'test_engine', name: 'Engine', plural: 'Engines', obeys: undefined };
-    const p = defaultParty(makeRng(136)), s = startCombat(p, [heart({ monsters: [lord, hand, sentry, sentry, engine], clock: undefined })], makeRng(136));
+    const p = defaultParty(TABLES, makeRng(136)), s = startCombat(TABLES, p, [heart({ monsters: [lord, hand, sentry, sentry, engine], clock: undefined })], makeRng(136));
     s.monsters[0].hp = 0;
     throughRound(s, p, 136);
     const fled = s.monsters.filter((m) => m.fled);
@@ -907,26 +910,26 @@ function glove(): void {
     if (!maren.spells.includes(spellId)) maren.spells.push(spellId);
     maren.sp = maren.maxSp = 99;
     for (const c of p.members) c.hp = c.maxHp = 999;
-    const s = startCombat(p, [{ id: 'g', monsters }], makeRng(seed));
+    const s = startCombat(TABLES, p, [{ id: 'g', monsters }], makeRng(seed));
     throughRound(s, p, seed, (i) => (i === 4 ? { type: 'cast', spellId, target: aliveMonsters(s)[0] } : undefined));
     return s;
   };
   const said = (s: CombatState): string[] => s.log.filter((l) => l.startsWith('The light goes into'));
-  const p = defaultParty(makeRng(110));
+  const p = defaultParty(TABLES, makeRng(110));
   const first = cast(p, ['knocker', 'knocker'], 'smite', 110), at = first.log.findIndex((l) => l.startsWith('Maren casts Smite'));
   ok(MONSTERS.knocker.kind === 'machine' && first.log[at] === 'Maren casts Smite: Knocker takes 0.' && first.log[at + 1] === GLOVE_LINE(true) && p.flags[GLOVE_FLAG] === 1,
     `the first Smite to pass through a machine says so after its line, and the flag keeps it said (${first.log.slice(at, at + 2).join(' / ')})`);
   const again = cast(p, ['knocker'], 'smite', 111), wrath = cast(p, ['knocker', 'mender'], 'wrath', 112);
   ok(said(again).length === 0 && said(wrath).length === 0 && again.log.includes('Maren casts Smite: Knocker takes 0.') && wrath.log.includes('Maren casts Wrath of the Hearth: 0 damage to every foe.'), 'the second does not, Smite or Wrath of the Hearth');
   // Through several at once it says them; nothing says it but the Hearth's light through a machine.
-  const q = defaultParty(makeRng(113)), several = cast(q, ['knocker', 'knocker', 'mender'], 'wrath', 113);
+  const q = defaultParty(TABLES, makeRng(113)), several = cast(q, ['knocker', 'knocker', 'mender'], 'wrath', 113);
   ok(said(several).join() === GLOVE_LINE(false) && GLOVE_LINE(false) === 'The light goes into them like a hand into a glove.', `Wrath of the Hearth through three machines says them (${said(several).join()})`);
-  const r = defaultParty(makeRng(114)), bandit = cast(r, ['bandit'], 'smite', 114), skeleton = cast(r, ['skeleton'], 'wrath', 115), spark = cast(r, ['knocker'], 'spark', 116);
+  const r = defaultParty(TABLES, makeRng(114)), bandit = cast(r, ['bandit'], 'smite', 114), skeleton = cast(r, ['skeleton'], 'wrath', 115), spark = cast(r, ['knocker'], 'spark', 116);
   const struck = [bandit.log.some((l) => /^Maren casts Smite: Bandit takes [1-9]/.test(l)), skeleton.log.some((l) => /^Maren casts Wrath of the Hearth: [1-9]/.test(l)), spark.log.some((l) => /^Maren casts Spark: Knocker takes [1-9]/.test(l))];
   ok([bandit, skeleton, spark].every((s) => said(s).length === 0) && !r.flags[GLOVE_FLAG] && struck.every(Boolean),
     'a bandit or a skeleton the light strikes never says it, nor Spark through a machine, which bites');
   // The flag goes into the save with the party, and the company that loads it is not told again.
-  const loaded = deserialize(serialize(new World(buildMaps(), p, makeRng(117)).state, p, 0)).party;
+  const loaded = deserialize(serialize(new World(TABLES, buildMaps(), p, makeRng(117)).state, p, 0)).party;
   ok(loaded.flags[GLOVE_FLAG] === 1 && said(cast(loaded, ['knocker'], 'smite', 118)).length === 0, 'the flag survives a save and a load, and the light goes through again unsaid');
 }
 
@@ -940,12 +943,12 @@ function sweep(): void {
   const giant: MonsterDef = { ...MONSTERS.ogre, id: 'test_giant', name: 'Giant', plural: 'Giants', hp: 999, attack: 99, dice: 1, sides: 1, bonus: 39, speed: 99, sweep: { chance: 1 } };
   const drake: MonsterDef = { ...giant, id: 'test_drake', name: 'Drake', plural: 'Drakes', sweep: { chance: 1, element: 'fire' } };
   const charm = { id: 'test_ember_charm', name: 'Ember Charm', slot: 'none' as const, price: 0, resist: ['fire' as const] };
-  const down = (q: Party, ...at: number[]): void => { for (const i of at) { q.members[i].hp = 0; addCondition(q.members[i], 'unconscious'); } };
+  const down = (q: Party, ...at: number[]): void => { for (const i of at) { q.members[i].hp = 0; addCondition(TABLES.items, q.members[i], 'unconscious'); } };
   /** What each member took from the first turn of `m`, at the head of the round, on a company of 200 apiece dressed by `dress`. */
-  const swept = (m: MonsterDef, dress: (q: Party, s: CombatState) => void = () => {}, seed = 120): { took: number[]; s: CombatState } => {
-    const q = defaultParty(makeRng(seed));
+  const swept = (m: MonsterDef, dress: (q: Party, s: CombatState) => void = () => {}, seed = 120, t: Tables = TABLES): { took: number[]; s: CombatState } => {
+    const q = defaultParty(t, makeRng(seed));
     for (const c of q.members) c.hp = c.maxHp = 200;
-    const s = startCombat(q, [{ id: 'g', monsters: [m] }], makeRng(seed));
+    const s = startCombat(t, q, [{ id: 'g', monsters: [m] }], makeRng(seed));
     dress(q, s);
     const before = q.members.map((c) => c.hp);
     untilActs(s, q, seed, 0);
@@ -963,35 +966,35 @@ function sweep(): void {
   const breath = swept(drake);
   ok(fell(breath, 0, 40, 'Drake', 'fire') && fell(swept(drake, (q) => down(q, 0)), 3, 40, 'Drake', 'fire'), `a drake's breath burns the fuller row, the front on a tie and the back once the front is thinner (${breath.s.log.at(-1)})`);
   const glass = swept(drake, (_q, s) => { s.glass = { element: 'fire', rounds: 5 }; });
-  const [worn, both] = withDefs(ITEMS, [charm], () => [swept(drake, (q) => { q.members[0].pack.push(charm.id); }), swept(drake, (q, s) => { q.members[0].pack.push(charm.id); s.glass = { element: 'fire', rounds: 5 }; })] as const);
+  const lent = tablesWith([charm]), [worn, both] = [swept(drake, (q) => { q.members[0].pack.push(charm.id); }, 120, lent), swept(drake, (q, s) => { q.members[0].pack.push(charm.id); s.glass = { element: 'fire', rounds: 5 }; }, 120, lent)] as const;
   ok(fell(glass, 0, 20, 'Drake', 'fire') && [0, 20].includes(worn.took[0]) && [0, 40].includes(worn.took[1]) && fell(both, 0, 20, 'Drake', 'fire'),
     `Lampglass on fire halves the breath on the whole row, a charm against fire on its bearer alone, and the two together halve it once, never to a quarter (${glass.took.slice(0, 3).join(', ')}; ${worn.took.slice(0, 3).join(', ')}; ${both.took.slice(0, 3).join(', ')})`);
   ok(SWEEP_LINE('Giant', undefined, 'the front row') === 'Giant sweeps the front row and misses.' && logLines(`${SWEEP_LINE('Cinder Drake', 'fire', 'the back row', 999)} Ottilie wakes. Ottilie, Maren and Cassian fall!`).length <= 2,
     'a sweep that hits nobody misses, and the longest line a breath can say fits two lines of the log');
   // A giant in the back rank holds while the front stands, as a blow would; a drake there breathes, as a spell is cast.
   const rearguard = (m: MonsterDef, seed: number): { acted: boolean; s: CombatState } => {
-    const q = defaultParty(makeRng(seed));
+    const q = defaultParty(TABLES, makeRng(seed));
     for (const c of q.members) c.hp = c.maxHp = 999;
-    const s = startCombat(q, [{ id: 'g', monsters: [{ ...MONSTERS.ogre, hp: 999, attack: -99 }, m], back: 1 }], makeRng(seed));
+    const s = startCombat(TABLES, q, [{ id: 'g', monsters: [{ ...MONSTERS.ogre, hp: 999, attack: -99 }, m], back: 1 }], makeRng(seed));
     return { acted: untilActs(s, q, seed, 1), s };
   };
   const held = rearguard(giant, 121), loosed = rearguard(drake, 122);
   ok(!held.acted && !held.s.log.some((l) => l.includes(' sweeps ')) && loosed.acted && loosed.s.log.some((l) => l.startsWith('Drake breathes fire on the front row')), 'a giant in the back rank waits for the front to fall; a drake there breathes over it');
   // The bots' answer: a member of the row a sweep would take is mended once one sweep could fell them.
   const heavy: MonsterDef = { ...giant, bonus: 99, speed: 0 }, lines = (m: MonsterDef, dress: (q: Party) => void = () => {}, answer = ANSWER): number[] => {
-    const q = defaultParty(makeRng(123));
+    const q = defaultParty(TABLES, makeRng(123));
     for (const c of q.members) c.hp = c.maxHp = 200;
     dress(q);
-    return mendLines(startCombat(q, [{ id: 'g', monsters: [m] }], makeRng(123)), q, asWritten, answer);
+    return mendLines(startCombat(TABLES, q, [{ id: 'g', monsters: [m] }], makeRng(123)), q, asWritten, answer);
   };
   const unanswered = lines(heavy, undefined, { ...ANSWER, sweep: false });
   ok(lines(heavy).join() === '100,100,100,80,80,80' && lines({ ...heavy, sweep: undefined }).join() === '80,80,80,80,80,80' && unanswered.join() === '80,80,80,80,80,80' && lines({ ...heavy, sweep: { chance: 1, element: 'fire' } }, (q) => down(q, 0)).join() === '80,80,80,100,100,100',
     'the bots mend the row a sweeper would take under what one sweep could deal them, the rest at 40%, and the back row once a breath would turn on it');
   const mended = (sweep: boolean): number => {
-    const q = defaultParty(makeRng(124)), rng = makeRng(124);
+    const q = defaultParty(TABLES, makeRng(124)), rng = makeRng(124);
     for (const c of q.members) c.hp = c.maxHp = 200;
     q.members[1].hp = 90;
-    const s = startCombat(q, [{ id: 'g', monsters: [heavy] }], rng);
+    const s = startCombat(TABLES, q, [{ id: 'g', monsters: [heavy] }], rng);
     for (let n = 0; n < 20; n++) { const t = currentTurn(s, q, rng); if (!t || t.side === 'monster') break; if (t.i === 4) { gateTurn(s, q, rng, 4, { answer: { ...ANSWER, sweep } }); break; } partyAct(s, q, rng, { type: 'defend' }); }
     return q.members[1].hp;
   };
@@ -1007,7 +1010,7 @@ function bot(): void {
   const dummy: MonsterDef = { ...MONSTERS.rat, id: 'test_dummy', name: 'Dummy', plural: 'Dummies', hp: 999, attack: -99 };
   /** The party braces against a dummy until each member in `who` has had a turn from botTurn: what it gave each. */
   const turnOf = (q: Party, seed: number, who: number[]): Map<number, PartyAction> => {
-    const rng = makeRng(seed), s = startCombat(q, [{ id: 'g', monsters: [dummy] }], rng), took = new Map<number, PartyAction>();
+    const rng = makeRng(seed), s = startCombat(TABLES, q, [{ id: 'g', monsters: [dummy] }], rng), took = new Map<number, PartyAction>();
     for (let n = 0; n < 40 && took.size < who.length; n++) {
       const t = currentTurn(s, q, rng);
       if (!t) break;
@@ -1018,7 +1021,7 @@ function bot(): void {
     return took;
   };
   {
-    const q = defaultParty(makeRng(130));
+    const q = defaultParty(TABLES, makeRng(130));
     for (const c of q.members) c.hp = c.maxHp = 200;
     q.members[1].hp = 70;
     const a = turnOf(q, 130, [4]).get(4);
@@ -1026,20 +1029,20 @@ function bot(): void {
   }
   {
     // Bram the knight to the back row, with his sword and no spell; Ottilie to the front.
-    const q = defaultParty(makeRng(131));
+    const q = defaultParty(TABLES, makeRng(131));
     [q.members[0], q.members[3]] = [q.members[3], q.members[0]];
     const bram = q.members[3], took = turnOf(q, 131, [0, 3]);
-    ok(bram.name === 'Bram' && !bram.spells.length && !canAttackFromRow(bram, 3) && JSON.stringify(took.get(3)) === '{"type":"defend"}' && took.get(0)?.type === 'attack',
+    ok(bram.name === 'Bram' && !bram.spells.length && !canAttackFromRow(TABLES.items, bram, 3) && JSON.stringify(took.get(3)) === '{"type":"defend"}' && took.get(0)?.type === 'attack',
       `botTurn gives a back-row fighter with no spell and no bow a brace (${JSON.stringify(took.get(3))}), and the front row a blow (${JSON.stringify(took.get(0))})`);
   }
   // A sweep and a breath: the mend lines and the breath's guard.
   const giant: MonsterDef = { ...MONSTERS.ogre, id: 'test_giant', name: 'Giant', plural: 'Giants', hp: 999, attack: 99, dice: 1, sides: 1, bonus: 99, speed: 99, sweep: { chance: 1 } };
   const drake: MonsterDef = { ...giant, id: 'test_drake', name: 'Drake', plural: 'Drakes', sweep: { chance: 1, element: 'fire' } };
   const facing = (m: MonsterDef, seed: number, dress: (q: Party) => void = () => {}): { q: Party; s: CombatState } => {
-    const q = defaultParty(makeRng(seed));
+    const q = defaultParty(TABLES, makeRng(seed));
     for (const c of q.members) { c.hp = c.maxHp = 200; c.sp = c.maxSp = 50; }
     dress(q);
-    return { q, s: startCombat(q, [{ id: 'g', monsters: [m] }], makeRng(seed)) };
+    return { q, s: startCombat(TABLES, q, [{ id: 'g', monsters: [m] }], makeRng(seed)) };
   };
   {
     const { q, s } = facing(giant, 132), written = mendLines(s, q).join(), unseen = mendLines(s, q, asSeen).join();
@@ -1049,7 +1052,7 @@ function bot(): void {
       `the gate's bot mends against a giant's sweep before it sweeps; the game's at 40% until the log shows the sweep, then as the gate's (${unseen} to ${seen})`);
   }
   {
-    const { q, s } = facing(drake, 133, (r) => { r.members[0].hp = 0; addCondition(r.members[0], 'unconscious'); });
+    const { q, s } = facing(drake, 133, (r) => { r.members[0].hp = 0; addCondition(TABLES.items, r.members[0], 'unconscious'); });
     const written = breathGuard(s, q), unseen = breathGuard(s, q, asSeen);
     untilActs(s, q, 133, 0);
     ok(written === 0 && unseen === undefined && s.log.some((l) => l.startsWith('Drake breathes fire on the back row')) && breathGuard(s, q, asSeen) === 0,
@@ -1079,7 +1082,7 @@ function bot(): void {
   }
   {
     const master: MonsterDef = { ...MONSTERS.bandit, id: 'test_master', name: 'Barge Master', plural: 'Barge Masters' };
-    const q = defaultParty(makeRng(137)), s = startCombat(q, [{ id: 'barge', monsters: [MONSTERS.bandit, master, MONSTERS.bandit], leader: master.id }], makeRng(137));
+    const q = defaultParty(TABLES, makeRng(137)), s = startCombat(TABLES, q, [{ id: 'barge', monsters: [MONSTERS.bandit, master, MONSTERS.bandit], leader: master.id }], makeRng(137));
     ok(markOf(s, aliveMonsters(s)) === 1 && markOf(s, aliveMonsters(s), asSeen) === undefined, "the gate's bot aims at a leader first; the game's never, since a leader shows only in its fall");
   }
 }
@@ -1106,7 +1109,7 @@ function botOpts(): void {
   const botFight = (groups: CombatGroup[], who: readonly number[], opts?: BotOpts, dress: (q: Party) => void = () => {}, sees: Sees = asWritten, turns = 1, bot = 'gate'): { q: Party; s: CombatState; took: PartyAction[] } => {
     const q = companyAt(12, 853), rng = makeRng(853);
     dress(q);
-    const s = startCombat(q, groups, rng), took: PartyAction[] = [];
+    const s = startCombat(TABLES, q, groups, rng), took: PartyAction[] = [];
     for (let n = 0; n < 400 && s.outcome === 'ongoing' && took.length < who.length * turns; n++) {
       const t = currentTurn(s, q, rng);
       if (!t) break;
@@ -1165,7 +1168,7 @@ function botOpts(): void {
       && wet.took[0]?.type === 'attack' && draughts(wet.q) === whole && off.took[0]?.type === 'attack',
       `with the option on, Bram gives Wren, under her mend line, the bag's draught when no one standing can mend her (${JSON.stringify(dry.took[0])}), not while Maren can (${JSON.stringify(wet.took[0])}); off, he strikes (${JSON.stringify(off.took[0])})`);
     // Bram held fast, smelling salts in Idris's pack: Idris frees him when no one can by a spell, and not while Maren can.
-    const held = (spent: boolean) => (q: Party): void => { addCondition(q.members[0], 'paralysed'); q.members[1].pack.push('smelling_salts'); for (const m of q.members) if (spent || m.cls !== 'cleric') m.sp = 0; };
+    const held = (spent: boolean) => (q: Party): void => { addCondition(TABLES.items, q.members[0], 'paralysed'); q.members[1].pack.push('smelling_salts'); for (const m of q.members) if (spent || m.cls !== 'cleric') m.sp = 0; };
     const salts = botFight(one(dummy), [1], ON, held(true)), cleric = botFight(one(dummy), [1], ON, held(false));
     ok(JSON.stringify(salts.took[0]) === '{"type":"use","itemId":"smelling_salts","target":0}' && canAct(salts.q.members[0]) && cleric.took[0]?.type !== 'use' && hasCondition(cleric.q.members[0], 'paralysed'),
       `and Idris frees Bram, held fast, with his salts when no one can by a spell (${JSON.stringify(salts.took[0])}), not while Maren can (${JSON.stringify(cleric.took[0])})`);
@@ -1194,7 +1197,7 @@ function botOpts(): void {
       const q = companyAt(level, 853), rng = makeRng(853), out: string[] = [];
       q.members[0].pack.push('potion_heal');
       q.bag.push('smelling_salts');
-      const s = startCombat(q, [{ id: 'a', monsters: level < 10 ? ['ogre', 'ogre', 'ogre'] : [great, great, great] }, { id: 'b', monsters: ['skeleton', 'skeleton', 'wolf', 'wolf'] }], rng);
+      const s = startCombat(TABLES, q, [{ id: 'a', monsters: level < 10 ? ['ogre', 'ogre', 'ogre'] : [great, great, great] }, { id: 'b', monsters: ['skeleton', 'skeleton', 'wolf', 'wolf'] }], rng);
       for (let n = 0; n < 2000 && s.outcome === 'ongoing'; n++) {
         const t = currentTurn(s, q, rng);
         if (!t) break;
@@ -1228,7 +1231,7 @@ function botOpts(): void {
     // turn is no blow, blesses, not Idris.
     const many = Object.values(SPELLS).filter((x) => x.dice && (x.target === 'group' || x.target === 'all')).map((x) => ` casts ${x.name}`);
     const three = (bot: 'gate' | 'thrifty'): { s: CombatState; woke: string[] } => {
-      const q = companyAt(12, 870), rng = makeRng(870), s = startCombat(q, [{ id: 'g', monsters: [great, great, great] }], rng), woke: string[] = [];
+      const q = companyAt(12, 870), rng = makeRng(870), s = startCombat(TABLES, q, [{ id: 'g', monsters: [great, great, great] }], rng), woke: string[] = [];
       for (let n = 0; n < 400 && s.outcome === 'ongoing'; n++) {
         const t = currentTurn(s, q, rng);
         if (!t || s.round > 3) break;
@@ -1252,10 +1255,10 @@ function botOpts(): void {
     const ogre: MonsterDef = { ...MONSTERS.ogre, id: 'test_ogre', hp: 30, attack: -99 };
     const alone = (opts: BotOpts, bram = false): { s: CombatState; turns: string } => {
       const q = companyAt(12, 865), rng = makeRng(865), turns: string[] = [];
-      q.members.forEach((m, j) => { if (j < 5 && !(bram && j === 0)) { addCondition(m, 'dead'); m.hp = 0; } });
+      q.members.forEach((m, j) => { if (j < 5 && !(bram && j === 0)) { addCondition(TABLES.items, m, 'dead'); m.hp = 0; } });
       Object.assign(q.members[5], { spells: ['sleep', 'firebolt'], hp: 999, maxHp: 999 });
       q.members[5].equipment.weapon = 'dagger';
-      const s = startCombat(q, [{ id: 'a', monsters: [ogre, ogre] }, { id: 'b', monsters: [ogre, ogre, ogre] }], rng);
+      const s = startCombat(TABLES, q, [{ id: 'a', monsters: [ogre, ogre] }, { id: 'b', monsters: [ogre, ogre, ogre] }], rng);
       playOut(s, q, rng, (s, q, rng, i) => { turns.push(JSON.stringify(botTurn(s, q, rng, i, asWritten, opts))); }, {}, ROUND_CAP);
       return { s, turns: turns.join(' ') };
     };
@@ -1270,7 +1273,7 @@ function botOpts(): void {
     const many = Object.values(SPELLS).filter((x) => x.dice && (x.target === 'group' || x.target === 'all')).map((x) => ` casts ${x.name}`);
     const q = companyAt(8, 865), rng = makeRng(865), woke: string[] = [];
     q.members[5] = companyAt(12, 865).members[5];
-    const s = startCombat(q, [{ id: 'a', monsters: [great, great] }, { id: 'b', monsters: [great, great] }], rng);
+    const s = startCombat(TABLES, q, [{ id: 'a', monsters: [great, great] }, { id: 'b', monsters: [great, great] }], rng);
     const asleep = (): number[] => s.monsters.flatMap((m, k) => (m.conditions.includes('asleep') ? [k] : []));
     for (let n = 0; n < 400 && s.outcome === 'ongoing'; n++) {
       const t = currentTurn(s, q, rng);
@@ -1356,7 +1359,7 @@ function autoFight(): void {
     const g = headlessGame(8);
     Object.assign(g.party, companyAt(3, 8));
     const master: MonsterDef = { ...MONSTERS.bandit, id: 'test_master', name: 'Barge Master', plural: 'Barge Masters' };
-    const s = startCombat(g.party, [{ id: 'barge', monsters: [MONSTERS.bandit, master, MONSTERS.bandit], leader: master.id }], g.rng), screen = new CombatScreen(s, ['barge']);
+    const s = startCombat(TABLES, g.party, [{ id: 'barge', monsters: [MONSTERS.bandit, master, MONSTERS.bandit], leader: master.id }], g.rng), screen = new CombatScreen(s, ['barge']);
     g.push(screen);
     screen.auto = true;
     const names = g.party.members.map((c) => c.name);
@@ -1376,7 +1379,7 @@ function fightTicks(): void {
   CombatScreen.instant = true;
   /** The premade company at three rats, the combat screen on top. */
   const atRats = (seed: number): { g: Game; screen: CombatScreen } => {
-    const g = headlessGame(seed), s = startCombat(g.party, [{ id: 'rats', monsters: ['rat', 'rat', 'rat'] }], g.rng), screen = new CombatScreen(s, ['rats']);
+    const g = headlessGame(seed), s = startCombat(TABLES, g.party, [{ id: 'rats', monsters: ['rat', 'rat', 'rat'] }], g.rng), screen = new CombatScreen(s, ['rats']);
     g.push(screen);
     return { g, screen };
   };

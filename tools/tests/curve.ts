@@ -26,8 +26,10 @@ import { handIns, choices } from '../../src/game/people.ts';
 import { xpForLevel, killPay, MAX_LEVEL } from '../../src/game/party.ts';
 import { FIXTURE, LAIR } from '../kit/rules/enclave.ts';
 import { CHECKS, once } from '../kit/checks.ts';
-import { ok, owed, withDefs, fxMap, fxKey, fxFlag } from './lib.ts';
+import { ok, owed, fxMap, fxKey, fxFlag } from './lib.ts';
 import { stepsFrom } from '../kit/rules/curve.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Items } from '../../src/game/tables.ts';
 
 /** Spearman's rank correlation, ties given their mean rank; 0 where either side does not vary. */
 function rankCorrelation(a: readonly number[], b: readonly number[]): number {
@@ -328,10 +330,10 @@ export const nearTop = (floor: number, top: number): number => (floor < MAX_LEVE
 export const windowed = (d: ItemDef): boolean => d.slot !== 'none' && d.price > 0 && !d.artifact;
 
 /** The finds of a clear that a price window holds (`windowed`): each with where it is found. */
-const heldFinds = ({ every, features }: Clear): { it: string; from: string }[] => [
+const heldFinds = ({ every, features }: Clear, items: Items = ITEMS): { it: string; from: string }[] => [
   ...features.flatMap((f) => (giftOf(f)?.items ?? []).map((it) => ({ it, from: `${f.kind} ${spentId(f)}` }))),
   ...[...new Set(every)].flatMap((m) => (m.drops ?? []).map((x) => ({ it: x.item, from: `${m.id}'s drop` }))),
-].filter(({ it }) => windowed(ITEMS[it]));
+].filter(({ it }) => windowed(items[it]));
 
 /**
  * The price window: no weapon, armour or shield in a clear's chests or its monsters' drops dearer
@@ -450,12 +452,13 @@ export function curve(): void {
     // thing carried, which no window holds marked or not.
     const arts = Object.values(ITEMS).filter((d) => d.artifact), widest = Math.max(...Object.values(CURVE).map((r) => r.price));
     const twins = arts.map((d): ItemDef => ({ ...d, id: `test_${d.id}_unmarked`, artifact: undefined }));
-    const caught = (id: string): string => heldFinds(clearOf([{ ...LAIR, features: (LAIR.features ?? []).map((f) => (f.kind === 'chest' ? { ...f, items: [id] } : f)) }])).filter((x) => ITEMS[x.it].price > price).map((x) => x.it).join();
-    withDefs(ITEMS, twins, () => {
-      const passed = arts.filter((d) => caught(d.id) === ''), slotted = twins.filter((d) => d.slot !== 'none'), held = slotted.filter((d) => caught(d.id) === d.id);
+    const caught = (id: string, items: Items = ITEMS): string => heldFinds(clearOf([{ ...LAIR, features: (LAIR.features ?? []).map((f) => (f.kind === 'chest' ? { ...f, items: [id] } : f)) }]), items).filter((x) => items[x.it].price > price).map((x) => x.it).join();
+    {
+      const lent = tablesWith(twins).items;
+      const passed = arts.filter((d) => caught(d.id, lent) === ''), slotted = twins.filter((d) => d.slot !== 'none'), held = slotted.filter((d) => caught(d.id, lent) === d.id);
       ok(arts.length > 0 && passed.length === arts.length && slotted.length > 0 && held.length === slotted.length && arts.every((d) => d.price > widest),
         `no window holds an artifact, by its mark alone: each of the ${arts.length} in ${LAIR.id}'s chest passes its window, the cap's ${fmt(price)}, and each of the ${held.length} with a slot, unmarked, at ${fmt(Math.min(...arts.map((d) => d.price)))} past the widest window's ${fmt(widest)}, is caught by it`);
-    });
+    }
     ok(true, `${LAIR.id}: as an enclave its ${fmt(lair.xp)} xp a member and ${fmt(lair.gold)} gold are a figure, counted in no clear`);
     const faults = (d: MapDef, outside = salt.outside ?? []): number => enclaveFaults({ id: FIXTURE.area, maps: [...salt.maps, d], outside }, [...MAP_DEFS, d]).length;
     ok(!faults(LAIR) && faults({ ...LAIR, band: undefined }) === 1 && faults({ ...LAIR, band: [11, 13] }) === 1 && faults(LAIR, [fxMap(LAIR.id)]) === 1

@@ -9,9 +9,10 @@ import type { BotOpts } from '../../src/game/bot.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
 import { botTurn, asWritten } from '../../src/game/bot.ts';
-import { RULES, type Rules, gateCompany } from './company.ts';
+import { RULES, type Rules, gateCompany, HARNESS } from './company.ts';
 import type { EncounterDef, Answer } from '../../src/game/mapdef.ts';
 import { answer, barred } from '../../src/game/people.ts';
+import type { Tables } from '../../src/game/tables.ts';
 
 /** No fight goes on for ever: one still running after this many rounds is broken off, and the company must rest. */
 export const ROUND_CAP = 15;
@@ -58,8 +59,8 @@ export function gateOpts(g: Pick<EncounterDef, 'when'>): CombatOpts {
  * `cap`, a fight still running after that many rounds is broken off, and not won; `opts` is the
  * fight's weather (see `gateOpts`); `rules` the what-ifs its bot plays by (`gateTurn`).
  */
-export function gateFight(p: Party, monsters: Fighters, seed: number, cap = Infinity, opts: CombatOpts = {}, rules: Readonly<Rules> = RULES): boolean {
-  const rng = makeRng(seed), s = startCombat(p, [asGroup('gate', monsters)], rng, opts);
+export function gateFight(p: Party, monsters: Fighters, seed: number, cap = Infinity, opts: CombatOpts = {}, rules: Readonly<Rules> = RULES, tables: Tables = HARNESS): boolean {
+  const rng = makeRng(seed), s = startCombat(tables, p, [asGroup('gate', monsters)], rng, opts);
   return playOut(s, p, rng, gateBot, rules, cap).outcome === 'victory';
 }
 
@@ -76,7 +77,7 @@ export const gateAnswer = (g: Pick<EncounterDef, 'choice'>): Answer | undefined 
  */
 export function gatePass(p: Party, g: Pick<EncounterDef, 'choice'>): boolean {
   const a = g.choice?.answers.find((x) => !x.fight && !barred(x, p));
-  if (a) answer(a, p);
+  if (a) answer(HARNESS.items, a, p);
   return !!a;
 }
 

@@ -13,7 +13,7 @@ import { STEPS as FORELAND_STEPS, FARM_FIRST } from '../shelf/walkthrough.ts';
 import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen, hear, answerTo, page, reads, there, open, clock, HIRE, hired, mapOf, who, taught, shows } from '../../../../tools/kit/walk.ts';
 import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { EAST, NORTH, SOUTH } from '../../../game/types.ts';
-import { MAP_DEFS, THE_QUEST } from '../../index.ts';
+import { MAP_DEFS, THE_QUEST, TABLES } from '../../index.ts';
 import { answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { questLog } from '../../../game/quests.ts';
@@ -191,7 +191,7 @@ function parley(w: Walk, at: string, label: string): string {
   w.world.travel(map, g.x, g.y - 1);
   const c = w.world.question(id), a = c?.answers.find((x) => x.label === label);
   w.ok(!!a && w.world.adjacentGroups().includes(id), `beside ${id} it asks before it fights, and '${label}' is an answer (${c?.ask ?? 'no question'})`);
-  const said = a ? answer(a, w.party) : '';
+  const said = a ? answer(TABLES.items, a, w.party) : '';
   listen(w);
   return said;
 }
@@ -591,7 +591,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
 
   // At 11: the premade ranger and cleric, and a druid who joins for the look ahead.
   const at11: Party = newWalk(ok).party;
-  at11.members[5] = createCharacter('Tamar', 'elf', 'druid', {}, makeRng(11));
+  at11.members[5] = createCharacter(TABLES, 'Tamar', 'elf', 'druid', {}, makeRng(11));
   for (const c of at11.members) { c.xp = xpForLevel(11); c.level = 11; }
   const sent = sought(questLog(w.world.state, at11)).find((p) => p.at === 'thornhold');
   const names = (cls: string[]) => cls.map((k) => at11.members.find((c) => c.cls === k)!.name);
@@ -659,7 +659,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   }
   ok(found, 'she is reached on foot from the box\'s way in, by no secret door');
   const druids: Party = mended.party;
-  druids.members[5] = createCharacter('Tamar', 'elf', 'druid', {}, makeRng(11));
+  druids.members[5] = createCharacter(TABLES, 'Tamar', 'elf', 'druid', {}, makeRng(11));
   for (const m of druids.members) { m.xp = xpForLevel(19); m.level = 19; }
   takePrestige(druids.members[5]);
   ok(!!sought(questLog(mended.world.state, druids)).find((p) => p.at === 'deepthorn_i5')?.who.includes('Tamar'), 'at 19 the druid is sent to the wood to the head');

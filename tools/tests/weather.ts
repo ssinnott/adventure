@@ -2,7 +2,7 @@
 // what it does to sight, steps and bows.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { MAP_DEFS, CLIMATES } from '../../src/content/index.ts';
+import { MAP_DEFS, CLIMATES, TABLES } from '../../src/content/index.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { dateAt, daylightAt, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../../src/game/calendar.ts';
@@ -65,17 +65,17 @@ export function weather(): void {
   ok(skyNews('clear', 'fog', shelf) === shelf.fogText && skyNews('clear', 'fog', thorn) === thorn.fogText && skyNews('cloudy', 'overcast', shelf) === null, 'fog comes in its region\'s own words; cloud is left to the eye');
   // A new world opens on a fair morning and never draws on the gameplay rng again.
   for (const seed of [1, 2, 3, 4, 5]) {
-    const r = makeRng(seed), w = new World(buildMaps(), defaultParty(r), r);
+    const r = makeRng(seed), w = new World(TABLES, buildMaps(), defaultParty(TABLES, r), r);
     ok(fairStart(w.state.weatherSeed!, START_MINUTES, shelf) && w.weather.precip < 0.05 && w.weather.fog < 0.3, `a new game (seed ${seed}) opens dry and clear of fog`);
   }
   {
     const a = makeRng(3), b = makeRng(3);
-    const wa = new World(buildMaps(), defaultParty(a), a), wb = new World(buildMaps(), defaultParty(b), b);
+    const wa = new World(TABLES, buildMaps(), defaultParty(TABLES, a), a), wb = new World(TABLES, buildMaps(), defaultParty(TABLES, b), b);
     for (let i = 0; i < 50; i++) { wa.advance(97); void wa.weather; wa.weatherNews(); void wa.sight; }
     ok(a.next() === b.next() && a.next() === b.next(), 'reading the weather draws nothing from the gameplay rng');
   }
   // What it does: fog and downpours close the view outdoors (a Light spell does not cut fog), not underground.
-  const r = makeRng(5), world = new World(buildMaps(), defaultParty(r), r), seed = world.state.weatherSeed!;
+  const r = makeRng(5), world = new World(TABLES, buildMaps(), defaultParty(TABLES, r), r), seed = world.state.weatherSeed!;
   const daylit = (m: number): boolean => daylightAt(m) === 1;
   const fogAt = findWeather(seed, START_MINUTES, shelf, (w, m) => w.fog >= 0.6 && daylit(m));
   world.travel('shelf', 16, 8, 2); world.state.minutes = fogAt;
@@ -154,8 +154,8 @@ export function weather(): void {
   { // No sky is lent (#945): a map that names no region, asked its sky, throws and names itself and the square.
     const said = (f: () => unknown): string => { try { f(); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } };
     const bare: MapDef = { id: 'fx_bare', name: 'Bare', kind: 'dungeon', start: { x: 1, y: 1, facing: SOUTH }, rows: ['###', '#.#', '###'] };
-    const party = defaultParty(makeRng(1)), w = new World(buildMaps(), party, makeRng(1));
-    const made = said(() => new World({ fx_bare: new GameMap(bare) }, party, makeRng(1)));
+    const party = defaultParty(TABLES, makeRng(1)), w = new World(TABLES, buildMaps(), party, makeRng(1));
+    const made = said(() => new World(TABLES, { fx_bare: new GameMap(bare) }, party, makeRng(1)));
     const asked = said(() => w.walks({ when: { sky: 'fog' } }, 0, 0, 'fx_nowhere')), sea = said(() => regionOf(w.maps[OUTDOORS], 0, 0));
     ok(made === "map 'fx_bare' names no region, nor does a zone at 1,1" && asked === "unknown map 'fx_nowhere'" && sea === `map '${OUTDOORS}' names no region, nor does a zone at 0,0`,
       `a World on a map that names no region throws, naming it (${made}); so does a sky asked of a map it has not got (${asked}) or of an outdoors square no zone holds (${sea})`);

@@ -17,7 +17,7 @@ import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { MAP_TERRAIN } from '../../src/game/atlas.ts';
 import { TERRAIN_COLORS, PARCHMENT, AUTOMAP_WASH } from '../../src/ui/palette.ts';
-import { MAP_DEFS, CLIMATES } from '../../src/content/index.ts';
+import { MAP_DEFS, CLIMATES, TABLES } from '../../src/content/index.ts';
 import { GROUND_SAMPLES } from '../kit/grounds.ts';
 import { mix, hexToRgb } from '../../src/lib/art/palettes.ts';
 import { ok } from './lib.ts';
@@ -150,7 +150,7 @@ function sight(): void {
   const def = (rows: readonly string[], x: number, y: number, f: Facing, more: Partial<MapDef> = {}): MapDef => ({ id: 'fx_sight', name: 'Sight', kind: 'outdoor', region: 'shelf', start: { x, y, facing: f }, rows: [...rows], ...more });
   /** A company on (x, y) facing f, at the first hour `when` holds, with nothing marked but what it sees there. */
   const look = (rows: readonly string[], x: number, y: number, f: Facing, when: When = DAY, more: Partial<MapDef> = {}): World => {
-    const rng = makeRng(29), w = new World({ fx_sight: new GameMap(def(rows, x, y, f, more)) }, defaultParty(rng), rng);
+    const rng = makeRng(29), w = new World(TABLES, { fx_sight: new GameMap(def(rows, x, y, f, more)) }, defaultParty(TABLES, rng), rng);
     w.state.minutes = findWeather(w.state.weatherSeed!, w.state.minutes, CLIMATES.shelf, when);
     w.mapState.explored.fill(0);
     w.travel('fx_sight', x, y, f);
@@ -242,6 +242,6 @@ function sight(): void {
   const old = look(VALLEY, 4, 5, NORTH);
   old.mapState.explored[(2 * 9 + 4) >> 5] |= 1 << ((2 * 9 + 4) & 31);
   const data = deserialize(serialize(old.state, old.party, 1));
-  const back = new World({ fx_sight: new GameMap(def(VALLEY, 4, 5, NORTH)) }, data.party, makeRng(1), data.world);
+  const back = new World(TABLES, { fx_sight: new GameMap(def(VALLEY, 4, 5, NORTH)) }, data.party, makeRng(1), data.world);
   ok(SAVE_VERSION >= 5 && back.explored(4, 2) && !back.sees(4, 2) && seen(data.world.maps.fx_sight.explored, 2 * 9 + 4), `a save made before loads with what it marked, the valley past the ridge among it, though from there it is not seen now (version ${SAVE_VERSION})`);
 }

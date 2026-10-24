@@ -4,8 +4,8 @@
 // each returns whether it was done, the gold that changed hands and the line the screen says, as `learn`
 // (game/skills.ts) returns its line. The screens (ui/screens.ts) draw the menus and say the line, and
 // the walkthroughs call the same rules instead of writing them out again. Each changes only what it is
-// handed, so a test serves as the game does, without a Game; it still reads the item and spell tables
-// through `sellPrice`, `spell`, `spellsFor` and `levelUp` until #973 and #974 pass them in.
+// handed, so a test serves as the game does, without a Game; it still reads the spell table through
+// `spell`, `spellsFor` and `levelUp` until #974 passes it in.
 import type { Feature } from './mapdef.ts';
 import type { World } from './world.ts';
 import type { Character, Party } from './party.ts';
@@ -91,7 +91,7 @@ export function donate(party: Pick<Party, 'gold' | 'flags'>): Served {
  * first as #973 passes every table, is the table the item is read from.
  */
 export function sell(items: Readonly<Record<string, ItemDef>>, party: Party, owner: string[], id: string): Served {
-  const d = items[id], paid = sellPrice(party, d.price);
+  const d = items[id], paid = sellPrice(items, party, d.price);
   if (d.artifact) return refused(REFUSED);
   if (paid === 0) return refused('"I will not buy that."');
   owner.splice(owner.indexOf(id), 1);
