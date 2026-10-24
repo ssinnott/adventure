@@ -10,7 +10,7 @@ const plate = THORNMARK.find((i) => i.id === 'plate')!;
 
 // Wrackholm's of the bounds' eight (DESIGN §9, #847): the Grey Knife's 1d8+14 and a point, for the
 // thief, the bard and the sorcerer, and Grasping Roots cast from it three times a day. Found and never
-// sold; placed nowhere yet, for #835 lays its lair and puts it there.
+// sold; it lies in Nick's Locker, the lair under F5's reef, on the ship's master past Old Nick (#835).
 export const holdfast = W('holdfast', 'Holdfast', ARTIFACT_PRICE, 1, 8, { kind: 'light', bonus: 15, classes: ['thief', 'bard', 'sorcerer'], casts: { spell: 'roots', times: 3 }, artifact: true, text: [
   'A smuggler\'s knife, its haft wound with kelp that has not rotted.',
   'Wet, the weed on it moves.',

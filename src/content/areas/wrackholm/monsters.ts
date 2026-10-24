@@ -58,10 +58,12 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the company steps to its desk (the map's), and calls two clerks at a half a turn, who may call their loaders;
   // size 1.6 and drawn inside TALL_REACH
   { id: 'tallymaster', name: 'The Tallymaster', plural: 'Tallymasters', sprite: 'tallymaster', kind: 'machine', look: 'It writes, and does not look up.', level: 28, hp: 1552, ac: 27, attack: 18, dice: 28, sides: 8, bonus: 50, speed: 13, xp: 17813, gold: [0, 0], calls: { monsters: ['tally_clerk', 'tally_clerk'], chance: 0.5 }, tint: '#6f7780', size: 1.6 },
-  // the bounds' lair (#835), drawn and defined before the lair that places it: F5's sea cave under the east rocks, where it
-  // keeps Holdfast. What the smugglers fed first, the lair's boss at 32 (MONSTERS §13): it reaches the back row (`ranged`, as
+  // the bounds' lair (#835): Nick's Locker, F5's sea cave under the reef, where it lies in the cave's throat and keeps
+  // Holdfast. What the smugglers fed first, the lair's boss at 32 (MONSTERS §13): it reaches the back row (`ranged`, as
   // the family's do) and its hits heal it (`drain`, as the leech's), and it stands at size 2 and is drawn inside TALL_REACH.
-  // Its numbers are the line's boss at 32 as tools/testmonster.ts gives it today, and provisional: the lair's pull request
-  // sets them from the harness's line at the cap (MONSTERS §4.1, §4.2, §13). It is owed in checks.ts until that lair places it
-  { id: 'old_nick', name: 'Old Nick', plural: 'Old Nicks', sprite: 'old_nick', kind: 'beast', look: 'What the smugglers fed first.', level: 32, hp: 2100, ac: 29, attack: 20, dice: 34, sides: 8, bonus: 41, speed: 13, xp: 20373, gold: [0, 0], ranged: true, drain: 'hp', tint: '#4c5650', size: 2 },
+  // Drawn at the line's boss at 32 (2,100 hp, attack 20, 34d8+41), each blow landed drinking back what it took, it was
+  // never won at 30 or at 32; set by the lair's pull request at the gate's company (1,600 hp, 20d8+20), it stands three
+  // quarters as long and its blow is a little over half the drawn one, its attack, armour, pace, reach and drinking kept,
+  // won 57% at its floor of 30 and 81% at 32, and it pays the boss line's xp at 32 (docs/areas/wrackholm.md §9, #835's 25)
+  { id: 'old_nick', name: 'Old Nick', plural: 'Old Nicks', sprite: 'old_nick', kind: 'beast', look: 'What the smugglers fed first.', level: 32, hp: 1600, ac: 29, attack: 20, dice: 20, sides: 8, bonus: 20, speed: 13, xp: 20373, gold: [0, 0], ranged: true, drain: 'hp', offLine: 'Nick\'s Locker\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above, its hits healing it as drawn (#835)', tint: '#4c5650', size: 2 },
 ];

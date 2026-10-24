@@ -29,10 +29,10 @@ export const MONSTERS: readonly MonsterDef[] = [
   // Tower's decks after (MONSTERS §10.1), an elite on the line at 27: a machine (§2), so it never breaks; its free hand
   // holds, paralysed at 0.15 as the elite's line has it
   { id: 'glass_walker', name: 'Glass Walker', plural: 'Glass Walkers', sprite: 'glass_walker', kind: 'machine', look: 'Something walking out of the Glass, and it has walked a long way.', level: 27, hp: 670, ac: 25, attack: 16, dice: 7, sides: 8, bonus: 7, speed: 15, xp: 2147, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.15 }, tint: '#5f8a6a', size: 1.2 },
-  // the bounds' lair (#833), drawn and defined before the lair that places it: D7's eyrie on the Scarp's east end,
-  // where it keeps Akkush. The bird that takes the Riders' foals, the lair's boss at 32 (MONSTERS §13): it flies, so
-  // it hunts the back row (`ranged` without `missile`, as the vulture's does), and stands at size 1.8. Its numbers
-  // are the line's boss at 32 as tools/testmonster.ts gives it today, and provisional: the lair's pull request sets
-  // them from the harness's line at the cap (MONSTERS §4.1, §4.2, §13). It is owed in checks.ts until that lair places it
-  { id: 'foal_taker', name: 'The Foal-taker', plural: 'Foal-takers', sprite: 'foal_taker', kind: 'beast', look: 'When its shadow crosses the herd, the herd runs.', level: 32, hp: 2100, ac: 29, attack: 20, dice: 34, sides: 8, bonus: 41, speed: 13, xp: 20373, gold: [0, 0], ranged: true, tint: '#cdbf9c', size: 1.8 },
+  // the bounds' lair (#833): Kushdag, D7's eyrie in the Scarp's east face, where it keeps Akkush. The bird that takes the
+  // Riders' foals, the lair's boss at 32 (MONSTERS §13): it flies, so it hunts the back row (`ranged` without `missile`,
+  // as the vulture's does), and stands at size 1.8. Drawn at the line's boss at 32 (2,100 hp, 34d8+41), it was won 16%
+  // at 30 and 28% at 32; set by the lair's pull request at the gate's company, it hits more often and half as hard and
+  // stands longer, won 57% at its floor of 30 and 81% at 32 (docs/areas/glasswold.md §9, #833's 25)
+  { id: 'foal_taker', name: 'The Foal-taker', plural: 'Foal-takers', sprite: 'foal_taker', kind: 'beast', look: 'When its shadow crosses the herd, the herd runs.', level: 32, hp: 2900, ac: 29, attack: 23, dice: 18, sides: 8, bonus: 20, speed: 13, xp: 20373, gold: [0, 0], ranged: true, offLine: 'Kushdag\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#833)', tint: '#cdbf9c', size: 1.8 },
 ];

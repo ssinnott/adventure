@@ -1,5 +1,27 @@
 {
   "maps": {
+    "blackdraw": {
+      "size": "16x16",
+      "used": [
+        "bd_bright",
+        "bd_clerks",
+        "bd_flow",
+        "bd_furnace",
+        "bd_irons",
+        "bd_locker",
+        "bd_mouth",
+        "bd_pay",
+        "bd_plates",
+        "bd_stoker"
+      ],
+      "groups": [
+        "bd_inspector",
+        "bd_walker"
+      ],
+      "doors": [
+        "5,6"
+      ]
+    },
     "caldera": {
       "used": [
         "e10_back",
@@ -549,6 +571,7 @@
     "grove_seedling",
     "hearth_symbol",
     "horn_bow+2",
+    "kindler",
     "marlinspike",
     "meridian_journal4",
     "meridian_mail",

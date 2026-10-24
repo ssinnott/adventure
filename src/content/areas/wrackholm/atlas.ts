@@ -21,6 +21,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'dead_drop2', kind: 'dungeon', at: [208, 210] }, // the vaults, down the drop's rails, six below it as the Tide Ship's decks are (#22)
   { id: 'dead_drop3', kind: 'dungeon', at: [208, 216] }, // the counting house, down the vaults' steps, six below them again (#22)
   { id: 'brokenback', kind: 'dungeon', band: [14, 15], at: [150, 150] }, // the enclave, the wreck on E5's black rocks, its break at 18,28 (#835, #845); the plate lies out in the sea
+  { id: 'nicks_locker', kind: 'dungeon', band: [30, 32], at: [188, 152] }, // the lair, Old Nick's sea cave under F5's reef, its door at 16,30 (#835, #845); the plate lies out in the sea
 ];
 
 export const SITES: readonly AtlasSite[] = [

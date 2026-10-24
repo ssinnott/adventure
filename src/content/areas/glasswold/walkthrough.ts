@@ -85,6 +85,8 @@ import { take as ride } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { RIDERS_RIDE } from '../../crossings.ts';
 import { CURES } from '../ashfall/items.ts';
+import { wrap } from '../../../ui/draw.ts';
+import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { STORY, ROAD_EAST } from './maps/wold_d8.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as WINDOW } from '../ashfall/chapter.ts';
@@ -1632,13 +1634,19 @@ function theWarning(ok: (cond: boolean, msg: string) => void): void {
  * foot and nothing on the strip that fights or pays; the west edge on top shut against C7's ring, and D8's
  * 0,0 and C8's 31,0 with it; the lip's sights, the salt-raker's words and the watch's fire, a rest; the
  * vultures, the lions and the walkers, each won; the keepers' store found from the smell of tar; and the
- * square left for the lair's door. Karaordu, the enclave (#845): south from the grass at D7's 8,29 down the
+ * two doors in its faces. Karaordu, the enclave (#845): south from the grass at D7's 8,29 down the
  * diggers' cut, its door saying its band and how it feels at 25, 26 and 28 and its sign its band; its two
  * groups won at 28, the khans' gold, the eldest khan's cell found from the horses' skulls turned to its
  * wall and the Khan's Sabre in it, and up the cut onto D7 again. The other island (E7): north from E8's
  * 16,0 onto its 16,31, and east from D7's 31,31 onto the spit; its sights, no group, and the castaway's
  * hollow found from the wind in the crack; its north edge shut to every company against Wrackholm's E6.
- * Walked, waded, climbed or floated, no prize is reached but through its door.
+ * Walked, waded, climbed or floated, no prize is reached but through its door. Last, Kushdag, the lair
+ * (#847): east from the lip at D7's 18,24 onto the shelf in the Scarp's east face, its door saying its
+ * band and how it feels at 26, 28 and 30; the Foal-taker alone on the shelf where it narrows, with the
+ * nest, the chest and the cleft unreached while it stands, won at 30; Akkush in the Rider's chest, held
+ * by no other place; the cleft found from the buckle in the rock; the way out onto the lip with its line
+ * alone; and the eldest's two lines of the bow, said at no meeting before the story, at every one after
+ * while the bird lives and at none once it has fallen.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
@@ -1675,8 +1683,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(!!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_d7 104,190') && !!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_e7 136,190')
     && d7.x === d8.x && d7.y + 32 === d8.y && e7.x === d7.x + 32 && e7.y === d7.y && e7.x === e8.x && e7.y + 32 === e8.y
     && [D7, E7].every((d) => d.density === 'country' && d.band?.join('-') === '26-27' && d.region === 'glasswold')
-    && (D7.exits ?? []).map((e) => e.to).join() === 'karaordu' && !(E7.exits ?? []).length,
-    'the Scarp\'s east end, D7, laid at 104,190 over Akordu\'s box, and the other island\'s north, E7, east of it at 136,190 over the shore: country, band 26-27, D7\'s one way out into Karaordu and none out of E7');
+    && (D7.exits ?? []).map((e) => e.to).join() === 'karaordu,kushdag' && !(E7.exits ?? []).length,
+    'the Scarp\'s east end, D7, laid at 104,190 over Akordu\'s box, and the other island\'s north, E7, east of it at 136,190 over the shore: country, band 26-27, D7\'s two ways out into Karaordu and Kushdag and none out of E7');
 
   // The way in: north from D8's 20,0 onto D7's 20,31, walked, one land and nothing said.
   const north = step(d8.id, 20, 0, NORTH);
@@ -1733,11 +1741,11 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(search(D7.id, rock.x + 1, rock.y, WEST, 'd7_store'), 'searched where the tar smells, the rock gives, and the beacon-keepers\' store can be walked into');
   const chest7 = feature(D7, 'd7_chest');
   ok(chest7.kind === 'chest' && chest7.gold === 1100 && chest7.items.join() === 'potion_sp_great' && chest7.x === rock.x - 2, 'in the store, the keepers\' chest: 1,100 gold and a Sapphire Vial');
-  // The doors, the lair's left in the Scarp's east face over the gulf and the enclave's in the hills over
-  // D8: each square is bare, the square before it open on the lip, and nothing stands on either.
+  // The doors, the lair's shelf in the Scarp's east face over the gulf and the enclave's cut in the hills
+  // over D8: each square is stone, the square before it open on the lip, and nothing stands on either.
   const bare = (x: number, y: number): boolean => !D7.features!.some((f) => f.x === x && f.y === y) && !D7.encounters!.some((g) => g.x === x && g.y === y);
-  ok(D7.rows[24][19] === '|' && lip.has(at(d7, 18, 24)) && bare(19, 24) && bare(18, 24) && D7.rows[30][8] === '"' && lip.has(at(d7, 8, 29)) && lip.has(at(d7, 8, 30)) && bare(8, 30) && bare(8, 29),
-    'the lair\'s door is left at the Scarp\'s east face, 19,24, and the enclave\'s is the cut in the hills over Akordu\'s box, 8,30, each bare and its way clear');
+  ok(D7.rows[24][19] === '"' && lip.has(at(d7, 18, 24)) && lip.has(at(d7, 19, 24)) && bare(19, 24) && bare(18, 24) && D7.rows[30][8] === '"' && lip.has(at(d7, 8, 29)) && lip.has(at(d7, 8, 30)) && bare(8, 30) && bare(8, 29),
+    'the lair\'s door is the shelf in the Scarp\'s east face, 19,24, and the enclave\'s is the cut in the hills over Akordu\'s box, 8,30, each stone, bare and its way clear');
 
   // Karaordu, the enclave (#845): the diggers' cut at D7's 8,30, walked into from the grass at 8,29, no
   // feature or group within four squares of it. Its door says its band and how it feels, as a border's
@@ -1816,4 +1824,96 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(chestE.kind === 'chest' && chestE.gold === 700 && chestE.items.join() === 'elixir' && chestE.x === crack.x + 1 && chestE.y === crack.y + 1, 'in the hollow, what the castaway left: 700 gold and an Elixir');
   const words = [D7, E7].flatMap((d) => d.features!.flatMap((f) => [...('text' in f && f.text ? [f.text] : []), ...(f.kind === 'npc' ? f.lines : [])])).join(' ');
   ok(!/glass|hull|ship|orbit|voyage|custodian|tower|bow/i.test(words), 'nothing in either box\'s words of the Glass, of what the crown is, or of the bow');
+
+  // Kushdag, the lair (#845, #847): the shelf cut in the Scarp's east face at D7's 19,24, walked onto from
+  // the lip at 18,24, nothing within four squares of it. Its door says its band and how it feels: the
+  // warning at 26, the box's floor, harder at 28 and its band alone at 30.
+  {
+    const KD = MAP_DEFS.find((d) => d.id === 'kushdag')!, shelf = D7.exits!.find((e) => e.to === KD.id)!, g = KD.encounters![0];
+    const near4 = [...D7.features!, ...D7.encounters!].filter((f) => Math.abs(f.x - 19) + Math.abs(f.y - 24) <= 4).map((f) => ('id' in f ? f.id : f.kind));
+    ok(D7.exits!.length === 2 && shelf.x === 19 && shelf.y === 24 && shelf.tx === KD.start.x && shelf.ty === KD.start.y && D7.rows[24][19] === '"' && lip.has(at(d7, 18, 24)) && !near4.length,
+      `the shelf into Kushdag is dressed stone in the Scarp's east face at D7's 19,24, walked to from the lip at 18,24, with nothing within four squares of it (${near4.join(', ') || 'nothing'})`);
+    // Its two ways say nothing of the bird, so they read true after it falls: they are said every time.
+    ok(![shelf.label, KD.exits![0].label].some((l) => /foal|bird|feather|cry|wing/i.test(l ?? '')), 'the way in and the way out say nothing of the Foal-taker, so they read true whether it stands or has fallen');
+    const levels = w.party.members.map((m) => m.level);
+    const door = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(D7.id, 18, 24, EAST);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === KD.id && w.world.state.x === KD.start.x && w.world.state.y === KD.start.y ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'Kushdag: levels 30-32.', far = door(26), near = door(28), at30 = door(30);
+    ok(far === `${shelf.label} | ${band} ${WARNING_IN}` && near === `${shelf.label} | ${band} ${HARDER_IN}` && at30 === `${shelf.label} | ${band}`,
+      `east from D7's lip onto the shelf and into Kushdag, the way's own line and then its band, with the warning at 26, the box's floor, harder at 28 and nothing more at 30 (${far}; ${near}; ${at30})`);
+    ok(!!KD.enclave && w.world.here.name === 'Kushdag' && w.world.here.band?.join('-') === '30-32', `inside, its sign gives the cap's band, over D7's 26-27 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    w.level = 30;
+    for (const id of ['kd_shelf', 'kd_foals', 'kd_feather']) see(w, `${KD.id}:${id}`);
+    // The guardian: the Foal-taker, a boss that never comes back, on the shelf where it comes down the face,
+    // the one way to the nest. With it standing and the squares a step from it shut (a fight starts next to
+    // a group), or with its square alone shut, no company walks, wades, climbs or floats past it: the nest,
+    // the chest, the buckle and the cleft are all behind the fight.
+    const flood = (shut: readonly (readonly [number, number])[]): Set<string> => {
+      const hold = new GameMap(KD), inside = new Set<string>(), closed = new Set(shut.map(([x, y]) => `${x},${y}`)), todo: [number, number][] = [[KD.start.x, KD.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (inside.has(`${x},${y}`) || closed.has(`${x},${y}`) || hold.passable(x, y, ALL) !== 'ok') continue;
+        inside.add(`${x},${y}`);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return inside;
+    };
+    const stepped = flood([[g.x, g.y], [g.x + 1, g.y], [g.x - 1, g.y], [g.x, g.y + 1], [g.x, g.y - 1]]), choke = flood([[g.x, g.y]]);
+    const behind = (s: Set<string>): boolean => [...s].some((k) => Number(k.split(',')[1]) >= 7);
+    ok(KD.encounters!.length === 1 && g.id === 'kd_foal_taker' && g.monsters.join() === 'foal_taker' && !!g.boss && !g.respawn && g.roams === false && !!g.slainText
+      && stepped.has('9,4') && choke.has('9,5') && !behind(stepped) && !behind(choke),
+      `the Foal-taker, the one group of the lair, stands on the shelf where it comes down the face: with it standing, none of Kushdag's ${choke.size} squares walked, waded, climbed or floated past it reaches the nest, the chest, the buckle or the cleft`);
+    fight(w, `${KD.id}:${g.id}`);
+    for (const id of ['kd_tracks', 'kd_nest', 'kd_rider']) see(w, `${KD.id}:${id}`);
+    // Akkush in the Rider's chest at the nest's edge, one in the world: no other chest, cairn or statue holds
+    // it, no shop sells it and no monster drops it.
+    const bow = feature(KD, 'kd_chest');
+    const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('akkush')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== bow && f.items.includes('akkush')) || (f.kind === 'statue' && !!f.gift?.items?.includes('akkush'));
+    ok(bow.kind === 'chest' && bow.gold === 0 && bow.items.join() === 'akkush' && !!item('akkush').artifact && flood([]).has(`${bow.x},${bow.y}`)
+      && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'akkush')),
+      'at the nest\'s edge, the Rider\'s chest with Akkush in it; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
+    // The secret: the buckle wedged in the rock behind the nest, the search there and the cleft behind it,
+    // where the bird keeps what shines. Walked, waded, climbed or floated, it is never reached but through the wall.
+    const [crack] = KD.secrets!, sealed = flood([[crack.x, crack.y]]);
+    ok(crack.hint === 'kd_buckle' && feature(KD, 'kd_buckle').x === crack.x && feature(KD, 'kd_buckle').y === crack.y - 1 && sealed.size > 50 && sealed.has(`${bow.x},${bow.y}`)
+      && !['6,13', '7,13', '8,13'].some((k) => sealed.has(k)), `the cleft is shut but for the wall behind the buckle: none of Kushdag's ${sealed.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${KD.id}:kd_buckle`);
+    ok(search(KD.id, crack.x, crack.y - 1, SOUTH, 'kd_cache'), 'searched where the buckle is wedged, the rock gives, and the cleft behind the nest can be walked into');
+    const cache = feature(KD, 'kd_cache_chest');
+    ok(cache.kind === 'chest' && cache.gold === 800 && cache.items.join() === 'elixir,potion_sp_great', 'in the cleft, the bird\'s cache: 800 gold, an Elixir and a Sapphire Vial');
+    // And out: back along the shelf onto the lip at D7's 18,24, the way's own line and no other.
+    w.world.travel(KD.id, KD.start.x + 1, KD.start.y, WEST);
+    const back = w.world.move('forward');
+    ok(back.kind === 'moved' && w.world.zone?.id === D7.id && w.world.state.x === d7.x + 18 && w.world.state.y === d7.y + 24 && back.messages.join(' | ') === KD.exits![0].label,
+      `out along the shelf onto D7's 18,24, the way's own line alone (${said(back)})`);
+    listen(w);
+    // The rumour (#846): the eldest at Akordu says nothing of the bow at the meeting that tells the oldest
+    // story and, at every meeting after it while the bird lives, two lines more, DESIGN §9's words: no flag
+    // or question comes with them, no quest names the bow and the journal says nothing of it. Once the bird
+    // has fallen she says them no more: it comes for foals no more.
+    const eldest = npcOn('wold_d8', 'The eldest');
+    const lines = ['"My grandmother\'s brother made a bow of white horn that never missed. He loosed it once, at the bird that takes our foals."', '"The bird took him, and the bow. It still comes for foals."'];
+    const bowWords = eldest.says!.filter((s) => s.lines.some((l) => l === lines[0]));
+    const bird = w.world.state.maps[KD.id]!.groups[g.id]!, fell = bird.dead;
+    bird.dead = -1;
+    w.world.travel('wold_d8', eldest.x, eldest.y);
+    const first = meet(eldest, w.party, heard(w.world, eldest)).text;
+    const after = meet(eldest, w.party, heard(w.world, eldest)).text;
+    w.party.flags[LION_TOLD] = 1;
+    const rest = meet(eldest, w.party, heard(w.world, eldest)).text;
+    bird.dead = fell;
+    const gone = meet(eldest, w.party, heard(w.world, eldest)).text;
+    ok(!first.includes('grandmother') && lines.every((l) => after.includes(l) && rest.includes(l)) && fell >= 0 && gone.includes('Keep it as we keep it.') && !gone.includes('grandmother') && bowWords.length === 2 && bowWords.every((s) => !s.sets && !s.choice && s.lines.slice(-2).join() === lines.join())
+      && !/Akkush|grandmother|white horn/.test(JSON.stringify(questLog(w.world.state, w.party))) && bowWords.every((s) => wrap(s.lines.join('\n\n'), SAY_W).length <= SAY_LINES),
+      'the eldest says nothing of the bow at the meeting that tells the story, and at every meeting after it while the bird lives, the lion\'s rest told or not, speaks of her grandmother\'s brother and the bird: words only, in no quest, and in the box\'s lines; once it has fallen, nothing of it');
+    listen(w);
+    delete w.party.flags[STORY]; delete w.party.flags[LION_TOLD];
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+    w.level = 26;
+  }
 }
