@@ -10,6 +10,7 @@ import { anchored } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
+import type { Rift } from '../../../rifts/index.ts';
 
 /**
  * Hale taken from the Scarth: a flag #156 sets when it puts strangers at the pass, on its own
@@ -29,7 +30,7 @@ export const TIDE_RIFT_CLOSED: When = { slain: 'tide_ship_rift:tide_ship_rift_wa
  * of the Stone's own glass in its rooms, the Warden of the Tide alone at its heart and the Stone in the
  * hoard beside it. Floored at 12, as Kelp Hole is, so the gate judges the Warden at 12 and 14.
  */
-export const TIDE_RIFT = rift({
+export const TIDE_RIFT: Rift<'tide_ship_rift'> = rift({
   id: 'tide_ship_rift', template: 'hall', material: 'brine', seed: 2, band: [12, 14], region: 'wrackholm',
   out: { to: 'tide_ship3', at: 'from_tide_ship_rift' },
   table: { groups: [['tide_elder', 'brineling', 'brineling', 'brineling']], warden: ['tide_warden'], boss: true },
@@ -44,7 +45,7 @@ const HALE_WORDS = [
   '"Never mind me. The rings pin under the floor; the pins knock out from the bilge. Start at the front, children first, and get them up to the boats before the watch counts heads."',
 ];
 
-export const TIDE_SHIP3: MapDef = {
+export const TIDE_SHIP3: MapDef<'tide_ship3'> = {
   id: 'tide_ship3',
   name: 'The Hold',
   kind: 'dungeon',

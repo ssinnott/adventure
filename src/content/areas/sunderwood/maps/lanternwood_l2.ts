@@ -17,7 +17,7 @@ import { EAST, SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const LANTERNWOOD_L2: MapDef = {
+export const LANTERNWOOD_L2: MapDef<'lanternwood_l2'> = {
   id: 'lanternwood_l2',
   name: 'Lanternwood',
   kind: 'outdoor',

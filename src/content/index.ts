@@ -2,7 +2,7 @@
 // area is its folder under areas/ and its line in AREAS (with the import above it); its drawings
 // and rooms are src/ui's (SPRITES in ui/monsters/index.ts, SCENES in ui/interior.ts), which the typecheck
 // holds to the lists here. The unions the game types its content with (MonsterSprite, Interior,
-// RegionId) are made from the areas, so nobody edits them by hand. The one quest is joined here
+// RegionId, MapId) are made from the areas, so nobody edits them by hand. The one quest is joined here
 // from the areas' chapters. The maps as played, with the outdoors laid out, are in ./maps.ts.
 import type { MapDef } from '../game/map.ts';
 import { landExits } from '../game/map.ts';
@@ -15,18 +15,18 @@ import type { Area } from './area.ts';
 import { guildQuestDef } from './guilds.ts';
 import type { Climate } from '../game/weather.ts';
 import type { Atlas } from '../game/atlas.ts';
-import { AREA as shelf } from './areas/shelf/index.ts';
-import { AREA as thornmark } from './areas/thornmark/index.ts';
-import { AREA as saltreach } from './areas/saltreach/index.ts';
-import { AREA as wrackholm } from './areas/wrackholm/index.ts';
-import { AREA as sunderwood } from './areas/sunderwood/index.ts';
-import { AREA as kilns } from './areas/kilns/index.ts';
-import { AREA as cairnmoor } from './areas/cairnmoor/index.ts';
-import { AREA as rimewater } from './areas/rimewater/index.ts';
-import { AREA as whitespine } from './areas/whitespine/index.ts';
-import { AREA as ashfall } from './areas/ashfall/index.ts';
-import { AREA as glasswold } from './areas/glasswold/index.ts';
-import { AREA as hearth } from './areas/hearth/index.ts';
+import { AREA as shelf, MAPS as shelfMaps } from './areas/shelf/index.ts';
+import { AREA as thornmark, MAPS as thornmarkMaps } from './areas/thornmark/index.ts';
+import { AREA as saltreach, MAPS as saltreachMaps } from './areas/saltreach/index.ts';
+import { AREA as wrackholm, MAPS as wrackholmMaps } from './areas/wrackholm/index.ts';
+import { AREA as sunderwood, MAPS as sunderwoodMaps } from './areas/sunderwood/index.ts';
+import { AREA as kilns, MAPS as kilnsMaps } from './areas/kilns/index.ts';
+import { AREA as cairnmoor, MAPS as cairnmoorMaps } from './areas/cairnmoor/index.ts';
+import { AREA as rimewater, MAPS as rimewaterMaps } from './areas/rimewater/index.ts';
+import { AREA as whitespine, MAPS as whitespineMaps } from './areas/whitespine/index.ts';
+import { AREA as ashfall, MAPS as ashfallMaps } from './areas/ashfall/index.ts';
+import { AREA as glasswold, MAPS as glasswoldMaps } from './areas/glasswold/index.ts';
+import { AREA as hearth, MAPS as hearthMaps } from './areas/hearth/index.ts';
 import { ITEMS as CORE_ITEMS } from './items.ts';
 import { SPELLS as ALL_SPELLS } from './spells.ts';
 import { PLAN } from './atlas.ts';
@@ -45,12 +45,22 @@ export type RegionId = AnyArea['id'];
 export type MonsterSprite = AnyArea['sprites'][number];
 /** The painted room a business shows while the party is inside it, one per business. */
 export type Interior = AnyArea['interiors'][number];
+/**
+ * The maps' ids, each kept literal where its map is declared (`MapDef<'cairns'>`): what an exit, a
+ * quest and an area name a map by (#994). Made of each area's `MAPS`, not of AREAS: an area's literal
+ * names maps (`outside`), so a union made of the areas would wait on itself.
+ */
+type AreaMaps = typeof shelfMaps | typeof thornmarkMaps | typeof saltreachMaps | typeof wrackholmMaps | typeof sunderwoodMaps | typeof kilnsMaps
+  | typeof cairnmoorMaps | typeof rimewaterMaps | typeof whitespineMaps | typeof ashfallMaps | typeof glasswoldMaps | typeof hearthMaps;
+export type MapId = AreaMaps[number]['id'];
 
 // The unions stay lists of names only while every area keeps its literals (`satisfies Area`, not
-// `: Area`). Widened to string, SPRITES and SCENES would stop catching a missing drawing or room,
-// so a widened union fails the typecheck here.
+// `: Area`, and each map `MapDef<'id'>`). Widened to string, SPRITES and SCENES would stop catching a
+// missing drawing or room and an exit a missing map, so a widened union fails the typecheck here.
 type Narrow<T extends string> = string extends T ? false : true;
-export const NARROW: [Narrow<RegionId>, Narrow<MonsterSprite>, Narrow<Interior>] = [true, true, true];
+export const NARROW: [Narrow<RegionId>, Narrow<MonsterSprite>, Narrow<Interior>, Narrow<MapId>] = [true, true, true, true];
+/** Every area's maps are in MapId: an area left out of AreaMaps fails the typecheck here. */
+export const LISTED: [Exclude<AnyArea['maps'][number]['id'], MapId>] extends [never] ? true : false = true;
 
 /** Rows keyed by id, in order, refusing an id given twice: two areas' 'wolf' would otherwise quietly become one. */
 function byId<T extends { id: string }>(what: string, rows: readonly T[]): Record<string, T> {
@@ -73,7 +83,7 @@ once('area', AREAS, (a) => a.id);
  * The maps as written, in road order, Helmstow first. The outdoor ones are zones the atlas places.
  * Each exit lands on an anchor of the map it leads to, which fills its square and facing here (#993).
  */
-export const MAP_DEFS: readonly MapDef[] = landExits(once('map', AREAS.flatMap((a) => a.maps), (d) => d.id));
+export const MAP_DEFS: readonly MapDef<MapId>[] = landExits(once('map', AREAS.flatMap<MapDef<MapId>>((a) => a.maps), (d) => d.id));
 
 /** Read-only: a suite lends a def through `withDefs` (tools/tests/lib.ts), and nothing else writes it (#945). */
 export const MONSTERS: Readonly<Record<string, MonsterDef>> = byId('monster', AREAS.flatMap((a) => a.monsters));

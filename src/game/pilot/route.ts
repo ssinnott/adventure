@@ -127,7 +127,7 @@ export function routeNearest(k: Known, map: string, x: number, y: number, facing
 }
 
 /** A way from a map to another: an exit seen, or a crossing told (#721), whose square is its seller's and whose `crossing` is the route's name. */
-export interface Edge { exit: Exit; crossing?: string }
+export interface Edge { exit: Exit<string>; crossing?: string }
 
 /**
  * A map's ways out as the navigator knows them: the exits Known gives, then the crossings told on it

@@ -8,7 +8,7 @@ import { SOUTH, WEST } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const DEEPTHORN_I4: MapDef = {
+export const DEEPTHORN_I4: MapDef<'deepthorn_i4'> = {
   id: 'deepthorn_i4',
   name: 'The Deepthorn',
   kind: 'outdoor',

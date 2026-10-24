@@ -13,7 +13,7 @@ import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const DEAD_DROP3: MapDef = {
+export const DEAD_DROP3: MapDef<'dead_drop3'> = {
   id: 'dead_drop3',
   name: 'The Counting House',
   kind: 'dungeon',

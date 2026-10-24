@@ -26,7 +26,7 @@ export const KEPT_ASKED = 'q_eleven_asked';
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 
-export const HEARTHISLE_I6: MapDef = {
+export const HEARTHISLE_I6: MapDef<'hearthisle_i6'> = {
   id: 'hearthisle_i6',
   name: 'Hearth Isle',
   kind: 'outdoor',

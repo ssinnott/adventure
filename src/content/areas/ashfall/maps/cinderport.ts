@@ -36,7 +36,7 @@ export const SHOVEL_KEPT = 'q_shovel_kept';
  */
 export const CIPHER_TAKEN = 'q_cipher_taken';
 
-export const CINDERPORT: MapDef = {
+export const CINDERPORT: MapDef<'cinderport'> = {
   id: 'cinderport',
   name: 'Cinderport',
   kind: 'town',

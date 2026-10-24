@@ -6,7 +6,7 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const GROVE1: MapDef = {
+export const GROVE1: MapDef<'grove1'> = {
   id: 'grove1',
   name: 'The Grove Roots',
   kind: 'dungeon',

@@ -8,7 +8,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const DOWNS_D4: MapDef = {
+export const DOWNS_D4: MapDef<'downs_d4'> = {
   id: 'downs_d4',
   name: 'Callow Downs',
   kind: 'outdoor',

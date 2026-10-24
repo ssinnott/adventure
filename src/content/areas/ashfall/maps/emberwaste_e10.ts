@@ -19,7 +19,7 @@ import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { ROAD_WEST, LIT } from '../public.ts';
 
-export const EMBERWASTE_E10: MapDef = {
+export const EMBERWASTE_E10: MapDef<'emberwaste_e10'> = {
   id: 'emberwaste_e10',
   name: 'The Ember Waste',
   kind: 'outdoor',

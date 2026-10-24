@@ -9,11 +9,12 @@
 // ladder keeps it behind the Surveyor's, which makes a company Mapmakers once it is paid.
 import type { GuildQuest } from '../../../game/guilds.ts';
 import { SLEEPERS_SEEN } from '../rimewater/public.ts';
+import type { When } from '../../../game/quests.ts';
 
 /** Where the journal lies: its chest in the lower gallery, opened. */
-const FOUND = { seen: 'ember_stone:es_journal' };
+const FOUND = { seen: 'ember_stone:es_journal' } satisfies When;
 /** Where the Company ended: the firelight on the one way to the fire, which no one comes to the fire without seeing. */
-const FIRE = { seen: 'meridian_camp3:mc3_fire' };
+const FIRE = { seen: 'meridian_camp3:mc3_fire' } satisfies When;
 
 export const GUILDS: readonly GuildQuest[] = [
   {

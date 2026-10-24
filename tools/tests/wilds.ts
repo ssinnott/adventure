@@ -23,7 +23,7 @@ import { CONTENT, collect, compare } from '../kit/shipped.ts';
 import { judge, measure } from '../kit/rules/density.ts';
 import { texts, lineFaults } from '../kit/rules/pillars.ts';
 import { condFaults } from '../kit/rules/quests.ts';
-import { ok } from './lib.ts';
+import { ok, fxKey } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
 
 const FIXTURE: MapDef = {
@@ -243,8 +243,8 @@ export function wilds(): void {
   const two = fresh();
   ok(answerRiddle(two.world, two.party, { ...statue, answer: 'old keeper' }, ' Old  KEEPER ').right, 'a two-word answer is taken typed with two spaces between');
   // The quests may name a spent feature by its map and id, and never by the map alone.
-  ok(condFaults({ seen: 'wilds:w_cairn' }, [FIXTURE]).length === 0 && condFaults({ seen: 'wilds' }, [FIXTURE]).length === 1, 'a quest sees a cairn by its id, and not by its map alone');
-  ok(condFaults({ seen: 'greywater2' }).join() === 'seen greywater2', 'nor Brandy Hole by its map alone');
+  ok(condFaults({ seen: fxKey('wilds:w_cairn') }, [FIXTURE]).length === 0 && condFaults({ seen: fxKey('wilds') }, [FIXTURE]).length === 1, 'a quest sees a cairn by its id, and not by its map alone');
+  ok(condFaults({ seen: fxKey('greywater2') }).join() === 'seen greywater2', 'nor Brandy Hole by its map alone');
   const statues = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f) => f.kind === 'statue'));
   const lost = hintless(MAP_DEFS);
   ok(!lost.length, `every statue in the content has its answer said elsewhere (${statues.length} placed)${lost.map((l) => '; ' + l).join('')}`);

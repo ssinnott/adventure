@@ -8,7 +8,7 @@ import { EAST } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const EAVES_K2: MapDef = {
+export const EAVES_K2: MapDef<'eaves_k2'> = {
   id: 'eaves_k2',
   name: 'Sunderfall',
   kind: 'outdoor',

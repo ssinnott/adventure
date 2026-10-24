@@ -7,11 +7,12 @@ import type { RegionId } from './weather.ts';
 import type { Crossing } from './atlas.ts';
 import type { Season, Tide } from './calendar.ts';
 import type { When } from './quests.ts';
-import type { Interior } from '../content/index.ts';
+import type { Interior, MapId } from '../content/index.ts';
 import type { GuildId } from '../content/guilds.ts';
 import type { SkillId } from './skills.ts';
 import type { Mastery } from './mastery.ts';
 import type { Clock } from './combat.ts';
+import type { OUTDOORS } from './outdoors.ts';
 
 export type MapKind = 'town' | 'dungeon' | 'outdoor';
 
@@ -71,10 +72,13 @@ export interface Cell {
 /** A named square of a map that another map's exit lands on, and the facing it lands with (#993). */
 export interface Anchor { x: number; y: number; facing: Facing }
 
-/** Where a map hands the party to another map. */
-export interface Exit {
+/**
+ * Where a map hands the party to another map. An area's exit names a map the areas list (`MapId`,
+ * #994); a map as played names the outdoors in place of a zone map (`PlayedDef`, game/outdoors.ts).
+ */
+export interface Exit<To extends string = MapId> {
   x: number; y: number;
-  to: string;
+  to: To;
   /**
    * The anchor of `to` it lands on, by name: `start`, or one of `to`'s `anchors` (#993). An area's
    * map lands every exit so, through `anchored`, and writes no square: the maps' join fills `tx`,
@@ -431,8 +435,13 @@ export interface Presence {
   after?: When;
 }
 
-export interface MapDef {
-  id: string;
+/**
+ * A map. An area's is declared with its id (`MapDef<'cairns'>`), which keeps the id literal in the
+ * `MapId` union (content/index.ts, #994). Its exits name the areas' maps, and `Off` besides: the
+ * outdoors on a map as played (`PlayedDef`). A suite's fixture hands its own maps on through `fxMap`.
+ */
+export interface MapDef<Id extends string = string, Off extends string = never> {
+  id: Id;
   name: string;
   kind: MapKind;
   /** Outdoors only: the floor tools/tests/density.ts holds it to. */
@@ -446,7 +455,7 @@ export interface MapDef {
    * no anchor takes that name. An exit names one as its `at`.
    */
   anchors?: Readonly<Record<string, Anchor>>;
-  exits?: Exit[];
+  exits?: Exit<MapId | Off>[];
   features?: Feature[];
   /**
    * Each secret door and the id of the event or sign on its near side that hints at it
@@ -492,6 +501,12 @@ export interface MapDef {
    */
   looks?: readonly string[];
 }
+
+/**
+ * A map as played (content/maps.ts): an exit onto a zone map laid into the outdoors names the
+ * outdoors in its place (game/outdoors.ts), so its exits are not the areas' alone (#994).
+ */
+export type PlayedDef = MapDef<string, typeof OUTDOORS>;
 
 /** An exit as an area writes it (#993): `at`, an anchor of the map it leads to, in place of `tx`, `ty` and `tf`. */
 export type Anchored = Omit<Exit, 'at' | 'tx' | 'ty' | 'tf'> & { at: string };
@@ -622,20 +637,20 @@ export class GameMap {
   readonly width: number;
   readonly height: number;
   readonly cells: Cell[];
-  readonly exits: readonly Exit[];
+  readonly exits: readonly Exit<MapId | typeof OUTDOORS>[];
   readonly features: readonly Feature[];
   readonly encounters: readonly EncounterDef[];
   readonly gates: readonly Gate[];
   readonly zones: readonly MapZone[];
   readonly palette: MapPalette;
-  readonly def: MapDef;
+  readonly def: PlayedDef;
   /** Each zone's palette over the map's, in the zones' order. */
   private readonly zonePalettes: readonly MapPalette[];
   /** The squares the map places a banner on, as y * width + x. */
   private readonly banners: ReadonlySet<number>;
   readonly landmarks: readonly Landmark[];
 
-  constructor(def: MapDef) {
+  constructor(def: PlayedDef) {
     this.def = def;
     this.id = def.id; this.name = def.name; this.kind = def.kind;
     this.height = def.rows.length;
@@ -723,7 +738,7 @@ export class GameMap {
   }
 
   /** The way off the map on a square: an exit, or a tear into a Rift, which is walked through as one. */
-  exitAt(x: number, y: number): Exit | undefined {
+  exitAt(x: number, y: number): Exit<string> | undefined {
     return this.exits.find((e) => e.x === x && e.y === y) ?? this.features.find((f): f is Extract<Feature, { kind: 'rift' }> => f.kind === 'rift' && f.x === x && f.y === y);
   }
   gateAt(x: number, y: number): Gate | undefined { return this.gates.find((g) => g.x === x && g.y === y); }

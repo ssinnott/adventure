@@ -27,7 +27,7 @@ export const WATCH = 'gap_watch';
  */
 export const SCHOLAR_ASKED = 'q_scholar_asked', ETCHING_GIVEN = 'q_etching_given', ETCHING_READ = 'q_etching_read';
 
-export const WOLD_B9: MapDef = {
+export const WOLD_B9: MapDef<'wold_b9'> = {
   id: 'wold_b9',
   name: 'The Wold',
   kind: 'outdoor',

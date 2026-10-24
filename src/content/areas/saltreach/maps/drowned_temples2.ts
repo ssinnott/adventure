@@ -12,7 +12,7 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { COUNT_STOPPED } from './drowned_temples.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const DROWNED_TEMPLES2: MapDef = {
+export const DROWNED_TEMPLES2: MapDef<'drowned_temples2'> = {
   id: 'drowned_temples2',
   name: 'The Choir',
   kind: 'dungeon',

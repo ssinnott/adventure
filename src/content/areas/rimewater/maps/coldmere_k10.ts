@@ -19,7 +19,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 /** The pilgrims gone from below the pass, up with the brother or back to the lodge (#56's 44, #494). */
 const GONE: When = [{ flag: 'q_pilgrims_up' }, { flag: 'q_pilgrims_back' }];
 
-export const COLDMERE_K10: MapDef = {
+export const COLDMERE_K10: MapDef<'coldmere_k10'> = {
   id: 'coldmere_k10',
   name: 'Loch Fuar',
   kind: 'outdoor',

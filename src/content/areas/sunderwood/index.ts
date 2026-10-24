@@ -21,9 +21,11 @@ import { CHAPTER } from './chapter.ts';
 import { QUESTS } from './quests.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
+export const MAPS = [EAVES_I2, EAVES_J2, EAVES_K2, EAVES_K3, K3_RIFT.map, THE_SUNDER, THE_SUNDER2, EAVES_J3, LANTERNWOOD_L2, LANTERNWOOD_M2, LANTERNWOOD_L3, LANTERNWOOD_L4, LANTERNWOOD_K4, LANTERN_WATCH] as const;
+
 export const AREA = {
   id: 'sunderwood' as const,
-  maps: [EAVES_I2, EAVES_J2, EAVES_K2, EAVES_K3, K3_RIFT.map, THE_SUNDER, THE_SUNDER2, EAVES_J3, LANTERNWOOD_L2, LANTERNWOOD_M2, LANTERNWOOD_L3, LANTERNWOOD_L4, LANTERNWOOD_K4, LANTERN_WATCH],
+  maps: MAPS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

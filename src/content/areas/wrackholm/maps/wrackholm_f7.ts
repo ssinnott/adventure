@@ -8,7 +8,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
-export const WRACKHOLM_F7: MapDef = {
+export const WRACKHOLM_F7: MapDef<'wrackholm_f7'> = {
   id: 'wrackholm_f7',
   name: 'Wrackholm',
   kind: 'outdoor',

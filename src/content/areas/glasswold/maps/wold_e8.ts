@@ -12,7 +12,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const WOLD_E8: MapDef = {
+export const WOLD_E8: MapDef<'wold_e8'> = {
   id: 'wold_e8',
   name: 'The Wold',
   kind: 'outdoor',

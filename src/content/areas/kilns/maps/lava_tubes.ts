@@ -10,7 +10,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const LAVA_TUBES: MapDef = {
+export const LAVA_TUBES: MapDef<'lava_tubes'> = {
   id: 'lava_tubes',
   name: 'Feuerstollen',
   kind: 'dungeon',

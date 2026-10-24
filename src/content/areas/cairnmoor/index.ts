@@ -21,9 +21,11 @@ import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
 
+export const MAPS = [HIGHMOOR_N7, CAIRNFIELD_N8, HIGHMOOR_O7, HIGHMOOR_O8, CAIRNFIELD_M7, CAIRNFIELD_M8, HIGHMOOR_P7, HIGHMOOR_P8, CAIRNFIELD_L8, CAIRNS, CAIRNS2, CARN_FADA, BEARN_LIATH] as const;
+
 export const AREA = {
   id: 'cairnmoor' as const,
-  maps: [HIGHMOOR_N7, CAIRNFIELD_N8, HIGHMOOR_O7, HIGHMOOR_O8, CAIRNFIELD_M7, CAIRNFIELD_M8, HIGHMOOR_P7, HIGHMOOR_P8, CAIRNFIELD_L8, CAIRNS, CAIRNS2, CARN_FADA, BEARN_LIATH],
+  maps: MAPS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

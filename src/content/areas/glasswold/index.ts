@@ -20,6 +20,8 @@ import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
 
+export const MAPS = [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8, WOLD_B8, WOLD_B9, WOLD_E9, WOLD_E8, WOLD_D7, WOLD_E7, KARAORDU, KUSHDAG] as const;
+
 export const AREA = {
   id: 'glasswold' as const,
   // In road order: the mesas (#527), the way in from E10, then the steppe (#525), the area's first built,
@@ -30,7 +32,7 @@ export const AREA = {
   // the Scarp's east end over the gulf and the other island's north, then Karaordu, the enclave (#845)
   // under the hills over Akordu's box, at 28-29, and Kushdag, the artifact's lair (#847) in the Scarp's
   // east face, at 30-32.
-  maps: [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8, WOLD_B8, WOLD_B9, WOLD_E9, WOLD_E8, WOLD_D7, WOLD_E7, KARAORDU, KUSHDAG],
+  maps: MAPS,
   monsters: MONSTERS,
   sprites: SPRITES,
   // The boxes' finds, the Riders' leather their trader sells at Akordu (#526) and the Compact's letter in

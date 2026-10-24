@@ -6,7 +6,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
-export const DEAD_DROP_STAIR: MapDef = {
+export const DEAD_DROP_STAIR: MapDef<'dead_drop_stair'> = {
   id: 'dead_drop_stair',
   name: 'The Stair\'s Foot',
   kind: 'dungeon',

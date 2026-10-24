@@ -25,7 +25,7 @@ export const SPRINGS_LEFT = 'q_springs_left';
 /** The springs gone cold, and the keeper told: The Springs done the other way. */
 export const SPRINGS_COLD = 'q_springs_cold';
 
-export const CINDERCOAST_H10: MapDef = {
+export const CINDERCOAST_H10: MapDef<'cindercoast_h10'> = {
   id: 'cindercoast_h10',
   name: 'Cindercoast',
   kind: 'outdoor',

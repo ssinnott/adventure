@@ -10,7 +10,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const CAIRNFIELD_M8: MapDef = {
+export const CAIRNFIELD_M8: MapDef<'cairnfield_m8'> = {
   id: 'cairnfield_m8',
   name: 'The Cairnfield',
   kind: 'outdoor',

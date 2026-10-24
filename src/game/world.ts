@@ -75,7 +75,7 @@ const bitsFor = (cells: number): number[] => new Array(Math.ceil(cells / 32)).fi
 
 export type MoveResult =
   /** `asks`: the group whose question comes before the fight (#544); then no `encounter`. */
-  | { kind: 'moved'; messages: string[]; encounter?: string[]; asks?: string; arrived?: Exit }
+  | { kind: 'moved'; messages: string[]; encounter?: string[]; asks?: string; arrived?: Exit<string> }
   | { kind: 'blocked'; reason: string }
   | { kind: 'turned' };
 
@@ -421,12 +421,12 @@ export class World {
   }
 
   /** Whether an exit is there now: one with an `after` is once it holds, as a presence is, and before that its square is no exit (#749). */
-  there(e: Exit): boolean {
+  there(e: Exit<string>): boolean {
     return !e.after || holds(e.after, this.state, this.party);
   }
 
   /** The exit on a square now, if it is there. */
-  exitAt(x: number, y: number): Exit | undefined {
+  exitAt(x: number, y: number): Exit<string> | undefined {
     const e = this.map.exitAt(x, y);
     return e && this.there(e) ? e : undefined;
   }

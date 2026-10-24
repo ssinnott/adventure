@@ -17,7 +17,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const FIREMOUNT_H11: MapDef = {
+export const FIREMOUNT_H11: MapDef<'firemount_h11'> = {
   id: 'firemount_h11',
   name: 'Fire Mountain',
   kind: 'outdoor',

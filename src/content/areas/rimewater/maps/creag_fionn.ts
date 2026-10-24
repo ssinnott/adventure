@@ -10,7 +10,7 @@ import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const CREAG_FIONN: MapDef = {
+export const CREAG_FIONN: MapDef<'creag_fionn'> = {
   id: 'creag_fionn',
   name: 'Creag Fionn',
   kind: 'dungeon',

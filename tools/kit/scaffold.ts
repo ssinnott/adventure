@@ -210,7 +210,7 @@ export function emit(d: Draft, zoneId: string, x: number, y: number, mapImport: 
     `import type { MapDef } from '${mapImport}';`,
     `import { ${facing} } from '${typesImport}';`,
     '',
-    `export const ${name}: MapDef = {`,
+    `export const ${name}: MapDef<'${def.id}'> = {`,
     `  id: '${def.id}',`,
     `  name: '${def.name.replace(/'/g, "\\'")}',`,
     `  kind: 'outdoor',`,

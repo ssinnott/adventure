@@ -12,7 +12,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const COLDMERE_J9: MapDef = {
+export const COLDMERE_J9: MapDef<'coldmere_j9'> = {
   id: 'coldmere_j9',
   name: 'Loch Fuar',
   kind: 'outdoor',
