@@ -76,7 +76,8 @@ import { meet, heard, answer, barred, handIns, personFlags } from '../../../game
 import { questLog, holds } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item, hits, ELEMENT_DIE } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition, createCharacter, takePrestige, className, rankMult, RANK_STEP, PRESTIGES } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, rest, templePrice, addCondition, createCharacter, takePrestige, className, rankMult, RANK_STEP, PRESTIGES } from '../../../game/party.ts';
+import { nightCost, stay, train } from '../../../game/services.ts';
 import { teach, barOf } from '../../../game/prestige.ts';
 import { seekId, sought } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
@@ -1948,16 +1949,14 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   ok(PORT.exits!.length === 1 && PORT.exits!.every((e) => !e.shut && !e.needFlag), 'nothing shuts the gate');
   listen(w);
 
-  // A night at the inn, as the business's screen does it (src/ui/screens.ts).
+  // A night at the inn, by the rule its screen serves (src/game/services.ts).
   ok(here('inn').length === 1 && here('temple').length === 1 && here('trainer').length === 1 && here('shop').length === 2 && !here('guild').length
     && INTERIORS.every((id) => PORT.features!.some((f) => 'interior' in f && f.interior === id)),
     'Cinderport has its eight businesses, each opening into its room: the inn, the temple, the armourer\'s, the chandler\'s, the yard, the two halls and the potter\'s; and no spell hall');
   w.party.gold = 60000;
-  const inn = here('inn')[0], night = inn.price * w.party.members.length;
+  const inn = here('inn')[0], night = nightCost(inn, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
-  w.party.gold -= night;
-  for (const m of w.party.members) rest(m);
-  w.world.sleepUntilMorning();
+  stay(w.party, w.world, inn);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 60000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
 
   // The armourer's sells the act's one step (#542), each class its rung at 25, at list price; the
@@ -1978,12 +1977,11 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   glassed.level = 25; addCondition(glassed, 'stoned');
   ok(templePrice(glassed) === cure.price && here('temple')[0].interior === 'cinderport_temple', `${here('temple')[0].name} lifts the stone from a member of 25 for ${templePrice(glassed)} gold, the cure's price`);
 
-  // Training to 27 at the yard, on a copy, so the company walks on as it was.
+  // Training to 27 at the yard, a copy from a copy of the purse, so the company walks on as it was.
   const yard = here('trainer')[0], trainee = structuredClone(w.party.members[0]);
   trainee.level = 26; trainee.xp = xpForLevel(27);
   ok(yard.maxLevel === 27 && yard.interior === 'cinderport_yard' && canTrainAt(trainee, yard.maxLevel), `${yard.name} will train a member of 26`);
-  const fee = trainPrice(trainee);
-  levelUp(trainee, makeRng(1), 27);
+  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), yard.maxLevel);
   ok(trainee.level === 27 && !canTrainAt(trainee, yard.maxLevel), `who trains to 27 for ${fee} gold, and no further`);
 
   // The two halls (#443, call 7), each a room: the Chart House the Cartographers' second, and the
