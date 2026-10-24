@@ -1007,7 +1007,7 @@ over content broken on purpose too, and two tools to theirs:
 - `layers` (§8.1, #900): the runtime imports of `src/` and `tools/`, read from the files in about
   0.2 s, held to the layers: no cycle among `src`'s, nothing in `src/game` taking content, the UI or
   the app, nothing in the UI the app, no area another's files but its `public.ts` (#992), and the
-  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 148 crossings are the
+  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 146 crossings are the
   rows of its `KNOWN`, each under the issue that clears it; a new crossing fails, and so does a row
   that no longer crosses, so the table only shrinks.
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
