@@ -516,7 +516,6 @@ A monster or an interior goes the same way: a brief, the drawing, the gallery or
 the checks, the sheet. A new kind of an existing family touches its family's file (its entry in the
 family's `SPRITES`: the drawer, the span the smoke test prints and any part drawn apart) and its
 area's monsters and index, and its sheet draws that family alone (#915).
-A monster's pull request runs `node tools/roster.ts`, which writes its row in `docs/ROSTER.md`.
 
 An area's dungeons may exit only to its own region's maps, or to the outdoors once its zone is laid,
 so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:125` holds it).

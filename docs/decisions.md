@@ -795,3 +795,47 @@ Decided by the builder for #1024, each the owner's to overturn:
     line is moved, never rewritten, so the 33 backticked words of EXPANSION's own lines that name
     no file from the root or from src/ (an area's checks, the kit's files by their names, the pages
     workflow) are #1025's to mend, inside the 46,000.
+
+## MONSTERS and the roster
+
+Decided by the builder for #1024, each the owner's to overturn:
+
+1. **A paragraph of §4.4 is a rule or a run whole,** since `tools/docmove.ts` holds each paragraph
+   whole in one file (the lines are MONSTERS.md's at a3c5ed75). `:527`, which says the gate judges
+   the day two under a floor, is a rule whose last sentence leads to its table, a run: the table
+   moves and two lines stand where it stood. The two decisions of 16 October 2026 written inside
+   run paragraphs (`:844` in #549's bullet, `:917` in #584's) move with them; the first is stated
+   again in EXPANSION §5.2 (#734), the second bounds a fix to the test brute's line at 12.
+2. **#18's and #891's lists in #865's bullet (`:959`, `:966`) are rules** (J2: the line is not made
+   on optional power), so they stay in §4.4 after "When the line moves", indented as they stood,
+   since a line is moved and never reworded; they read as a paragraph and a list. #865's bullet, a
+   run, moves.
+3. **The harness's report (`:972`) is a rule:** how the line is measured and made again, its flags
+   and what-ifs. The armoured held at 29 and 31 (`:632`) stays with the line it explains.
+4. **The row:** the issue's family, kind and level, numbers, look and abilities, each number a
+   column (hit points, armour, to-hit, the blow's dice, speed, xp, gold) and the name with its id,
+   by which the tool names a row. Left out: `tint` and `size` (the drawing's), `plural`, `sprite`
+   (one to each def), `drops` (the items') and `offLine` (why its numbers stand off the line, the
+   harness suite's; 30 defs, up to 236 characters).
+5. **What it does is the def's own fields:** its kind's (immune, resistant, weak, holy, when it
+   breaks) are the kind's column and MONSTERS §2, not repeated. A chance reads "0.3 a hit" as §4.4
+   writes it, and "every turn" at 1.
+6. **The families' table:** a row to each family the defs use, in the order the road first meets
+   it, its first area (with its defs there) and then each later area with its own; a family is
+   named by its module (`machines`, `longbodies`, `oldwood`, `glasswalkers`), as `FAMILY_OF` names
+   it, not by the old table's words.
+7. **An area is headed by the atlas's name and its id,** the Foreland's "The Foreland (`shelf`)";
+   an area with no defs has no heading.
+8. **The roster counts nothing,** as #1023's decision 11 has the code map count nothing: two pull
+   requests that add monsters to two areas merge clean; two that add one family's kinds in two
+   areas both edit its row, mended by the tool.
+9. **A guardian's row stays in MONSTERS.md §13 only while it is not drawn.** Built on b56e8daa, the
+   Old Chanter's row stayed there with §13's heading, the table's head and three lines saying why.
+   #1045 merged during the build (15434c64) with the Old Chanter drawn, so on merging main §13 went
+   whole to the archive, its row and #1045's lines in it, and MONSTERS.md keeps no §13; its index
+   names the archive for it.
+10. **An index of four entries at MONSTERS.md's head** names the file of each section that moved,
+    under its number, for the citations of §5 to §13 and of the runs; README's list names the three
+    new files.
+11. **The archives' heads are blockquotes,** as `docs/archive/SLICE-history.md`'s is; the log's
+    table takes a line leading to it, since its paragraph stays in MONSTERS.md.

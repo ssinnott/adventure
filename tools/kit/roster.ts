@@ -24,7 +24,7 @@ export const ROSTER_FILE = 'docs/ROSTER.md';
 
 /** An area as the roster reads it: its id, its name on the atlas and its defs in its monsters.ts's order. */
 export interface RosterArea { id: string; name: string; monsters: readonly MonsterDef[] }
-/** What the roster is made of: the areas in road order, the family that registers each drawing's kind, and the spells by id. */
+/** What the roster is made of: the areas in road order, the family that registers each drawing's kind and the spells by id. */
 export interface Defs {
   areas: readonly RosterArea[];
   family: Readonly<Record<string, string>>;
@@ -52,8 +52,8 @@ const counted = (n: number, d: { name: string; plural: string }): string =>
 
 /**
  * What a def can do, in words, its own fields alone (its kind's are its kind's, MONSTERS §2): its
- * reach, what it inflicts, casts, drains, mends, calls and sweeps, what it shrugs off, resists or is
- * weak to, and how it holds; '' where it does none of them.
+ * reach; what it inflicts, casts, drains, mends, calls and sweeps; what it shrugs off, resists or
+ * is weak to; how it holds. '' where it does none of them.
  */
 export function abilities(d: MonsterDef, defs: Defs): string {
   const byId = new Map(defs.areas.flatMap((a) => a.monsters.map((m) => [m.id, m] as const)));

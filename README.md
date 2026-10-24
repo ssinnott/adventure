@@ -27,8 +27,8 @@ dependencies, and nothing compiled to disk during development.
 - [docs/EXPANSION.md](docs/EXPANSION.md) — how the rest of Caldera gets built: the principles,
   when an area is done, the checks every map, monster and quest must pass and how the work splits
   so sessions do not collide. The epics hold the order of work.
-- [docs/decisions.md](docs/decisions.md) — the "Decided by" lists that settle EXPANSION's rules,
-  each under its section's number and each the owner's to overturn; a builder adds the next there,
+- [docs/decisions.md](docs/decisions.md) — the "Decided by" lists that settle the docs' rules,
+  each under its doc and section and each the owner's to overturn; a builder adds the next there,
   under the doc and section of the rule it settles, an area's decisions aside (EXPANSION §8.2).
 - [docs/ISSUES.md](docs/ISSUES.md) — how that work is filed: issue types, labels, epics, the
   Dependencies section every issue carries, and the sections of an issue.
