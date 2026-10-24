@@ -11,7 +11,7 @@ import type { LogQuest } from './quests.ts';
 import type { GuildQuest } from './guilds.ts';
 import type { Climate, RegionId } from './weather.ts';
 import type { Atlas } from './atlas.ts';
-import type { MapDef } from './map.ts';
+import type { MapDef } from './mapdef.ts';
 import type { GuildDef, GuildId } from '../content/guilds.ts';
 import type { Wardstone } from '../content/stones.ts';
 import type { Ending, EndingId } from '../content/endings.ts';
