@@ -17,6 +17,7 @@ import { UPGRADES } from '../../src/game/upgrades.ts';
 import type { Upgrade } from '../../src/game/upgrades.ts';
 import { CONTENT, LISTS, collect, collectShares, compare, join, readShares, readShipped, shippedFile } from '../kit/shipped.ts';
 import type { Content, Share, Shares, Shipped } from '../kit/shipped.ts';
+import { FLAG_OWNERS } from '../../src/content/index.ts';
 import { ok } from './lib.ts';
 
 const list = (xs: readonly string[]): string => xs.length ? ':\n        ' + xs.join('\n        ') : '';
@@ -38,6 +39,21 @@ const lines = (s: Share): string[] => [
  * content there is, a line in a file not its owner's, and a line missing from its owner's file while
  * another holds it, which the union would hide. A line no file is owed or none holds is compare's.
  */
+/**
+ * Where the flags as declared (#995) and the shipped files disagree: a flag the joined record holds that
+ * no area declares, one declared that it does not hold, and one declared by an area whose own file does
+ * not record it (the code's own, `core`, by the central file). A box declares its flags and records them.
+ */
+function undeclared(owners: Readonly<Record<string, string>>, files: Shares, record: readonly string[]): string[] {
+  const held = new Set(record);
+  return [
+    ...record.filter((f) => !Object.hasOwn(owners, f)).map((f) => `flag ${f} is recorded and declared by nobody`),
+    ...Object.entries(owners).filter(([f]) => !held.has(f)).map(([f, a]) => `flag ${f} is declared by ${a} and not recorded`),
+    ...Object.entries(owners).filter(([f, a]) => held.has(f) && !files[shippedFile(a === 'core' ? undefined : a)]?.flags?.includes(f))
+      .map(([f, a]) => `flag ${f} is declared by ${a}, whose shipped file does not record it`),
+  ];
+}
+
 function misplaced(files: Shares, owed: Shares): string[] {
   const linesOf = (s: Shares): Map<string, Set<string>> => new Map(Object.entries(s).map(([f, x]) => [f, new Set(lines(x))]));
   const held = linesOf(files), due = linesOf(owed), out: string[] = [];
@@ -149,6 +165,14 @@ export function shipped(): void {
       }
     }
     okList(stray.length === 0, 'each area\'s maps, boxes, items and monsters, by the areas\' own lists, sit in its own shipped file and in no other', stray);
+  }
+  const loose = undeclared(FLAG_OWNERS, files, was.flags);
+  okList(loose.length === 0, `the declared flags are the shipped record's, exactly, each recorded in its declarer's file (${Object.keys(FLAG_OWNERS).length} flags)`, loose);
+  { // Broken on purpose: a flag left out of its declaration, and one declared that nothing records, each caught by name.
+    const [f, a] = Object.entries(FLAG_OWNERS)[0];
+    const caught = [...undeclared(Object.fromEntries(Object.entries(FLAG_OWNERS).filter(([g]) => g !== f)), files, was.flags), ...undeclared({ ...FLAG_OWNERS, fx_new: a }, files, was.flags)];
+    okList(caught.includes(`flag ${f} is recorded and declared by nobody`) && caught.includes(`flag fx_new is declared by ${a} and not recorded`),
+      `a flag recorded and declared by nobody, and one declared and recorded nowhere, are caught by name (${f})`, caught);
   }
   ok(Object.keys(UPGRADES).map(Number).every((v) => v >= 2 && v <= SAVE_VERSION), 'every upgrade brings a save to a version this build knows');
 

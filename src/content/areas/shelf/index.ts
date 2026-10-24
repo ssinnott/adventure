@@ -2,6 +2,7 @@
 // and woods, the Ashcombe cellar and Brandy Hole's two levels. Its id is still 'shelf', as saves
 // hold it. docs/areas/shelf.md is its brief.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { HARROW } from './maps/harrow.ts';
 import { KEEP } from './maps/keep.ts';
 import { SHELF } from './maps/shelf.ts';
@@ -26,11 +27,13 @@ import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES } from './atlas.ts';
 
 export const MAPS = [HARROW, KEEP, SHELF, MILL, GREYWATER1, GREYWATER2, DOWNS_F2, DOWNS_F3, DOWNS_E3, DOWNS_E2, DOWNS_D2, DOWNS_D3, DOWNS_D4, BERTH, DOWNS_E4, HAG_HOLE] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'shelf' as const,
   // Helmstow first: a new game starts on it.
   maps: MAPS,
+  flags: FLAGS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

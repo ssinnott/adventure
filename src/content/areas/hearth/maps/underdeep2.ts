@@ -11,11 +11,12 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/public.ts';
 import { HELD, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './hearthisle_h6.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
+import type { Flag } from '../../../index.ts';
 
 /** The last frame's word (59), the end of her knots: `ud2_word`, once. */
 export const KNOT_LAST = 'underdeep2:ud2_word';
 /** The road's five, set at the Stones: what the last door listens for (§9, call 1). The Grove's mending opens nothing. */
-export const FIVE = ['q_tide_home', 'q_grove_done', 'q_anvil_closed', 'q_peak_stood', 'q_ember_lit'];
+export const FIVE = ['q_tide_home', 'q_grove_done', 'q_anvil_closed', 'q_peak_stood', 'q_ember_lit'] as const;
 /**
  * The last door, into the Heart (#759): the act's one lock, the road's second, signed in
  * src/content/locks.ts on `q_ember_lit` at underdeep2 16,1, its reason: "the heart opens for whoever makes
@@ -30,7 +31,7 @@ export const LAST_DOOR: Exit = anchored({
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 
 /** The claimant's captain's words (57), each under the flag that holds the landing: the three verdicts first, then the three tokens, so a verdict that carried outranks a token (HELD's order). */
-const CAPTAIN: readonly (readonly [string, readonly string[]])[] = [
+const CAPTAIN: readonly (readonly [Flag, readonly string[]])[] = [
   [THRONE_COUSIN, ['A Warden captain on the landing with six of the Drillyard\'s behind her, the Hand\'s rearguard dead at their feet.', '"The Council\'s word came over with us: the cousin\'s people hold the stair for the company. We came in by the door that opened, and we\'ll hold it till you\'re back up."']],
   [THRONE_HOLD, ['Elves of Henlys on the landing, their bows strung, and the Hand\'s rearguard dead at their feet.', '"The hold sent us when the Council read the treaty. We hold this landing, and we do not go down: what is at the bottom was never ours."']],
   [THRONE_TALLIS, ['Compact hands on the landing, a dozen, the Hand\'s rearguard dead at their feet and their packs already open.', '"Tallis has the chair, and we\'ve been paid to hold this for you. What comes up out of that door with you is his, mind: the ring most of all."']],

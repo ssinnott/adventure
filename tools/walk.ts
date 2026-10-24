@@ -144,7 +144,7 @@ export function gone(w: Walk, at: string): void {
  * and never by their square, and go through the meeting as the game does.
  */
 export function meetWho(w: Walk, what: string): void {
-  const found = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && ([f.flag ?? []].flat().includes(what) || handIns(f).some((q) => q.setFlag === what || q.item === what)) ? [{ map: d.id, p: f as Person }] : []));
+  const found = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' && ([f.flag ?? []].flat().some((x) => x === what) || handIns(f).some((q) => q.setFlag === what || q.item === what)) ? [{ map: d.id, p: f as Person }] : []));
   w.ok(found.length === 1, `one person hires, finishes or takes ${what}${found.length === 1 ? ` (${found[0].p.name.split(',')[0]})` : ` -> ${found.length}`}`);
   if (found.length !== 1) return;
   const { map, p } = found[0];

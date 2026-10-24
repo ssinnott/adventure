@@ -1,6 +1,7 @@
 // The Whitespine, the range the bells ring over (band 22-24): Monks' Vale, the High Spine and Sheer
 // Point, the first of Act IV. docs/areas/whitespine.md is its brief.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { MONKSVALE_J11 } from './maps/monksvale_j11.ts';
 import { MONASTERY } from './maps/monastery.ts';
 import { MONASTERY2 } from './maps/monastery2.ts';
@@ -23,10 +24,12 @@ export const MAPS = [MONKSVALE_J11, MONASTERY, MONASTERY2, HIGHSPINE_I11, HIGHSP
     MONKSVALE_J10, HIGHSPINE_I12, MONKSVALE_J12,
     // The bounds (#832): the pines over the water by Sheer Point.
     SHEERPOINT_J8] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'whitespine' as const,
   maps: MAPS,
+  flags: FLAGS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

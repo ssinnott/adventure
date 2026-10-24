@@ -1,6 +1,7 @@
 // Cairnmoor, the moor with the ring (band 18-20): High Moor and the Cairnfield, the second of Act
 // III. docs/areas/cairnmoor.md is its brief.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { HIGHMOOR_N7 } from './maps/highmoor_n7.ts';
 import { CAIRNFIELD_N8 } from './maps/cairnfield_n8.ts';
 import { HIGHMOOR_O7 } from './maps/highmoor_o7.ts';
@@ -22,10 +23,12 @@ import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
 
 export const MAPS = [HIGHMOOR_N7, CAIRNFIELD_N8, HIGHMOOR_O7, HIGHMOOR_O8, CAIRNFIELD_M7, CAIRNFIELD_M8, HIGHMOOR_P7, HIGHMOOR_P8, CAIRNFIELD_L8, CAIRNS, CAIRNS2, CARN_FADA, BEARN_LIATH] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'cairnmoor' as const,
   maps: MAPS,
+  flags: FLAGS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

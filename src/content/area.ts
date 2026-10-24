@@ -19,6 +19,11 @@ export interface Area {
    */
   maps: readonly MapDef[];
   /**
+   * The flags it sets, each with what holding it means, in its flags.ts, which public.ts gives on: `Flag`
+   * is made of them, and a flag two areas declare is refused (#995). A new area starts with `flags: {}`.
+   */
+  flags: Flags;
+  /**
    * Its maps that pay outside any area's budget (EXPANSION §5.2): the deepest levels, past its band,
    * which the road never needs. Each is held to its own band, and no area's clear counts its xp or
    * gold (tools/tests/curve.ts).
@@ -61,6 +66,9 @@ export interface Area {
    */
   atlas: { zones: readonly AtlasZone[]; places: readonly AtlasPlace[]; sites: readonly AtlasSite[]; links?: readonly AtlasLink[] };
 }
+
+/** Flags by name, each with a gloss of a few words on what holding it means (#995). */
+export type Flags = Readonly<Record<string, string>>;
 
 /**
  * What the suites hold of an area that is its own and no part of the game: written in the area's

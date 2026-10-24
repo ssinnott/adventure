@@ -31,6 +31,7 @@ import { GameMap } from '../../../game/map.ts';
 import type { PageView } from '../../../game/quests.ts';
 import { ENDINGS } from '../../endings.ts';
 import { WENNA_HOME, VOICE_WHOLE } from '../hearth/public.ts';
+import type { Flag } from '../../index.ts';
 
 /** Vask hires the company: before the chapter, or its last step for a company that came early. */
 export const HIRE: Step = { name: 'the hire', play: (w) => meetWho(w, 'q_ashcombe') };
@@ -423,7 +424,7 @@ function around(map: string, shut: Person, from: readonly [number, number], to: 
 const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
 
 /** Meet the person `meetWho` finds by `what`, and answer the question they put with `label`. */
-function answerWho(w: Walk, what: string, label: string): string {
+function answerWho(w: Walk, what: Flag, label: string): string {
   const d = MAP_DEFS.find((m) => m.features?.some((f) => f.kind === 'npc' && [f.flag ?? []].flat().includes(what)))!;
   const p = d.features!.find((f): f is Person => f.kind === 'npc' && [f.flag ?? []].flat().includes(what))!;
   w.world.travel(d.id, p.x, p.y);

@@ -7,7 +7,7 @@ import type { RegionId } from './weather.ts';
 import type { Crossing } from './atlas.ts';
 import type { Season, Tide } from './calendar.ts';
 import type { When } from './quests.ts';
-import type { Interior, MapId } from '../content/index.ts';
+import type { Interior, MapId, Flag } from '../content/index.ts';
 import type { GuildId } from '../content/guilds.ts';
 import type { SkillId } from './skills.ts';
 import type { Mastery } from './mastery.ts';
@@ -92,7 +92,7 @@ export interface Exit<To extends string = MapId> {
   /** Shown in the log on arrival. */
   label?: string;
   /** Party flags that must all be set before the exit opens; `blockedText` says why not. */
-  needFlag?: string | readonly string[];
+  needFlag?: Flag | readonly Flag[];
   /**
    * Closed while this holds, read afresh at every step, so it opens again once it stops holding
    * (Helmstow's gate to a company with an orcblood member, #157); `blockedText` says why.
@@ -146,7 +146,7 @@ interface Business extends Presence { x: number; y: number; name: string; interi
  * once `after` holds, and its `says` are said on waking in place of the usual line (game/wilds.ts
  * `campNight`, `restAndWake`).
  */
-export interface Night { after?: When; sets: string; says?: readonly string[] }
+export interface Night { after?: When; sets: Flag; says?: readonly string[] }
 
 /** A thing in a cell the party can interact with by stepping on it or pressing the action key. */
 export type Feature =
@@ -164,7 +164,7 @@ export type Feature =
    * sets the first of its flags not yet set, so the nights come in order, a flag a night (game/party.ts
    * `stayNight`).
    */
-  | ({ kind: 'inn'; price: number; nights?: readonly string[] } & Business)
+  | ({ kind: 'inn'; price: number; nights?: readonly Flag[] } & Business)
   | ({ kind: 'temple' } & Business)
   | ({ kind: 'shop'; stock: string[]; prices?: Readonly<Record<string, number>> } & Business)
   | ({ kind: 'guild'; classes: string[]; fee: number; maxTier?: number } & Business)
@@ -188,7 +188,7 @@ export type Feature =
    * line's Master to the company's members of it (game/mastery.ts). `hall`, on a person with a room,
    * makes the tavern a guild's hall, as a business's does: a hall that does not look like one.
    */
-  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: string | readonly string[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; hall?: GuildId; passage?: readonly Passage[]; teaches?: Teaching; skill?: SkillId; mastery?: Mastery } & Presence)
+  | ({ kind: 'npc'; x: number; y: number; name: string; lines: string[]; flag?: Flag | readonly Flag[]; quest?: NpcQuest | readonly NpcQuest[]; says?: readonly Words[]; choice?: Choice; interior?: Interior; hall?: GuildId; passage?: readonly Passage[]; teaches?: Teaching; skill?: SkillId; mastery?: Mastery } & Presence)
   /** A tear into a Rift (game/rifts.ts): stepped on, it takes the party through, as an exit does. */
   | { kind: 'rift'; x: number; y: number; id: string; to: string; tx: number; ty: number; tf?: Facing; label?: string }
   /** The wilderness features (game/wilds.ts). A shrine and a fountain are one shape, told apart by their words. */
@@ -217,7 +217,7 @@ export type Feature =
   | { kind: 'den'; x: number; y: number; id: string; name?: string; text: string; breeds: readonly string[]; keepers: string; brood: readonly string[]; ask: string; burn: string; leave?: string; burnt: string; ruin?: string; gold: number; items: string[] }
   | { kind: 'well'; x: number; y: number; text: string; heal?: boolean }
   /** Said on stepping in; `sets` is set as it is said (Hale gone from the Scarth once the Delta is reached, #156). */
-  | ({ kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean; sets?: string | readonly string[] } & Presence);
+  | ({ kind: 'event'; x: number; y: number; id: string; text: string; once?: boolean; sets?: Flag | readonly Flag[] } & Presence);
 
 /**
  * A cell the party may not step onto until every flag is set, or while `shut` holds: a gated exit whose way on is simply
@@ -225,7 +225,7 @@ export type Feature =
  */
 export interface Gate {
   x: number; y: number;
-  needFlag?: string | readonly string[];
+  needFlag?: Flag | readonly Flag[];
   /** Closed while this holds, as an exit's `shut` is, unless `lifts` holds. */
   shut?: When;
   lifts?: When;
@@ -264,7 +264,7 @@ export interface NpcQuest {
   /** What the NPC says taking the item from a company they never hired; `done` if not given. */
   early?: string[];
   done: string[];
-  setFlag: string;
+  setFlag: Flag;
   /** What the NPC says once the quest is complete; of several hand-ins, the last done that has any. */
   after?: string[];
 }
@@ -321,7 +321,7 @@ export interface Passage {
  */
 export interface Words extends Presence {
   lines: readonly string[];
-  sets?: string | readonly string[];
+  sets?: Flag | readonly Flag[];
   choice?: Choice;
 }
 
@@ -341,7 +341,7 @@ export interface Choice {
  */
 export interface Answer {
   label: string;
-  sets?: string | readonly string[];
+  sets?: Flag | readonly Flag[];
   gives?: string;
   pay?: { gold?: number; xp?: number };
   price?: number;
@@ -378,7 +378,7 @@ export interface EncounterDef extends Presence {
   /** Said in the log when the party beats the group: what its death changes. */
   slainText?: string;
   /** Flags set as the party beats the group, with its `slainText`: what its death changes holds before the next step (#636). */
-  sets?: string | readonly string[];
+  sets?: Flag | readonly Flag[];
   /**
    * A question put when the company comes beside the group, before the fight, as a person's is (the
    * giants' toll, MONSTERS §8.1, #544): its refusal starts the fight, and once another answer's

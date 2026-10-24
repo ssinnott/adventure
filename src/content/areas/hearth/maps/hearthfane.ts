@@ -9,6 +9,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { THRONE_REMOVED } from '../../shelf/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
+import type { Flag } from '../../../index.ts';
 
 /** Met the sacristan under the vestry's table (56). */
 export const LAMPS = 'q_lamps';
@@ -41,7 +42,7 @@ const BURNING = 'A lamp on a stand, burning high.';
  * sockets are. Out of its turn its answer is wrong and brings the swarm; in its turn, once the lamp
  * before it is out, it goes out, and stays out. The Sea lamp's turn is first, so it is never wrong.
  */
-function lamp(i: 0 | 1 | 2 | 3, x: number, y: number, name: string, right: readonly string[], sets: string | readonly string[]): Feature {
+function lamp(i: 0 | 1 | 2 | 3, x: number, y: number, name: string, right: readonly string[], sets: Flag | readonly Flag[]): Feature {
   const ask = 'Put it out?';
   const out = { ask, answers: [{ label: 'Put it out.', sets, says: right }] };
   if (i === 0) return { kind: 'npc', x, y, name, until: { flag: LAMP_FLAGS[0] }, lines: ['A lamp on a stand of the rim\'s rock, burning high. The moths are thick on it.'], choice: out };

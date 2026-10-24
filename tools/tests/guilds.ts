@@ -26,7 +26,7 @@ import { SIDE_W } from '../../src/ui/frame.ts';
 import { columnLabelWidth } from '../../src/ui/draw.ts';
 import { CONTENT, collect } from '../kit/shipped.ts';
 import { condFaults } from '../kit/rules/quests.ts';
-import { ok, owed } from './lib.ts';
+import { ok, owed, fxFlag } from './lib.ts';
 import { headlessGame } from '../kit/headless.ts';
 
 const quest = (id: string, rank: number, deed: Partial<GuildQuest>, guild: GuildId = 'wardens'): GuildQuest => ({
@@ -97,7 +97,7 @@ export function guilds(): void {
     ok(party.flags[rankFlag('wardens')] === 3 && rankOf('wardens', party, grown) === 3 && ids(offered('wardens', party, grown)) === 'fx_later',
       `a quest added later at a rank held is offered, and never lowers the rank (${rankOf('wardens', party, grown)}, offered ${ids(offered('wardens', party, grown))})`);
     // A later act's ask waits for its act: at the rank, it is offered once its flag is set.
-    const act = [...FIXTURE, quest('fx_act', 3, { goal: { visited: 'thornmark' }, after: 'fx_act_come' })];
+    const act = [...FIXTURE, quest('fx_act', 3, { goal: { visited: 'thornmark' }, after: fxFlag('fx_act_come') })];
     ok(!offered('wardens', party, act).length && rankOf('wardens', party, act) === 3, 'a quest whose act has not come is not offered, though the rank is held');
     party.flags.fx_act_come = 1;
     ok(ids(offered('wardens', party, act)) === 'fx_act', 'and is offered once its act has come');
@@ -127,7 +127,7 @@ export function guilds(): void {
 
   { // xp that makes a member ready to train says so, as a fight's does.
     const { party, world } = fresh();
-    const q = quest('fx_ready', 0, { goal: { flag: 'fx_ready_deed' }, pay: { xp: 6 * 1000 } });
+    const q = quest('fx_ready', 0, { goal: { flag: fxFlag('fx_ready_deed') }, pay: { xp: 6 * 1000 } });
     party.flags.fx_ready_deed = 1;
     const said = take(q, world.state, party, [q]).join(' ');
     ok(/Ready to train: Bram, Idris, Wren, Ottilie, Maren, Cassian\./.test(said), `pay that makes the living ready to train names them (${said.replace(/\n+/g, ' ')})`);

@@ -10,15 +10,19 @@
 // areas' indexes did not.
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { AREAS, MAP_DEFS, MONSTERS, ATLAS } from '../../src/content/index.ts';
+import { AREAS, MAP_DEFS, MONSTERS, ATLAS, FLAG_OWNERS, ONCE, flagOwners } from '../../src/content/index.ts';
+import type { Once } from '../../src/content/index.ts';
+import type { Area } from '../../src/content/area.ts';
+import type { QuestCond, QuestGoal } from '../../src/game/quests.ts';
+import type { GuildQuest } from '../../src/game/guilds.ts';
 import { TEAR_CLOSED } from '../../src/content/areas/thornmark/maps/grove2.ts';
 import { gridFaults } from '../../src/game/atlas.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { GameMap, anchored, landExits } from '../../src/game/map.ts';
-import type { EncounterDef, Exit, Feature, MapDef } from '../../src/game/map.ts';
+import type { Answer, EncounterDef, Exit, Feature, Gate, MapDef, Night, NpcQuest, Words } from '../../src/game/map.ts';
 import { EAST, SOUTH } from '../../src/game/types.ts';
 import { RESPAWN } from '../../src/game/keys.ts';
-import { ok, fxMap } from './lib.ts';
+import { ok, fxMap, fxFlag } from './lib.ts';
 import { presenceFaults, strandedLocks, respawnsOutOfRange, returningGuardians, questItems, guardian } from '../kit/rules/structure.ts';
 
 /**
@@ -156,12 +160,55 @@ export async function structure(): Promise<void> {
     // @ts-expect-error: groups slain on a map no area has, beside one it has
     const slain: QuestCond = { slain: ['harrow:fx_group', 'fx_nowhere:fx_group'] };
     // @ts-expect-error: a goal done on a map no area has
-    const at: QuestGoal = { when: { flag: 'fx_flag' }, text: 'Go.', at: 'fx_nowhere' };
+    const at: QuestGoal = { when: { flag: 'q_hermit' }, text: 'Go.', at: 'fx_nowhere' };
     // @ts-expect-error: an area's map that pays outside, which no area has
     const outside: Area['outside'] = ['fx_nowhere'];
     const ids = new Set(MAP_DEFS.map((d) => d.id));
     ok([to, visited, seen, slain, at, outside].length === 6 && ids.size === MAP_DEFS.length,
       `an exit's to, a condition's visited, seen and slain, a goal's at and an area's outside each refuse a map no area has, as the six lines above hold; the ${ids.size} maps' ids are each given once`);
+  }
+
+  // Each of the twelve fields that sets or reads a flag takes Flag, the union of the declarations (#995):
+  // a flag no area declares fails the typecheck at each, so the lines below fail it too if the union
+  // widens or a field is let go.
+  {
+    // @ts-expect-error: a condition on a flag no area declares
+    const cond: QuestCond = { flag: 'fx_undeclared' };
+    // @ts-expect-error: an exit that waits on a flag no area declares
+    const exit: Exit = { x: 1, y: 1, to: 'harrow', tx: 1, ty: 1, needFlag: 'fx_undeclared' };
+    // @ts-expect-error: a gate that waits on a flag no area declares, beside one declared
+    const gate: Gate = { x: 1, y: 1, needFlag: ['q_hermit', 'fx_undeclared'] };
+    // @ts-expect-error: a person whose meeting sets a flag no area declares
+    const met: Feature = { kind: 'npc', x: 1, y: 1, name: 'Fixture', lines: ['.'], flag: 'fx_undeclared' };
+    // @ts-expect-error: an event that sets a flag no area declares
+    const event: Feature = { kind: 'event', x: 1, y: 1, id: 'fx_event', text: '.', sets: 'fx_undeclared' };
+    // @ts-expect-error: a person's words that set a flag no area declares
+    const words: Words = { lines: ['.'], sets: 'fx_undeclared' };
+    // @ts-expect-error: an answer that sets a flag no area declares
+    const answer: Answer = { label: 'Yes.', says: ['.'], sets: 'fx_undeclared' };
+    // @ts-expect-error: a group whose fall sets a flag no area declares
+    const fall: EncounterDef = { id: 'fx_group', x: 1, y: 1, monsters: ['rat'], sets: 'fx_undeclared' };
+    // @ts-expect-error: a night at a camp's fire that sets a flag no area declares
+    const night: Night = { sets: 'fx_undeclared' };
+    // @ts-expect-error: a hand-in that sets a flag no area declares
+    const handIn: NpcQuest = { item: 'fx_item', reward: 0, done: ['.'], setFlag: 'fx_undeclared' };
+    // @ts-expect-error: an inn whose night sets a flag no area declares
+    const inn: Feature = { kind: 'inn', x: 1, y: 1, name: 'Fixture', price: 1, interior: 'hearthlight_inn', nights: ['fx_undeclared'] };
+    // @ts-expect-error: a guild quest offered once a flag no area declares is held
+    const after: GuildQuest['after'] = 'fx_undeclared';
+    ok([cond, exit, gate, met, event, words, answer, fall, night, handIn, inn, after].length === 12,
+      'a condition, an exit, a gate, a person, an event, words, an answer, a group, a night, a hand-in, an inn and a guild quest each refuse a flag no area declares, as the twelve lines above hold');
+  }
+  // A flag two declare (#995): the type names it where the declarations are written down, and the load
+  // refuses it by name where they are a list made at run time, as two fixture areas show.
+  {
+    // @ts-expect-error: a flag two declarations hold, named by the type
+    const twice: Once<{ fx_one: 'q_fx' | 'q_fx_two'; fx_two: 'q_fx' }> = true;
+    const apart: Once<{ fx_one: 'q_fx'; fx_two: 'q_fx_two' }> = true;
+    let refused = '';
+    try { flagOwners([{ id: 'fx_one', flags: { q_fx: 'Fixture' } }, { id: 'fx_two', flags: { q_fx: 'Fixture again' } }]); } catch (e) { refused = (e as Error).message; }
+    ok([twice, apart, ONCE].length === 3 && refused === "flag 'q_fx' is declared by fx_one and fx_two",
+      `a flag two areas declare is refused by name, in the type (the line above) and at load (${refused}); the content's ${Object.keys(FLAG_OWNERS).length} are each declared once`);
   }
 
   // Broken on purpose, each a copy of a real map, kept out of MAP_DEFS.
@@ -215,16 +262,16 @@ export async function structure(): Promise<void> {
   { // Times to walk that name nothing, or that cannot mean anything.
     const faults = (d: MapDef): string => presenceFaults(d).join();
     ok(faults(group(map('mill'), 'm_rats', { respawn: 1440, until: { slain: 'shelf:road_rats' } })) === 'm_rats until: slain shelf:road_rats', 'an until naming a group that respawns is refused');
-    ok(faults(group(map('mill'), 'm_rats', { respawn: 1440, after: { flag: 'no_such_flag' }, until: { slain: 'grove2:no_such_group' } })) === 'm_rats until: slain grove2:no_such_group,m_rats after: flag no_such_flag', 'and one naming nothing real, and an after');
+    ok(faults(group(map('mill'), 'm_rats', { respawn: 1440, after: { flag: fxFlag('no_such_flag') }, until: { slain: 'grove2:no_such_group' } })) === 'm_rats until: slain grove2:no_such_group,m_rats after: flag no_such_flag', 'and one naming nothing real, and an after');
     ok(faults(group(map('mill'), 'm_rats', { respawn: undefined, until: TEAR_CLOSED })) === 'm_rats: until, but it never comes back', 'an until on a group that never comes back is refused');
     ok(faults(group(map('mill'), 'm_rats', { respawn: undefined, until: TEAR_CLOSED, leaves: true })) === '', 'but not on one that leaves on it, standing or not (#747)');
     ok(faults(group(map('mill'), 'm_rats', { when: [{ hours: 'night' }, { sky: 'fog' }] })) === 'm_rats: a sky underground', 'and fog asked of a group underground; night is not');
     const worn = (f: MapDef['features']): string => presenceFaults({ ...map('mill'), features: f }).join();
-    ok(worn([{ kind: 'event', x: 1, y: 1, id: 'fx_lamp', text: 'Dark.', until: { flag: 'no_such_flag' } }, { kind: 'npc', x: 1, y: 1, name: 'Alwin, a fixture', lines: ['Hm.'], after: { seen: 'mill:no_such_event' }, when: { sky: 'fog' } }])
+    ok(worn([{ kind: 'event', x: 1, y: 1, id: 'fx_lamp', text: 'Dark.', until: { flag: fxFlag('no_such_flag') } }, { kind: 'npc', x: 1, y: 1, name: 'Alwin, a fixture', lines: ['Hm.'], after: { seen: 'mill:no_such_event' }, when: { sky: 'fog' } }])
       === 'fx_lamp until: flag no_such_flag,Alwin at 1,1 after: seen mill:no_such_event,Alwin at 1,1: a sky underground', "an event's until and a person's after naming nothing real are refused, and a person's fog underground");
-    ok(worn([{ kind: 'shrine', x: 1, y: 1, id: 'fx_shrine', text: 'You kneel.', stat: 'luck', done: 'Quiet.', after: { flag: 'no_such_flag' } }, { kind: 'fountain', x: 2, y: 1, id: 'fx_fountain', text: 'You drink.', stat: 'speed', done: 'Dry.' }])
+    ok(worn([{ kind: 'shrine', x: 1, y: 1, id: 'fx_shrine', text: 'You kneel.', stat: 'luck', done: 'Quiet.', after: { flag: fxFlag('no_such_flag') } }, { kind: 'fountain', x: 2, y: 1, id: 'fx_fountain', text: 'You drink.', stat: 'speed', done: 'Dry.' }])
       === 'fx_shrine after: flag no_such_flag', "a shrine's after naming nothing real is refused, as an event's is, and a fountain with no presence passes");
-    const camped: MapDef = { ...map('mill'), features: [{ kind: 'camp', x: 1, y: 1, text: 'Ashes.', nights: [{ sets: 'fx_night', after: { flag: 'no_such_flag' } }, { sets: 'fx_late', after: { flag: 'fx_night' } }, { sets: 'fx_free' }] }] };
+    const camped: MapDef = { ...map('mill'), features: [{ kind: 'camp', x: 1, y: 1, text: 'Ashes.', nights: [{ sets: fxFlag('fx_night'), after: { flag: fxFlag('no_such_flag') } }, { sets: fxFlag('fx_late'), after: { flag: fxFlag('fx_night') } }, { sets: fxFlag('fx_free') }] }] };
     ok(presenceFaults(camped, [...MAP_DEFS, camped]).join() === 'camp at 1,1 night fx_night after: flag no_such_flag',
       "a camp's night whose after names nothing real is refused, and one after another night's flag, and one with no after, pass (#730)");
     const tm = map('thornmark');

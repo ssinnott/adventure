@@ -53,3 +53,6 @@ export const ROPE: Exit = anchored({ x: 19, y: 2, to: 'firemount_g11', at: 'from
 
 // Every item by name, with the rest of items.ts.
 export * from './items.ts';
+
+// Every flag it sets, each with what holding it means (#995).
+export { FLAGS } from './flags.ts';

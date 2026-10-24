@@ -15,3 +15,6 @@ export const NOTCH: Exit = anchored({ x: 0, y: 28, to: 'longmere_m9', at: 'start
 
 // Every item by name, with the rest of items.ts.
 export * from './items.ts';
+
+// Every flag it sets, each with what holding it means (#995).
+export { FLAGS } from './flags.ts';
