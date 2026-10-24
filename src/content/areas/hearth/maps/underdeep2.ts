@@ -7,7 +7,7 @@
 // (13,1). Band 30-31; docs/areas/hearth_isle.md §4.7 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
-import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/maps/keep.ts';
+import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/public.ts';
 import { HELD, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './hearthisle_h6.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

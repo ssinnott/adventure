@@ -8,7 +8,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
-import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { CRACK_SEALED } from '../../hearth/public.ts';
 
 /** The den burnt: its brood stops coming. */
 const DEN_BURNT = denBurnt('lanternwood_l4', 'l4_den');

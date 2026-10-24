@@ -13,7 +13,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
-import { WENNA_LODGE } from '../../rimewater/maps/rime_lodge.ts';
+import { WENNA_LODGE } from '../../rimewater/public.ts';
 import { NEST_FOUND } from './highspine_i11.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

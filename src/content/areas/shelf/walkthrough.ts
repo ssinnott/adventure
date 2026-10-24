@@ -30,7 +30,7 @@ import { questLog } from '../../../game/quests.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { PageView } from '../../../game/quests.ts';
 import { ENDINGS } from '../../endings.ts';
-import { WENNA_HOME, VOICE_WHOLE } from '../hearth/maps/core.ts';
+import { WENNA_HOME, VOICE_WHOLE } from '../hearth/public.ts';
 
 /** Vask hires the company: before the chapter, or its last step for a company that came early. */
 export const HIRE: Step = { name: 'the hire', play: (w) => meetWho(w, 'q_ashcombe') };

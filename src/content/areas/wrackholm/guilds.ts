@@ -7,7 +7,7 @@
 // takes nothing and the Thief's third prestige (#448) still has the orders to carry. The choice that
 // the rank opens is Ruan's, put in the Keel (saltreach/maps/saltmouth.ts), not at the report.
 import type { GuildQuest } from '../../../game/guilds.ts';
-import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
+import { SLEEPERS_SEEN } from '../rimewater/public.ts';
 
 export const GUILDS: readonly GuildQuest[] = [
   {

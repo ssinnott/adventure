@@ -15,6 +15,7 @@ import type { MapDef, Choice } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
+import { STAIR_TOP } from '../public.ts';
 
 /**
  * The Stair-king's toll (#544): put before the fight, the way a business puts its menu. Paid in gold,
@@ -33,12 +34,6 @@ export const TOLL: Choice = {
 
 /** The toll answered, in gold, a part or the coin, or the king fallen: the Stair is the company's (#505). */
 export const STAIR_PASSED: When = [{ flag: 'toll_paid' }, { flag: 'toll_part' }, { flag: 'toll_coin' }, { slain: 'highspine_i10:i10_king' }];
-
-/**
- * The Stair stood on below the king's step, looking down into the ash: `i10_top` sets it, the
- * once. The Whitespine's chapter, The Bells, is done on it, and Ashfall's (#518) reads it.
- */
-export const STAIR_TOP = 'q_stair_top';
 
 /**
  * The Toll (#56's 47, #506) done: the toll answered or the king fallen, his girl walks down to the

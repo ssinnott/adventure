@@ -8,18 +8,11 @@
 // lies in the furnace's mouth beside a heap of their parts; behind it the scavenger's hole, up his rope
 // to his ledge on G11 (HOLE). Once the Stone is lit a sentry comes up the stair. Band 25, the area's
 // own; docs/areas/meridian_camp.md §4.1 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/map.ts';
 import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
-
-/**
- * The way down to the iron corridors (meridian_camp2, #22's second level): the stair at the far end,
- * 4,30, onto the corridors' first square at 4,1, facing south; their way back up lands on 4,29, facing
- * north, the stair's head.
- */
-export const STAIR: Exit = { x: 4, y: 30, to: 'meridian_camp2', tx: 4, ty: 1, tf: SOUTH,
-  label: 'Down the steps into the red dark, the heat climbing to meet you a step at a time.' };
+import { STAIR } from '../public.ts';
 
 export const MERIDIAN_CAMP: MapDef = {
   id: 'meridian_camp',

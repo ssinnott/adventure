@@ -9,12 +9,11 @@
 // (#941). Last, the four prestige trainers here (#19), taught at 11 and 19.
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
-import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
 import { HIRE, STEPS as FORELAND_STEPS, FARM_FIRST, hired } from '../shelf/walkthrough.ts';
 import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH } from '../../../game/types.ts';
-import { MAP_DEFS } from '../../index.ts';
+import { MAP_DEFS, THE_QUEST } from '../../index.ts';
 import { meet, answer, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { questLog } from '../../../game/quests.ts';
@@ -28,6 +27,9 @@ import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { TEAR_CLOSED } from './maps/grove2.ts';
+
+// Another area's chapter, taken from the quest by its id and not from its file (#992).
+const FORELAND = THE_QUEST.chapters.find((c) => c.id === 'ashcombe')!;
 
 /** Over the pass, walked: the road has to let a company by. */
 const pass = (w: Walk): void => walkThrough(w, 'shelf', 30, 9, EAST, 'thornmark');

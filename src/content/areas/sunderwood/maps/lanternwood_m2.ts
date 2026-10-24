@@ -7,7 +7,7 @@
 // docs/areas/sunderwood.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, SOUTH } from '../../../../game/types.ts';
-import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LANTERNWOOD_M2: MapDef = {

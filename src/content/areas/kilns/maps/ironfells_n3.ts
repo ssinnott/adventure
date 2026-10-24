@@ -3,19 +3,12 @@
 // crag, past the dwarves' outer workings and their spoil and up the stair beside their terraces, with
 // the tithe-house at the terraces' foot. A burying ground of iron markers on the grass, a cairn on the
 // bare fell under the crag, and a collapsed working in the rock at the south-east corner.
-// The gate at 28,8 is the way into Anvilhall (#459, GATE).
+// The gate at 28,8 is the way into Anvilhall (#459, IRONFELLS_GATE, in the area's public.ts).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.3 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
-import { EAST, NORTH } from '../../../../game/types.ts';
+import type { MapDef } from '../../../../game/map.ts';
+import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
-
-/**
- * The gate into Anvilhall (#459): a door on the gate's square in the crag's dressed front, into the
- * town's start inside its own gate, saying the town's gate line (docs/areas/kilns.md §4.4) as the
- * company goes in; the town's way back lands on 28,9, facing south.
- */
-export const GATE: Exit = { x: 28, y: 8, to: 'anvilhall', tx: 7, ty: 14, tf: NORTH,
-  label: 'A door in the hill, iron-bound, and the hammering behind it. Over the lintel, words cut deep and painted red.' };
+import { IRONFELLS_GATE } from '../public.ts';
 
 export const IRONFELLS_N3: MapDef = {
   id: 'ironfells_n3',
@@ -59,7 +52,7 @@ export const IRONFELLS_N3: MapDef = {
     ',,===,,,,,,,,,,,^,,^^^,,rrr:rrrr',
     ',,,,==,,,,,,,,,,,,,,,,,,rrrrrrrr',
   ],
-  exits: [GATE],
+  exits: [IRONFELLS_GATE],
   features: [
     // Where the spur leaves the trail, the hammering heard; along it, the camp in the knoll's lee.
     { kind: 'event', x: 2, y: 27, id: 'n3_hammering', once: true, text: 'The spur leaves the trail for the north-east, and the hammering comes down it. It comes out of the hill.' },
@@ -73,7 +66,7 @@ export const IRONFELLS_N3: MapDef = {
     // The outer workings: an adit in the west hills and a working in the crag, their spoil warm.
     { kind: 'event', x: 10, y: 20, id: 'n3_adit', once: true, text: 'An old adit in the hillside, its spoil fanned out below it to the road. The spoil is warm to the hand.' },
     { kind: 'event', x: 21, y: 8, id: 'n3_working', once: true, text: 'An old working in the crag, timbered and open, rails running out of it onto the spoil. The air that comes out is warm.' },
-    // The lookout from the top terrace. The gate's own words are its label, said going in (GATE).
+    // The lookout from the top terrace. The gate's own words are its label, said going in (IRONFELLS_GATE).
     { kind: 'event', x: 31, y: 10, id: 'n3_lookout', once: true, when: { hours: 'day' }, text: 'South-east from the top terrace, the heart: the smelter\'s smoke going up, and past it the ash, grey to the skyline.' },
     { kind: 'event', x: 31, y: 10, id: 'n3_lookout_night', once: true, when: { hours: 'night' }, text: 'South-east the heart lies dark but for the smelter\'s fires, and far past them a line of red along the ground.' },
     // The terrace well, and the mother at it. The Crust-Bearer (#56's 33, #471): she gives the ring off
