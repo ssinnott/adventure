@@ -9,6 +9,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
+import type { Rift } from '../../../rifts/index.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -18,7 +19,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * its tear stays open. Only the crack sealed far below (#56's 61, #765) quiets what comes out of it:
  * its two groups leave then, standing or killed, by the leave rule.
  */
-const TEAR = rift({
+const TEAR: Rift<'k3_rift'> = rift({
   id: 'k3_rift', template: 'spiral', material: 'glass', seed: 2, band: [14, 15], region: 'sunderwood',
   out: { to: 'eaves_k3', at: 'from_k3_rift' },
   table: { groups: [['sunderling', 'sunderling', 'sunderling', 'sunderling'], ['glass_spider', 'glass_spider', 'glass_spider', 'glass_spider']] },
