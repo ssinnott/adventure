@@ -1210,7 +1210,7 @@ Decided by delegate for #483, each the owner's to overturn:
 1. **The lights are drawn as light, never as a thing:** a flame within a flame over a pool of its
    light, unoutlined, swinging and bobbing at a walker's hip with nobody there, and guttering.
 2. **Motes rise out of the peat into a light as it gutters,** its one part apart, declared in
-   `tools/smoke.ts` as the moths' dust is: two pieces, 6% of the ink. The Rime Light is a Build.
+   `tools/smoke/art.ts` as the moths' dust is: two pieces, 6% of the ink. The Rime Light is a Build.
 3. **The Bog Light comes down whole, to 0.575 of the controller's line** (124 hit points, 2d6+2):
    on the line four sent a company of 18 to rest in four fights; whole, it fights 8.5 of 8.5 asked.
    On #541's line, 117 hit points and 2d6+2: four fights on the line and 8.9 at 0.575.
