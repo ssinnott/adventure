@@ -1205,8 +1205,9 @@ Decided by the builder for #986, each the owner's to overturn:
 
 ### 8.2 The recipe for a zone map
 
-1. **Brief**, in the area's plan, `docs/areas/<area>/plan.md` (the area's doc, below): purpose,
-   band, landmarks, the secret and its hint, the encounters, what is new; its "As built" once built.
+1. **Brief**, in the area's plan, `docs/areas/<area>/plan.md` (the area's doc, below; its §4 until
+   D3 moves it): purpose, band, landmarks, the secret and its hint, the encounters, what is new;
+   its "As built" once built.
 2. **Scaffold.** Every outdoor map is one box of the grid the Foreland and Thornmark sit on: 32
    squares a side, its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges, and
    named as the old maps were, by its column's letter and its row's number (the Foreland is G2). A
@@ -1297,9 +1298,9 @@ earlier one is not edited, bar a plain slip the pull request that finds it says 
 the lines of the state sections the state does not keep; a new box's brief goes there first, with
 its "As built" once it is built. A doc is moved, never rewritten: `node tools/docmove.ts` finds each
 line of the old among the new files as many times as it stood, and each of its paragraphs whole in
-one of them; `tools/tests/areadocs.ts` holds the shape. The Foreland's moved first, to
-`docs/areas/shelf/plan.md` and `docs/areas/shelf/decisions.md`; the other thirteen are owed to D3,
-and the suite lists them on every run.
+one of them, in their old order there; `tools/tests/areadocs.ts` holds the shape. The Foreland's
+moved first, to `docs/areas/shelf/plan.md` and `docs/areas/shelf/decisions.md`; the other thirteen
+are owed to D3, and the suite lists them on every run.
 
 Decided by the builder for #1011, each the owner's to overturn:
 
@@ -1314,8 +1315,9 @@ Decided by the builder for #1011, each the owner's to overturn:
    the title; every other part stands under the heading it had, repeated where the state keeps it.
 4. **The proof holds paragraphs as well as lines:** a paragraph (a run of lines, broken at each
    heading, list item and table row; a fenced block whole) stands whole and in order in one new
-   file, since every line found does not show that none was split or reordered. A line is compared
-   whole, its spaces and all.
+   file, its blank lines where they were, and each file holds a section's paragraphs in their old
+   order, since every line found does not show that none was split or reordered. A line is
+   compared whole, its spaces and all.
 5. **The lanes line takes the doc's folder whole,** any file in it, as an area's content folder is
    taken, through `DOC_AREA` for a place's doc.
 6. **The owed docs are named, and their lines read as they stand** each run, so no area's pull

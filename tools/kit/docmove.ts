@@ -26,8 +26,10 @@ export interface Move {
   missing: Line[];
   /** The first line of each old paragraph that stands whole in no new file. */
   broken: Line[];
-  /** The new files' lines that are no line of the old, or one more time than it stood. */
-  added: Line[];
+  /** The first line of each old paragraph its file holds before one that stood above it in its section. */
+  unordered: Line[];
+  /** The new files' lines that are no line of the old, or one more time than it stood (again: its first old line). */
+  added: (Line & { again?: number })[];
 }
 
 /** Whether a line is counted: not blank, and not a rule. */
@@ -67,13 +69,16 @@ export function move(old: Doc, news: readonly Doc[]): Move {
   const oldLines = linesOf(old), newLines = news.map(linesOf);
   const want = new Map<string, number>();
   for (const l of oldLines) want.set(l.text, (want.get(l.text) ?? 0) + 1);
+  // The old's first line of each text, to mark a line the new files add that is an old line again.
+  const again = new Map<string, number>();
+  for (const l of oldLines) if (!again.has(l.text)) again.set(l.text, l.n);
   // The new files' lines in order, each taken by the old while the old has that line left over.
-  const left = new Map(want), held = new Map<string, number>(), added: Line[] = [];
+  const left = new Map(want), held = new Map<string, number>(), added: Move['added'] = [];
   for (const [i, lines] of newLines.entries()) {
     held.set(news[i].path, 0);
     for (const l of lines) {
       const k = left.get(l.text) ?? 0;
-      if (k > 0) { left.set(l.text, k - 1); held.set(l.path, held.get(l.path)! + 1); } else added.push(l);
+      if (k > 0) { left.set(l.text, k - 1); held.set(l.path, held.get(l.path)! + 1); } else added.push(again.has(l.text) ? { ...l, again: again.get(l.text) } : l);
     }
   }
   // The old's lines past the count the new files hold of each are the missing.
@@ -89,15 +94,36 @@ export function move(old: Doc, news: readonly Doc[]): Move {
     lines.forEach((l, j) => { const a = m.get(l.text); if (a) a.push(j); else m.set(l.text, [j]); });
     return m;
   });
-  const whole = (para: Line[]): boolean => newLines.some((lines, f) =>
-    (at[f].get(para[0].text) ?? []).some((j) => para.every((p, k) => lines[j + k]?.text === p.text)));
+  // Where a paragraph stands whole in file f: each place its lines start, with the blank lines among
+  // them where they stood (a fenced block's), so a paragraph split by a blank line is not whole.
+  const places = (para: Line[], f: number): number[] => (at[f].get(para[0].text) ?? []).filter((j) =>
+    para.every((p, k) => newLines[f][j + k]?.text === p.text && newLines[f][j + k].n - newLines[f][j].n === p.n - para[0].n));
   const paras = paragraphs(old);
-  const broken = paras.filter((p) => !whole(p)).map((p) => p[0]);
-  return { old: old.path, lines: oldLines.length, paragraphs: paras.length, held, missing, broken, added };
+  const broken = paras.filter((p) => newLines.every((_, f) => !places(p, f).length)).map((p) => p[0]);
+  // Each file holds a section's paragraphs (those under one `## ` heading) in their old order: of those
+  // whose text stood once in the old and stands once in the file, each comes after every earlier one,
+  // or two paragraphs swapped would pass. Where a section's paragraphs go is the move's own choice.
+  const key = (p: Line[]): string => p.map((l) => l.text).join('\n');
+  const times = new Map<string, number>();
+  for (const p of paras) times.set(key(p), (times.get(key(p)) ?? 0) + 1);
+  const sectionOf = new Map<Line[], number>();
+  let section = 0;
+  for (const p of paras) { if (/^##\s/.test(p[0].text)) section = p[0].n; sectionOf.set(p, section); }
+  const unordered: Line[] = [];
+  for (const f of newLines.keys()) {
+    const last = new Map<number, number>();
+    for (const p of paras) {
+      const js = times.get(key(p)) === 1 ? places(p, f) : [];
+      if (js.length !== 1) continue;
+      const s = sectionOf.get(p)!;
+      if (js[0] < (last.get(s) ?? -1)) unordered.push(p[0]); else last.set(s, js[0]);
+    }
+  }
+  return { old: old.path, lines: oldLines.length, paragraphs: paras.length, held, missing, broken, unordered, added };
 }
 
-/** Whether the move lost nothing: no line missing and no paragraph broken. */
-export const kept = (m: Move): boolean => !m.missing.length && !m.broken.length;
+/** Whether the move lost nothing: no line missing, no paragraph broken and none out of its order. */
+export const kept = (m: Move): boolean => !m.missing.length && !m.broken.length && !m.unordered.length;
 
 const num = (n: number): string => n.toLocaleString('en-GB');
 /** A list in words, with no comma before the last: `a, b and c`. */
@@ -113,8 +139,11 @@ export function report(m: Move, base: string): string {
     ...m.missing.map((l) => `  ${m.old}:${l.n}  ${l.text}`),
     m.broken.length ? `Paragraphs not whole in one file, ${num(m.broken.length)} (each by its first line):` : 'Paragraphs not whole: none.',
     ...m.broken.map((l) => `  ${m.old}:${l.n}  ${l.text}`),
-    `The new files add ${num(m.added.length)} line${m.added.length === 1 ? '' : 's'}:`,
-    ...m.added.map((l) => `  ${l.path}:${l.n}  ${l.text}`),
+    m.unordered.length ? `Paragraphs out of their order in their section, ${num(m.unordered.length)} (each by its first line):` : 'Paragraphs out of order: none.',
+    ...m.unordered.map((l) => `  ${m.old}:${l.n}  ${l.text}`),
+    `The new files add ${num(m.added.length)} line${m.added.length === 1 ? '' : 's'}` +
+      `${m.added.some((l) => l.again) ? ` (${num(m.added.filter((l) => l.again).length)} of them an old line again)` : ''}:`,
+    ...m.added.map((l) => `  ${l.path}:${l.n}  ${l.text}${l.again ? `  (old line ${l.again} again)` : ''}`),
   ];
   return out.join('\n');
 }

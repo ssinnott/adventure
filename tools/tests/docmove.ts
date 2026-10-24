@@ -47,6 +47,8 @@ export function docmove(): void {
   const twice: Doc = { path: 'old.md', text: 'A.\n\nB.\n\nA.\n' };
   const once = move(twice, [{ path: 'new.md', text: 'A.\n\nB.\n' }]);
   ok(!kept(once) && once.missing.map((l) => l.n).join() === '5', 'a line that stood twice is looked for twice: kept once, its second is missing');
+  const copied = move({ path: 'old.md', text: 'A.\n\nB.\n' }, [{ path: 'new.md', text: 'A.\n\nB.\n\nA.\n' }]);
+  ok(kept(copied) && report(copied, 'base').includes('  new.md:5  A.  (old line 1 again)'), 'a line the new files add that is an old line again is marked with its old number');
 
   // A paragraph split across files, and one with its lines reordered: every line found, the paragraph not whole.
   const split = move(OLD, [state(), decisions, plan('# Plan', '', '## 4. What is still to build', '', '| Box | Band |', '|---|---|', '| F2 | 2–3 |', '', 'Built.', '', '## Moved from the state', '', 'goes on here.', 'It is a place. This line')]);
@@ -55,6 +57,16 @@ export function docmove(): void {
   const item = paragraphs(OLD).find((p) => p[0].text.startsWith('- **North'));
   ok(item?.length === 2 && paragraphs(OLD).filter((p) => p[0].text.startsWith('|')).length === 3,
     'a list item is a paragraph with its own lines, and each table row one of its own');
+
+  // Two paragraphs of one section swapped, and one split by a blank line: every line is found and
+  // every paragraph's lines stand together, yet neither move is kept.
+  const swapped = move(OLD, [state('# The Place: a fixture', '', '§4 is in plan.md, §9 in decisions.md.', '', '## 1. Where it is', '',
+    '- **South:** the sea.', '- **North:** the rim,', '  about nine squares.', ''), decisions, plan()]);
+  ok(!kept(swapped) && !swapped.missing.length && !swapped.broken.length && swapped.unordered.map((l) => l.n).join() === '12',
+    'two paragraphs of one section swapped fail, the one now first named by its old number (12)');
+  const parted = move(OLD, [state(), decisions, plan('# Plan', '', '## 4. What is still to build', '', '| Box | Band |', '|---|---|', '| F2 | 2–3 |', '', 'Built.', '', '## Moved from the state', '', 'It is a place. This line', '', 'goes on here.')]);
+  ok(!kept(parted) && !parted.missing.length && parted.broken.map((l) => l.n).join() === '3',
+    'a paragraph split by a blank line fails, named by its first line (3)');
 
   // The git read: a ref that is not there is a fault in git's words.
   let said = '';

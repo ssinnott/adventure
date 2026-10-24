@@ -137,7 +137,7 @@ area on the road, it claims nothing new (`novel`), and the novelty check asks no
   100%, the Deacon 50% and 100%, the Berth's captain 44% and 100%; the Hag 66% at 30 and 91% at 32.
 - **Fights to a rest** (aim 5.5 to 7.5, limit 4 to 10): the Foreland map 4.55, Brandy Hole 4.09,
   the Seam 6.69, the cellar 7.41, F2 6.60, F3 7.07, E3 7.53, E2 6.93, D2 7.59, D3 8.21, D4 7.54 and
-  the Berth 7.12, which wins 88.8% at its floor. Eight figures are off their aim, inside the limits.
+  the Berth 7.12, which wins 88.8% at its floor. Six are off their aim, of the gate's eight.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, the Foreland map 97.4%, F3
   100%, E3 96.9% and D2 92.6%; within 12 in the country, F2 99.5%, E2 96.4% (its furthest square 20,
   on the limit), D3 99.7%, D4 96.7% and E4 100%.
@@ -193,7 +193,7 @@ named in the atlas.
 - **Owed to no check:** its checks have no `owes`, and the curve, the gate, density and the ladder
   hold the Foreland with nothing owed.
 - **Watched, not moved:** Brandy Hole's 4.09 fights to a rest and E2's furthest square at 20 sit on
-  their limits' edge (plan, §8). What the owner finds by hand goes there; the doc holds none yet.
+  their limits' edge (plan, §8). What the owner finds by hand goes here; none yet.
 - **The Keep's armoury,** its door and Wulfric's armour, waits on an interior (the Keep's map).
 - **Cut:** the rim's foothills and G3's and G4's scraps (plan, §11); the Mewstone is off the road.
 - **What is next:** nothing. The plan's briefs are all built, and a new box starts its brief there.

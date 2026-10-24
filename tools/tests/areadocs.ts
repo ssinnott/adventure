@@ -27,7 +27,7 @@ export function areadocs(): void {
     const doc = `docs/areas/${name}.md`, lines = linesIn(readFileSync(new URL(`${name}.md`, root), 'utf8'));
     const moved = folders.includes(name);
     if (UNMOVED.includes(name)) {
-      owed(moved, `${doc} is one file of ${lines.toLocaleString('en-GB')} lines, not yet its state with decisions.md and plan.md beside it`, 'D3');
+      owed(moved, `${doc} is its state, with decisions.md and plan.md beside it (today one file of ${lines.toLocaleString('en-GB')} lines)`, 'D3');
       continue;
     }
     const lacks = BESIDE.filter((f) => !existsSync(new URL(`${name}/${f}`, root)));
