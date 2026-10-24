@@ -1435,8 +1435,8 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
   scales and re-skins cheaply (see §13).
 - **Frame:** the status strip at the top right (the facing, the time and the place; the date and the
   sky), the automap under it with its compass rose, the purse under that (gold and food), the
-  party's portraits with condition faces along the bottom, and the message log over the foot of
-  the view, a strip of four lines and five in a fight (`LOG_LINES`, `COMBAT_LOG_LINES`).
+  party's portraits with condition faces along the bottom and the message log over the foot of the
+  view, a strip of four lines and five in a fight (`LOG_LINES`, `COMBAT_LOG_LINES`).
 - **Monsters:** front-facing paintings: 159 kinds, drawn by 28 family modules in `src/ui/monsters/`
   that each register the kinds they draw. A drawing breathes in a slow bob and flashes white when
   it is hit; there is no attack frame and no death frame, and a monster that dies is no longer
@@ -1487,7 +1487,7 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 - **Not from the engine:** netcode. This is single-player; `src/lib/net/` is vendored and imported
   by nothing.
 - **New, game-owned:** the grid viewport compositor, map format, turn-based combat resolver,
-  quest state machine, save format, Rift generator, and the shape of the content: what a map, a
+  quest state machine, save format, Rift generator and the shape of the content: what a map, a
   monster, an item, a spell and a quest are.
 - **Content is TypeScript, in `src/content/`:** maps, monsters, items, quests and dialogue, one
   folder per area (`src/content/areas/<area>/`), merged in road order by `src/content/index.ts`; the

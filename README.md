@@ -142,7 +142,8 @@ tools/             dev server, bundler, tests (tools/tests/, a file per suite), 
 
 `src/lib/` is [game-engine](https://github.com/ssinnott/game-engine) `src/`, added with
 `git subtree add --prefix=src/lib ... --squash`. Used here: the fixed-step loop, the render canvas,
-the deterministic rng, the pixel font, and the colour and shape helpers. The rig, audio and net
+the deterministic rng, the pixel font and the colour and shape helpers. The rig, audio and net
 modules are vendored but not yet imported. Pull updates with
 `git subtree pull --prefix=src/lib https://github.com/ssinnott/game-engine split --squash`
-once the `split` branch has been re-published from main (it currently predates `src/audio/`).
+once the `split` branch has been re-published from main (it currently predates the engine's audio,
+vendored here as `src/lib/audio/`).

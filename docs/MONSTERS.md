@@ -276,8 +276,8 @@ Decided by delegate for #537, each the owner's to overturn:
 2. **A troll felled stays down:** mending is the living's, so no company meets a fight it cannot
    finish for want of fire. "Or they get up again" (§7.2) is the mending.
 3. **Fire stops the mending for the round it lands in,** the damage of one of the four fire spells
-   or a fire weapon's die (the Beacon Hammer and Trollbrand); the log says "Tor Troll mends 36."
-   and, burnt, "Tor Troll smoulders and does not mend."
+   (since #855 a fire weapon's die as well: the Beacon Hammer and Trollbrand); the log says
+   "Tor Troll mends 36." and, burnt, "Tor Troll smoulders and does not mend."
 4. **A curse is what `party.ts` makes it, as disease is:** it outlasts a rest and a raising; Faith
    keeps it off, and Restore, Absolve (tier 7) or a temple lifts it. It takes nothing in a fight, so
    no bot answers it; a bite there (Bless turned round) is the owner's to ask for.

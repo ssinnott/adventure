@@ -62,7 +62,7 @@ built or given a naming pass of its own.
 - **Sunderwood** (step V): English, the Crown's and the Lanterns', kept (`docs/areas/sunderwood.md`
   §10).
 - **The Kilns** (step VI): named on 2 October 2026 with its area doc (#435). `docs/areas/kilns.md`
-  §10 has the dwarves' tongue and its names: Erzkamm, the Tiefzeche, Gluthutte, Feuerstollen, and
+  §10 has the dwarves' tongue and its names: Erzkamm, the Tiefzeche, Gluthutte, Feuerstollen, with
   the bounds' Seestollen, Durchschlag, the Randzeche and Brandt; the Kilns, Kilnmouth, the Iron
   Fells, Anvilhall, the Anvil Stone and Kilnhaven keep the Crown's English, and CREW ONLY is the
   crew's.
