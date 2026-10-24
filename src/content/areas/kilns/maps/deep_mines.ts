@@ -42,7 +42,7 @@ export const DEEP_MINES: MapDef = {
     anchored({ x: 7, y: 14, to: 'kilnsheart_n4', at: 'from_deep_mines', label: 'The cage goes up the shaft, the wheel creaking over it, and out into the air.' }),
     anchored({ x: 1, y: 1, to: 'deep_mines2', at: 'start', label: 'You go down the worn stair into the old workings.' }),
     // The service ladder, behind the niche, down to the old workings' shaft.
-    anchored({ x: 14, y: 11, to: 'deep_mines2', at: 'from_deep_mines', label: 'You climb down the iron rungs a long way, into the dark.' }),
+    anchored({ x: 14, y: 11, to: 'deep_mines2', at: 'rungs', label: 'You climb down the iron rungs a long way, into the dark.' }),
   ],
   features: [
     { kind: 'event', x: 7, y: 13, id: 'dm1_in', once: true, text: 'The shaft\'s foot. Timbered galleries go off into the dark, and somewhere ahead picks are going.' },

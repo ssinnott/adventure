@@ -17,7 +17,7 @@ export const DEEP_MINES2: MapDef = {
   band: [16, 17],
   region: 'kilns',
   start: { x: 1, y: 2, facing: SOUTH },
-  anchors: { from_deep_mines: { x: 5, y: 11, facing: NORTH }, from_deep_mines3: { x: 14, y: 13, facing: NORTH } },
+  anchors: { rungs: { x: 5, y: 11, facing: NORTH }, from_deep_mines3: { x: 14, y: 13, facing: NORTH } },
   palette: { wall: '#5e564c', wallDark: '#3c362e', floor: '#3e3832', ceiling: '#141110', door: '#4a3c2c', wallStyle: 'stone', ceilingStyle: 'beams', banner: '#5a2a24' },
   rows: [
     '################',

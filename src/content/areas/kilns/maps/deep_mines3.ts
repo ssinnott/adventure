@@ -46,7 +46,7 @@ export const DEEP_MINES3: MapDef = {
   exits: [
     anchored({ x: 14, y: 14, to: 'deep_mines2', at: 'from_deep_mines3', label: 'You climb the steep stair to the old workings.' }),
     // The service ladder, up the shaft to the old workings.
-    anchored({ x: 14, y: 9, to: 'deep_mines2', at: 'from_deep_mines', label: 'You climb the rungs up out of the hum, a long way, to the old workings.' }),
+    anchored({ x: 14, y: 9, to: 'deep_mines2', at: 'rungs', label: 'You climb the rungs up out of the hum, a long way, to the old workings.' }),
   ],
   features: [
     // The end of the dwarves' tunnel, and the hole into the corridor; the crusts on their ledge, where
