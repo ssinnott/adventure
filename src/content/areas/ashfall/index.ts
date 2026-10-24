@@ -1,5 +1,6 @@
-// Ashfall, the far side of the Sound (band 24-26): Cindercoast, Fire Mountain and the Ember Waste, the
-// second area of Act IV, begun by sea (#443, call 6). docs/areas/ashfall.md is its brief.
+// Ashfall, the far side of the Sound (band 24-26): Cindercoast, Fire Mountain and the Ember Waste,
+// the second area of Act IV, begun by sea (#443, call 6). docs/areas/ashfall.md is its state, and
+// docs/areas/ashfall/ holds its plan and decisions.
 import type { Area } from '../../area.ts';
 import { CINDERCOAST_H10 } from './maps/cindercoast_h10.ts';
 import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';

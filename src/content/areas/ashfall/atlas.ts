@@ -1,5 +1,5 @@
 // Ashfall's part of the world map: its three zones, the plates of its town and dungeons, and its
-// sites. docs/areas/ashfall.md is its brief (#509). Meridian Camp is #22's, down the vents.
+// sites. docs/areas/ashfall/plan.md holds its brief (#509). Meridian Camp is #22's, down the vents.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 import { laid } from '../../../game/atlas.ts';
 import { PLAN } from '../../atlas.ts';
