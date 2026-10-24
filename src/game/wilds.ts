@@ -169,7 +169,7 @@ export interface Explored { lines: string[]; moved: boolean }
  * its work done on the world. Waymark sets its mark, or with `back` returns to it, and gives the points
  * back where the mark will not take.
  */
-export function castExplore(world: Pick<World, 'state' | 'revealAll' | 'townPortal' | 'bear' | 'setMark' | 'toMark'>, party: Party, casterIndex: number, spellId: string, back = false): Explored {
+export function castExplore(world: Pick<World, 'tables' | 'state' | 'revealAll' | 'townPortal' | 'bear' | 'setMark' | 'toMark'>, party: Party, casterIndex: number, spellId: string, back = false): Explored {
   const c = party.members[casterIndex];
   const sp = spell(spellId);
   const said = (line: string, moved = false): Explored => ({ lines: [line], moved });
@@ -186,6 +186,6 @@ export function castExplore(world: Pick<World, 'state' | 'revealAll' | 'townPort
       c.sp += sp.sp;
       return said(`${c.name} casts ${sp.name}, but the mark will not take here.`);
     default:
-      return said(sp.target === 'party' && (sp.heal || sp.cure) ? castOnParty(c, sp, party) : `${c.name} casts ${sp.name}.`);
+      return said(sp.target === 'party' && (sp.heal || sp.cure) ? castOnParty(world.tables.items, c, sp, party) : `${c.name} casts ${sp.name}.`);
   }
 }

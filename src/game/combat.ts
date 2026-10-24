@@ -17,7 +17,7 @@ import type { ItemDef } from './items.ts';
 import type { Party, Character, Condition } from './party.ts';
 import type { World } from './world.ts';
 import { GLOVE_FLAG } from './keys.ts';
-import type { Items } from './tables.ts';
+import type { Items, Tables } from './tables.ts';
 
 export interface MonsterInst {
   def: MonsterDef;
@@ -59,6 +59,8 @@ export type Outcome = 'ongoing' | 'victory' | 'defeat' | 'fled';
 export interface Loot { xp: number; shares: number[]; gold: number; items: string[]; ready: string[]; }
 
 export interface CombatState {
+  /** The tables the fight reads, from `startCombat` (#973). */
+  readonly tables: Tables;
   monsters: MonsterInst[];
   groupIds: string[];
   /** Each group's leader, by monster id, as `groupIds` lists them (`Ranks`). */
@@ -229,7 +231,7 @@ export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: Monster
 }
 
 /** Start a fight with up to three groups, twelve monsters at most; each rank of a group is a group of the fight's. */
-export function startCombat(party: Party, groups: readonly CombatGroup[], rng: RngInstance, opts: CombatOpts = {}): CombatState {
+export function startCombat(tables: Tables, party: Party, groups: readonly CombatGroup[], rng: RngInstance, opts: CombatOpts = {}): CombatState {
   const monsters: MonsterInst[] = [];
   let rank = -1;
   groups.forEach((g, band) => {
@@ -243,7 +245,7 @@ export function startCombat(party: Party, groups: readonly CombatGroup[], rng: R
   });
   const ticking = groups.findIndex((g) => g.clock);
   const s: CombatState = {
-    monsters, groupIds: groups.map((g) => g.id), leaders: groups.map((g) => g.leader), round: 0, order: [], turn: 0, downAtStart: party.members.filter(isDown).length, bless: 0, shield: 0, haste: 0,
+    tables, monsters, groupIds: groups.map((g) => g.id), leaders: groups.map((g) => g.leader), round: 0, order: [], turn: 0, downAtStart: party.members.filter(isDown).length, bless: 0, shield: 0, haste: 0,
     ...(ticking >= 0 ? { clock: { ...groups[ticking].clock!, band: ticking, dim: 0 } } : {}),
     foeBless: groups.map(() => 0), foeShield: groups.map(() => 0), seen: {},
     defending: party.members.map(() => false), rangedPenalty: opts.rangedPenalty ?? 0, log: [], outcome: 'ongoing', loot: null,

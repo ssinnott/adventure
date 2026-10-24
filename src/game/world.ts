@@ -21,6 +21,7 @@ import { open, given } from './people.ts';
 import { pace, denLooks, densOf } from './dens.ts';
 import { stonesRestored, endingOf, hearthWord } from './stones.ts';
 import type { Hearth } from './stones.ts';
+import type { Tables } from './tables.ts';
 import { signLine, signSays } from './inscriptions.ts';
 import { hasSkill, skilled } from './skills.ts';
 
@@ -191,6 +192,8 @@ export function regionOf(m: GameMap, x: number, y: number): RegionId {
 }
 
 export class World {
+  /** The tables it reads, handed in (#973). */
+  readonly tables: Tables;
   readonly maps: Record<string, GameMap>;
   state: WorldState;
   party: Party;
@@ -204,8 +207,8 @@ export class World {
   /** The weather of every region a group has asked after, this minute: liveGroups runs every frame. */
   private skies: { seed: number; minutes: number; by: Map<RegionId, Weather> } | null = null;
 
-  constructor(maps: Record<string, GameMap>, party: Party, rng: RngInstance, state?: WorldState) {
-    this.maps = maps; this.party = party; this.rng = rng;
+  constructor(tables: Tables, maps: Record<string, GameMap>, party: Party, rng: RngInstance, state?: WorldState) {
+    this.tables = tables; this.maps = maps; this.party = party; this.rng = rng;
     if (state) this.state = state;
     else {
       const first = Object.values(maps)[0];

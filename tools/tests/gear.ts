@@ -31,7 +31,7 @@ function check(): void {
   ok(throws(() => P(ITEMS.torch, 1)) && throws(() => P(sword, 1)) && throws(() => P(ITEMS.dagger, 0)), 'no plus on a torch, on a plus or of 0');
 
   // To-hit, exactly one better.
-  const mk = (cls: Parameters<typeof createCharacter>[2]) => createCharacter(TABLES, 'T', 'human', cls, {}, makeRng(3));
+  const mk = (cls: Parameters<typeof createCharacter>[3]) => createCharacter(TABLES, 'T', 'human', cls, {}, makeRng(3));
   const kn = mk('knight'); kn.equipment.weapon = 'longsword'; const hitBase = attackBonus(TABLES.items, kn);
   kn.equipment.weapon = sword.id;
   ok(attackBonus(TABLES.items, kn) === hitBase + 1, `a knight's to-hit with a Long Sword +1 (${hitBase} -> ${attackBonus(TABLES.items, kn)})`);

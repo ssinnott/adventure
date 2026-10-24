@@ -78,12 +78,12 @@ function met(q: GuildQuest, world: WorldState, party: Party): boolean {
 
 function payOut(items: Items, q: GuildQuest, party: Party, early: boolean): string {
   if (q.item) takeItem(party, q.item);
-  const { gold = 0, xp = 0, items = [] } = q.pay;
+  const { gold = 0, xp = 0, items: given = [] } = q.pay;
   party.gold += gold;
   const ready = payXp(party, xp);
-  party.bag.push(...items);
+  party.bag.push(...given);
   party.flags[doneFlag(q.id)] = 1;
-  const what = [gold ? `${gold} gold` : '', xp ? `${xp} experience` : '', ...items.map((id) => items[id].name)].filter(Boolean);
+  const what = [gold ? `${gold} gold` : '', xp ? `${xp} experience` : '', ...given.map((id) => items[id].name)].filter(Boolean);
   return (early && q.early ? q.early : q.paid).join('\n\n') + (what.length ? `\n\n(${what.join(', ')}.)` : '')
     + (ready.length ? `\n\nReady to train: ${ready.join(', ')}.` : '');
 }

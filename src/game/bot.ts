@@ -290,7 +290,7 @@ export function striker(s: CombatState, p: Party, i: number): boolean {
 }
 
 /** What a member can drink or give in a fight: its pack's draughts, then the company's bag's, as the resolver takes them. */
-const draughts = (items: Items, p: Party, c: Character): ItemDef[] => [...c.pack, ...p.bag].map(item).filter((d) => d.use);
+const draughts = (items: Items, p: Party, c: Character): ItemDef[] => [...c.pack, ...p.bag].map((id) => item(items, id)).filter((d) => d.use);
 
 /**
  * The bots' drink (#853): where no member who can act could mend them, a healing draught for the

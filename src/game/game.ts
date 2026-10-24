@@ -37,6 +37,7 @@ import { RiddleScreen } from '../ui/riddle.ts';
 import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restAndWake, drinkWell, give, giftOf } from './wilds.ts';
 import { approach, burn } from './dens.ts';
 import type { Pilot } from './pilot/pilot.ts';
+import type { Tables } from './tables.ts';
 
 /**
  * Attract mode's lines (#722): the band holds both over the pilot's own for the first three seconds,
@@ -57,6 +58,8 @@ export class Game {
   world!: World;
   party!: Party;
   readonly rng: Rng = rng;
+  /** The tables the game reads, handed in by the app (src/main.ts: content's), and on to its world and fights (#973). */
+  readonly tables: Tables;
   readonly store: Store | null;
   /** Set by main.ts; screens that take typed text need it. `typed` is the keys typed in the text mode, where the pilot types a riddle's word too (#721). */
   input: { textMode: boolean; typed?: string[]; drainText(current: string, max?: number): string } | null = null;
@@ -86,8 +89,8 @@ export class Game {
   /** The frame attract mode began on, for its opening lines in the band. */
   private attractFrom = 0;
 
-  constructor(store: Store | null = browserStore()) {
-    this.store = store;
+  constructor(tables: Tables, store: Store | null = browserStore()) {
+    this.tables = tables; this.store = store;
     this.screens.push(new TitleScreen(hasSave(store)));
   }
 

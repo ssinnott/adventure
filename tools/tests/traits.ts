@@ -7,7 +7,7 @@ import { spell } from '../../src/game/spells.ts';
 import { ok } from './lib.ts';
 
 export function traits(): void {
-  const mk = (cls: Parameters<typeof createCharacter>[2]) => createCharacter(TABLES, 'T', 'human', cls, {}, makeRng(3));
+  const mk = (cls: Parameters<typeof createCharacter>[3]) => createCharacter(TABLES, 'T', 'human', cls, {}, makeRng(3));
   for (const cd of Object.values(CLASSES)) ok(cd.traits.length >= 1 && cd.traits.length <= 2 && cd.traits.every((t) => t in TRAITS), `a ${cd.name} has one or two traits (${cd.traits.join(', ')})`);
   // Stalwart: the knight's AC carries the bonus.
   const k = mk('knight'); const ac = armorClass(TABLES.items, k);
@@ -18,7 +18,7 @@ export function traits(): void {
   const leatherMonk = mk('monk'); leatherMonk.equipment.armor = 'leather';
   ok(armorClass(TABLES.items, leatherMonk) === 10 + 3, 'a monk in leather loses unarmoured defence');
   // Immunities come through addCondition.
-  const cases: [Parameters<typeof createCharacter>[2], 'diseased' | 'cursed' | 'asleep' | 'paralysed' | 'poisoned'][] = [['paladin', 'diseased'], ['cleric', 'cursed'], ['sorcerer', 'asleep'], ['monk', 'paralysed'], ['druid', 'poisoned']];
+  const cases: [Parameters<typeof createCharacter>[3], 'diseased' | 'cursed' | 'asleep' | 'paralysed' | 'poisoned'][] = [['paladin', 'diseased'], ['cleric', 'cursed'], ['sorcerer', 'asleep'], ['monk', 'paralysed'], ['druid', 'poisoned']];
   for (const [cls, cond] of cases) { const c = mk(cls); addCondition(TABLES.items, c, cond); ok(!hasCondition(c, cond), `a ${cls} is immune to ${cond}`); }
   const kn = mk('knight'); addCondition(TABLES.items, kn, 'poisoned'); ok(hasCondition(kn, 'poisoned'), 'a knight is not');
   // Die Hard: a barbarian at -15 is unconscious, not dead; a knight is dead.
