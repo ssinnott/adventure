@@ -763,9 +763,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - `typecheck`: `tsc -p tsconfig.json` (no emit, strict, over `src/`, `tools/` and `types/`), zero
   suppressions. It is the first content check: a monster with no drawing, a business with no room
   or a map in a region no area has fails it.
-- `test`: `node tools/test.ts`, then `node tools/tests/runner/check.ts`, the runner's own check,
-  which runs it on `tools/tests/runner/fixture/`, `stuck/` and `leaves/`, their failures kept out of
-  the real run, then `node tools/test.ts fullrun`, the pilot's full run on the shelf (about 10 to 25 s; it
+- `test`: `node tools/test.ts --jobs`, the suites in parallel (#954), then
+  `node tools/tests/runner/check.ts`, the runner's own check, which runs it on
+  `tools/tests/runner/fixture/`, `stuck/`, `leaves/` and `narrow/`, in one process and under `--jobs`,
+  its runs side by side, their failures kept out of the real run, then `node tools/test.ts fullrun`, the pilot's full run on the shelf (about 10 to 25 s; it
   repeats walkthrough:shelf's play). The suites are in `tools/tests/`, one file each exporting a function of its name (`lib.ts`
   is what they share), which the runner finds (maps, movement, monsters, combat, harness, party,
   traits, calendar, terrain, weather, atlas, outdoors, save, quests, then any other in name order),
@@ -807,6 +808,26 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   suite under 6, 698.9 s in all. In CI's tests job (#905, 8965ac98): the gate 149.4 s (53%),
   `labels` 37.9, `row` 30.4, `harness` 15.2, `quests` 13.9, the Foreland's walkthrough 8.7,
   `scaffold` 4.6, `pilot` 4.3 and every other suite under 1.5, 282.8 s in all.
+  In parallel (#954): `--jobs [N]` runs the runs as processes of their own, N at a time, as many as
+  the cores where N is left out. A suite that exports `parts()` runs as its parts, `suite:part`, in
+  one process too: the gate's are `fixed` (its workings on fixtures and the tables' checks) and one
+  to each area the run asks for, Saltreach's with the enclave's fixture, each with its own figures
+  off their aim and its own owed entries, 723 checks in thirteen runs. The runs over three seconds
+  (`DEAR`, or `TEST_DEAR=a,b`) are a process each, started dearest first once the rest, packed into
+  one process in the run's order, has started; `--jobs 1` runs every run alone, one after another. A
+  run's lines are held in its process and print whole at its turn in the run's order, so the output
+  is one process's but the seconds; its seconds, counts and owed lines come back over the channel;
+  a process that dies fails the run in flight by name (`died, exit 13`), and any after it in that
+  process never ran. The harness's workers take `TEST_CORES`, the cores over the processes.
+  `--shuffle [seed]` plays the runs in an order the seed shuffles, printed first and last to play it
+  again. The line of the run's wall, before the last line, gives the runs, the processes, the cores,
+  the starts, the suites' seconds and the run's. Before it, on 23 October: the gate 52% of the
+  suites' seconds in CI (189.1 of 361.1 s, and 313.9 of 591.0), its areas 11 s (Thornmark) to 77 (the
+  Kilns) on a loaded machine, and about a second to start a process. On this container, loaded by
+  other runs, on 24 October (2675867d): in one process 75 runs took 700.9 s, the gate's parts 379.3,
+  the largest `gate:ashfall` 58.7 after `labels` 97.3 and `row` 86.7, the 56 packed runs 53.2 in all;
+  under `--jobs`, four at a time in 20 processes, 341.7 s, bound by the cores (1,297.5 s of suites
+  and 52.8 of starts over four) more than by its largest run (`labels`, 174.0 s).
   A check someone owes is reported, not failed:
   `owed()` in `tools/tests/lib.ts` prints `owed: <what> (#40's)`, and fails once the check holds,
   so the entry is dropped. The last line counts them by whose, as `ALL OK (3 owed: #40 ×2, #43 ×1)`.
