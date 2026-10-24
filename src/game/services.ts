@@ -4,8 +4,7 @@
 // each returns whether it was done, the gold that changed hands and the line the screen says, as `learn`
 // (game/skills.ts) returns its line. The screens (ui/screens.ts) draw the menus and say the line, and
 // the walkthroughs call the same rules instead of writing them out again. Each changes only what it is
-// handed, so a test serves as the game does, without a Game; it still reads the spell table through
-// `spell`, `spellsFor` and `levelUp` until #974 passes it in.
+// handed, the spell table among it (#974), so a test serves as the game does, without a Game.
 import type { Feature } from './mapdef.ts';
 import type { World } from './world.ts';
 import type { Character, Party } from './party.ts';
@@ -15,6 +14,7 @@ import { CLASSES, canTrainAt, isDown, levelUp, rest, stayNight, templePrice, tra
 import { REFUSED, sellPrice } from './items.ts';
 import { spell, spellsFor } from './spells.ts';
 import { guildFlag } from './keys.ts';
+import type { Tables } from './tables.ts';
 
 type Inn = Extract<Feature, { kind: 'inn' }>;
 type Hall = Extract<Feature, { kind: 'guild' }>;
@@ -118,22 +118,22 @@ export function payFee(party: Pick<Party, 'gold' | 'flags'>, hall: Hall): Served
 export interface Offer { who: number; id: string; price: number }
 
 /** What a hall offers, member by member: each of its classes' spells to its tier (the second unless it says) that the member lacks, at `spellPrice`. */
-export function hallOffers(party: Pick<Party, 'members'>, hall: Hall): Offer[] {
+export function hallOffers(spells: Tables['spells'], party: Pick<Party, 'members'>, hall: Hall): Offer[] {
   const offers: Offer[] = [];
   party.members.forEach((m, i) => {
     const list = CLASSES[m.cls].spells;
     if (!hall.classes.includes(m.cls) || !list) return;
-    for (const sp of spellsFor(list, hall.maxTier ?? 2)) if (!m.spells.includes(sp.id)) offers.push({ who: i, id: sp.id, price: spellPrice(sp.level) });
+    for (const sp of spellsFor(spells, list, hall.maxTier ?? 2)) if (!m.spells.includes(sp.id)) offers.push({ who: i, id: sp.id, price: spellPrice(sp.level) });
   });
   return offers;
 }
 
 /** An offer bought: the gold taken and the spell given. */
-export function learnSpell(party: Pick<Party, 'gold' | 'members'>, o: Offer): Served {
+export function learnSpell(spells: Tables['spells'], party: Pick<Party, 'gold' | 'members'>, o: Offer): Served {
   if (party.gold < o.price) return refused(SHORT);
   const c = party.members[o.who];
   party.gold -= o.price; c.spells.push(o.id);
-  return { done: true, paid: o.price, line: `${c.name} learns ${spell(o.id).name}.` };
+  return { done: true, paid: o.price, line: `${c.name} learns ${spell(spells, o.id).name}.` };
 }
 
 // ---- a trainer ----
@@ -146,13 +146,13 @@ export const mayTrain = (c: Character, maxLevel: number): boolean => canTrainAt(
  * its hit points drawn on `rng`. One the trainer does not take (`mayTrain`) is refused with nothing
  * said, as the screen bars the row.
  */
-export function train(party: Pick<Party, 'gold'>, c: Character, rng: RngInstance, maxLevel: number): Served {
+export function train(spells: Tables['spells'], party: Pick<Party, 'gold'>, c: Character, rng: RngInstance, maxLevel: number): Served {
   if (!mayTrain(c, maxLevel)) return refused('');
   const price = trainPrice(c);
   if (party.gold < price) return refused(SHORT);
   party.gold -= price;
   const before = c.level, xp = c.xp;
   // levelUp grants every level the xp allows; the trainer charges for one, so cap it.
-  c.xp = Math.min(c.xp, xpForLevel(c.level + 2) - 1); levelUp(c, rng); c.xp = xp;
+  c.xp = Math.min(c.xp, xpForLevel(c.level + 2) - 1); levelUp(spells, c, rng); c.xp = xp;
   return { done: true, paid: price, line: `${c.name} trains to level ${c.level}.` + (c.level === before ? '' : ` HP ${c.maxHp}, SP ${c.maxSp}.`) };
 }

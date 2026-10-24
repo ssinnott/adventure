@@ -125,7 +125,7 @@ export const FLAG_OWNERS = flagOwners([...AREAS, { id: 'core', flags: CORE_FLAGS
  */
 export const MAP_DEFS: readonly MapDef<MapId>[] = landExits(once('map', AREAS.flatMap<MapDef<MapId>>((a) => a.maps), (d) => d.id));
 
-/** Read-only: a suite lends a monster through `withDefs` (tools/tests/lib.ts), and nothing else writes it (#945). */
+/** Read-only, and nothing writes it: a suite that lends one plays a table of its own (#945, #974). */
 export const MONSTERS: Readonly<Record<string, MonsterDef>> = byId('monster', AREAS.flatMap((a) => a.monsters));
 
 /** The items no area owns first, then each area's. Read-only, and nothing writes it: a suite or the harness that lends one plays a table of its own (#973). */

@@ -1,7 +1,7 @@
 // Gear with a plus: a +1 weapon hits one better and deals one more, +1 armour or a shield adds one
 // to armour class, and a robe with a plus is still a robe. No table has a plus yet, so the items are
-// made here with the helper and lent to ITEMS only where absent while the suite runs (`withDefs`):
-// every suite shares the one ITEMS.
+// made here with the helper and lent, only where absent, by a table of the suite's own (`tablesWith`):
+// content's ITEMS is never written.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, TABLES } from '../../src/content/index.ts';
 import { P, PLUS_PRICE, core } from '../../src/content/items.ts';

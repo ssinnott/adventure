@@ -32,7 +32,7 @@ export function party(): void {
   const s = p.members[5];
   s.xp = xpForLevel(2);
   const before = s.maxHp;
-  ok(levelUp(s, rng) === 1 && s.level === 2 && s.maxHp > before && s.spells.includes('sleep'), 'levelling to 2 raises hp and teaches tier 2');
+  ok(levelUp(TABLES.spells, s, rng) === 1 && s.level === 2 && s.maxHp > before && s.spells.includes('sleep'), 'levelling to 2 raises hp and teaches tier 2');
   ok(!equip(TABLES.items, p.members[5], 'chain'), 'a sorcerer cannot wear chain');
   ok(armorClass(TABLES.items, p.members[0]) > armorClass(TABLES.items, p.members[5]), 'the knight has the better AC');
   ok(Object.values(SPELLS).every((sp) => sp.sp > 0), 'every spell costs something');
@@ -40,24 +40,24 @@ export function party(): void {
   const tiers = (ls: number[], hybrid = false): string => ls.map((l) => spellTierAt(l, hybrid)).join();
   ok(tiers([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) === '1,2,2,3,3,4,4,5,5,5', `spell tiers by level are ${tiers([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])}`);
   ok(tiers([14, 15, 22, 23, 32]) === '5,6,6,7,7' && tiers([8, 15, 16, 17, 24, 25], true) === '5,5,5,6,6,7', `tiers 6 and 7 come at 15 and 23, a hybrid's at 17 and 25 (${tiers([14, 15, 22, 23, 32])}; ${tiers([8, 15, 16, 17, 24, 25], true)})`);
-  for (const list of ['cleric', 'sorcerer', 'druid'] as const) for (let t = 1; t <= 7; t++) ok(spellsFor(list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
+  for (const list of ['cleric', 'sorcerer', 'druid'] as const) for (let t = 1; t <= 7; t++) ok(spellsFor(TABLES.spells, list, t).some((sp) => sp.level === t), `the ${list} list has a tier ${t} spell`);
   const c = p.members[4];
   c.xp = 1_000_000;
-  const gained = levelUp(c, rng);
+  const gained = levelUp(TABLES.spells, c, rng);
   ok(c.level === MAX_LEVEL && gained === MAX_LEVEL - 1, `a cleric with endless xp levels to exactly ${MAX_LEVEL} (${c.level})`);
   ok(!canTrain(c), 'and cannot train further');
-  ok(spellsFor('cleric', 7).every((sp) => c.spells.includes(sp.id)), 'at the cap every cleric spell is known, including tier 7');
+  ok(spellsFor(TABLES.spells, 'cleric', 7).every((sp) => c.spells.includes(sp.id)), 'at the cap every cleric spell is known, including tier 7');
   ok(c.maxHp >= 31 * 1 + 8 && c.maxSp > 60, `hp and sp grew with the levels (hp ${c.maxHp}, sp ${c.maxSp})`);
   ok(MAX_LEVEL === 32 && trainPrice({ level: 10 }) === 400 && trainPrice({ level: 31 }) === 1240, `the road's cap is ${MAX_LEVEL}, and a level past 10 costs 40 gold a level (${trainPrice({ level: 31 })} for the 32nd)`);
   const k = p.members[0]; k.xp = xpForLevel(8);
-  ok(levelUp(k, rng) === 7 && k.level === 8 && k.spells.length === 0, 'a knight levels to 8 on level-8 xp and learns no spells');
+  ok(levelUp(TABLES.spells, k, rng) === 7 && k.level === 8 && k.spells.length === 0, 'a knight levels to 8 on level-8 xp and learns no spells');
   // Every class can wear its own starting kit, and every caster's list has spells to give.
   for (const cd of Object.values(CLASSES)) {
     const m = createCharacter(TABLES, 'Test', 'human', cd.id, {}, makeRng(9));
     ok(cd.kit.every((id) => !ITEMS[id].classes || ITEMS[id].classes!.includes(cd.id)) && !!m.equipment.weapon && !!m.equipment.armor, `a ${cd.name} may use its whole starting kit`);
     ok(!cd.spells || m.spells.length > 0, `a ${cd.name} starts with ${cd.spells ? 'spells' : 'no spells'}`);
   }
-  const r = p.members[2]; r.xp = xpForLevel(4); levelUp(r, rng);
+  const r = p.members[2]; r.xp = xpForLevel(4); levelUp(TABLES.spells, r, rng);
   ok(r.spells.includes('thorn') && r.spells.includes('barkskin') && !r.spells.includes('spark'), 'the ranger learns the druid list');
   ok(xpForLevel(10) === 13050 && xpForLevel(MAX_LEVEL) === 147250, `level 10 costs ${xpForLevel(10)} xp, and ${MAX_LEVEL} ${xpForLevel(MAX_LEVEL)}`);
 
@@ -66,7 +66,7 @@ export function party(): void {
   const trainers = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'trainer' ? [{ town: d.name, maxLevel: f.maxLevel }] : [])));
   const at = (town: string): number => trainers.find((t) => t.town === town)?.maxLevel ?? NaN;
   const ten = defaultParty(TABLES, makeRng(6)).members[0];
-  ten.xp = xpForLevel(10); levelUp(ten, makeRng(6)); ten.xp = xpForLevel(11);
+  ten.xp = xpForLevel(10); levelUp(TABLES.spells, ten, makeRng(6)); ten.xp = xpForLevel(11);
   const saltmouth = trainerCeiling(CURVE.saltreach);
   ok(ten.level === 10 && saltmouth === 13 && at('Saltmouth') === saltmouth && canTrainAt(ten, saltmouth) && canTrainAt(ten, at('Thornhold')) && at('Helmstow') === 6 && !canTrainAt(ten, at('Helmstow')),
     `a member of 10 with the xp for 11 trains at Saltmouth's ceiling (${saltmouth}) and in Thornhold (${at('Thornhold')}), and not in Helmstow (${at('Helmstow')})`);
@@ -76,9 +76,9 @@ export function party(): void {
   // And at the cap (docs/areas/hearth.md §9, call 4): a band topping at 32 gives a ceiling of 32,
   // not its top plus one, and a member of 31 with the xp for 32 trains to it there, and no further.
   const capped = trainerCeiling(CURVE.hearth), last = defaultParty(TABLES, makeRng(7)).members[0];
-  last.xp = xpForLevel(31); levelUp(last, makeRng(7)); last.xp = xpForLevel(32);
+  last.xp = xpForLevel(31); levelUp(TABLES.spells, last, makeRng(7)); last.xp = xpForLevel(32);
   const ready = last.level === 31 && canTrainAt(last, capped);
-  levelUp(last, makeRng(7), capped); last.xp = xpForLevel(33);
+  levelUp(TABLES.spells, last, makeRng(7), capped); last.xp = xpForLevel(33);
   ok(CURVE.hearth.band[1] === 32 && capped === 32 && capped === MAX_LEVEL && trainerCeiling({ ...CURVE.hearth, band: [28, 31] }) === 32 && ready && last.level === 32 && !canTrainAt(last, capped),
     `a band topping at the cap, 32, teaches to ${capped}, as one topping at 31 does: a member of 31 with the xp for 32 trains to it, and none past it`);
 
@@ -96,7 +96,7 @@ export function party(): void {
   const meek = (level: number): MonsterDef => ({ id: `k${level}`, name: 'Straw Man', plural: 'Straw Men', sprite: 'rat', kind: 'beast', level, hp: 1, ac: 0, attack: -20, dice: 1, sides: 2, bonus: 0, speed: 1, xp: 600, gold: [0, 0], tint: '#888', size: 0.5 });
   const pays = [13, 7].map((level) => {
     const company = defaultParty(TABLES, makeRng(7));
-    for (const m of company.members) { m.xp = xpForLevel(10); levelUp(m, makeRng(7)); }
+    for (const m of company.members) { m.xp = xpForLevel(10); levelUp(TABLES.spells, m, makeRng(7)); }
     const st = won(company, meek(level), 7);
     return { st, got: company.members.map((m) => m.xp - xpForLevel(10)) };
   });
@@ -104,7 +104,7 @@ export function party(): void {
     `a level-13 kill worth 600 pays a level-10 member ×1.5 (${pays[0].got[0]} of an even 100) and a level-7 kill ×0.1 (${pays[1].got[0]})`);
   ok(pays[0].st.log.at(-1) === 'Victory! 900 experience, 0 gold.' && pays[1].st.log.at(-1) === 'Victory! 60 experience, 0 gold.', `the log pays the kill by level (${pays[0].st.log.at(-1)} / ${pays[1].st.log.at(-1)})`);
   const mixed = defaultParty(TABLES, makeRng(8));
-  for (const [i, m] of mixed.members.entries()) { m.xp = xpForLevel(i < 3 ? 10 : 12); levelUp(m, makeRng(8)); }
+  for (const [i, m] of mixed.members.entries()) { m.xp = xpForLevel(i < 3 ? 10 : 12); levelUp(TABLES.spells, m, makeRng(8)); }
   const st = won(mixed, meek(11), 8), got = mixed.members.map((m, i) => m.xp - xpForLevel(i < 3 ? 10 : 12));
   ok(got.join() === '115,115,115,70,70,70' && st.log.at(-1) === victoryLine(st.loot!) && st.log.at(-1) === 'Victory! 70 to 115 experience by level, 0 gold.',
     `members of 10 and 12 take ${got.join(', ')} of a level-11 kill, and the log says so (${st.log.at(-1)})`);

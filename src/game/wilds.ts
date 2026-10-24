@@ -186,7 +186,7 @@ export interface Explored { lines: string[]; moved: boolean }
  */
 export function castExplore(world: Pick<World, 'tables' | 'state' | 'revealAll' | 'townPortal' | 'bear' | 'setMark' | 'toMark'>, party: Party, casterIndex: number, spellId: string, back = false): Explored {
   const c = party.members[casterIndex];
-  const sp = spell(spellId);
+  const sp = spell(world.tables.spells, spellId);
   const said = (line: string, moved = false): Explored => ({ lines: [line], moved });
   if (c.sp < sp.sp) return said(`${c.name} lacks the spell points.`);
   c.sp -= sp.sp;

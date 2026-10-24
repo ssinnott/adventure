@@ -21,7 +21,7 @@ import { TABLES } from '../../src/content/index.ts';
 /** A member of a class trained to a level, its prestiges taken as far as the level allows, or `took`. */
 function member(cls: ClassId, level: number, took = PRESTIGE_LEVELS.filter((l) => level >= l).length, seed = 19): Character {
   const rng = makeRng(seed), c = createCharacter(TABLES, cls, 'human', cls, { might: 14, endurance: 14, personality: 14, intellect: 14 }, rng);
-  c.xp = xpForLevel(level); levelUp(c, rng);
+  c.xp = xpForLevel(level); levelUp(TABLES.spells, c, rng);
   for (let n = 0; n < took; n++) takePrestige(c);
   c.hp = c.maxHp; c.sp = c.maxSp;
   return c;
@@ -48,7 +48,7 @@ export function prestige(): void {
   takePrestige(cleric); takePrestige(cleric);
   ok(cleric.maxHp - before.hp === 9 + 1 && cleric.maxSp - before.sp === 2 * (9 + 1), `a cleric at 19 with both gains 10 hit points and 20 spell points (${cleric.maxHp - before.hp}, ${cleric.maxSp - before.sp})`);
   const grown = member('cleric', 19), sp0 = grown.maxSp, hp0 = grown.maxHp, rng = makeRng(5);
-  grown.xp = xpForLevel(20); levelUp(grown, rng);
+  grown.xp = xpForLevel(20); levelUp(TABLES.spells, grown, rng);
   ok(grown.maxSp - sp0 >= 1 + 4 && grown.maxHp - hp0 >= 1 + 2, `and each level after adds what both add, 2 hit points and 4 spell points over the roll (${grown.maxHp - hp0}, ${grown.maxSp - sp0})`);
 
   // The trainer: its class only, in order, from its level, for its price, the third for its quest.
@@ -57,14 +57,14 @@ export function prestige(): void {
   const bram = party.members[0];
   party.gold = 5000;
   ok(offers(errantry, party, world.state).length === 1 && barOf(errantry, bram, party, world.state) === 'from level 11', `a knight at 1 is told the level (${barOf(errantry, bram, party, world.state)})`);
-  bram.xp = xpForLevel(11); levelUp(bram, rng2);
+  bram.xp = xpForLevel(11); levelUp(TABLES.spells, bram, rng2);
   party.gold = 999;
   ok(barOf(errantry, bram, party, world.state) === 'not enough gold' && !teach(errantry, party, world.state, 0).taught && party.gold === 999, 'at 11 and short of the price, nothing changes');
   party.gold = 5000;
   const taught = teach(errantry, party, world.state, 0);
   ok(taught.taught && party.gold === 4000 && prestigeOf(bram) === 1 && className(bram) === 'Knight-Errant' && taught.line === 'Bram is a Knight-Errant now.', `and with it, Bram takes the first for 1000 ("${taught.line}")`);
   ok(barOf(errantry, bram, party, world.state) === 'Knight-Errant already' && !teach({ cls: 'knight', prestige: 1 }, party, world.state, 1).taught, 'taken once, it is not taught again, and never to a paladin');
-  bram.xp = xpForLevel(27); levelUp(bram, rng2);
+  bram.xp = xpForLevel(27); levelUp(TABLES.spells, bram, rng2);
   ok(barOf(paramount, bram, party, world.state) === 'Knight Banneret first', 'the third waits on the second');
   takePrestige(bram);
   ok(barOf(paramount, bram, party, world.state) === 'the quest first', 'and on its quest');
@@ -77,7 +77,7 @@ export function prestige(): void {
     // Magus once his quest's deed is done, and for no gold.
     const magus = TRAINERS().find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3)?.teaches;
     const r = makeRng(807), p = defaultParty(TABLES, r), w = new World(TABLES, buildMaps(), p, r), cassian = p.members[5];
-    cassian.xp = xpForLevel(27); levelUp(cassian, r); takePrestige(cassian); takePrestige(cassian);
+    cassian.xp = xpForLevel(27); levelUp(TABLES.spells, cassian, r); takePrestige(cassian); takePrestige(cassian);
     const purse = p.gold, waits = !!magus && barOf(magus, cassian, p, w.state) === 'the quest first' && !teach(magus, p, w.state, 5).taught;
     for (const c of [magus?.done ?? []].flat()) for (const f of [c.flag ?? []].flat()) p.flags[f] = 1;
     const made = magus ? teach(magus, p, w.state, 5) : { taught: false, line: '' };
@@ -88,7 +88,7 @@ export function prestige(): void {
   // A save with prestiges taken keeps them: the count, the hit points they added and a spent rite.
   {
     const r = makeRng(29), p = defaultParty(TABLES, r), w = new World(TABLES, buildMaps(), p, r), maren = p.members[4];
-    maren.xp = xpForLevel(27); levelUp(maren, r);
+    maren.xp = xpForLevel(27); levelUp(TABLES.spells, maren, r);
     for (let n = 0; n < 3; n++) takePrestige(maren);
     maren.riteSpent = true;
     const back = deserialize(serialize(w.state, p, 0)).party.members[4];

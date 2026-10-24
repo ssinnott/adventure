@@ -1,8 +1,8 @@
 # Issues: how the work is filed
 
 How an issue is written, labelled and linked, so that whoever picks one up, a person or a session,
-can tell at a glance what it is, what it waits on and when it is done. EXPANSION.md §9 sets the
-order of the work; this is how that order is kept on GitHub.
+can tell at a glance what it is, what it waits on and when it is done. The epics hold the order of
+the work (§3); this is how that order is kept on GitHub.
 
 The templates in `.github/ISSUE_TEMPLATE/` hold the sections below. An issue filed through the API,
 as the Claude sessions file them, gets no template, so it follows this page by hand.
@@ -61,7 +61,7 @@ nothing still open under Blocked by, is ready to pick up.
 
 ## 3. Epics
 
-An epic is an issue whose sub-issues are the work: one for each phase of EXPANSION §9 (#25, #26,
+An epic is an issue whose sub-issues are the work: one for each phase, in order (#25, #26,
 #149, #431, #441, #742), one for a body of work that runs across phases, as levels 11–32 do (#18), and a last one
 for the finishing touches that nothing else waits on (#54). GitHub shows its progress from its sub-issues.
 
