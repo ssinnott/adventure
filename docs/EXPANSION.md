@@ -1082,9 +1082,9 @@ Decided by the builder for #899, each the owner's to overturn:
    row is added.
 
 The tools that open the game in Chromium (the smoke, the sheet, the gallery, the interiors, the world
-map and `shot.ts`) start it in one place, `tools/kit/browser.ts` (#986): Playwright imported by name,
-the pinned dependency it is (§8.3), the launch and its fallback once, and the game opened on a page,
-its errors gathered and, for the smoke and the sheet, its `Math.random` pinned. The sheet, the
+map and `shot.ts`) start it in one place, `tools/kit/browser.ts` (#986), which imports Playwright by
+name as the pinned dependency it is (§8.3), launches it once with its fallback and opens the game on a
+page, its errors gathered and, for the smoke and the sheet, its `Math.random` pinned. The sheet, the
 gallery, the interiors and the world map read their command lines strictly by `tools/kit/args.ts`,
 which `tools/tests/args.ts` holds. `types/globals.d.ts` types the page's game, so the tools read it
 as the `Game` it is.
@@ -1101,7 +1101,7 @@ Decided by the builder for #986, each the owner's to overturn:
    own (`src/` has none outside `src/lib/`), so their runs print what they did.
 3. **The four tools' tables stand in `tools/kit/args.ts` beside the reading,** not in the tools: a
    suite takes no tool and a tool runs as it loads, so the suite reads them there. Each tool keeps
-   its defaults, its output path among them, and the meaning of each flag; the sheet's usage line and
+   its defaults (its output path among them) and the meaning of each flag; the sheet's usage line and
    refusals are word for word.
 4. **The output path is the one word that is neither a flag nor a flag's value, wherever it
    stands.** The gallery and the interiors took the first word that was not a flag, so a line with no
@@ -1113,8 +1113,8 @@ Decided by the builder for #986, each the owner's to overturn:
    close over the tool's, so each binds it (`const load: Load = (p) => import(p);`) and each call names
    the module's type, its path a literal as before.
 6. **The smoke names what it reaches into, all of it erased before the page sees it:** `Shown`, the
-   fields it reads off a screen that `Screen` does not name; casts to write what the game keeps
-   read-only (a map's features and landmarks); and the world's private cached sky by its name
+   fields it reads off a screen that `Screen` does not name; casts that write what the game keeps
+   read-only (a map's features and landmarks); the world's private cached sky by its name
    (`w['cached']`), set to `null` where it was `undefined`, as a flag set to `true` is now `1`: the
    game tests both for truth. Its five lines left with `any` (the lighthouse's and the tents' records
    and an early return's `wold`) are H9's.
