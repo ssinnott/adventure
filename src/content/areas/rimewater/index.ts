@@ -28,12 +28,14 @@ import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
 import { QUESTS } from './quests.ts';
 
+export const MAPS = [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9, COLDMERE_K10, SLEEPERS_BAY, SLEEPERS_BAY2, COLDMERE_J9, COLDMERE_K11, LONGMERE_L10, LONGMERE_L11, LONGMERE_M10, LONGMERE_M11, LONGMERE_N9, COLDMERE_K12, LONGMERE_L12, CREAG_FIONN, SPITTAL, SPITTAL2];
+
 export const AREA = {
   id: 'rimewater' as const,
   // The bounds (#832): K12 and L12, the country off the road, then Creag Fionn, the enclave (#845) in
   // L12's rim, at 22-23, and the Spittal, the Wakerobe's lair (#847) under the pass behind K12's door, at
   // the cap's 30-32.
-  maps: [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9, COLDMERE_K10, SLEEPERS_BAY, SLEEPERS_BAY2, COLDMERE_J9, COLDMERE_K11, LONGMERE_L10, LONGMERE_L11, LONGMERE_M10, LONGMERE_M11, LONGMERE_N9, COLDMERE_K12, LONGMERE_L12, CREAG_FIONN, SPITTAL, SPITTAL2],
+  maps: MAPS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

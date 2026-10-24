@@ -18,13 +18,15 @@ import { CHAPTER } from './chapter.ts';
 import { QUESTS } from './quests.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
-export const AREA = {
-  id: 'whitespine' as const,
-  maps: [MONKSVALE_J11, MONASTERY, MONASTERY2, HIGHSPINE_I11, HIGHSPINE_I10, SHEERPOINT_I9, SHEERPOINT_I8,
+export const MAPS = [MONKSVALE_J11, MONASTERY, MONASTERY2, HIGHSPINE_I11, HIGHSPINE_I10, SHEERPOINT_I9, SHEERPOINT_I8,
     // The country behind the road (#508): the giants' ground, the Spine's south and the vale's end.
     MONKSVALE_J10, HIGHSPINE_I12, MONKSVALE_J12,
     // The bounds (#832): the pines over the water by Sheer Point.
-    SHEERPOINT_J8],
+    SHEERPOINT_J8];
+
+export const AREA = {
+  id: 'whitespine' as const,
+  maps: MAPS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,
