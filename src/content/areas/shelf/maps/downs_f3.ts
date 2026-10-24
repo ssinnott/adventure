@@ -55,9 +55,18 @@ export const DOWNS_F3: MapDef = {
     { kind: 'well', x: 6, y: 10, text: 'The village well. A rope of plaited net-cord.' },
     { kind: 'camp', x: 7, y: 13, name: 'The net loft', text: 'The net loft, warm and smelling of tar.' },
     { kind: 'event', x: 8, y: 14, id: 'f3_boats', once: true, text: 'Boats drawn up on the shingle. On every bow a loop inside a loop, fresh paint on old.' },
-    { kind: 'npc', x: 9, y: 13, name: 'An old man mending nets', lines: [
+    // Met once, he speaks at every meeting after it, after his song, of his gran's holed stone (the
+    // Hagstone's rumour, #846): words only, and it marks nothing on the world map.
+    { kind: 'npc', x: 9, y: 13, name: 'An old man mending nets', flag: 'netmender_met', lines: [
       'An old man mends a net across his knees, and sings to it under his breath.',
       '"Ten for the Hearth and one for the Queen, and the lamp on the rocks for the boats unseen. Where the lamp goes out, the cave goes in, and nobody asks where the cargo\'s been."',
+    ], says: [
+      { after: { flag: 'netmender_met' }, lines: [
+        'An old man mends a net across his knees, and sings to it under his breath.',
+        '"Ten for the Hearth and one for the Queen, and the lamp on the rocks for the boats unseen. Where the lamp goes out, the cave goes in, and nobody asks where the cargo\'s been."',
+        '"My gran had a stone with a hole worn through it. Nothing sat on her chest of a night, she said, and nothing held her."',
+        '"She was buried without it, and nobody would say where it went."',
+      ] },
     ] },
     { kind: 'event', x: 11, y: 7, id: 'f3_rise', once: true, text: 'The ashes of a camp, cold, on the rise. Below it the whole bay, and Gullwick\'s boats.' },
     { kind: 'event', x: 0, y: 15, id: 'f3_soot', once: true, text: 'Where the beach ends, a lamp\'s worth of soot on the rock, and the sand trodden flat before it.' },

@@ -3,12 +3,12 @@
 // it and under the cliff a strand of grey sand, the sea on every side but the land's. A post of
 // driftwood hung with holed stones on the last rise, a shrine; a cairn of flints at the strand's end;
 // at the north-east shore a stack of rock with crab shells heaped at its foot, and behind its face a
-// crabber's store. The cliff's face at 3,6 is left bare for the lair's door, the Hag's sea cave
-// (docs/areas/shelf.md §12.3). In from E3 (#67) over its north edge and from D4 (#72) over its west,
-// square for square. No group. Laid whole in the Downs, cut from the atlas with the rocks drawn in;
-// docs/areas/shelf.md §12.2 is its brief.
+// crabber's store. At 3,6 in the cliff's face the mouth of Hag Hole, the artifact's lair, walked into
+// from the strand at 3,7 (#845, #846; docs/areas/shelf.md §12.3). In from E3 (#67) over its north
+// edge and from D4 (#72) over its west, square for square. No group. Laid whole in the Downs, cut from
+// the atlas with the rocks drawn in; docs/areas/shelf.md §12.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const DOWNS_E4: MapDef = {
   id: 'downs_e4',
@@ -24,7 +24,7 @@ export const DOWNS_E4: MapDef = {
     ',,,,,,,,~~rrrWWWWWWWWWWWWWWWWWWW',
     ',,,,,,,,~~WWWWWWWWWWWWWWWWWWWWWW',
     ',rrrr,,,~~WWWWWWWWWWWWWWWWWWWWWW',
-    ',rrrr,~~~WWWWWWWWWWWWWWWWWWWWWWW',
+    ',rr"r,~~~WWWWWWWWWWWWWWWWWWWWWWW',
     '______~~WWWWWWWWWWWWWWWWWWWWWWWW',
     '___~~~~WWWWWWWWWWWWWWWWWWWWWWWWW',
     '__~~~~WWWWWWWWWWWWWWWWWWWWWWWWWW',
@@ -65,4 +65,8 @@ export const DOWNS_E4: MapDef = {
     { kind: 'chest', x: 11, y: 2, id: 'e4_crock', gold: 80, items: ['elixir'] },
   ],
   secrets: [{ x: 10, y: 2, hint: 'e4_shells' }],
+  // The mouth in the cliff's face, the way into Hag Hole, the artifact's lair (#845, #846).
+  exits: [
+    { x: 3, y: 6, to: 'hag_hole', tx: 7, ty: 14, tf: NORTH, label: 'You stoop in at a mouth in the cliff\'s face. The sand inside is wet, and the dark goes back.' },
+  ],
 };
