@@ -1,5 +1,5 @@
 // Saltreach's part of the world map: its three zones, the plates of its town and temples, and its
-// sites. docs/areas/saltreach.md is its brief.
+// sites. docs/areas/saltreach/plan.md holds its brief.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 import { laid } from '../../../game/atlas.ts';
 import { PLAN } from '../../atlas.ts';
