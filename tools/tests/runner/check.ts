@@ -80,8 +80,13 @@ const counts: Record<string, string> = { holds: '0 ok, 1 failed', later: '0 ok, 
 const names = Object.keys(counts);
 const miscounted = names.filter((n) => !new RegExp(`^${n} +\\d+\\.\\d s {2}${counts[n]}$`, 'm').test(all.out));
 ok(!miscounted.length, `every suite ends with a line of its seconds and its own counts${miscounted.length ? ` (not ${miscounted.join(' ')})` : ''}`);
-const table = all.out.slice(all.out.indexOf("Each suite's seconds")).split('\n').slice(1).filter((l) => l.startsWith('  ')).map((l) => l.trim().split(' ')[0]);
-ok(table[0] === 'slow' && [...table].sort().join(' ') === names.join(' '), `the summary's table lists every suite, the slowest first (${table.join(' ')})`);
+// The table is held to its own printed seconds, never to which suite a loaded machine timed slowest: `slow`
+// leads by its 300 ms sleep alone, which a stall of the same length in another suite outruns. Its seconds
+// hold its sleep however loaded the machine, as an awaited suite is timed whole.
+const rows = all.out.slice(all.out.indexOf("Each suite's seconds")).split('\n').slice(1).filter((l) => l.startsWith('  ')).map((l) => l.trim().split(/ +/));
+const table = rows.map((r) => r[0]), secs = rows.map((r) => Number(r[1]));
+ok(secs.every((s, i) => i === 0 || s <= secs[i - 1]) && [...table].sort().join(' ') === names.join(' ') && secs[table.indexOf('slow')] >= 0.25,
+  `the summary's table lists every suite, the slowest first, and times an awaited suite whole (${rows.map((r) => `${r[0]} ${r[1]}`).join(', ')})`);
 // A run that dies inside a suite names it last, as the suite's name prints when it starts: here an
 // await that never settles, which ends the run with Node's exit 13; a crash and a timeout alike.
 const stuck = await started.stuck;

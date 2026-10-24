@@ -1,8 +1,8 @@
 // The art held to what the owner once found by hand. Every monster def has a drawing of its own
 // (EXPANSION §5.6), and the walls are dressed with restraint: the share of wall faces that carry
 // dressing stays near where #9 put it, and each kind of dressing has its rate. The silhouettes and
-// the cracks need a canvas, so they are the smoke test's (tools/smoke.ts). Every bow bends away
-// from the man who holds it (#57).
+// the cracks need a canvas, so they are the smoke test's (tools/smoke/art.ts and cracks.ts). Every
+// bow bends away from the man who holds it (#57).
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { wallDressing, isSolidWall, isHouse, isTent, tentOf, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
@@ -171,7 +171,7 @@ export async function art(): Promise<void> {
   // A felt palette (#736): outside a town a building's square and the door beside it are a tent, and
   // tent squares that fill a rectangle are one tent, as the trader's at Akordu; an L of them is three
   // tents; a wall is no tent, nor is a house in a town. Felt carries no dressing. The tents' drawing
-  // is the smoke test's (tools/smoke.ts).
+  // is the smoke test's (the landmarks part, tools/smoke/scenes.ts).
   const camp = (kind: 'outdoor' | 'town', wallStyle: 'stone' | 'tent', rows: readonly string[]): GameMap => new GameMap({ id: 'fx_camp', name: 'Camp', kind, start: { x: 0, y: 0, facing: 0 }, rows, palette: { wallStyle } });
   const ring = camp('outdoor', 'tent', [',,,,,,,', ',BB,B,,', ',DB,BB,', ',,,,,#,', ',,,,,,,']);
   const one = tentOf(ring, 1, 2), ell = [tentOf(ring, 4, 1), tentOf(ring, 5, 2)];

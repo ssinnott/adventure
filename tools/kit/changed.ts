@@ -29,11 +29,13 @@ export function changedFiles(base: string): string[] {
  * common.ts it re-exports; so do the paint kit's brush and the ink its outline takes (#983); so does
  * game/ink.ts, how a cell is drawn (`drawnCell`), which the painter and the sweep's plan both read;
  * and tools/kit/browser.ts, the Chromium and the page the smoke's sweep paints in (#986). The
- * narrowing counts every map too: tools/changed.ts, and this file, its library since #984.
+ * narrowing counts every map too: tools/changed.ts, and this file, its library since #984. So do
+ * the smoke's runner and every file of its parts in tools/smoke/, the sweep's cracks.ts and the
+ * frame's boot.ts among them (#1006).
  */
 const EVERY_MAP = [
   /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/paint\/(brush|ink)\.ts$/, /^src\/ui\/monsters\/(kit\/)?common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|ink)\.ts$/,
-  /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed|sweep|kit\/(sweep|browser|changed))\.ts$/,
+  /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|smoke\/[^/]+|changed|sweep|kit\/(sweep|browser|changed))\.ts$/,
 ];
 const MAP_FILE = /^src\/content\/areas\/[^/]+\/maps\/[^/]+\.ts$/;
 
