@@ -23,7 +23,7 @@
 // no look is painted as what it is, nothing: flat pink, unlit and untextured, standing up past the
 // top of the view so that it hides the sky behind it as well as the ground.
 import type { World } from '../game/world.ts';
-import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight, hillOver, hillHiding } from '../game/world.ts';
+import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight, hillOver } from '../game/world.ts';
 import { drawnCell } from '../game/ink.ts';
 import type { GameMap, Cell, Terrain, MapPalette, Landmark, Feature } from '../game/map.ts';
 import { FACING_DX, FACING_DY } from '../game/types.ts';
@@ -2166,14 +2166,4 @@ function addPoly(ctx: CanvasPath, pts: [number, number][]): void {
   for (let i = 0; i < pts.length; i++) { const p = pts[i], q = pts[(i + 1) % pts.length]; area += p[0] * q[1] - q[0] * p[1]; }
   const o = area < 0 ? [...pts].reverse() : pts;
   ctx.moveTo(o[0][0], o[0][1]); for (let i = 1; i < o.length; i++) ctx.lineTo(o[i][0], o[i][1]); ctx.closePath();
-}
-
-/** Which cells the viewport can show, for the automap's field-of-view highlight: none a hill hides (#53). */
-export function viewCells(map: GameMap, px: number, py: number, f: Facing, sight: number): { x: number; y: number }[] {
-  const out: { x: number; y: number }[] = [];
-  for (let d = 0; d <= Math.min(DEPTH, sight); d++) for (let l = -LATERAL; l <= LATERAL; l++) {
-    const c = cellAt(px, py, f, d, l);
-    if (map.inBounds(c.x, c.y) && !hillHiding(map, px, py, f, c.x, c.y)) out.push(c);
-  }
-  return out;
 }

@@ -1,7 +1,14 @@
-// The automap's ink: what a cell is drawn as. The view draws its walls by it, the automap inks its
-// squares by it, and the pilot's fair view (game/pilot/known.ts) reads the map through it, so all
-// three show one map.
-import type { GameMap, Cell, Solid } from './map.ts';
+// The automap's ink: what a cell is drawn as, and what the map marks (a feature there now, the groups
+// in view or near and those a sense finds). The view draws its walls by it, the automap inks and
+// marks its squares by it and the pilot's fair view (game/pilot/known.ts) reads the map through it,
+// so all three show one map.
+import type { GameMap, Cell, Solid, Feature } from './map.ts';
+import type { Facing } from './types.ts';
+import type { World, LiveGroup } from './world.ts';
+import { AWARE, VIEW_DEPTH, VIEW_LATERAL, viewCell, hillHiding } from './world.ts';
+import { hasSkill, SPIRIT_REACH } from './skills.ts';
+import { monster } from './monsters.ts';
+import { isDown } from './party.ts';
 
 /** The billboards a door outdoors may be set among, in the order a tie goes. */
 const GUISES = ['mountain', 'rock', 'tree', 'glass'] as const;
@@ -29,4 +36,36 @@ export function drawnCell(map: GameMap, x: number, y: number): Cell {
     if (of.length > most) { most = of.length; best = of[0]; }
   }
   return best;
+}
+
+/** Which cells the viewport can show, for the automap's field-of-view highlight: none a hill hides (#53). */
+export function viewCells(map: GameMap, px: number, py: number, f: Facing, sight: number): { x: number; y: number }[] {
+  const out: { x: number; y: number }[] = [];
+  for (let d = 0; d <= Math.min(VIEW_DEPTH, sight); d++) for (let l = -VIEW_LATERAL; l <= VIEW_LATERAL; l++) {
+    const c = viewCell(px, py, f, d, l);
+    if (map.inBounds(c.x, c.y) && !hillHiding(map, px, py, f, c.x, c.y)) out.push(c);
+  }
+  return out;
+}
+
+/** Whether the automap marks a feature: not an event, and not a person who is not there now. A feature of another map than the party's names it. */
+export const onAutomap = (world: Pick<World, 'present'>, f: Feature, on?: string): boolean => f.kind !== 'event' && world.present(f, on);
+
+/**
+ * The live groups the automap marks: in view, or on a seen square within two steps of the party; none
+ * a hill hides (#53). A member standing who has a sense (game/skills.ts; #856) marks more, through
+ * walls, hills and dark: with Spirit Sense, a group all of the dead within `SPIRIT_REACH` steps; with
+ * Danger Sense, a roaming group aware of the company, within its `aware` (as `moveMonsters` reads it).
+ */
+export function markedGroups(world: World): LiveGroup[] {
+  const m = world.map, { x, y, facing } = world.state;
+  const inView = new Set(viewCells(m, x, y, facing, world.sight).map((c) => c.y * m.width + c.x));
+  const up = world.party.members.filter((c) => !isDown(c));
+  const spirit = up.some((c) => hasSkill(c, 'spirit_sense')), danger = up.some((c) => hasSkill(c, 'danger_sense'));
+  return world.liveGroups().filter(({ def, state: s }) => {
+    const d = Math.abs(s.x - x) + Math.abs(s.y - y);
+    return inView.has(s.y * m.width + s.x) || (world.explored(s.x, s.y) && d <= 2 && !world.hidden(s.x, s.y))
+      || (spirit && d <= SPIRIT_REACH && def.monsters.every((id) => monster(id).kind === 'dead'))
+      || (danger && def.roams !== false && d <= (def.aware ?? AWARE));
+  });
 }

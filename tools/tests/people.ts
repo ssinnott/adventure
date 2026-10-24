@@ -18,7 +18,8 @@ import { CONTENT, collect } from '../shipped.ts';
 import { condFaults } from './quests.ts';
 import { wrap, columnLabelWidth } from '../../src/ui/draw.ts';
 import { measureText as measure } from '../../src/lib/engine/text.ts';
-import { SAY_W, SAY_LINES, ASK_LINES, ASK_SIDE_LINES, SIDE_W, onAutomap } from '../../src/ui/frame.ts';
+import { SAY_W, SAY_LINES, ASK_LINES, ASK_SIDE_LINES, SIDE_W } from '../../src/ui/frame.ts';
+import { onAutomap } from '../../src/game/ink.ts';
 import { ok, withDefs } from './lib.ts';
 
 /** The three hand-ins of Act I, by the item each takes. */
