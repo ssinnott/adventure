@@ -295,7 +295,7 @@ function strategist(): void {
 
   // The navigator goes round a business's door on the way, and ends on one: a visit puts the party back before it.
   const dg = piloted(), dk = knownOf(dg);
-  const shopDoor: MapDef = { id: 'fx_door', name: 'Door', kind: 'town', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#.#.#', '#...#', '#####'],
+  const shopDoor: MapDef = { id: 'fx_door', name: 'Door', kind: 'town', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#.#.#', '#...#', '#####'],
     features: [{ kind: 'shop', x: 2, y: 1, name: 'A Stall', interior: 'harrow_provisioner', stock: [] }] };
   fixture(dg, shopDoor, [1, 1, EAST]);
   const round = routeOn(dk, 'fx_door', 1, 1, EAST, 3, 1), into = routeOn(dk, 'fx_door', 1, 1, EAST, 2, 1);
@@ -525,7 +525,7 @@ function helm(): void {
   lg.saveGame();
   lg.pilot.hear('A line from before the load.');
   const loaded = lg.loadGame();
-  ok(loaded && lg.pilot.heard.join(' / ') === 'Loaded.', `a load empties the corpus: the company loaded has heard "${lg.pilot.heard.join(' / ')}"`);
+  ok(loaded === true && lg.pilot.heard.join(' / ') === 'Loaded.', `a load empties the corpus: the company loaded has heard "${lg.pilot.heard.join(' / ')}"`);
 }
 
 /** The tempo: an action every 15th tick at 1×, every 8th at 2× and every 4th at 4×; instant, every tick. */
@@ -783,7 +783,7 @@ function navigator(): void {
     `never over a secret door, where passable as written would step through: the long way round (${round.length} keys), none with no way round, and through it once a search has found it (${through?.join(' ')})`);
 
   // A group the automap marks is gone round; one it does not is not known (a light, so the view goes four deep).
-  const yard: MapDef = { id: 'fx_yard', name: 'Yard', kind: 'dungeon', start: { x: 1, y: 1, facing: WEST }, rows: ['#######', '#.....#', '#.###.#', '#.....#', '#######'],
+  const yard: MapDef = { id: 'fx_yard', name: 'Yard', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: WEST }, rows: ['#######', '#.....#', '#.###.#', '#.....#', '#######'],
     encounters: [{ id: 'fx_eels', x: 4, y: 1, monsters: ['fen_eel'], roams: false }] };
   g.world.state.light = 50;
   fixture(g, yard, [1, 1, WEST]);
@@ -1335,7 +1335,7 @@ function quartermaster(): void {
 
 /** A fixture town of one row of floor, `n` squares long, with `features` on it; the party at its west end, facing east. */
 const row = (id: string, n: number, features: Feature[]): MapDef =>
-  ({ id, name: id, kind: 'town', start: { x: 1, y: 1, facing: EAST }, rows: ['#'.repeat(n + 2), `#${'.'.repeat(n)}#`, '#'.repeat(n + 2)], features });
+  ({ id, name: id, kind: 'town', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['#'.repeat(n + 2), `#${'.'.repeat(n)}#`, '#'.repeat(n + 2)], features });
 
 /**
  * Talk (#721): whom it meets (the near, and on the aim's map the far; again once the company gains an
@@ -1557,7 +1557,7 @@ function survives(): void {
   // A town's own door before the land's gate: the town walked out, its gate to the keep is walked to, though the land's is nearer.
   const kg = piloted(), kp = kg.pilot!;
   kg.maps.fx_keep = new GameMap({ id: 'fx_keep', name: 'Keep', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'] });
-  fixture(kg, { id: 'fx_town', name: 'Town', kind: 'town', start: { x: 2, y: 1, facing: WEST }, rows: ['#########', '#.......#', '#########'],
+  fixture(kg, { id: 'fx_town', name: 'Town', kind: 'town', region: 'shelf', start: { x: 2, y: 1, facing: WEST }, rows: ['#########', '#.......#', '#########'],
     exits: [{ x: 1, y: 1, to: OUTDOORS, tx: 216, ty: 34 }, { x: 7, y: 1, to: 'fx_keep', tx: 1, ty: 1 }] }, [2, 1, WEST]);
   kp.brains = [aims];
   kp.toggle(kg);
@@ -1638,7 +1638,7 @@ function survives(): void {
 
   // A steady walk costs no whole-map search a tick: bound for an inn down a long lane, seen, the quartermaster's want held.
   const wg = piloted(), wp2 = wg.pilot!;
-  fixture(wg, { id: 'fx_long', name: 'Long', kind: 'town', start: { x: 1, y: 1, facing: EAST }, rows: ['#'.repeat(122), `#${'.'.repeat(120)}#`, '#'.repeat(122)],
+  fixture(wg, { id: 'fx_long', name: 'Long', kind: 'town', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['#'.repeat(122), `#${'.'.repeat(120)}#`, '#'.repeat(122)],
     features: [{ kind: 'inn', x: 120, y: 1, name: 'A Far Inn', price: 12, interior: 'hearthlight_inn' }] }, [1, 1, EAST]);
   wg.party.members[0].hp = 1;
   wg.party.food = 0;
@@ -1665,7 +1665,7 @@ function survives(): void {
 
   // A group in the only way is gone through, the fight the bot's; with a way round, it is gone round.
   const rg = piloted(), held = (): Known => ({ ...knownOf(rg), groups: () => [{ x: 3, y: 1 }] });
-  fixture(rg, { id: 'fx_lane', name: 'Lane', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '######'] }, [1, 1, EAST]);
+  fixture(rg, { id: 'fx_lane', name: 'Lane', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '######'] }, [1, 1, EAST]);
   const through = routeOn(held(), 'fx_lane', 1, 1, EAST, 4, 1);
   fixture(rg, { id: 'fx_ring', name: 'Ring', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '#.##.#', '#....#', '######'] }, [1, 1, EAST]);
   const round = routeOn(held(), 'fx_ring', 1, 1, EAST, 4, 1);

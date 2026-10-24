@@ -536,7 +536,7 @@ export function outdoors(): void {
   // laid on a strip of world of their own with the atlas's own rows for the two zones.
   {
     const row = (id: string): AtlasZone => ATLAS.zones.find((z) => z.id === id)!;
-    const box = (id: string, rows: string[], band: [number, number], exits: MapDef['exits'] = []): MapDef => ({ id, name: id, kind: 'outdoor', density: 'country', band, start: { x: 2, y: 1, facing: EAST }, rows, exits });
+    const box = (id: string, rows: string[], band: [number, number], exits: MapDef['exits'] = []): MapDef => ({ id, name: id, kind: 'outdoor', region: 'shelf', density: 'country', band, start: { x: 2, y: 1, facing: EAST }, rows, exits });
     // With `jump`, steps down from the road's 2,1 to the fen's 2,1 and back up from its 3,1: ways that
     // jump from one zone map to another, as N8's notch does onto M9.
     const strip = (crossing?: AtlasZone['crossing'], label?: string, jump = false): Record<string, GameMap> => {

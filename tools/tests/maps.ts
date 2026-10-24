@@ -398,7 +398,8 @@ export function maps(): void {
   // are drawn with the sprite kinds it lists, and its businesses paint the rooms it lists.
   const same = (a: readonly string[], b: readonly string[]): boolean => a.every((x) => b.includes(x)) && b.every((x) => a.includes(x));
   for (const area of AREAS) {
-    ok(area.maps.every((d) => (d.region ?? 'shelf') === area.id), `${area.id}: its ${area.maps.length} maps share its weather`);
+    const unlike = area.maps.filter((d) => d.region !== area.id).map((d) => d.id);
+    ok(unlike.length === 0, `${area.id}: its ${area.maps.length} maps share its weather${unlike.length ? ` (not ${unlike.join(', ')})` : ''}`);
     ok(same(area.monsters.map((m) => m.sprite), area.sprites), `${area.id}: its monsters are drawn with the ${area.sprites.length} sprite kinds it lists`);
     const rooms = area.maps.flatMap((d) => (d.features ?? []).flatMap((f) => 'interior' in f && f.interior ? [f.interior] : []));
     const lists = area.interiors.filter((i) => !Object.hasOwn(unplaced.all, i));

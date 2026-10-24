@@ -84,7 +84,7 @@ export function monsters(): void {
     ok(b && !there(day), 'and one that walks by day, the other way round');
   }
   {
-    const { w } = beside({ when: { sky: 'fog' } }), c = CLIMATES[w.map.def.region ?? 'shelf'], seed = w.state.weatherSeed!;
+    const { w } = beside({ when: { sky: 'fog' } }), c = w.climate, seed = w.state.weatherSeed!;
     const foggy = findWeather(seed, noon, c, (x) => x.fog >= FOG), clear = findWeather(seed, noon, c, (x) => x.fog < 0.1);
     at(w, foggy); const a = there(w); at(w, clear);
     ok(foggy > 0 && clear > 0 && a && !there(w), `a group that walks in fog is there in fog (at minute ${foggy}) and not in the clear (${clear})`);

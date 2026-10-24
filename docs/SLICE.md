@@ -522,9 +522,11 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
   same function run over the ten days before, so snow builds through a fall, lasts in the cold and
   melts in a thaw or a rain. A new game draws seeds until its first morning is dry and free of fog.
 - **Regions.** A region is an area, with its `climate` in its `index.ts`. Each map names its region
-  (`MapDef.region`, the Foreland when absent); towns and dungeons share their region's weather, and
-  a test holds them to it. The Foreland is mild and wet, foggy off the sea in the autumn, with snow
-  only in a cold snap; Thornmark is colder, and its winter snow lies deep for weeks. Fronts reach
+  (`MapDef.region`; the laid outdoors names none, its zones do); towns and dungeons share their
+  region's weather, and a test holds them to it, naming any map that differs. No sky is lent: a
+  World asked the sky of a square no zone or map gives a region throws, naming both (`regionOf`,
+  #945). The Foreland is mild and wet, foggy off the sea in the autumn, with snow only in a cold
+  snap; Thornmark is colder, and its winter snow lies deep for weeks. Fronts reach
   Thornmark five hours after they cross the Foreland.
 - **What the sky does:** clear, cloudy, overcast, fog, drizzle, rain, downpour, thunderstorm,
   sleet, flurries, snow, heavy snow and blizzard. A shower on a threshold does not flicker: each
@@ -1083,7 +1085,7 @@ does.
 | `game/map.ts` | the terrains (hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice, peaks, cliffs, steppe, dunes, vines and the volcano named as the atlas names them, and `DRAG`, the slow ones), `MapDef` (rows + legend + features + encounters, a sign's reading and marks, `secrets` with each secret door's hint, a town's or a dungeon's placed `banners`, its `landmarks`, an outdoor map's `density` and, on the outdoors, its gates, zones and `looks`; the wilderness features and a statue's `Gift`, the den; a person's hand-ins, `Words`, `Choice`, `Answer` and the crossings they sell, `Passage`), `GameMap` queries (passable, `exitAt` (an exit or a tear into a Rift), blocksView (a hill only from lower ground, given the eye's square) and `overtops`, the zone and palette at a cell, `bannerAt`); the void and its looks; `Presence`, when a thing is in the world (`when` as `Hours`, `until`, `after`), which a group and a person's words wear; an enclave (`enclave`, #845), a dungeon beside the road held to its own band |
 | `game/outdoors.ts` | `layOutdoors`: the maps as played, the placed zone maps laid into one outdoors the size of the world, void where nothing is built and drawn as the atlas paints it (`LOOK`), their ways between them walked and gated |
 | `game/atlas.ts` | the world map's model: `Atlas`, the land drawn in strokes, `worldGrid` (a cell a square, the built outdoor maps stamped in 1:1, each cell's zone), the ways between areas (the exits, the crossings people sell and the planned links, a crossing link sold both ways drawn as built) and the road's steps |
-| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates (a Pathfinder's step at six minutes), a lock opened (`unlock`), reveal (a Cartographer's a square further), the weather's reach into play (sight, snow, the log, the almanac, fights), roaming groups and when they walk (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`, and what a hill hides from below it, `hillOver`, `hidden`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search, an enclave's door crossing in (`enclaveLine`: its name and band, and how it feels, #845); the clock's one way on (`advance`, which runs `passClock`) |
+| `game/world.ts` | `WorldState` (position, clock, weather seed, per-map state with cells seen in bits, zones set foot in, the kinds met; a group a map has gained since a save, and a saved door only where the map still has one), the zone the party is in and what it is called, movement across zones and gates (a Pathfinder's step at six minutes), a lock opened (`unlock`), reveal (a Cartographer's a square further), the weather's reach into play (sight, snow, the log, the almanac, fights), the region of a square, its zone's or its map's, or a throw naming both (`regionOf`, #945), roaming groups and when they walk, on any map (`walks`, `ended`, `hoursHold`), whether a person or an event is there (`present`), what is in sight (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`, and what a hill hides from below it, `hillOver`, `hidden`) and the looks said on first meeting (`sightings`, `meet`, a den's too), a den's brood paced as they come back, encounter triggers (a group under the ice keeping to it and striking only a company on it), rest, search, an enclave's door crossing in (`enclaveLine`: its name and band, and how it feels, #845); the clock's one way on (`advance`, which runs `passClock`) |
 | `game/calendar.ts` | the months and seasons, dates, dawn and dusk through the year, and the tide |
 | `game/weather.ts` | the `Climate` shape (each area has its own, merged as `CLIMATES` in `content/index.ts`), `weatherAt` (the sky, the temperature, snow lying, wet ground), naming the sky and its log lines, and what it does to sight, steps and bows |
 | `game/party.ts` | races, classes, `Character` (its secondary skills learnt among it), `Party`, conditions, equip, what a member bears (`borne`) and a stat as they stand (`statOf`), levelling and the trainer's price, the prestiges (titles, pools, `takePrestige`, `spellRank`), what a tier does (`armsBonus`, `tierSteps`, beside `RANK_STEP`), the premade party; a ward borne in `immuneTo` (`WARDABLE`) and what the clock's passing does to what is borne (`passClock`: regeneration by the hour, an artifact's castings back at dawn) |
@@ -1093,11 +1095,11 @@ does.
 | `game/mastery.ts` | the weapon and magic tiers: who takes which line, the levels and prices (`TIER_PRICES`), each member's bar, the offers (a trainer's Expert, a Master's person's) and teaching a tier; what a tier does is `party.ts`'s (`armsBonus`, `tierSteps`); pure |
 | `game/skills.ts` | the secondary skills (`SKILLS`, all twelve, Linguist the first): a member's list, who has one (learnt, or born to it by people or class) and who does its work for the company (`skilled`, a carried item too), the skills a guild's halls teach, the menu's two levels (a hall's skills, then a skill's six), each member's bar, and learning one; pure |
 | `game/inscriptions.ts` | Kiln-script: an inscription (a sign with `read`), who reads it (`readerOf`), what a sign says and what a reading keeps (`signSays`), its texts as the line check measures them (`signTexts`), the id it is kept by (`readId`, given on from `game/keys.ts`) and the places the world map pins once read (`readMarks`); pure |
-| `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), the Hearth's bearing from a world cell, its flicker and the almanac's word by the count; pure |
+| `game/stones.ts` | the Hearth's measure: the Stones restored (`stonesRestored`, `savedStones` for the title), where the Hearth burns, the atlas's `hearth` site or a throw (`hearthIn`, #945), its bearing from a world cell, its flicker and the almanac's word by the count; pure |
 | `game/passage.ts` | crossings: a passage's fare (nothing once its `free` holds, half once its `half` does and half again for a Navigator), its next departure and its landing, the floor at the far end, the menu's line and the terms with their warning, and taking it (the fare, the clock, the landing, the company rested); pure |
 | `game/guilds.ts`, `game/ranks.ts` | a guild quest (`GuildQuest`); a company's rank, worked out from its done flags and kept once reached (`rank_<guild>`; `rankOf`, ranks.ts's, which reads the content alone); what a hall offers (a quest may wait for a flag, `after`), taking a quest and the report that pays it (gold, items, xp split among the living), an item taken at the first meeting whatever the rank; pure |
 | `game/items.ts`, `game/monsters.ts`, `game/spells.ts` | what an item, a monster and a spell are (`ItemDef`, with a letter's `text`, a raise borne, a blow's element, an artifact's mark and its spell, regeneration or ward; `MonsterDef`, `SpellDef`) and their lookups; a weapon's measure (`hits`) and what a shop pays (`sellPrice`: half, a Merchant two thirds) and says to an artifact (`REFUSED`), and the bounds of an artifact's power (the most it raises a stat, `ARTIFACT_RAISE`; the most castings a day of its spell, `ARTIFACT_CASTINGS`; the level that spell rolls at, `ARTIFACT_LEVEL`; regeneration's share, `REGEN_PART`) and the castings left until dawn (`chargesLeft`); a monster's kind and what each kind sets (`KINDS`: sleep, Holy Strike); the tables are content's |
-| `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen |
+| `game/save.ts`, `game/upgrades.ts` | the save and `SAVE_VERSION`; the upgrades, each registered by the version it brings a save to and run in turn on load, with what they need of the world as it was kept frozen; a save that will not load gives its reason (`load`, #945) |
 | `game/keys.ts` | the keys a save keeps things by, each spelt once: a den's look (`lookKey`), the ids a feature is spent and an inscription read by (`spentId`, `readId`), a seeking quest's id (`seekId`), the flags of a spell hall paid (`guildFlag`), of the glove's line (`GLOVE_FLAG`) and of a guild quest taken and done and a rank kept (`takenFlag`, `doneFlag`, `rankFlag`); and a den's brood's `until` (`denBurnt`), which the maps import. It imports only types, so any module may load it first; each old home gives its keys on (#896) |
 | `game/combat.ts` | `CombatState`, `startCombat`, `currentTurn`, `partyAct`, `monsterAct` (a spell cast from an artifact, `from`, for a charge), and the log's lines, the glove's once a game (`GLOVE_FLAG`, given on from `game/keys.ts`); pure and seeded |
 | `game/bot.ts` | the bot that plays a fight, the gate's and the game's: `botTurn` (the action the resolver took; `gateTurn` the same with the action dropped), its two readings of the monsters (`asWritten`, every trait as written, the gate's; `asSeen`, only what the fight's log has shown, the auto-fight's), the answers a tool may turn (`ANSWER`, frozen: a tool passes another as `answer`, #946), the three it may play (`BotOpts`: bless, sleep and drink, off unless given; `PLAYED`, the game's, read from level 11 by `optsFor`, with its guards `striker` and `letsLie`) and the rest rule (`mustRest`); pure |
@@ -1120,8 +1122,8 @@ does.
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
 | `ui/scenery.ts`, `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, each registering its kinds with their spans (`SPRITES`, merged by `ui/monsters/index.ts`), the dispatcher, and the shared brush and helpers |
 | `ui/create.ts` | party creation |
-| `ui/title.ts` | the title screen: new game or continue, the Hearth over the saved company and attract mode's idle (untouched for 45 seconds, the pilot plays a new game) |
-| `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests and guild quests, climates, rooms), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
+| `ui/title.ts` | the title screen: new game or continue, why a save will not load in the note's two lines (#945), the Hearth over the saved company and attract mode's idle (untouched for 45 seconds, the pilot plays a new game) |
+| `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests and guild quests, climates, rooms; the monsters and items read-only by type, #945), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
 | `content/guilds.ts` | the four guilds (`GUILDS`: names, a short name where a hall's menu row would cut the whole, and ranks), a guild quest's flags (given on from `game/keys.ts`) and its side of the quest log |
 | `content/area.ts` | `Area`, the shape every area fills in, and `Novelty`, what it claims is new (held by `tools/tests/pillars.ts`); `Walkthrough`, an area's end-to-end test |
 | `content/areas/<area>/` | an area: its maps, monsters, items, chapter of the one quest (`chapter.ts`), side quests (`quests.ts`), climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
@@ -1157,3 +1159,31 @@ Decided by the builder for #896, each the owner's to overturn:
    climbs and swims by them only while the learner stands.
 6. **The fifteen loads start at once,** each in its own process, as the structure suite begins, and are
    read at its end; the areas' indexes are found from `AREAS`.
+
+Decided by the builder for #945, each the owner's to overturn:
+
+1. **`walks` and `present` take the map by its id as written** (`on?: string`), read through
+   `locate`: the walkthroughs know the zone map's id, and a zone map is not in `World.maps`; an id
+   the World has not got throws.
+2. **`regionOf` is a function of a played map and a square,** exported from `world.ts`. The
+   constructor asks it of the first map's start square, so a laid outdoors first takes the zone its
+   start lies in; the game's first map is Helmstow's, so no game draws another seed.
+3. **`load` returns the save, `null` or the reason;** `Game.loadGame` returns `true` or the line the
+   title and the load key show, so neither caller words it. A save that reads but that the build
+   cannot lay out (a map gone, a square under no region) gives the World's reason, and the game is
+   left as it was.
+4. **Text that is not a save gives the build's own reason,** "the text in storage is not a save",
+   whether it will not parse or parses to no object with a numbered version: not the engine's,
+   whose words name marks the font has not got (`{`, `}`) and differ by browser.
+5. **The note is cut by `paragraph`'s `maxLines`** to its two lines across 380 of its 400; the saves
+   suite holds the notes of the reasons to two lines at that width.
+6. **`HEARTH` reads through `hearthIn(sites)`,** exported so the stones suite can hand it the
+   atlas's sites without the Hearth and read the throw without touching `ATLAS`.
+7. **A fixture names the region in the helper that makes it** where there is one (`row`, `town`,
+   `box`: every map they make names it, 47 asked the sky); `people.ts` has two `fx_town` literals
+   and both name it.
+8. **`crossings` reports an exit whose end names no region** rather than comparing two absences as
+   equal; the sheet refuses a map with no region as it refuses one with no way in.
+9. **The smoke's torch search keeps to squares the Foreland's zones hold:** the sky it fixes is the
+   Foreland's and its message says "no square of the Foreland"; it painted squares no zone holds
+   under the lent sky. The ground and Rift samples name the Foreland, the sky they had.

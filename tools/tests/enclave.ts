@@ -38,7 +38,7 @@ export function enclave(): void {
   // Its door, crossing in from a hollow: its band, as its sign gives it, and how it feels by the
   // company's level, as a border's line: a warning three or more under, harder one or two, then nothing.
   const DOWN = 'Down into the dark.';
-  const hollow: MapDef = { id: 'fx_hollow', name: 'Fixture Hollow', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['####', '#..#', '####'],
+  const hollow: MapDef = { id: 'fx_hollow', name: 'Fixture Hollow', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['####', '#..#', '####'],
     exits: [{ x: 2, y: 1, to: LAIR.id, tx: LAIR.start.x, ty: LAIR.start.y, tf: NORTH, label: DOWN }] };
   const enter = (level: number, into: MapDef = LAIR, from: MapDef = hollow): { said: string[]; w: World } => {
     const w = new World({ [from.id]: new GameMap(from), [into.id]: new GameMap(into) }, gateCompany(level, 1), makeRng(1));

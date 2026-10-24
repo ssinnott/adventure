@@ -15,6 +15,8 @@ import type { Hearth } from '../game/stones.ts';
 
 /** Ticks of nothing on the title before the pilot plays a game for watching (attract mode, #722): forty-five seconds at 60 a second. */
 export const IDLE_TICKS = 60 * 45;
+/** The note under the menu (why the save would not load): two lines of the font across its panel, 400 by 34. */
+export const NOTE_W = 380, NOTE_LINES = 2;
 
 export class TitleScreen implements Screen {
   private sel = 0;
@@ -42,7 +44,7 @@ export class TitleScreen implements Screen {
     else if (is(a, 'down')) this.sel = (this.sel + 1) % this.items.length;
     else if (is(a, 'interact')) {
       const it = this.items[this.sel];
-      if (it === 'Continue') { if (!g.loadGame()) this.note = 'The save could not be read.'; }
+      if (it === 'Continue') { const loaded = g.loadGame(); if (loaded !== true) this.note = loaded; }
       else g.push(new CreateScreen(freshSeed()));
     }
   }
@@ -54,7 +56,8 @@ export class TitleScreen implements Screen {
     drawText(ctx, 'A CHARTERED COMPANY, ONE SQUARE AT A TIME', 320, 94, { size: 1, color: TEXT, align: 'center' });
     panel(ctx, 230, 212, 180, 24 + this.items.length * 20, 'rgba(14,12,16,0.8)');
     menu(ctx, this.items, 250, 224, this.sel, { size: 2 });
-    if (this.note) { panel(ctx, 120, 300, 400, 34, 'rgba(14,12,16,0.8)'); paragraph(ctx, this.note, 130, 308, 380, { color: TEXT }); }
+    // The note's two lines: a longer reason is cut to them, not wrapped past the panel (#945).
+    if (this.note) { panel(ctx, 120, 300, 400, 34, 'rgba(14,12,16,0.8)'); paragraph(ctx, this.note, 130, 308, NOTE_W, { color: TEXT, maxLines: NOTE_LINES }); }
     drawText(ctx, 'ARROWS / WASD MOVE  SPACE ACT  ESC BACK', 320, 342, { size: 1, color: TEXT, align: 'center' });
   }
 }

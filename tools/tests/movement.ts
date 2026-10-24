@@ -278,7 +278,7 @@ export function movement(): void {
  * one into the mountain is, a Mountaineer climbs onto either, and anyone walks the road.
  */
 function range(): void {
-  const cut: MapDef = { id: 'fx_cut', name: 'Cut', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows: ['MMMMM', 'MA=|M', 'MA=|M', 'MMMMM'] };
+  const cut: MapDef = { id: 'fx_cut', name: 'Cut', kind: 'outdoor', region: 'shelf', start: { x: 2, y: 2, facing: NORTH }, rows: ['MMMMM', 'MA=|M', 'MA=|M', 'MMMMM'] };
   const rng = makeRng(13), party = defaultParty(rng), w = new World({ fx_cut: new GameMap(cut) }, party, rng);
   const step = (f: Facing): string => { w.travel('fx_cut', 2, 2, f); const r = w.move('forward'); return r.kind === 'blocked' ? r.reason : `${r.kind} ${w.state.x},${w.state.y}`; };
   const peak = step(WEST), cliff = step(EAST), road = step(NORTH);
@@ -296,7 +296,7 @@ function range(): void {
  */
 function underIce(): void {
   const lake = (pike: Partial<EncounterDef>): MapDef => ({
-    id: 'fx_lake', name: 'Lake', kind: 'outdoor', start: { x: 1, y: 3, facing: NORTH },
+    id: 'fx_lake', name: 'Lake', kind: 'outdoor', region: 'shelf', start: { x: 1, y: 3, facing: NORTH },
     rows: ['MMMMMMMM', 'M,iiii,M', 'M,iiii,M', 'M,,,,,,M', 'MMMMMMMM'],
     encounters: [{ id: 'pike', x: 3, y: 2, monsters: ['fen_eel', 'fen_eel'], roams: false, under: 'ice', ...pike }],
   });
@@ -318,7 +318,7 @@ function underIce(): void {
  * volcano or a vent in it is refused as one into the mountain is, and a Mountaineer climbs onto either.
  */
 function farSide(): void {
-  const def: MapDef = { id: 'fx_far', name: 'Far', kind: 'outdoor', start: { x: 2, y: 2, facing: NORTH }, rows: ['MMMMM', 'MVs@M', 'Mu&uM', 'MMMMM'] };
+  const def: MapDef = { id: 'fx_far', name: 'Far', kind: 'outdoor', region: 'shelf', start: { x: 2, y: 2, facing: NORTH }, rows: ['MMMMM', 'MVs@M', 'Mu&uM', 'MMMMM'] };
   const rng = makeRng(17), party = defaultParty(rng), w = new World({ fx_far: new GameMap(def) }, party, rng);
   const step = (x: number, y: number, f: Facing): string => { w.travel('fx_far', x, y, f); const r = w.move('forward'); return r.kind === 'blocked' ? r.reason : `${r.kind} ${w.state.x},${w.state.y}`; };
   const walked = [step(2, 2, NORTH), step(2, 2, WEST), step(1, 2, EAST)], refused = [step(2, 1, WEST), step(2, 1, EAST)];
@@ -337,7 +337,7 @@ function farSide(): void {
  * and the flags that grant each still do.
  */
 function opened(): void {
-  const def: MapDef = { id: 'fx_skills', name: 'Skills', kind: 'outdoor', start: { x: 2, y: 1, facing: NORTH }, rows: ['WWWWW', 'WM.~W', 'WWWWW'] };
+  const def: MapDef = { id: 'fx_skills', name: 'Skills', kind: 'outdoor', region: 'shelf', start: { x: 2, y: 1, facing: NORTH }, rows: ['WWWWW', 'WM.~W', 'WWWWW'] };
   // The company of six without its one Tidefolk (Maren), raised as `setup` has it; then a step west, east and north from the middle.
   const steps = (setup: (p: Party) => void): string => {
     const rng = makeRng(19), party = defaultParty(rng), w = new World({ fx_skills: new GameMap(def) }, party, rng);
@@ -407,7 +407,7 @@ function paced(): void {
  * that does the skill's work carried (`ItemDef.skill`), as a copybook does Linguist's.
  */
 function picked(): void {
-  const def: MapDef = { id: 'fx_lock', name: 'Lock', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#.L.#', '#####'] };
+  const def: MapDef = { id: 'fx_lock', name: 'Lock', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#.L.#', '#####'] };
   const picks: ItemDef = { id: 'fx_picks', name: 'A Set of Picks', slot: 'none', price: 750, skill: 'lockpick' };
   const thief = (p: Party): Character => p.members.find((m) => m.cls === 'thief')!;
   /** A step east into the door for the company `setup` makes: what happens, the line said, the keys left and the door after. */
@@ -448,7 +448,7 @@ function picked(): void {
 function archdruid(): void {
   const rng = makeRng(23);
   const strip = (group: Partial<EncounterDef>): MapDef => ({
-    id: 'fx_strip', name: 'Strip', kind: 'outdoor', start: { x: 1, y: 1, facing: EAST },
+    id: 'fx_strip', name: 'Strip', kind: 'outdoor', region: 'shelf', start: { x: 1, y: 1, facing: EAST },
     rows: ['MMMMMMMMM', 'M,,,,,,,M', 'MMMMMMMMM'],
     encounters: [{ id: 'beasts', x: 6, y: 1, monsters: ['fx_beast20', 'fx_beast20'], aware: 8, ...group }],
   });

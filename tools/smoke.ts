@@ -669,6 +669,8 @@ const torches = await page.evaluate(async () => {
   // with the tree there, that torch's point is painted otherwise than without it.
   let found: { at: [number, number]; bare: ReturnType<typeof paint>; tree: ReturnType<typeof paint> } | null = null;
   for (let y = 16, tries = 0; !found && y < m.height - 7 && tries < 400; y += 13) for (let x = 7; !found && x < m.width - 7 && tries < 400; x++) {
+    // A square of the Foreland, whose sky is the one fixed above: a square no zone holds has no sky to paint (#945).
+    if (m.zoneAt(x, y)?.region !== 'shelf') continue;
     lay(x, y, 'none');
     if (V.wallDressing(m, x, y - 3) === 'sconce') {
       tries++;

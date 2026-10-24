@@ -5,7 +5,7 @@
 // the draft's top-left. Every one of its 32 by 32 squares is the atlas's, the road included, with no
 // ring: the ways in and out, the landmarks and the groups are the author's. It prints the draft as a
 // map module, or writes it with --out, and never overwrites a file without --force. The draft takes
-// its area's region where the area has one; the Foreland's sky otherwise, and says so. It refuses an
+// its area's region where the area has one, and none otherwise, and says so. It refuses an
 // unknown zone, an id a built map has or no map id could be, and a cut that falls outside the world,
 // lies over a laid zone map, or holds a terrain no map character is, saying how many squares of
 // each. It registers nothing: that is the area's work.
@@ -104,11 +104,11 @@ export function cut(atlas: Atlas, defs: readonly MapDef[], grid: WorldGrid, regi
     id, name: zone.name, kind: 'outdoor', density: 'country', rows,
     start: start(rows, laid, x, y),
     ...(band ? { band: [band[0], band[1]] as [number, number] } : {}),
-    // The Foreland's sky is the default; another area's zone shares its own.
-    ...(zone.area !== 'shelf' && regions.includes(zone.area) ? { region: zone.area as MapDef['region'] } : {}),
+    // Its area's sky, the Foreland's too: every map as written names its region (#945).
+    ...(regions.includes(zone.area) ? { region: zone.area } : {}),
   };
   const said = notes(atlas, laid, def, x, y);
-  if (!regions.includes(zone.area)) said.unshift(`area ${zone.area} has no region yet, so the draft shares the Foreland's sky until it has`);
+  if (!regions.includes(zone.area)) said.unshift(`area ${zone.area} has no region yet, so the draft names none until it has: the maps suite refuses it, and a World asked its sky throws`);
   return { def, counts, zones, notes: said };
 }
 

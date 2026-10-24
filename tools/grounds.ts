@@ -8,7 +8,7 @@ import { NORTH } from '../src/game/types.ts';
 export const GROUND_SAMPLES: readonly MapDef[] = [
   {
     // The ash under the vents, running out of the grass, a ruin and a rock in it.
-    id: 'ground_ash', name: 'Ash', kind: 'outdoor', start: { x: 6, y: 7, facing: NORTH },
+    id: 'ground_ash', name: 'Ash', kind: 'outdoor', region: 'shelf', start: { x: 6, y: 7, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',
       'M,,,aaaaaarM',
@@ -24,7 +24,7 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
   },
   {
     // A pinewood with a track through it, a woodcutters' hut and a rock among the pines.
-    id: 'ground_pine', name: 'Pine', kind: 'outdoor', start: { x: 7, y: 8, facing: NORTH },
+    id: 'ground_pine', name: 'Pine', kind: 'outdoor', region: 'shelf', start: { x: 7, y: 8, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',
       'Mppppp:ppppM',
@@ -41,7 +41,7 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
   {
     // A frozen lake seen from its shore, with snow lying here and there and a fishing hut; a pike
     // under the ice two squares out, as a group placed on ice is drawn.
-    id: 'ground_ice', name: 'Ice', kind: 'outdoor', start: { x: 5, y: 8, facing: NORTH },
+    id: 'ground_ice', name: 'Ice', kind: 'outdoor', region: 'shelf', start: { x: 5, y: 8, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',
       'M**,,,,,,**M',
@@ -59,7 +59,7 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
   {
     // An escarpment across the way, the road cut up through its face to the hills above it; a ruin
     // and a rock under the face.
-    id: 'ground_cliff', name: 'Cliff', kind: 'outdoor', start: { x: 6, y: 7, facing: NORTH },
+    id: 'ground_cliff', name: 'Cliff', kind: 'outdoor', region: 'shelf', start: { x: 6, y: 7, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',
       'M^^^^^=^^^^M',
@@ -76,7 +76,7 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
   {
     // The road up to a pass cut between two peaks, the mountain about them and lower, snow lying by
     // the road under them; a herder's hut by the road.
-    id: 'ground_peak', name: 'Peak', kind: 'outdoor', start: { x: 6, y: 8, facing: NORTH },
+    id: 'ground_peak', name: 'Peak', kind: 'outdoor', region: 'shelf', start: { x: 6, y: 8, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',
       'MAAAAA=AAAAM',
@@ -92,7 +92,7 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
   },
   {
     // The open steppe, a track over it, a Riders' hut and an outcrop of rock.
-    id: 'ground_steppe', name: 'Steppe', kind: 'outdoor', start: { x: 5, y: 8, facing: NORTH },
+    id: 'ground_steppe', name: 'Steppe', kind: 'outdoor', region: 'shelf', start: { x: 5, y: 8, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',
       'MssssssssrrM',
@@ -108,7 +108,7 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
   },
   {
     // The dunes' edge: the steppe running out into sand in ridges, a ruin and a rock in the sand.
-    id: 'ground_dunes', name: 'Dunes', kind: 'outdoor', start: { x: 6, y: 8, facing: NORTH },
+    id: 'ground_dunes', name: 'Dunes', kind: 'outdoor', region: 'shelf', start: { x: 6, y: 8, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',
       'MuuuuuuuuuuM',
@@ -125,7 +125,7 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
   {
     // The shore's hanging vines, a path through them down to the sand and the Sound; a hut and a
     // rock among them, and a strangler vine standing in them, as it does, never roaming.
-    id: 'ground_vines', name: 'Vines', kind: 'outdoor', start: { x: 6, y: 8, facing: NORTH },
+    id: 'ground_vines', name: 'Vines', kind: 'outdoor', region: 'shelf', start: { x: 6, y: 8, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',
       'M~~~~~~~~~~M',
@@ -143,7 +143,7 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
   {
     // The volcano's flank: the cone over its ash foot with a vent in it ahead, a flow of lava down
     // from the cone opening into a field; a forge's ruin and a rock on the ash.
-    id: 'ground_volcano', name: 'Volcano', kind: 'outdoor', start: { x: 5, y: 6, facing: NORTH },
+    id: 'ground_volcano', name: 'Volcano', kind: 'outdoor', region: 'shelf', start: { x: 5, y: 6, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',
       'MVVVVVVVVVVM',

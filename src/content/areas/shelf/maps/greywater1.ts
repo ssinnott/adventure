@@ -10,6 +10,7 @@ export const GREYWATER1: MapDef = {
   name: 'Brandy Hole',
   kind: 'dungeon',
   band: [2, 4],
+  region: 'shelf',
   start: { x: 1, y: 1, facing: SOUTH },
   palette: { wall: '#6a7a80', wallDark: '#465258', floor: '#3a4448', ceiling: '#2a3236', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#2a5a7a' },
   rows: [
