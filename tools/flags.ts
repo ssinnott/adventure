@@ -110,22 +110,15 @@ if (!write) {
   const name = (a: string): string => /The way into (.+?) from another area/.exec(read(join(AREAS_DIR, a, 'public.ts')))?.[1] ?? a;
   const missing: string[] = [], written: string[] = [];
   for (const [owner, flags] of owned) {
-    const groups = new Map<string, typeof flags>();
-    for (const f of flags) {
-      if (!gloss.get(f.flag)) missing.push(f.flag);
-      const file = f.at ? relative(owner === CORE ? join(ROOT, 'src') : join(AREAS_DIR, owner), join(ROOT, f.at.file)) : '?';
-      groups.set(file, [...(groups.get(file) ?? []), f]);
-    }
-    const body = [...groups].sort(([a], [b]) => a.localeCompare(b)).flatMap(([file, fs]) => [
-      `  // ${file}`,
-      ...fs.sort((a, b) => (a.at?.line ?? 0) - (b.at?.line ?? 0) || a.flag.localeCompare(b.flag)).map((f) => `  ${key(f.flag)}: ${lit(gloss.get(f.flag) ?? '')},`),
-    ]);
+    for (const f of flags) if (!gloss.get(f.flag)) missing.push(f.flag);
+    // In the record's order (tools/kit/shipped.ts sorts each list), so each reads against its shipped.json.
+    const body = flags.map((f) => f.flag).sort().map((f) => `  ${key(f)}: ${lit(gloss.get(f) ?? '')},`);
     const head = owner === CORE
       ? ['// The flags no area owns, which the code sets (src/game/keys.ts), each with what holding it means (#995):',
-        '// declared once for the whole, as the core items are. `Flag` is made of every declaration (./index.ts).']
-      : [`// The flags ${name(owner)} sets, each with what holding it means (#995), under the file that first sets it:`,
-        '// its own, which public.ts gives on. `Flag` is made of every declaration (src/content/index.ts), and a',
-        '// flag two declare is refused; the shipped suite holds them to the record (shipped.json).'];
+        '// declared once for the whole, beside the core items. `Flag` is made of every declaration (./index.ts).']
+      : [`// The flags ${name(owner)} sets, each with what holding it means (#995): its own, declared once here and`,
+        '// given on by public.ts. `Flag` is made of every declaration (src/content/index.ts), which refuses a flag',
+        '// two declare, and the shipped suite holds them to the record (shipped.json).'];
     const text = [...head, 'export const FLAGS = {', ...body, '};', ''].join('\n');
     if (existsSync(declFile(owner)) && read(declFile(owner)) === text) continue;
     writeFileSync(declFile(owner), text);

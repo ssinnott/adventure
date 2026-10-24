@@ -1,0 +1,31 @@
+// The flags the Whitespine sets, each with what holding it means (#995): its own, declared once here and
+// given on by public.ts. `Flag` is made of every declaration (src/content/index.ts), which refuses a flag
+// two declare, and the shipped suite holds them to the record (shipped.json).
+export const FLAGS = {
+  i8_watcher_met: 'The watcher on I8 met',
+  q_eleven: 'The eleven asked of',
+  q_eleven_sung: 'The eleven sung',
+  q_ledge: 'The ledge asked of',
+  q_ledge_held: 'The ledge held till first light',
+  q_mason: 'The deserter met',
+  q_mason_passage: 'The deserter given passage',
+  q_mason_swapped: "The deserter's tally swapped",
+  q_nest: 'The herder met',
+  q_nest_cell: 'The badge given to the brother in Highcell',
+  q_novice: 'The novice met',
+  q_novice_kept: 'The novice told only that his mother is well',
+  q_novice_letter: "The novice's letter taken",
+  q_novice_told: 'The novice told: home to Anvilhall',
+  q_peak_stood: 'The Peak Stone stood by',
+  q_rook_orders: "The Rook's orders asked of",
+  q_rook_read: "The Rook's orders read",
+  q_stair_top: "The stair's top reached: the Bells done",
+  q_toll: 'The caravan-master met',
+  q_toll_done: 'The toll done: the caravan thanked',
+  q_vigil: 'The vigil asked of',
+  q_vigil_kept: 'The vigil kept till dawn',
+  q_wenna_taken: 'Wenna taken from the camp',
+  toll_coin: 'The toll paid with the faceless coin',
+  toll_paid: 'The toll paid in gold',
+  toll_part: 'The toll paid with the grey part',
+};
