@@ -5,7 +5,7 @@ import { changedMaps, changedMonsters, changedInteriors, familiesIn, reachedArea
 import { graph, treeFiles } from '../kit/graph.ts';
 import { AREAS, MONSTERS } from '../../src/content/index.ts';
 import { execFileSync } from 'node:child_process';
-import { readFileSync, readdirSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { FAMILY_OF } from '../../src/ui/monsters/index.ts';
 import { ok } from './lib.ts';
 
@@ -83,6 +83,10 @@ export async function changed(): Promise<void> {
   ok((await changedMaps(['src/ui/scenery.ts'])).all && !scenery.all && !scenery.monsters.length, 'the scenery counts every map and no monster');
   ok(!(await changedMaps(['src/ui/sprites.ts'])).all && !(await changedMaps(['src/ui/monsters/wolf.ts', 'src/ui/monsters/index.ts'])).all, 'the dispatcher, a family and the barrel count no map');
   ok((await changedMaps(['src/ui/monsters/common.ts'])).all, 'ui/monsters/common.ts, whose B and stroke the scenery paints with, counts every map');
+  // The kits count what the files they came from counted (#983), and the old paths that re-export them still do.
+  const rig = 'src/ui/monsters/kit/figure.ts', plumbing = 'src/ui/monsters/kit/common.ts';
+  ok((await changedMaps([plumbing])).all && (await changedMonsters([plumbing])).all && (await changedMonsters([rig])).all && !(await changedMaps([rig])).all,
+    "a file of the monsters' kit counts every monster, and its common.ts, where B and stroke are, every map too");
   // A change to the barrel counts the families it merges that its base did not, read from its import lines.
   const barrel = readFileSync(new URL('../../src/ui/monsters/index.ts', import.meta.url), 'utf8'), registered = [...new Set(Object.values(FAMILY_OF))];
   ok(familiesIn(barrel).sort().join() === registered.sort().join() && familiesIn("import { SPRITES as wolf } from './wolf.ts';\nimport type { Sprite } from './common.ts';").join() === 'wolf',
@@ -111,12 +115,19 @@ export async function changed(): Promise<void> {
   } else console.log('  skip: the checks against HEAD, as Thornmark\'s monsters or index, or the barrel, differ from it');
   ok((await changedMonsters(['src/ui/brush.ts'])).all && (await changedInteriors(['src/ui/brush.ts'])).all, 'ui/brush.ts counts every monster and every interior');
   ok((await changedInteriors(['src/ui/monsters/gloss.ts'])).all, 'ui/monsters/gloss.ts, which the scenes borrow, counts every interior');
+  const brush = 'src/ui/paint/brush.ts', gloss = 'src/ui/paint/gloss.ts';
+  ok((await changedMaps([brush])).all && (await changedMonsters([brush])).all && (await changedInteriors([brush])).all && (await changedMaps(['src/ui/paint/ink.ts'])).all,
+    "the paint kit's brush counts every map, every monster and every interior, and its ink, B's outline, every map too");
+  ok((await changedMonsters([gloss])).all && (await changedInteriors([gloss])).all && !(await changedMaps([gloss])).all, "the paint kit's gloss counts every monster and every interior, and no map");
   // A file under an area's folder of rooms counts every room of the area, as the folder's registry keys them: the helpers its
   // scenes share (kilns/hold.ts, kilns/port.ts, rimewater/lodge.ts) have no room of their own to be found by, and a scene may
   // borrow from another (shelf/throne_room.ts from warden_drillyard.ts), which no file's name says.
   const roomsOf = (area: string): string[] => [...AREAS.find((a) => a.id === area)!.interiors];
   const counts = (c: { all: boolean; interiors: string[] }, want: string[]): boolean => want.length > 0 && !c.all && c.interiors.length === want.length && want.every((i) => c.interiors.includes(i));
-  const folders = readdirSync(new URL('../../src/ui/interiors/', import.meta.url), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
+  // The rooms' kit (kit/, #983) is the one folder that is no area's: it registers no room, so it has no index.ts, and a
+  // registry put there is checked as any folder's is, and fails as no area's.
+  const kitIndex = new URL('../../src/ui/interiors/kit/index.ts', import.meta.url);
+  const folders = readdirSync(new URL('../../src/ui/interiors/', import.meta.url), { withFileTypes: true }).filter((d) => d.isDirectory() && (d.name !== 'kit' || existsSync(kitIndex))).map((d) => d.name);
   const adrift: string[] = [];
   for (const folder of folders) {
     const registry = ((await import(new URL(`../../src/ui/interiors/${folder}/index.ts`, import.meta.url).href)) as { SCENES: Record<string, unknown> }).SCENES;
@@ -134,6 +145,8 @@ export async function changed(): Promise<void> {
   ok(!stray.all && !stray.interiors.length, 'a folder that is no area\'s, with no registry, counts no room');
   ok(counts(await changedInteriors(['src/ui/interiors/kilns/hold.ts', 'src/ui/interiors/rimewater/lodge.ts']), [...roomsOf('kilns'), ...roomsOf('rimewater')]), 'two areas\' helpers together count the rooms of both, each once');
   ok((await changedInteriors(['src/ui/interiors/kit.ts'])).all, 'the kit counts every interior');
+  const stage = await changedInteriors(['src/ui/interiors/kit/stage.ts']), props = await changedMonsters(['src/ui/interiors/kit/props.ts']);
+  ok(stage.all && !stage.interiors.length && !props.all && !props.monsters.length, "a file of the rooms' kit counts every interior, as no area's folder, and no monster");
   ok((await changedInteriors(['src/lib/engine/text.ts'])).all, 'the pixel font, which letters signs in some rooms, counts every interior');
   ok(!(await changedInteriors(['src/ui/monsters/wolf.ts'])).all, 'a monster drawing counts no interior');
 }
