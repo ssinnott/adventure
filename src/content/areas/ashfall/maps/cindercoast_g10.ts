@@ -12,6 +12,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.3 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The way into Cinderport (#512): a door in the town's south wall at 6,2, onto the town's first square
@@ -123,9 +124,9 @@ export const CINDERCOAST_G10: MapDef = {
     // Cinder beetles on the ash south of the ground, the box's gentlest, nearest the gate; strangler
     // vines in the shore's trees east of it, which never roam; and at the far end, where the ash warms
     // toward the mountain, ember salamanders and a cinder drake with them, the box's group at 25.
-    { id: 'g10_beetles', x: 15, y: 9, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: 1440 },
-    { id: 'g10_vines', x: 26, y: 8, monsters: ['strangler_vine', 'strangler_vine', 'strangler_vine', 'strangler_vine'], aware: 2, respawn: 1440, roams: false },
-    { id: 'g10_salamanders', x: 21, y: 24, monsters: ['ember_salamander', 'ember_salamander', 'ember_salamander', 'ember_salamander'], aware: 4, respawn: 1440 },
-    { id: 'g10_drake', x: 26, y: 27, monsters: ['cinder_drake'], aware: 5, respawn: 2880 },
+    { id: 'g10_beetles', x: 15, y: 9, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'g10_vines', x: 26, y: 8, monsters: ['strangler_vine', 'strangler_vine', 'strangler_vine', 'strangler_vine'], aware: 2, respawn: RESPAWN.day, roams: false },
+    { id: 'g10_salamanders', x: 21, y: 24, monsters: ['ember_salamander', 'ember_salamander', 'ember_salamander', 'ember_salamander'], aware: 4, respawn: RESPAWN.day },
+    { id: 'g10_drake', x: 26, y: 27, monsters: ['cinder_drake'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

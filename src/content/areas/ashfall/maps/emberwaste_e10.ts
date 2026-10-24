@@ -17,6 +17,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { LIT } from './ember_stone.ts';
 import { ENDED } from '../../../endings.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The road west taken once the Stone is lit: `e10_west` sets it on the Hills' last shoulder, the once,
@@ -117,14 +118,14 @@ export const EMBERWASTE_E10: MapDef = {
   encounters: [
     // Two cinder drakes on the Hills' crest at the far end, by the road coming down to the steppe: one
     // alone is too light a fight for the gate (#517).
-    { id: 'e10_drakes', x: 6, y: 9, monsters: ['cinder_drake', 'cinder_drake'], aware: 5, respawn: 2880 },
+    { id: 'e10_drakes', x: 6, y: 9, monsters: ['cinder_drake', 'cinder_drake'], aware: 5, respawn: RESPAWN.twoDays },
     // The Wold's half (#524), the fewest groups the gate's day passes with: cinder beetles come over from
     // the Waste, nearest the way in; the vultures at the hills' foot, the Wold's nearest, one flock; and
     // the pride in the first grass west of the Hills, the box's hardest.
-    { id: 'e10_beetles', x: 27, y: 23, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: 1440 },
-    { id: 'e10_vultures', x: 21, y: 18, monsters: ['vulture', 'vulture', 'vulture', 'vulture', 'vulture', 'vulture'], aware: 5, respawn: 1440 },
-    { id: 'e10_lions', x: 7, y: 23, monsters: ['wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: 2880 },
+    { id: 'e10_beetles', x: 27, y: 23, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'e10_vultures', x: 21, y: 18, monsters: ['vulture', 'vulture', 'vulture', 'vulture', 'vulture', 'vulture'], aware: 5, respawn: RESPAWN.day },
+    { id: 'e10_lions', x: 7, y: 23, monsters: ['wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: RESPAWN.twoDays },
     // Once the Stone is lit (#449), two sentries by the road up into the Hills, the box's top at 26.
-    { id: 'e10_sentries', x: 10, y: 16, monsters: ['sentry', 'sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
+    { id: 'e10_sentries', x: 10, y: 16, monsters: ['sentry', 'sentry'], aware: 4, respawn: RESPAWN.twoDays, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
   ],
 };

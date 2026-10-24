@@ -7,6 +7,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DEEPTHORN_J4: MapDef = {
   id: 'deepthorn_j4',
@@ -82,10 +83,10 @@ export const DEEPTHORN_J4: MapDef = {
   encounters: [
     // The gentlest first: thorn spiders where the glade comes in, dire wolves down it, great owls
     // over it by night, rootwalkers under the crag and the heartwood alone at the glade's south end.
-    { id: 'j4_spiders', x: 2, y: 15, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 4, respawn: 1440 },
-    { id: 'j4_wolves', x: 7, y: 17, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },
-    { id: 'j4_owls', x: 7, y: 25, monsters: ['great_owl', 'great_owl', 'great_owl', 'great_owl'], aware: 5, respawn: 1440, when: { hours: 'night' }, until: TEAR_CLOSED },
-    { id: 'j4_rootwalkers', x: 10, y: 20, monsters: ['rootwalker', 'rootwalker', 'rootwalker', 'rootwalker'], aware: 3, respawn: 2880, until: TEAR_CLOSED },
-    { id: 'j4_heartwood', x: 6, y: 29, monsters: ['heartwood'], aware: 3, respawn: 2880, until: TEAR_CLOSED },
+    { id: 'j4_spiders', x: 2, y: 15, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 4, respawn: RESPAWN.day },
+    { id: 'j4_wolves', x: 7, y: 17, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: RESPAWN.day },
+    { id: 'j4_owls', x: 7, y: 25, monsters: ['great_owl', 'great_owl', 'great_owl', 'great_owl'], aware: 5, respawn: RESPAWN.day, when: { hours: 'night' }, until: TEAR_CLOSED },
+    { id: 'j4_rootwalkers', x: 10, y: 20, monsters: ['rootwalker', 'rootwalker', 'rootwalker', 'rootwalker'], aware: 3, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
+    { id: 'j4_heartwood', x: 6, y: 29, monsters: ['heartwood'], aware: 3, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
   ],
 };

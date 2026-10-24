@@ -7,6 +7,7 @@
 // waits alone. Band 20-22; docs/areas/rimewater.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SLEEPERS_BAY: MapDef = {
   id: 'sleepers_bay',
@@ -59,9 +60,9 @@ export const SLEEPERS_BAY: MapDef = {
   encounters: [
     // The tallymen and their knockers that did not come up through the hole, on the stair and on the
     // water's way: three tallymen to a crew, which at the ice-hole's one were too few for the band (#490).
-    { id: 'sb1_knockers1', x: 2, y: 7, monsters: ['tallyman', 'tallyman', 'tallyman', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker'], aware: 2, respawn: 2880, roams: false },
-    { id: 'sb1_knockers2', x: 12, y: 8, monsters: ['tallyman', 'tallyman', 'tallyman', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker'], aware: 2, respawn: 2880, roams: false },
+    { id: 'sb1_knockers1', x: 2, y: 7, monsters: ['tallyman', 'tallyman', 'tallyman', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'sb1_knockers2', x: 12, y: 8, monsters: ['tallyman', 'tallyman', 'tallyman', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // The first keeper, alone at the stair's foot, and gentle.
-    { id: 'sb1_keeper', x: 6, y: 12, monsters: ['bay_keeper'], aware: 2, respawn: 2880, roams: false },
+    { id: 'sb1_keeper', x: 6, y: 12, monsters: ['bay_keeper'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

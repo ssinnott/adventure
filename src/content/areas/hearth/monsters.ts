@@ -29,11 +29,11 @@ export const MONSTERS: readonly MonsterDef[] = [
   // called by the ring (#759), a soldier at 31 on twice the line's hit points as #752 read them (445) with its blow, so a
   // clock let run costs a company what the plan says (#752); the line made at 31 since is 437 (#793), twice that 874, and
   // the sentry stays at 890: the heavy machines' frame, the core's own; it stands down when Vask falls
-  { id: 'core_sentry', name: 'Core Sentry', plural: 'Core Sentries', sprite: 'core_sentry', kind: 'machine', look: 'The core\'s own, and it takes orders from the ring.', level: 31, hp: 890, ac: 27, attack: 17, dice: 5, sides: 7, bonus: 10, speed: 11, xp: 1233, gold: [0, 0], obeys: true, tint: '#c3c7cc', size: 1.45 },
+  { id: 'core_sentry', name: 'Core Sentry', plural: 'Core Sentries', sprite: 'core_sentry', kind: 'machine', look: 'The core\'s own, and it takes orders from the ring.', level: 31, hp: 890, ac: 27, attack: 17, dice: 5, sides: 7, bonus: 10, speed: 11, xp: 1233, gold: [0, 0], obeys: true, offLine: 'the Heart\'s sentries, called by its clock: the soldier\'s blow on twice its hit points as the line read them at 31 between 30 and 32, so a company that lets the clock run wins a quarter to a third (#752), and held there when #793 made 31', tint: '#c3c7cc', size: 1.45 },
   // the Heart (#759), the boss at 32 with his hit points and blow set on his odds, the clock played and the Hands
   // killed first (#752; on the line, 2,100 and 34d8+41, he is won 9% so, 21% going for him first and 5% fighting
   // the sentries as they come): he calls the core's sentries with the Queen's ring, and never breaks
-  { id: 'vask', name: 'Lord Vask', plural: 'Lord Vasks', sprite: 'vask', kind: 'person', look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.', steady: true, level: 32, hp: 1850, ac: 29, attack: 20, dice: 22, sides: 8, bonus: 23, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['core_sentry'], chance: 1 }, tint: '#6c7078', size: 1.6 },
+  { id: 'vask', name: 'Lord Vask', plural: 'Lord Vasks', sprite: 'vask', kind: 'person', look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.', steady: true, level: 32, hp: 1850, ac: 29, attack: 20, dice: 22, sides: 8, bonus: 23, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['core_sentry'], chance: 1 }, offLine: 'the Heart\'s boss, his hit points and his blow set by its gate with the clock played and the Hands killed first (#759), and set again on his odds on the line made with the Hand\'s steel (#752)', tint: '#6c7078', size: 1.6 },
   // the Ways' last run and the Stair (#757, #758), a brute on the line at 31: a machine (§2), so it never breaks; it comes
   // down from above and reaches the back row
   { id: 'deep_crawler', name: 'Deep Crawler', plural: 'Deep Crawlers', sprite: 'deep_crawler', kind: 'machine', look: 'It comes down from above, on too many legs.', level: 31, hp: 1060, ac: 25, attack: 18, dice: 7, sides: 7, bonus: 10, speed: 8, xp: 2467, gold: [0, 0], ranged: true, tint: '#4a454d', size: 1.25 },
@@ -41,5 +41,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   // on the line as it was then, 2,096 and 35d7+54, it is won 14% at 30 and 28% at 32; the line made at 31 since is 2,095
   // and 34d8+41, #793): it reaches the back row, and what it
   // holds is held
-  { id: 'catcher', name: 'The Catcher', plural: 'Catchers', sprite: 'catcher', kind: 'machine', look: 'It caught the Hand on these stairs.', level: 31, hp: 1300, ac: 28, attack: 19, dice: 32, sides: 8, bonus: 37, speed: 13, xp: 19733, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, tint: '#3a363c', size: 2 },
+  { id: 'catcher', name: 'The Catcher', plural: 'Catchers', sprite: 'catcher', kind: 'machine', look: 'It caught the Hand on these stairs.', level: 31, hp: 1300, ac: 28, attack: 19, dice: 32, sides: 8, bonus: 37, speed: 13, xp: 19733, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, offLine: 'the Stair\'s boss, its hit points and its blow set by its gate (#758) and set again on its odds on the line made with the Hand\'s steel (#752)', tint: '#3a363c', size: 2 },
 ];

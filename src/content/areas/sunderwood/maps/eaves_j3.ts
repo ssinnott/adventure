@@ -7,7 +7,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/keys.ts';
+import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 
 /** The den burnt: its brood stops coming. */
 const DEN_BURNT = denBurnt('eaves_j3', 'j3_den');
@@ -89,8 +89,8 @@ export const EAVES_J3: MapDef = {
     // The den's brood abroad, a pair on the track; by night two deathsheads come to the den's mouth,
     // to the light in the cache; and beside the den its keepers, the old bears gone to glass, the
     // box's group at 16.
-    { id: 'j3_brood', x: 15, y: 8, monsters: ['pine_bear', 'pine_bear'], aware: 4, respawn: 1440, until: DEN_BURNT },
-    { id: 'j3_moths', x: 15, y: 20, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
+    { id: 'j3_brood', x: 15, y: 8, monsters: ['pine_bear', 'pine_bear'], aware: 4, respawn: RESPAWN.day, until: DEN_BURNT },
+    { id: 'j3_moths', x: 15, y: 20, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: RESPAWN.day, when: { hours: 'night' } },
     { id: 'j3_keepers', x: 19, y: 20, monsters: ['glass_bear', 'glass_bear'], aware: 3, roams: false },
   ],
 };

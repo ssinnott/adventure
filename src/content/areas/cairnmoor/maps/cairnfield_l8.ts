@@ -12,6 +12,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §12.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CAIRNFIELD_L8: MapDef = {
   id: 'cairnfield_l8',
@@ -89,7 +90,7 @@ export const CAIRNFIELD_L8: MapDef = {
     // not rake, the gentler, at 18, the nearer from the way in; a tor troll and a cairn wight keep the
     // loch's foot in the south-west, the farther and the hardest, at 19 (the curve's rise,
     // docs/areas/cairnmoor.md §9, #834's 16).
-    { id: 'l8_bodies', x: 30, y: 16, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: 1440, roams: false },
-    { id: 'l8_strand', x: 17, y: 31, monsters: ['tor_troll', 'cairn_wight'], aware: 3, respawn: 1440, roams: false },
+    { id: 'l8_bodies', x: 30, y: 16, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: RESPAWN.day, roams: false },
+    { id: 'l8_strand', x: 17, y: 31, monsters: ['tor_troll', 'cairn_wight'], aware: 3, respawn: RESPAWN.day, roams: false },
   ],
 };

@@ -14,6 +14,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const MONKSVALE_J10: MapDef = {
   id: 'monksvale_j10',
@@ -91,6 +92,6 @@ export const MONKSVALE_J10: MapDef = {
   encounters: [
     // The box's one fight: two giants at their own fire in the clearing, the hardest and the only group.
     // They are people, as the Stair's are, and ask no toll here (#443, call 1).
-    { id: 'j10_giants', x: 19, y: 6, monsters: ['stair_giant', 'stair_giant'], aware: 3, respawn: 2880, roams: false },
+    { id: 'j10_giants', x: 19, y: 6, monsters: ['stair_giant', 'stair_giant'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

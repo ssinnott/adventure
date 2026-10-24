@@ -14,6 +14,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SHEERPOINT_I9: MapDef = {
   id: 'sheerpoint_i9',
@@ -95,8 +96,8 @@ export const SHEERPOINT_I9: MapDef = {
     // Spine eagles off the peaks over the pines by the way in, the nearest; snow trolls lying in the
     // gully, two together; and on the trail's end the Ashen masons with their sledge, the first of the
     // Hand's on the road, who never break (MONSTERS §8.1).
-    { id: 'i9_eagles', x: 15, y: 28, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: 1440 },
-    { id: 'i9_trolls', x: 15, y: 20, monsters: ['snow_troll', 'snow_troll'], aware: 3, respawn: 2880, roams: false },
-    { id: 'i9_masons', x: 20, y: 4, monsters: ['ashen_mason', 'ashen_mason', 'ashen_mason', 'ashen_mason'], aware: 3, respawn: 2880 },
+    { id: 'i9_eagles', x: 15, y: 28, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: RESPAWN.day },
+    { id: 'i9_trolls', x: 15, y: 20, monsters: ['snow_troll', 'snow_troll'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'i9_masons', x: 20, y: 4, monsters: ['ashen_mason', 'ashen_mason', 'ashen_mason', 'ashen_mason'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

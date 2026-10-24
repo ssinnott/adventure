@@ -11,6 +11,7 @@
 // Whitespine's own (its novelty); docs/areas/rimewater.md §4.8 is its brief (#497).
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const COLDMERE_K11: MapDef = {
   id: 'coldmere_k11',
@@ -80,6 +81,6 @@ export const COLDMERE_K11: MapDef = {
   secrets: [{ x: 23, y: 11, hint: 'k11_sledge' }],
   encounters: [
     // A pair of ice bears lying up in the cleft under the crags, the box's one fight and its hardest.
-    { id: 'k11_bears', x: 16, y: 20, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
+    { id: 'k11_bears', x: 16, y: 20, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

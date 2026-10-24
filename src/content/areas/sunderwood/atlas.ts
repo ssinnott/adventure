@@ -1,10 +1,10 @@
 // Sunderwood's part of the world map: its two zones, the plates of its town and dungeon, and its
 // sites. docs/areas/sunderwood.md is its brief.
-import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [{ map: 'eaves_i2', at: [264, 30] }, { map: 'eaves_j2', at: [296, 30] }, { map: 'eaves_k2', at: [328, 30] }, { map: 'eaves_k3', at: [328, 62] }, { map: 'eaves_j3', at: [296, 62] }], seeds: [[292, 40], [300, 86]] },
-  { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', band: [15, 16], maps: [{ map: 'lanternwood_l2', at: [360, 30] }, { map: 'lanternwood_m2', at: [392, 30] }, { map: 'lanternwood_l3', at: [360, 62] }, { map: 'lanternwood_l4', at: [360, 94] }, { map: 'lanternwood_k4', at: [328, 94] }], seeds: [[372, 50]], label: [378, 84] },
+  { id: 'eaves', name: 'The Eaves', area: 'sunderwood', band: [14, 15], maps: [{ map: 'eaves_i2', at: [264, 30] }, { map: 'eaves_j2', at: [296, 30] }, { map: 'eaves_k2', at: [328, 30] }, { map: 'eaves_k3', at: [328, 62] }, { map: 'eaves_j3', at: [296, 62] }], seeds: [[292, 40], [300, 86]], road: ['eaves_i2:i2_bears1', 'eaves_i2:i2_bears2', 'eaves_j2:j2_bears', 'eaves_j2:j2_hounds', 'eaves_k2:k2_hounds', 'eaves_k2:k2_bears'] },
+  { id: 'lanternwood', name: 'Lanternwood', area: 'sunderwood', band: [15, 16], maps: [{ map: 'lanternwood_l2', at: [360, 30] }, { map: 'lanternwood_m2', at: [392, 30] }, { map: 'lanternwood_l3', at: [360, 62] }, { map: 'lanternwood_l4', at: [360, 94] }, { map: 'lanternwood_k4', at: [328, 94] }], seeds: [[372, 50]], label: [378, 84], road: ['lanternwood_l2:l2_lamp_moths', 'lanternwood_l2:l2_bears', 'lanternwood_m2:m2_hounds'] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
@@ -20,4 +20,10 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Lantern Watch', icon: 'tower', at: [372, 46], label: 'below' }, // at the gate on L2, 12,16 (#200, #201)
   { name: 'The Sunder', icon: 'rift', map: 'eaves_k3', at: [10.5, 8.5], label: 'right' }, // its door on the first landing (#199)
   { name: 'Sunderfall', icon: 'falls', map: 'eaves_k2', at: [8.5, 27.5], label: 'right' }, // its shrine, the Paladin's second prestige (#19)
+];
+
+export const LINKS: readonly AtlasLink[] = [
+  { from: 'eaves', to: 'lanternwood', kind: 'road', a: [330, 56], b: [346, 56], note: 'rope bridge' },
+  { from: 'eaves', to: 'the_sunder', kind: 'enter', a: [338, 70] },
+  { from: 'lanternwood', to: 'lantern_watch', kind: 'enter', a: [372, 46] },
 ];

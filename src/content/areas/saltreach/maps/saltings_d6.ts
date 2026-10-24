@@ -8,6 +8,7 @@
 // its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SALTINGS_D6: MapDef = {
   id: 'saltings_d6',
@@ -63,6 +64,6 @@ export const SALTINGS_D6: MapDef = {
   secrets: [{ x: 11, y: 4, hint: 'd6_boom' }],
   encounters: [
     // Two bull toads come out of the Delta's reeds onto the spit, the box's one fight.
-    { id: 'd6_toads', x: 12, y: 2, monsters: ['bull_toad', 'bull_toad'], aware: 3, roams: false, respawn: 1440 },
+    { id: 'd6_toads', x: 12, y: 2, monsters: ['bull_toad', 'bull_toad'], aware: 3, roams: false, respawn: RESPAWN.day },
   ],
 };

@@ -31,7 +31,7 @@ export const TIDE_RIFT_CLOSED: When = { slain: 'tide_ship_rift:tide_ship_rift_wa
 export const TIDE_RIFT = rift({
   id: 'tide_ship_rift', template: 'hall', material: 'brine', seed: 2, band: [12, 14], region: 'wrackholm',
   out: { to: 'tide_ship3', tx: 8, ty: 3, tf: SOUTH },
-  table: { groups: [['tide_elder', 'brineling', 'brineling', 'brineling']], warden: ['tide_warden'] },
+  table: { groups: [['tide_elder', 'brineling', 'brineling', 'brineling']], warden: ['tide_warden'], boss: true },
   hoard: { gold: 700, items: ['tide_stone'] },
   until: TIDE_RIFT_CLOSED,
 });

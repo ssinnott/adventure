@@ -8,6 +8,7 @@
 // Cairnmoor's figures; docs/areas/cairnmoor.md §12.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CARN_FADA: MapDef = {
   id: 'carn_fada',
@@ -62,10 +63,10 @@ export const CARN_FADA: MapDef = {
   secrets: [{ x: 7, y: 8, hint: 'cf_spirals' }],
   encounters: [
     // Bog bodies come up out of the tide at the passage's head, the nearest and the gentlest, at 18.
-    { id: 'cf_bodies', x: 9, y: 3, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'cf_bodies', x: 9, y: 3, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
     // Cairn wights keep the chamber's mouth, at 19.
-    { id: 'cf_wights', x: 11, y: 10, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 3, roams: false, respawn: 2880 },
+    { id: 'cf_wights', x: 11, y: 10, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
     // Ice bears off the loch's foot have made a den of the end cell: the farthest and the hardest, at 21.
-    { id: 'cf_bears', x: 4, y: 10, monsters: ['ice_bear', 'ice_bear'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'cf_bears', x: 4, y: 10, monsters: ['ice_bear', 'ice_bear'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

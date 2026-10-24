@@ -31,7 +31,7 @@ const unplaced = beside(UNPLACED, areaRows((c) => c.owes?.unplaced));
  * The most monsters a group may hold on a zone's maps, by the zone: the Deepthorn's monsters are
  * harder, not more. A zone may say so itself (`AtlasZone.maxGroup`), and is then named here no longer (#897).
  */
-const MAX_GROUP: Record<string, number> = { deepthorn: 8 };
+const MAX_GROUP: Record<string, number> = {};
 const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */

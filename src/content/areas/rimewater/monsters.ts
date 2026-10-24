@@ -25,7 +25,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the bay's last row (#490), its boss at 22; it never comes back, it mends itself one turn in ten and it leaves its
   // cap. Off MONSTERS §4.4's boss line (1,299 hp, 22d8+27, won 79% at 21 and 93% at 23), its hit points, its blow and
   // its mending are set for #490's gate: about half at its floor, 21, and nearly always at 23
-  { id: 'matron', name: 'The Matron', plural: 'Matrons', sprite: 'matron', kind: 'machine', look: 'It has tended them for four hundred years.', level: 22, hp: 1900, ac: 24, attack: 15, dice: 17, sides: 8, bonus: 18, speed: 13, xp: 13973, gold: [0, 0], cast: { spells: ['heal'], chance: 0.1 }, drops: [{ item: 'matron_cap', chance: 1 }], tint: '#b0b1ab', size: 1.45 },
+  { id: 'matron', name: 'The Matron', plural: 'Matrons', sprite: 'matron', kind: 'machine', look: 'It has tended them for four hundred years.', level: 22, hp: 1900, ac: 24, attack: 15, dice: 17, sides: 8, bonus: 18, speed: 13, xp: 13973, gold: [0, 0], cast: { spells: ['heal'], chance: 0.1 }, drops: [{ item: 'matron_cap', chance: 1 }], offLine: 'the Sleepers\' Bay\'s boss, its hit points and its blow set by its gate (#490)', tint: '#b0b1ab', size: 1.45 },
   // the bounds' lair (#832): the Spittal, the brothers' house under the pass behind K12's door, where it keeps the Wakerobe
   // in the Infirmary. The bay's keeper at the lair's door, the lair's boss at 32 (MONSTERS §13): a machine, so it never
   // breaks; its touch puts to sleep, as the Bay Keeper's does (0.3 a hit), and it mends itself, as the Matron does, one turn

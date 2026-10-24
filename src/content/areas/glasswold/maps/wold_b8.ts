@@ -11,6 +11,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/glasswold.md §4.7 is its brief (#529).
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The Ranger's third (#448): Aysu has asked a ranger of 27 with the second for Oriel Fane's map, from the
@@ -154,8 +155,9 @@ export const WOLD_B8: MapDef = {
     // From the way in: the pride at its kill with the vultures down on it; the mesa fight in the scree under
     // the lesser mesa's south face, a basilisk behind four lions; and the Grey Lion alone on his ground
     // between the mesas, the box's boss at 28.
-    { id: 'b8_pride', x: 27, y: 13, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: 2880 },
-    { id: 'b8_mesa', x: 24, y: 23, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'basilisk'], aware: 3, respawn: 2880 },
-    { id: 'b8_grey_lion', x: 17, y: 19, monsters: ['grey_lion'], aware: 3, roams: false, slainText: 'The Grey Lion lies down in the beaten grass as if to sleep, and the vultures begin to come down.' },
+    { id: 'b8_pride', x: 27, y: 13, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'b8_mesa', x: 24, y: 23, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'basilisk'], aware: 3, respawn: RESPAWN.twoDays },
+    // The Grey Lion alone on his ground between the mesas, under the rim (#529).
+    { id: 'b8_grey_lion', x: 17, y: 19, monsters: ['grey_lion'], aware: 3, roams: false, boss: true, slainText: 'The Grey Lion lies down in the beaten grass as if to sleep, and the vultures begin to come down.' },
   ],
 };

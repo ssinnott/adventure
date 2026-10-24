@@ -9,6 +9,7 @@
 // void written '%'; docs/areas/kilns.md §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNSHEART_P5: MapDef = {
   id: 'kilnsheart_p5',
@@ -85,7 +86,7 @@ export const KILNSHEART_P5: MapDef = {
     // Three fire beetles on the spoil fans under the north pit, the nearest and the gentlest, at 16; and in
     // the deepest pit a slag elder and a slagling come over from the tear in O5, the hardest, at 17, until
     // the tear is closed.
-    { id: 'p5_beetles', x: 2, y: 12, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: 1440 },
-    { id: 'p5_slag', x: 5, y: 26, monsters: ['slag_elder', 'slagling'], aware: 3, respawn: 2880, roams: false, until: { flag: 'q_anvil_closed' } },
+    { id: 'p5_beetles', x: 2, y: 12, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'p5_slag', x: 5, y: 26, monsters: ['slag_elder', 'slagling'], aware: 3, respawn: RESPAWN.twoDays, roams: false, until: { flag: 'q_anvil_closed' } },
   ],
 };

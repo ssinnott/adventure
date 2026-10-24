@@ -60,6 +60,7 @@ import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take, rankOf } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
 import { FOURTH_RANKS_OPEN } from '../kilns/guilds.ts';
+import { RESPAWN } from '../../../game/keys.ts';
 
 /**
  * The Lanterns' fourth rank's ask on High Moor (DESIGN §8, #439), on a copy of the walk's company made
@@ -1243,7 +1244,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       return seen;
     };
     const groups = CF.encounters!.map((g) => `${g.id} ${g.x},${g.y} ${g.monsters.length} ${[...new Set(g.monsters)].join('+')}`).join('; ');
-    ok(groups === 'cf_bodies 9,3 6 bog_body; cf_wights 11,10 4 cairn_wight; cf_bears 4,10 2 ice_bear' && CF.encounters!.every((g) => g.respawn === 2880 && g.roams === false && !g.slainText)
+    ok(groups === 'cf_bodies 9,3 6 bog_body; cf_wights 11,10 4 cairn_wight; cf_bears 4,10 2 ice_bear' && CF.encounters!.every((g) => g.respawn === RESPAWN.twoDays && g.roams === false && !g.slainText)
       && !flood([7, 8], [9, 3]).has('12,3') && !flood([7, 8], [11, 10]).has('7,9') && !flood([7, 8], [4, 10]).has('1,10'),
       `six bog bodies at the tide's head, four cairn wights at the chamber's mouth and two ice bears in the end cell's, each back in two days, none roaming or a guardian, and none walked round (${groups})`);
     // Its three groups won at its floor, rising from the bodies to the bears; every sight; and the oldest

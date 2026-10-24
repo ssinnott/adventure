@@ -6,6 +6,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.15 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNMOUTH_M5: MapDef = {
   id: 'kilnmouth_m5',
@@ -77,6 +78,6 @@ export const KILNMOUTH_M5: MapDef = {
   secrets: [{ x: 12, y: 6, hint: 'm5_swallows' }],
   encounters: [
     // Two rock worms in the lime pits, boring the white stone: the box's group, at 17.
-    { id: 'm5_worms', x: 20, y: 11, monsters: ['rock_worm', 'rock_worm'], aware: 3, respawn: 2880, roams: false },
+    { id: 'm5_worms', x: 20, y: 11, monsters: ['rock_worm', 'rock_worm'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

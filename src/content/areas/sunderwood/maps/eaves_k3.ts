@@ -9,6 +9,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
 import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The black-glass Rift in the crystal (#165): sunderlings nearer the way in and glass spiders by the
@@ -98,7 +99,7 @@ export const EAVES_K3: MapDef = {
     // it, on a ledge a square wide, between the company and their camp below; and in the dead wood east of the crystal
     // at the far south end, the glass bears.
     // Once Sunderfall runs again the water is down the ledges and the gleaners come no more (#205).
-    { id: 'k3_door', x: 9, y: 8, monsters: ['ashen_gleaner', 'ashen_gleaner', 'sunder_hound', 'sunder_hound'], aware: 3, respawn: 2880, roams: false, until: { flag: 'q_dam_broken' } },
-    { id: 'k3_bears', x: 23, y: 29, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: 2880, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
+    { id: 'k3_door', x: 9, y: 8, monsters: ['ashen_gleaner', 'ashen_gleaner', 'sunder_hound', 'sunder_hound'], aware: 3, respawn: RESPAWN.twoDays, roams: false, until: { flag: 'q_dam_broken' } },
+    { id: 'k3_bears', x: 23, y: 29, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: RESPAWN.twoDays, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
   ],
 };

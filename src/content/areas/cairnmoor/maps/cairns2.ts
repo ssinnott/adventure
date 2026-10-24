@@ -7,6 +7,7 @@
 // the Hill Torc. Band 19-20; docs/areas/cairnmoor.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CAIRNS2: MapDef = {
   id: 'cairns2',
@@ -57,9 +58,9 @@ export const CAIRNS2: MapDef = {
   secrets: [{ x: 6, y: 10, hint: 'cd2_rows' }],
   encounters: [
     // Wights over the rows, four to a side: the King's court.
-    { id: 'cd2_wights1', x: 5, y: 7, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 2, respawn: 2880, roams: false },
-    { id: 'cd2_wights2', x: 9, y: 5, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 2, respawn: 2880, roams: false },
+    { id: 'cd2_wights1', x: 5, y: 7, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'cd2_wights2', x: 9, y: 5, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // The Cairn King on its seat, alone: it never comes back, and the door stays shut when it falls.
-    { id: 'cd2_king', x: 7, y: 3, monsters: ['cairn_king'], aware: 2, roams: false, slainText: 'The King sinks back on its seat, and the crown rolls ringing down the hall. Behind it the door stays shut.' },
+    { id: 'cd2_king', x: 7, y: 3, monsters: ['cairn_king'], aware: 2, roams: false, boss: true, slainText: 'The King sinks back on its seat, and the crown rolls ringing down the hall. Behind it the door stays shut.' },
   ],
 };

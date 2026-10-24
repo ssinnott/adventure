@@ -7,6 +7,7 @@
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LAVA_TUBES: MapDef = {
   id: 'lava_tubes',
@@ -65,9 +66,9 @@ export const LAVA_TUBES: MapDef = {
   encounters: [
     // Fire beetles in the cooled side tube; salamanders on the chamber's fire and in the north tube; at
     // the bore's end a rock worm in its hollow, the level's group at 17.
-    { id: 'lt1_beetles', x: 3, y: 13, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: 1440, roams: false },
-    { id: 'lt1_salamanders', x: 2, y: 5, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: 1440, roams: false },
-    { id: 'lt1_salamanders_n', x: 10, y: 4, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: 1440, roams: false },
-    { id: 'lt1_worm', x: 13, y: 13, monsters: ['rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'lt1_beetles', x: 3, y: 13, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'lt1_salamanders', x: 2, y: 5, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'lt1_salamanders_n', x: 10, y: 4, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'lt1_worm', x: 13, y: 13, monsters: ['rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

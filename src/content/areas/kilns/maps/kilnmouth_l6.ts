@@ -6,6 +6,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.13 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The way into Kilnhaven (#469): a door in the town's wall at 28,4, onto the town's first square
@@ -92,9 +93,9 @@ export const KILNMOUTH_L6: MapDef = {
   encounters: [
     // Fire beetles in the ore heaps at either end of the quay; by night the Hand's crew on the pier,
     // loading for the ship; and under the heath a rock worm pair, the box's top.
-    { id: 'l6_beetles_east', x: 26, y: 10, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: 1440 },
-    { id: 'l6_beetles_west', x: 18, y: 10, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: 1440 },
-    { id: 'l6_crew', x: 22, y: 8, monsters: ['ashen_gleaner', 'ashen_gleaner', 'ashen_gleaner'], aware: 3, respawn: 1440, when: { hours: 'night' } },
-    { id: 'l6_worms', x: 12, y: 27, monsters: ['rock_worm', 'rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'l6_beetles_east', x: 26, y: 10, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: RESPAWN.day },
+    { id: 'l6_beetles_west', x: 18, y: 10, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 4, respawn: RESPAWN.day },
+    { id: 'l6_crew', x: 22, y: 8, monsters: ['ashen_gleaner', 'ashen_gleaner', 'ashen_gleaner'], aware: 3, respawn: RESPAWN.day, when: { hours: 'night' } },
+    { id: 'l6_worms', x: 12, y: 27, monsters: ['rock_worm', 'rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

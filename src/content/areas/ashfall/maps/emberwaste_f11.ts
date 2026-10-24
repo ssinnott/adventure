@@ -15,6 +15,7 @@ import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { LAMP_ASKED, LAMP_LIT } from './old_cinder2.ts';
 import { ENDED } from '../../../endings.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The way down into Old Cinder (#515): the crater's west lip, 19,4, where a roof-ridge stood until the
@@ -145,9 +146,9 @@ export const EMBERWASTE_F11: MapDef = {
     // Cinder beetles on the ash below the crater, the box's gentlest, nearest the way in, and more on the
     // field's ash; ash husks out of the crater by night; a cinder drake on the flow, the hardest before the
     // Stone; and, once the Ember Stone is lit, sentries on the way back from it, the box's top, at 26.
-    { id: 'f11_beetles', x: 20, y: 9, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: 1440 },
-    { id: 'f11_husks', x: 27, y: 4, monsters: ['ash_husk', 'ash_husk', 'ash_husk', 'ash_husk'], aware: 3, respawn: 1440, when: { hours: 'night' } },
-    { id: 'f11_drake', x: 25, y: 12, monsters: ['cinder_drake'], aware: 5, respawn: 2880 },
-    { id: 'f11_sentries', x: 14, y: 20, monsters: ['sentry', 'sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
+    { id: 'f11_beetles', x: 20, y: 9, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'f11_husks', x: 27, y: 4, monsters: ['ash_husk', 'ash_husk', 'ash_husk', 'ash_husk'], aware: 3, respawn: RESPAWN.day, when: { hours: 'night' } },
+    { id: 'f11_drake', x: 25, y: 12, monsters: ['cinder_drake'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'f11_sentries', x: 14, y: 20, monsters: ['sentry', 'sentry'], aware: 4, respawn: RESPAWN.twoDays, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
   ],
 };

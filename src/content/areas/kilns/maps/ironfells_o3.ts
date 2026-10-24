@@ -7,6 +7,7 @@
 // docs/areas/kilns.md §4.15 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const IRONFELLS_O3: MapDef = {
   id: 'ironfells_o3',
@@ -75,6 +76,6 @@ export const IRONFELLS_O3: MapDef = {
   secrets: [{ x: 19, y: 13, hint: 'o3_path' }],
   encounters: [
     // The warren's pair, under the pines at the mountain's foot: the box's one fight, and its top.
-    { id: 'o3_worms', x: 23, y: 22, monsters: ['rock_worm', 'rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'o3_worms', x: 23, y: 22, monsters: ['rock_worm', 'rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

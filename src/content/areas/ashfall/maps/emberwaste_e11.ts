@@ -16,6 +16,7 @@
 // §4.10 is its brief (#522).
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const EMBERWASTE_E11: MapDef = {
   id: 'emberwaste_e11',
@@ -96,6 +97,6 @@ export const EMBERWASTE_E11: MapDef = {
   encounters: [
     // A clutch of young drakes lying up in the hollows on the flow's warm bank, the box's one fight and its
     // hardest, at the band's top: four were too light a fight for the pace (24.7 fights to a rest).
-    { id: 'e11_drakelings', x: 12, y: 18, monsters: ['drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling'], aware: 3, respawn: 2880 },
+    { id: 'e11_drakelings', x: 12, y: 18, monsters: ['drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

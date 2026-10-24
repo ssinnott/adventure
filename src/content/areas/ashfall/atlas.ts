@@ -1,6 +1,6 @@
 // Ashfall's part of the world map: its three zones, the plates of its town and dungeons, and its
 // sites. docs/areas/ashfall.md is its brief (#509). Meridian Camp is #22's, down the vents.
-import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
@@ -8,17 +8,27 @@ export const ZONES: readonly AtlasZone[] = [
     // The crossing line said coming onto the shore (#166, #511): how the far side feels to a company under its floor,
     // in words as true coming down off the mountain (G11, #513) as down the Stair.
     crossing: { harder: 'The far side, and it is harder than the range over the Sheer.', warning: 'The far side, and nothing on it would spare you. The way back is still open.' },
+    // Down the Giants' Stair past the beetles at its foot (#510), then out of Cinderport's gate and south
+    // over the ash past the beetles below the ground to the salamanders where it warms toward the mountain
+    // (#511).
+    road: ['cindercoast_h10:h10_beetles_foot', 'cindercoast_g10:g10_beetles', 'cindercoast_g10:g10_salamanders'],
   },
   {
     id: 'firemount', name: 'Fire Mountain', area: 'ashfall', band: [25, 26], maps: [{ map: 'firemount_g11', at: [200, 318] }, { map: 'firemount_h11', at: [232, 318] }, { map: 'firemount_h12', at: [232, 350] }, { map: 'firemount_g12', at: [200, 350] }], seeds: [[214, 330], [240, 340]],
     // The crossing line said coming onto the mountain (#166, #522): in words as true down G10's track or
     // off H10's ash as over the border from the High Spine on I11 and I12, where no road runs.
     crossing: { harder: 'The ground is warm through the boots, and what lives on the mountain is harder.', warning: 'Nothing on the mountain would spare you. The way back is still open.' },
+    // Down the track off the coast past the salamanders on the slope to the stokers at the vents' mouths,
+    // the way down to Meridian Camp (#513).
+    road: ['firemount_g11:g11_salamanders', 'firemount_g11:g11_stokers'],
   },
   {
     id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], maps: [{ map: 'emberwaste_f10', at: [168, 286] }, { map: 'emberwaste_e10', at: [136, 286] }, { map: 'emberwaste_f11', at: [168, 318] }, { map: 'emberwaste_e11', at: [136, 318] }, { map: 'emberwaste_f12', at: [168, 350] }], seeds: [[172, 336], [180, 300]],
     // The crossing line said coming off the coast onto the ash (#166, #517).
     crossing: { harder: 'Nothing grows out here, and what lives on the ash is harder.', warning: 'Nothing on the ash would spare you. The coast is behind you still.' },
+    // West out of G10 onto the Waste's ash past the beetles below the vines and the drake on the rocks
+    // where the road turns west, and over the Cinder Hills past the drakes at their far end (#517).
+    road: ['emberwaste_f10:f10_beetles', 'emberwaste_f10:f10_drake', 'emberwaste_e10:e10_drakes'],
   },
 ];
 
@@ -43,4 +53,11 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Scaldwell', icon: 'springs', at: [240, 300], label: 'below' }, // the Hot Springs: H10's pools at 8,14 (#510)
   { name: 'Meridian Camp', icon: 'cave', at: [226, 334], label: 'below' }, // the vents' mouth on G11, 26,16, the way down (#22): the Lost Expedition's last camp lies below
   { name: 'Grimsforge', icon: 'forge', at: [230, 330], label: 'right' }, // Warlord's Forge, by the vents' mouth on G11, 30,12 (#513): the Barbarian's third prestige
+];
+
+export const LINKS: readonly AtlasLink[] = [
+  { from: 'cindercoast', to: 'cinderport', kind: 'enter', a: [206, 288] },
+  { from: 'emberwaste', to: 'old_cinder', kind: 'enter', a: [187, 322] },
+  { from: 'firemount', to: 'meridian_camp', kind: 'enter', a: [226, 334] },
+  { from: 'emberwaste', to: 'ember_stone', kind: 'enter', a: [176, 342] },
 ];

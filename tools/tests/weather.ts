@@ -159,7 +159,7 @@ export function weather(): void {
  * dungeon may cross. It may be marked on its exit instead (`Exit.crosses`, the same two regions), and
  * then is written here no longer (#897): a list, so that it may be empty.
  */
-const ONE_CROSSING: readonly Crossing[] = [{ from: 'underdeep', x: 2, y: 10, to: 'deep_mines3', regions: 'hearth kilns' }];
+const ONE_CROSSING: readonly Crossing[] = [];
 
 /** A crossing written in ONE_CROSSING: its exit's map and square, the map it leads to, and the regions it joins, from and to. */
 interface Crossing { from: string; x: number; y: number; to: string; regions: string }

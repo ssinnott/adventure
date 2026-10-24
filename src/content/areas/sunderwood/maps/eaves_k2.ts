@@ -6,6 +6,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const EAVES_K2: MapDef = {
   id: 'eaves_k2',
@@ -107,9 +108,9 @@ export const EAVES_K2: MapDef = {
   encounters: [
     // At the bridge's far end the hounds and a spider in the glass; the gleaners and their dog at the
     // dam where the river leaves the pines; and on the road on east, where Lanternwood begins, the glass bears.
-    { id: 'k2_hounds', x: 9, y: 22, monsters: ['sunder_hound', 'sunder_hound', 'sunder_hound', 'glass_spider'], aware: 5, respawn: 2880, until: { flag: CRACK_SEALED }, leaves: true },
+    { id: 'k2_hounds', x: 9, y: 22, monsters: ['sunder_hound', 'sunder_hound', 'sunder_hound', 'glass_spider'], aware: 5, respawn: RESPAWN.twoDays, until: { flag: CRACK_SEALED }, leaves: true },
     // The dam's gleaners stay dead: their foreman waits on them (#205).
     { id: 'k2_dam', x: 18, y: 11, monsters: ['ashen_gleaner', 'ashen_gleaner', 'ashen_gleaner', 'sunder_hound'], aware: 4 },
-    { id: 'k2_bears', x: 30, y: 22, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: 2880, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
+    { id: 'k2_bears', x: 30, y: 22, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: RESPAWN.twoDays, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
   ],
 };

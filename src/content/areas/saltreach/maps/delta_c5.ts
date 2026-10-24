@@ -8,6 +8,7 @@ import type { When } from '../../../../game/quests.ts';
 import { WEST, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
 import { STONE_HOME } from './drowned_temples.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Rift on the islet gone quiet: its warden fallen, or the Tide Stone home (#191). */
 export const RIFT_CLOSED: When = [{ slain: 'c5_rift:c5_rift_warden' }, STONE_HOME];
@@ -87,8 +88,8 @@ export const DELTA_C5: MapDef = {
   secrets: [{ x: 27, y: 22, hint: 'c5_arch' }],
   encounters: [
     // The fen's pools either side of the causeway, leeches with an eel in the water; a bull toad alone at the far end.
-    { id: 'c5_pools_n', x: 25, y: 9, monsters: ['leech', 'leech', 'leech', 'fen_eel'], aware: 3, roams: false, respawn: 1440 },
-    { id: 'c5_pools_s', x: 29, y: 15, monsters: ['leech', 'leech', 'leech', 'fen_eel'], aware: 3, roams: false, respawn: 1440 },
-    { id: 'c5_toad', x: 26, y: 29, monsters: ['bull_toad'], aware: 4, respawn: 1440 },
+    { id: 'c5_pools_n', x: 25, y: 9, monsters: ['leech', 'leech', 'leech', 'fen_eel'], aware: 3, roams: false, respawn: RESPAWN.day },
+    { id: 'c5_pools_s', x: 29, y: 15, monsters: ['leech', 'leech', 'leech', 'fen_eel'], aware: 3, roams: false, respawn: RESPAWN.day },
+    { id: 'c5_toad', x: 26, y: 29, monsters: ['bull_toad'], aware: 4, respawn: RESPAWN.day },
   ],
 };

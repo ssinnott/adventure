@@ -11,6 +11,7 @@
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The way down to the iron corridors (meridian_camp2, #22's second level): the stair at the far end,
@@ -105,9 +106,9 @@ export const MERIDIAN_CAMP: MapDef = {
     // The stokers' rounds: one with a salamander at its heel by the grates, and one alone on the east
     // flue; the furnace room's two with their salamanders, the level's hardest, at the furnace; and,
     // once the Ember Stone is lit, a sentry come up the stair, the level's top, at 26.
-    { id: 'mc1_round', x: 19, y: 10, monsters: ['stoker', 'ember_salamander'], aware: 3, respawn: 1440 },
-    { id: 'mc1_flue', x: 28, y: 8, monsters: ['stoker'], aware: 3, respawn: 1440 },
-    { id: 'mc1_stokers', x: 23, y: 23, monsters: ['stoker', 'ember_salamander', 'stoker', 'ember_salamander'], aware: 2, respawn: 2880, roams: false },
-    { id: 'mc1_sentry', x: 6, y: 27, monsters: ['sentry'], aware: 4, respawn: 2880, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
+    { id: 'mc1_round', x: 19, y: 10, monsters: ['stoker', 'ember_salamander'], aware: 3, respawn: RESPAWN.day },
+    { id: 'mc1_flue', x: 28, y: 8, monsters: ['stoker'], aware: 3, respawn: RESPAWN.day },
+    { id: 'mc1_stokers', x: 23, y: 23, monsters: ['stoker', 'ember_salamander', 'stoker', 'ember_salamander'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'mc1_sentry', x: 6, y: 27, monsters: ['sentry'], aware: 4, respawn: RESPAWN.twoDays, after: { flag: 'q_ember_lit' }, until: ENDED, leaves: true },
   ],
 };

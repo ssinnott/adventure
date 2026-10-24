@@ -14,6 +14,7 @@
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const FIREMOUNT_H12: MapDef = {
   id: 'firemount_h12',
@@ -80,6 +81,6 @@ export const FIREMOUNT_H12: MapDef = {
   secrets: [{ x: 7, y: 9, hint: 'h12_seam' }],
   encounters: [
     // The box's one fight: the drakelings on the warm ash by the flow's end, the band's top.
-    { id: 'h12_drakelings', x: 14, y: 9, monsters: ['drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling'], aware: 3, respawn: 2880 },
+    { id: 'h12_drakelings', x: 14, y: 9, monsters: ['drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

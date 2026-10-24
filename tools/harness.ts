@@ -147,21 +147,7 @@ export function edgeOf(c: Character, round: number, rules: Readonly<Rules> = RUL
  * checks.ts (`AreaChecks.gear`), read beside these (`GEAR`), a level in both refused (#897): the
  * Foreland's two are there.
  */
-const GEAR_ROWS: Rungs = [
-  [8, ['warhammer', 'battleaxe', 'greatsword', 'crossbow', 'elfbow', 'rune_dagger', 'grove_staff', 'runed_robe', 'brigandine', 'plate', 'tower_shield']],
-  [9, ['warhammer+1', 'rune_dagger+1', 'elfbow+1', 'grove_staff+1', 'greatsword+1', 'brigandine+1', 'brigandine+2', 'runed_robe+1']],
-  [10, ['warhammer+2', 'greatsword+2', 'elfbow+2', 'rune_dagger+2', 'runed_robe+2', 'brigandine+3', 'tower_shield+1', 'eldests_bough']],
-  [11, ['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe']],
-  [13, ['morning_star+1', 'stiletto+1', 'ironshod_staff+1', 'tidefolk_robe+1', 'horn_bow+1', 'plate+1', 'long_axe+1']],
-  [14, ['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield']],
-  [16, ['flail+1', 'ironwood_bow+1', 'plate+2', 'wardens_dirk+1', 'lanterns_staff', 'great_axe+1']],
-  [17, ['forge_hammer', 'seax', 'steel_bow', 'mattock', 'banded_staff', 'dwarf_mail', 'kiln_robe', 'forge_shield']],
-  [19, ['plate+3', 'forge_hammer+1', 'mattock+1', 'steel_bow+1', 'seax+1', 'kiln_robe+1', 'banded_staff+1']],
-  [21, ['ice_axe', 'skinning_knife', 'hunters_bow', 'bear_spear', 'guides_staff', 'bearskin', 'fur_robe']],
-  [22, ['ice_axe+1', 'skinning_knife+1', 'bear_spear+1', 'guides_staff+1', 'hunters_bow+1', 'plate+4']],
-  [25, ['slag_mace', 'marlinspike', 'ashwood_bow', 'flamberge', 'battle_staff', 'drakeskin', 'cinder_robe', 'basalt_shield']],
-  [28, ['grey_blade', 'grey_axe', 'grey_knife', 'grey_bow', 'grey_staff', 'old_lanterns_staff', 'grey_mail', 'grey_robe', 'grey_shield']],
-];
+const GEAR_ROWS: Rungs = [];
 /** A ladder's rows: by a level, the items a company has by then. */
 type Rungs = readonly (readonly [number, readonly string[]])[];
 /** The areas' rungs (`AreaChecks.gear`), in road order. */
@@ -574,7 +560,7 @@ export function measure(level: number, monsters: Encounter, seeds: number, from 
  * Cinderport's chandler sells by the ladder's step (#546), for a glassed member no one standing can
  * absolve. tools/tests/ladder.ts holds it to the band's window.
  */
-const KIT_ROWS: Rungs = [[25, [quickening.id]]];
+const KIT_ROWS: Rungs = [];
 /** The kit (KIT_ROWS beside what the areas' rungs carry rather than wear). */
 export const KIT: Rungs = ladder(KIT_ROWS, false);
 /** The levels whose rung is given twice, in GEAR_ROWS or KIT_ROWS and on an area or on two areas: tools/tests/ladder.ts refuses them. */

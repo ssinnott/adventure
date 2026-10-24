@@ -5,6 +5,7 @@
 // out and not in. Band 12-14; docs/areas/wrackholm.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Great Devilfish dead, a guardian that stays so: the boy has fed it for the last time. */
 export const BEAST_SLAIN = { slain: 'smugglers_cove2:kh2_great_devilfish' } as const;
@@ -63,9 +64,9 @@ export const SMUGGLERS_COVE2: MapDef = {
   ],
   secrets: [{ x: 3, y: 11, hint: 'kh2_tidemark' }],
   encounters: [
-    { id: 'kh2_crew', x: 3, y: 4, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, respawn: 2880 },
-    { id: 'kh2_devilfish_west', x: 8, y: 8, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: 2880 },
-    { id: 'kh2_devilfish_east', x: 13, y: 6, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: 2880 },
-    { id: 'kh2_great_devilfish', x: 13, y: 13, monsters: ['great_devilfish'], aware: 1, roams: false },
+    { id: 'kh2_crew', x: 3, y: 4, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'kh2_devilfish_west', x: 8, y: 8, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'kh2_devilfish_east', x: 13, y: 6, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'kh2_great_devilfish', x: 13, y: 13, monsters: ['great_devilfish'], aware: 1, roams: false, boss: true },
   ],
 };

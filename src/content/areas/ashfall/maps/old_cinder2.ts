@@ -8,6 +8,7 @@
 // light the lamp: asked by the old Lightbearer on F11's lip, it is lit here.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Paladin's third (#448): the old Lightbearer on F11's lip has asked for the lamp lit, and given his oil and flint. */
 export const LAMP_ASKED = 'q_old_lamp';
@@ -73,6 +74,6 @@ export const OLD_CINDER2: MapDef = {
   secrets: [{ x: 7, y: 10, hint: 'oc2_fallen' }],
   encounters: [
     // Husks in the cellars, before the walk.
-    { id: 'oc2_husks', x: 9, y: 4, monsters: ['ash_husk', 'ash_husk', 'ash_husk', 'ash_husk'], aware: 2, respawn: 2880, roams: false },
+    { id: 'oc2_husks', x: 9, y: 4, monsters: ['ash_husk', 'ash_husk', 'ash_husk', 'ash_husk'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

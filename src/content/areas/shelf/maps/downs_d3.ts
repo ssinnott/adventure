@@ -5,7 +5,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/shelf.md §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/keys.ts';
+import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 
 /** The camp's brood work the road until it burns. */
 const BURNT = denBurnt('downs_d3', 'd3_camp');
@@ -76,12 +76,12 @@ export const DOWNS_D3: MapDef = {
   ],
   secrets: [{ x: 3, y: 18, hint: 'd3_cleft' }],
   encounters: [
-    { id: 'd3_crows', x: 29, y: 28, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
-    { id: 'd3_bandits', x: 25, y: 29, monsters: BROOD, aware: 5, respawn: 2880, until: BURNT },
-    { id: 'd3_bandits2', x: 17, y: 28, monsters: BROOD, aware: 5, respawn: 2880, until: BURNT },
+    { id: 'd3_crows', x: 29, y: 28, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: RESPAWN.day },
+    { id: 'd3_bandits', x: 25, y: 29, monsters: BROOD, aware: 5, respawn: RESPAWN.twoDays, until: BURNT },
+    { id: 'd3_bandits2', x: 17, y: 28, monsters: BROOD, aware: 5, respawn: RESPAWN.twoDays, until: BURNT },
     { id: 'd3_keepers', x: 21, y: 27, monsters: ['cutthroat', 'cutthroat'], aware: 3, roams: false },
-    { id: 'd3_wolves', x: 11, y: 12, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: 1440 },
-    { id: 'd3_wolves2', x: 24, y: 7, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: 1440 },
-    { id: 'd3_boar', x: 5, y: 5, monsters: ['tusker'], aware: 3, respawn: 2880 },
+    { id: 'd3_wolves', x: 11, y: 12, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: RESPAWN.day },
+    { id: 'd3_wolves2', x: 24, y: 7, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: RESPAWN.day },
+    { id: 'd3_boar', x: 5, y: 5, monsters: ['tusker'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

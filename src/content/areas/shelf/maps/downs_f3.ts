@@ -7,6 +7,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
 import { WENNA_HOME, SIGNET } from '../../hearth/maps/core.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DOWNS_F3: MapDef = {
   id: 'downs_f3',
@@ -189,8 +190,8 @@ export const DOWNS_F3: MapDef = {
   ],
   secrets: [{ x: 1, y: 16, hint: 'f3_soot' }],
   encounters: [
-    { id: 'f3_crabs', x: 27, y: 2, monsters: ['shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: 1440 },
-    { id: 'f3_crows', x: 4, y: 3, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
-    { id: 'f3_wreckers', x: 2, y: 15, when: { hours: 'night' }, monsters: ['wrecker', 'wrecker', 'lampman'], aware: 5, respawn: 2880 },
+    { id: 'f3_crabs', x: 27, y: 2, monsters: ['shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: RESPAWN.day },
+    { id: 'f3_crows', x: 4, y: 3, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: RESPAWN.day },
+    { id: 'f3_wreckers', x: 2, y: 15, when: { hours: 'night' }, monsters: ['wrecker', 'wrecker', 'lampman'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

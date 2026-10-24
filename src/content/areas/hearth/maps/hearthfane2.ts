@@ -6,6 +6,7 @@
 // docs/areas/hearth_isle.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The eleven kept in the crypt's niches (the Cleric's third, §6): `hf2_eleven` sets it. */
 export const ELEVEN_KEPT = 'q_eleven_kept';
@@ -81,11 +82,11 @@ export const HEARTHFANE2: MapDef = {
     // The Hand's best in the chamber, never roaming; the rats in the side vault, come up for the dead;
     // and the keeper at the grey door, the Hand's last man beside it. Up through the door she left open
     // (#794): rats at the chamber's dead and at the Hand's; four keepers, the first machines met on the isle.
-    { id: 'hf2_champions', x: 8, y: 10, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: 2880 },
-    { id: 'hf2_rats', x: 2, y: 9, monsters: many(10, 'deep_rat'), aware: 3, respawn: 1440 },
-    { id: 'hf2_keeper', x: 8, y: 3, monsters: ['keeper', 'ashen_champion'], aware: 2, roams: false, respawn: 2880 },
-    { id: 'hf2_rats2', x: 11, y: 8, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
-    { id: 'hf2_keepers', x: 6, y: 6, monsters: many(4, 'keeper'), aware: 2, roams: false, respawn: 2880 },
-    { id: 'hf2_rats3', x: 3, y: 6, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
+    { id: 'hf2_champions', x: 8, y: 10, monsters: many(3, 'ashen_champion'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'hf2_rats', x: 2, y: 9, monsters: many(10, 'deep_rat'), aware: 3, respawn: RESPAWN.day },
+    { id: 'hf2_keeper', x: 8, y: 3, monsters: ['keeper', 'ashen_champion'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'hf2_rats2', x: 11, y: 8, monsters: many(12, 'deep_rat'), aware: 3, respawn: RESPAWN.day },
+    { id: 'hf2_keepers', x: 6, y: 6, monsters: many(4, 'keeper'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'hf2_rats3', x: 3, y: 6, monsters: many(12, 'deep_rat'), aware: 3, respawn: RESPAWN.day },
   ],
 };

@@ -7,6 +7,7 @@
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const BROKENBACK: MapDef = {
   id: 'brokenback',
@@ -58,9 +59,9 @@ export const BROKENBACK: MapDef = {
   encounters: [
     // Three overseers and the gleaner they brought, stripping the hold at its mouth: the nearer and the
     // gentler, at 13.5.
-    { id: 'wb_strippers', x: 7, y: 7, monsters: ['ashen_overseer', 'ashen_overseer', 'ashen_overseer', 'ashen_gleaner'], aware: 3, roams: false, respawn: 2880 },
+    { id: 'wb_strippers', x: 7, y: 7, monsters: ['ashen_overseer', 'ashen_overseer', 'ashen_overseer', 'ashen_gleaner'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
     // Four gleaners alone at the master's cabin, just inside the bulkhead's door: the farthest and the
     // hardest, at 15.
-    { id: 'wb_gleaners', x: 7, y: 12, monsters: ['ashen_gleaner', 'ashen_gleaner', 'ashen_gleaner', 'ashen_gleaner'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'wb_gleaners', x: 7, y: 12, monsters: ['ashen_gleaner', 'ashen_gleaner', 'ashen_gleaner', 'ashen_gleaner'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

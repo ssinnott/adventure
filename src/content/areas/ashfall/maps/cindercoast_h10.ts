@@ -11,6 +11,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * What the Springs Bring Up (#56's 49, #519): the stoker at the rock is what keeps the springs hot.
@@ -130,9 +131,9 @@ export const CINDERCOAST_H10: MapDef = {
     // roam; and at Scaldwell's rock the stoker, the first heavy machine, at its shovelling, the box's
     // group at 25. It is What the Springs Bring Up's fight (#519): broken, it stays down, and the springs
     // are cold for good (COLD).
-    { id: 'h10_beetles_foot', x: 21, y: 23, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: 1440 },
-    { id: 'h10_beetles_dune', x: 21, y: 6, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: 1440 },
-    { id: 'h10_vines', x: 14, y: 10, monsters: ['strangler_vine', 'strangler_vine', 'strangler_vine', 'strangler_vine'], aware: 2, respawn: 1440, roams: false },
+    { id: 'h10_beetles_foot', x: 21, y: 23, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'h10_beetles_dune', x: 21, y: 6, monsters: ['cinder_beetle', 'cinder_beetle', 'cinder_beetle', 'cinder_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'h10_vines', x: 14, y: 10, monsters: ['strangler_vine', 'strangler_vine', 'strangler_vine', 'strangler_vine'], aware: 2, respawn: RESPAWN.day, roams: false },
     { id: 'h10_stoker', x: 6, y: 17, monsters: ['stoker'], aware: 3, roams: false,
       slainText: 'The stoker is down at its rock, its shovel under it. In the pools behind you the steam thins.' },
   ],

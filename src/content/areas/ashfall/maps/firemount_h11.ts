@@ -15,6 +15,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.10 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const FIREMOUNT_H11: MapDef = {
   id: 'firemount_h11',
@@ -88,6 +89,6 @@ export const FIREMOUNT_H11: MapDef = {
   secrets: [{ x: 26, y: 26, hint: 'h11_axe' }],
   encounters: [
     // The box's one fight: the drakelings at their shell in the warm ash, the band's top.
-    { id: 'h11_drakelings', x: 19, y: 22, monsters: ['drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling'], aware: 3, respawn: 2880 },
+    { id: 'h11_drakelings', x: 19, y: 22, monsters: ['drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

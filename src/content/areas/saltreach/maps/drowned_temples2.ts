@@ -9,6 +9,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { COUNT_STOPPED } from './drowned_temples.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DROWNED_TEMPLES2: MapDef = {
   id: 'drowned_temples2',
@@ -61,12 +62,12 @@ export const DROWNED_TEMPLES2: MapDef = {
   ],
   encounters: [
     // A drowned man alone at the stair's foot.
-    { id: 'dt2_verger', x: 7, y: 12, monsters: ['temple_drowned'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'dt2_verger', x: 7, y: 12, monsters: ['temple_drowned'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
     // The choir (MONSTERS §6.1), cut to the temples' share: two chanters behind two drowned men, the
     // front row asleep while the chanters count. It does not come back once the count has stopped.
-    { id: 'dt2_choir', x: 7, y: 6, monsters: ['temple_drowned', 'temple_drowned', 'drowned_chanter', 'drowned_chanter'], back: 2, aware: 3, roams: false, respawn: 2880, until: COUNT_STOPPED },
+    { id: 'dt2_choir', x: 7, y: 6, monsters: ['temple_drowned', 'temple_drowned', 'drowned_chanter', 'drowned_chanter'], back: 2, aware: 3, roams: false, respawn: RESPAWN.twoDays, until: COUNT_STOPPED },
     // The Choirmaster on the chancel step, alone: the area's boss, which never comes back, and the
     // count stops with it.
-    { id: 'dt2_choirmaster', x: 8, y: 2, monsters: ['choirmaster'], aware: 1, roams: false, slainText: 'The bell rolls from its hands and rings once on the stone. The count stops at seven, and nobody takes it up.' },
+    { id: 'dt2_choirmaster', x: 8, y: 2, monsters: ['choirmaster'], aware: 1, roams: false, boss: true, slainText: 'The bell rolls from its hands and rings once on the stone. The count stops at seven, and nobody takes it up.' },
   ],
 };

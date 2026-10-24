@@ -3,6 +3,7 @@
 // door in the north-east; the Deacon waits in the shrine with the cult's ledger. Band 3-5.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const GREYWATER2: MapDef = {
   id: 'greywater2',
@@ -47,13 +48,13 @@ export const GREYWATER2: MapDef = {
   ],
   secrets: [{ x: 11, y: 5, hint: 'gw2_carving' }],
   encounters: [
-    { id: 'gw2_ghouls', x: 6, y: 1, monsters: ['ghoul', 'ghoul', 'ghoul'], aware: 4, respawn: 1440 },
-    { id: 'gw2_drowned', x: 1, y: 6, monsters: ['drowned', 'drowned', 'drowned', 'drowned'], aware: 4, respawn: 2880 },
-    { id: 'gw2_acolytes', x: 10, y: 1, monsters: ['ashen_acolyte', 'ashen_acolyte', 'ashen_acolyte'], aware: 5, respawn: 2880 },
-    { id: 'gw2_crawlers', x: 14, y: 3, monsters: ['rift_crawler', 'rift_crawler', 'rift_crawler', 'rift_crawler'], aware: 5, respawn: 1440 },
-    { id: 'gw2_mixed', x: 13, y: 9, monsters: ['ashen_acolyte', 'ashen_acolyte', 'ghoul', 'ghoul'], aware: 5, respawn: 2880 },
-    { id: 'gw2_crawlers2', x: 1, y: 11, monsters: ['rift_crawler', 'rift_crawler', 'rift_crawler', 'rift_crawler', 'rift_crawler'], aware: 5, respawn: 1440 },
-    { id: 'gw2_dead', x: 6, y: 14, monsters: ['ghoul', 'ghoul', 'ghoul', 'ghoul', 'drowned', 'drowned'], aware: 4, respawn: 2880 },
+    { id: 'gw2_ghouls', x: 6, y: 1, monsters: ['ghoul', 'ghoul', 'ghoul'], aware: 4, respawn: RESPAWN.day },
+    { id: 'gw2_drowned', x: 1, y: 6, monsters: ['drowned', 'drowned', 'drowned', 'drowned'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'gw2_acolytes', x: 10, y: 1, monsters: ['ashen_acolyte', 'ashen_acolyte', 'ashen_acolyte'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'gw2_crawlers', x: 14, y: 3, monsters: ['rift_crawler', 'rift_crawler', 'rift_crawler', 'rift_crawler'], aware: 5, respawn: RESPAWN.day },
+    { id: 'gw2_mixed', x: 13, y: 9, monsters: ['ashen_acolyte', 'ashen_acolyte', 'ghoul', 'ghoul'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'gw2_crawlers2', x: 1, y: 11, monsters: ['rift_crawler', 'rift_crawler', 'rift_crawler', 'rift_crawler', 'rift_crawler'], aware: 5, respawn: RESPAWN.day },
+    { id: 'gw2_dead', x: 6, y: 14, monsters: ['ghoul', 'ghoul', 'ghoul', 'ghoul', 'drowned', 'drowned'], aware: 4, respawn: RESPAWN.twoDays },
     { id: 'gw2_doorguard', x: 11, y: 10, monsters: ['ashen_acolyte', 'ashen_acolyte', 'ashen_acolyte', 'ghoul', 'ghoul'], aware: 3, roams: false },
     { id: 'gw2_deacon', x: 7, y: 11, monsters: ['ashen_deacon', 'ashen_acolyte', 'ashen_acolyte'], aware: 2, roams: false, boss: true },
   ],

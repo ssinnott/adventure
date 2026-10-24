@@ -7,6 +7,7 @@
 // its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DEEP_MINES: MapDef = {
   id: 'deep_mines',
@@ -70,7 +71,7 @@ export const DEEP_MINES: MapDef = {
   secrets: [{ x: 13, y: 10, hint: 'dm1_candles' }],
   encounters: [
     // Fire beetles in the warm gallery; at the face's far end, a rock worm in its hole, the level's group at 17.
-    { id: 'dm1_beetles', x: 2, y: 10, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: 1440, roams: false },
-    { id: 'dm1_worm', x: 14, y: 6, monsters: ['rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'dm1_beetles', x: 2, y: 10, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'dm1_worm', x: 14, y: 6, monsters: ['rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

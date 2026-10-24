@@ -18,7 +18,7 @@ import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
 
 export const AREA = {
@@ -38,5 +38,5 @@ export const AREA = {
   // No town, and no business (#434, call 9).
   interiors: [] as const,
   novel: { families: ['lights'], terrain: ['snow', 'ice'], mechanics: ['inflict:cursed'], landmarks: ['ring'] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;

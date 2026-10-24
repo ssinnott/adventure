@@ -6,6 +6,7 @@ import type { MapDef, Choice } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import type { When } from '../../../../game/quests.ts';
 import { TEAR_CLOSED } from './grove2.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** Thornhold takes Thora's people in (#219): past it the road's brigands stop coming. */
 const TERMS_TAKEN: When = { flag: 'q_terms_taken' };
@@ -188,23 +189,23 @@ export const THORNMARK: MapDef = {
     },
   ],
   encounters: [
-    { id: 'tm_wolves1', x: 5, y: 9, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },
+    { id: 'tm_wolves1', x: 5, y: 9, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: RESPAWN.day },
     { id: 'tm_ogre', x: 5, y: 7, monsters: ['ogre', 'brigand_archer', 'brigand', 'brigand', 'brigand'], aware: 3, roams: false, choice: BARGAIN },
-    { id: 'tm_brigands1', x: 23, y: 7, monsters: ['brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand_archer'], aware: 5, respawn: 2880, until: TERMS_TAKEN },
+    { id: 'tm_brigands1', x: 23, y: 7, monsters: ['brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand_archer'], aware: 5, respawn: RESPAWN.twoDays, until: TERMS_TAKEN },
     { id: 'tm_barrow', x: 26, y: 8, monsters: ['bone_knight', 'bone_knight', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton', 'skeleton'], aware: 3, roams: false },
     { id: 'tm_wraiths', x: 30, y: 7, monsters: ['wraith', 'wraith', 'wraith', 'wraith', 'wraith', 'wraith'], aware: 3, roams: false },
-    { id: 'tm_spiders1', x: 17, y: 13, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 1440 },
-    { id: 'tm_brigands2', x: 13, y: 15, monsters: ['brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand_archer'], aware: 5, respawn: 2880, until: TERMS_TAKEN },
-    { id: 'tm_wolves2', x: 20, y: 16, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'dire_wolf'], aware: 5, respawn: 1440 },
-    { id: 'tm_wolves3', x: 26, y: 14, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: 1440 },
-    { id: 'tm_hounds', x: 13, y: 21, monsters: ['rift_hound', 'rift_hound', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 6, respawn: 2880, until: TEAR_CLOSED },
-    { id: 'tm_spiders2', x: 10, y: 22, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 1440 },
-    { id: 'tm_zealots', x: 7, y: 26, monsters: ['zealot', 'ashen_adept', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand'], aware: 5, respawn: 2880 },
-    { id: 'tm_elders', x: 12, y: 27, monsters: ['riftling_elder', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: 2880, until: TEAR_CLOSED },
+    { id: 'tm_spiders1', x: 17, y: 13, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: RESPAWN.day },
+    { id: 'tm_brigands2', x: 13, y: 15, monsters: ['brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand_archer'], aware: 5, respawn: RESPAWN.twoDays, until: TERMS_TAKEN },
+    { id: 'tm_wolves2', x: 20, y: 16, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'dire_wolf'], aware: 5, respawn: RESPAWN.day },
+    { id: 'tm_wolves3', x: 26, y: 14, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: RESPAWN.day },
+    { id: 'tm_hounds', x: 13, y: 21, monsters: ['rift_hound', 'rift_hound', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 6, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
+    { id: 'tm_spiders2', x: 10, y: 22, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: RESPAWN.day },
+    { id: 'tm_zealots', x: 7, y: 26, monsters: ['zealot', 'ashen_adept', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'tm_elders', x: 12, y: 27, monsters: ['riftling_elder', 'riftling', 'riftling', 'riftling', 'riftling', 'riftling', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider'], aware: 5, respawn: RESPAWN.twoDays, until: TEAR_CLOSED },
     // The side quests' (#219): Leofwin's band, once he whistles for it; Thora's, in the snow, once
     // the company has told her no.
     { id: 'tm_deserters', x: 16, y: 16, monsters: ['brigand_archer', 'brigand_archer', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand'], aware: 3, roams: false, after: { flag: 'q_coin_fight' } },
     { id: 'tm_thora', x: 18, y: 6, monsters: ['brigand_archer', 'brigand_archer', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand', 'brigand'], aware: 3, roams: false, when: { season: 'winter' }, after: { flag: 'q_terms_refuse' } },
-    { id: 'tm_lake', x: 24, y: 21, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'rift_hound', 'rift_hound'], aware: 5, respawn: 1440, until: TEAR_CLOSED },
+    { id: 'tm_lake', x: 24, y: 21, monsters: ['thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'thorn_spider', 'rift_hound', 'rift_hound'], aware: 5, respawn: RESPAWN.day, until: TEAR_CLOSED },
   ],
 };

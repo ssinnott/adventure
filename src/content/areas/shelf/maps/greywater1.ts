@@ -4,6 +4,7 @@
 // 2-4.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const GREYWATER1: MapDef = {
   id: 'greywater1',
@@ -55,13 +56,13 @@ export const GREYWATER1: MapDef = {
   ],
   secrets: [{ x: 10, y: 11, hint: 'gw1_drag' }],
   encounters: [
-    { id: 'gw1_crabs', x: 5, y: 1, monsters: ['shore_crab', 'shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: 1440 },
-    { id: 'gw1_rats', x: 8, y: 3, monsters: ['rat', 'rat', 'rat', 'rat', 'rat', 'rat'], aware: 4, respawn: 720 },
-    { id: 'gw1_smug1', x: 12, y: 5, monsters: ['smuggler', 'smuggler', 'smuggler', 'smuggler_bowman'], aware: 5, respawn: 2880 },
-    { id: 'gw1_crabs2', x: 3, y: 7, monsters: ['shore_crab', 'shore_crab', 'shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: 1440 },
-    { id: 'gw1_drowned', x: 8, y: 10, monsters: ['drowned', 'drowned', 'drowned'], aware: 4, respawn: 2880 },
-    { id: 'gw1_smug2', x: 3, y: 13, monsters: ['smuggler', 'smuggler', 'smuggler_bowman', 'smuggler_bowman'], aware: 5, respawn: 2880 },
-    { id: 'gw1_smug3', x: 12, y: 7, monsters: ['smuggler', 'smuggler', 'smuggler', 'smuggler', 'smuggler_bowman', 'smuggler_bowman'], aware: 5, respawn: 2880 },
+    { id: 'gw1_crabs', x: 5, y: 1, monsters: ['shore_crab', 'shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: RESPAWN.day },
+    { id: 'gw1_rats', x: 8, y: 3, monsters: ['rat', 'rat', 'rat', 'rat', 'rat', 'rat'], aware: 4, respawn: RESPAWN.half },
+    { id: 'gw1_smug1', x: 12, y: 5, monsters: ['smuggler', 'smuggler', 'smuggler', 'smuggler_bowman'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'gw1_crabs2', x: 3, y: 7, monsters: ['shore_crab', 'shore_crab', 'shore_crab', 'shore_crab', 'shore_crab'], aware: 4, respawn: RESPAWN.day },
+    { id: 'gw1_drowned', x: 8, y: 10, monsters: ['drowned', 'drowned', 'drowned'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'gw1_smug2', x: 3, y: 13, monsters: ['smuggler', 'smuggler', 'smuggler_bowman', 'smuggler_bowman'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'gw1_smug3', x: 12, y: 7, monsters: ['smuggler', 'smuggler', 'smuggler', 'smuggler', 'smuggler_bowman', 'smuggler_bowman'], aware: 5, respawn: RESPAWN.twoDays },
     { id: 'gw1_captain', x: 8, y: 13, monsters: ['smuggler_captain', 'smuggler', 'smuggler'], aware: 2, roams: false, boss: true },
     { id: 'gw1_stairs', x: 14, y: 12, monsters: ['ghoul', 'ghoul', 'drowned', 'drowned'], aware: 3, roams: false },
   ],

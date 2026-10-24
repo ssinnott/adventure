@@ -50,73 +50,7 @@ type SeamKind = (typeof SEAM_KINDS)[number];
  * adds no row. A row may stand on its area instead (`AreaChecks.seamsAsBuilt`), the area of the first
  * box its key names, and then stands here no longer (#897): the Foreland's do.
  */
-const SEAMS_AS_BUILT: readonly AsBuilt[] = [
-  // Thornmark and the Deepthorn.
-  { seam: 'thornmark/deepthorn_h3', walk: '3-7 9-14', water: '0-2', why: 'Thornmark\'s ring stands against the Deepthorn\'s water, sand and woods as mountains, with the elves\' road through a gap at 8' },
-  { seam: 'deepthorn_i3/deepthorn_i4', road: '12', why: 'the road out of I3 goes on into I4 as a dirt track' },
-  { seam: 'deepthorn_i4|deepthorn_j4', walk: '18-19', why: 'J4\'s clearing runs two squares further south than I4\'s, into I4\'s trees' },
-  { seam: 'deepthorn_i5|deepthorn_j5', walk: '18-19', why: 'I5\'s sand starts two squares north of J5\'s, against J5\'s trees' },
-  { seam: 'deepthorn_i5/hearthisle_i6', walk: '0-2', way: '3-4', why: 'the Deepthorn\'s rock stands against the isle\'s grass and hills; the shallows meet at 3 and 4, but on I5\'s side they are a pocket of seven squares shut by rock and deep water, so no company reaches the isle by them' },
-  { seam: 'deepthorn_j4|lanternwood_k4', walk: '17', water: '18-31', why: 'K4\'s rock stands against J4\'s shore and its sea, so no way opens between Thornmark and the Sunderwood here' },
-  // Saltreach.
-  { seam: 'delta_c5|delta_d5', walk: '17-20', water: '17-20', road: '0-1 3-4', why: 'the road crosses the line on a slant, and the shore steps across it, C5\'s sand against D5\'s shallows' },
-  { seam: 'upperwater_c2|downs_d2', walk: '2', why: 'the mountain at the north end runs a square further down D2\'s side, against C2\'s hills' },
-  { seam: 'upperwater_c2/upperwater_c3', walk: '26 29-31', why: 'the end of C3\'s ring stands as mountains against C2\'s grass, C2\'s own mountain meeting it at 27 and 28' },
-  { seam: 'upperwater_c3|downs_d3', walk: '0-10', why: 'the Upper Water\'s ring stands as mountains against D3\'s grass under the cliff' },
-  { seam: 'upperwater_c3/delta_c4', walk: '31', why: 'C3\'s ring\'s mountain at its corner stands over C4\'s grass' },
-  { seam: 'saltings_c7/wold_c8', walk: '28-30', why: 'the steppe where the Scarp\'s lip bends north at C8\'s east end lies under C7\'s ring' },
-  { seam: 'upperwater_b3|upperwater_c3', water: '12', why: 'Rietum\'s diep runs in from B3 against the sluice-house on C3\'s west edge' },
-  { seam: 'upperwater_b3/delta_b4', walk: '12-13 15', water: '13 15', why: 'the stream steps a square east at the line, and B3\'s trees end a square after B4\'s' },
-  { seam: 'delta_b4|delta_c4', walk: '8', water: '8', why: 'the shore steps a square at the line, B4\'s shallows against C4\'s sand' },
-  // The Sunderwood.
-  { seam: 'eaves_i2/deepthorn_i3', walk: '4-9 13-15', why: 'I2\'s mountains stand over I3\'s hills and woods, the stream going on between them at 3' },
-  { seam: 'eaves_j2|eaves_k2', walk: '23 26-27 29', road: '23', why: 'the road, two squares wide on J2\'s side, meets the rope bridge\'s one, and J2\'s trees face K2\'s dead wood south of it' },
-  { seam: 'lanternwood_l2|lanternwood_m2', water: '31', why: 'the river at L2\'s corner meets M2\'s trees' },
-  { seam: 'lanternwood_l2/lanternwood_l3', water: '31', why: 'the river at L2\'s corner meets L3\'s trees' },
-  { seam: 'lanternwood_m2|ironfells_n2', walk: '20-31', why: 'N2\'s hills and fell under the rim stand against M2\'s range' },
-  { seam: 'lanternwood_m2/ironfells_m3', walk: '3-4 27-31', why: 'M3\'s pines beside the road and its hills at the east end stand against the ridge on M2\'s side' },
-  { seam: 'lanternwood_l3/lanternwood_l4', walk: '16-18', why: 'L3\'s woods west of the river stand against L4\'s trees, the path going on east of it' },
-  // The Kilns.
-  { seam: 'ironfells_n3|ironfells_o3', walk: '9-16', why: 'the hall\'s crag runs down O3\'s west edge against N3\'s terraces, so nothing comes at the gate from this side' },
-  { seam: 'kilnsheart_n4|kilnsheart_o4', walk: '14', why: 'N4\'s hills start a square north of O4\'s, against O4\'s crag' },
-  { seam: 'kilnsheart_n5|kilnsheart_o5', walk: '5 15-16', why: 'the mountain between them steps a square at the line' },
-  { seam: 'ironfells_o3/kilnsheart_o4', walk: '2 26', why: 'the rock and the mountain at the pines\' east end each step a square at the line' },
-  { seam: 'kilnsheart_o4/kilnsheart_o5', walk: '10-12 27-30', why: 'O4\'s hills meet O5\'s mountain at 10 to 12, and O5\'s hills run on under O4\'s mountain at the east end' },
-  // Cairnmoor.
-  { seam: 'cairnfield_n8/longmere_n9', walk: '2-31', why: 'the Rimefells stand along N9\'s north against N8\'s hills and heather' },
-  { seam: 'cairnfield_m8|cairnfield_n8', walk: '28-29', why: 'M8\'s crags close the notch\'s west side against N8\'s hills' },
-  // Rimewater.
-  { seam: 'longmere_m9|longmere_n9', walk: '7-8 11-29', why: 'the glacier\'s edge stands down M9\'s east against N9\'s pines but at 9 and 10, its only way in' },
-  { seam: 'longmere_m9/longmere_m10', walk: '30-31', why: 'M10\'s pines stand under M9\'s closed corner' },
-  { seam: 'longmere_l9/longmere_l10', walk: '11 17', why: 'the ridge\'s tail steps a square east at the line' },
-  { seam: 'coldmere_k11|longmere_l11', walk: '7-8', water: '7-8', why: 'K11\'s shore ice meets L11\'s open water' },
-  { seam: 'longmere_l10/longmere_l11', walk: '5 17', water: '5', why: 'the lake\'s shore ice and the ridge each step a square at the line' },
-  { seam: 'longmere_m10/longmere_m11', walk: '25', why: 'the ridge widens by a square across the line' },
-  // The Whitespine.
-  { seam: 'monksvale_j11|coldmere_k11', walk: '0', why: 'J11\'s mountain at its corner meets K11\'s pines' },
-  { seam: 'monksvale_j11/monksvale_j12', walk: '18', why: 'J12\'s mountain runs a square further east than J11\'s' },
-  { seam: 'highspine_i11/highspine_i12', walk: '26', why: 'the mountain steps a square at the line' },
-  { seam: 'highspine_i10/highspine_i11', walk: '25 28', why: 'the mountain closing the Stone\'s ring above the trail meets I10\'s pines, and the Stone at I11\'s 28,0 stands under I10\'s mountain' },
-  { seam: 'sheerpoint_i9|coldmere_j9', walk: '1-7', why: 'I9\'s mountain stands against J9\'s pines' },
-  { seam: 'monksvale_j10|coldmere_k10', walk: '13-17 20-22 31', why: 'K10\'s pass, its shoulder and its walls either side of the road, stand against J10\'s pines, and J10\'s corner against K10\'s' },
-  // Ashfall.
-  { seam: 'cindercoast_g10|cindercoast_h10', road: '11', why: 'H10\'s shore track comes out onto G10\'s vines' },
-  { seam: 'cindercoast_g10/firemount_g11', walk: '5 21-22', why: 'Fire Mountain\'s foot is wider on G11\'s side, each as the atlas cuts it' },
-  { seam: 'firemount_g11|firemount_h11', walk: '12-13 16-17', why: 'Grimsforge\'s wall stands against H11\'s ash, and H11\'s rocks against G11\'s ash, so the hole is shut to H11' },
-  { seam: 'emberwaste_e10|emberwaste_f10', walk: '31', why: 'F10\'s rock at its corner meets E10\'s ash' },
-  { seam: 'emberwaste_e10/emberwaste_e11', walk: '31', why: 'E11\'s rock at its corner meets E10\'s ash' },
-  { seam: 'cindercoast_f9|cindercoast_g9', walk: '19', water: '19', why: 'the shore steps a square at the line' },
-  { seam: 'cindercoast_g9/cindercoast_g10', walk: '4', water: '6-12', why: 'G9\'s grass meets Cinderport\'s wall at 4, and the wall stands against the sea wall\'s moles and the harbour' },
-  { seam: 'cindercoast_h9|sheerpoint_i9', walk: '6-16', water: '5', why: 'the Sheer stands down H9\'s east against I9\'s shallows, sand and pines, so the Stair stays the only way over by land' },
-  { seam: 'cindercoast_h9/cindercoast_h10', walk: '30', why: 'the Sheer is a square wider on H10\'s side' },
-  { seam: 'emberwaste_e11|emberwaste_f11', walk: '16-18 21-25', why: 'F11\'s rock, the Waste\'s and the builders\', stands against E11\'s ash either side of the way at 19 and 20' },
-  // The Glasswold.
-  { seam: 'wold_d10|emberwaste_e10', walk: '0-5', why: 'the great mesa\'s east face stands against E10\'s steppe and hills' },
-  { seam: 'wold_d9/wold_d10', walk: '24-26 30-31', why: 'the scree under the mesa\'s north face meets D9\'s rock, and the mesa\'s rock D9\'s steppe' },
-  { seam: 'wold_e8/wold_e9', walk: '20-21', water: '20-21', why: 'the shore steps two squares at the line' },
-  // Hearth Isle.
-  { seam: 'hearthisle_h6|hearthisle_i6', walk: '0-1 19-20 24 27-28', why: 'the rim\'s rock and the Bowl\'s grass each step at the line, and the pocket behind the tally-house at 24 is shut against H6\'s rock' },
-];
+const SEAMS_AS_BUILT: readonly AsBuilt[] = [];
 
 /**
  * The open squares of every edge of a built box that faces no built box (#898), exactly, each row with

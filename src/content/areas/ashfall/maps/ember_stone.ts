@@ -12,6 +12,7 @@
 // docs/areas/ashfall.md §4.8 is its brief.
 import type { Answer, Feature, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The flag the Stone lights on (docs/areas/ashfall.md §9, #548's 1): the Hearth counts it, and the sentries wait on it. */
 export const LIT = 'q_ember_lit';
@@ -123,8 +124,8 @@ export const EMBER_STONE: MapDef = {
   secrets: [{ x: 8, y: 13, hint: 'es_pin' }],
   encounters: [
     // The Sentinel in the door the moment the Stone lights, the first thing up; it never comes back.
-    { id: 'es_sentinel', x: 8, y: 7, monsters: ['sentinel'], aware: 3, after: { flag: LIT }, slainText: 'The Sentinel goes down on its knees over the door, and the fire in its visor goes out.' },
+    { id: 'es_sentinel', x: 8, y: 7, monsters: ['sentinel'], aware: 3, after: { flag: LIT }, slainText: 'The Sentinel goes down on its knees over the door, and the fire in its visor goes out.', boss: true },
     // The sentries up through the door after it, as everywhere once the Stone is lit.
-    { id: 'es_sentries', x: 9, y: 8, monsters: ['sentry', 'sentry'], aware: 2, respawn: 2880, after: { flag: LIT, slain: 'ember_stone:es_sentinel' } },
+    { id: 'es_sentries', x: 9, y: 8, monsters: ['sentry', 'sentry'], aware: 2, respawn: RESPAWN.twoDays, after: { flag: LIT, slain: 'ember_stone:es_sentinel' } },
   ],
 };

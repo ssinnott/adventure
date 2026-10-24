@@ -7,6 +7,7 @@
 // docs/areas/hearth_isle.md §4.6 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The CREW ONLY door opened from the inside and left open (60), by its answer. */
 export const CREW_OPEN = 'q_crew_open';
@@ -76,7 +77,7 @@ export const UNDERDEEP: MapDef = {
     { x: 16, y: 31, to: 'hearthfane2', tx: 8, ty: 2, tf: SOUTH, label: 'Back through the grey door, up into the cold of the crypt.' },
     // The CREW ONLY door, there once it is answered either way (60): onto the Clean Corridor's floor before
     // the mines' side of it, which stays a door drawn in a wall (deep_mines3 13,3).
-    { x: 2, y: 10, to: 'deep_mines3', tx: 13, ty: 3, tf: WEST, after: [{ flag: CREW_OPEN }, { flag: CREW_SHUT }], label: 'Through the door marked CREW ONLY, from the inside, into the Tiefzeche\'s lowest level.' },
+    { x: 2, y: 10, to: 'deep_mines3', tx: 13, ty: 3, tf: WEST, after: [{ flag: CREW_OPEN }, { flag: CREW_SHUT }], label: 'Through the door marked CREW ONLY, from the inside, into the Tiefzeche\'s lowest level.', crosses: 'hearth kilns' },
     // Down onto the Stair (#758): through the last door at the ways' end onto its head, and out of the crawl
     // way onto its fourth landing, below its fights.
     STAIR_DOOR,
@@ -132,20 +133,20 @@ export const UNDERDEEP: MapDef = {
     // The machine at work and the rats, rising from the grey door: the knockers in the first bays (28),
     // the keepers and rats on (30), the crawlers last at the Stair's head (31). The table's twelfth row
     // stands on the Deep Mines' side (60) and is the road behind's.
-    { id: 'ud_rats1', x: 16, y: 27, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
-    { id: 'ud_knockers1', x: 9, y: 26, monsters: ['deep_knocker', 'deep_knocker', 'keeper'], aware: 2, respawn: 2880 },
-    { id: 'ud_knockers2', x: 22, y: 26, monsters: many(3, 'deep_knocker'), aware: 2, roams: false, respawn: 2880 },
-    { id: 'ud_keepers2', x: 21, y: 21, monsters: many(4, 'keeper'), aware: 2, respawn: 2880 },
+    { id: 'ud_rats1', x: 16, y: 27, monsters: many(12, 'deep_rat'), aware: 3, respawn: RESPAWN.day },
+    { id: 'ud_knockers1', x: 9, y: 26, monsters: ['deep_knocker', 'deep_knocker', 'keeper'], aware: 2, respawn: RESPAWN.twoDays },
+    { id: 'ud_knockers2', x: 22, y: 26, monsters: many(3, 'deep_knocker'), aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    { id: 'ud_keepers2', x: 21, y: 21, monsters: many(4, 'keeper'), aware: 2, respawn: RESPAWN.twoDays },
     // The rats in the crew's stores behind the third west frame (#794): the box's pay.
-    { id: 'ud_rats3', x: 10, y: 22, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
-    { id: 'ud_keepers1', x: 11, y: 17, monsters: many(3, 'keeper'), aware: 2, respawn: 2880 },
-    { id: 'ud_rats2', x: 8, y: 13, monsters: many(12, 'deep_rat'), aware: 3, respawn: 1440 },
-    { id: 'ud_keepers3', x: 16, y: 12, monsters: many(4, 'keeper'), aware: 2, respawn: 2880 },
-    { id: 'ud_crew_guard', x: 12, y: 10, monsters: ['keeper', 'keeper', 'deep_knocker'], aware: 2, respawn: 2880 },
-    { id: 'ud_keepers4', x: 16, y: 8, monsters: many(4, 'keeper'), aware: 2, respawn: 2880 },
+    { id: 'ud_rats3', x: 10, y: 22, monsters: many(12, 'deep_rat'), aware: 3, respawn: RESPAWN.day },
+    { id: 'ud_keepers1', x: 11, y: 17, monsters: many(3, 'keeper'), aware: 2, respawn: RESPAWN.twoDays },
+    { id: 'ud_rats2', x: 8, y: 13, monsters: many(12, 'deep_rat'), aware: 3, respawn: RESPAWN.day },
+    { id: 'ud_keepers3', x: 16, y: 12, monsters: many(4, 'keeper'), aware: 2, respawn: RESPAWN.twoDays },
+    { id: 'ud_crew_guard', x: 12, y: 10, monsters: ['keeper', 'keeper', 'deep_knocker'], aware: 2, respawn: RESPAWN.twoDays },
+    { id: 'ud_keepers4', x: 16, y: 8, monsters: many(4, 'keeper'), aware: 2, respawn: RESPAWN.twoDays },
     // The first crawlers, down off the ceiling at the Stair's head: the level's hardest.
-    { id: 'ud_crawlers', x: 16, y: 5, monsters: many(2, 'deep_crawler'), aware: 3, respawn: 2880 },
+    { id: 'ud_crawlers', x: 16, y: 5, monsters: many(2, 'deep_crawler'), aware: 3, respawn: RESPAWN.twoDays },
     // By the crack, never roaming; once it is sealed they go to it and are gone, standing or not (#747).
-    { id: 'ud_knockers3', x: 26, y: 6, monsters: many(2, 'deep_knocker'), aware: 2, roams: false, respawn: 2880, until: { flag: CRACK_SEALED }, leaves: true },
+    { id: 'ud_knockers3', x: 26, y: 6, monsters: many(2, 'deep_knocker'), aware: 2, roams: false, respawn: RESPAWN.twoDays, until: { flag: CRACK_SEALED }, leaves: true },
   ],
 };

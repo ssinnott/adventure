@@ -6,6 +6,7 @@
 // tools/scaffold.ts; docs/areas/shelf.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DOWNS_D4: MapDef = {
   id: 'downs_d4',
@@ -63,9 +64,9 @@ export const DOWNS_D4: MapDef = {
   ],
   secrets: [{ x: 20, y: 13, hint: 'd4_worn' }],
   encounters: [
-    { id: 'd4_crows', x: 25, y: 3, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
-    { id: 'd4_bandits', x: 16, y: 12, monsters: ['billman', 'billman', 'billman', 'slinger'], aware: 4, respawn: 2880 },
-    { id: 'd4_bandits2', x: 7, y: 22, monsters: ['billman', 'billman', 'billman', 'slinger'], aware: 5, respawn: 2880 },
-    { id: 'd4_cutthroats', x: 3, y: 27, monsters: ['cutthroat', 'cutthroat'], aware: 5, respawn: 2880 },
+    { id: 'd4_crows', x: 25, y: 3, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: RESPAWN.day },
+    { id: 'd4_bandits', x: 16, y: 12, monsters: ['billman', 'billman', 'billman', 'slinger'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'd4_bandits2', x: 7, y: 22, monsters: ['billman', 'billman', 'billman', 'slinger'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'd4_cutthroats', x: 3, y: 27, monsters: ['cutthroat', 'cutthroat'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

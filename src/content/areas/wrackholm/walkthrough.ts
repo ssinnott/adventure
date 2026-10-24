@@ -86,6 +86,7 @@ import { item, hits, sellPrice } from '../../../game/items.ts';
 import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
+import { RESPAWN } from '../../../game/keys.ts';
 
 /** The clock on to the next hour given. */
 const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
@@ -1307,7 +1308,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     w.level = 14;
     const [first, last] = [WB.encounters!.find((g) => g.id === 'wb_strippers')!, WB.encounters!.find((g) => g.id === 'wb_gleaners')!];
     ok(WB.encounters!.length === 2 && first.monsters.join() === 'ashen_overseer,ashen_overseer,ashen_overseer,ashen_gleaner' && last.monsters.join() === 'ashen_gleaner,ashen_gleaner,ashen_gleaner,ashen_gleaner'
-      && WB.encounters!.every((g) => g.respawn === 2880 && !g.slainText && g.roams === false), 'three overseers with a gleaner at the hold\'s mouth and four gleaners at the cabin\'s door, and no guardian');
+      && WB.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && g.roams === false), 'three overseers with a gleaner at the hold\'s mouth and four gleaners at the cabin\'s door, and no guardian');
     for (const g of WB.encounters!) fight(w, `${WB.id}:${g.id}`);
     for (const id of ['wb_break', 'wb_tide', 'wb_hold', 'wb_bulkhead', 'wb_cabin', 'wb_stern']) see(w, `${WB.id}:${id}`);
     const hold = new GameMap(WB), key = (x: number, y: number): string => `${x},${y}`, [wall] = WB.secrets!;
