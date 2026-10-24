@@ -4,7 +4,7 @@
 // band. The gate, the curve, the quest and the pilot hold the fixture in their own suites (gate.ts,
 // curve.ts, quests.ts, pilot.ts). None of it is content: no area lists the lair, and no save holds it.
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { World, enclaveLine, HARDER_IN, WARNING_IN } from '../../src/game/world.ts';
 import { EAST, NORTH } from '../../src/game/types.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';

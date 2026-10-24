@@ -5,7 +5,7 @@
 import { STONES } from '../content/stones.ts';
 import { ENDINGS } from '../content/endings.ts';
 import type { Ending, EndingId } from '../content/endings.ts';
-import type { Answer } from './map.ts';
+import type { Answer } from './mapdef.ts';
 import { ATLAS } from '../content/index.ts';
 import { holds } from './quests.ts';
 import type { WorldState } from './world.ts';

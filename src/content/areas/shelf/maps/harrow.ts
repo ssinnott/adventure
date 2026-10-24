@@ -5,7 +5,7 @@
 // Mottram the chandler and the Bard's by a luthier under the Hearthlight's eaves (#19). Once the Council
 // has removed Vask (#764) the gibbets go, the inn is the old city's price and the Eel talks of the
 // verdict; the hold's opens the Chapel and Tallis's makes the stores a port's.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { QuestCond } from '../../../../game/quests.ts';

@@ -13,7 +13,7 @@
 // straight lines. Ways between areas come from the built maps' exits and the atlas's planned links;
 // a planned way may open only after a later step, which is what sends the party back through
 // country it has already cleared, or out across the inland sea. Pure: nothing here draws.
-import type { MapDef, MapKind } from './map.ts';
+import type { MapDef, MapKind } from './mapdef.ts';
 import type { RegionId } from './weather.ts';
 
 /** A point in world cells: x east, y south. */

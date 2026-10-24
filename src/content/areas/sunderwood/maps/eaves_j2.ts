@@ -3,7 +3,7 @@
 // south-east for the bridge, the pine-cutters' steading among the first glass trees, and a bear's
 // cave under the rim at the north path's end.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

@@ -3,7 +3,7 @@
 // the lime kilns in a row on the hill over the fields, the lookout from its top over the port and the
 // sea, and the grass under the hill running down to the shore.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.12 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

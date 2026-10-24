@@ -41,7 +41,7 @@ async function main(): Promise<void> {
   const x = Number(sx), y = Number(sy);
   const d = cut(ATLAS, MAP_DEFS, baseline(ATLAS, MAP_DEFS), AREAS.map((a) => a.id), zoneId, x, y, id);
   if ('refused' in d) return refuse(d.refused);
-  const text = emit(d, zoneId, x, y, importFrom(out, 'map.ts'), importFrom(out, 'types.ts'));
+  const text = emit(d, zoneId, x, y, importFrom(out, 'mapdef.ts'), importFrom(out, 'types.ts'));
   if (out) { writeFileSync(out, text); console.log(`scaffold: wrote ${def(d)} to ${out}`); }
   else process.stdout.write(text);
   console.error(`scaffold: ${def(d)}, start ${d.def.start.x},${d.def.start.y} facing ${FACING_NAMES[d.def.start.facing]}`);

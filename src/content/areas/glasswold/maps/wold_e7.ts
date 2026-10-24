@@ -5,7 +5,7 @@
 // stand off its isle's south end across deep water, shut against E6, which no road joins to the Wold;
 // the strand's end at the south-west corner is E8's and D7's sand. Cut from the atlas by
 // tools/scaffold.ts; docs/areas/glasswold.md §12 is its brief (#833).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 
 export const WOLD_E7: MapDef<'wold_e7'> = {

@@ -6,7 +6,7 @@
 // corner, where the road leaves.
 // Cut from the atlas by hand, its rim's pine drawn as forest (tools/scaffold.ts has no character for
 // pine); docs/areas/sunderwood.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { AVERIL, AVERIL_MET } from './lantern_watch.ts';
 import { LAMP_LIT } from '../quests.ts';

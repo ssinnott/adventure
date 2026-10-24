@@ -2,7 +2,7 @@
 // price sells at its own; and selling back is half the item's own price whatever the shop, or two
 // thirds to a company with a Merchant standing (#857), which no price of a shop's may be under.
 import { MAP_DEFS, ITEMS } from '../../src/content/index.ts';
-import type { Feature } from '../../src/game/map.ts';
+import type { Feature } from '../../src/game/mapdef.ts';
 import { priceIn, buy, sellPrice } from '../../src/game/items.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';

@@ -1,6 +1,6 @@
 // The Ashcombe cellar: the first dungeon and the tutorial Rift. Four rings of corridor around
 // four rooms; a locked door and a secret door decide the order the rings open in.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

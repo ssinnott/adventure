@@ -10,7 +10,7 @@ import { TEMPLATES, MATERIALS, RIFT_SAMPLES, rift } from '../../src/content/rift
 import { generateRift, templateFaults, turn, RIFT_SIZE } from '../../src/game/rifts.ts';
 import type { RiftSpec } from '../../src/game/rifts.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { EAST } from '../../src/game/types.ts';

@@ -7,7 +7,7 @@
 // walked (#497: the pass across the corner was taken, not walked, while the box was parked). The south
 // edge meets L11; the east edge M10.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

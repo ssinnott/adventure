@@ -5,7 +5,7 @@
 // ribs, and against her keel her master, Holdfast on him; behind her bows, kelp grown green over the rock
 // where no wave comes, and behind it the master's sea chest in a dry cleft. One level, band 30-32;
 // docs/areas/wrackholm.md §12.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 

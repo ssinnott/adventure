@@ -10,7 +10,7 @@ import { ATLAS, MAP_DEFS, AREAS } from '../../src/content/index.ts';
 import { worldGrid, MAP_TERRAIN } from '../../src/game/atlas.ts';
 import type { Atlas } from '../../src/game/atlas.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { cut, emit, layBack, mismatches, baseline, CHAR_OF, SIZE } from '../kit/scaffold.ts';
 import type { Draft } from '../kit/scaffold.ts';
 import { ok } from './lib.ts';
@@ -47,7 +47,7 @@ async function exported(d: Draft, zone: string, x: number, y: number): Promise<R
   const game = (f: string): string => fileURLToPath(new URL(`../../src/game/${f}`, import.meta.url));
   const dir = mkdtempSync(join(tmpdir(), 'scaffold-')), file = join(dir, 'draft.ts');
   try {
-    writeFileSync(file, emit(d, zone, x, y, game('map.ts'), game('types.ts')));
+    writeFileSync(file, emit(d, zone, x, y, game('mapdef.ts'), game('types.ts')));
     return await import(pathToFileURL(file).href) as Record<string, MapDef>;
   } finally { rmSync(dir, { recursive: true, force: true }); }
 }
@@ -82,7 +82,7 @@ export async function scaffold(): Promise<void> {
   const band = zone.band ?? atlas.areas.find((a) => a.id === zone.area)?.band;
   ok(def.id === zone.id && def.name === zone.name && def.kind === 'outdoor' && def.density === 'country' && def.band?.join('-') === band?.join('-') && def.region === 'shelf', `it takes the zone's id, name and band, the Foreland's region, and is country (${def.name}, ${def.band?.join('-')}, ${def.density})`);
   // Declared `: MapDef` and listed in its area's MAPS, a draft would make MapId wait on itself (#994).
-  ok(new RegExp(`^export const \\w+: MapDef<'${def.id}'> = \\{$`, 'm').test(emit(d, 'downs', AT[0], AT[1], 'map.ts', 'types.ts')), `its map is declared with its id, MapDef<'${def.id}'>, as MapId asks`);
+  ok(new RegExp(`^export const \\w+: MapDef<'${def.id}'> = \\{$`, 'm').test(emit(d, 'downs', AT[0], AT[1], 'mapdef.ts', 'types.ts')), `its map is declared with its id, MapDef<'${def.id}'>, as MapId asks`);
   const has = (t: 'hills' | 'farm' | 'forest' | 'road'): boolean => (d.counts[t] ?? 0) > 0;
   ok(has('hills') && has('farm') && has('forest') && has('road'), `its hills, farmland, forest and road come through (${['hills', 'farm', 'forest', 'road'].map((t) => `${t} ${d.counts[t as 'hills'] ?? 0}`).join(', ')})`);
 
@@ -133,7 +133,7 @@ export async function scaffold(): Promise<void> {
   const moved: Atlas = { ...atlas, zones: atlas.zones.map((z) => (z.id === 'downs' ? { ...z, area: 'thornmark' } : z)) };
   const sky = async (regions: readonly string[]): Promise<{ region?: string; told: boolean }> => {
     const r = cut(moved, defs, g0, regions, 'downs', AT[0], AT[1]);
-    return 'refused' in r ? { told: false } : { region: (await written(r, 'downs', AT[0], AT[1])).region, told: /has no region yet/.test(emit(r, 'downs', AT[0], AT[1], 'map.ts', 'types.ts')) };
+    return 'refused' in r ? { told: false } : { region: (await written(r, 'downs', AT[0], AT[1])).region, told: /has no region yet/.test(emit(r, 'downs', AT[0], AT[1], 'mapdef.ts', 'types.ts')) };
   };
   const own = await sky(REGIONS), none = await sky(['shelf']);
   ok(own.region === 'thornmark' && !own.told, `a Thornmark zone's draft is written in Thornmark's region (${own.region})`);

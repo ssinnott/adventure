@@ -19,7 +19,7 @@ import { defaultParty, partyCan, isDown, takePrestige, RACES, CLASSES, NAME_MAX 
 import type { Party, RaceId, ClassId } from '../../src/game/party.ts';
 import { World } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Feature } from '../../src/game/map.ts';
+import type { MapDef, Feature } from '../../src/game/mapdef.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { Person } from '../../src/game/people.ts';
 import { startCombat, currentTurn } from '../../src/game/combat.ts';

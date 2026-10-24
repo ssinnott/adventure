@@ -4,7 +4,7 @@
 // well-house is walled into the rim's foot over a spring, a willow hung with rags at its door. The
 // north-east corner is the rim, as B3 closes it, the Long Water's first shallows behind it. Cut from the
 // atlas by hand, its void written in; docs/areas/saltreach.md §12 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

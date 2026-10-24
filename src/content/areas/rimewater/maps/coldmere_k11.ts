@@ -9,7 +9,7 @@
 // edge K12's north (#832), square for square.
 // Cut from the atlas by tools/scaffold.ts, the rim's peaks drawn as its mountain, the peaks being the
 // Whitespine's own (its novelty); docs/areas/rimewater.md §4.8 is its brief (#497).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

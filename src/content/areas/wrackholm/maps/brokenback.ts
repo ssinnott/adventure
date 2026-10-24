@@ -5,7 +5,7 @@
 // gleaners alone; and under the cabin's deck, behind one plank worn bright, the master's strongbox.
 // Band 14-15, a band over E5's 12-13, out of the isle's figures; docs/areas/wrackholm.md §12.5 is its
 // brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

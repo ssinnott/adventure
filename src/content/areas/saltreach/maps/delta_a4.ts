@@ -7,7 +7,7 @@
 // whole, at the Delta's band. Its south edge is shut with the rim's mountain against A5, not built yet,
 // but at the corner, where B4's marsh runs on (docs/areas/saltreach.md §12.5). Cut from the atlas by
 // hand, its void written in; §12 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 

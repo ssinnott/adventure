@@ -3,7 +3,7 @@
 // Great Devilfish in the black pool at the back with the boy who feeds it. A flooded passage behind
 // the west wall, where the tide-mark stops short of the roof, lets out on the isle's shore: a way
 // out and not in. Band 12-14; docs/areas/wrackholm.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

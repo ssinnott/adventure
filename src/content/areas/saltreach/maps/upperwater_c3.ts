@@ -5,7 +5,7 @@
 // mountain with the Downs' strip above it, and Sjonghol, a cleft in its foot. The Night-Light (#56's
 // 21, #183): the priest asks for Nynke's light, and Tobin across the diep would buy it. Cut from the atlas by
 // hand, the scaffold drawing no cliff; docs/areas/saltreach.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

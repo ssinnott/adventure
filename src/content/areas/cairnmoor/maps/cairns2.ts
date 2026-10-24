@@ -5,7 +5,7 @@
 // smooth wall that nothing opens, with nothing beside it at a girl's shoulder. Beside the stair's head
 // a cell the hill folk walled up, its dead laid the other way about, with the richest grave-gold and
 // the Hill Torc. Band 19-20; docs/areas/cairnmoor.md §4.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

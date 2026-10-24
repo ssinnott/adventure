@@ -2,7 +2,7 @@
 // here once, and a den's `until`, which the maps read. It imports nothing that runs, only types, so
 // any module may load it first, a map among them, without reaching the content index; each old home
 // gives its keys on, so no other import moves (tools/tests/structure.ts loads the modules first).
-import type { Feature } from './map.ts';
+import type { Feature } from './mapdef.ts';
 import type { Den } from './dens.ts';
 import type { QuestCond } from './quests.ts';
 import type { GuildId } from '../content/guilds.ts';

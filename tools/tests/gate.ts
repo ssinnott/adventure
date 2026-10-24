@@ -13,7 +13,7 @@ import { ATLAS, ITEMS, MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { CURVE } from '../../src/content/progression.ts';
-import type { EncounterDef, Feature, MapDef, Choice } from '../../src/game/map.ts';
+import type { EncounterDef, Feature, MapDef, Choice } from '../../src/game/mapdef.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { World } from '../../src/game/world.ts';
 import { EAST } from '../../src/game/types.ts';

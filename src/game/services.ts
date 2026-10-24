@@ -6,7 +6,7 @@
 // the walkthroughs call the same rules instead of writing them out again. Each changes only what it is
 // handed, so a test serves as the game does, without a Game; it still reads the item and spell tables
 // through `sellPrice`, `spell`, `spellsFor` and `levelUp` until #973 and #974 pass them in.
-import type { Feature } from './map.ts';
+import type { Feature } from './mapdef.ts';
 import type { World } from './world.ts';
 import type { Character, Party } from './party.ts';
 import type { ItemDef } from './items.ts';

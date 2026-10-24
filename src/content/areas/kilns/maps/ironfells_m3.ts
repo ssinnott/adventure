@@ -5,7 +5,7 @@
 // heap below it. The road runs on out of the east edge for N3 and Anvilhall.
 // Lanternwood's trees close the west against L3, and the ridge under M2 the north but for the road.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

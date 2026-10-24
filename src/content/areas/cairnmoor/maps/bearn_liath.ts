@@ -5,7 +5,7 @@
 // hollow under the tops, the old man sits against the rock with his kist, and Torhide in it; great
 // tracks cross the hollow to its north wall, where the troll keeps what it took from the rest who came
 // up. One level, band 30-32; docs/areas/cairnmoor.md §12.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 

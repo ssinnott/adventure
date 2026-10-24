@@ -5,7 +5,7 @@
 // cutting he stopped at; on the hills south the tors with faces cut in them, the stonecutter's fire
 // under them, and the first of the Rimefells at the south-east corner.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

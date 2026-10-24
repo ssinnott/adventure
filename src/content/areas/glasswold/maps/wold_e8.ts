@@ -8,7 +8,7 @@
 // is not built, so the world ends past the east edge.
 // Cut from the atlas by tools/scaffold.ts, with a bar of shallows out to each island for a swimmer;
 // docs/areas/glasswold.md §4.9 is its brief (#534).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

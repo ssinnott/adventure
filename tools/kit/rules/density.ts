@@ -1,6 +1,7 @@
 // The density rule the suites share (#984): a map measured against its floors and judged. The
 // density suite holds every map to it; the others take it from here.
-import { GameMap, type MapDef } from '../../../src/game/map.ts';
+import { GameMap } from '../../../src/game/map.ts';
+import type { MapDef } from '../../../src/game/mapdef.ts';
 
 type Row = 'core' | 'country' | 'town' | 'dungeon';
 /** 90% of the squares within `within` steps, and none past `cap`. Country held on every country box of the Downs (#47). */

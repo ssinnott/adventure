@@ -5,7 +5,7 @@
 // fonts, two bull toads come in with the fen at the north-east's; the apse at the nave's head and
 // its stair down to the choir, where the count is heard from the top. Band 11-12;
 // docs/areas/saltreach.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { QuestCond, When } from '../../../../game/quests.ts';

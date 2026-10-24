@@ -6,7 +6,7 @@
 // is closed with it, band 26-28, but for the stair: its flights climb column 8 from the notch, past
 // the fallen one by a rope ladder, to the Wold's lip on C8 (#528). Cut from the atlas by
 // tools/scaffold.ts; docs/areas/saltreach.md §4.10 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

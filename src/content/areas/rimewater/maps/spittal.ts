@@ -5,7 +5,7 @@
 // robe on every peg but one; at the passage's end the stair down to the Infirmary (`spittal2`), where the
 // Infirmarer keeps the Wakerobe. It holds no group and no find. Band 30-32, the cap's, out of Rimewater's
 // figures; docs/areas/rimewater.md §12.5 is its brief (#832).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 

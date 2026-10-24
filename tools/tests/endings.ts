@@ -10,7 +10,7 @@ import type { Ending } from '../../src/content/endings.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { answer, SHORT } from '../../src/game/people.ts';
-import type { Answer } from '../../src/game/map.ts';
+import type { Answer } from '../../src/game/mapdef.ts';
 import { save } from '../../src/game/save.ts';
 import type { Store } from '../../src/game/save.ts';
 import type { Game } from '../../src/game/game.ts';

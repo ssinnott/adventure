@@ -4,7 +4,7 @@
 // test cannot do (tools/tests/ways.ts).
 import { worldPoint } from '../../src/game/atlas.ts';
 import type { Atlas } from '../../src/game/atlas.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import type { Facing } from '../../src/game/types.ts';
 
 /** A way out of a map; `sold` marks a crossing a person sells, which is no gate. */

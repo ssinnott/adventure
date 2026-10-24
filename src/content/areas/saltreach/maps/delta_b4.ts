@@ -5,7 +5,7 @@
 // carried across the water's foot; and the fen's north end across the south, a bull toad in it. The
 // heronry is a den (#88) that breeds the river's herons. Cut from the atlas by tools/scaffold.ts;
 // docs/areas/saltreach.md §4.11 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 

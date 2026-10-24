@@ -8,7 +8,7 @@
 // (§9, #834's 3).
 // The P column is 24 wide: cut by hand from the atlas, the void written '%'; docs/areas/cairnmoor.md
 // §12.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

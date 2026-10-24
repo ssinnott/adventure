@@ -11,7 +11,7 @@
 // edge meets K9 (#489) square for square, walked anywhere; the west edge J10 and the south edge K11
 // (#497).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

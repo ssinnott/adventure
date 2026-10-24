@@ -4,7 +4,7 @@
 // E4, the Downs' last shore (#837). The cliff is mountain, as D3's is, carried on to the water where
 // the atlas stops it short, so the bends are the one way down. Cut from the atlas by
 // tools/scaffold.ts; docs/areas/shelf.md §4.9 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

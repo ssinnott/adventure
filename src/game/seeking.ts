@@ -4,7 +4,7 @@
 // places (a person who `teaches`), so nothing is saved and an old save gains one as soon as an area
 // places its trainer. Begun at the level with the prestige before; done once the member has taken it,
 // or, for a third whose trainer asks a quest (`asks`), once that quest begins.
-import type { MapDef, Teaching } from './map.ts';
+import type { MapDef, Teaching } from './mapdef.ts';
 import type { Party } from './party.ts';
 import type { QuestDef, LogQuest, When, QuestView } from './quests.ts';
 import { PRESTIGES, PRESTIGE_LEVELS } from './party.ts';
