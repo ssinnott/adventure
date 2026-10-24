@@ -11,9 +11,9 @@ Where each section is (#1024):
 - §1 to §4.3 and the rules of §4.4: here.
 - The harness's runs of §4.4, the tables of a day, each time the line was made again and the lists
   of #541, #549 and #584: [archive/harness-log.md](archive/harness-log.md), under §4.4.
-- §5 to §12, the acts' rosters, the reach, the families down the road (§11) and what they add
-  (§12): [archive/MONSTERS-rosters.md](archive/MONSTERS-rosters.md), under the numbers they had.
-- §13, the bounds' lairs: there too, but the row of the guardian not yet drawn, which stays here.
+- §5 to §13, the acts' rosters, the reach, the families down the road (§11), what they add (§12)
+  and the bounds' lairs (§13): [archive/MONSTERS-rosters.md](archive/MONSTERS-rosters.md), under
+  the numbers they had.
 - The monsters as their defs make them, a row to each by area in road order, then the families:
   [ROSTER.md](ROSTER.md), made by `node tools/roster.ts`.
 
@@ -692,15 +692,3 @@ company were the four newer classes' (#854). They combine. Play has none of the 
 checks none of the last three, which #865 weighed and kept off (the game's own bot plays the three
 from level 11); `--calibrate`
 under any says what share of days end badly at each point it makes, and writes nothing.
-
----
-
-## 13. The bounds' lairs
-
-The row of the guardian not yet drawn stays here, a plan until it is built (its lair is
-`docs/areas/saltreach/plan.md`'s); the rest of this section is in
-[archive/MONSTERS-rosters.md](archive/MONSTERS-rosters.md) under §13 (#1024).
-
-| Monster | Family | Role, level | Where | Look; what it does |
-|---|---|---|---|---|
-| The Old Chanter | skeleton, new kind | boss, 32 | Saltreach's drowned mound, A5; the Telstok | *The first of the chanters, and it still sings the old song.* Blesses itself and curses; dead, so sleep and nature do nothing to it and holy half again |

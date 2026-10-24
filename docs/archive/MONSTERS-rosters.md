@@ -2,8 +2,7 @@
 
 > History, not kept up to date: §5 to §13 of `docs/MONSTERS.md` as they stood when #1024 cut it,
 > whole and in order under their own numbers: the acts' rosters (§5 to §9), the reach (§10), the
-> families down the road (§11), what they add to the design (§12) and the bounds' lairs (§13), but
-> for the row of the guardian not yet drawn, which MONSTERS.md §13 keeps until it is built. Each
+> families down the road (§11), what they add to the design (§12) and the bounds' lairs (§13). Each
 > monster as its def makes it is [ROSTER.md](../ROSTER.md), made by `node tools/roster.ts`; the
 > rules are [MONSTERS.md](../MONSTERS.md).
 
@@ -962,14 +961,16 @@ small creatures pull request in its family's module (EXPANSION.md §8.1), after 
 families register their kinds since #919. Each stands at 32, the band's top, as the road's bosses
 stand at theirs, and is judged at the lair's floor of 30 (#845; EXPANSION.md §5.2). Its numbers are
 set by its lair's gate, off the harness's line at the cap, with a word on its row that says so
-(`offLine`; §4.1, §4.2): the seven built have theirs, and the Old Chanter waits on Saltreach's lair
-(#830). So this names the role and the shape and no hit points. Where it can, a guardian answers
+(`offLine`; §4.1, §4.2): the seven built have theirs, and the Old Chanter, drawn and defined before
+its lair, stands on the line's boss at 32 with no word until Saltreach's lair (#830) sets its
+numbers. So this names the role and the shape and no hit points. Where it can, a guardian answers
 what its lair holds, and a company that has fought it knows what it has found. The lair's other
 groups are its brief's, from kinds already drawn.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
 | The Hag | long bodies, new kind | boss, 32 | Hag Hole, the Foreland's sea cave behind E4's cliff; it keeps the Hagstone | *No eyes, and it found you first.* Holds (paralysis) |
+| The Old Chanter | skeleton, new kind | boss, 32 | Saltreach's drowned mound, A5; the Telstok | *The first of the chanters, and it still sings the old song.* Blesses itself and curses; dead, so sleep and nature do nothing to it and holy half again |
 | Old Nick | devilfish, new kind | boss, 32 | Nick's Locker, Wrackholm's sea cave under F5's reef; Holdfast | *What the smugglers fed first.* Size 2; reaches the back row; its hits heal it |
 | The Steiger | knockers, new kind | boss, 32 | the Randzeche, the Kilns' old working behind P5's adit; the Erzhemd | *It knocks once, and the whole seam answers.* A machine; calls a group of deep knockers |
 | The Rim Troll | ogre, new kind | boss, 32 | Bearn Liath, Cairnmoor's cleft in P7's rim; Torhide | *The rim stood up.* Size 2; mends unless burned |

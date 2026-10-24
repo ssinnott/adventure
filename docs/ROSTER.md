@@ -94,6 +94,7 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Salt Crab (`salt_crab`) | spider | beast | 11 | 127 | 19 | +7 | 3d7+3 | 8 | 578 | 0 | *White with salt, and it glitters when it moves.* | shrugs off sleep |
 | Leech (`leech`) | longbodies | beast | 10 | 87 | 16 | +7 | 2d6+3 | 12 | 393 | 0 | *Black, and as long as your arm.* | its hits heal it |
 | Bull Toad (`bull_toad`) | toads | beast | 12 | 278 | 16 | +9 | 3d7+6 | 8 | 947 | 0 | *It could swallow Ottilie whole.* | diseases, 0.15 a hit |
+| The Old Chanter (`old_chanter`) | skeleton | dead | 32 | 2100 | 29 | +20 | 34d8+41 | 13 | 20373 | 0 | *The first of the chanters, and it still sings the old song.* | curses, 0.2 a hit; casts Bless, every turn |
 
 ## Wrackholm (`wrackholm`)
 
@@ -245,7 +246,7 @@ each def is a kind of its own. First met is the first area in road order with a 
 | `spider` | The Foreland (Marsh Spider, Shore Crab, Rift Crawler and Barnacle Crab) | Thornmark (Thorn Spider); Saltreach (Salt Crab); Sunderwood (Glass Spider); The Kilns (Fire Beetle); Ashfall (Cinder Beetle); The Glasswold (Glass Scorpion) |
 | `bandit` | The Foreland (Bandit, Bandit Archer, Smuggler, Smuggler Bowman, Smuggler Captain, Wrecker, Lampman, Footpad, Poacher, Billman, Slinger and Cutthroat) | Thornmark (Brigand and Brigand Archer); Saltreach (Bargeman and Barge Master); Wrackholm (Wrack Smuggler and Wrack Bowman); The Kilns (Anvil Guard) |
 | `cultist` | The Foreland (Ashen Cultist, Ashen Acolyte and Ashen Deacon) | Thornmark (Ashen Zealot, Ashen Adept and Hand of Ash); Wrackholm (Ashen Overseer); Sunderwood (Ashen Gleaner); The Whitespine (Ashen Mason); Hearth Isle (Ashen Champion, Ashen Preacher, Ashen Rearguard, Grey Hand and Lord Vask) |
-| `skeleton` | The Foreland (Skeleton, Drowned Man, Ghoul, Barrow Guard and Barrow Captain) | Thornmark (Bone Knight); Saltreach (Drowned Man, Drowned Chanter and The Choirmaster); Cairnmoor (Bog Body and The Cairn King); Ashfall (Ash Husk) |
+| `skeleton` | The Foreland (Skeleton, Drowned Man, Ghoul, Barrow Guard and Barrow Captain) | Thornmark (Bone Knight); Saltreach (Drowned Man, Drowned Chanter, The Choirmaster and The Old Chanter); Cairnmoor (Bog Body and The Cairn King); Ashfall (Ash Husk) |
 | `riftling` | The Foreland (Riftling and Rift Warden) | Thornmark (Riftling Elder and Warden of the Cut); Saltreach (Brineling); Wrackholm (Tide Elder and Warden of the Tide); Sunderwood (Sunderling and Warden of the Sunder); The Kilns (Slagling, Slag Elder and Warden of the Anvil) |
 | `birds` | The Foreland (Carrion Crow and Old Rook) | Thornmark (Great Owl); Saltreach (Grey Heron); Wrackholm (Wrack Gull); Cairnmoor (Raven); The Whitespine (Spine Eagle); The Glasswold (Vulture and The Foal-taker) |
 | `longbodies` | The Foreland (The Hag) | Saltreach (Fen Eel and Leech); The Kilns (Rock Worm); Rimewater (Ice Pike) |
