@@ -3,8 +3,8 @@
 //   node tools/gate.ts                                 every map with monsters, levels 1-8, 10, 12 and 14
 //   node tools/gate.ts --maps thornmark,grove2 --levels 2,3,4,5 --seeds 200
 //   node tools/gate.ts --road thornmark:tm_wolves1,tm_brigands2,tm_hounds,tm_zealots
-// The premade company is trained to each level, dressed by the ladder (GEAR, tools/harness.ts: to
-// 28, the Hand's steel, and past it in that top step) and takes the prestiges its
+// The premade company is trained to each level, dressed by the ladder (GEAR, tools/kit/company.ts:
+// to 28, the Hand's steel, and past it in that top step) and takes the prestiges its
 // level brings, at 11, 19 and 27, as harness's company does (it is that company, `companyAt`),
 // and fights every group of a map alone from full health, once per seed. --road instead fights the
 // groups named, in order, with no rest between, and counts the companies still standing after each;
@@ -21,89 +21,12 @@
 // and area to them (the gate check); it imports this file, whose table runs only from the command
 // line.
 import { pathToFileURL } from 'node:url';
-import { makeRng } from '../src/lib/engine/rng.ts';
 import { MAX_LEVEL } from '../src/game/party.ts';
-import type { Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, monsterAct, asGroup } from '../src/game/combat.ts';
-import type { CombatOpts, CombatState, Fighters } from '../src/game/combat.ts';
-import { RANGED_PENALTY } from '../src/game/weather.ts';
-import { botTurn, asWritten } from '../src/game/bot.ts';
-import type { RngInstance } from '../src/lib/engine/rng.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
-import { companyAt, RULES, type Rules } from './harness.ts';
-import type { EncounterDef, Answer } from '../src/game/map.ts';
-import { answer, barred } from '../src/game/people.ts';
+import { gateCompany } from './kit/company.ts';
+import type { EncounterDef } from '../src/game/map.ts';
+import { gateOpts, gateFight, winRate } from './kit/fight.ts';
 
-// The bot's turn, its blast and its burn are the game's (src/game/bot.ts); the gate's callers find them here still.
-export { gateBlast, gateBurn, botTurn } from '../src/game/bot.ts';
-
-/**
- * The bot's turn for member `i`, as the gate plays it: the game's `botTurn` knowing every monster as
- * written, with the options `rules.bot` asks (#853, `--bot`), none unless a what-if passes them
- * (#865), and the answers `rules.answer` asks, play's unless passed (#946).
- */
-export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number, rules: Readonly<Rules> = RULES): void { botTurn(s, p, rng, i, asWritten, rules.bot, rules.answer); }
-
-/**
- * The premade company, every member trained to `level`, dressed by the ladder and with the prestiges
- * that level brings, whole: harness's own (`companyAt`, under `rules`), a fresh copy every call. Under
- * level 1 it is no company, and throws.
- */
-export function gateCompany(level: number, seed: number, rules: Readonly<Rules> = RULES): Party {
-  if (!(level >= 1)) throw new Error(`no company at level ${level}: levels start at 1`);
-  return companyAt(level, seed, rules);
-}
-
-/**
- * What a group's time to walk does to its fights: one that walks only in fog is fought with the
- * bows' toll. By night, by day, in snow or in a season it is fought dry, as every other group.
- */
-export function gateOpts(g: Pick<EncounterDef, 'when'>): CombatOpts {
-  const when = g.when === undefined ? [] : [g.when].flat();
-  return when.length && when.every((h) => h.sky === 'fog') ? { rangedPenalty: RANGED_PENALTY } : {};
-}
-
-/**
- * One fight to its end with the bot playing the party, which carries its wounds out. True if won. With
- * `cap`, a fight still running after that many rounds is broken off, and not won; `opts` is the
- * fight's weather (see `gateOpts`); `rules` the what-ifs its bot plays by (`gateTurn`).
- */
-export function gateFight(p: Party, monsters: Fighters, seed: number, cap = Infinity, opts: CombatOpts = {}, rules: Readonly<Rules> = RULES): boolean {
-  const rng = makeRng(seed), s = startCombat(p, [asGroup('gate', monsters)], rng, opts);
-  for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) {
-    const t = currentTurn(s, p, rng);
-    if (!t || s.round > cap) break;
-    if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i, rules);
-  }
-  return s.outcome === 'victory';
-}
-
-/**
- * A group's question as the bot answers it (#544, kept by #549): it refuses, so the gate measures
- * the fight. None for a group that asks nothing.
- */
-export const gateAnswer = (g: Pick<EncounterDef, 'choice'>): Answer | undefined => g.choice?.answers.find((a) => a.fight);
-
-/**
- * The walk past a group that asks: the first answer that does not fight and the company can give,
- * given (its price paid, its item handed over, its flags set), and true. False, and nothing changes,
- * when it can give none: then the group is fought.
- */
-export function gatePass(p: Party, g: Pick<EncounterDef, 'choice'>): boolean {
-  const a = g.choice?.answers.find((x) => !x.fight && !barred(x, p));
-  if (a) answer(a, p);
-  return !!a;
-}
-
-/** The seed of a group's fight on seed `k`, the same for every level and every caller. */
-export const fightSeed = (k: number): number => k * 7919 + 13;
-
-/** The share of a group's fights a company of `level` wins, each alone from full health, over seeds 1 to `seeds`, under the what-ifs `rules`. */
-export function winRate(level: number, monsters: Fighters, seeds: number, cap = Infinity, opts: CombatOpts = {}, rules: Readonly<Rules> = RULES): number {
-  let won = 0;
-  for (let k = 1; k <= seeds; k++) if (gateFight(gateCompany(level, k, rules), monsters, fightSeed(k), cap, opts, rules)) won++;
-  return won / seeds;
-}
 
 function main(): void {
   const args = process.argv.slice(2);

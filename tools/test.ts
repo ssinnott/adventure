@@ -229,7 +229,7 @@ if (job !== undefined) {
       reached = `Asked for ${only.join(', ') || 'no area'}`;
     } else {
       try {
-        const { changedAreas, describeReach } = await import('./changed.ts');
+        const { changedAreas, describeReach } = await import('./kit/changed.ts');
         const r = changedAreas(since!);
         if (!r.all) { only = [...r.areas.keys()].filter((a) => ids.includes(a)); walks = [...r.walks.keys()].filter((a) => ids.includes(a)); }
         reached = `Reached since ${since}: ${describeReach(r)}`;

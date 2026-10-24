@@ -54,8 +54,8 @@ import { AREAS, ATLAS, MAP_DEFS, MONSTERS as MONSTER_DEFS } from '../../index.ts
 import { CURVE } from '../../progression.ts';
 import { elementMult } from '../../../game/monsters.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
-import { headlessGame } from '../../../../tools/tests/lib.ts';
-import { GEAR } from '../../../../tools/harness.ts';
+import { headlessGame } from '../../../../tools/kit/headless.ts';
+import { GEAR } from '../../../../tools/kit/company.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer, barred, SHORT, NONE } from '../../../game/people.ts';

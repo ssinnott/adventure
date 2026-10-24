@@ -20,7 +20,7 @@ import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { readerOf, readMarks, signLine, readLine, markLine, isInscription, marksOf, readId } from '../../src/game/inscriptions.ts';
 import { ATLAS, MAP_DEFS, ITEMS } from '../../src/content/index.ts';
-import { CONTENT, collect, compare } from '../shipped.ts';
+import { CONTENT, collect, compare } from '../kit/shipped.ts';
 import { ok, withDefs } from './lib.ts';
 
 const STORE = 'Cut over the wall, the dwarves\' words for plenty.', BREATH = 'The dwarves\' words for the mountain\'s breath.';

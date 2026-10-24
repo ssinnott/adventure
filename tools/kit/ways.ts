@@ -2,10 +2,10 @@
 // the outdoor square a town, a ship or a dungeon is entered from, which its crop of the world map is
 // centred on. They live here because the sheet drives a browser the moment it is imported, which a
 // test cannot do (tools/tests/ways.ts).
-import { worldPoint } from '../src/game/atlas.ts';
-import type { Atlas } from '../src/game/atlas.ts';
-import type { MapDef } from '../src/game/map.ts';
-import type { Facing } from '../src/game/types.ts';
+import { worldPoint } from '../../src/game/atlas.ts';
+import type { Atlas } from '../../src/game/atlas.ts';
+import type { MapDef } from '../../src/game/map.ts';
+import type { Facing } from '../../src/game/types.ts';
 
 /** A way out of a map; `sold` marks a crossing a person sells, which is no gate. */
 export type Way = { x: number; y: number; to: string; tx: number; ty: number; tf?: Facing; sold?: boolean };

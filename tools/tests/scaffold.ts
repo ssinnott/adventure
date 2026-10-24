@@ -11,8 +11,8 @@ import { worldGrid, MAP_TERRAIN } from '../../src/game/atlas.ts';
 import type { Atlas } from '../../src/game/atlas.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/map.ts';
-import { cut, emit, layBack, mismatches, baseline, CHAR_OF, SIZE } from '../scaffold.ts';
-import type { Draft } from '../scaffold.ts';
+import { cut, emit, layBack, mismatches, baseline, CHAR_OF, SIZE } from '../kit/scaffold.ts';
+import type { Draft } from '../kit/scaffold.ts';
 import { ok } from './lib.ts';
 
 /** The Downs' first zone map: the square west of the Foreland, on the grid the built maps sit on. */

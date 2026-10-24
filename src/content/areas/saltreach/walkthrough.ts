@@ -43,7 +43,7 @@
 // played every way. Then the bounds (#830), as `theBounds` walks them, box by box.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, fight, listen, see, kneel, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
-import { headlessGame, drive } from '../../../../tools/tests/lib.ts';
+import { headlessGame, drive } from '../../../../tools/kit/headless.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { CHAPTER } from './chapter.ts';
 import { STEPS as FORELAND_STEPS, hired, ledgerGiven } from '../shelf/walkthrough.ts';
@@ -69,7 +69,7 @@ import { serialize, deserialize } from '../../../game/save.ts';
 import { World } from '../../../game/world.ts';
 import { buildMaps } from '../../maps.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
-import { ACT_II } from '../../../../tools/tests/ladder.ts';
+import { ACT_II } from '../../../../tools/kit/rules/ladder.ts';
 import { MAP_DEFS, GUILD_QUESTS, THE_QUEST } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { businessEntries, ChoiceScreen } from '../../../ui/screens.ts';
