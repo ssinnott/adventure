@@ -41,6 +41,17 @@ export function withDefs<T extends ItemDef | MonsterDef, R>(table: Readonly<Reco
 /** Whether every check prints its line (`--list`, or TEST_LIST=1); by default only one that fails does (#895). */
 export const LIST = process.argv.includes('--list') || process.env.TEST_LIST === '1';
 
+/**
+ * The areas the gate and the walkthroughs run for, where the runner narrows them (#955: `--areas a,b`
+ * or TEST_AREAS, `--since <ref>` or TEST_SINCE, read in tools/test.ts); unset, every area.
+ */
+let narrowedTo: ReadonlySet<string> | undefined;
+export const narrow = (areas: readonly string[] | undefined): void => { narrowedTo = areas && new Set(areas); };
+/** Whether the run asks for an area: every area unless the runner narrowed them. */
+export const asked = (area: string): boolean => !narrowedTo || narrowedTo.has(area);
+/** The areas the runner narrowed to, or undefined for every area. */
+export const narrowed = (): readonly string[] | undefined => narrowedTo && [...narrowedTo];
+
 let failures = 0, held = 0;
 export const ok = (cond: boolean, msg: string): void => {
   if (cond) held++; else failures++;

@@ -33,7 +33,7 @@ import { groupFlags } from '../../src/game/people.ts';
 import type { QuestCond } from '../../src/game/quests.ts';
 import type { AtlasZone } from '../../src/game/atlas.ts';
 import { once } from '../checks.ts';
-import { ok, owed, withDefs } from './lib.ts';
+import { ok, owed, withDefs, asked } from './lib.ts';
 
 /**
  * Each figure's aim, and its limit beyond it (#273): a figure inside its aim passes; one between its
@@ -628,7 +628,11 @@ export function gate(): void {
     ok(areaPools([], 1).through === null, 'an area with no groups has no figure to judge');
   }
 
+  // The areas the run asks for (#955: tools/test.ts --areas, --since), every area unless narrowed. The
+  // keys of one left out, which start with its name, its zones' or its maps', the owed check passes over.
+  const skipped: string[] = [];
   for (const area of AREAS) {
+    if (!asked(area.id)) { skipped.push(nameOf(area.id), ...area.atlas.zones.map((z) => zoneName(z.name)), ...area.maps.map((d) => d.id)); continue; }
     const id: RegionId = area.id, band = CURVE[id].band;
     const zones = area.atlas.zones.filter((z) => z.maps?.length);
     const bosses = bossesOf(area);
@@ -690,8 +694,9 @@ export function gate(): void {
   // The enclave (#845): the fixture lair at the cap beside Saltreach, a band-10 area. Its own: Saltreach's
   // pools and day take what they took without it, and no zone's road walks it (a road walks its zone's
   // maps, and an enclave is none). Judged at its own band as any map is: its groups at 30, two under by
-  // the day, its guardian at 30 and 32.
-  {
+  // the day, its guardian at 30 and 32. It reads Saltreach's pools, so it runs with Saltreach's.
+  if (!asked(FIXTURE.area)) skipped.push(LAIR.id);
+  else {
     const salt = AREAS.find((a) => a.id === FIXTURE.area)! as Area, floor = CURVE[FIXTURE.area].band[0];
     const bosses = bossesOf(salt);
     const was = gateMaps(salt, bosses), now = gateMaps({ ...salt, maps: [...salt.maps, LAIR] }, [...bosses, GUARDIAN]);
@@ -728,6 +733,6 @@ export function gate(): void {
   ok(ids(beforeBehind(fx)) === 'fx_kept' && ids(beforeBehind({ ...fx, id: 'fx_elsewhere' })) === 'ud_mines,fx_kept' && beforeBehind({ ...fx, encounters: [fx.encounters![1]] }).encounters!.length === 1,
     'leaving the road behind out drops the group BEHIND names from its map and no other: not its neighbour, nor the same id on another map');
   if (offAim.length) console.log(`\n  Off their aim, inside their limits (${offAim.length}):\n${offAim.map((l) => `    ${l}`).join('\n')}`);
-  const stale = Object.keys(OWED).filter((k) => !used.has(k));
+  const stale = Object.keys(OWED).filter((k) => !used.has(k) && !skipped.some((p) => k.startsWith(`${p}:`)));
   ok(!stale.length, `every owed entry names a check that ran${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
 }

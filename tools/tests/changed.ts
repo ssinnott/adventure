@@ -1,14 +1,66 @@
 // What a pull request changed (tools/changed.ts), as the smoke test's sweep and the contact sheet
 // read it: which files count every map, monster or interior, which count every room of one area, and
 // which count only their own.
-import { changedMaps, changedMonsters, changedInteriors, familiesIn } from '../changed.ts';
+import { changedMaps, changedMonsters, changedInteriors, familiesIn, reachedAreas, describeReach, type Reach } from '../changed.ts';
+import { graph, treeFiles } from '../kit/graph.ts';
 import { AREAS, MONSTERS } from '../../src/content/index.ts';
 import { execFileSync } from 'node:child_process';
 import { readFileSync, readdirSync } from 'node:fs';
 import { FAMILY_OF } from '../../src/ui/monsters/index.ts';
 import { ok } from './lib.ts';
 
+/** The areas a diff reaches (#955), each rule on the tree's own graph: `removed` gives a table's `-` lines, none where unset. */
+function reaches(): void {
+  const text = (f: string): string => readFileSync(new URL(`../../${f}`, import.meta.url), 'utf8');
+  const g = graph(treeFiles(), text);
+  const reach = (files: string[], removed: Record<string, readonly string[] | null> = {}, added: Record<string, readonly string[]> = {}): Reach =>
+    reachedAreas(files, (f) => (removed[f] === null ? null : { removed: removed[f] ?? [], added: added[f] ?? [] }), g, text);
+  const def = (f: string, id: string): string => text(f).split('\n').find((l) => l.includes(`id: '${id}'`)) ?? `no def ${id}`;
+  // 2: a table's line changed or removed reaches every area; a def only added, its own area alone.
+  const bones = 'src/content/areas/shelf/monsters.ts', axe = 'src/content/areas/sunderwood/items.ts';
+  const fought = AREAS.filter((a) => a.id !== 'shelf' && a.maps.some((d) => d.encounters?.some((e) => e.monsters.includes('skeleton')))).map((a) => a.id);
+  const skeleton = reach([bones], { [bones]: [def(bones, 'skeleton')] });
+  ok(fought.includes('thornmark') && skeleton.all?.file === bones, `a changed skeleton, the Foreland's, fought in the groups of ${fought.join(', ')}, reaches every area (${describeReach(skeleton)})`);
+  const item = reach([axe], { [axe]: [def(axe, 'great_axe')] }), added = reach([axe]);
+  ok(item.all?.file === axe && !added.all && [...added.areas.keys()].join() === 'sunderwood',
+    `a changed item reaches every area, as the ladder dresses every company; a def only added reaches its own area alone, not the tables that import it (${describeReach(added)})`);
+  const inert = reach([axe], { [axe]: ["import { P } from '../../../game/items.ts';", '  // a word', ''] });
+  ok(!inert.all && reach([axe], { [axe]: null }).all?.why.startsWith('deleted') === true, 'an import, a comment or a blank changed reaches no further, and a table deleted reaches every area');
+  // 1 and 3: an area's file reaches its area, and the areas whose files import it, in turn, as far
+  // as the areas' own files go.
+  const walk = 'src/content/areas/shelf/walkthrough.ts';
+  const by = [...g.edges].filter(([f, to]) => to.has(walk) && f.startsWith('src/content/areas/') && !f.startsWith('src/content/areas/shelf/')).map(([f]) => f.split('/')[3]);
+  const walked = reach([walk]);
+  ok(by.includes('thornmark') && !walked.all && walked.areas.get('shelf') === walk && by.every((a) => walked.areas.get(a) === 'imports shelf/walkthrough.ts'),
+    `the Foreland's walkthrough reaches the Foreland and each area whose files import it (${describeReach(walked)})`);
+  // 3, past the imports: a line of a map changed reaches also every other walkthrough, as they read
+  // other areas' maps by id and by scan, which no import shows; a comment changed, none.
+  const anvil = 'src/content/areas/kilns/maps/anvil_stone.ts';
+  const map = reach([anvil], { [anvil]: ["  rows: ['#.#']"] }, { [anvil]: ["  rows: ['#..']"] }), note = reach([anvil], { [anvil]: ['// a word'] }, { [anvil]: ['// two words'] });
+  const others = [...map.walks.keys()];
+  ok(others.length === AREAS.length - 1 && !others.includes('kilns') && others.includes('thornmark') && [...map.areas.keys()].join() === 'kilns' && !note.walks.size && [...note.areas.keys()].join() === 'kilns',
+    `a line of a Kilns map changed reaches the Kilns and every other walkthrough (${others.length}); a comment changed, the Kilns alone`);
+  // A def only added to a table reaches every walkthrough too, as Rimewater's reads every monster's
+  // drops; a rung of the ladder (the Foreland's checks.ts) reaches every area; another area's rows its own.
+  const bred = reach([bones], {}, { [bones]: ["  { id: 'mut', name: 'Mut', plural: 'Muts', sprite: 'bandit', kind: 'person', level: 2, hp: 10 },"] });
+  const rung = 'src/content/areas/shelf/checks.ts', laddered = reach([rung], { [rung]: ["    3: ['longsword', 'axe'],"] }, { [rung]: ["    3: ['longsword+2', 'axe'],"] });
+  const seams = 'src/content/areas/kilns/checks.ts', own = reach([seams], { [seams]: ['  seamsAsBuilt: [],'] });
+  ok(!bred.all && bred.walks.has('rimewater') && bred.walks.size === AREAS.length - 1 && laddered.all?.file === rung && !own.all && [...own.areas.keys()].join() === 'kilns',
+    `a def only added reaches every walkthrough (${bred.walks.size}); a rung of the ladder changed reaches every area (${describeReach(laddered)}); a row of the Kilns' own, the Kilns`);
+  const index = reach(['src/content/areas/hearth/index.ts']);
+  ok(!index.all && index.areas.size < AREAS.length, `the walk stops at the files outside the areas, as src/content/index.ts imports every area's (${describeReach(index)})`);
+  // 4: elsewhere.
+  const none = reach(['docs/DESIGN.md', 'README.md', 'CLAUDE.md', 'types/globals.d.ts', '.github/labels.json', 'tools/tests/outdoors.ts', 'tools/smoke.ts', 'src/ui/monsters/wolf.ts', 'src/ui/interiors/kilns/hold.ts']);
+  ok(!none.all && !none.areas.size, `the docs, the front pages, types/, .github/ but the workflow, a module neither the gate nor a walkthrough loads and a drawing reach no area (${describeReach(none)})`);
+  const all: [string, string][] = [['src/game/combat.ts', 'the gate or a walkthrough loads it'], ['tools/harness.ts', 'the gate or a walkthrough loads it'], ['tools/test.ts', 'it decides what runs'],
+    ['tools/changed.ts', 'it decides what runs'], ['tools/kit/graph.ts', 'it decides what runs'], ['.github/workflows/checks.yml', 'it decides what runs'], ['package.json', 'the graph does not read it'],
+    ['src/content/shipped.json', 'the graph does not read it'], ['tools/a_table_no_file_imports.json', 'the graph does not read it']];
+  const missed = all.filter(([f, why]) => reach(['docs/DESIGN.md', f]).all?.why !== why).map(([f]) => f);
+  ok(!missed.length, `a systems file, a tool the gate loads, what decides what runs and a file the graph does not read reach every area${missed.length ? ` (not: ${missed.join(', ')})` : ''}`);
+}
+
 export async function changed(): Promise<void> {
+  reaches();
   ok((await changedMaps(['src/game/atlas.ts'])).all, 'a change to game/atlas.ts re-lays the zones, so it counts every map');
   ok(!(await changedMaps(['docs/DESIGN.md'])).all, 'a change to the docs counts no map');
   const wolf = await changedMonsters(['src/ui/monsters/wolf.ts']);
