@@ -8,7 +8,8 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { When } from '../../../../game/quests.ts';
-import { BELL_HUNG, COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
+import { COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
+import { BELL_HUNG } from '../public.ts';
 import { ENDINGS } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

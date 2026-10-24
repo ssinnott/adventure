@@ -256,10 +256,10 @@ Added:
   for square on passable ground, water and road, and open a way between two areas only where the
   atlas joins them; a seam that disagrees on purpose is a row of its area's `seamsAsBuilt`
   (`tools/tests/outdoors.ts`) with its reason, and a box built since adds none. Every edge of a built
-  box that faces no built box is open to a walker exactly where a row of `OPEN_ON_NOTHING` says, with
-  the box it faces and why that is unbuilt; the box built there meets the seam rule, and its pull
-  request deletes the row. That is the bounds' border check (#828) in embryo. A row of either may
-  stand in its area's `checks.ts` instead (§8.2, #897).
+  box that faces no built box is open to a walker exactly where a row of its area's `openOnNothing`
+  says, with the box it faces and why that is unbuilt; the box built there meets the seam rule, and
+  its pull request deletes the row. That is the bounds' border check (#828) in embryo. A row of
+  either stands in its area's `checks.ts` (§8.2).
 
 Decided by the builder for #898, each the owner's to overturn:
 
@@ -270,14 +270,14 @@ Decided by the builder for #898, each the owner's to overturn:
    does all three crosses, and the atlas joins two areas where a road does, by a map's exits or its
    links (`zoneEdges`), as a whole and not seam by seam: 285 squares on seams between two areas that
    no road crosses are walked open by design, so a wall opened on both sides of a seam between joined
-   areas, or of one inside an area, passes. `ONE_CROSSING` is a dungeon's door and no seam. One crossing the
-   atlas does not draw is held as built: the shallows where the Deepthorn's I5 meets Hearth Isle's I6,
-   which on I5's side are a pocket of seven squares shut by rock and deep water, so no company reaches
-   the isle by them. The way is read on the two squares either side of a seam, so it never misses a
-   crossing, and holds one into a closed pocket too.
+   areas, or of one inside an area, passes. The door marked `crosses` is a dungeon's door and no
+   seam. One crossing the atlas does not draw is held as built: the shallows where the Deepthorn's
+   I5 meets Hearth Isle's I6, which on I5's side are a pocket of seven squares shut by rock and deep
+   water, so no company reaches the isle by them. The way is read on the two squares either side of
+   a seam, so it never misses a crossing, and holds one into a closed pocket too.
 3. **A row is exact:** it lists, kind by kind, the squares that fail, so a square that comes to agree is
    refused with it. On 18 October: 153 seams, 62 rows, 329 squares.
-4. **The edges against unbuilt land are held exactly,** as the seams are: a row of `OPEN_ON_NOTHING`
+4. **The edges against unbuilt land are held exactly,** as the seams are: a row of `openOnNothing`
    for each edge with a square open to a walker, so a square opened or shut on such an edge fails; its
    reason names the box it faces and the issue that builds it, or the reach, a crumb or the sea. On 18
    October: 102 edges, 3,264 squares, 899 open in 50 rows, five of them onto the sea or the world's end,
@@ -367,13 +367,14 @@ full clear still pays, in gear, gold and secrets.
 So an area may give more than its ask (#634): paid by level, a lead does not build up, for the next
 area takes it back. What the curve holds is the lead itself: a company of six entering an area at
 its floor and clearing three quarters of it, paid by level, leaves it no more than a level over the
-next floor. Two built areas pass that line and are named in `OVER_ROAD` (`tools/tests/curve.ts`),
-each held at the level it leaves as built so that neither grows unnoticed: the Kilns at 19.3, their
-bosses paying the line's, and Ashfall at 27.4, for the Stone, the rungs, the quests, the sentries
-and the country behind the road. Decided by the owner's delegate, 16 October 2026 (#738): accepted
-as built, the Wold taking the lead back and leaving a company at 27.9, a tenth under the Hearth's
-floor. Walked in road order, Act III ends 0.8 over the road at three quarters cleared and 1.4 at a
-full clear; Act IV ends 0.6 and 1.3 over, Act II's own areas 0.5 to 0.8 and 1.2 to 1.6.
+next floor. Two built areas pass that line and each holds its lead in its `checks.ts` (`overRoad`,
+`tools/tests/curve.ts`), at the level it leaves as built so that neither grows unnoticed: the Kilns
+at 19.5, their bosses paying the line's, and Ashfall at 27.4, for the Stone, the rungs, the quests,
+the sentries and the country behind the road. Decided by the owner's delegate, 16 October 2026
+(#738): accepted as built, the Wold taking the lead back and leaving a company at 27.9, a tenth
+under the Hearth's floor. Walked in road order, Act III ends 0.8 over the road at three quarters
+cleared and 1.4 at a full clear; Act IV ends 0.6 and 1.3 over, Act II's own areas 0.5 to 0.8 and 1.2
+to 1.6.
 
 Its first rows are the slice's own figures from SLICE.md: level 2 from the Foreland and the cellar,
 level 4 with Brandy Hole, level 9 from one clear of everything, about two fifths of one more sweep
@@ -993,7 +994,7 @@ there, where repetition is the design, rather than on the map.
 
 | Lane | Touches | At once |
 |---|---|---|
-| Systems | `src/game/`, `src/ui/` outside the art modules, the save format, the shape of the registries | one |
+| Systems | `src/game/`, `src/ui/` outside the art modules, the kits (`src/ui/paint/`, `src/ui/monsters/kit/`, `src/ui/interiors/kit/`), the save format, the shape of the registries | one |
 | Area | `src/content/areas/<area>/`, `docs/areas/<area>.md` | one per area in flight |
 | Creatures | `src/ui/monsters/<family>.ts` | one per family |
 | Interiors | `src/ui/interiors/<area>/` | one per area |
@@ -1029,9 +1030,8 @@ Decided by the builder for #900, each the owner's to overturn:
 5. **The keys are the plan's:** L2 the items (`items.ts`, `party.ts`, `skills.ts`), L3 the monsters
    and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
    `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
-   imports of `src/input.ts`; A6 each pair of areas; K8 a walkthrough taking another; K7 the
-   walkthroughs' and the suites' others. L8 and L9 hold none: `src/game` takes a screen only in the
-   pilot and `game.ts`.
+   imports of `src/input.ts`; K8 a walkthrough taking another; K7 the walkthroughs' and the suites'
+   others. L8 and L9 hold none: `src/game` takes a screen only in the pilot and `game.ts`.
 6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
    `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
    modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).
@@ -1080,6 +1080,40 @@ Decided by the builder for #899, each the owner's to overturn:
    imports `node:` modules alone, which the check does not follow), and `tools/lanes.ts` is the
    command line that takes it. The job and the docs still name `node tools/lanes.ts`, and no `KNOWN`
    row is added.
+
+The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; it, the monsters' kit
+(`src/ui/monsters/kit/`) and the rooms' (`src/ui/interiors/kit/`) are the systems lane's, as
+`tools/kit/` is quality's (#983). A family or a scene takes a kit's helper when it is next edited,
+not in a sweep, and a helper a third family or a third scene wants goes into the kit by a small pull
+request of its own, not into a copy in a third file: the rule of three.
+
+Decided by the builder for #983, each the owner's to overturn:
+
+1. **Which file holds what.** The paint kit: `brush.ts` and `gloss.ts` moved whole, `ink.ts` (`INK`,
+   `rod`), `forms.ts` (`Pt`, the unit frame `F`, `ring`, `tube`) and `flame.ts`; the monsters' kit:
+   `common.ts` and `figure.ts` moved whole, and `chisel.ts`; the rooms' kit: `stage.ts`
+   (the old `kit.ts`, a name that says nothing in `kit/`), `props.ts` and `trades/`.
+   A moved file keeps its name.
+2. **The glow goes with the flame:** `smudge`, which `drawFlame` lights with, moves into `flame.ts`,
+   as the paint kit takes nothing from the rooms'. The stage imports `INK`, `smudge` and `drawFlame`
+   and re-exports none; the old `kit.ts` does, so each name has one home in the kits.
+3. **The trades are the props the issue names:** the temple's stained glass, altar, pew and
+   Lanterns' ring (eight scenes take one) and the smithy's armour stand, mail and anvil (six).
+   `pillar` stays in `props.ts`, as the throne room stands on it beside two temples, and so
+   do the weapons and shields.
+4. **The unit frame is `F`, as its nine copies name it,** beside `Pt`, so a family taking
+   it deletes its own declaration and changes no other line; the four with an `h` and
+   the crawlers' `H` need more.
+5. **The brush's default and `B` take `INK`,** as the issue asks; the eye's pupil in `common.ts`,
+   the file's other `'#120c14'`, is a copy and stays until the file is next edited.
+6. **What a kit's file counts (`tools/changed.ts`) goes by folder:** any of `src/ui/paint/` every
+   monster and room, and `brush.ts` and `ink.ts` (the viewport's `hash`, `B`'s outline)
+   every map too; any of `src/ui/monsters/kit/` every monster, its `common.ts` every map
+   too; any of `src/ui/interiors/kit/` every room. A new kit file is counted with no edit;
+   `chisel.ts` counts every monster, where `knockers.ts` counted the knockers alone for a
+   mark three other families cut.
+7. **The rooms' kit is no area's folder:** the changed suite's check that each folder of
+   `src/ui/interiors/` is an area's, its registry keying the area's rooms, skips `kit/` by name.
 
 The tools that open the game in Chromium (the smoke, the sheet, the gallery, the interiors, the world
 map and `shot.ts`) start it in one place, `tools/kit/browser.ts` (#986), which imports Playwright by
@@ -1176,10 +1210,23 @@ owes, its rungs of the ladder, its lead over the road, its seams as built and it
 nothing, is a row in its `checks.ts` (`AreaChecks`), which nothing in the game imports and the suites
 find as the runner finds a walkthrough; a field `AreaChecks` has not stops the run with its name. A
 seam is the area's of the first box its key names (`a|b` or `a/b`), an edge the area's whose box it
-is. Each suite reads those beside its own table and refuses a row in both, so a row moves one way.
-Every area's have moved, the Foreland's first (#897) and the rest by one script in a window with no
-area pull request open (#968), so a box adds its rows to its own folder only; the emptied tables go
-with #969.
+is. Each suite reads those alone. Every area's have moved, the Foreland's first (#897), the rest by
+one script in a window with no area pull request open (#968) and the last two tables' by the same
+script (#969), which dropped the emptied tables and the second reads beside them; so a box adds its
+rows to its own folder only.
+
+**An area's `public.ts` is the one file of it another area imports** (#992), which the layers suite
+holds (§8.1). It declares the flags and exits the others take, imported back by the files they stood
+in, and re-exports the area's `items.ts`, where every item is a const of its own by the name of its
+id (`export const plate = A('plate', …)`, `halberd+1` as `halberdPlus1`): another area takes an item
+by its name, never by its id from a table. It re-exports nothing else. What it re-exports, everyone
+who takes anything of the area loads, and the areas take one another both ways (Ashfall and the
+Glasswold, Hearth Isle and the Foreland, the Kilns and the Whitespine): with every `items.ts`
+re-exported, a map re-exported for its flags closes a loop of six files, every `chapter.ts` one of
+eleven and every `guilds.ts` one of six, and the layers suite refuses a loop. So a walkthrough takes
+another area's chapter from `THE_QUEST.chapters` by its id. Every area has one; a new area has one
+once another takes something from it, and a flag another area needs that `public.ts` lacks is one
+line there, added by the box that needs it and said in its pull request.
 
 Decided by the builder for #897, each the owner's to overturn:
 
@@ -1247,6 +1294,53 @@ Decided by the builder for #968, each the owner's to overturn:
    (`openOnNothing`, `overRoad`), but #968's table names neither, and it kept `OVER_ROAD` only until
    it had one; #969 moves both by the same script, and its body names them.
 
+Decided by the builder for #992, each the owner's to overturn:
+
+1. **`public.ts` re-exports `items.ts` whole** (`export * from './items.ts'`): every item by name
+   and the rest of the file (`ITEMS`, `CURES` and the shops' lists; the Kilns' `quarterMore`,
+   `SMITH_PRICES` and `ANVIL_STONE_PRICE`), in one line that an item added never touches.
+2. **A statement of several flags is split** where the others take only some: those taken move, and
+   the rest stay in the map under the comment that names them all. Each group in `public.ts` says
+   the file it came from; a flag's own comment moves with it.
+3. **The Kilns' `GATE` of `ironfells_n3` is `IRONFELLS_GATE`**, for the Iron Fells, its map's name
+   without its square, in the map and the two walkthroughs that read it; `kilnmouth_l6`'s stays
+   `GATE`. No other name of a `public.ts` clashes with one of its area's.
+4. **An item named for the first time takes its id's name**, declared above the array it stands in
+   (`ITEMS`, or Ashfall's `PARTS`), in that array's order and with its comment, an object typed
+   `ItemDef`; the array holds the names. The 20 consts that had names keep them and gain `export`.
+5. **A walkthrough takes another area's chapter as the Hearth's takes the warning:** `const TIDE =
+   THE_QUEST.chapters.find((c) => c.id === 'tide')!`, under one comment after its imports, the names
+   the bodies read kept.
+6. **One import from each `public.ts` in a file**, where the first of the imports it replaces stood;
+   an area's own files and the tools that took a moved name take it from `public.ts` too.
+7. **The layers suite's fixtures key their area row `K8`**: `judge` takes a row under any key of the
+   plan, and with `A6` gone no key holds a row of the area rule (`K8`'s eight are a walkthrough
+   taking another, the `tests` rule's), so the fixtures borrow `K8`; what they test is the rule, not
+   the key.
+
+Decided by the builder for #969, each the owner's to overturn:
+
+1. **The script gives the two tables their owners**: an edge open on nothing to the area whose box
+   it is, a lead over the road to its area, after its rungs and before its seams as `AreaChecks`
+   orders them; `OPEN_ON_NOTHING`'s headers, one an area, go, as `SEAMS_AS_BUILT`'s did.
+2. **`MAX_GROUP` goes too**: #968 emptied it and the issue's list leaves it out, but no suite may
+   read a row from two places; the maps suite reads the zones' `maxGroup` alone.
+3. **A row two areas could both give is still refused twice** (an owed monster, room, flag, map,
+   square or lock, and a rung): that is no table's second read but the areas' own check, so `beside`
+   becomes `gather` over the areas alone and the line drops "in the table or by its area".
+4. **A refusal that only a table could trip goes with it**: a zone holds one road, a group one mark,
+   a monster one `offLine` and an area one `overRoad`, and a seam's or an edge's row is held once by
+   its own check; so those lines go, and the gate's "every key of `ROADS` and `BOSSES` is a zone".
+5. **The one crossing is still one**: a second exit marked `crosses` is refused, as the weather rule
+   allows one door; the fixtures that wrote the door in the table mark it on its exit.
+6. **The gate's `nameOf` loses its fallback to the id**: an area the atlas does not name throws, as
+   the issue asks of whatever fallback `NAMES` left.
+7. **The items suite's `UNPLACED`** (the Telstok's lair, owed to #830) is not an area's table, and
+   the issue names it neither in its What nor as an exception: it stands, though the issue's grep
+   finds it.
+8. **A doc's rule says the field; a record keeps the name**: the decisions of #897 and #968 above
+   and the area docs' build history name the tables as they stood when each was written.
+
 ### 8.3 Pull requests
 
 - A `pull_request` workflow runs the typecheck, the tests, the smoke test and the smoke's crack
@@ -1258,7 +1352,7 @@ Decided by the builder for #968, each the owner's to overturn:
   (#955). Everything runs on main: `pages.yml`'s `npm test` on every push, a CI cycle after the
   merge and before the deploy; the Checks workflow every day at 03:17 UTC (`schedule:`); and a run
   started by hand, a release's. A flag spelt in two areas, or a crossing that lands on another
-  area's map, the gate's narrowing cannot see until `A7` and `A6`: those runs catch it.
+  area's map, the gate's narrowing cannot see until `A7` and `A9`: those runs catch it.
 - Main has no branch protection, by the owner's word of 18 October 2026: "We are not doing branch
   protection." Nothing in the plan needs a GitHub setting. Two green branches that are red together
   are kept from merging by a procedure, now the only safeguard: the orchestrating session merges one

@@ -8,9 +8,9 @@
 // how the words are keyed is in src/content/area.ts (`chapter`), and tools/tests/quests.ts checks every
 // key. docs/areas/glasswold.md §5 and §9 (#531) are its design.
 import type { Chapter } from '../../../game/quests.ts';
-import { LIT } from '../ashfall/maps/ember_stone.ts';
-import { ROAD_WEST } from '../ashfall/maps/emberwaste_e10.ts';
-import { STORY, ROAD_EAST } from './maps/wold_d8.ts';
+import { LIT, ROAD_WEST } from '../ashfall/public.ts';
+import { STORY } from './maps/wold_d8.ts';
+import { ROAD_EAST } from './public.ts';
 import { WATCH } from './maps/wold_b9.ts';
 
 /** The stair's head, where a Rider at the cairn says what hunts on the Wold (#528). */

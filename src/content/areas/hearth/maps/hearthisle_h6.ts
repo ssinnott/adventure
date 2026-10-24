@@ -14,8 +14,8 @@ import type { MapDef } from '../../../../game/map.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { LAST_CROSSING, sells } from '../../../crossings.ts';
-import { COMPACT_OVER, COMPACT_WARDENS } from '../../saltreach/maps/saltmouth.ts';
-import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/maps/keep.ts';
+import { COMPACT_OVER, COMPACT_WARDENS } from '../../saltreach/public.ts';
+import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The once-event at the boat's grounding, the cleft's foot: the chapter's first step (§5). */

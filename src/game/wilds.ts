@@ -1,13 +1,16 @@
 // The wilderness features (EXPANSION §5.3): a shrine or fountain that blesses once, a cairn
 // with a cache, a statue that gives for its riddle's answer, typed, and a camp to rest at. A spent
-// one is its id in the map's `used`, as an opened chest is, so nothing new is saved. Pure, so the
-// tests load it; game.ts calls it and says what it returns.
+// one is its id in the map's `used`, as an opened chest is, so nothing new is saved. A well and the
+// exploration spells are here too (#978). Pure, so the tests load it; game.ts and the spell screen
+// call it and say what it returns.
 import type { Feature, Gift, Night } from './map.ts';
 import type { World } from './world.ts';
 import type { Party, Stat } from './party.ts';
-import { rest as restMember, stayNight } from './party.ts';
+import { rest as restMember, stayNight, isDown } from './party.ts';
 import { manhattan } from './types.ts';
 import { item } from './items.ts';
+import { spell } from './spells.ts';
+import { castOnParty } from './combat.ts';
 
 /** The features this module plays. */
 export type Wild = Extract<Feature, { kind: 'shrine' | 'fountain' | 'cairn' | 'statue' | 'camp' }>;
@@ -148,4 +151,40 @@ export function restAndWake(world: World, party: Party): string | undefined {
   if (!restParty(world, party)) return undefined;
   const says = campNight(world, party)?.says;
   return says?.length ? says.join(' ') : MORNING;
+}
+
+/** A well: its words and, where it heals, every member not down made whole (#978, out of `Game.interact`). */
+export function drinkWell(party: Pick<Party, 'members'>, f: Extract<Feature, { kind: 'well' }>): string[] {
+  if (!f.heal) return [f.text];
+  for (const m of party.members) if (!isDown(m)) m.hp = m.maxHp;
+  return [f.text, 'The party drinks and feels restored.'];
+}
+
+/** What an exploration spell did: its lines, and whether it moved the party, which the game answers by meeting what stands there (`Game.enterCell`). */
+export interface Explored { lines: string[]; moved: boolean }
+
+/**
+ * An exploration spell cast by a member of the company (#978, out of `Game`): the spell points paid and
+ * its work done on the world. Waymark sets its mark, or with `back` returns to it, and gives the points
+ * back where the mark will not take.
+ */
+export function castExplore(world: Pick<World, 'state' | 'revealAll' | 'townPortal' | 'bear' | 'setMark' | 'toMark'>, party: Party, casterIndex: number, spellId: string, back = false): Explored {
+  const c = party.members[casterIndex];
+  const sp = spell(spellId);
+  const said = (line: string, moved = false): Explored => ({ lines: [line], moved });
+  if (c.sp < sp.sp) return said(`${c.name} lacks the spell points.`);
+  c.sp -= sp.sp;
+  switch (sp.explore) {
+    case 'light': world.state.light = 200; return said(`${c.name} casts ${sp.name}. The way ahead is lit.`);
+    case 'wizard_eye': world.revealAll(6); return said(`${c.name} casts ${sp.name}. The map fills in around you.`);
+    case 'town_portal': { const name = world.townPortal(); return said(`${c.name} casts ${sp.name}. The world folds, and you stand in ${name}.`, true); }
+    case 'walk': world.bear('walk'); return said(`${c.name} casts ${sp.name}. The shallows will bear you a while.`);
+    case 'float': world.bear('float'); return said(`${c.name} casts ${sp.name}. Your feet leave the ground.`);
+    case 'mark':
+      if (back ? world.toMark() : world.setMark()) return said(back ? `${c.name} casts ${sp.name}. The world folds, and you stand at the mark.` : `${c.name} casts ${sp.name}. The ground here is marked.`, back);
+      c.sp += sp.sp;
+      return said(`${c.name} casts ${sp.name}, but the mark will not take here.`);
+    default:
+      return said(sp.target === 'party' && (sp.heal || sp.cure) ? castOnParty(c, sp, party) : `${c.name} casts ${sp.name}.`);
+  }
 }

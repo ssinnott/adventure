@@ -8,7 +8,7 @@
 // of the ceiling. Band 17-18; docs/areas/kilns.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
-import { CREW_OPEN } from '../../hearth/maps/underdeep.ts';
+import { CREW_OPEN } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DEEP_MINES3: MapDef = {

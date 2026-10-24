@@ -7,7 +7,7 @@ import { World } from './world.ts';
 import { signSays } from './inscriptions.ts';
 import type { WorldState } from './world.ts';
 import { groupDrawn } from './world.ts';
-import { defaultParty, isDown, allDown } from './party.ts';
+import { defaultParty, allDown } from './party.ts';
 import { meet, answer, answerLabel, asked, barred, heard } from './people.ts';
 import type { Person } from './people.ts';
 import type { Party } from './party.ts';
@@ -15,8 +15,7 @@ import { buildMaps } from '../content/maps.ts';
 import type { GameMap, Feature, Interior, Choice, Passage, Teaching } from './map.ts';
 import * as passage from './passage.ts';
 import * as prestige from './prestige.ts';
-import { startCombat, castOnParty } from './combat.ts';
-import { spell } from './spells.ts';
+import { startCombat } from './combat.ts';
 import { save as saveTo, load as loadFrom, browserStore, hasSave } from './save.ts';
 import type { Store } from './save.ts';
 import type { Action } from '../input.ts';
@@ -36,7 +35,7 @@ import { endingTaken, endsIn } from './stones.ts';
 import { WorldMapScreen } from '../ui/worldmap.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { RiddleScreen } from '../ui/riddle.ts';
-import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restAndWake } from './wilds.ts';
+import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restAndWake, drinkWell, give, giftOf } from './wilds.ts';
 import { approach, burn } from './dens.ts';
 import type { Pilot } from './pilot/pilot.ts';
 
@@ -258,7 +257,7 @@ export class Game {
     const w = this.world;
     switch (f.kind) {
       case 'sign': if (!stepped) for (const l of signSays(w, f)) this.say(l); return;
-      case 'well': this.say(f.text); if (f.heal) { for (const m of this.party.members) if (!isDown(m)) m.hp = m.maxHp; this.say('The party drinks and feels restored.'); } return;
+      case 'well': for (const l of drinkWell(this.party, f)) this.say(l); return;
       case 'npc': this.talk(f); return;
       case 'chest': {
         if (stepped) { if (!w.used(f.id)) this.say(f.locked ? 'A locked chest.' : 'A chest. Space opens it.'); return; }
@@ -266,10 +265,7 @@ export class Game {
         // A locked chest opens to a Lockpick or a key (`World.unlock`, #857), and to nothing else.
         if (f.locked) { const opened = w.unlock(); this.say(opened || 'Locked.'); if (!opened) return; }
         w.markUsed(f.id);
-        this.party.gold += f.gold;
-        this.party.bag.push(...f.items);
-        const names = f.items.map((i) => itemName(i));
-        this.say(`You open the chest: ${[f.gold ? `${f.gold} gold` : '', ...names].filter(Boolean).join(', ')}.`);
+        this.say(`You open the chest: ${give(this.party, giftOf(f)!).join(', ')}.`);
         return;
       }
       case 'inn': case 'temple': case 'shop': case 'guild': case 'trainer':
@@ -452,30 +448,6 @@ export class Game {
     this.screens = [new TitleScreen(hasSave(this.store), 'The party has fallen. Caldera goes on without them.')];
   }
 
-  /** Cast an exploration spell by the selected caster; Waymark sets its mark, or with `back` returns to it. */
-  castExplore(casterIndex: number, spellId: string, back = false): void {
-    const c = this.party.members[casterIndex];
-    const sp = spell(spellId);
-    if (c.sp < sp.sp) { this.say(`${c.name} lacks the spell points.`); return; }
-    c.sp -= sp.sp;
-    switch (sp.explore) {
-      case 'light': this.world.state.light = 200; this.say(`${c.name} casts ${sp.name}. The way ahead is lit.`); break;
-      case 'wizard_eye': this.world.revealAll(6); this.say(`${c.name} casts ${sp.name}. The map fills in around you.`); break;
-      case 'town_portal': { const name = this.world.townPortal(); this.say(`${c.name} casts ${sp.name}. The world folds, and you stand in ${name}.`); this.enterCell(); break; }
-      case 'walk': this.world.bear('walk'); this.say(`${c.name} casts ${sp.name}. The shallows will bear you a while.`); break;
-      case 'float': this.world.bear('float'); this.say(`${c.name} casts ${sp.name}. Your feet leave the ground.`); break;
-      case 'mark':
-        if (back ? this.world.toMark() : this.world.setMark()) {
-          this.say(back ? `${c.name} casts ${sp.name}. The world folds, and you stand at the mark.` : `${c.name} casts ${sp.name}. The ground here is marked.`);
-          if (back) this.enterCell();
-        } else { c.sp += sp.sp; this.say(`${c.name} casts ${sp.name}, but the mark will not take here.`); }
-        break;
-      default:
-        if (sp.target === 'party' && (sp.heal || sp.cure)) this.say(castOnParty(c, sp, this.party));
-        else this.say(`${c.name} casts ${sp.name}.`);
-    }
-  }
-
   /** Monsters the viewport should draw at a cell; a group under the ice is drawn under it. */
   monstersAt = (x: number, y: number): ViewMonster[] | null => {
     const g = this.world.groupAt(x, y);
@@ -483,9 +455,6 @@ export class Game {
     return groupDrawn(g.def.monsters).map((id) => { const d = monster(id); return { id, sprite: d.sprite, tint: d.tint, size: d.size, ...(g.def.under ? { under: g.def.under } : {}) }; });
   };
 }
-
-import { item } from './items.ts';
-function itemName(id: string): string { return item(id).name; }
 
 /** Exploration: the spine of the game. */
 export class ExploreScreen implements Screen {

@@ -9,13 +9,14 @@
 // Hand (Hereward in Rook's Nest, the Thief's, and the Dead-Drop's counting house).
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every key.
 import type { QuestDef } from '../../../game/quests.ts';
-import { NOVICE_TOLD, NOVICE_KEPT, ELEVEN_ASKED, ELEVEN_SUNG, VERSES, SING } from './maps/monastery.ts';
-import { NEST_FOUND, NEST_WATCH, NEST_CELL } from './maps/highspine_i11.ts';
+import { ELEVEN_ASKED, ELEVEN_SUNG, VERSES, SING } from './maps/monastery.ts';
+import { NOVICE_TOLD, NOVICE_KEPT, NEST_WATCH, MASON_PASSAGE } from './public.ts';
+import { NEST_FOUND, NEST_CELL } from './maps/highspine_i11.ts';
 import { STAIR_PASSED, TOLL_DONE, LEDGE_ASKED, LEDGE_HELD } from './maps/highspine_i10.ts';
-import { MASON_PASSAGE, MASON_SWAPPED, ORDERS_ASKED, ORDERS_READ } from './maps/sheerpoint_i8.ts';
+import { MASON_SWAPPED, ORDERS_ASKED, ORDERS_READ } from './maps/sheerpoint_i8.ts';
 import { VIGIL_ASKED, VIGIL_KEPT } from './maps/monksvale_j11.ts';
-import { BELL_HUNG } from '../saltreach/maps/drowned_temples.ts';
-import { HYMN_SUNG } from '../kilns/maps/anvilhall.ts';
+import { BELL_HUNG } from '../saltreach/public.ts';
+import { HYMN_SUNG } from '../kilns/public.ts';
 
 export const QUESTS: readonly QuestDef[] = [
   {

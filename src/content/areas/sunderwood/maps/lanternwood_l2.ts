@@ -13,7 +13,7 @@ import { LAMP_LIT } from '../quests.ts';
 const GATE_DAY = 'The gate stands open. Over it the tower goes up into the rain, one lamp at the top lit in broad day.';
 const GATE_NIGHT = 'The gate stands open. Over it the tower goes up into the night, one lamp lit and the moths round it.';
 import { EAST, NORTH } from '../../../../game/types.ts';
-import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LANTERNWOOD_L2: MapDef = {

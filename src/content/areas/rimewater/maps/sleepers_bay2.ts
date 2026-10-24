@@ -8,7 +8,7 @@
 // Band 21-22; docs/areas/rimewater.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
-import { SLEEPERS_SEEN } from '../chapter.ts';
+import { SLEEPERS_SEEN } from '../public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SLEEPERS_BAY2: MapDef = {

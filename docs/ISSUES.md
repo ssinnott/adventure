@@ -32,10 +32,10 @@ see what would collide. An issue can be in more than one.
 
 | Label | Touches |
 |---|---|
-| `lane: systems` | `src/game/`, `src/ui/` outside the art modules, the save format, the shape of the registries |
+| `lane: systems` | `src/game/`, `src/ui/` outside the art modules, the kits (`src/ui/paint/`, `src/ui/monsters/kit/`, `src/ui/interiors/kit/`), the save format, the shape of the registries |
 | `lane: area` | an area's maps, monsters, items and quests, and its doc |
-| `lane: creatures` | the monster drawings, `src/ui/monsters/` |
-| `lane: interiors` | the businesses' rooms, `src/ui/interiors/` |
+| `lane: creatures` | the monster drawings, `src/ui/monsters/` outside its `kit/` |
+| `lane: interiors` | the businesses' rooms, `src/ui/interiors/` outside its `kit/` |
 | `lane: quality` | `tools/`, CI and the content contract (EXPANSION §5) |
 | `lane: design` | `docs/`: settling questions, and writing the answers into DESIGN, STORY, MONSTERS or EXPANSION |
 

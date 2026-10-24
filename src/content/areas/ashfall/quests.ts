@@ -16,7 +16,8 @@ import { FOUNDING_RAISED } from './maps/cindercoast_g10.ts';
 import { FOUNDING_UP, FOUNDING_LEFT, SHOVEL_THANE, SHOVEL_WARDENS, SHOVEL_KEPT } from './maps/cinderport.ts';
 import { SHOVEL_STORY, BROOD_ASKED, BROOD } from './maps/firemount_g11.ts';
 import { LAMP_ASKED, LAMP_LIT } from './maps/old_cinder2.ts';
-import { LIT, SEEDLING_ASKED, SEEDLING_TAKEN, SEEDLING_PLANTED } from './maps/ember_stone.ts';
+import { SEEDLING_ASKED, SEEDLING_TAKEN, SEEDLING_PLANTED } from './maps/ember_stone.ts';
+import { LIT } from './public.ts';
 
 const SHOVEL_SEEN = { seen: 'cindercoast_h10:h10_shovel' };
 const LEDGE = { seen: 'firemount_g11:g11_finds' };

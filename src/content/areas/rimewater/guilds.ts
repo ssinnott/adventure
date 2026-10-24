@@ -3,7 +3,7 @@
 // on the fourth night. The Kilns hold the first. The Lodge's hall gives the Lanterns' ladder as every
 // Lantern hall does, its first task the ladder's own.
 import type { GuildQuest } from '../../../game/guilds.ts';
-import { FOURTH_RANKS_OPEN } from '../kilns/guilds.ts';
+import { FOURTH_RANKS_OPEN } from '../kilns/public.ts';
 
 export const GUILDS: readonly GuildQuest[] = [
   {

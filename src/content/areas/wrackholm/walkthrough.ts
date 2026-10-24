@@ -39,9 +39,8 @@ import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { CHAPTER } from './chapter.ts';
-import { CHAPTER as TIDE } from '../saltreach/chapter.ts';
-import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
-import { COMPACT_WARDENS, COMPACT_OVER } from '../saltreach/maps/saltmouth.ts';
+import { SLEEPERS_SEEN } from '../rimewater/public.ts';
+import { COMPACT_WARDENS, COMPACT_OVER } from '../saltreach/public.ts';
 import { inOrder, saltmouthFirst } from '../saltreach/walkthrough.ts';
 import { stonesRestored } from '../../../game/stones.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
@@ -50,7 +49,7 @@ import type { PageView } from '../../../game/quests.ts';
 import type { Person, Meeting } from '../../../game/people.ts';
 import { take } from '../../../game/passage.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
-import { MAP_DEFS, GUILD_QUESTS, AREAS, ATLAS, MONSTERS } from '../../index.ts';
+import { MAP_DEFS, GUILD_QUESTS, AREAS, ATLAS, MONSTERS, THE_QUEST } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take as takeWork, report, offered, rankOf } from '../../../game/guilds.ts';
@@ -87,6 +86,9 @@ import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { RESPAWN } from '../../../game/keys.ts';
+
+// Another area's chapter, taken from the quest by its id and not from its file (#992).
+const TIDE = THE_QUEST.chapters.find((c) => c.id === 'tide')!;
 
 /** The clock on to the next hour given. */
 const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };

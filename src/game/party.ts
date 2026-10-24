@@ -478,6 +478,25 @@ export function heal(c: Character, n: number): number {
 }
 
 /**
+ * An item used on a member, in a fight or from the sheet (#978): taken from the holder's pack, or else
+ * the company's bag, and its healing, spell points, cure and food applied in that order. `items`, first
+ * as #973 passes every table, is the table it is read from; with no holder it comes from the bag. What
+ * it says, or null where it has no use or nobody holds it, and then nothing changes.
+ */
+export function useItem(items: Readonly<Record<string, ItemDef>>, party: Pick<Party, 'bag' | 'food'>, holder: Pick<Character, 'pack'> | null, id: string, target: Character): string[] | null {
+  const use = items[id].use;
+  const from = holder && holder.pack.includes(id) ? holder.pack : party.bag.includes(id) ? party.bag : null;
+  if (!use || !from) return null;
+  from.splice(from.indexOf(id), 1);
+  const said: string[] = [];
+  if (use.heal) said.push(`${target.name} recovers ${heal(target, use.heal)}.`);
+  if (use.sp) { target.sp = Math.min(target.maxSp, target.sp + use.sp); said.push(`${target.name} feels sharper.`); }
+  if (use.cure) said.push(lift(target, use.cure) ? `${target.name} is flesh again.` : `${target.name} is cleansed.`);
+  if (use.food) { party.food += use.food; said.push(`The party's food grows by ${use.food}.`); }
+  return said;
+}
+
+/**
  * A night at an inn that counts them (`nights`, Rime Lodge's): the first of its flags the company has
  * not set is set, so each stay is the next night, in order. The flag set, if any.
  */
