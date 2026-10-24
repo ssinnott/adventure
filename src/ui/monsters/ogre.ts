@@ -64,10 +64,17 @@ const DRIFT: Build = { lichen: 0, heather: 0, eyeHex: '#8ad4ff', beds: 0, snow: 
 /** The Rim Troll: the rim stood up, bare slate and snow and the veins of closed cuts, a seventh broader than the tor troll. */
 const RIM: Build = { lichen: 0, heather: 0, eyeHex: '#ff7a3c', beds: 1, snow: 0, bulk: 1.14, rim: 1 };
 
+/**
+ * Each troll's Build, keyed by the kinds SPRITES names but the ogre: a troll registered there with no
+ * row here fails the typecheck (the `satisfies`), and a kind with no row draws as the ogre.
+ */
+const BUILDS: Partial<Record<MonsterSprite, Build>> = { tor_troll: TOR, snow_troll: DRIFT, rim_troll: RIM } satisfies Record<Exclude<keyof typeof SPRITES, 'ogre'>, Build>;
+
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
+  const b = BUILDS[kind];
   // A tall one stands on the third rank with its markers over its crown: drawn inside 0.8 of its
   // height, its crown keeps under TALL_REACH.
-  if (kind === 'tor_troll' || kind === 'snow_troll' || kind === 'rim_troll') troll(ctx, x, y, h * 0.8, p, kind === 'snow_troll' ? DRIFT : kind === 'rim_troll' ? RIM : TOR);
+  if (b) troll(ctx, x, y, h * 0.8, p, b);
   else ogre(ctx, x, y, h, p);
 };
 
@@ -113,6 +120,18 @@ function tatters(x0: number, x1: number, ytop: number, ybase: number, n: number,
   return pts;
 }
 
+/**
+ * The ogre's frame, worked out once and handed to each of its layers: X and Y take units of h across
+ * from its foot and up from the ground; the breath's lift and the club's roll; the paints; and the
+ * head's radius, with P and M mapping head-radius units round its centre to the canvas.
+ */
+interface OgreFrame {
+  ctx: CanvasRenderingContext2D; h: number; p: Paint; X: (k: number) => number; Y: (k: number) => number;
+  b: number; sw: number; tone: number; leather: string; wrap: string; wood: string; rope: string;
+  ivory: string; farHex: string; iron: string; gum: string; hr: number;
+  P: (px: number, py: number) => [number, number]; M: (a: readonly number[]) => number[];
+}
+
 function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const X = (k: number) => x + h * k, Y = (k: number) => y - h * k;
   const b = p.breathe * h * 0.011;                   // a heavy breath: the shoulders and head rise
@@ -128,12 +147,27 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   const hx = X(0.022);
   const P = (px: number, py: number): [number, number] => [hx + px * hr, hy + py * hr];
   const M = (a: readonly number[]): number[] => { const o: number[] = []; for (let i = 0; i < a.length; i += 2) o.push(...P(a[i], a[i + 1])); return o; };
+  const O: OgreFrame = { ctx, h, p, X, Y, b, sw, tone, leather, wrap, wood, rope, ivory, farHex, iron, gum, hr, P, M };
 
   groundShadow(ctx, X(0.03), y + 1, h * 0.7);
 
-  // 1. The far limbs, behind the hide. An arm and a leg are two things, so they are two masses: in
-  //    one blob they unioned from shoulder to floor into a single dark slab that read as a cloak
-  //    and swallowed the hand. The leg goes down first, then the arm hangs over it, a step lighter.
+  ogreFar(O);
+  ogreHide(O);
+  ogreBelly(O);
+  ogreKilt(O);
+  ogreNearArm(O);
+  ogreClub(O);
+  ogreFist(O);
+  ogreFace(O);
+}
+
+/**
+ * 1. The far limbs, behind the hide. An arm and a leg are two things, so they are two masses: in
+ *    one blob they unioned from shoulder to floor into a single dark slab that read as a cloak
+ *    and swallowed the hand. The leg goes down first, then the arm hangs over it, a step lighter.
+ */
+function ogreFar(O: OgreFrame): void {
+  const { ctx, h, p, X, Y, b, farHex } = O;
   blob(ctx, B, farHex, [
     { k: 'tube', pts: [X(-0.08), Y(0.425), X(-0.206), Y(0.222), X(-0.158), Y(0.055)], r0: h * 0.086, r1: h * 0.048, wobble: 0.05, seed: 23 },
     { k: 'ell', x: X(-0.204), y: Y(0.218), rx: h * 0.064, ry: h * 0.052, rot: -0.2 },
@@ -150,10 +184,15 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     { x0: X(-0.302), y0: Y(0.585), x1: X(-0.332), y1: Y(0.505), r: h * 0.019, a: 0.45 },    // inside the far elbow
     { x0: X(-0.312), y0: Y(0.325), x1: X(-0.26), y1: Y(0.307), r: h * 0.012, a: 0.4 },      // the knuckles
   ] });
+}
 
-  // 2. The hide: torso, gut, neck, skull, ears, near leg and foot -- one mass. The skull is cut by
-  //    hand rather than taken off a ring: a low crown, a brow shelf standing out over the eyes, the
-  //    cheekbones flaring under it and a jaw that juts. A ball with a fat lower half is a baby.
+/**
+ * 2. The hide: torso, gut, neck, skull, ears, near leg and foot -- one mass. The skull is cut by
+ *    hand rather than taken off a ring: a low crown, a brow shelf standing out over the eyes, the
+ *    cheekbones flaring under it and a jaw that juts. A ball with a fat lower half is a baby.
+ */
+function ogreHide(O: OgreFrame): void {
+  const { ctx, h, p, X, Y, b, hr, P, M } = O;
   const hide: Part[] = [
     { k: 'curve', pts: [
       X(-0.156), Y(0.80) - b, X(-0.224), Y(0.778) - b, X(-0.258), Y(0.71), X(-0.254), Y(0.615),
@@ -183,8 +222,11 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     { x0: X(0.186), y0: Y(0.052), x1: X(0.196), y1: Y(0.016), r: h * 0.008, a: 0.4 },          // toes
     { x0: X(0.228), y0: Y(0.052), x1: X(0.236), y1: Y(0.016), r: h * 0.008, a: 0.4 },
   ] });
+}
 
-  // 3. Paler belly, chest and jaw, inside the hide with no line.
+/** 3. Paler belly, chest and jaw, inside the hide with no line. */
+function ogreBelly(O: OgreFrame): void {
+  const { ctx, h, p, X, Y, b, M } = O;
   blob(ctx, B, p.light, [
     { k: 'ell', x: X(0.012), y: Y(0.495) + b * 0.4, rx: h * 0.148, ry: h * 0.078 },
     { k: 'ell', x: X(-0.086), y: Y(0.688), rx: h * 0.092, ry: h * 0.05, rot: 0.14 },
@@ -195,9 +237,14 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   // are one pale mass however carefully they are shaped.
   softLine(ctx, B, [X(-0.176), Y(0.672), X(-0.09), Y(0.632), X(0.012), Y(0.626), X(0.116), Y(0.634), X(0.206), Y(0.678)], p.dark, h * 0.02, 0.38);
   softLine(ctx, B, [X(0.014), Y(0.722), X(0.016), Y(0.648)], p.dark, h * 0.016, 0.4);
+}
 
-  // 4. The kilt: a rope belt knotted at the near hip and a genuinely torn hem. Its top edge used to
-  //    be a level band with the rope a straight lit stripe along it, which read as a barrel hoop.
+/**
+ * 4. The kilt: a rope belt knotted at the near hip and a genuinely torn hem. Its top edge used to
+ *    be a level band with the rope a straight lit stripe along it, which read as a barrel hoop.
+ */
+function ogreKilt(O: OgreFrame): void {
+  const { ctx, h, p, X, Y, leather, wrap, rope } = O;
   blob(ctx, B, leather, [
     { k: 'curve', pts: [X(-0.212), Y(0.452), X(-0.09), Y(0.418), X(0.05), Y(0.412), X(0.17), Y(0.432), X(0.246), Y(0.466), X(0.262), Y(0.4), X(0.0), Y(0.372), X(-0.232), Y(0.386)], wobble: 0.05, seed: 12, sub: 3 },
     { k: 'poly', pts: tatters(X(-0.236), X(0.256), Y(0.42), Y(0.368), 7, 5, h * 0.072) },
@@ -228,11 +275,15 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     softLine(ctx, B, [X(sxN - 0.058), Y(t) + h * 0.008, X(sxN + 0.058), Y(t) - h * 0.004], wrap, h * 0.013, 0.55);
     softLine(ctx, B, [X(sxF - 0.056), Y(t) - h * 0.004, X(sxF + 0.056), Y(t) + h * 0.008], wrap, h * 0.013, 0.5);
   }
+}
 
-  // 5. The near arm, its own mass in front of the torso: a contact shadow under the shoulder first,
-  //    then the upper arm swung out past the ribs and the forearm hanging down to the club.
+/**
+ * 5. The near arm, its own mass in front of the torso: a contact shadow under the shoulder first,
+ *    then the upper arm swung out past the ribs and the forearm hanging down to the club.
+ */
+function ogreNearArm(O: OgreFrame): void {
+  const { ctx, h, p, X, Y, b } = O;
   softLine(ctx, B, [X(0.272), Y(0.726), X(0.254), Y(0.6), X(0.258), Y(0.5)], p.dark, h * 0.042, 0.4);
-  const fx = X(0.294), fy = Y(0.33);
   blob(ctx, B, p.base, [
     { k: 'tube', pts: [X(0.23), Y(0.776) - b, X(0.334), Y(0.648), X(0.352), Y(0.542)], r0: h * 0.066, r1: h * 0.044, wobble: 0.06, seed: 30 },
     { k: 'tube', pts: [X(0.352), Y(0.546), X(0.328), Y(0.44), X(0.3), Y(0.34)], r0: h * 0.044, r1: h * 0.038, wobble: 0.06, seed: 31 },
@@ -240,16 +291,21 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     { x0: X(0.3), y0: Y(0.585), x1: X(0.348), y1: Y(0.522), r: h * 0.021, a: 0.5 },    // the inside of the elbow
     { x0: X(0.268), y0: Y(0.36), x1: X(0.322), y1: Y(0.36), r: h * 0.012, a: 0.4 },    // the wrist
   ] });
+}
 
-  // 6. The club, and which end of it reads as the head. It used to read upside down, and not
-  //    because the head was wrong: 0.24h of capped, knotted, fully lit wood projected above the
-  //    fist -- 41% of the length and 30% of the paint -- while the head cleared its own shank by
-  //    only 1.55x. Worse, the club's axis lay within 24 degrees of blob()'s gradient axis, so the
-  //    one ramp meant to model a single mass instead ran END TO END along the weapon and put the
-  //    butt at full highlight and the head in deep shadow: the head's brightest pixel was 0.64 of
-  //    the butt's average. Three fixes together, because each alone only reaches parity --
-  //    cut the butt back to a stub, make the swell an EVENT rather than a cone along the whole
-  //    shaft, and give the head its own blob so it gets its own ramp and a tone step up.
+/**
+ * 6. The club, and which end of it reads as the head. It used to read upside down, and not
+ *    because the head was wrong: 0.24h of capped, knotted, fully lit wood projected above the
+ *    fist -- 41% of the length and 30% of the paint -- while the head cleared its own shank by
+ *    only 1.55x. Worse, the club's axis lay within 24 degrees of blob()'s gradient axis, so the
+ *    one ramp meant to model a single mass instead ran END TO END along the weapon and put the
+ *    butt at full highlight and the head in deep shadow: the head's brightest pixel was 0.64 of
+ *    the butt's average. Three fixes together, because each alone only reaches parity --
+ *    cut the butt back to a stub, make the swell an EVENT rather than a cone along the whole
+ *    shaft, and give the head its own blob so it gets its own ramp and a tone step up.
+ */
+function ogreClub(O: OgreFrame): void {
+  const { ctx, h, X, Y, sw, wood, iron } = O;
   const bux = X(0.274 + sw), buy = Y(0.44), cxh = X(0.338 + sw * 0.05), cyh = Y(0.09);
   const kn = (t: number, s: number): [number, number] => [bux + (cxh - bux) * t + (cyh - buy) * -s, buy + (cyh - buy) * t + (cxh - bux) * s];
   // The shank: near parallel, 0.032h to 0.040h. A cone from grip to head does 43% of the widening
@@ -285,8 +341,12 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
     ctx.lineTo(ox - dy * h * 0.028, oy + dx * h * 0.028);
     ctx.closePath(); ctx.fill(); ctx.stroke();
   }
+}
 
-  // 6b. The fist closed over the shaft: three fingers across it and the thumb laid back over them.
+/** 6b. The fist closed over the shaft: three fingers across it and the thumb laid back over them. */
+function ogreFist(O: OgreFrame): void {
+  const { ctx, h, p, X, Y } = O;
+  const fx = X(0.294), fy = Y(0.33);
   const grip: Part[] = [];
   const creases: Crease[] = [];
   for (let i = 0; i < 3; i++) {
@@ -296,11 +356,16 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   }
   grip.push({ k: 'tube', pts: [fx - h * 0.022, fy + h * 0.056, fx - h * 0.03, fy - h * 0.012], r0: h * 0.021, r1: h * 0.016, wobble: 0.05, seed: 33 });
   blob(ctx, B, p.base, grip, { h, formK: 0.65, creases });
+}
 
-  // 7. The face, cut as crisp shapes rather than built out of soft washes: translucent strokes on
-  //    a flat hide stack into a pale headband and a pair of grey goggles, which is what the brow
-  //    and the sockets had become. A brow SHELF lit along its top with the eyes in pits under it,
-  //    a muzzle with a lit top plane and a dark underside, and a mouth that is a hole.
+/**
+ * 7. The face, cut as crisp shapes rather than built out of soft washes: translucent strokes on
+ *    a flat hide stack into a pale headband and a pair of grey goggles, which is what the brow
+ *    and the sockets had become. A brow SHELF lit along its top with the eyes in pits under it,
+ *    a muzzle with a lit top plane and a dark underside, and a mouth that is a hole.
+ */
+function ogreFace(O: OgreFrame): void {
+  const { ctx, p, tone, ivory, gum, hr, P, M } = O;
   const fill = (a: readonly number[], hex: string): void => {
     ctx.beginPath(); ctx.moveTo(...P(a[0], a[1]));
     for (let k = 2; k < a.length; k += 2) ctx.lineTo(...P(a[k], a[k + 1]));
@@ -340,6 +405,20 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
 }
 
 /**
+ * A troll's frame, worked out once and handed to each of its layers: its Build and how broad it is;
+ * X and Y take units of h across from its foot, times the breadth, and up from the ground; the
+ * shoulders' lift on a breath and the head's turn; the paints, `cold` turning a shadow blue in snow;
+ * the eyes' pulse; and the head's radius, with P and M mapping head-radius units round it to the canvas.
+ */
+interface TrollFrame {
+  ctx: CanvasRenderingContext2D; h: number; p: Paint; b: Build; g: number; X: (k: number) => number;
+  Y: (k: number) => number; br: number; nod: number; cold: (hex: string) => string; tone: number;
+  stone: string; back: string; farHex: string; lit: string; joint: string; yellow: string; rust: string;
+  moss: string; heath: string; bloom: string; pulse: number; frost: string; quartz: string; hr: number;
+  P: (px: number, py: number) => [number, number]; M: (a: readonly number[]) => number[];
+}
+
+/**
  * A troll, in units of `h` (the tall one's drawn height) up from the ground line: the hump of its
  * back at 0.97, the head sunk under it at 0.76, the hips at 0.42 and the fists on the ground either
  * side of the feet.
@@ -357,8 +436,30 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   const heath = shade('#5e4c3c', tone), bloom = shade('#9c6a88', tone);
   const pulse = 0.5 + 0.5 * Math.sin(p.frame / 13);
   const frost = shade('#e8f0f8', tone), quartz = shade('#e6dfca', tone);
+  // The head's frame, sunk forward under the hump: P and M map head-radius units round it to the canvas.
+  const hx = X(0.03 + nod), hy = Y(0.74) - br, hr = h * 0.135 * g;
+  const P = (px: number, py: number): [number, number] => [hx + px * hr, hy + py * hr];
+  const M = (a: readonly number[]): number[] => { const o: number[] = []; for (let i = 0; i < a.length; i += 2) o.push(...P(a[i], a[i + 1])); return o; };
+  const T: TrollFrame = { ctx, h, p, b, g, X, Y, br, nod, cold, tone, stone, back, farHex, lit, joint, yellow, rust, moss, heath, bloom, pulse, frost, quartz, hr, P, M };
   groundShadow(ctx, X(0), y + 1, h * 0.98 * g);
+  const S = stonework(T);
+  trollFar(T, S);
+  trollHump(T, S);
+  trollBody(T, S);
+  trollScree(T, S);
+  trollDrift(T);
+  trollNearArm(T, S);
+  trollHead(T, S);
+  trollSnow(T);
+  trollGrowth(T);
+}
 
+/**
+ * The stone as the troll's layers lay it, each tool read off its frame: a boulder, a bed, lichen, snow
+ * on a ledge, a cut that closed over (in pixels, or in the frame's units as a seam) and the scree's rocks.
+ */
+function stonework(T: TrollFrame) {
+  const { ctx, h, b, X, Y, lit, joint, frost, quartz } = T;
   /** A boulder's outline: a ring, flattened where it sits, rounded where it weathered; in snow, `rime` feathers it. */
   const boulder = (cx: number, cy: number, rx: number, ry: number, seed: number, rime = false): Part => {
     const pts: number[] = [];
@@ -418,8 +519,15 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   };
   /** A vein laid in the frame's units, as `bed` takes them: out from the middle and up from the ground. */
   const seam = (pts: readonly number[], w = 1): void => vein(pts.map((v, i) => (i % 2 ? Y(v) : X(v))), w);
+  return { boulder, bed, lichen, cap, vein, rock, seam };
+}
+/** The troll's stone tools, as stonework makes them. */
+type Stonework = ReturnType<typeof stonework>;
 
-  // ---- the far leg and the far arm, behind, a step darker: two masses, the fist a boulder on the ground.
+/** The far leg and the far arm, behind, a step darker: two masses, the fist a boulder on the ground. */
+function trollFar(T: TrollFrame, S: Stonework): void {
+  const { ctx, h, g, X, Y, br, farHex } = T;
+  const { boulder, bed, cap } = S;
   blob(ctx, B, farHex, [
     { k: 'tube', pts: [X(-0.11), Y(0.42), X(-0.2), Y(0.23), X(-0.18), Y(0.07)], r0: h * 0.1 * g, r1: h * 0.076 * g, wobble: 0.04, seed: 61 },
     { k: 'curve', pts: [X(-0.31), Y(0.008), X(-0.3), Y(0.07), X(-0.2), Y(0.105), X(-0.1), Y(0.08), X(-0.09), Y(0.012)], wobble: 0.06, seed: 62, sub: 2 },
@@ -433,8 +541,12 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   ] });
   bed([-0.44, 0.44, -0.33, 0.45]);
   cap(-0.39, 0.105, 0.09, 0.1, 0.03, 107);
+}
 
-  // ---- the hump: the slabs of its back, stacked behind its head and shoulders, each its own stone.
+/** The hump: the slabs of its back, stacked behind its head and shoulders, each its own stone. */
+function trollHump(T: TrollFrame, S: Stonework): void {
+  const { ctx, h, br, back, yellow, rust } = T;
+  const { boulder, lichen, cap, seam } = S;
   blob(ctx, B, back, [boulder(-0.19, 0.84, 0.15, 0.1, 67, true)], { h, formK: 0.45 });
   cap(-0.19, 0.84, 0.15, 0.1, 0.03, 111);
   blob(ctx, B, back, [boulder(0.21, 0.83, 0.15, 0.1, 69, true)], { h, formK: 0.45 });
@@ -444,8 +556,12 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   seam([-0.14, 0.945, -0.08, 0.91, -0.12, 0.875], 0.9);
   lichen(-0.12, 0.88, 0.026, yellow, 73);
   lichen(0.24, 0.86, 0.022, rust, 74);
+}
 
-  // ---- the body: barrel, gut, the shoulders like boulders, and the near leg, one mass of stone.
+/** The body: barrel, gut, the shoulders like boulders, and the near leg, one mass of stone. */
+function trollBody(T: TrollFrame, S: Stonework): void {
+  const { ctx, h, b, g, X, Y, br, stone, lit, yellow, rust } = T;
+  const { boulder, bed, lichen, cap, seam } = S;
   blob(ctx, B, stone, [
     { k: 'curve', pts: [
       X(-0.3), Y(0.81) - br, X(-0.34), Y(0.72), X(-0.31), Y(0.58), X(-0.27), Y(0.46), X(-0.2), Y(0.4), X(0.2), Y(0.4),
@@ -490,8 +606,12 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   lichen(0.22, 0.18, 0.024, rust, 84);
   lichen(0.3, 0.78, 0.022, yellow, 85);
   cap(-0.285, 0.765 + br / h, 0.11, 0.09, 0.028, 109);
+}
 
-  // ---- scree banked round the feet where the rim let go of it: a heap of broken stone, and the stones on it.
+/** Scree banked round the feet where the rim let go of it: a heap of broken stone, and the stones on it. */
+function trollScree(T: TrollFrame, S: Stonework): void {
+  const { ctx, h, b, X, Y, stone } = T;
+  const { rock } = S;
   if (b.rim > 0) {
     blob(ctx, B, shade(stone, 0.84), [{ k: 'curve', pts: [
       X(-0.45), Y(0), X(-0.44), Y(0.04), X(-0.4), Y(0.08), X(-0.3), Y(0.115), X(-0.2), Y(0.105), X(-0.08), Y(0.145), X(0.05), Y(0.12),
@@ -503,8 +623,11 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
       rock(0.4, 0.07, 0.055, 0.045, 128), rock(0.44, 0.025, 0.035, 0.03, 132),
     ], { h, formK: 0.55 });
   }
+}
 
-  // ---- the drift it stood up out of, banked round its feet and cut by the wind: snow only.
+/** The drift it stood up out of, banked round its feet and cut by the wind: snow only. */
+function trollDrift(T: TrollFrame): void {
+  const { ctx, h, b, X, Y, cold, stone, lit } = T;
   if (b.snow > 0) {
     blob(ctx, B, cold(shade(stone, 0.98)), [{ k: 'curve', pts: [
       X(-0.53), Y(0), X(-0.47), Y(0.07), X(-0.3), Y(0.145), X(-0.08), Y(0.2), X(0.14), Y(0.19), X(0.33), Y(0.14),
@@ -512,8 +635,12 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
     ], wobble: 0.05, seed: 96, sub: 3 }], { h, formK: 0.35 });
     if (!B.override) softLine(ctx, B, [X(-0.44), Y(0.06), X(-0.25), Y(0.125), X(-0.05), Y(0.165), X(0.16), Y(0.155)], mix(lit, '#ffffff', 0.4), Math.max(1, h * 0.008), 0.5);
   }
+}
 
-  // ---- the near arm, its own mass in front: down past the gut to the fist, a boulder on the ground.
+/** The near arm, its own mass in front: down past the gut to the fist, a boulder on the ground. */
+function trollNearArm(T: TrollFrame, S: Stonework): void {
+  const { ctx, h, p, g, X, Y, br, stone, yellow } = T;
+  const { boulder, bed, lichen, cap, seam } = S;
   softLine(ctx, B, [X(0.33), Y(0.74), X(0.31), Y(0.6), X(0.31), Y(0.5)], p.dark, h * 0.04, 0.38);
   blob(ctx, B, stone, [
     { k: 'tube', pts: [X(0.28), Y(0.8) - br, X(0.4), Y(0.56), X(0.385), Y(0.24)], r0: h * 0.09 * g, r1: h * 0.068 * g, wobble: 0.04, seed: 86 },
@@ -530,11 +657,12 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   seam([0.33, 0.7, 0.44, 0.65], 0.9);
   cap(0.28, 0.8 - br / h, 0.088, 0.088, 0.03, 108);
   cap(0.392, 0.105, 0.095, 0.105, 0.03, 106);
+}
 
-  // ---- the head, a block of the stone sunk forward under the hump, and the face cut in it.
-  const hx = X(0.03 + nod), hy = Y(0.74) - br, hr = h * 0.135 * g;
-  const P = (px: number, py: number): [number, number] => [hx + px * hr, hy + py * hr];
-  const M = (a: readonly number[]): number[] => { const o: number[] = []; for (let i = 0; i < a.length; i += 2) o.push(...P(a[i], a[i + 1])); return o; };
+/** The head, a block of the stone sunk forward under the hump, and the face cut in it. */
+function trollHead(T: TrollFrame, S: Stonework): void {
+  const { ctx, h, b, stone, lit, joint, pulse, frost, hr, P, M } = T;
+  const { vein } = S;
   blob(ctx, B, shade(stone, 1.04), [{ k: 'curve', pts: M([
     -0.96, -0.5, -0.62, -0.94, 0, -1.02, 0.64, -0.92, 0.98, -0.48, 1.02, 0.12, 0.86, 0.72, 0.42, 1.02, -0.36, 1.02, -0.86, 0.72, -1.02, 0.12,
   ]), wobble: 0.04, seed: 90, sub: 2 }], { h, formK: 0.5 });
@@ -581,9 +709,14 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
     // The stonecutter's marks: the chisel's strokes along the cheek, where the face was cut.
     if (!B.override && hr >= 6) for (let i = 0; i < 3; i++) softLine(ctx, B, M([0.68 + i * 0.07, 0.12, 0.76 + i * 0.07, 0.34]), joint, Math.max(1, hr * 0.05), 0.5);
   }
+}
 
-  // ---- snow: the hump's drift blown forward over the brow and curled under at its lip, icicles
-  // hanging from the lip and the jaw, and the wind's ripples across the chest and the gut.
+/**
+ * Snow: the hump's drift blown forward over the brow and curled under at its lip, icicles
+ * hanging from the lip and the jaw, and the wind's ripples across the chest and the gut.
+ */
+function trollSnow(T: TrollFrame): void {
+  const { ctx, h, p, b, X, Y, br, nod, cold, tone, stone } = T;
   if (b.snow > 0) {
     blob(ctx, B, shade(stone, 1.06), [{ k: 'curve', pts: [
       X(-0.17), Y(0.925) - br, X(-0.03), Y(0.985) - br, X(0.12), Y(0.975) - br, X(0.215), Y(0.93) - br, X(0.25), Y(0.875) - br,
@@ -602,8 +735,11 @@ function troll(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
       softLine(ctx, B, pts.map((v, i) => (i % 2 ? Y(v) : X(v))), cold(shade(p.dark, 1.08)), Math.max(1, h * 0.007), 0.25);
     }
   }
+}
 
-  // ---- what grows on it: moss on the crown, heather rooted along the shoulders and the hump.
+/** What grows on it: moss on the crown, heather rooted along the shoulders and the hump. */
+function trollGrowth(T: TrollFrame): void {
+  const { ctx, h, b, X, Y, moss, heath, bloom, M } = T;
   if (b.heather > 0) {
     blob(ctx, B, moss, [{ k: 'curve', pts: M([-0.62, -0.86, -0.3, -1.08, 0.2, -1.1, 0.58, -0.9, 0.2, -0.94, -0.3, -0.92]), wobble: 0.12, spiky: 0.12, seed: 92, sub: 2 }], { h, formK: 0.4, spread: 0.7 });
     // Heather: low bushy mounds in the cracks of the stone, brown in the cold, a few bells still on it.

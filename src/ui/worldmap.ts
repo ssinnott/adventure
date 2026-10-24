@@ -17,8 +17,7 @@ import { GRID } from '../content/maps.ts';
 import { zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, mapPlace, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
 import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
 import type { World } from '../game/world.ts';
-import type { QuestDef } from '../game/quests.ts';
-import { questLog } from '../game/quests.ts';
+import { questLog, finishedBy } from '../game/quests.ts';
 import { sought } from '../game/seeking.ts';
 import { readMarks } from '../game/inscriptions.ts';
 import { drawFrameBackground } from './frame.ts';
@@ -1173,7 +1172,7 @@ function centreOf(id: string): [number, number] | undefined {
  * keeps the name it was saved under, so its own words can be a place's old name.
  */
 function gateName(flag: string): string {
-  const q = QUESTS.flatMap((d): readonly QuestDef[] => d.chapters ?? [d]).find((d) => [d.done ?? []].flat().some((c) => [c.flag ?? []].flat().includes(flag)));
+  const q = finishedBy(QUESTS, flag);
   return q ? q.title.replace(/^The /, '') : flag.replace(/^q_/, '').replace(/_done$/, '');
 }
 

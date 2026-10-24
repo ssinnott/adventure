@@ -5,7 +5,7 @@
 // copybook reads as a Linguist does). Linguist is the first built, and reads Kiln-script
 // (game/inscriptions.ts); Mountaineer and Swimmer climb and swim (`partyCan`, game/party.ts; #805);
 // Perception searches (`World.search`), Spirit Sense and Danger Sense mark the automap (`markedGroups`,
-// ui/frame.ts) and Arms Master strikes first (`newRound`, game/combat.ts; #856); Cartographer maps a
+// game/ink.ts) and Arms Master strikes first (`newRound`, game/combat.ts; #856); Cartographer maps a
 // square further (`World.reveal`), Pathfinder walks rough ground at the road's pace (`World.move`),
 // Lockpick opens an iron lock and keeps the key (`World.unlock`), Merchant sells dearer (`sellPrice`,
 // game/items.ts) and Navigator crosses for half (`fareOf`, game/passage.ts; #857). Pure apart from the
@@ -59,7 +59,7 @@ export const SKILLS: Readonly<Record<SkillId, SkillDef>> = {
   navigator: { id: 'navigator', name: 'Navigator', text: 'Pays half fare on every crossing.', guild: 'compact', price: SKILL_PRICE },
 };
 
-/** How far Spirit Sense reaches, in steps (`markedGroups`, ui/frame.ts). */
+/** How far Spirit Sense reaches, in steps (`markedGroups`, game/ink.ts). */
 export const SPIRIT_REACH = 8;
 
 /** The skills a member has learnt: none in a save from before them. */
