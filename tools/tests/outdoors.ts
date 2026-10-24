@@ -17,7 +17,7 @@ import { EAST, FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { findWeather, weatherAt, weatherSight } from '../../src/game/weather.ts';
 import { daylightAt } from '../../src/game/calendar.ts';
 import { areaRows, areaLists, gather, once } from '../checks.ts';
-import { ok, owed, local, stopsWalk } from './lib.ts';
+import { ok, owed, local, stopsWalk, fxMap } from './lib.ts';
 import { logLines } from '../../src/ui/frame.ts';
 
 /**
@@ -439,10 +439,10 @@ export function outdoors(): void {
       ] };
       const defs = [
         box('fx_road', ['MMMMMM', 'M,,,,,', 'MMMMMM'], [4, 5], [
-          ...(label ? [{ x: 5, y: 1, to: 'fx_fen', tx: 0, ty: 1, label }] : []),
-          ...(jump ? [{ x: 2, y: 1, to: 'fx_fen', tx: 2, ty: 1, tf: EAST, label: 'Down the steps.' }] : []),
+          ...(label ? [{ x: 5, y: 1, to: fxMap('fx_fen'), tx: 0, ty: 1, label }] : []),
+          ...(jump ? [{ x: 2, y: 1, to: fxMap('fx_fen'), tx: 2, ty: 1, tf: EAST, label: 'Down the steps.' }] : []),
         ]),
-        box('fx_fen', ['MMMMMM', ',,,,,,', 'MMMMMM'], [10, 11], jump ? [{ x: 3, y: 1, to: 'fx_road', tx: 3, ty: 1, tf: EAST, label: 'Back up the steps.' }] : []),
+        box('fx_fen', ['MMMMMM', ',,,,,,', 'MMMMMM'], [10, 11], jump ? [{ x: 3, y: 1, to: fxMap('fx_road'), tx: 3, ty: 1, tf: EAST, label: 'Back up the steps.' }] : []),
         box('fx_deeper', ['MMMMMM', ',,,,,M', 'MMMMMM'], [11, 12]),
       ];
       return Object.fromEntries(layOutdoors(atlas, defs).map((d) => [d.id, new GameMap(d)]));

@@ -20,7 +20,7 @@ import { judge, measure } from './density.ts';
 import { lineFaults, texts } from './pillars.ts';
 import { condFaults } from './quests.ts';
 import { presenceFaults } from './structure.ts';
-import { ok } from './lib.ts';
+import { ok, fxMap } from './lib.ts';
 
 const DEN: Den = {
   kind: 'den', x: 6, y: 3, id: 'r_den', name: 'A rookery', text: 'Nests of sticks crowd the willows, and the crows watch you come.',
@@ -28,7 +28,7 @@ const DEN: Den = {
   ask: 'The old birds are dead. Burn the rookery?', burn: 'Burn it.', burnt: 'The nests go up like tinder, and the crows scatter.',
   ruin: 'Black stumps, and no crow left to watch.', gold: 40, items: ['key_iron'],
 };
-const PACE = 1440, UNTIL = denBurnt('rookery', DEN.id);
+const PACE = 1440, UNTIL = denBurnt(fxMap('rookery'), DEN.id);
 const FIXTURE: MapDef = {
   id: 'rookery', name: 'Rookery', kind: 'outdoor', region: 'shelf', density: 'country',
   start: { x: 0, y: 0, facing: NORTH },
@@ -52,7 +52,7 @@ export function denFaults(def: MapDef): string[] {
   const out: string[] = [], group = (id: string) => def.encounters?.find((e) => e.id === id), bred = new Map<string, string>();
   for (const f of def.features ?? []) {
     if (f.kind !== 'den') continue;
-    const at = `${def.id}'s den ${f.id}`, until = JSON.stringify(denBurnt(def.id, f.id));
+    const at = `${def.id}'s den ${f.id}`, until = JSON.stringify(denBurnt(fxMap(def.id), f.id));
     if (!f.breeds.length) out.push(`${at} breeds nothing`);
     for (const m of f.breeds) if (!(m in MONSTERS)) out.push(`${at} breeds ${m}, which is no monster`);
     const k = group(f.keepers);

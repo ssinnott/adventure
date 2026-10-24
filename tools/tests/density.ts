@@ -8,7 +8,7 @@
 import { AREAS } from '../../src/content/index.ts';
 import { GameMap, type Exit, type Feature, type MapDef } from '../../src/game/map.ts';
 import { NORTH } from '../../src/game/types.ts';
-import { ok } from './lib.ts';
+import { ok, fxMap } from './lib.ts';
 
 type Row = 'core' | 'country' | 'town' | 'dungeon';
 /** 90% of the squares within `within` steps, and none past `cap`. Country held on every country box of the Downs (#47). */
@@ -90,7 +90,7 @@ export function density(): void {
   const fails = (d: MapDef, what: string, msg: string): void => { const w = judge(d).why; ok(w.includes(what), `${msg}: ${w || 'passes'}`); };
   const passes = (d: MapDef, msg: string): void => { const w = judge(d).why; ok(!w, `${msg}${w ? ': ' + w : ''}`); };
   const chest = (x: number, y = 0): Feature => ({ kind: 'chest', x, y, id: `c${x}_${y}`, gold: 1, items: [] });
-  const exit = (x: number, y = 0): Exit => ({ x, y, to: 'nowhere', tx: 0, ty: 0 });
+  const exit = (x: number, y = 0): Exit => ({ x, y, to: fxMap('nowhere'), tx: 0, ty: 0 });
 
   // A road of grass 73 squares long, a way off it at one end.
   const road = (features: Feature[], density?: 'core' | 'country'): MapDef =>

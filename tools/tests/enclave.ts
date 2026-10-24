@@ -10,7 +10,7 @@ import { World, enclaveLine, HARDER_IN, WARNING_IN } from '../../src/game/world.
 import { EAST, NORTH } from '../../src/game/types.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { gateCompany } from '../gate.ts';
-import { ok } from './lib.ts';
+import { ok, fxMap } from './lib.ts';
 
 /** Where the fixture lair stands: beside Saltreach, a band-10 area, its door on C3 in the Upper Water (10-11). */
 export const FIXTURE = { area: 'saltreach', zone: 'upperwater', box: 'upperwater_c3' } as const;
@@ -39,7 +39,7 @@ export function enclave(): void {
   // company's level, as a border's line: a warning three or more under, harder one or two, then nothing.
   const DOWN = 'Down into the dark.';
   const hollow: MapDef = { id: 'fx_hollow', name: 'Fixture Hollow', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['####', '#..#', '####'],
-    exits: [{ x: 2, y: 1, to: LAIR.id, tx: LAIR.start.x, ty: LAIR.start.y, tf: NORTH, label: DOWN }] };
+    exits: [{ x: 2, y: 1, to: fxMap(LAIR.id), tx: LAIR.start.x, ty: LAIR.start.y, tf: NORTH, label: DOWN }] };
   const enter = (level: number, into: MapDef = LAIR, from: MapDef = hollow): { said: string[]; w: World } => {
     const w = new World({ [from.id]: new GameMap(from), [into.id]: new GameMap(into) }, gateCompany(level, 1), makeRng(1));
     const r = w.move('forward');

@@ -17,6 +17,7 @@ import type { Terrain } from '../../src/game/map.ts';
 import { SOUTH } from '../../src/game/types.ts';
 import { once } from '../checks.ts';
 import { ok } from './lib.ts';
+import type { MapId } from '../../src/content/index.ts';
 
 export function weather(): void {
   const shelf = CLIMATES.shelf, thorn = CLIMATES.thornmark;
@@ -143,7 +144,7 @@ export function weather(): void {
     // its exit (`Exit.crosses`), with the two regions it joins.
     const fx = (id: string, region: string, exits: MapDef['exits'] = []): MapDef => ({ id, name: 'Fixture', kind: 'dungeon', region: region as RegionId, start: { x: 1, y: 1, facing: SOUTH }, rows: ['#####', '#...#', '#####'], exits });
     const mines = fx('deep_mines3', 'kilns'), regions = 'hearth kilns';
-    const ways = (x: number, to = 'deep_mines3', region = 'hearth', crosses?: string): MapDef[] => [fx('underdeep', region, [{ x, y: 10, to, tx: 13, ty: 3, ...(crosses ? { crosses } : {}) }]), mines, fx('deep_mines2', 'kilns')];
+    const ways = (x: number, to: MapId = 'deep_mines3', region = 'hearth', crosses?: string): MapDef[] => [fx('underdeep', region, [{ x, y: 10, to, tx: 13, ty: 3, ...(crosses ? { crosses } : {}) }]), mines, fx('deep_mines2', 'kilns')];
     ok(!crossings(ways(2, 'deep_mines3', 'hearth', regions)).length, 'the door marked CREW ONLY, from the Ways under the Hearth into the Kilns\' deep mines, crosses by its written exception');
     ok(crossings(ways(3)).length === 1 && crossings(ways(2, 'deep_mines2')).length === 1 && crossings(ways(2, 'deep_mines3', 'shelf', regions)).length === 1, 'and an exit unmarked, from another square or to another map, does not, nor one marked between two other regions');
     const marked = (region: string): MapDef[] => [fx('underdeep', region, [{ x: 3, y: 10, to: 'deep_mines3', tx: 13, ty: 3, crosses: regions }]), mines];

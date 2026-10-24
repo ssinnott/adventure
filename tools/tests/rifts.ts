@@ -18,7 +18,7 @@ import { wallDressing } from '../../src/ui/viewport.ts';
 import { judge } from './density.ts';
 import { lineFaults, hintFaults, missingGlyphs, americanisms } from './pillars.ts';
 import { strandedLocks, respawnsOutOfRange, returningGuardians, presenceFaults, questItems } from './structure.ts';
-import { ok, stopsWalk } from './lib.ts';
+import { ok, stopsWalk, fxKey, fxMap } from './lib.ts';
 
 /** What is wrong with a generated Rift, by the contract's checks on a map as written. */
 function faults(def: MapDef, items: ReadonlySet<string>, maps: readonly MapDef[] = MAP_DEFS): string[] {
@@ -79,7 +79,7 @@ export function rifts(): void {
     out: { to: 'downs_e3', tx: 21, ty: 4 },
     table: { groups: [['riftling', 'riftling'], ['rift_crawler', 'rift_crawler', 'rift_crawler'], ['riftling', 'rift_crawler']], warden: ['riftling_elder', 'riftling'] },
     hoard: { gold: 120, items: ['potion_heal'] },
-    until: { slain: 'fx_rift:fx_rift_warden' },
+    until: { slain: fxKey('fx_rift:fx_rift_warden') },
   });
   ok(JSON.stringify(generateRift(spec(5))) === JSON.stringify(generateRift(spec(5))), 'the same template, material, table and seed give the same Rift');
   const ids = (d: MapDef): string => [...(d.features ?? []).map((f) => ('id' in f ? f.id : '')), ...(d.encounters ?? []).map((e) => e.id)].sort().join();
@@ -118,7 +118,7 @@ export function rifts(): void {
 
   // A brine Rift on a box of the Delta: its tear walked into, the Rift walked, and back out.
   {
-    const DELTA = rift({ ...spec(7), id: 'fx_delta_rift', material: 'brine', template: 'cells', until: { slain: 'fx_delta_rift:fx_delta_rift_warden' }, out: { to: 'fx_delta', tx: 3, ty: 2, tf: EAST } });
+    const DELTA = rift({ ...spec(7), id: 'fx_delta_rift', material: 'brine', template: 'cells', until: { slain: fxKey('fx_delta_rift:fx_delta_rift_warden') }, out: { to: fxMap('fx_delta'), tx: 3, ty: 2, tf: EAST } });
     const box: MapDef = { id: 'fx_delta', name: 'Fixture Fen', kind: 'outdoor', region: 'shelf', density: 'core', start: { x: 1, y: 2, facing: EAST }, rows: ['MMMMMMM', 'M,,,,,M', 'M,,,,,M', 'M,,,,,M', 'MMMMMMM'], features: [DELTA.way(4, 2)] };
     const maps = { fx_delta: new GameMap(box), fx_delta_rift: new GameMap(DELTA.map) };
     const r = makeRng(3), w = new World(maps, defaultParty(r), r);

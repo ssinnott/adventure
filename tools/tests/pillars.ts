@@ -31,7 +31,7 @@ import { ENDINGS } from '../../src/content/endings.ts';
 import type { Ending } from '../../src/content/endings.ts';
 import { PAGE, pageLines } from '../../src/ui/ending.ts';
 import { areaRows, gatherLists, once } from '../checks.ts';
-import { ok, owed, familyModules, withDefs } from './lib.ts';
+import { ok, owed, familyModules, withDefs, fxMap } from './lib.ts';
 
 /**
  * What is wrong with a map's secret doors and their hints: a secret door with no hint declared, a
@@ -911,7 +911,7 @@ export async function pillars(): Promise<void> {
     // Act III's lock stays on the bay's door (#440): the pass from Loch Fuar into Monks' Vale shut on its
     // flag is a lock between areas, signed in or not, and the pass on the atlas opening on a step fails too.
     const [fuar, vale] = ['coldmere', 'monksvale'].map((z) => ATLAS.zones.find((x) => x.id === z)!.area);
-    const pass = { ...room([{ x: 3, y: 1, to: 'fixture_vale', tx: 1, ty: 1, needFlag: 'q_wenna_up' }]), id: 'fixture_pass' };
+    const pass = { ...room([{ x: 3, y: 1, to: fxMap('fixture_vale'), tx: 1, ty: 1, needFlag: 'q_wenna_up' }]), id: 'fixture_pass' };
     const beyond = [{ id: fuar, maps: [pass] }, { id: vale, maps: [{ ...room([]), id: 'fixture_vale' }] }];
     const shut = findLocks(beyond).filter((f) => f.map === pass.id), whose = (m: string): string | undefined => beyond.find((a) => a.maps.some((d) => d.id === m))?.id;
     ok(shut.length === 1 && lockFaults(shut, [lock({ flag: 'q_wenna_up', map: pass.id })], whose).some((f) => f.text.endsWith(`a lock between ${fuar} and ${vale}`)),

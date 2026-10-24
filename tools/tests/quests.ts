@@ -26,7 +26,7 @@ import { readId } from '../../src/game/inscriptions.ts';
 import { FIXTURE, LAIR } from './enclave.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { areaRows, gather, once } from '../checks.ts';
-import { ok, owed } from './lib.ts';
+import { ok, owed, fxKey, fxMap } from './lib.ts';
 
 /**
  * Flags a condition may read before anything sets them, each owed by its area to the issue that will
@@ -116,7 +116,7 @@ export function quests(): void {
     `goalMap gives the map the shown goal names, in the one quest and in a quest of its own: ${hiredAt.join(' and ')} once hired, then ${firstAt.join(' and ')} for the chapter's first goal (${shelf.goals[0].at})`);
   // A reading is kept by its inscription's id (#538), so `seen` names it; a plain sign is kept by nothing.
   const lintel: MapDef = { ...crossing, features: [{ kind: 'sign', x: 0, y: 0, id: 'fx_lintel', text: 'Marks.', read: 'STORE.' }, { kind: 'sign', x: 1, y: 0, text: 'A post.' }] };
-  ok(!condFaults({ seen: 'fx_shore:fx_lintel' }, [lintel]).length && condFaults({ seen: 'fx_shore:fx_post' }, [lintel]).join() === 'seen fx_shore:fx_post',
+  ok(!condFaults({ seen: fxKey('fx_shore:fx_lintel') }, [lintel]).length && condFaults({ seen: fxKey('fx_shore:fx_post') }, [lintel]).join() === 'seen fx_shore:fx_post',
     'an inscription read names something real by its id, as a once-event does');
   ok(fleeting({ member: { race: 'orcblood' } }).length === 1 && !fleeting({ member: { cls: 'paladin', level: 16 } }).length, 'a member\'s race can stop holding, so a journal may not ask it, and the rest of a member may');
   const conds = (w: When): QuestCond[] => [w].flat();
@@ -168,7 +168,7 @@ export function quests(): void {
     }
     // The fixture lair beside Saltreach (#845) holds no step of the one quest; a step set in it is caught,
     // and holds no zone, where the same step on its box holds the Upper Water.
-    const defs = [...MAP_DEFS, LAIR], first = THE_QUEST.chapters[0], at = (map: string): Chapter => ({ ...first, goals: [{ ...first.goals[0], at: map }] });
+    const defs = [...MAP_DEFS, LAIR], first = THE_QUEST.chapters[0], at = (map: string): Chapter => ({ ...first, goals: [{ ...first.goals[0], at: fxMap(map) }] });
     ok(!enclaveSteps(THE_QUEST.chapters, defs).length && enclaveSteps([at(LAIR.id)], defs).length === 1
       && !heldZones([at(LAIR.id)], defs).has(FIXTURE.zone) && heldZones([at(FIXTURE.box)], defs).has(FIXTURE.zone),
       'the fixture lair holds no step of the one quest; a step set in it is caught and holds no zone, where the same step on its box, C3, holds the Upper Water');

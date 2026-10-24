@@ -14,6 +14,8 @@ import type { Action } from '../../src/input.ts';
 import { drainTyped } from '../../src/input.ts';
 import { SAVE_KEY } from '../../src/game/save.ts';
 import { ITEMS } from '../../src/content/index.ts';
+import type { MapId } from '../../src/content/index.ts';
+import type { MapKey } from '../../src/game/keys.ts';
 
 /**
  * `f` with `defs` lent to the item or the monster table (#946): each put in under its id, over any
@@ -53,6 +55,14 @@ export const asked = (area: string): boolean => !narrowedTo || narrowedTo.has(ar
 export const narrowed = (): readonly string[] | undefined => narrowedTo && [...narrowedTo];
 
 let failures = 0, held = 0;
+/**
+ * A map only a suite's fixture has (`fx_hall`), which no area lists, or one a check reads off any map as
+ * a string: the fixture's wider type, handed to the game as a map's id (#994). A real map's id needs none.
+ */
+export const fxMap = (id: string): MapId => id as MapId;
+/** A thing on a fixture's map, `'map:id'`, or a key the game must refuse: handed on as `fxMap` hands a map. */
+export const fxKey = (key: string): MapKey => key as MapKey;
+
 export const ok = (cond: boolean, msg: string): void => {
   if (cond) held++; else failures++;
   if (LIST || !cond) console.log((cond ? '  ok:   ' : '  FAIL: ') + msg);
