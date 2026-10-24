@@ -1514,7 +1514,7 @@ Decided by the builder for #895, each the owner's to overturn:
 Decided by the builder for #954, each the owner's to overturn:
 
 1. **The gate's parts** are `fixed` and one to each area the run asks for, Saltreach's with the
-   enclave's fixture. Each lists its own figures off their aim, a block to an area where one of 89
+   enclave's fixture. Each lists its own figures off their aim, a block to an area where one of 99
    closed the gate, and holds the owed entries its names begin, the fixed part those that name no
    area: an owed check to each part, thirteen where there was one.
 2. **A suite has parts where its file exports `parts()`**, read from its text before it loads, so
@@ -1531,9 +1531,9 @@ Decided by the builder for #954, each the owner's to overturn:
 5. **What a run writes is caught in its process** and sent with its record, so each run of the
    packed process prints at its own turn; what a process writes outside a run, or as it dies, prints
    with its last run or the run it died in.
-6. **A process that dies** fails the run in flight (`died, exit 13`, or `killed by` its signal), those
-   after it in that process `never ran`, and the run goes on to its summary; one that exits with a
-   code its records do not account for fails its last run (`died after its end`).
+6. **A process that dies** fails the run in flight (`died, exit 13`, or `killed by` its signal) and
+   marks those after it in that process `never ran`; the run goes on to its summary. One that
+   exits with a code its records do not account for fails its last run (`died after its end`).
 7. **`DEAR` is CI's table of 23 October and the gate's areas**, the dearest first, the harness third
    as a process of one worker; `TEST_DEAR=a,b` replaces it, as the runner's own check does to put
    fixture suites in processes of their own. That check runs its runs side by side, as many as the

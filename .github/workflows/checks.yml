@@ -71,9 +71,14 @@ jobs:
       # npm test ends with the pilot's full run on the shelf (tools/tests/fullrun.ts, FULLRUN unset): about ten seconds.
       # The runner says which areas ran and why, and writes that and its table of seconds into the
       # run's summary.
-      - run: npm test
+      - if: github.event_name != 'schedule'
+        run: npm test
         env:
           TEST_SINCE: ${{ github.event_name == 'pull_request' && 'HEAD^1' || '' }}
+      # The nightly plays the runs in an order of its own (#954) and prints its seed first and last:
+      # a suite that passes only after another fails by name, and `--shuffle <seed>` plays it again.
+      - if: github.event_name == 'schedule'
+        run: node tools/test.ts --jobs --shuffle && node tools/tests/runner/check.ts && node tools/test.ts fullrun
 
   # For #954's measure alone, taken out before the merge: every suite in one process, then in
   # parallel, on one machine, each printing its table and its wall.

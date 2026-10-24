@@ -677,6 +677,12 @@ function fixed(): void {
   const ids = (d: MapDef): string => (d.encounters ?? []).map((g) => g.id).join();
   ok(ids(beforeBehind(fx)) === 'fx_kept' && ids(beforeBehind({ ...fx, id: 'fx_elsewhere' })) === 'ud_mines,fx_kept' && beforeBehind({ ...fx, encounters: [fx.encounters![1]] }).encounters!.length === 1,
     'leaving the road behind out drops the group BEHIND names from its map and no other: not its neighbour, nor the same id on another map');
+  // An owed entry goes to the part whose check reads it (#954): by an area's name, a zone's, a map's or
+  // a boss's on a map, to that area; the fixture lair's to Saltreach's; any other to this part.
+  const strays = AREAS.flatMap((a) => [`${nameOf(a.id)}: floor`, ...a.atlas.zones.map((z) => `${zoneName(z.name)}: road`), ...a.maps.flatMap((d) => [`${d.id}: rest`, `${d.id}:x: floor`])]
+    .filter((k) => ownerOf(k) !== a.id));
+  ok(!strays.length && ownerOf(`${LAIR.id}: rest`) === FIXTURE.area && ownerOf('fx_nowhere: floor') === undefined,
+    `every owed key goes to the part of the area it names, the fixture lair's to ${FIXTURE.area}'s, any other to the fixed part${strays.length ? ` (not: ${strays.join(', ')})` : ''}`);
 }
 
 /** An area's part: its maps, its pools and its zones against the curve; Saltreach's with the enclave's fixture. */

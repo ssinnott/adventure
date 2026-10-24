@@ -17,9 +17,9 @@
 //                                       since <ref> reaches (tools/changed.ts), as TEST_SINCE does
 //   node tools/test.ts --areas a,b      only for those areas, as TEST_AREAS=a,b does (#955)
 //   node tools/test.ts --jobs [N]       the runs in processes of their own, N at a time, as many as
-//                                       the cores where N is left out (#954): the dear (DEAR, or
-//                                       TEST_DEAR=a,b) each alone and the rest packed into one;
-//                                       with --jobs 1 every run alone, one after another
+//                                       the cores (two at least) where N is left out (#954): the dear
+//                                       (DEAR, or TEST_DEAR=a,b) each alone and the rest packed into
+//                                       one; with --jobs 1 every run alone, one after another
 //   node tools/test.ts --shuffle [seed] the runs in an order shuffled by the seed, a new one where
 //                                       none is given, which the run prints to play it again
 // By default a suite prints its name as it starts, then its failures and its owed lines; what else it
@@ -82,9 +82,13 @@ const counted = (flag: string, bare: () => number): number | undefined => {
 };
 // A child of a run under --jobs is given its runs, and the areas the run is narrowed to ('' for none), by its parent.
 const job = value('--job'), narrowing = value('--narrow');
-const jobs = counted('--jobs', availableParallelism), seed = counted('--shuffle', () => randomInt(1, 0x7fffffff));
+const jobs = counted('--jobs', () => Math.max(2, availableParallelism())), seed = counted('--shuffle', () => randomInt(1, 0x7fffffff));
 if (jobs !== undefined && jobs < 1) { console.error('--jobs takes how many processes run at a time, one at least.'); process.exit(2); }
 const since = value('--since') ?? (process.env.TEST_SINCE || undefined), named = value('--areas') ?? (process.env.TEST_AREAS || undefined);
+// A flag the runner does not know, or a count that is no whole number (`--jobs=4`, `--jobs -1`), would
+// be taken for a suite's name and run nothing: it stops the run instead.
+const stray = args.filter((a) => a.startsWith('-'));
+if (stray.length) { console.error(`No flag is named ${stray.join(', ')}: the flags are --list, --dir, --since, --areas, --jobs [N] and --shuffle [seed].`); process.exit(2); }
 const wanted = args;
 
 const found = readdirSync(dir).filter((f) => f.endsWith('.ts') && f !== 'lib.ts').map((f) => f.slice(0, -3));
