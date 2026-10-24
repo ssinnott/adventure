@@ -13,6 +13,7 @@ import { LAMP_LIT, WALL_WALKED } from '../quests.ts';
 import { NEST_WATCH } from '../../whitespine/public.ts';
 import { ENDINGS } from '../../../endings.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
+import { mapKey } from '../../../../game/keys.ts';
 
 /**
  * The Reader's words, read to what the company carries: the papers, the log or both, each opened
@@ -91,7 +92,7 @@ const LAMP_WORDS = [
 /** Where Vask is: the papers read and the wall touched, by day, until he has his answer. */
 const VASK_HERE = { after: { flag: 'papers_read', seen: 'the_sunder2:su2_wall' }, until: { flag: 'q_salt_done' }, when: { hours: 'day' } } as const;
 
-export const LANTERN_WATCH: MapDef = {
+export const LANTERN_WATCH: MapDef<'lantern_watch'> = {
   id: 'lantern_watch',
   name: 'Lantern Watch',
   kind: 'town',
@@ -304,7 +305,7 @@ export const LANTERN_WATCH: MapDef = {
     ] } },
     // The gate's line on either square of the road in, said once whichever is walked.
     ...([[7, 'lw_vask', 'lw_vask_e'], [8, 'lw_vask_e', 'lw_vask']] as const).map(([x, id, other]) => ({
-      kind: 'event' as const, x, y: 13, id, once: true, ...VASK_HERE, until: [VASK_HERE.until, { seen: `lantern_watch:${other}` }],
+      kind: 'event' as const, x, y: 13, id, once: true, ...VASK_HERE, until: [VASK_HERE.until, { seen: mapKey('lantern_watch', other) }],
       text: 'Rain. Three horses at the gate, two Wardens holding them, and a man standing in the wet as if it were not raining.',
     })),
     { kind: 'event', x: 7, y: 14, id: 'lw_gate', once: true, text: 'Lantern Watch: one tower in a walled yard over the gorge, and a lamp at the top lit in daylight. Moth dust lies on the step like flour.' },

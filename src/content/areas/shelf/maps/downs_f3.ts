@@ -9,7 +9,7 @@ import { ENDED } from '../../../endings.ts';
 import { WENNA_HOME, SIGNET } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const DOWNS_F3: MapDef = {
+export const DOWNS_F3: MapDef<'downs_f3'> = {
   id: 'downs_f3',
   name: 'Callow Downs',
   kind: 'outdoor',

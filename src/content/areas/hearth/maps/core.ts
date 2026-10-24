@@ -57,7 +57,7 @@ export const CHOICE_THREE: Choice = { ...CHOICE_TWO, answers: [RELIT, OPENED, FI
 const CLOCK = { calls: 'core_sentry', every: 2, dims: 8, panel: ['grey_hand'] };
 const SLAIN = 'Vask goes down on his knees and stays there. The last sentry stops where it stands, and the light through the roof stops going out.';
 
-export const CORE: MapDef = {
+export const CORE: MapDef<'core'> = {
   id: 'core',
   name: 'The Heart',
   kind: 'dungeon',

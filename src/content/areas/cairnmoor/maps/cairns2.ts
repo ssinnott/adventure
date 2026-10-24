@@ -10,7 +10,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const CAIRNS2: MapDef = {
+export const CAIRNS2: MapDef<'cairns2'> = {
   id: 'cairns2',
   name: 'Under Carn Dubh',
   kind: 'dungeon',

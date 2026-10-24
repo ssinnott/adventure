@@ -13,7 +13,7 @@ import { CRACK_SEALED } from '../../hearth/public.ts';
 /** The den burnt: its brood stops coming. */
 const DEN_BURNT = denBurnt('lanternwood_l4', 'l4_den');
 
-export const LANTERNWOOD_L4: MapDef = {
+export const LANTERNWOOD_L4: MapDef<'lanternwood_l4'> = {
   id: 'lanternwood_l4',
   name: 'The Bay Wood',
   kind: 'outdoor',

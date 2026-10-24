@@ -14,7 +14,7 @@ import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { STAIR2 } from '../public.ts';
 
-export const MERIDIAN_CAMP2: MapDef = {
+export const MERIDIAN_CAMP2: MapDef<'meridian_camp2'> = {
   id: 'meridian_camp2',
   name: 'The Iron Corridors',
   kind: 'dungeon',

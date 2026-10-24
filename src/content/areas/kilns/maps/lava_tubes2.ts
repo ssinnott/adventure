@@ -9,7 +9,7 @@ import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const LAVA_TUBES2: MapDef = {
+export const LAVA_TUBES2: MapDef<'lava_tubes2'> = {
   id: 'lava_tubes2',
   name: 'The Deep Tubes',
   kind: 'dungeon',

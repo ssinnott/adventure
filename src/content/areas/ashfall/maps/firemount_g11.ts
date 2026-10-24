@@ -57,7 +57,7 @@ export const HOLE: Exit = anchored({ x: 31, y: 17, to: 'meridian_camp', at: 'fro
  */
 export const SHOVEL_STORY = 'q_shovel_story';
 
-export const FIREMOUNT_G11: MapDef = {
+export const FIREMOUNT_G11: MapDef<'firemount_g11'> = {
   id: 'firemount_g11',
   name: 'Fire Mountain',
   kind: 'outdoor',

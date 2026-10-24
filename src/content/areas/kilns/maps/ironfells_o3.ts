@@ -9,7 +9,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const IRONFELLS_O3: MapDef = {
+export const IRONFELLS_O3: MapDef<'ironfells_o3'> = {
   id: 'ironfells_o3',
   name: 'The Iron Fells',
   kind: 'outdoor',

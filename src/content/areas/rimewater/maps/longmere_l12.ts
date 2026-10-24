@@ -13,7 +13,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const LONGMERE_L12: MapDef = {
+export const LONGMERE_L12: MapDef<'longmere_l12'> = {
   id: 'longmere_l12',
   name: 'Loch Fada',
   kind: 'outdoor',

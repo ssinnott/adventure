@@ -4,9 +4,10 @@
 // night carts carry down. Cairnmoor and Rimewater hold the rest of the fourth ranks.
 import type { GuildQuest } from '../../../game/guilds.ts';
 import { FOURTH_RANKS_OPEN } from './public.ts';
+import type { When } from '../../../game/quests.ts';
 
 /** The words over the dead, read by a reader on either level of the Tiefzeche (game/inscriptions.ts). */
-const COPIED = [{ seen: 'deep_mines:dm1_niche' }, { seen: 'deep_mines2:dm2_niche' }];
+const COPIED = [{ seen: 'deep_mines:dm1_niche' }, { seen: 'deep_mines2:dm2_niche' }] satisfies When;
 
 export const GUILDS: readonly GuildQuest[] = [
   {

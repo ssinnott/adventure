@@ -16,7 +16,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const MONKSVALE_J10: MapDef = {
+export const MONKSVALE_J10: MapDef<'monksvale_j10'> = {
   id: 'monksvale_j10',
   name: 'Monks\' Vale',
   kind: 'outdoor',

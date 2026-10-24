@@ -20,7 +20,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
  */
 export const MASTER_MET = 'master_arms_met', MASTER_FAVOUR = 'master_arms_favour';
 
-export const WOLD_D10: MapDef = {
+export const WOLD_D10: MapDef<'wold_d10'> = {
   id: 'wold_d10',
   name: 'The Wold',
   kind: 'outdoor',

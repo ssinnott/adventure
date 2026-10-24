@@ -12,7 +12,7 @@ const GROVE_QUIET = ['"The Grove is quiet again. The cut will need a Lantern to 
 /** Sylvane's words once the treaty is seen: once before the brigands' terms, and after them. */
 const TREATY_SEEN = ['"You have seen it, then. Two seals on one skin: the Crown\'s, and ours, and ours is the mark on the chisel that cut our Stone." She looks at her hands. "Two hundred years we have called that mark ours. I no longer know whose it is. Keep that from Vask as well."'];
 
-export const THORNHOLD: MapDef = {
+export const THORNHOLD: MapDef<'thornhold'> = {
   id: 'thornhold',
   name: 'Thornhold',
   kind: 'town',

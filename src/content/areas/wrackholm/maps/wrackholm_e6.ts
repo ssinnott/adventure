@@ -9,7 +9,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const WRACKHOLM_E6: MapDef = {
+export const WRACKHOLM_E6: MapDef<'wrackholm_e6'> = {
   id: 'wrackholm_e6',
   name: 'Wrackholm',
   kind: 'outdoor',

@@ -16,7 +16,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const WOLD_D7: MapDef = {
+export const WOLD_D7: MapDef<'wold_d7'> = {
   id: 'wold_d7',
   name: 'The Wold',
   kind: 'outdoor',

@@ -12,7 +12,7 @@ import { NORTH } from '../../../../game/types.ts';
 /** Old Nick slain, as the game names a group: Merryn's rumour of it ends with it (wrackholm_f6.ts). */
 export const NICK_DOWN = 'nicks_locker:nl_nick';
 
-export const NICKS_LOCKER: MapDef = {
+export const NICKS_LOCKER: MapDef<'nicks_locker'> = {
   id: 'nicks_locker',
   name: 'Nick\'s Locker',
   kind: 'dungeon',

@@ -7,6 +7,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
+import type { Rift } from '../../../rifts/index.ts';
 import { STONE_HOME } from './drowned_temples.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -14,7 +15,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 export const RIFT_CLOSED: When = [{ slain: 'c5_rift:c5_rift_warden' }, STONE_HOME];
 
 /** The brine Rift off the causeway (#165): brinelings in its rooms, and a tide elder at the tear's heart. */
-export const C5_RIFT = rift({
+export const C5_RIFT: Rift<'c5_rift'> = rift({
   id: 'c5_rift', template: 'ring', material: 'brine', seed: 6, band: [10, 11], region: 'saltreach',
   out: { to: 'delta_c5', at: 'from_c5_rift' },
   table: { groups: [['brineling', 'brineling', 'brineling']], warden: ['tide_elder', 'brineling'] },
@@ -22,7 +23,7 @@ export const C5_RIFT = rift({
   until: RIFT_CLOSED,
 });
 
-export const DELTA_C5: MapDef = {
+export const DELTA_C5: MapDef<'delta_c5'> = {
   id: 'delta_c5',
   name: 'The Delta',
   kind: 'outdoor',

@@ -10,7 +10,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const DELTA_A5: MapDef = {
+export const DELTA_A5: MapDef<'delta_a5'> = {
   id: 'delta_a5',
   name: 'The Delta',
   kind: 'outdoor',

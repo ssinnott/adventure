@@ -117,7 +117,7 @@ import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { RESPAWN } from '../../../game/keys.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
-const person = (name: string, d = G10): Person => d.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+const person = (name: string, d: MapDef = G10): Person => d.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
 const COAST = ATLAS.zones.find((z) => z.id === 'cindercoast')!;
 
 export const walkthrough: Walkthrough = (ok) => {

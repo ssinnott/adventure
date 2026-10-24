@@ -26,7 +26,7 @@ import { handIns, choices } from '../../src/game/people.ts';
 import { xpForLevel, killPay, MAX_LEVEL } from '../../src/game/party.ts';
 import { FIXTURE, LAIR } from '../kit/rules/enclave.ts';
 import { CHECKS, once } from '../kit/checks.ts';
-import { ok, owed, withDefs } from './lib.ts';
+import { ok, owed, withDefs, fxMap, fxKey } from './lib.ts';
 import { stepsFrom } from '../kit/rules/curve.ts';
 
 /** Spearman's rank correlation, ties given their mean rank; 0 where either side does not vary. */
@@ -406,10 +406,10 @@ export function curve(): void {
     'and so is a hand-in\'s reward, at the larger of two people who take the item, and not a reward of nothing');
   const deed = (goal: GuildQuest['goal'], pay: GuildQuest['pay'] = { xp: 600, gold: 40 }): string =>
     crossBooked('fx_a', [], [{ id: 'fx_q', guild: 'compact', rank: 0, offer: [], goal, paid: [], pay, title: 'The Errand', entries: [], goals: [] }], lands).join('|');
-  ok(deed({ seen: 'fx_b1:x' }) === 'fx_a: its clear counts the Errand\'s 100 xp a member and 40 gold, the Salt Compact\'s quest paid at any hall, its deed in fx_b'
-    && !!deed({ slain: ['fx_a1:g', 'fx_b1:h'] }) && !!deed({ visited: 'fx_b1' }) && !!deed([{ flag: 'fx_f' }, { seen: 'fx_b1:x' }]),
+  ok(deed({ seen: fxKey('fx_b1:x') }) === 'fx_a: its clear counts the Errand\'s 100 xp a member and 40 gold, the Salt Compact\'s quest paid at any hall, its deed in fx_b'
+    && !!deed({ slain: [fxKey('fx_a1:g'), fxKey('fx_b1:h')] }) && !!deed({ visited: fxMap('fx_b1') }) && !!deed([{ flag: 'fx_f' }, { seen: fxKey('fx_b1:x') }]),
     'a guild quest whose deed is seen, slain or visited on a map of another area is counted in the clear of the area whose file holds it, with its xp a member and its gold');
-  ok(!deed({ seen: 'fx_a1:x' }) && !deed({ flag: 'fx_f' }) && !deed({ item: 'fx_i' }) && !deed(undefined) && !deed({ seen: 'fx_nowhere:x' }) && !deed({ seen: 'fx_b1:x' }, { items: ['fx_i'] }),
+  ok(!deed({ seen: fxKey('fx_a1:x') }) && !deed({ flag: 'fx_f' }) && !deed({ item: 'fx_i' }) && !deed(undefined) && !deed({ seen: fxKey('fx_nowhere:x') }) && !deed({ seen: fxKey('fx_b1:x') }, { items: ['fx_i'] }),
     'and one whose deed is on the area\'s own maps, a flag, an item, none or no map at all, or that pays no xp or gold, is not printed');
   // The road's last area reads its deep places' bands with its zone's (docs/areas/hearth_isle.md §9,
   // call 2): its isle laid at 28-29 reads 28-32 with the Underdeep and the Core, and 28-29 without.
@@ -458,7 +458,7 @@ export function curve(): void {
     });
     ok(true, `${LAIR.id}: as an enclave its ${fmt(lair.xp)} xp a member and ${fmt(lair.gold)} gold are a figure, counted in no clear`);
     const faults = (d: MapDef, outside = salt.outside ?? []): number => enclaveFaults({ id: FIXTURE.area, maps: [...salt.maps, d], outside }, [...MAP_DEFS, d]).length;
-    ok(!faults(LAIR) && faults({ ...LAIR, band: undefined }) === 1 && faults({ ...LAIR, band: [11, 13] }) === 1 && faults(LAIR, [LAIR.id]) === 1
+    ok(!faults(LAIR) && faults({ ...LAIR, band: undefined }) === 1 && faults({ ...LAIR, band: [11, 13] }) === 1 && faults(LAIR, [fxMap(LAIR.id)]) === 1
       && faults({ ...LAIR, exits: [] }) === 1 && faults({ ...LAIR, kind: 'outdoor' }) === 1,
       'an enclave has a band of its own over its box\'s, opens onto a box and is listed nowhere else: one with no band, at 11-13 by C3\'s 10-11, listed outside too, opening onto nothing or laid as a zone map fails');
   }

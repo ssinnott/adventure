@@ -16,7 +16,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const SHEERPOINT_I9: MapDef = {
+export const SHEERPOINT_I9: MapDef<'sheerpoint_i9'> = {
   id: 'sheerpoint_i9',
   name: 'Sheer Point',
   kind: 'outdoor',

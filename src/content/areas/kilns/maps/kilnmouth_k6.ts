@@ -12,7 +12,7 @@ import { anchored } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const KILNMOUTH_K6: MapDef = {
+export const KILNMOUTH_K6: MapDef<'kilnmouth_k6'> = {
   id: 'kilnmouth_k6',
   name: 'Kilnmouth',
   kind: 'outdoor',

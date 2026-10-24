@@ -10,7 +10,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const DEEP_MINES2: MapDef = {
+export const DEEP_MINES2: MapDef<'deep_mines2'> = {
   id: 'deep_mines2',
   name: 'The Old Workings',
   kind: 'dungeon',

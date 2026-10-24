@@ -18,7 +18,7 @@ import { GameMap, anchored, landExits } from '../../src/game/map.ts';
 import type { EncounterDef, Exit, Feature, MapDef } from '../../src/game/map.ts';
 import { EAST, SOUTH } from '../../src/game/types.ts';
 import { RESPAWN } from '../../src/game/keys.ts';
-import { ok } from './lib.ts';
+import { ok, fxMap } from './lib.ts';
 import { presenceFaults, strandedLocks, respawnsOutOfRange, returningGuardians, questItems, guardian } from '../kit/rules/structure.ts';
 
 /**
@@ -129,19 +129,39 @@ export async function structure(): Promise<void> {
     const hall = (anchors: MapDef['anchors'] = { from_cell: { x: 2, y: 1, facing: EAST } }): MapDef => room('fx_hall', { anchors });
     const cell = (...exits: Exit[]): MapDef => room('fx_cell', { exits });
     const join = (defs: MapDef[]): string => { try { landExits(defs); return 'nothing refused'; } catch (e) { return (e as Error).message; } };
-    const ways = [anchored({ x: 3, y: 1, to: 'fx_hall', at: 'start' }), anchored({ x: 2, y: 1, to: 'fx_hall', at: 'from_cell' })];
+    const ways = [anchored({ x: 3, y: 1, to: fxMap('fx_hall'), at: 'start' }), anchored({ x: 2, y: 1, to: fxMap('fx_hall'), at: 'from_cell' })];
     const fine = join([cell(...ways), hall()]), [a, b] = ways.map((e) => `${e.tx},${e.ty} ${e.tf}`);
     ok(fine === 'nothing refused' && a === `1,1 ${SOUTH}` && b === `2,1 ${EAST}`, `an exit to the hall's start and one to its anchor land on their squares and facings (${fine}: ${a}; ${b})`);
-    const lacks = join([cell(anchored({ x: 3, y: 1, to: 'fx_hall', at: 'from_yard' })), hall()]);
+    const lacks = join([cell(anchored({ x: 3, y: 1, to: fxMap('fx_hall'), at: 'from_yard' })), hall()]);
     ok(lacks === `exit of fx_cell at 3,1 to fx_hall lands at 'from_yard', and fx_hall has no such anchor`, `an anchor the landing map lacks is refused by name (${lacks})`);
-    const twice = join([cell(anchored({ x: 3, y: 1, to: 'fx_hall', at: 'start' })), hall({ start: { x: 2, y: 1, facing: EAST } })]);
+    const twice = join([cell(anchored({ x: 3, y: 1, to: fxMap('fx_hall'), at: 'start' })), hall({ start: { x: 2, y: 1, facing: EAST } })]);
     ok(twice === `map fx_hall names the anchor 'start' twice: its start is one`, `an anchor named twice is refused by name (${twice})`);
     // Another name twice is a literal's, which keeps the last, so only the typecheck can refuse it.
     // @ts-expect-error: an anchor named twice in one literal
     const same: MapDef['anchors'] = { from_cell: { x: 2, y: 1, facing: EAST }, from_cell: { x: 3, y: 1, facing: EAST } };
     ok(Object.keys(same ?? {}).join() === 'from_cell', `any other name twice is the typecheck's to refuse, as the line above holds; the join sees it once (${Object.keys(same ?? {}).join()})`);
-    const both = join([cell({ x: 3, y: 1, to: 'fx_hall', at: 'from_cell', tx: 2, ty: 1 }), hall()]);
+    const both = join([cell({ x: 3, y: 1, to: fxMap('fx_hall'), at: 'from_cell', tx: 2, ty: 1 }), hall()]);
     ok(both === `exit of fx_cell at 3,1 to fx_hall lands both at 'from_cell' and on a square`, `an exit with both an anchor and a square is refused by name (${both})`);
+  }
+
+  // Each field that names a map takes MapId, the union of the areas' maps' ids (#994): an id no map has
+  // fails the typecheck at each, so the six lines below fail it too if the union widens or a field goes.
+  {
+    // @ts-expect-error: an exit to a map no area has
+    const to: Exit = { x: 1, y: 1, to: 'fx_nowhere', tx: 1, ty: 1 };
+    // @ts-expect-error: a map set foot on that no area has
+    const visited: QuestCond = { visited: 'fx_nowhere' };
+    // @ts-expect-error: a thing seen on a map no area has
+    const seen: QuestCond = { seen: 'fx_nowhere:fx_thing' };
+    // @ts-expect-error: groups slain on a map no area has, beside one it has
+    const slain: QuestCond = { slain: ['harrow:fx_group', 'fx_nowhere:fx_group'] };
+    // @ts-expect-error: a goal done on a map no area has
+    const at: QuestGoal = { when: { flag: 'fx_flag' }, text: 'Go.', at: 'fx_nowhere' };
+    // @ts-expect-error: an area's map that pays outside, which no area has
+    const outside: Area['outside'] = ['fx_nowhere'];
+    const ids = new Set(MAP_DEFS.map((d) => d.id));
+    ok([to, visited, seen, slain, at, outside].length === 6 && ids.size === MAP_DEFS.length,
+      `an exit's to, a condition's visited, seen and slain, a goal's at and an area's outside each refuse a map no area has, as the six lines above hold; the ${ids.size} maps' ids are each given once`);
   }
 
   // Broken on purpose, each a copy of a real map, kept out of MAP_DEFS.

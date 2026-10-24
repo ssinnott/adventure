@@ -11,7 +11,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
-export const DOWNS_E4: MapDef = {
+export const DOWNS_E4: MapDef<'downs_e4'> = {
   id: 'downs_e4',
   name: 'Callow Downs',
   kind: 'outdoor',

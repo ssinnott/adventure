@@ -23,7 +23,7 @@ export const WRITER_STAIR: Exit = anchored({ x: 16, y: 30, to: 'dead_drop3', at:
 export const HOIST: Exit = anchored({ x: 13, y: 28, to: 'dead_drop', at: 'from_dead_drop2_2',
   label: 'The cage goes up a long while in the dark, rattling, and stops with a jolt.' });
 
-export const DEAD_DROP2: MapDef = {
+export const DEAD_DROP2: MapDef<'dead_drop2'> = {
   id: 'dead_drop2',
   name: 'The Vaults',
   kind: 'dungeon',

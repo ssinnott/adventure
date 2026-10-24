@@ -7,7 +7,7 @@ import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const TIDE_SHIP2: MapDef = {
+export const TIDE_SHIP2: MapDef<'tide_ship2'> = {
   id: 'tide_ship2',
   name: 'The Lower Deck',
   kind: 'dungeon',

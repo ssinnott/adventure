@@ -30,7 +30,7 @@ export const HELD: readonly QuestCond[] = [THRONE_COUSIN, THRONE_HOLD, THRONE_TA
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 
-export const HEARTHISLE_H6: MapDef = {
+export const HEARTHISLE_H6: MapDef<'hearthisle_h6'> = {
   id: 'hearthisle_h6',
   name: 'Hearth Isle',
   kind: 'outdoor',
