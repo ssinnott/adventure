@@ -1,8 +1,7 @@
 // Wrackholm's part of the world map: its one zone, with E6 (#187) and F6 (#189) laid at their
-// boxes and the strands of the bounds round them, E5, F5 and F7 (#835), the plates of Kelp Hole's two
-// levels (#188) and the Tide Ship, the Dead-Drop's below it (#22), and its sites. The Area carries it
-// (index.ts).
-// docs/areas/wrackholm.md is its brief.
+// boxes and the strands of the bounds round them, E5, F5 and F7 (#835), the plates of Kelp Hole's
+// two levels (#188) and the Tide Ship, the Dead-Drop's below it (#22), and its sites. The Area
+// carries it (index.ts). docs/areas/wrackholm/plan.md holds its brief.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 import { laid } from '../../../game/atlas.ts';
 import { PLAN } from '../../atlas.ts';
