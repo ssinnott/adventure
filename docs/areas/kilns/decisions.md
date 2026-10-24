@@ -292,7 +292,7 @@ Decided by delegate for #472 (the salamanders), each the owner's to overturn:
    standing up; three-quarter on it reads as a lizard at a glance, and its mouth can open to them.
 5. **The fire shows in blotches, as a fire salamander wears its yellow,** and on the Great Salamander
    in the seams of a crust of rock and in its open mouth. The embers are the parts apart, declared in
-   `tools/smoke.ts` as the rift hound's are: three pieces, 1% of the ink.
+   `tools/smoke/art.ts` as the rift hound's are: three pieces, 1% of the ink.
 6. **The frame is a Build for the kin to come** (MONSTERS §11): the ember salamander a hotter fire on
    a lither body, the basilisk no fire, a crest, a crown and a stare, each a Build and a colouring.
 7. **The Salamander is owed to N3 (#458),** the first box whose brief places one (§4.3's spoil heaps,
