@@ -601,9 +601,13 @@ trainer one level past it, onto Act II's road:
 
 Everything is drawn at runtime from vector shapes; there are no bitmaps in the repo.
 
-- `ui/brush.ts` is a minimal `ShadeTarget`, so sprites and portraits paint with the engine's own
-  cel-shading helpers (`celBall`, `celCapsule`, `celPoly`, `band`) and share the sibling games' look:
-  1px ink outline, three tones, top-left light.
+- `ui/paint/brush.ts` is a minimal `ShadeTarget`, so sprites and portraits paint with the engine's
+  own cel-shading helpers (`celBall`, `celCapsule`, `celPoly`, `band`) and share the sibling games'
+  look: 1px ink outline, three tones, top-left light. It is the paint kit's (`ui/paint/`, #983),
+  with the gloss, one `INK` and `rod`, the forms (`ring`, `tube`, the unit frame) and the flame:
+  what every drawing in `ui` paints with. It, the monsters' kit and the rooms' are the systems
+  lane's; the old paths (`ui/brush.ts` and the rest) re-export them, and a family or a scene takes a
+  kit when it is next edited (EXPANSION §8.1).
 - `ui/portraits.ts` builds a front-facing portrait per character from the name, race and class
   (head shape, ears, skin, hair, beard, class headgear), with the expression following the
   character's state, cached to an offscreen canvas.
@@ -613,16 +617,18 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   signature. Each family registers the kinds it draws in its `SPRITES`, each with its drawer, its span
   and any part drawn apart, and `ui/monsters/index.ts` merges the 28, refusing by name a kind two
   families register or one no area names; `FAMILY`, `SPAN` and the smoke test's `DETACHED` are read
-  off it, so a new kind of a family is its family's file alone (#915). `common.ts` has the brush
-  and the small shape helpers, and `figure.ts` the measured humanoid frame the bandits, the cult and
-  the skeletons stand on. Every monster def names a sprite kind no other
-  def uses (`tools/tests/art.ts` holds it), so the variants that share a family (the archers, brigands,
-  smugglers, wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
+  off it, so a new kind of a family is its family's file alone (#915). The monsters' kit,
+  `ui/monsters/kit/`, has the brush and the small shape helpers (`common.ts`), the measured humanoid
+  frame the bandits, the cult and the skeletons stand on (`figure.ts`) and the chisel's mark
+  (`chisel.ts`, which `knockers.ts` re-exports); `common.ts` and `figure.ts` beside it
+  re-export it. Every monster def names a sprite kind no other def uses (`tools/tests/art.ts`
+  holds it), so the variants that share a family (the archers, brigands, smugglers,
+  wrecker and lampman, the cult's ranks, the bone knight, the ghoul, the drowned man
   and the Barrow Guard and Captain, the dire wolf, rift hound and Black Dog, the thorn spider, shore
   crab and rift crawler, the crow and the great owl, the elder and the two wardens, the bramble,
   rootwalker, heartwood and the Eldest) are drawn with their own gear, anatomy and glow rather than
   a recolour.
-- `ui/monsters/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
+- `ui/paint/gloss.ts` is how the monsters stop looking like outlined primitives, after the Xeen
   look: `blob()` paints every part of one material (a wolf's fur, a robe, a hide) as a single
   mass, with one ink outline around the union, one rendered gradient across the whole (a bright
   core toward the light, a deep band at the far edge), then, clipped inside, a soft volume per
@@ -637,7 +643,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   acolyte's censer, the lampman's lantern, the adept's hand flame, the rift hound's and the Hand of
   Ash's embers, the wraith's fading cloth), and stands inside the view where a fight seats it, its
   foot 184 px below the view's top (`seatFoot`), and within its span (below); the smoke test holds
-  both.
+  both. The old path, `ui/monsters/gloss.ts`, re-exports it.
 - Combat sprite height comes from `combatHeight()` in `ui/sprites.ts`, which scales with how many
   monsters share the row: a lone enemy or a pair fills the viewport the way a Xeen monster does,
   three and four taper down, five is the old flat size and six goes under it. Across the view the
@@ -664,9 +670,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   black cloth. The farm kitchen is Ellerby's store (#87). Saltreach's eight, Lantern Watch's five,
   Anvilhall's six, Kilnhaven's six and Rime Lodge's six are painted beside them, each in its built
   town (docs/areas/kilns.md §3 and docs/areas/rimewater.md §3 describe the last three). No people:
-  the rooms are backdrops. `kit.ts` has the walls, floors, windows and
-  light, `props.ts` the furniture and goods; each scene is a file in `ui/interiors/<area>/`, and
-  what both towns' scenes of a trade use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`.
+  the rooms are backdrops. The rooms' kit, `ui/interiors/kit/`, has the walls, floors,
+  windows and light (`stage.ts`), the furniture and goods (`props.ts`) and a trade's
+  own (`trades/`, the temple's and the smithy's), which `kit.ts` and `props.ts` beside
+  it re-export; each scene is a file in `ui/interiors/<area>/`, and what both towns'
+  scenes of a trade use is in `shops.ts`, `guilds.ts`, `yards.ts` and `taverns.ts`.
   A scene is painted once into an offscreen canvas and multiplied by a light map (the ambient for
   the hour plus a pool round every lamp, fire and window it put down), so the corners fall dark on
   their own; flames, glows and drifting motes are drawn over it every frame. Windows and the two
@@ -745,7 +753,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   the view, splashing only on floor the party can see; snow as flakes that sway and blow, nearly
   flat in a blizzard; fog banks drifting low; and the flash of a strike. Particles take their
   positions from `mixHash()` in `game/weather.ts`, which mixes well enough that a drop's x is
-  unrelated to its y (`hash()` in `ui/brush.ts` does not). All of it costs a fraction of a
+  unrelated to its y (`hash()` in `ui/paint/brush.ts` does not). All of it costs a fraction of a
   millisecond a frame.
 
 ## Stubbed or absent
@@ -1116,12 +1124,12 @@ does.
 | `ui/riddle.ts` | a statue's riddle, the answer typed in the text mode |
 | `ui/worldmap.ts` | the world map (M): the cloth painted from the atlas and the built maps, the zone overlay (Tab) and the almanac (Space), and the pins of a place sought and of one a reading marked |
 | `ui/screens.ts` | message (a person's box, `SAY_W` by `SAY_LINES` from `ui/frame.ts`), choice, character sheet (a letter read from it and a piece's words as it is taken up, the skills a member has, an artifact's power on its slot's line or a carried one's own, the column laid out by `sheetRows` above `SHEET_FOOT`), spell picker, inn/temple/shop/guild/trainer (each draws its menu and says what its rule in `game/services.ts` returns, with no sum of its own), a business's first menu (`businessEntries`), a guild's work at its hall and its skills there (`skillMenu`, two levels) or from a person (`learnerMenu`), and the visit that frames them (`InteriorScreen`) |
-| `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the painting kit and the props, a scene to a file in `<area>/`, and the helpers a trade's scenes share |
+| `ui/interior.ts`, `ui/interiors/` | the businesses' interiors: the rooms' kit (`kit/`: the stage, the props and a trade's own in `trades/`), a scene to a file in `<area>/`, and the helpers a trade's scenes share |
 | `ui/combat.ts` | the combat screen (menus over the resolver), its monsters where `ui/row.ts` seats them; the spells an artifact borne casts beside a member's own, with the castings left; the auto-fight (`auto`: `game/bot.ts` plays the company's turns by what the fight has shown (the three from level 11, `PLAYED`) and leaves the finished fight, until a key takes it back) |
 | `ui/row.ts` | the fight's row: each monster's place across the view and the height it is drawn, spaced by the drawings' spans, every one whole inside the view and none over more than a third of the next (`seatRow`, `OVERLAP`); pure |
 | `ui/grouplabels.ts` | the labels over a fight: each group's kinds, each with its count of the living (a lone proper name none), laid out inside the view; pure |
 | `ui/quests.ts` | the quest log screen, and `questSheets`, its pure page layout, a chapter to a page or more |
-| `ui/scenery.ts`, `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, each registering its kinds with their spans (`SPRITES`, merged by `ui/monsters/index.ts`), the dispatcher, and the shared brush and helpers |
+| `ui/scenery.ts`, `ui/sprites.ts`, `ui/monsters/*.ts` | scenery sprites, the trees dressed by the season; the monster drawings by family, each registering its kinds with their spans (`SPRITES`, merged by `ui/monsters/index.ts`), the dispatcher, and the monsters' kit (`ui/monsters/kit/`: the brush, the helpers, the humanoid frame and the chisel's mark) on the paint kit (`ui/paint/`: the brush and its hash, the gloss, the ink, the forms and the flame) |
 | `ui/create.ts` | party creation |
 | `ui/title.ts` | the title screen: new game or continue, why a save will not load in the note's two lines (#945), the Hearth over the saved company and attract mode's idle (untouched for 45 seconds, the pilot plays a new game) |
 | `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests and guild quests, climates, rooms; the monsters and items read-only by type, #945), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
