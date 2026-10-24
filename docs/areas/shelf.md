@@ -828,7 +828,7 @@ the rumour, once #845, #847 and the guardian's drawing were in (§12.3).
 - **The lair:** Hag Hole, a sea cave of one level, its mouth on E4's strand under the Downs, at the
   cap's band, 30–32 (#845, §12.3).
 - **The guardian:** the Hag (long bodies, a new kind; boss, 32; docs/MONSTERS.md §13): *No eyes, and
-  it found you first.* It holds. Its gate sets its numbers, 2,200 hit points, attack 26 and 23d8+26
+  it found you first.* It holds. Its gate sets its numbers, 2,000 hit points, attack 26 and 24d8+26
   a blow, off the line with its word (§9, #837's 14).
 
 ## 7. Encounters, and what is new
@@ -882,8 +882,7 @@ the Hearth by its floor (EXPANSION §5.2, #845's 7), passes (§12.3).
   Seam 6.69, the Ashcombe cellar 7.41, F2 6.60, F3 7.07, E3 7.53, E2 6.93, D2 7.59, D3 8.21, D4 7.54
   and the Berth 7.12. These are re-measured with E4 laid (#837), which holds no group (§12.1), and
   are main's before it too. Hag Hole's Hag, the lair's one group, is judged out of the area's pools
-  at the lair's floor and two above (#845): won 64% at 30 and 81% at 32, under its aim of nine in
-  ten and inside the limit, listed, as the Stair's Catcher and the Kilns' Steiger are (§12.3).
+  at the lair's floor and two above (#845): won 66% at 30 and 91% at 32, inside its aims (§12.3).
 - **The thresholds, as the pilot left them** (#47). Every box of the Downs was tuned to the aims of
   #273, and none moved them:
 
@@ -1146,12 +1145,12 @@ Decided by the builder for #837, each the owner's to overturn:
     without its fight; it never moves and never comes back.
 14. **The Hag's numbers are set by its gate,** as the Steiger's and the Rim Troll's are
     (docs/areas/kilns.md §9, #831's 41). Drawn at the line's boss at 32 (2,100 hit points, attack
-    20, 34d8+41), it was won 38% at 30 and 40% at 32; at 2,200, attack 26 and 23d8+26, its armour
-    (29), its pace (13) and its hold (paralysed, 0.2) kept, it is won 64% at 30 and 81% at 32, where
-    the Stair's Catcher and the Steiger stand (57% and 80%, 56% and 81%). It pays the line's 20,373
-    xp at 32 and carries its own `offLine` word. 2,800 with 21d8+22 (54% and 83%) ran 14.3 rounds a
-    fight at 30 in the harness, 44% of its days broken off at the round cap; the row set runs 12.6,
-    5% broken off.
+    20, 34d8+41), it was won 38% at 30 and 40% at 32; at 2,000, attack 26 and 24d8+26, its armour
+    (29), its pace (13) and its hold (paralysed, 0.2) kept, it is won 66% at 30 and 91% at 32,
+    inside both aims (66% and 90% over 400 seeds), where the Stair's Catcher and the Steiger stand
+    under the aim at 32 (80% and 81%). It pays the line's 20,373 xp at 32 and carries its own
+    `offLine` word. 2,800 with 21d8+22 (54% and 83%) ran 14.3 rounds a fight at 30 in the harness,
+    44% of its days broken off at the round cap; the row set runs 11.2, 2% broken off.
 15. **The secret is the ledge behind a fall of rock at 3,3,** over the pool in the cave's west end,
     found from the lamp smoke on the roof over the pool and searched at 3,4 facing north: the
     purse's 500 gold, as the Randzeche's stope and Bearn Liath's store hold 500, the lamp a look and
@@ -1336,7 +1335,10 @@ its "As built".
   black on the cave's roof, above water no lamp could stand in.
 - **New here.** The Hag and the artifact (#846, #847).
 - **Finds.** The Hagstone, carried by any of the ten, a ward against paralysis, found and never sold
-  (§6, #846); the rumour is the old net-mender's at Gullwick, built with the lair.
+  (§6, #846).
+- **The rumour.** The old man mending nets at Gullwick (F3, §6): at every meeting after his first,
+  after his look and his song, two lines of his gran's holed stone, words only (§9, #837's 17). It
+  marks nothing on the world map.
 - **Pay.** Counted in no clear (`tools/tests/curve.ts`).
 - **As built** (#837, 23 October): `hag_hole`, one level of 16 by 16, `enclave: true` at 30–32, its
   plate at 140,100, laid last in the area's maps. Its start is 7,14 facing north, the exit there,
@@ -1349,14 +1351,14 @@ its "As built".
   7,9, a pool beside it at 5,10 and at 8,11: the mouth's look (`hh_mouth`, 7,13), the tide's line
   (`hh_tide`, 6,10) and the narrows (`hh_narrows`, 7,9). The Hag (`hh_hag`) stands on 7,7, the one
   square from 7,8 into the cave, with no `respawn`, `roams: false` and a `slainText`; with it
-  standing, a walker, wader, climber or floater reaches 10 of the lair's squares and nothing past
+  standing, a walker, climber or floater reaches 8 of Hag Hole's squares, a wader 10, and none past
   it. The cave is rows 4 to 6 from column 3 to 9 (to 7 on row 4), its pools at 1 and 2 on rows 4 and
   5 and at 8,4: its look (`hh_cave`, 7,6), the wrack (`hh_wrack`, 8,5) and the box in it (`hh_box`,
   9,5), the Hagstone alone. The secret: the lamp smoke (`hh_smoke`, 3,4) under the fall of rock at
   3,3, and behind it the ledge at 2,2 and 3,2, its look (`hh_ledge`, 3,2) and the purse (`hh_purse`,
   2,2), 500 gold; with the fall shut, 36 squares are reached and not the ledge. 32 squares walkable
   and 7 of pools; density 32 of 32 within 7 steps, the furthest 3, no sign among 11 points. The Hag
-  is won 64% at 30 and 81% at 32 at the gate's company, 12.6 and 11.7 rounds a fight in the harness
-  with 5% and 6% of its days broken off at the round cap; the curve counts the lair's 3,395 xp a
+  is won 66% at 30 and 91% at 32 at the gate's company, 11.2 and 10.4 rounds a fight in the harness
+  with 2% of its days broken off at the round cap at each; the curve counts the lair's 3,395 xp a
   member and 500 gold in no clear. The rumour is the old man's at F3's 9,13 at every meeting after
   his first (his flag `netmender_met`), after his look and his song: 10 of his box's 14 lines.
