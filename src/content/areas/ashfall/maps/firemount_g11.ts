@@ -12,7 +12,9 @@
 // #22). Fane's rope comes up out of the camp at its bottom onto 13,10, beside the lookout (meridian_camp3's
 // ROPE): a way out and never in, so nothing here leads back down it, and its square is kept clear.
 // The west edge meets F11 (#514); the east edge meets H11 and the south edge G12 (#522), walked, H11's rocks
-// shutting the scavenger's hole off from the east.
+// shutting the scavenger's hole off from the east. Petroc, met again, speaks of his grandfather's axe
+// and its grave: Grim's Axe's rumour, its lair Grim's Howe under F12's dam (#836, docs/areas/ashfall.md
+// §12.4).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
@@ -26,6 +28,18 @@ export const BROOD_ASKED = 'q_brood';
  * come back, and a quest keyed on them would undo itself.
  */
 export const BROOD = 'meridian_camp2:mc2_brood';
+
+/** Petroc's own words, at his first meeting and before the rumour at a later one. */
+const HEIR = [
+  'A big man at the anvil, grey in the beard. An old axe hangs over the fire, its edge long gone.',
+  '"Grimsforge. My grandfather kept it, and fought from it. I keep the fire."',
+  '"There was a man went down beside the forge with a rope. He comes up when he likes, with things."',
+];
+/** Grim's Axe's rumour (#846, DESIGN §9): Petroc's two lines more at a meeting after his first, words only. */
+export const AXE_RUMOUR = [
+  '"Grim\'s axe was made at this anvil. When he lifted it, the mountain threw its stones for him."',
+  '"They buried him with it, and the mountain closed the grave."',
+];
 
 /**
  * The way down to Meridian Camp (#22): the middle of the vents' three mouths, 26,16, open ash between
@@ -100,20 +114,19 @@ export const FIREMOUNT_G11: MapDef = {
     // last words and the teaching. In its lee a rack and a camp, and the vent-scavenger by the fire.
     { kind: 'event', x: 28, y: 12, id: 'g11_forge', once: true, text: 'Grimsforge: a forge of black stone in the mountain\'s foot, its fire lit. The anvil rings.' },
     { kind: 'chest', x: 29, y: 14, id: 'g11_rack', gold: 0, items: ['warhammer+1'] },
-    { kind: 'npc', x: 28, y: 13, name: 'Petroc, the warlord\'s heir', lines: [
-      'A big man at the anvil, grey in the beard. An old axe hangs over the fire, its edge long gone.',
-      '"Grimsforge. My grandfather kept it, and fought from it. I keep the fire."',
-      '"There was a man went down beside the forge with a rope. He comes up when he likes, with things."',
-    ], flag: 'g11_heir_met', says: [
+    { kind: 'npc', x: 28, y: 13, name: 'Petroc, the warlord\'s heir', lines: HEIR, flag: 'g11_heir_met', says: [
       { after: { flag: BROOD_ASKED, slain: BROOD }, lines: [
         'He hears you out with the hammer still in his fist, then takes the old axe down off its hook.',
         '"Quiet down there, after three lives of it. Come to the anvil."',
+        ...AXE_RUMOUR,
       ] },
       { after: { flag: 'g11_heir_met', member: { cls: 'barbarian', level: 27, prestige: 2 } }, until: { flag: BROOD_ASKED }, sets: BROOD_ASKED, lines: [
         'He sets his hammer down and looks your barbarian over, slowly, from the boots up.',
         '"Something nests down the vents, where the iron runs hot. My grandfather heard it breathe from here."',
         '"Go down and kill it. Then come up, and I will put an edge on you."',
       ] },
+      // Every other meeting after his first: his own words, and Grim's Axe's rumour after them (#836).
+      { after: { flag: 'g11_heir_met' }, lines: [...HEIR, ...AXE_RUMOUR] },
     ], teaches: { cls: 'barbarian', prestige: 3, asks: 'brood', done: { flag: BROOD_ASKED, slain: BROOD }, seek: 'Petroc, the warlord\'s heir, at the anvil in Grimsforge by the mouth of Fire Mountain\'s vents, can make a Warlord of an Ironhide.' } },
     // The scavenger, a person who moves (#519): asked for the smith once his ledge is found, he tells
     // where the shovel-head came from and goes to Cinderport (SHOVEL_STORY).

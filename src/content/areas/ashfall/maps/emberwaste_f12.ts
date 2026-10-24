@@ -3,8 +3,9 @@
 // south-west into a cut it made in the rim, and its front stopped across the cut in a dam of black rock;
 // a cairn under the wall, a man of stone calling to the mountain with a riddle cut below, sulphur round
 // the vents in the east. No group. The secret: flakes of black glass heaped at a rock's foot, and behind
-// the rock a knapper's store. The dam's rock at 20,14 is left bare for the lair's door; in the mountain's
-// face at 10,3 a flue's mouth goes down into Blackdraw, the enclave (#845, docs/areas/ashfall.md §12.3).
+// the rock a knapper's store. In the dam's rock at 20,14, the way in under its crust: the door of Grim's
+// Howe, the lair, the warlord's grave (docs/areas/ashfall.md §12.4); in the mountain's face at 10,3 a
+// flue's mouth goes down into Blackdraw, the enclave (#845, docs/areas/ashfall.md §12.3).
 // In from F11 (#514) walked, over the ash: F11's south edge meets this map's north edge square for square,
 // the mountain at 0 to 3 and the ash and the flow from 4. In from G12 (#522) walked: G12's west edge meets
 // this map's east edge square for square, the ash at 0 to 10 and the mountain and the void below. The
@@ -37,7 +38,7 @@ export const EMBERWASTE_F12: MapDef = {
     '%%%%%%%%%%MMMMMMMMMMM!!!MMMaaaaM',
     '%%%%%%%%%%%%MMMMMMMM!!!MMMMMrSrM',
     '%%%%%%%%%%%%%MMMMMMM!!!MMMMMr:rM',
-    '%%%%%%%%%%%%%%MM%MMrrrMMMMMMr:rM',
+    '%%%%%%%%%%%%%%MM%MMr"rMMMMMMr:rM',
     '%%%%%%%%%%%%%%%%%%%MMMMMMMMMrrrM',
     '%%%%%%%%%%%%%%%%%%%%MMMMMMMMMMMM',
     '%%%%%%%%%%%%%%%%%%%%%%%%MMMMMMMM',
@@ -57,9 +58,11 @@ export const EMBERWASTE_F12: MapDef = {
     '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%',
   ],
   // Blackdraw, the enclave (#845): the flue's mouth in the mountain's face at 10,3, drawn as stone and
-  // walked into from the ash at 10,2.
+  // walked into from the ash at 10,2. Grim's Howe, the lair (#845, #846): the way in under the dam's
+  // crust at 20,14, drawn as stone with the rock either side and walked into from the flow at 20,13.
   exits: [
     { x: 10, y: 3, to: 'blackdraw', tx: 7, ty: 1, tf: SOUTH, label: 'You go in at a mouth in the mountain\'s face, out of the wind and down into the dark.' },
+    { x: 20, y: 14, to: 'grims_howe', tx: 7, ty: 1, tf: SOUTH, label: 'You stoop in under the dam, where its crust stands off the rock, and down into air as warm as breath.' },
   ],
   features: [
     // In off F11's ash: the slope down to the mountain's wall, and the flow going down beside it.

@@ -31,6 +31,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'meridian_camp2', kind: 'dungeon', at: [226, 346] }, // the iron corridors, down the vents' stair at 4,30 (#22), the second plate six squares south
   { id: 'meridian_camp3', kind: 'dungeon', at: [226, 352] }, // the camp, down the corridors' stair at 4,30 (#22), the third plate six squares south of the second
   { id: 'blackdraw', kind: 'dungeon', band: [27, 28], at: [178, 358] }, // the enclave, the flue in the mountain's face on F12 at 10,3 (#836, #845); the plate five squares south, under the mountain
+  { id: 'grims_howe', kind: 'dungeon', band: [30, 32], at: [188, 366] }, // the lair, the warlord's grave under F12's dam of rock, its door at 20,14 (#836, #845, #846); the plate two squares south, under the rim
 ];
 
 export const SITES: readonly AtlasSite[] = [
