@@ -433,7 +433,8 @@ function rehome(area: string): void {
     const keep = names.split(',').map((x) => x.trim()).filter((x) => x && !SHELF_GIVES.has(x));
     return `import { ${keep.join(', ')} } from '../shelf/walkthrough.ts';`;
   });
-  src = imports(src, area);
+  // Only a walkthrough the run moved something in takes new imports: a rerun changes nothing.
+  if (edits.length || src !== read(f)) src = imports(src, area);
   write(f, src);
 }
 
