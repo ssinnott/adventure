@@ -1,4 +1,6 @@
-// Title screen: new game or continue.
+// The title screen: new game or continue, why a save will not load in the note's two lines (#945),
+// the Hearth over the saved company, and attract mode: untouched for 45 seconds, the pilot plays a
+// new game.
 import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';

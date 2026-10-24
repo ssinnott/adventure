@@ -3,6 +3,10 @@
 // groups and encounter triggers live here. The outdoors is one map (game/outdoors.ts), so outdoors
 // the party's zone, not its map, says where it is, what the weather does and what the log calls
 // the place. Pure with respect to rendering and input; the Game drives it and reads the results.
+// What is in sight is here too (the viewport's rule: `VIEW_DEPTH`, `lineOfSight`, and what a hill
+// hides from below it, `hillOver` and `hidden`), with the looks said on first meeting (`sightings`),
+// a lock opened (`unlock`), the region of a square (`regionOf`, #945), roaming groups and when they
+// walk (`walks`), rest, search and an enclave's door crossing in (`enclaveLine`, #845).
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap, DRAG } from './map.ts';
 import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice, Gate, MapDef } from './mapdef.ts';

@@ -1,5 +1,7 @@
-// The frame around the viewport: the status strip, the automap, the party cards and the message
-// log. Layout for the 640x360 canvas is fixed here in LAYOUT so every screen agrees on it.
+// The frame around the viewport: the status strip (the time, the date, the sky and its glyph), the
+// automap (whole, or a window round the party outdoors; the features and the groups marked as
+// game/ink.ts says), the party cards, the message log and the purse. Layout for the 640x360 canvas
+// is fixed here in LAYOUT so every screen agrees on it.
 import { drawText } from '../lib/engine/text.ts';
 import type { World } from '../game/world.ts';
 import type { Party, Character, Condition } from '../game/party.ts';

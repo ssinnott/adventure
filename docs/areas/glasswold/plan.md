@@ -1460,7 +1460,7 @@ a clear then giving 21,439 xp a member of the 21,067 asked and 12,750 gold of th
 Wold takes no step on the gear ladder, no town to sell one (§9); the trader's coat is off it (§9,
 #526's 7). Its ground is laid (#543): steppe (`s`), walked as grass and tawny at Harvest, and dunes
 (`u`), sand in ridges walked as slowly as hills, so the scaffold drafted D9 with its 807 squares of
-steppe and 171 of dunes (docs/SLICE.md). Its six monsters are drawn (#533, MONSTERS §8.3): five on
+steppe and 171 of dunes (docs/archive/SLICE-history.md). Its six monsters are drawn (#533, MONSTERS §8.3): five on
 frames that exist, the vulture, the Wold lion, the Grey Lion, the glass scorpion and the basilisk,
 and the glass walker, the first of a family of its own (`src/ui/monsters/glasswalkers.ts`); their
 defs are in `src/content/areas/glasswold/monsters.ts`, the Area's own since D9 lists it (`AHEAD`,

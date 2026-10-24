@@ -1894,7 +1894,7 @@ Its ground (#543): vines (`&`), walked through as the woods are, the shore's tre
 creepers; the volcano (`V`) and a vent in it (`@`), the mountain's rock to walk into, see and climb,
 a vent's fire in its lip and its smoke going up; lava is the `!` there was. The scaffold drafts H10
 with its 207 squares of vines (187 as built, §4.2) and G11 with its 102 of lava; the atlas lays the
-cone as mountain, so #513 lettered it `V` and its mouth `@` over the draft (docs/SLICE.md).
+cone as mountain, so #513 lettered it `V` and its mouth `@` over the draft (docs/archive/SLICE-history.md).
 
 The Ember Stone counts for the Hearth (#548): its row in `src/content/stones.ts` restores it on
 `q_ember_lit`, the flag the Stone's dungeon sets the moment its third part is in and it lights

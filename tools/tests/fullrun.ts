@@ -2,6 +2,7 @@
 // brain asked and every key pressed through `Game.update`, the one quest's chapters in AREAS order on
 // the one Game, so that each area starts as the pilot left the last (the one road, EXPANSION §2.2). A
 // line a chapter: finished, with its ticks, days and the company's level, or where the pilot stopped.
+//
 // A chapter the fair pilot does not finish is played again from the save point taken before it, with
 // the map on top as a player saves, by a fresh omniscient pilot (`Pilot.omniscient`), whose line says
 // which kind of failure it is; the road goes on from where that one finished it, and ends at a
