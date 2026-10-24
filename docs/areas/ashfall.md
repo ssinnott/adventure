@@ -1962,8 +1962,8 @@ the road before it (§12.2).
 - **The bounds** (#836, §12). F12 holds no group, so the gate has nothing new to judge there and the
   pool is as it was (above). It pays no xp and 200 gold, so a clear gives 35,919 xp a member of the
   19,467 asked and 12,160 gold of the 11,760, and a company entering at 24 and three quarters
-  clearing it leaves at 27.3554 by the curve's own count, as before, under the 27.4 that `OVER_ROAD`
-  names Ashfall at (#738). The enclave and the lair are counted in no clear, so it stays there with
+  clearing it leaves at 27.3554 by the curve's own count, as before, under the 27.4 that Ashfall's
+  `overRoad` holds (#738). The enclave and the lair are counted in no clear, so it stays there with
   both built (`tools/tests/curve.ts`). Blackdraw, the enclave, is judged alone at its own floor and
   stands out of the pool: a company at 27 wins every fight and manages 11.14 fights to a rest,
   inside the aim (9.75 to 11.75), 78.3% of its days ending in a fight broken off, in the range of

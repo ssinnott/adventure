@@ -75,7 +75,7 @@ const BUILT: Readonly<Record<string, { area: string; hand: string; classes: read
 /**
  * The artifacts no lair holds yet, each its area's issue's, which lays the lair and places it: reported
  * as that issue's while it waits and failed once it is placed, so its entry is dropped. The table only
- * shrinks, as maps.ts's UNPLACED does: an artifact comes into it only as it is defined.
+ * shrinks, as the areas' owed places do (`Owes.unplaced`): an artifact comes into it only as it is defined.
  */
 const UNPLACED: Readonly<Record<string, string>> = { telstok: '#830' };
 /** The content's artifacts, and each one's twin without the mark: what the mark alone changes. */

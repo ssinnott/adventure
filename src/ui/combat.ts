@@ -11,7 +11,7 @@ import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardR
 import { drawMonsterSprite } from './sprites.ts';
 import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
-import { currentTurn, partyAct, monsterAct, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
+import { currentTurn, partyAct, monsterAct, meetCalled, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
 import type { CombatState, PartyAction, TurnRef } from '../game/combat.ts';
 import { botTurn, asSeen, PLAYED } from '../game/bot.ts';
 import { spell, ELEMENTS } from '../game/spells.ts';
@@ -79,15 +79,6 @@ export class CombatScreen implements Screen {
     this.bands = state.groupIds.length;
   }
 
-  /** A group called into the fight says the look of each kind in it the company has not met, as the fight's first groups do. */
-  private meetCalled(g: Game): void {
-    const s = this.state;
-    if (s.groupIds.length === this.bands) return;
-    const come = s.monsters.filter((m) => m.band >= this.bands).map((m) => m.def.id);
-    this.bands = s.groupIds.length;
-    s.log.push(...g.world.meet(come));
-  }
-
   private burst(x: number, y: number, col: string, n = 10): void {
     for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = 1 + Math.random() * 2.5; this.sparks.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 1, life: 10 + Math.random() * 8, col }); }
   }
@@ -146,7 +137,7 @@ export class CombatScreen implements Screen {
     const t = currentTurn(s, g.party, g.rng);
     if (!t) { this.mode = 'done'; return; }
     if (t.side === 'monster') {
-      if (++this.timer >= this.wait(g, MONSTER_DELAY) || is(a, 'interact')) { this.timer = 0; monsterAct(s, g.party, g.rng); this.meetCalled(g); }
+      if (++this.timer >= this.wait(g, MONSTER_DELAY) || is(a, 'interact')) { this.timer = 0; monsterAct(s, g.party, g.rng); this.bands = meetCalled(g.world, s, this.bands); }
       return;
     }
     if (this.auto) {
