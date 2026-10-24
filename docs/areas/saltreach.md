@@ -130,7 +130,7 @@ first task First Chain (`carto_chain`, 30 gold and 120 xp) and its first rank's 
 The West Arm (200 gold and 360 xp each), where Ysolde reads the Meridian journal (`meridian_read`);
 and the Salt Compact in the Keel, its first task The Long Way (`compact_run`, 30 gold and 120 xp),
 its first rank's What the Crews Carry (100 gold and 360 xp) and The Watcher on Wrackholm (150 gold
-and 480 xp), the boat at half fare to a Runner, and Ruan's choice once the Factor's rung is paid
+and 480 xp), the boat at half fare to a Runner and Ruan's choice once the Factor's rung is paid
 (`q_compact_wardens`, `q_compact_over`).
 
 **The Telstok** (#846), the bounds' artifact, is not built: its lair, a drowned mound of two levels
@@ -209,8 +209,8 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
 
 - **Owed, not started:** the bounds' enclave and lair (#830): the enclave, its door in the Scarp's
   foot on B7 (#845), and the lair, a drowned mound of two levels at 30–32, its door on A5, the
-  Telstok's (#846, #847). Each adds its brief to the plan, its decisions to `decisions.md` and a row
-  to §3 here (EXPANSION §8.2).
+  Telstok's (#846, #847). Each adds its brief to the plan, its decisions to
+  `docs/areas/saltreach/decisions.md` and a row to §3 here (EXPANSION §8.2).
 - **Owed to no check:** its checks have no `owes`; the curve, the gate, density and the ladder hold
   Saltreach with nothing owed.
 - **Watched, not moved:** B5's two Rifts, 4.75 fights to a rest each, and the choir's 82.7% won sit

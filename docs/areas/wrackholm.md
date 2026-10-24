@@ -64,7 +64,7 @@ The weather is the gulf's: wind, spray on the cliffs, gulls and the moor's heath
 
 Seventeen maps (`src/content/areas/wrackholm/maps/`, the Rift in the Hold's), a row each: its id
 and name, kind, size and band; what is there, with its groups (the gate's count); and its secret,
-a door at the squares given, with the hint that finds it (the map's `secrets`). Ten maps have one
+a door at the squares given, with the hint that finds it (the map's `secrets`). Nine maps have one
 and F6 two; Kelp Hole's cave, the weather and lower decks, the Rift, the stair's foot, the drop and
 the counting house have none.
 
@@ -155,7 +155,8 @@ underfoot and the wreck, the Tide Ship's site.
   6.83 and 6.19, F6 8.02, the Tide Ship's three decks 5.72, 7.36 and 6.77 and the Rift 7.24; the
   Brokenback 7.48 at 14 (aim 6.5 to 8.5). Three figures are off their aim, inside the limits: the
   weather deck's 5.72, the Rift's 83% won at 12 and Old Nick's 81% at 32. The gate judges the
-  Dead-Drop's levels here too, by their own floors (`docs/areas/dead_drop.md`).
+  Dead-Drop's levels here too, by their own floors (`docs/areas/dead_drop.md`), and two of theirs
+  are off their aim as well: the drop's 76.2% two under and the counting house's 85% won.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, E6 100% and F6 95.9%;
   within 12 in the country, E5, F5 and F7 100%; the dungeons 100% within 7, the Rift 97.6%.
 - **The ladder:** rung 13 is Wrackholm's (`gear`, in its checks): the same with a plus from
