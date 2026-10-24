@@ -1,15 +1,23 @@
-// The runner's own check: tools/test.ts run in a child process against ./fixture/, ./stuck/ and ./leaves/,
-// folders the real run never reads, so the owed lines and failures here stay out of its output.
+// The runner's own check: tools/test.ts run in a child process against ./fixture/, ./stuck/,
+// ./leaves/ and ./narrow/, folders the real run never reads, so the owed lines and failures here
+// stay out of its output.
 //   node tools/tests/runner/check.ts
-import { spawnSync } from 'node:child_process';
+import { execFileSync, spawnSync } from 'node:child_process';
+import { readFileSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ok, failureCount, summary } from '../lib.ts';
 
 const runner = fileURLToPath(new URL('../../test.ts', import.meta.url));
 const fixture = fileURLToPath(new URL('./fixture', import.meta.url));
-/** The runner on `dir`; `TEST_LIST=1` among the args sets it for the run, else it is unset there, whatever it is here. */
-const runIn = (dir: string, ...args: string[]) => {
-  const env = { ...process.env, TEST_LIST: args.includes('TEST_LIST=1') ? '1' : '' };
+/**
+ * The runner on `dir`; `TEST_LIST=1` among the args sets it for the run, else it is unset there,
+ * whatever it is here, and so are TEST_SINCE, TEST_AREAS and GITHUB_STEP_SUMMARY but as `set` gives them.
+ */
+const runIn = (dir: string, ...args: string[]) => runWith({}, dir, ...args);
+const runWith = (set: Record<string, string>, dir: string, ...args: string[]) => {
+  const env = { ...process.env, TEST_LIST: args.includes('TEST_LIST=1') ? '1' : '', TEST_SINCE: '', TEST_AREAS: '', GITHUB_STEP_SUMMARY: '', ...set };
   const r = spawnSync(process.execPath, [runner, '--dir', dir, ...args.filter((a) => a !== 'TEST_LIST=1')], { encoding: 'utf8', env });
   return { status: r.status, out: r.stdout + r.stderr, stdout: r.stdout };
 };
@@ -66,6 +74,33 @@ ok(asked.status === 0 && asked.out.includes('the suite run only when named ran')
 ok(!listed.out.includes('the full run ran'), 'a bare run passes over the full run, run only when named (ASKED)');
 const full = run('fullrun', '--list');
 ok(full.status === 0 && full.out.includes('the full run ran'), 'the full run runs when it is named');
+
+// The gate and the walkthroughs narrowed to areas (#955): --areas or TEST_AREAS names them, --since or
+// TEST_SINCE reads them from a diff, and the run says which and why before its table. With none given
+// every area runs and nothing is said, as in `npm test` with no --since.
+const narrow = fileURLToPath(new URL('./narrow', import.meta.url));
+const ranFor = (out: string): string | undefined => /^ {2}note: the gate ran for (.+)$/m.exec(out)?.[1];
+const whole = runIn(narrow, '--list');
+ok(whole.status === 0 && ranFor(whole.out) === 'every area' && !whole.out.includes('the gate and the walkthroughs ran for'), `a run given no --since and no --areas runs the gate for every area and says nothing of areas (${ranFor(whole.out)})`);
+const two = runIn(narrow, '--areas', 'shelf,thornmark', '--list');
+const twoLine = /\nAsked for shelf, thornmark: the gate and the walkthroughs ran for 2 of \d+ areas\.\n/.exec(two.out);
+ok(two.status === 0 && ranFor(two.out) === 'shelf,thornmark' && !!twoLine && two.out.indexOf(twoLine[0]) < two.out.indexOf("Each suite's seconds"), `--areas narrows the gate to the areas named, and the run says so before its table (${ranFor(two.out)})`);
+ok(ranFor(runWith({ TEST_AREAS: 'hearth' }, narrow, '--list').out) === 'hearth', 'TEST_AREAS narrows it as --areas does');
+const stray = runIn(narrow, '--areas', 'nowhere');
+ok(stray.status === 2 && stray.out.includes('No area is named nowhere'), `an area no area is named fails the run before it starts (exit ${stray.status})`);
+const lost = runIn(narrow, '--since', 'no-such-ref-955', '--list');
+ok(lost.status === 0 && ranFor(lost.out) === 'every area' && lost.out.includes('Reached since no-such-ref-955: every area, as the diff could not be read'), 'a diff that cannot be read runs every area, and says so');
+let clean = true;
+try { clean = !execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(); } catch { clean = false; }
+if (clean) {
+  const none = runWith({ TEST_SINCE: 'HEAD' }, narrow, '--list');
+  ok(ranFor(none.out) === 'no area' && /\nReached since HEAD: no area: the gate and the walkthroughs ran for 0 of \d+ areas\.\n/.test(none.out), `TEST_SINCE on a clean tree reads no change since HEAD, and the gate runs for no area (${ranFor(none.out)})`);
+} else console.log('  skip: TEST_SINCE=HEAD, as the tree differs from HEAD');
+const step = join(tmpdir(), `runner-check-${process.pid}.md`);
+runWith({ GITHUB_STEP_SUMMARY: step }, narrow, '--areas', 'shelf');
+let said = '';
+try { said = readFileSync(step, 'utf8'); rmSync(step); } catch { /* not written */ }
+ok(/Asked for shelf: the gate and the walkthroughs ran for 1 of \d+ areas\./.test(said) && said.includes("Each suite's seconds") && said.includes('ALL OK'), 'where GITHUB_STEP_SUMMARY is set, the line of what ran and the table go into it');
 
 console.log('\n' + summary(failureCount(), new Map()));
 process.exit(failureCount() ? 1 : 0);

@@ -783,6 +783,17 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   line saying what it holds, so the output under `--list` is the list; `node tools/test.ts maps combat` runs a few
   suites, `walkthrough:<area>` one walkthrough. The pilot's survival sweep and full run (`survival`,
   `fullrun`, docs/PILOT.md) run only when named; `npm test` names the full run, on the shelf alone.
+  `--since <ref>` (or `TEST_SINCE`) runs the gate and the walkthroughs only for the areas the diff
+  since the ref reaches and `--areas a,b` (or `TEST_AREAS`) for those; every other suite runs whole
+  (#955). `node tools/changed.ts <ref> areas` prints each area reached with why: a file of its own,
+  or a file of another area that imports the one changed, in turn. Where more than a comment
+  changed, every walkthrough runs as well: they read other areas' maps by id and by scan, which no
+  import shows. A changed or removed line of an area's items or monsters, a rung of the ladder (an
+  area's `gear`), a module the gate or a walkthrough loads, what decides what runs and a file the
+  graph does not read reach every area; the docs, a module neither loads and the drawings none.
+  The run says what ran and why before its table, and in `$GITHUB_STEP_SUMMARY` where it is set;
+  with neither flag every area runs, as the runner's check holds on `runner/narrow/`. Locally the
+  ref is the base, `--since origin/main`; `TEST_SINCE=HEAD^1` is the last commit.
   The run is quiet unless asked (#895): by default it prints each suite's name as it starts, so a
   run that dies inside one names it last, then a check only when it fails, and the owed lines; what
   a suite prints itself (the gate's `n/a` lines and its figures off their aim, the quests' `info`)
@@ -825,6 +836,13 @@ and the crack sweep's four ways run beside it: the `plan` job, Node alone, plans
 runs the shelf's full run, and so does the tests job (10 s on CI). A run started by hand skips the
 sheet, sweeps every map for cracks with the audit and adds the job `fullrun`: the pilot's full run
 on the areas its `fullrun` input names (all unless changed), a report that gates nothing.
+
+On a pull request the tests job runs the gate only for the areas its diff reaches
+(`TEST_SINCE=HEAD^1`) and every other suite whole; the walkthroughs run for those areas and,
+where more than a comment changed, for all. Its summary says which areas ran and why (#955). Every
+day at 03:17 UTC a schedule runs everything, as a run started by hand (a release's) does: the gate
+and every walkthrough, and every map swept with the audit; `fullrun` alone waits for a hand.
+`pages.yml` runs `npm test` whole on every push to main.
 
 Of the suites before `quests`, `combat` holds the bots' three (#853, #865): a seeded fight played
 turn for turn as before with them off, and with them on at 4 and at 10, but not at 11; bless,
