@@ -75,6 +75,7 @@ import { WRACKHOLM_E5 } from './maps/wrackholm_e5.ts';
 import { WRACKHOLM_F5 } from './maps/wrackholm_f5.ts';
 import { WRACKHOLM_F7 } from './maps/wrackholm_f7.ts';
 import { BROKENBACK } from './maps/brokenback.ts';
+import { NICKS_LOCKER, NICK_DOWN } from './maps/nicks_locker.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -83,6 +84,8 @@ import { OUTDOORS } from '../../../game/outdoors.ts';
 import { answerRiddle } from '../../../game/wilds.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
 import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
+import { wrap } from '../../../ui/draw.ts';
+import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 
 /** The clock on to the next hour given. */
 const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
@@ -1150,13 +1153,18 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
  * that hold no group. North from E6's grass onto E5's strand, walked, the land not named again, and on
  * east into F5's; the figurehead's riddle; the soot on the stack's face and the hollow behind it, shut
  * but through its door. North from F6's grass onto F5's strand; the cairn; the fish scales at the
- * stack's foot and the bait store behind it; the reef at F5's 16,30 left bare for the lair's door.
- * South from F6's shingle onto F7's strand; the spring under the cliff; the cut chain and the hollow
- * behind the rock. Each box's edges as built. Last, the Brokenback, the enclave (#845): in at the break
- * in the wreck's side at E5's 18,28, its door saying its band and how it feels at 11, 12 and 14 and its
- * sign its band; its two groups won at 14 and met in order by a company on foot, which passes neither;
- * Keelhaul in the master's strongbox, the hollow under the cabin's deck found from the worn plank and
- * shut to the four ways but through its wall; and out onto E5's 18,29 again.
+ * stack's foot and the bait store behind it. South from F6's shingle onto F7's strand; the spring
+ * under the cliff; the cut chain and the hollow behind the rock. Each box's edges as built. Then the
+ * Brokenback, the enclave (#845): in at the break in the wreck's side at E5's 18,28, its door saying
+ * its band and how it feels at 11, 12 and 14 and its sign its band; its two groups won at 14 and met in
+ * order by a company on foot, which passes neither; Keelhaul in the master's strongbox, the hollow
+ * under the cabin's deck found from the worn plank and shut to the four ways but through its wall; and
+ * out onto E5's 18,29 again. Last, Nick's Locker, the lair (#845, #847): in under the reef at F5's
+ * 16,30, its door saying its band and how it feels at 13, 28 and 30 and its sign its band; Old Nick
+ * alone in the cave's throat, nothing past it reached while it lies there, won at 30; Holdfast on the
+ * ship's master and nowhere else; the master's sea chest in the cleft behind the kelp, found from it
+ * and shut to the four ways but through its rock; out onto F5's 16,31; and Merryn's two lines at
+ * every meeting after her first while Old Nick lives, and her own words alone once it has fallen.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -1188,15 +1196,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
   };
   const chest = (d: MapDef, id: string): string => { const c = d.features!.find((f) => f.kind === 'chest' && f.id === id); return c?.kind === 'chest' ? `${c.gold} ${c.items.join()}` : 'none'; };
-  /** A door left bare: rock, rock either side along the face, its way walked to, nothing within four squares. */
-  const bare = (d: MapDef, walked: Set<number>, z: MapZone, [x, y]: readonly [number, number], [dx, dy]: readonly [number, number]): string[] => {
-    const near = [...(d.features ?? []), ...(d.encounters ?? []), ...(d.secrets ?? [])].filter((f) => Math.abs(f.x - x) + Math.abs(f.y - y) <= 4);
-    return [d.rows[y][x] === 'r' && d.rows[y - dx]?.[x - dy] === 'r' && d.rows[y + dx]?.[x + dy] === 'r' ? '' : 'not rock in a face',
-      walked.has(at(z, x + dx, y + dy)) ? '' : 'its way not walked to', ...near.map((f) => `${f.x},${f.y} within four`)].filter(Boolean);
-  };
   const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
-  ok([E5, F5, F7].every((d) => !(d.encounters ?? []).length) && (E5.exits ?? []).map((e) => e.to).join() === BROKENBACK.id && ![F5, F7].some((d) => (d.exits ?? []).length),
-    'the strands hold no group, and nothing is taken out of them but E5\'s one way, in at the break into the Brokenback');
+  ok([E5, F5, F7].every((d) => !(d.encounters ?? []).length) && (E5.exits ?? []).map((e) => e.to).join() === BROKENBACK.id && (F5.exits ?? []).map((e) => e.to).join() === NICKS_LOCKER.id && !(F7.exits ?? []).length,
+    'the strands hold no group, and nothing is taken out of them but E5\'s one way, in at the break into the Brokenback, and F5\'s, in under the reef into Nick\'s Locker');
 
   // E5: north from E6's grass at 24,0 onto the strand's 24,31, walked, in Wrackholm still.
   w.world.travel(e6.id, 24, 0, NORTH);
@@ -1243,9 +1245,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   see(w, `${F5.id}:f5_scales`);
   ok(search(F5.id, 9, 28, NORTH, 'f5_store'), 'searched where the scales are dried on the rock\'s foot, the rock gives, and the store behind it can be walked into');
   ok(chest(F5, 'f5_box') === '120 elixir', `under the casks, a box with 120 gold and an Elixir (${chest(F5, 'f5_box')})`);
-  // The lair's door (docs §12.6) is left bare: the reef at the strand's east end, 16,30.
-  const reef = bare(F5, strand6, f5, [16, 30], [0, 1]);
-  ok(!reef.length, `the reef at F5's 16,30 is left bare for the lair's door, walked to from 16,31, nothing within four squares${reef.length ? ` (not: ${reef.join(', ')})` : ''}`);
+  // The lair's door (docs §12.6) is the way in under the reef at the strand's east end, 16,30: walked into last.
 
   // F7: south from F6's shingle at 14,31 onto the strand's 14,0, walked.
   w.world.travel(f6.id, 14, 31, SOUTH);
@@ -1351,6 +1351,100 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     ok(back.kind === 'moved' && w.world.zone?.id === E5.id && w.world.state.x === e5.x + 18 && w.world.state.y === e5.y + 29 && back.messages.join(' | ') === WB.exits![0].label,
       `out through the break onto E5's 18,29, the way's own line alone (${said(back)})`);
     listen(w);
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+    w.level = 13;
+  }
+
+  // Nick's Locker, the lair (#845, #847): in under the reef at F5's 16,30, one stone in the reef with rock either
+  // side, walked onto from the strand at 16,31, and nothing within four squares of it. Its door says its band and
+  // how it feels, as a border's line: the warning at F5's 13, harder at 28 and its band alone at 30; inside, its
+  // sign gives its band.
+  {
+    const NL = NICKS_LOCKER, mouth = F5.exits!.find((e) => e.to === NL.id)!, levels = w.party.members.map((m) => m.level);
+    const near4 = [...F5.features!, ...(F5.encounters ?? []), ...F5.secrets!].filter((f) => Math.abs(f.x - 16) + Math.abs(f.y - 30) <= 4);
+    ok(F5.exits!.length === 1 && mouth.x === 16 && mouth.y === 30 && mouth.tx === NL.start.x && mouth.ty === NL.start.y && F5.rows[30].slice(15, 18) === 'r"r' && strand6.has(at(f5, 16, 31)) && !near4.length
+      && out.passable(f5.x + 16, f5.y + 29, ALL) === 'ok' && out.passable(f5.x + 16, f5.y + 29, {}) !== 'ok',
+      `the way into Nick's Locker is the one stone in the reef at F5's 16,30, rock either side, walked to from the strand at 16,31 and waded to from the shallows at 16,29, and nothing stands within four squares of it${near4.length ? ` (${near4.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+    const door = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(F5.id, 16, 31, NORTH);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === NL.id && w.world.state.x === NL.start.x && w.world.state.y === NL.start.y && w.world.state.facing === NORTH ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'Nick\'s Locker: levels 30-32.', low = door(13), close = door(28), at30 = door(30);
+    ok(low === `${mouth.label} | ${band} ${WARNING_IN}` && close === `${mouth.label} | ${band} ${HARDER_IN}` && at30 === `${mouth.label} | ${band}`,
+      `in under the reef from F5's 16,31, the way's own line and then its band, with the warning at 13, harder at 28 and nothing more at 30 (${low}; ${close}; ${at30})`);
+    ok(!!NL.enclave && w.world.here.name === 'Nick\'s Locker' && w.world.here.band?.join('-') === '30-32', `inside, its sign gives the cap's band, over F5's 13-14 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    w.level = 30;
+    for (const id of ['nl_mouth', 'nl_flood', 'nl_throat']) see(w, `${NL.id}:${id}`);
+    // The guardian: Old Nick, a boss that never comes back, in the cave's throat, the one way in, so no company steps
+    // round it: with its square and those a step from it shut, nothing past it is reached, walked, waded, climbed or
+    // floated. Won at the lair's floor.
+    const hold = new GameMap(NL);
+    const flood = (...shut: (readonly [number, number])[]): Set<string> => {
+      const seen = new Set<string>(), todo: [number, number][] = [[NL.start.x, NL.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (seen.has(`${x},${y}`) || shut.some(([sx, sy]) => sx === x && sy === y) || hold.passable(x, y, ALL) !== 'ok') continue;
+        seen.add(`${x},${y}`);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return seen;
+    };
+    const nick = NL.encounters!.find((g) => g.id === 'nl_nick')!;
+    const shut = flood([nick.x, nick.y], [nick.x - 1, nick.y], [nick.x + 1, nick.y], [nick.x, nick.y - 1], [nick.x, nick.y + 1]);
+    ok(NL.encounters!.length === 1 && nick.monsters.join() === 'old_nick' && !!nick.boss && !nick.respawn && nick.roams === false && !!nick.slainText
+      && shut.has('7,11') && shut.has('3,13') && !['7,7', '7,5', '12,5', '12,6', '9,3', '9,1', '8,1'].some((k) => shut.has(k)),
+      `Old Nick, the one group of the lair, lies in the cave's throat: with it there, none of Nick's Locker's ${shut.size} squares walked, waded, climbed or floated reaches the cave, the ship, her master, the kelp or the cleft`);
+    fight(w, `${NL.id}:nl_nick`);
+    for (const id of ['nl_cave', 'nl_ribs', 'nl_master']) see(w, `${NL.id}:${id}`);
+    // Holdfast on the ship's master, one in the world: no other chest, cairn or statue holds it, no shop sells it and
+    // no monster drops it.
+    const belt = NL.features!.find((f) => f.kind === 'chest' && f.id === 'nl_belt')!;
+    const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('holdfast')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== belt && !!f.items?.includes('holdfast')) || (f.kind === 'statue' && !!f.gift?.items?.includes('holdfast'));
+    ok(belt.kind === 'chest' && belt.gold === 0 && belt.items.join() === 'holdfast' && !!item('holdfast').artifact
+      && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'holdfast')),
+      'on her master, Holdfast; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
+    // The secret: kelp grown green behind her bows where no wave comes, the search there and the master's sea chest in
+    // the cleft behind it. Walked, waded, climbed or floated, it is never reached but through the rock.
+    const [rock] = NL.secrets!, closed = flood([rock.x, rock.y]);
+    ok(rock.hint === 'nl_kelp' && closed.size > 40 && closed.has('9,3') && !['8,1', '9,1'].some((k) => closed.has(k)),
+      `the cleft is shut but for its rock: none of Nick's Locker's ${closed.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${NL.id}:nl_kelp`);
+    ok(search(NL.id, 9, 3, NORTH, 'nl_cleft'), 'searched where the kelp grows, the rock gives, and the cleft behind it can be walked into');
+    ok(chest(NL, 'nl_sea_chest') === '500 elixir,potion_sp_great', `in the cleft, her master's sea chest: 500 gold, an Elixir and a Sapphire Vial (${chest(NL, 'nl_sea_chest')})`);
+    // And out under the reef onto F5's 16,31, facing the land, with the way's own line and no other.
+    w.world.travel(NL.id, NL.start.x, NL.start.y - 1, SOUTH);
+    const back = w.world.move('forward');
+    ok(back.kind === 'moved' && w.world.zone?.id === F5.id && w.world.state.x === f5.x + 16 && w.world.state.y === f5.y + 31 && w.world.state.facing === SOUTH && back.messages.join(' | ') === NL.exits![0].label,
+      `out under the reef onto F5's 16,31, facing the land, the way's own line alone (${said(back)})`);
+    listen(w);
+    // The rumour (#846): Merryn on F6 says DESIGN §9's two lines at every meeting after her first while Old Nick lives,
+    // whatever became of the founder's letter, and nothing of it at the first; once it has fallen, "Nick gives nothing
+    // back" is no longer so, and she says her own words alone. Words only, setting nothing, in no quest, and every
+    // meeting with them fits her box. `fight` has slain Old Nick, so it is stood up again for the first two meetings.
+    const merryn = F6.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Merryn'))!;
+    const rumour = ['"One ship I counted in and never out. Her master had a knife the weed obeyed: cut a line with it and the kelp held her fast."', '"Old Nick had ship, master and knife. Nick gives nothing back."'];
+    const hermit = (): string[] => Object.keys(w.party.flags).filter((k) => k.startsWith('q_hermit'));
+    const kept = Object.fromEntries(hermit().map((k) => [k, w.party.flags[k]]));
+    for (const k of hermit()) delete w.party.flags[k];
+    const standing = w.world.state.maps[NL.id]!.groups[nick.id]!, fell = standing.dead;
+    standing.dead = -1;
+    w.world.travel(F6.id, merryn.x, merryn.y);
+    const first = meet(merryn, w.party, heard(w.world, merryn)).text, then = meet(merryn, w.party, heard(w.world, merryn)).text;
+    standing.dead = fell;
+    const since = meet(merryn, w.party, heard(w.world, merryn)).text;
+    const says = merryn.says!, boxes = says.filter((s) => s.until).map((s) => wrap(s.lines.join('\n\n'), SAY_W).length);
+    ok(fell >= 0 && !first.includes('Old Nick') && then.startsWith('Another stroke on the wall') && rumour.every((l) => then.includes(l)) && !since.includes('Old Nick') && since.startsWith('Another stroke on the wall')
+      && says.length === 8 && says.every((s, i) => !s.sets && (i % 2 === 0
+        ? JSON.stringify(s.until) === JSON.stringify({ slain: NICK_DOWN }) && s.lines.slice(-2).join('\n') === rumour.join('\n')
+        : !s.until && JSON.stringify(s.after) === JSON.stringify({ ...JSON.parse(JSON.stringify(says[i - 1].after)), slain: NICK_DOWN }) && s.lines.join('\n') === says[i - 1].lines.slice(0, -2).join('\n')))
+      && boxes.every((n) => n <= SAY_LINES) && !JSON.stringify(questLog(w.world.state, w.party)).includes('Old Nick'),
+      `Merryn says nothing of Old Nick at her first meeting, after her own words speaks of the ship she counted in and never out at every meeting after it while Old Nick lives, and once it has fallen says her own words alone: words only, in no quest, ${boxes.join(', ')} of her box's ${SAY_LINES} lines`);
+    listen(w);
+    for (const k of hermit()) delete w.party.flags[k];
+    Object.assign(w.party.flags, kept);
     w.party.members.forEach((m, i) => { m.level = levels[i]; });
     w.level = 13;
   }

@@ -1,11 +1,11 @@
 // Wrackholm, box F5: the north strand's east end. Country, band 13-14, the bounds' first (#835): the
 // strand running on east from E5 under the east rocks' north face, the grass of F6's north end above
 // it and the open sea north and east. A cairn of shore stones above the weed; a stack of rock with fish
-// scales dried on its foot, and behind its face the store where the smugglers kept the bait. The reef
-// at the strand's east end, in sight of the hermit's point, is left bare at 16,30 for the lair's door,
-// Old Nick's sea cave (docs/areas/wrackholm.md §12.6). In from F6 (#189) over its south edge and from
-// E5 (#835) over its west, square for square. No group. Laid whole in Wrackholm, cut from the atlas
-// with the rocks drawn in; docs/areas/wrackholm.md §12.3 is its brief.
+// scales dried on its foot, and behind its face the store where the smugglers kept the bait. In the
+// reef at the strand's east end, in sight of the hermit's point, at 16,30, the way in under the reef:
+// the door of Nick's Locker, the lair, Old Nick's sea cave (docs/areas/wrackholm.md §12.6). In from F6
+// (#189) over its south edge and from E5 (#835) over its west, square for square. No group. Laid whole
+// in Wrackholm, cut from the atlas with the rocks drawn in; docs/areas/wrackholm.md §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 
@@ -48,8 +48,11 @@ export const WRACKHOLM_F5: MapDef = {
     ',,,,,,,~rSr~~WWWWWWWWWWWWWWWWWWW',
     ',,,,,,,,,,~~~~~WWWWWWWWWWWWWWWWW',
     ',,,,,,,,,,,,,~~~~WWWWWWWWWWWWWWW',
-    ',,,,,,,,,,,,,,_rrr~WWWWWWWWWWWWW',
+    ',,,,,,,,,,,,,,_r"r~WWWWWWWWWWWWW',
     ',,,,,,,,,,,,,,,____~~~WWWWWWWWWW',
+  ],
+  exits: [
+    { x: 16, y: 30, to: 'nicks_locker', tx: 5, ty: 14, tf: NORTH, label: 'You duck in under the reef where the sea goes in, into the dark and the smell of weed.' },
   ],
   features: [
     // In from F6's grass, the strand running east to the reef.
