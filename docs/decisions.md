@@ -784,8 +784,8 @@ Decided by the builder for #1024, each the owner's to overturn:
 5. **A pointer ends each section whose lists moved,** §5.1, §5.2, §5.5, §8.1 and §8.2; the other
    kept sections had none to point at.
 6. **Of §2's rules only the road's wanted a line,** a bullet of §5.4, where the pillars are checked:
-   §4 and §5.4 say a story lock is declared and kept to its count, which `src/content/locks.ts`
-   holds, and §5.3 says the core and the country, each to its floor.
+   §4 and §5.4 say a story lock is declared and kept to its count (`src/content/locks.ts` holds
+   it) and §5.3 says the core and the country, each to its floor.
 7. **§10's aim is a bullet of §8.3, after the tests job's;** the cure's three steps are built (#955,
    #954 and #953) and the sentence keeps their order.
 8. **The archive gives §8's heading again above §8.4,** so that §8.4 stands under its number; its
