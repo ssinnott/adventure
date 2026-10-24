@@ -1,6 +1,6 @@
 // The Foreland, the first step of the road (band 1-5): Helmstow and its keep, the Foreland's coast
 // and woods, the Ashcombe cellar and Brandy Hole's two levels. Its id is still 'shelf', as saves
-// hold it. docs/areas/shelf.md is its brief.
+// hold it. docs/areas/shelf.md is its state, and docs/areas/shelf/ holds its plan and decisions.
 import type { Area } from '../../area.ts';
 import { FLAGS } from './flags.ts';
 import { HARROW } from './maps/harrow.ts';

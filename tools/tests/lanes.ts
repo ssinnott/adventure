@@ -22,6 +22,7 @@ export function lanes(): void {
     ['src/content/areas/shelf/maps/shelf.ts', 'area: shelf'], ['src/content/areas/shelf/shipped.json', 'area: shelf'], ['docs/areas/ashfall.md', 'area: ashfall'],
     ['docs/areas/hearth.md', 'area: hearth'], ['docs/areas/dead_drop.md', 'area: wrackholm'], ['docs/areas/meridian_camp.md', 'area: ashfall'],
     ['docs/areas/shelf/decisions.md', 'area: shelf'], ['docs/areas/shelf/plan.md', 'area: shelf'], ['docs/areas/dead_drop/plan.md', 'area: wrackholm'],
+    ['docs/areas/hearth/decisions.md', 'area: hearth'], ['docs/areas/hearth/plan.md', 'area: hearth'],
     ['src/ui/monsters/wolf.ts', 'creatures'], ['src/ui/monsters/common.ts', 'creatures'], ['src/ui/interiors/shelf/index.ts', 'interiors'],
     ['src/ui/paint/brush.ts', 'systems'], ['src/ui/monsters/kit/common.ts', 'systems'], ['src/ui/interiors/kit/trades/temple.ts', 'systems'],
     ['tools/lanes.ts', 'quality'], ['tools/tests/gate.ts', 'quality'], ['.github/workflows/checks.yml', 'quality'], ['.github/labels.json', 'quality'], ['src/content/shipped.json', 'quality'],
