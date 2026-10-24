@@ -35,11 +35,12 @@ export function headlessLoad(save: string, tables: Tables = TABLES): Game {
 
 /**
  * Content's tables with `defs` lent among the items (#973), and `monsters` among the monsters (#974): a
- * table of the suite's own to play, each def under its id over any there, and content's never written.
- * On `base` where it is another's: the harness's (`HARNESS`, tools/kit/company.ts) for the gate's company.
+ * table of the suite's own to play, each def under its id over any there, and content's never written;
+ * a slice nothing is lent to is `base`'s own. On `base` where it is another's: the harness's
+ * (`HARNESS`, tools/kit/company.ts) for the gate's company.
  */
 export function tablesWith(defs: readonly ItemDef[], base: Tables = TABLES, monsters: readonly MonsterDef[] = []): Tables {
-  return { ...base, items: { ...base.items, ...Object.fromEntries(defs.map((d) => [d.id, d])) },
+  return { ...base, ...(defs.length ? { items: { ...base.items, ...Object.fromEntries(defs.map((d) => [d.id, d])) } } : {}),
     ...(monsters.length ? { monsters: { ...base.monsters, ...Object.fromEntries(monsters.map((d) => [d.id, d])) } } : {}) };
 }
 
