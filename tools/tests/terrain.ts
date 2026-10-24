@@ -238,9 +238,10 @@ function sight(): void {
   const cut = [look(VALLEY, 4, 6, NORTH, DAY), look(VALLEY, 4, 6, NORTH, NIGHT), lit, look(VALLEY, 4, 6, NORTH, FOG)].map((w) => `${w.sight}: ${marks(w, [[4, 4], [4, 3], [4, 2]])}`);
   ok(cut.join(' / ') === '4: ms ms -- / 2: ms -- -- / 4: ms ms -- / 2: ms -- --', `by day and by a light the hill stops the view at its brow, and the night and the fog short of it (${cut.join(' / ')})`);
   // A save made before #53 holds what the company marked then, the valley past the ridge among it: it loads and shows it.
+  // The mark asked no upgrade of its own at SAVE_VERSION 5, nor at any version after it (6 is #941's, the hermit's flag).
   const old = look(VALLEY, 4, 5, NORTH);
   old.mapState.explored[(2 * 9 + 4) >> 5] |= 1 << ((2 * 9 + 4) & 31);
   const data = deserialize(serialize(old.state, old.party, 1));
   const back = new World({ fx_sight: new GameMap(def(VALLEY, 4, 5, NORTH)) }, data.party, makeRng(1), data.world);
-  ok(SAVE_VERSION === 5 && back.explored(4, 2) && !back.sees(4, 2) && seen(data.world.maps.fx_sight.explored, 2 * 9 + 4), `a save made before loads with what it marked, the valley past the ridge among it, though from there it is not seen now (version ${SAVE_VERSION})`);
+  ok(SAVE_VERSION >= 5 && back.explored(4, 2) && !back.sees(4, 2) && seen(data.world.maps.fx_sight.explored, 2 * 9 + 4), `a save made before loads with what it marked, the valley past the ridge among it, though from there it is not seen now (version ${SAVE_VERSION})`);
 }

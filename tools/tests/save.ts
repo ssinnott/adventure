@@ -1,8 +1,9 @@
 // Saves: a round trip, the outdoors kept small, a save from before the weather, a version 1 save
 // loaded onto the outdoors and onto a map that has since grown, a version 2 save's yes to Vask
 // brought to his no, a version 3 save given its members' blessings, none, a version 4 save that
-// stood at the Peak Stone given the flag the Core's door asks, the upgrades run by version, and what
-// a save meets on content changed since: a group added, a door moved off its square.
+// stood at the Peak Stone given the flag the Core's door asks, a version 5 save that met the
+// Deepthorn's hermit given his own flag, the upgrades run by version, and what a save meets on
+// content changed since: a group added, a door moved off its square.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { World, seen } from '../../src/game/world.ts';
@@ -136,6 +137,22 @@ export function save(): void {
     ok(JSON.stringify(five.party.flags) === '{"q_vask_rain":1}' && five.world.maps[OUTDOORS].used[STONE] === 1, 'a version 5 save is untouched: the flag is given once, by the upgrade to 5');
     const flagged = { ...at4(true, true), version: 5 }; flagged.party.flags[FLAG] = 1;
     ok(JSON.stringify(load(flagged).party.flags) === `{"q_vask_rain":1,"${FLAG}":1}`, 'and one that has the flag keeps it');
+  }
+  { // A version 5 save holding q_hermit (#941) that never set foot in Merryn's box had it from the
+    // Deepthorn's hermit, so it loads with his own flag instead; one that has trodden her box keeps it,
+    // one with neither is untouched, and a version 6 save is left as it is.
+    const at5 = (trod: boolean, hermit: boolean): SaveData => {
+      const d = upgrade(JSON.parse(JSON.stringify(v1)) as SaveData, UPGRADES, 5);
+      d.party.flags = hermit ? { q_vask_rain: 1, q_hermit: 1 } : { q_vask_rain: 1 };
+      if (trod) d.world.zones!.push('wrackholm_f6');
+      return d;
+    };
+    const flags = (d: SaveData): string => JSON.stringify(deserialize(JSON.stringify(d)).party.flags);
+    const met = deserialize(JSON.stringify(at5(false, true)));
+    ok(met.version === SAVE_VERSION && JSON.stringify(met.party.flags) === '{"q_vask_rain":1,"q_hermit_deepthorn":1}', `a version 5 save with q_hermit that never set foot in Merryn's box loads with q_hermit_deepthorn and without q_hermit, its other flags kept (${Object.keys(met.party.flags).join(', ')})`);
+    ok(flags(at5(true, true)) === '{"q_vask_rain":1,"q_hermit":1}', 'one that has trodden her box keeps q_hermit and gains nothing');
+    ok(flags(at5(false, false)) === '{"q_vask_rain":1}' && flags(at5(true, false)) === '{"q_vask_rain":1}', 'one with neither flag is untouched, her box trodden or not');
+    ok(flags({ ...at5(false, true), version: 6 }) === '{"q_vask_rain":1,"q_hermit":1}', 'and a version 6 save is left as it is: q_hermit is Merryn\'s');
   }
   { // The upgrades run by version, each registered with the version it brings a save to.
     const to3 = (d: SaveData): SaveData => ({ ...d, world: { ...d.world, steps: d.world.steps + 1 } });
