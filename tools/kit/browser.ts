@@ -53,10 +53,17 @@ export async function open(port: number, o: { viewport?: { width: number; height
       };
     }, o.seed);
   }
+  // The fallback's full Chromium asks for /favicon.ico, which the tree lacks, and its 404 is a console
+  // error: it is answered here with nothing, so a tool fails on the game's own errors alone.
+  await page.route('**/favicon.ico', (r) => r.fulfill({ status: 204 }));
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push('pageerror: ' + e.message));
   page.on('console', (m) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
-  await page.goto(`http://localhost:${port}/`, { waitUntil: 'load' });
-  await page.waitForFunction(() => window.__game?.ready === true, null, { timeout: 15000 });
+  // A page that never loads or never gets ready closes its browser before the error goes on, so a
+  // caller that catches it leaves no Chromium behind.
+  try {
+    await page.goto(`http://localhost:${port}/`, { waitUntil: 'load' });
+    await page.waitForFunction(() => window.__game?.ready === true, null, { timeout: 15000 });
+  } catch (e) { await browser.close(); throw e; }
   return { browser, page, errors };
 }

@@ -65,7 +65,7 @@ if (areaId) {
 const base = opt('changed');
 if (base) {
   const files = changedFiles(base);
-  const everything = files.includes('tools/sheet.ts') || files.includes('tools/ways.ts');
+  const everything = ['tools/sheet.ts', 'tools/ways.ts', 'tools/kit/browser.ts', 'tools/kit/args.ts'].some((f) => files.includes(f));
   const m = await changedMaps(files), mo = await changedMonsters(files, base), i = await changedInteriors(files, base);
   maps = [...maps, ...(everything || m.all ? MAP_DEFS.map((d) => d.id) : m.maps), ...(files.includes('tools/grounds.ts') ? GROUND_SAMPLES.map((d) => d.id) : [])];
   monsters = [...monsters, ...(everything || mo.all ? Object.keys(MONSTERS) : mo.monsters)];
