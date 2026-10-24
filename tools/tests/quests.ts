@@ -25,26 +25,21 @@ import { spentId } from '../../src/game/wilds.ts';
 import { readId } from '../../src/game/inscriptions.ts';
 import { FIXTURE, LAIR } from './enclave.ts';
 import type { MapState } from '../../src/game/world.ts';
-import { areaRows, beside, once } from '../checks.ts';
+import { areaRows, gather, once } from '../checks.ts';
 import { ok, owed } from './lib.ts';
 
 /**
- * Flags a condition may read before anything sets them, each owed to the issue that will set it:
- * reported as that issue's while nothing does, and failed once something does, so its entry is
- * dropped here.
+ * Flags a condition may read before anything sets them, each owed by its area to the issue that will
+ * set it (`Owes.unset`): reported as that issue's while nothing does, and failed once something does,
+ * so its row is dropped; a flag owed twice is refused.
  */
-export const UNSET: Record<string, string> = {
-  // None owed: the road behind (#765) sets the last of Act V's, the signet's four (the Council's clerk at
-  // Helmstow's gate and the sea off Gullwick), the walk home and Jowan's letter.
-};
-/** UNSET beside the flags the areas owe (`Owes.unset`), a flag in both refused (#897). */
-const unset = beside(UNSET, areaRows((c) => c.owes?.unset));
+const unset = gather(areaRows((c) => c.owes?.unset));
 
 /** The flags a feature sets: a person's, met, an event's, said (#156), an inn's, stayed at and a camp's, rested at (#730). */
 export const featureFlags = (f: Feature): readonly string[] => f.kind === 'npc' ? personFlags(f) : f.kind === 'event' ? [f.sets ?? []].flat() : f.kind === 'inn' ? f.nights ?? [] : f.kind === 'camp' ? (f.nights ?? []).map((n) => n.sets) : [];
 
 /**
- * What in a condition names nothing real: a flag no NPC, event or guild quest sets (nor one UNSET owes), an item, something spent once and kept
+ * What in a condition names nothing real: a flag no NPC, event or guild quest sets (nor one an area owes), an item, something spent once and kept
  * by its id (a once-only event, a chest, a cairn, a shrine, a fountain or a statue, or an inscription read, #538), a guardian that
  * never respawns (one that does comes back to life, and what turns on its death with it), a map. The
  * maps are the game's unless given.
@@ -101,7 +96,7 @@ export function quests(): void {
   // A flag owed to an issue counts as real until that issue sets it, and only then.
   const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap(featureFlags)));
   for (const [f, whose] of Object.entries(unset.all)) owed(setBy.has(f), `flag ${f} is set by someone`, whose);
-  ok(...once('every flag owed its setting is owed once, in UNSET or by its area', unset.twice));
+  ok(...once('every flag owed its setting is owed once', unset.twice));
   ok(!condFaults({ flag: Object.keys(unset.all)[0] }).length && condFaults({ flag: 'fx_never_set' }).join() === 'flag fx_never_set',
     'a flag owed to an issue names something real, and one nobody sets or owes does not');
   const crossing: MapDef = { id: 'fx_shore', name: 'Fixture', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH }, rows: [',,'],

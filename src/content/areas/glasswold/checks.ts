@@ -10,4 +10,12 @@ export const CHECKS = {
     { seam: 'wold_d9/wold_d10', walk: '24-26 30-31', why: 'the scree under the mesa\'s north face meets D9\'s rock, and the mesa\'s rock D9\'s steppe' },
     { seam: 'wold_e8/wold_e9', walk: '20-21', water: '20-21', why: 'the shore steps two squares at the line' },
   ],
+  // Its edges open on nothing (tools/tests/outdoors.ts).
+  openOnNothing: [
+    { edge: 'wold_d10 south', open: '0-31', why: 'D11 is the Glass, the reach, shut until Phase 1.6' },
+    { edge: 'wold_d10 west', open: '0-14 23-31', why: 'C10 is the Glass, the reach, shut until Phase 1.6' },
+    { edge: 'wold_d9 west', open: '0-31', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
+    { edge: 'wold_c8 south', open: '0-31', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
+    { edge: 'wold_b9 east', open: '0-13 27', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
+  ],
 } satisfies AreaChecks;

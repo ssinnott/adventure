@@ -1887,7 +1887,8 @@ it hangs by at its tail; a wave of steps runs down its legs. The Catcher is a cr
 what falls: three great plates under its hook, a hood with a band of five lamps and from its rim a
 cage of seven hooked arms closed to the floor, one of the Hand slumped inside with an arm hung out
 through the bars; two pairs of long legs stand it over the cage, size 2 inside the tall boss's crown.
-The brute on the line at 31 and the boss off it, its hit points and blow set by the Stair's gate (`OFF_LINE`, #758); the Ways and the Stair place them (#757, #758).
+The brute on the line at 31 and the boss off it, its hit points and blow set by the Stair's gate
+(`offLine`, #758); the Ways and the Stair place them (#757, #758).
 
 ---
 
