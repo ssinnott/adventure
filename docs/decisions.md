@@ -792,3 +792,7 @@ Decided by the builder for #1024, each the owner's to overturn:
    links are left as written from `docs/`, as the slice's archive left them.
 9. **The rules' own "Decided by" sentences stay in them** (three in §5.2): each is a rule with its
    source, not a list.
+10. **The pass of #1025's rule reads the lines this writes:** seven paths, all in the tree. A kept
+    line is moved, never rewritten, so the 33 backticked words of EXPANSION's own lines that name
+    no file from the root or from src/ (an area's checks, the kit's files by their names, the pages
+    workflow) are #1025's to mend, inside the 46,000.
