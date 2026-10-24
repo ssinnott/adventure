@@ -35,7 +35,7 @@ export function drawn(): void {
 
   // Seen before the fight: eleven brigands and their archer ahead, and the company meets both kinds.
   const field: MapDef = {
-    id: 'drawn_field', name: 'Field', kind: 'outdoor', density: 'country', start: { x: 2, y: 4, facing: NORTH },
+    id: 'drawn_field', name: 'Field', kind: 'outdoor', region: 'shelf', density: 'country', start: { x: 2, y: 4, facing: NORTH },
     rows: [',,,,,', ',,,,,', ',,,,,', ',,,,,', ',,,,,'],
     encounters: [{ id: 'band', x: 2, y: 2, monsters: [...Array(11).fill('brigand'), 'brigand_archer'], roams: false }],
   };

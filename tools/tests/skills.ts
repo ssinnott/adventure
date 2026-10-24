@@ -439,7 +439,7 @@ function fits(): void {
 function perception(): void {
   // From 1,1 facing east the door is two squares off, past an open square; from 2,1 the wall ahead;
   // from 1,2 two squares off, past a wall; from 1,3 two squares off, past a closed door.
-  const def: MapDef = { id: 'fx_search', name: 'Search', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#..S#', '#.#S#', '#.DS#', '#####'] };
+  const def: MapDef = { id: 'fx_search', name: 'Search', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#..S#', '#.#S#', '#.DS#', '#####'] };
   const TRIES = 24;
   /** Of TRIES searches from x,y facing east, each on a fresh map with its own seed: how many find the door. */
   const finds = (setup: (q: Party) => void, x: number, y: number): number => {
@@ -484,12 +484,12 @@ const DAY = (wx: Parameters<typeof weatherSight>[0], m: number): boolean => weat
  * learner down; a group that stands is not, nor one that roams past its `aware`. A company of each people.
  */
 function senses(): void {
-  const hall: MapDef = { id: 'fx_spirit', name: 'Spirit', kind: 'dungeon', start: { x: 1, y: 1, facing: WEST }, rows: ['############', '#....#.....#', '############'],
+  const hall: MapDef = { id: 'fx_spirit', name: 'Spirit', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: WEST }, rows: ['############', '#....#.....#', '############'],
     encounters: [
       { id: 'dead5', x: 6, y: 1, monsters: ['skeleton'], roams: false }, { id: 'mixed6', x: 7, y: 1, monsters: ['skeleton', 'rat'], roams: false },
       { id: 'dead8', x: 9, y: 1, monsters: ['ghoul'], roams: false }, { id: 'dead9', x: 10, y: 1, monsters: ['skeleton'], roams: false },
     ] };
-  const valley: MapDef = { id: 'fx_brow', name: 'Brow', kind: 'outdoor', start: { x: 4, y: 4, facing: NORTH },
+  const valley: MapDef = { id: 'fx_brow', name: 'Brow', kind: 'outdoor', region: 'shelf', start: { x: 4, y: 4, facing: NORTH },
     rows: ['MMMMMMMMM', 'M,,,,,,,M', 'M,,,,,,,M', 'M^^^^^^^M', 'M,,,,,,,M', 'M,,,,,,,M', 'MMMMMMMMM'],
     encounters: [
       { id: 'roamer', x: 4, y: 2, monsters: ['wolf'] }, { id: 'stander', x: 2, y: 2, monsters: ['wolf'], roams: false },
@@ -527,8 +527,8 @@ function senses(): void {
  * door or an unfound secret door it is not.
  */
 function cartographer(): void {
-  const open: MapDef = { id: 'fx_chart', name: 'Chart', kind: 'outdoor', start: { x: 5, y: 5, facing: NORTH }, rows: Array<string>(11).fill(',,,,,,,,,,,') };
-  const hall: MapDef = { id: 'fx_chart_hall', name: 'Chart hall', kind: 'dungeon', start: { x: 5, y: 5, facing: NORTH }, rows: Array<string>(11).fill('...........') };
+  const open: MapDef = { id: 'fx_chart', name: 'Chart', kind: 'outdoor', region: 'shelf', start: { x: 5, y: 5, facing: NORTH }, rows: Array<string>(11).fill(',,,,,,,,,,,') };
+  const hall: MapDef = { id: 'fx_chart_hall', name: 'Chart hall', kind: 'dungeon', region: 'shelf', start: { x: 5, y: 5, facing: NORTH }, rows: Array<string>(11).fill('...........') };
   const chart: ItemDef = { id: 'fx_chart', name: 'A Chart', slot: 'none', price: 400, skill: 'cartographer' };
   const NIGHT = (_: unknown, m: number): boolean => daylightAt(m) < 0.1;
   /** How many squares west of the company the automap takes, for a company `how` on `def` at a time `when` finds. */
@@ -552,7 +552,7 @@ function cartographer(): void {
     ok(day === '2/3/2/3' && night === '1/2/1/2' && under === '1/2/1/2',
       `a Cartographer standing, or a chart carried, maps a square further: on open ground by day ${day}, by night ${night}, in a dungeon ${under} (none / learnt / down / a chart)`);
     // West of 3,3 open floor, east a closed door, north an unfound secret door; facing the wall south.
-    const doors: MapDef = { id: 'fx_chart_doors', name: 'Chart doors', kind: 'dungeon', start: { x: 3, y: 3, facing: SOUTH }, rows: ['#######', '###.###', '###S###', '#...D.#', '#######'] };
+    const doors: MapDef = { id: 'fx_chart_doors', name: 'Chart doors', kind: 'dungeon', region: 'shelf', start: { x: 3, y: 3, facing: SOUTH }, rows: ['#######', '###.###', '###S###', '#...D.#', '#######'] };
     const past = (learnt: boolean): string => {
       const rng = makeRng(43), q = defaultParty(rng);
       if (learnt) q.members[0].skills = ['cartographer'];

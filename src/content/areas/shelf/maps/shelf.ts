@@ -41,6 +41,7 @@ export const SHELF: MapDef = {
   kind: 'outdoor',
   density: 'core',
   band: [1, 5],
+  region: 'shelf',
   start: { x: 16, y: 4, facing: NORTH },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',

@@ -25,7 +25,7 @@ import { condFaults } from './quests.ts';
 import { ok, headlessGame, drive } from './lib.ts';
 
 const FIXTURE: MapDef = {
-  id: 'wilds', name: 'Wilds', kind: 'outdoor', density: 'country',
+  id: 'wilds', name: 'Wilds', kind: 'outdoor', region: 'shelf', density: 'country',
   start: { x: 0, y: 0, facing: NORTH },
   rows: Array.from({ length: 5 }, () => ','.repeat(13)),
   features: [
@@ -44,7 +44,7 @@ const FIXTURE: MapDef = {
  * nothing, a camp that counts none, and a hollow whose one night has no words of its own.
  */
 const CAMPS: MapDef = {
-  id: 'camps', name: 'Camps', kind: 'outdoor',
+  id: 'camps', name: 'Camps', kind: 'outdoor', region: 'shelf',
   start: { x: 0, y: 0, facing: NORTH },
   rows: Array.from({ length: 3 }, () => ','.repeat(9)),
   features: [

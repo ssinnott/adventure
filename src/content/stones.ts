@@ -6,11 +6,13 @@
 // here, but the Lodestone, which is whole from the start, and each `restored` flag to something that
 // sets it, or to the issue that owes it.
 import type { When } from '../game/quests.ts';
+import type { RegionId } from '../game/weather.ts';
 
 export interface Wardstone {
   /** As the atlas names it (`AtlasArea.stone`). */
   name: string;
-  area: string;
+  /** Its area's region: a Stone of an area that does not exist fails the typecheck (#945). */
+  area: RegionId;
   /** Restored once this holds; absent until its area writes it. */
   restored?: When;
   /** The issue that sets the flag `restored` waits on, while nothing does. */

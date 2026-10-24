@@ -119,7 +119,7 @@ export function rifts(): void {
   // A brine Rift on a box of the Delta: its tear walked into, the Rift walked, and back out.
   {
     const DELTA = rift({ ...spec(7), id: 'fx_delta_rift', material: 'brine', template: 'cells', until: { slain: 'fx_delta_rift:fx_delta_rift_warden' }, out: { to: 'fx_delta', tx: 3, ty: 2, tf: EAST } });
-    const box: MapDef = { id: 'fx_delta', name: 'Fixture Fen', kind: 'outdoor', density: 'core', start: { x: 1, y: 2, facing: EAST }, rows: ['MMMMMMM', 'M,,,,,M', 'M,,,,,M', 'M,,,,,M', 'MMMMMMM'], features: [DELTA.way(4, 2)] };
+    const box: MapDef = { id: 'fx_delta', name: 'Fixture Fen', kind: 'outdoor', region: 'shelf', density: 'core', start: { x: 1, y: 2, facing: EAST }, rows: ['MMMMMMM', 'M,,,,,M', 'M,,,,,M', 'M,,,,,M', 'MMMMMMM'], features: [DELTA.way(4, 2)] };
     const maps = { fx_delta: new GameMap(box), fx_delta_rift: new GameMap(DELTA.map) };
     const r = makeRng(3), w = new World(maps, defaultParty(r), r);
     w.move('forward'); w.move('forward');

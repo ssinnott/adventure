@@ -147,7 +147,7 @@ const FOG: When = (wx, m) => weatherSight(wx) === 2 && daylightAt(m) >= 0.6;
  * the company as well, a secret door among them (#889); and a save made before shows what it showed.
  */
 function sight(): void {
-  const def = (rows: readonly string[], x: number, y: number, f: Facing, more: Partial<MapDef> = {}): MapDef => ({ id: 'fx_sight', name: 'Sight', kind: 'outdoor', start: { x, y, facing: f }, rows: [...rows], ...more });
+  const def = (rows: readonly string[], x: number, y: number, f: Facing, more: Partial<MapDef> = {}): MapDef => ({ id: 'fx_sight', name: 'Sight', kind: 'outdoor', region: 'shelf', start: { x, y, facing: f }, rows: [...rows], ...more });
   /** A company on (x, y) facing f, at the first hour `when` holds, with nothing marked but what it sees there. */
   const look = (rows: readonly string[], x: number, y: number, f: Facing, when: When = DAY, more: Partial<MapDef> = {}): World => {
     const rng = makeRng(29), w = new World({ fx_sight: new GameMap(def(rows, x, y, f, more)) }, defaultParty(rng), rng);

@@ -6,7 +6,7 @@ import { AWARE } from '../game/world.ts';
 import { hasSkill, SPIRIT_REACH } from '../game/skills.ts';
 import { monster } from '../game/monsters.ts';
 import type { Feature } from '../game/map.ts';
-import type { Party, Character } from '../game/party.ts';
+import type { Party, Character, Condition } from '../game/party.ts';
 import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
 import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
@@ -37,7 +37,8 @@ export function cardRect(i: number): { x: number; y: number; w: number; h: numbe
   return { x: Math.round(LAYOUT.party.x + i * (CARD_W + CARD_GAP)), y: LAYOUT.party.y, w: CARD_W, h: LAYOUT.party.h };
 }
 
-const COND_COLOR: Record<string, string> = {
+/** A row for every condition: one left out fails the typecheck, not the card (#945). */
+const COND_COLOR: Record<Condition, string> = {
   dead: RED, stoned: TEXT_DIM, unconscious: RED, paralysed: YELLOW, asleep: BLUE, poisoned: GREEN, diseased: PURPLE, cursed: PURPLE,
 };
 
@@ -209,7 +210,7 @@ function drawCard(ctx: CanvasRenderingContext2D, c: Character, i: number, select
   }
   const cond = worstCondition(c);
   const ready = c.xp >= xpForLevel(c.level + 1);
-  if (cond) drawText(ctx, cond.toUpperCase().slice(0, 9), bx, r.y + 52, { size: 1, color: COND_COLOR[cond] ?? TEXT });
+  if (cond) drawText(ctx, cond.toUpperCase().slice(0, 9), bx, r.y + 52, { size: 1, color: COND_COLOR[cond] });
   else if (ready && (frame >> 5) & 1) drawText(ctx, 'CAN TRAIN', bx, r.y + 52, { size: 1, color: YELLOW });
   else drawText(ctx, `AC ${armorClassOf(c)}`, bx, r.y + 52, { size: 1, color: TEXT_DIM });
   // Row marker under the portrait: brass for the front row.
@@ -218,8 +219,8 @@ function drawCard(ctx: CanvasRenderingContext2D, c: Character, i: number, select
 
 import { armorClass as armorClassOf } from '../game/party.ts';
 
-/** Whether the automap marks a feature: not an event, and not a person who is not there now. */
-export const onAutomap = (world: Pick<World, 'present'>, f: Feature): boolean => f.kind !== 'event' && world.present(f);
+/** Whether the automap marks a feature: not an event, and not a person who is not there now. A feature of another map than the party's names it. */
+export const onAutomap = (world: Pick<World, 'present'>, f: Feature, on?: string): boolean => f.kind !== 'event' && world.present(f, on);
 
 /**
  * The live groups the automap marks: in view, or on a seen square within two steps of the party; none

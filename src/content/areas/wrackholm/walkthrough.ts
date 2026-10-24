@@ -549,10 +549,10 @@ export const walkthrough: Walkthrough = (ok) => {
   const pender = f6.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
   clock(w, 12);
   w.world.travel(f6.id, pender.x, pender.y);
-  ok(!w.world.present(pender), 'by day nobody on the shingle rows out to the ship');
+  ok(!w.world.present(pender, f6.id), 'by day nobody on the shingle rows out to the ship');
   clock(w, 23);
   w.world.travel(f6.id, pender.x, pender.y);
-  ok(w.world.present(pender) && meet(pender, w.party, heard(w.world, pender)).text.startsWith('An old man sits on a thwart'), 'by night Dando sits in his boat on the shingle');
+  ok(w.world.present(pender, f6.id) && meet(pender, w.party, heard(w.world, pender)).text.startsWith('An old man sits on a thwart'), 'by night Dando sits in his boat on the shingle');
   w.party.gold += 20;
   const rowed = take(pender.passage![0], w.world, w.party);
   ok(rowed.taken && w.world.state.mapId === ship.id && w.world.hour < 6, 'he rows the company out, and it comes aboard by night');

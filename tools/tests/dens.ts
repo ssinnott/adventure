@@ -30,7 +30,7 @@ const DEN: Den = {
 };
 const PACE = 1440, UNTIL = denBurnt('rookery', DEN.id);
 const FIXTURE: MapDef = {
-  id: 'rookery', name: 'Rookery', kind: 'outdoor', density: 'country',
+  id: 'rookery', name: 'Rookery', kind: 'outdoor', region: 'shelf', density: 'country',
   start: { x: 0, y: 0, facing: NORTH },
   rows: Array.from({ length: 7 }, () => ','.repeat(13)),
   features: [DEN],

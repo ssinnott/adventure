@@ -13,6 +13,7 @@ export const DOWNS_E3: MapDef = {
   kind: 'outdoor',
   density: 'core',
   band: [3, 4],
+  region: 'shelf',
   start: { x: 31, y: 10, facing: WEST },
   rows: [
     ',,,,,,,,,,,fffffffffffffffff~fff',

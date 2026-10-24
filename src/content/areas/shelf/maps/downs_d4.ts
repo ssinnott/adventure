@@ -14,6 +14,7 @@ export const DOWNS_D4: MapDef = {
   kind: 'outdoor',
   density: 'country',
   band: [4, 5],
+  region: 'shelf',
   start: { x: 29, y: 0, facing: SOUTH },
   rows: [
     ',,,,,,,,MM,,,,,,,,,,,,,,,,,,,==,',

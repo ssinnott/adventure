@@ -291,7 +291,7 @@ function theNightLight(w: Walk): void {
     const then = w.world.state.minutes;
     w.world.state.minutes = Math.floor(then / MINUTES_PER_DAY) * MINUTES_PER_DAY + 23 * 60;
     w.world.travel('upperwater_c3', NYNKE.x, NYNKE.y);
-    const seen = { brine: w.world.walks(BRINE, BRINE.x, BRINE.y) && !w.world.ended(BRINE), glow: w.world.present(GLOW) };
+    const seen = { brine: w.world.walks(BRINE, BRINE.x, BRINE.y, C3.id) && !w.world.ended(BRINE), glow: w.world.present(GLOW, C3.id) };
     w.world.state.minutes = then;
     return seen;
   };
@@ -499,7 +499,7 @@ function picksAndChart(ok: (cond: boolean, msg: string) => void): void {
   ok(withPicks === `A locked chest. ${picker} picks the lock. You open the chest: 40 gold, ${item('torch').name}. | 40 | spent` && withoutPicks === 'A locked chest. Locked. | 0 | shut' && thiefStanding.includes(`${thief.name} picks the lock.`),
     `the picks bought open a locked chest that the same company without them, its thief down, cannot ("${withPicks}" against "${withoutPicks}"); its thief standing opens it born to it`);
 
-  const hall: MapDef = { id: 'fx_chart_hall', name: 'Chart hall', kind: 'dungeon', start: { x: 5, y: 5, facing: NORTH }, rows: Array<string>(11).fill('...........') };
+  const hall: MapDef = { id: 'fx_chart_hall', name: 'Chart hall', kind: 'dungeon', region: 'shelf', start: { x: 5, y: 5, facing: NORTH }, rows: Array<string>(11).fill('...........') };
   /** How many squares west of the company the automap takes, standing in the middle of an open hall. */
   const reach = (q: Party): number => {
     const rng = makeRng(41), world = new World({ [hall.id]: new GameMap(hall) }, q, rng);

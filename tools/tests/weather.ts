@@ -10,7 +10,8 @@ import type { Season } from '../../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../../src/game/weather.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import type { Climate, RegionId, Sky, Weather } from '../../src/game/weather.ts';
-import { START_MINUTES } from '../../src/game/world.ts';
+import { START_MINUTES, regionOf } from '../../src/game/world.ts';
+import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { GameMap, HILL_DRAG, DRAG } from '../../src/game/map.ts';
 import type { Terrain } from '../../src/game/map.ts';
 import { SOUTH } from '../../src/game/types.ts';
@@ -149,6 +150,15 @@ export function weather(): void {
     ok(!crossings(marked('hearth'), []).length && crossings(marked('shelf'), []).length === 1 && namedCrossings(marked('hearth'), []).length === 1 && namedCrossings(marked('hearth'), [door]).length === 2,
       'an exit marked as the crossing, with the two regions it joins, crosses alone, and between two others does not; beside a written one it is a second crossing named, which is refused');
   }
+  { // No sky is lent (#945): a map that names no region, asked its sky, throws and names itself and the square.
+    const said = (f: () => unknown): string => { try { f(); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } };
+    const bare: MapDef = { id: 'fx_bare', name: 'Bare', kind: 'dungeon', start: { x: 1, y: 1, facing: SOUTH }, rows: ['###', '#.#', '###'] };
+    const party = defaultParty(makeRng(1)), w = new World(buildMaps(), party, makeRng(1));
+    const made = said(() => new World({ fx_bare: new GameMap(bare) }, party, makeRng(1)));
+    const asked = said(() => w.walks({ when: { sky: 'fog' } }, 0, 0, 'fx_nowhere')), sea = said(() => regionOf(w.maps[OUTDOORS], 0, 0));
+    ok(made === "map 'fx_bare' names no region, nor does a zone at 1,1" && asked === "unknown map 'fx_nowhere'" && sea === `map '${OUTDOORS}' names no region, nor does a zone at 0,0`,
+      `a World on a map that names no region throws, naming it (${made}); so does a sky asked of a map it has not got (${asked}) or of an outdoors square no zone holds (${sea})`);
+  }
 }
 
 /**
@@ -177,7 +187,8 @@ export function crossings(defs: readonly MapDef[], written: readonly Crossing[] 
     const to = defs.find((d) => d.id === e.to);
     if (!to) { out.push(`${def.id} ${e.x},${e.y} -> ${e.to}, no map`); continue; }
     if (def.kind === 'outdoor' && to.kind === 'outdoor') continue;
-    const a = def.region ?? 'shelf', b = to.region ?? 'shelf';
+    const a = def.region, b = to.region;
+    if (!a || !b) { out.push(`${def.id} ${e.x},${e.y} (${a ?? 'no region'}) -> ${to.id} (${b ?? 'no region'})`); continue; }
     if (a === b || e.crosses === `${a} ${b}` || written.some((o) => def.id === o.from && e.x === o.x && e.y === o.y && e.to === o.to && `${a} ${b}` === o.regions)) continue;
     out.push(`${def.id} ${e.x},${e.y} (${a}) -> ${to.id} (${b})`);
   }
