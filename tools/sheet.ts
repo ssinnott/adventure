@@ -1,5 +1,6 @@
 // The contact sheet: every new map, monster and interior of a pull request on one page, for the owner
 // to judge from pictures rather than a checkout (EXPANSION §5.7).
+//
 //   node tools/sheet.ts out.png --area thornmark
 //   node tools/sheet.ts out.png [--maps thornhold,grove1] [--monsters tm_ogre] [--interiors green_man]
 //   node tools/sheet.ts out.png --changed origin/main

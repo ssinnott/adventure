@@ -1,6 +1,8 @@
 // Save and load. The save is the world state, the party and the rng state; content is never saved,
 // so a map edit shows up in an old save the next time it is loaded. localStorage in the browser;
-// tests pass their own store.
+// tests pass their own store. `SAVE_VERSION` is the save's version, which the upgrades of
+// game/upgrades.ts bring an older save to on load; a save that will not load gives its reason
+// (`load`, #945).
 import type { WorldState } from './world.ts';
 import type { Party } from './party.ts';
 import { UPGRADES } from './upgrades.ts';

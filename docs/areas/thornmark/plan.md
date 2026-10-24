@@ -344,7 +344,7 @@ Its content is in `src/content/areas/thornmark/` (maps, monsters, items, its cha
 quest, The Grove Stone, in `chapter.ts`, its side quests, The Lost Expedition and #56's six on the
 built maps (#219), in `quests.ts`, climate and its part of the world map) and its businesses' rooms
 in `src/ui/interiors/thornmark/`. The systems it runs on, the level cap and the spells, classes and
-traits that carry a company to it included, are in [SLICE.md](../SLICE.md) ("The road to level 10").
+traits that carry a company to it included, are in [SLICE-history.md](../../archive/SLICE-history.md) ("The road to level 10").
 Its ids: the area, its zone and its map are `thornmark`, the Deepthorn `deepthorn`, the town
 `thornhold`, the Grove Roots `grove1` and the Cut Stone `grove2`.
 

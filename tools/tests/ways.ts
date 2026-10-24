@@ -1,7 +1,7 @@
-// The outdoor square a map is entered from (tools/ways.ts), which the contact sheet centres its crop of
-// the world map on (#638). A way in by an exit or a Rift, the gate, comes before a crossing's seller,
-// whose end is the ship's port and not the town, even when the seller's map is listed first; a map
-// with a crossing alone keeps the seller, since no gate leads in.
+// The outdoor square a map is entered from (tools/kit/ways.ts), which the contact sheet centres its
+// crop of the world map on (#638). A way in by an exit or a Rift, the gate, comes before a
+// crossing's seller, whose end is the ship's port and not the town, even when the seller's map is
+// listed first; a map with a crossing alone keeps the seller, since no gate leads in.
 import { MAP_DEFS, ATLAS } from '../../src/content/index.ts';
 import { worldPoint } from '../../src/game/atlas.ts';
 import { waysOut, entrance } from '../kit/ways.ts';

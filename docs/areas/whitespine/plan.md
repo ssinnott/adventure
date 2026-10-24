@@ -1200,7 +1200,7 @@ planned no more (§9, #499's 12; #500's 1; #501's 16; #502's 11; #504's 11; #508
 
 Its ground (#543): peaks (`A`) and cliffs (`|`), the mountain's rock to walk into, see and climb,
 with the road through them plain road, so the scaffold drafts each box square for square (J11's 202
-peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (docs/SLICE.md).
+peaks, I11's 48 peaks and 64 cliffs) and the view draws a summit and a face (docs/archive/SLICE-history.md).
 
 The chapter, on the places built (#505):
 

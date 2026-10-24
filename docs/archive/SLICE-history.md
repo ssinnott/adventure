@@ -1,3 +1,10 @@
+> History, not kept up to date: `docs/SLICE.md` as it stood when #1023 cut it, whole and in order
+> under its own headings, its links still written from `docs/`. What a session needs of the systems
+> is [SYSTEMS.md](../SYSTEMS.md) now, and a row to each file, made from its header,
+> [CODEMAP.md](../CODEMAP.md). The hand-written code map, the Checks (each suite's header and
+> EXPANSION §5 say them now), the tools' usage (each tool's header) and the "Decided by" lists stand
+> here and nowhere else.
+
 # The vertical slice (M0) and the road to level 10
 
 What is playable now, what is stubbed, and where things live: the systems. What each area holds is
