@@ -1,31 +1,35 @@
 // The one quest walked through (EXPANSION §5.8): a new game played by the game's own moves, one step
 // of a chapter at a time, and each step checked before and after. Each area's walkthrough
 // (src/content/areas/<area>/walkthrough.ts) writes its chapter's plays with these; Thornmark's plays
-// the chain, and again with Thornmark taken early. Nothing in the game imports this.
+// the chain, and again with Thornmark taken early. Nothing in the game imports this. The helpers the
+// walkthroughs wrote out each for itself are here once (#985), the floods over a map's squares in
+// grid.ts beside it.
 //
 // A step is checked as it comes up: the goal the log shows is one of the chapter's, placed at a
 // built map and named in its words; the company's level, the curve's for the step, sits in that
 // map's band; the play finishes it (every fight it needs is won at least once in ten by the gate's
 // bot at that level, and the goal moves on); and a person who takes an item stands at the step's
 // place. Every goal of every chapter has to come up in some run (`everyGoalWalked`).
-import { makeRng } from '../src/lib/engine/rng.ts';
-import { buildMaps } from '../src/content/maps.ts';
-import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST } from '../src/content/index.ts';
-import { CURVE } from '../src/content/progression.ts';
-import { World } from '../src/game/world.ts';
-import { companyLevel, defaultParty } from '../src/game/party.ts';
-import type { Party } from '../src/game/party.ts';
-import { meet, heard, handIns, personFlags } from '../src/game/people.ts';
-import type { Person } from '../src/game/people.ts';
-import { questLog, questMarks, questNews, holds } from '../src/game/quests.ts';
-import type { Chapter, QuestCond, QuestView, When } from '../src/game/quests.ts';
-import { Pilot } from '../src/game/pilot/pilot.ts';
-import { headlessGame, drive } from './kit/headless.ts';
-import { homeMap } from '../src/game/atlas.ts';
-import { useShrine } from '../src/game/wilds.ts';
-import type { Feature } from '../src/game/map.ts';
-import type { Facing } from '../src/game/types.ts';
-import { winRate, gateOpts } from './kit/fight.ts';
+import { makeRng } from '../../src/lib/engine/rng.ts';
+import { buildMaps } from '../../src/content/maps.ts';
+import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST } from '../../src/content/index.ts';
+import { CURVE } from '../../src/content/progression.ts';
+import { World } from '../../src/game/world.ts';
+import type { MoveResult } from '../../src/game/world.ts';
+import { MINUTES_PER_DAY } from '../../src/game/calendar.ts';
+import { companyLevel, defaultParty, xpForLevel } from '../../src/game/party.ts';
+import type { Party } from '../../src/game/party.ts';
+import { meet, heard, answer, handIns, personFlags } from '../../src/game/people.ts';
+import type { Person } from '../../src/game/people.ts';
+import { questLog, questMarks, questNews, holds } from '../../src/game/quests.ts';
+import type { Chapter, PageView, QuestCond, QuestView, When } from '../../src/game/quests.ts';
+import { Pilot } from '../../src/game/pilot/pilot.ts';
+import { headlessGame, drive } from './headless.ts';
+import { homeMap } from '../../src/game/atlas.ts';
+import { useShrine } from '../../src/game/wilds.ts';
+import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
+import type { Facing } from '../../src/game/types.ts';
+import { winRate, gateOpts } from './fight.ts';
 
 type Ok = (cond: boolean, msg: string) => void;
 
@@ -157,7 +161,7 @@ export function meetWho(w: Walk, what: string): void {
 }
 
 /** The chapter a goal's words come from, and the goal. */
-function goalOf(text: string): { chapter: Chapter; at: string } | undefined {
+function chapterOf(text: string): { chapter: Chapter; at: string } | undefined {
   for (const c of THE_QUEST.chapters) { const g = c.goals.find((x) => x.text === text); if (g) return { chapter: c, at: g.at }; }
   return undefined;
 }
@@ -199,7 +203,7 @@ export function playChapter(w: Walk, chapter: Chapter, steps: readonly Step[], h
   let level = 0;
   for (const s of steps) {
     const v = quest(w), goal = v?.goal ?? null;
-    const g = goal ? goalOf(goal) : undefined;
+    const g = goal ? chapterOf(goal) : undefined;
     if (goal) walked(w.ok).add(goal);
     const tag = `${how}, ${chapter.title}, ${s.name}`;
     w.ok(!!g && g.chapter === chapter, `${tag}: the goal is the chapter's (${goal})`);
@@ -301,4 +305,225 @@ export function ending(w: Walk, how: string, upTo?: Chapter): string[] {
   const twice = [...ends.filter((e) => w.news.filter((x) => x === e).length !== 1), ...(last ? [] : [end].filter((e) => w.news.includes(e)))];
   w.ok(!twice.length && w.news.filter((x) => x === `New quest: ${THE_QUEST.title}.`).length === 1, `${how}: the quest begins once, and each chapter's end${last ? ' and the quest\'s' : ` to ${upTo?.title}`} is said once${twice.length ? ' -> ' + twice.join(' ') : ''}`);
   return (v?.pages ?? []).filter((p) => upto.includes(p.def as Chapter)).flatMap((p) => p.entries.map((e) => `${p.def.id}.${e.id}`)).sort();
+}
+
+// ---- What the walkthroughs wrote out each for itself (#985) ------------------------------------
+
+/** What a move said, or its kind if it did not move: `World.move`'s answer as one line. */
+export const said = (r: MoveResult): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
+
+/** Meet a person who stands at `map`, as the game does, and give back what they say; the log is heard after. */
+export function hear(w: Walk, map: string, p: Person): string {
+  w.world.travel(map, p.x, p.y);
+  const said = meet(p, w.party, heard(w.world, p)).text;
+  listen(w);
+  return said;
+}
+
+/**
+ * Meet a person who stands at `map` and give the answer that sets `by` (null: the one that sets
+ * nothing), or the one labelled `by.label`; it has to be one of the answers, and the check names
+ * the person up to the first comma of their name (`whole`: all of it). Gives back what the answer
+ * says; the log is heard after.
+ */
+export function answerTo(w: Walk, map: string, p: Person, by: string | null | { label: string }, whole = false): string {
+  w.world.travel(map, p.x, p.y);
+  const m = meet(p, w.party, heard(w.world, p)), name = whole ? p.name : p.name.split(',')[0], asked = m.choice?.ask ?? 'no question';
+  const label = by !== null && typeof by === 'object' ? by.label : undefined;
+  const a = m.choice?.answers.find((x) => label !== undefined ? x.label === label : (x.sets ?? null) === by);
+  w.ok(!!a, label !== undefined ? `${name} asks, and '${label}' is an answer (${asked})` : `${name} asks, and an answer sets ${by ?? 'nothing'} (${asked})`);
+  const said = a ? answer(a, w.party) : '';
+  listen(w);
+  return said;
+}
+
+/** The first page of the quest `id`, as the log shows it now. */
+export const page = (w: Walk, id: string): PageView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
+
+/** The quest `id`'s goal as the log shows it now. */
+export const goal = (w: Walk, id: string): string => page(w, id)?.goal ?? '(no goal)';
+
+/** Chapter `c`'s goal whose words begin with `start`. */
+export const goalOf = (c: Chapter, start: string): string => c.goals.find((g) => g.text.startsWith(start))!.text;
+
+/** The entries written on chapter `c`'s page, by id. */
+export const written = (w: Walk, c: Chapter): string[] => (quest(w)?.pages.find((p) => p.def === c)?.entries ?? []).map((e) => e.id);
+
+/** Whether the quest titled `title` has begun: its news said. */
+export const began = (w: Walk, title: string): boolean => w.news.includes(`New quest: ${title}.`);
+
+/**
+ * The quest `id` done, with no goal: its entries `want` written and none of `not`, and its end said
+ * once. It goes by the title of its first page.
+ */
+export function reads(w: Walk, id: string, want: readonly string[], not: readonly string[], how: string): void {
+  const pg = page(w, id), ids = pg?.entries.map((e) => e.id) ?? [], title = pg?.def.title ?? id;
+  const done = w.news.filter((n) => n === `Quest complete: ${title}.`).length;
+  w.ok(!!pg?.done && pg.goal === null && want.every((e) => ids.includes(e)) && !not.some((e) => ids.includes(e)) && done === 1,
+    `${how}: ${title} is done with no goal, its entries ${ids.join(', ')}, and said complete once (${done})`);
+}
+
+/**
+ * Whether `f`, a person or a thing on `map`, is there: the company taken to its square, and `f`
+ * placed on the map it is written on (a box's square found where the world lays the box).
+ */
+export const there = (w: Walk, map: string, f: Feature): boolean => { w.world.travel(map, f.x, f.y); return w.world.present(f, map); };
+
+/** Where the company stands: its map and square. */
+export const here = (w: Walk): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
+
+/**
+ * Open a chest, 'map:id': the company at its square, the chest marked used and its gold and items
+ * taken, then the log heard (not if `listening` is false). A chest already open fails the step
+ * (`fresh` 'check', the default), is passed by ('skip') or is opened again ('any'). Gives back the
+ * items it held.
+ */
+export function open(w: Walk, at: string, fresh: 'check' | 'skip' | 'any' = 'check', listening = true): readonly string[] {
+  const [map, id] = ref(at);
+  const c = def(map)?.features?.find((f) => f.kind === 'chest' && f.id === id);
+  if (c?.kind !== 'chest') { w.ok(false, `there is a chest ${at}`); return []; }
+  w.world.travel(map, c.x, c.y);
+  if (fresh === 'skip' && w.world.used(id)) return [];
+  if (fresh === 'check') w.ok(!w.world.used(id), `the chest ${at} is there to open`);
+  w.world.markUsed(id);
+  w.party.gold += c.gold;
+  w.party.bag.push(...c.items);
+  if (listening) listen(w);
+  return c.items;
+}
+
+/**
+ * Search from a square, facing a way, up to twenty times; found, walk two steps on through what was
+ * found, into the room whose event `room` the stepping in uses. The log is heard after.
+ */
+export function search(w: Walk, map: string, x: number, y: number, facing: Facing, room: string): boolean {
+  w.world.travel(map, x, y, facing);
+  let found = false;
+  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+  const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
+  listen(w);
+  return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
+}
+
+/** The map whose id is `id`. */
+export const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
+
+/** The `n`th person (the first, unless told) on `map` whose name is `name`. */
+export const npc = (map: string, name: string, n = 0): Person => mapOf(map).features!.filter((f) => f.kind === 'npc' && f.name === name)[n] as Person;
+
+/** The person on `map` at x, y whose name begins `name` (and who hires with `flag`, if one is given); there has to be one. */
+export function who(map: string, x: number, y: number, name: string, flag?: string): Person {
+  const p = MAP_DEFS.find((d) => d.id === map)?.features?.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name) && (flag === undefined || f.flag === flag));
+  if (!p) throw new Error(`no ${name} at ${map} ${x},${y}`);
+  return p;
+}
+
+/** The features of `kind` on map `d`. */
+export const ofKind = <K extends Feature['kind']>(d: MapDef, kind: K): Extract<Feature, { kind: K }>[] => d.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
+
+/** The event `id` on `map`. */
+export const ev = (map: string, id: string): Feature => mapOf(map).features!.find((f) => f.kind === 'event' && f.id === id)!;
+
+/** The chest `id` on map `d`. */
+export const chest = (d: MapDef, id: string): Extract<Feature, { kind: 'chest' }> => d.features!.find((f): f is Extract<Feature, { kind: 'chest' }> => f.kind === 'chest' && f.id === id)!;
+
+/** What chest `id` on map `d` holds, its gold and its items, as words. */
+export const stock = (d: MapDef, id: string): string => { const c = d.features!.find((f) => f.kind === 'chest' && f.id === id); return c?.kind === 'chest' ? `${c.gold} ${c.items.join()}` : 'none'; };
+
+/** What the people on `map` teach. */
+export const taught = (map: string) => (mapOf(map).features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
+
+/** The quest `id` as the log shows it now. */
+export const log = (w: Walk, id: string): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+
+/** Whether event or group `id` of `map` is there: the company taken to its square, and it placed on the map it is written on. */
+export function shows(w: Walk, map: string, id: string): boolean {
+  const d = MAP_DEFS.find((m) => m.id === map)!;
+  const f = [...(d.features ?? []), ...(d.encounters ?? [])].find((x) => 'id' in x && x.id === id) as Feature | EncounterDef;
+  w.world.travel(map, f.x, f.y);
+  return 'monsters' in f ? w.world.walks(f, f.x, f.y, map) && !w.world.ended(f) : w.world.present(f, map);
+}
+
+/** Whether group `id` of `map` still stands there: the company taken to it. */
+export function alive(w: Walk, map: string, id: string): boolean {
+  const g = MAP_DEFS.find((d) => d.id === map)!.encounters!.find((e) => e.id === id)!;
+  w.world.travel(map, g.x, g.y);
+  return w.world.liveGroups().some((l) => l.def.id === id);
+}
+
+/** Whether group 'map:id' still stands there: the company taken to it. */
+export const live = (w: Walk, at: string): boolean => alive(w, ...ref(at));
+
+/** An iron key into the party's bag. */
+export const key = (p: Party): void => { p.bag.push('key_iron'); };
+
+/**
+ * A locked chest pressed on a game of its own, the company dressed by `dress` first: what the log
+ * says, whether the chest is spent, whether its items are taken and how many iron keys are left.
+ */
+export const press = (map: string, facing: Facing, c: Extract<Feature, { kind: 'chest' }>, dress: (p: Party) => void): string => {
+  const g = headlessGame(4), p = g.party;
+  dress(p);
+  g.world.travel(map, c.x, c.y, facing);
+  const there = g.world.featureHere(), from = g.log.length;
+  g.enterCell();
+  if (there) { g.interact(there); g.interact(there); }
+  return `${g.log.slice(from).join(' ')} | ${g.world.used(c.id) ? 'spent' : 'shut'} | ${c.items.every((i) => p.bag.includes(i)) ? 'taken' : 'left'} | ${p.bag.filter((i) => i === 'key_iron').length} keys`;
+};
+
+/** Every chest of every map, with its map: read once, when first asked. */
+let CHESTS: { map: string; f: Extract<Feature, { kind: 'chest' }> }[] | undefined;
+/** The chests that hold item `id`, each 'map:id', joined. */
+export const holding = (id: string): string => (CHESTS ??= MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f): f is Extract<Feature, { kind: 'chest' }> => f.kind === 'chest').map((f) => ({ map: d.id, f }))))
+  .filter(({ f }) => f.items.includes(id)).map(({ map, f }) => `${map}:${f.id}`).join();
+
+/** How many iron keys the party carries. */
+export const keys = (w: Walk): number => w.party.bag.filter((i) => i === 'key_iron').length;
+
+/** The experience the party holds, every member's together. */
+export const xpOf = (p: Party): number => p.members.reduce((t, m) => t + m.xp, 0);
+
+/** The party's thief dead. */
+export const thiefDown = (p: Party): void => { p.members.find((m) => m.cls === 'thief')!.conditions.push('dead'); };
+
+/** Whether two things are the same, field by field. */
+export const same = (a: unknown, b: unknown): boolean => JSON.stringify(a) === JSON.stringify(b);
+
+/** The clock set on to hour `hour` of the next day. */
+export const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
+
+/** The clock set to hour `h` of the day it is. */
+export const hour = (w: Walk, h: number): void => { w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + h * 60; };
+
+/** A new walk whose company stands at `level`: every member set to it, with the experience it takes. */
+export const walkAt = (ok: Ok, level: number): Walk => {
+  const w = newWalk(ok);
+  w.level = level;
+  for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+  return w;
+};
+
+/** Step `s` played at `level`: every member set to it, with the experience it takes, first. */
+export const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level}`, play: (w) => {
+  for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
+  w.level = level;
+  s.play(w);
+} });
+
+/** Vask hires the company: before the chapter, or its last step for a company that came early. */
+export const HIRE: Step = { name: 'the hire', play: (w) => meetWho(w, 'q_ashcombe') };
+
+/** A new game hired by Vask, the way the chapter begins in order. */
+export function hired(w: Walk): void {
+  listen(w);
+  w.ok(!quest(w), 'a new game has no quest yet');
+  HIRE.play(w);
+  w.ok(w.news.at(-1) === 'New quest: The Dimming.', `Vask's hire begins the one quest (${w.news.at(-1)})`);
+}
+
+/** The Cargo Ledger found in Brandy Hole and given to Hale, as his first hand-in. */
+export function ledgerGiven(w: Walk): void {
+  open(w, 'greywater2:gw2_ledger');
+  meetWho(w, 'q_greywater_done');
+  w.ok(!!w.party.flags.q_greywater_done && !w.party.bag.includes('greywater_ledger'), 'Hale takes the ledger');
 }

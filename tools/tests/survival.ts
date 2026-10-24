@@ -4,7 +4,7 @@
 // a seed: finished, or where the company fell, at what level and when. It takes minutes, so it runs only
 // when named (`ASKED`, tools/test.ts): node tools/test.ts survival.
 import { ok } from './lib.ts';
-import { pilotRun } from '../walk.ts';
+import { pilotRun } from '../kit/walk.ts';
 import { randomParty } from '../../src/game/party.ts';
 import { THE_QUEST } from '../../src/content/index.ts';
 
