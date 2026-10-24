@@ -4,10 +4,10 @@
 // as it reads the zones', groups', monsters' and exits' own fields: the tables they moved from are gone
 // (#969), and a row given twice, on two areas or twice on one, is refused (`gather`).
 import { existsSync, readdirSync } from 'node:fs';
-import { AREAS } from '../src/content/index.ts';
-import type { AreaChecks, Owes } from '../src/content/area.ts';
+import { AREAS } from '../../src/content/index.ts';
+import type { AreaChecks, Owes } from '../../src/content/area.ts';
 
-const folder = new URL('../src/content/areas/', import.meta.url);
+const folder = new URL('../../src/content/areas/', import.meta.url);
 const ids: readonly string[] = AREAS.map((a) => a.id);
 const has = (id: string): boolean => existsSync(new URL(`${id}/checks.ts`, folder));
 const stray = readdirSync(folder, { withFileTypes: true }).filter((d) => d.isDirectory() && !ids.includes(d.name) && has(d.name));

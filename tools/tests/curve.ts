@@ -26,7 +26,7 @@ import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, choices } from '../../src/game/people.ts';
 import { xpForLevel, killPay, MAX_LEVEL } from '../../src/game/party.ts';
 import { FIXTURE, LAIR } from './enclave.ts';
-import { CHECKS, once } from '../checks.ts';
+import { CHECKS, once } from '../kit/checks.ts';
 import { ok, owed, withDefs } from './lib.ts';
 
 /**

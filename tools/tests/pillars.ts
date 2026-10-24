@@ -30,7 +30,7 @@ import { hoardLine } from '../../src/game/dens.ts';
 import { ENDINGS } from '../../src/content/endings.ts';
 import type { Ending } from '../../src/content/endings.ts';
 import { PAGE, pageLines } from '../../src/ui/ending.ts';
-import { areaRows, gatherLists, once } from '../checks.ts';
+import { areaRows, gatherLists, once } from '../kit/checks.ts';
 import { ok, owed, familyModules, withDefs } from './lib.ts';
 
 /**

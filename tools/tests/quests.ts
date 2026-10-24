@@ -25,7 +25,7 @@ import { spentId } from '../../src/game/wilds.ts';
 import { readId } from '../../src/game/inscriptions.ts';
 import { FIXTURE, LAIR } from './enclave.ts';
 import type { MapState } from '../../src/game/world.ts';
-import { areaRows, gather, once } from '../checks.ts';
+import { areaRows, gather, once } from '../kit/checks.ts';
 import { ok, owed } from './lib.ts';
 
 /**

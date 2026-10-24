@@ -27,7 +27,7 @@ import type { ClassId } from '../../src/game/party.ts';
 import { hits } from '../../src/game/items.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { GEAR, KIT, RUNGS_TWICE, companyAt } from '../harness.ts';
-import { CHECKS, once } from '../checks.ts';
+import { CHECKS, once } from '../kit/checks.ts';
 import { gateCompany } from '../gate.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { personGives } from '../../src/game/people.ts';

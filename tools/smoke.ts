@@ -8,7 +8,7 @@ import { createServer } from './server.ts';
 import { open, type Load } from './kit/browser.ts';
 import type { View } from './kit/sweep.ts';
 import { shardAsked, sweepAsked } from './sweep.ts';
-import { GROUND_SAMPLES } from './grounds.ts';
+import { GROUND_SAMPLES } from './kit/grounds.ts';
 import type { MonsterSprite } from '../src/content/index.ts';
 import { SPAN, SPAN_SLACK } from '../src/ui/sprites.ts';
 import { SPRITES } from '../src/ui/monsters/index.ts';
