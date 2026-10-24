@@ -11,7 +11,7 @@ import type { Party } from '../../src/game/party.ts';
 import { spell, spellsFor } from '../../src/game/spells.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { nightCost, stay, buyRations, RATIONS, RATIONS_PRICE, cure, donate, DONATION, sell, spellPrice, joined, payFee, hallOffers, learnSpell, mayTrain, train } from '../../src/game/services.ts';
-import { ok } from './lib.ts';
+import { ok, fxFlag } from './lib.ts';
 
 type Inn = Extract<Feature, { kind: 'inn' }>;
 type Hall = Extract<Feature, { kind: 'guild' }>;
@@ -24,7 +24,7 @@ const unchanged = (p: Party, before: string): boolean => JSON.stringify(p) === b
 export function services(): void {
   // The inn: a night at its price a member, every member rested, the world slept to morning and the
   // next of its nights counted; short of the price, nothing.
-  const inn: Inn = { kind: 'inn', x: 0, y: 0, name: 'The Fixture', price: 7, interior: 'rime_inn', nights: ['fx_night_1', 'fx_night_2'] };
+  const inn: Inn = { kind: 'inn', x: 0, y: 0, name: 'The Fixture', price: 7, interior: 'rime_inn', nights: [fxFlag('fx_night_1'), fxFlag('fx_night_2')] };
   let slept = 0;
   const world = { sleepUntilMorning: (): void => { slept++; } };
   const guests = company(200);

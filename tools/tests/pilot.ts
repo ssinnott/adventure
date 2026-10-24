@@ -27,7 +27,7 @@ import { ChoiceScreen, InteriorScreen } from '../../src/ui/screens.ts';
 import { randomParty } from '../../src/game/party.ts';
 import { CLASSES, RACES, companyLevel } from '../../src/game/party.ts';
 import type { RaceId } from '../../src/game/party.ts';
-import { ok, fxMap } from './lib.ts';
+import { ok, fxMap, fxFlag } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
 import { keep, need, needs, better, reserve, spare } from '../../src/game/pilot/keep.ts';
 import type { Need } from '../../src/game/pilot/keep.ts';
@@ -347,7 +347,7 @@ function known(): void {
     `a secret door seen reads as a wall, its legend letter gone (${JSON.stringify(door)})`);
   ok(k.cell('harrow', fx, fy) === undefined && all.cell('harrow', fx, fy) !== undefined, 'an unseen square has no cell');
   // An exit not there yet (`after`, #749) is floor to the eye, and an exit once it is.
-  const late: MapDef = { id: 'fx_after', name: 'After', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: 'harrow', tx: 1, ty: 1, after: { flag: 'fx_ready' } }] };
+  const late: MapDef = { id: 'fx_after', name: 'After', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'], exits: [{ x: 3, y: 1, to: 'harrow', tx: 1, ty: 1, after: { flag: fxFlag('fx_ready') } }] };
   g.maps.fx_after = new GameMap(late);
   g.world.travel('fx_after', 1, 1, EAST);
   const none = k.exits('fx_after').length, ground = k.cell('fx_after', 3, 1);
@@ -875,7 +875,7 @@ function walking(): void {
   ok(zp.goal === null && z.world.state.x === zx && z.world.state.y === zy && z.world.zone?.id === 'thornmark', `a goal in Thornmark's own squares is walked to on the outdoors (${z.world.state.mapId} ${z.world.state.x},${z.world.state.y})`);
 
   // A gate it cannot know is learnt by trying it: three blocks and the goal is shut, its square told to the explorer.
-  const bar: MapDef = { id: 'fx_bar', name: 'Bar', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '####.#', '####.#', '######'], gates: [{ x: 3, y: 1, needFlag: 'fx_never', blockedText: 'The bar is down.' }] };
+  const bar: MapDef = { id: 'fx_bar', name: 'Bar', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '####.#', '####.#', '######'], gates: [{ x: 3, y: 1, needFlag: fxFlag('fx_never'), blockedText: 'The bar is down.' }] };
   const q = piloted(), qp = q.pilot!, pressed: Action[] = [], said: [string, string?][] = [];
   fixture(q, bar, [1, 1, EAST]);
   qp.toggle(q);
@@ -1131,7 +1131,7 @@ function exploring(): void {
   ok(sp.searched.size === 0 && sp.prefer === null, 'a new game forgets the walls searched and the map preferred');
 
   // A gate learnt by trying it: shut at the third block, gone round, tried again only once a flag has been set since.
-  const bar: MapDef = { id: 'fx_gate', name: 'Gatehouse', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '####.#', '####.#', '######'], gates: [{ x: 3, y: 1, needFlag: 'fx_lift', blockedText: 'The bar is down.' }] };
+  const bar: MapDef = { id: 'fx_gate', name: 'Gatehouse', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '####.#', '####.#', '######'], gates: [{ x: 3, y: 1, needFlag: fxFlag('fx_lift'), blockedText: 'The bar is down.' }] };
   const q = piloted(), qp = q.pilot!, qk = knownOf(q), downs = (): number => q.log.filter((l) => l === 'The bar is down.').length;
   fixture(q, bar, [1, 1, EAST], grid(4, 5));
   qp.toggle(q);
@@ -1350,7 +1350,7 @@ function talking(): void {
 
   // A group's question with a price and a fight: with 100 gold the price, with 5 none open but the fight, so Esc.
   const toll: MapDef = { ...row('fx_toll', 3, []), kind: 'dungeon', encounters: [{ id: 'fx_tollmen', x: 3, y: 1, monsters: ['rat'], choice: { ask: '"Ten gold, or blood."', answers: [
-    { label: 'Pay 10 gold', price: 10, sets: 'fx_toll_paid', says: ['"Pass."'] }, { label: 'Fight', fight: true, says: ['"Blood, then."'] }] } }] };
+    { label: 'Pay 10 gold', price: 10, sets: fxFlag('fx_toll_paid'), says: ['"Pass."'] }, { label: 'Fight', fight: true, says: ['"Blood, then."'] }] } }] };
   const pg = piloted();
   fixture(pg, toll, [2, 1, EAST]);
   const parley = (gold: number): number => { pg.party.gold = gold; pg.parley('fx_tollmen'); const i = pick(pg.top as ChoiceScreen, pg, pg.pilot!); pg.pop(); return i; };
@@ -1379,7 +1379,7 @@ function talking(): void {
 
   // A hand-in: taken at a meeting that holds the item, so its keeper is met again once the company gains it.
   const hg = piloted(), hp = hg.pilot!;
-  fixture(hg, row('fx_yard', 4, [{ kind: 'npc', x: 3, y: 1, name: 'A collector', lines: ['"Bring me a wand."'], quest: [{ item: 'survey_wand', reward: 10, setFlag: 'fx_handed', done: ['"Good."'] }] }]), [1, 1, EAST]);
+  fixture(hg, row('fx_yard', 4, [{ kind: 'npc', x: 3, y: 1, name: 'A collector', lines: ['"Bring me a wand."'], quest: [{ item: 'survey_wand', reward: 10, setFlag: fxFlag('fx_handed'), done: ['"Good."'] }] }]), [1, 1, EAST]);
   hp.brains = [talk];
   hp.toggle(hg);
   drive(hg, Array(20).fill(null));
@@ -1420,7 +1420,7 @@ function talking(): void {
 
   // A person met again once the company sets a flag: the words that wait on it are heard.
   const fg = piloted(), fp = fg.pilot!;
-  fixture(fg, row('fx_watch', 4, [{ kind: 'npc', x: 3, y: 1, name: 'A watcher', lines: ['"Not yet."'], says: [{ after: { flag: 'fx_word' }, lines: ['"Now then."'] }] }]), [1, 1, EAST]);
+  fixture(fg, row('fx_watch', 4, [{ kind: 'npc', x: 3, y: 1, name: 'A watcher', lines: ['"Not yet."'], says: [{ after: { flag: fxFlag('fx_word') }, lines: ['"Now then."'] }] }]), [1, 1, EAST]);
   fp.brains = [talk];
   fp.toggle(fg);
   drive(fg, Array(12).fill(null));
@@ -1432,7 +1432,7 @@ function talking(): void {
   // A person's question, from one at hand: the first answer open that is no way out and has no price.
   const cg = piloted(), cp = cg.pilot!;
   fixture(cg, row('fx_clerk', 3, [{ kind: 'npc', x: 2, y: 1, name: 'A clerk', lines: ['"A case?"'], choice: { ask: '"Whose case?"', answers: [
-    { label: 'Not now', sets: 'fx_no', says: ['"Later."'] }, { label: 'The dear one.', price: 60, sets: 'fx_dear', says: ['"Paid."'] }, { label: 'The plain one.', sets: 'fx_plain', says: ['"Plain."'] }] } }]), [1, 1, EAST]);
+    { label: 'Not now', sets: fxFlag('fx_no'), says: ['"Later."'] }, { label: 'The dear one.', price: 60, sets: fxFlag('fx_dear'), says: ['"Paid."'] }, { label: 'The plain one.', sets: fxFlag('fx_plain'), says: ['"Plain."'] }] } }]), [1, 1, EAST]);
   cp.brains = [talk];
   cp.toggle(cg);
   drive(cg, Array(12).fill(null));

@@ -35,7 +35,7 @@ import { FIXTURE, LAIR, GUARDIAN } from '../kit/rules/enclave.ts';
 import { featureFlags } from '../kit/rules/quests.ts';
 import { groupFlags } from '../../src/game/people.ts';
 import type { QuestCond } from '../../src/game/quests.ts';
-import { ok, owed, withDefs, asked } from './lib.ts';
+import { ok, owed, asked, fxFlag } from './lib.ts';
 import { GATE, landings } from '../kit/rules/gate.ts';
 import { tablesWith } from '../kit/headless.ts';
 import type { Tables } from '../../src/game/tables.ts';
@@ -432,7 +432,7 @@ function fixed(): void {
   // aside for that company, through a save and a load, where one short of the price is fought.
   {
     const toll: Choice = { ask: '"Toll."', answers: [
-      { label: 'Pay', price: 300, sets: 'fx_toll_paid', says: ['He steps aside.'] },
+      { label: 'Pay', price: 300, sets: fxFlag('fx_toll_paid'), says: ['He steps aside.'] },
       { label: 'Refuse', fight: true, says: ['He stands.'] },
     ] };
     const band: EncounterDef = { id: 'fx_toll', x: 2, y: 1, monsters: ['bandit', 'bandit', 'bandit'], aware: 3, roams: false, choice: toll };
@@ -475,7 +475,7 @@ function fixed(): void {
     // in it are the mountain's rock, climbed as it is.
     const far: MapDef = { id: 'fx_far', name: 'Far', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMMMM', 'M,su&V@=M', 'MMMMMMMMM'] };
     ok(stepsFrom(far)(7, 1) === 6, `the walk from a way in crosses steppe, dunes and vines and climbs the volcano and a vent (${stepsFrom(far)(7, 1)} steps over six squares)`);
-    const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: 'f' } }, at(3), at(4)];
+    const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: fxFlag('f') } }, at(3), at(4)];
     ok(nearestWayIn(line, (x) => x).map((g) => g.id).join() === 'g1,g3', 'the groups nearest the way in skip one that comes only after a step');
     // A den's keepers are its camp's hardest fight: won no more often than any of its brood.
     const den: Extract<Feature, { kind: 'den' }> = { kind: 'den', x: 1, y: 1, id: 'd', text: '', breeds: ['rat'], keepers: 'k', brood: ['b'], ask: '', burn: '', burnt: '', gold: 0, items: [] };
@@ -504,16 +504,16 @@ function fixed(): void {
   const unbehind = BEHIND.filter((ref) => { const [map, id] = ref.split(':'); return !MAP_DEFS.find((d) => d.id === map)?.encounters?.find((e) => e.id === id)?.after; });
   ok(!unbehind.length, `every group BEHIND leaves out is a built map's and waits on an after${unbehind.length ? ` (not: ${unbehind.join(', ')})` : ''}`);
   {
-    const said = (id: string, sets: string): Feature => ({ kind: 'event', x: 1, y: 1, id, text: 'Fixture.', once: true, sets });
+    const said = (id: string, sets: string): Feature => ({ kind: 'event', x: 1, y: 1, id, text: 'Fixture.', once: true, sets: fxFlag(sets) });
     const group = (id: string, after?: EncounterDef['after']): EncounterDef => ({ id, x: 1, y: 1, monsters: ['knocker'], ...(after ? { after } : {}) });
     const early: MapDef = { id: 'fx_early', name: '', kind: 'dungeon', start: { x: 0, y: 0, facing: 0 }, rows: [], features: [said('fx_now', 'fx_now')],
-      encounters: [group('fx_late', { flag: 'fx_then' }), group('fx_either', [{ flag: 'fx_then' }, { flag: 'fx_now' }]), group('fx_free')] };
+      encounters: [group('fx_late', { flag: fxFlag('fx_then') }), group('fx_either', [{ flag: fxFlag('fx_then') }, { flag: fxFlag('fx_now') }]), group('fx_free')] };
     const later: MapDef = { ...early, id: 'fx_later', features: [said('fx_then', 'fx_then')], encounters: [] };
     ok(behindOf([{ maps: [early] }, { maps: [later] }]).join() === 'fx_early:fx_late',
       'a group is behind when each of its after\'s alternatives waits on a flag only a later area sets, and met when one waits on its own area\'s or it waits on none (#897)');
   }
   const fx: MapDef = { id: 'deep_mines3', name: '', kind: 'dungeon', start: { x: 0, y: 0, facing: 0 }, rows: [], encounters: [
-    { id: 'ud_mines', x: 1, y: 1, monsters: ['knocker'], after: { flag: 'fx_open' } }, { id: 'fx_kept', x: 2, y: 1, monsters: ['knocker'] }] };
+    { id: 'ud_mines', x: 1, y: 1, monsters: ['knocker'], after: { flag: fxFlag('fx_open') } }, { id: 'fx_kept', x: 2, y: 1, monsters: ['knocker'] }] };
   const ids = (d: MapDef): string => (d.encounters ?? []).map((g) => g.id).join();
   ok(ids(beforeBehind(fx)) === 'fx_kept' && ids(beforeBehind({ ...fx, id: 'fx_elsewhere' })) === 'ud_mines,fx_kept' && beforeBehind({ ...fx, encounters: [fx.encounters![1]] }).encounters!.length === 1,
     'leaving the road behind out drops the group BEHIND names from its map and no other: not its neighbour, nor the same id on another map');

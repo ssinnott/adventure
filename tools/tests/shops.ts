@@ -10,7 +10,7 @@ import type { ItemDef } from '../../src/game/items.ts';
 import { skilled } from '../../src/game/skills.ts';
 import { businessEntries } from '../../src/ui/screens.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { ok, withDefs } from './lib.ts';
+import { ok } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
 import { tablesWith } from '../kit/headless.ts';
 import type { Items } from '../../src/game/tables.ts';

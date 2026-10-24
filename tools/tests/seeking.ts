@@ -12,7 +12,7 @@ import type { QuestDef, QuestCond } from '../../src/game/quests.ts';
 import { seekingQuests, trainersIn, sought, seekId } from '../../src/game/seeking.ts';
 import type { Trainer } from '../../src/game/seeking.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
-import { ok, fxMap } from './lib.ts';
+import { ok, fxMap, fxFlag } from './lib.ts';
 
 export function seeking(): void {
   const rng = makeRng(191), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng);
@@ -52,8 +52,8 @@ export function seeking(): void {
   }
 
   const fletcher: Trainer = { map: 'thornhold', place: 'Thornhold', name: 'Aldric the fletcher', teaches: { cls: 'ranger', prestige: 1 } };
-  const eyrie: Trainer = { map: fxMap('fx_eyrie'), place: 'the Wold', name: 'the scout', teaches: { cls: 'ranger', prestige: 3, asks: 'fx_fane_map', done: { flag: 'fx_map_home' } } };
-  const fane: QuestDef = { id: 'fx_fane_map', title: "Oriel Fane's Map", start: { flag: 'fx_asked' }, entries: [], goals: [] };
+  const eyrie: Trainer = { map: fxMap('fx_eyrie'), place: 'the Wold', name: 'the scout', teaches: { cls: 'ranger', prestige: 3, asks: 'fx_fane_map', done: { flag: fxFlag('fx_map_home') } } };
+  const fane: QuestDef = { id: 'fx_fane_map', title: "Oriel Fane's Map", start: { flag: fxFlag('fx_asked') }, entries: [], goals: [] };
   const trainers = [fletcher, eyrie];
   const r2 = makeRng(192), p2 = defaultParty(TABLES, r2), w2 = new World(TABLES, buildMaps(), p2, r2);
   p2.members[3] = createCharacter(TABLES, 'Brin', 'human', 'ranger', {}, r2);

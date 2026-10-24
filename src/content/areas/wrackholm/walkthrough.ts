@@ -84,6 +84,7 @@ import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { RESPAWN } from '../../../game/keys.ts';
+import type { Flag } from '../../index.ts';
 
 // Another area's chapter, taken from the quest by its id and not from its file (#992).
 const TIDE = THE_QUEST.chapters.find((c) => c.id === 'tide')!;
@@ -900,7 +901,7 @@ const TAM_HOME = (): Person => who('saltmouth', 9, 13, 'Tam');
 
 
 /** The words of a person's that hold `flag` in their `after` (the first such), as said. */
-const words = (p: Person, flag: string): string => (p.says ?? []).find((x) => [x.after ?? []].flat().some((c) => [c.flag ?? []].flat().includes(flag)))?.lines.join('\n\n') ?? `(no words of ${p.name} after ${flag})`;
+const words = (p: Person, flag: Flag): string => (p.says ?? []).find((x) => [x.after ?? []].flat().some((c) => [c.flag ?? []].flat().includes(flag)))?.lines.join('\n\n') ?? `(no words of ${p.name} after ${flag})`;
 
 
 

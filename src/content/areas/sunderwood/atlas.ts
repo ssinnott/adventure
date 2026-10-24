@@ -1,5 +1,5 @@
 // Sunderwood's part of the world map: its two zones, the plates of its town and dungeon, and its
-// sites. docs/areas/sunderwood.md is its brief.
+// sites. docs/areas/sunderwood.md is its state, and docs/areas/sunderwood/ its decisions and plan.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 import { laid } from '../../../game/atlas.ts';
 import { PLAN } from '../../atlas.ts';

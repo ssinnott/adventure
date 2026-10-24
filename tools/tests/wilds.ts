@@ -23,7 +23,7 @@ import { CONTENT, collect, compare } from '../kit/shipped.ts';
 import { judge, measure } from '../kit/rules/density.ts';
 import { texts, lineFaults } from '../kit/rules/pillars.ts';
 import { condFaults } from '../kit/rules/quests.ts';
-import { ok, fxKey } from './lib.ts';
+import { ok, fxKey, fxFlag } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
 
 const FIXTURE: MapDef = {
@@ -51,11 +51,11 @@ const CAMPS: MapDef = {
   rows: Array.from({ length: 3 }, () => ','.repeat(9)),
   features: [
     { kind: 'camp', x: 1, y: 1, name: 'The fire', text: 'A fire-ring on the shingle.', nights: [
-      { after: { flag: 'fx_come' }, sets: 'fx_night1', says: ['She is gone.', 'A boat is out.'] },
-      { sets: 'fx_night2', says: ['Rain on the stones.'] },
+      { after: { flag: fxFlag('fx_come') }, sets: fxFlag('fx_night1'), says: ['She is gone.', 'A boat is out.'] },
+      { sets: fxFlag('fx_night2'), says: ['Rain on the stones.'] },
     ] },
     { kind: 'camp', x: 3, y: 1, text: 'A ring of cold ashes.' },
-    { kind: 'camp', x: 5, y: 1, text: 'A hollow in the rock.', nights: [{ sets: 'fx_quiet' }] },
+    { kind: 'camp', x: 5, y: 1, text: 'A hollow in the rock.', nights: [{ sets: fxFlag('fx_quiet') }] },
   ],
 };
 
@@ -195,7 +195,7 @@ export function wilds(): void {
 
   // A blessing that waits on a flag (#554): out of its presence it is not there, says nothing and is
   // not spent; once the flag is set it blesses, once.
-  const waits = { ...shrine, id: 'w_tide', x: 1, y: 3, after: { flag: 'w_bell' } };
+  const waits = { ...shrine, id: 'w_tide', x: 1, y: 3, after: { flag: fxFlag('w_bell') } };
   const late: MapDef = { ...FIXTURE, features: [...FIXTURE.features!, waits] };
   const tide = (() => { const rng = makeRng(3), p = defaultParty(TABLES, rng); return { world: new World(TABLES, { wilds: new GameMap(late) }, p, rng), party: p }; })();
   tide.world.state.x = waits.x; tide.world.state.y = waits.y;
@@ -206,7 +206,7 @@ export function wilds(): void {
   ok(tide.world.present(waits) && tide.world.featureHere() === waits && stepLine(tide.world, waits).includes('Space kneels'), 'once the flag is set it is there');
   ok(useShrine(tide.world, tide.party, waits)[0] === waits.text && plus(before, stat(tide.party, 'might'), 1) && tide.world.used(waits.id), 'and blesses, a point of Might to each');
   ok(useShrine(tide.world, tide.party, waits)[0] === waits.done && plus(before, stat(tide.party, 'might'), 1), 'once');
-  ok(condFaults({ flag: 'w_bell' }, [late]).length === 1, 'its flag is one some person or event has to set');
+  ok(condFaults({ flag: fxFlag('w_bell') }, [late]).length === 1, 'its flag is one some person or event has to set');
 
   // A blessing's resistance (#555): to every member, whatever their state; the kind kept to the next
   // rest ends at it and the lasting one does not; both survive a save.
@@ -377,8 +377,8 @@ function campNights(): void {
   ok(kept.flags.fx_night1 === 1 && kept.flags.fx_night2 === 1, 'a save keeps the nights as flags');
   const shipped = collect({ ...CONTENT, defs: [CAMPS] }).flags;
   ok(['fx_night1', 'fx_night2', 'fx_quiet'].every((k) => shipped.includes(k)), 'the shipped list records the flags a camp\'s nights set');
-  ok(!condFaults({ flag: 'fx_night1' }, [CAMPS]).length && condFaults({ flag: 'fx_night9' }, [CAMPS]).length === 1, 'a night\'s flag is one something sets, for a quest or a presence to wait on');
-  const wordy = { ...fire, nights: [{ sets: 'fx_long', says: ['A night of a great many words, said slowly, with a long breath drawn between each.', 'And another, and a third, until the fire has burnt down to nothing at all.', 'Then the grey comes up over the water and the company wakes, one by one.'] }] };
+  ok(!condFaults({ flag: fxFlag('fx_night1') }, [CAMPS]).length && condFaults({ flag: fxFlag('fx_night9') }, [CAMPS]).length === 1, 'a night\'s flag is one something sets, for a quest or a presence to wait on');
+  const wordy = { ...fire, nights: [{ sets: fxFlag('fx_long'), says: ['A night of a great many words, said slowly, with a long breath drawn between each.', 'And another, and a third, until the fire has burnt down to nothing at all.', 'Then the grey comes up over the water and the company wakes, one by one.'] }] };
   ok(!lineFaults(CAMPS).length && lineFaults({ ...CAMPS, features: [wordy] }).length === 1, 'a night whose lines, said as one, take more than three of the log is caught');
   ok(texts([CAMPS]).some((t) => t.text === 'She is gone.' && t.where.includes('fx_night1')), 'and its lines are read with every text, for the font, the spelling and the voice');
 

@@ -9,6 +9,7 @@ import type { GuildId } from '../content/guilds.ts';
 import { GUILDS } from '../content/guilds.ts';
 import { takenFlag, doneFlag, rankFlag } from './keys.ts';
 import { GUILD_QUESTS } from '../content/index.ts';
+import type { Flag } from '../content/index.ts';
 import type { WorldState } from './world.ts';
 import type { Party } from './party.ts';
 import { countItem, takeItem, payXp } from './party.ts';
@@ -28,7 +29,7 @@ export interface GuildQuest {
   /** The rank a company must hold to be offered it: 0, the first task, is offered to strangers. */
   rank: number;
   /** A flag the company must hold as well: a later act's ask waits for its act (DESIGN §8), so a rank held early opens nothing ahead of the road. */
-  after?: string;
+  after?: Flag;
   /** What the hall says offering it. */
   offer: readonly string[];
   /** The deed: once it holds, the next report pays. */

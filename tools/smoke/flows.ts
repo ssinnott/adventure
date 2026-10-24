@@ -1,6 +1,7 @@
 // The smoke's flows (#1006): the parts that play the game by its keys and its screens, each waiting on the
 // page's state after a key or a change (boot.ts, `press` and `settle`), never on the clock.
 import type { Load } from '../kit/browser.ts';
+import type { Flag } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/map.ts';
 import type { Facing } from '../../src/game/types.ts';
 import type { CombatScreen } from '../../src/ui/combat.ts';
@@ -76,11 +77,11 @@ export async function inn({ page, ok }: Run): Promise<void> {
   // away, and the menu no longer lists him. Then the real Hob is put back, and the menu lists him.
   const inn = await (async () => {
     await page.evaluate(() => {
-      const g = window.__game!.game!, m = g.world.map;
+      const g = window.__game!.game!, m = g.world.map, fx = (f: string): Flag => f as Flag;
       (window as Window & Kept).__hob = (m.features as Feature[]).splice(m.features.findIndex((f) => f.kind === 'npc' && f.name.startsWith('Hob')), 1)[0];
       g.world.travel('harrow', 4, 5, 0);
-      (g.world.map.features as Feature[]).push({ kind: 'npc', x: 4, y: 4, name: 'Hob, once tenant of Ashcombe', lines: ['"A stranger, and armed."'], until: { flag: 'fx_hob_gone' },
-        choice: { ask: '"Should I go to Gullwick?"', answers: [{ label: 'Go', sets: 'fx_hob_gone', says: ['"Then I go."'] }, { label: 'Stay', sets: 'fx_hob_stays', says: ['"Then I stay."'] }] } });
+      (g.world.map.features as Feature[]).push({ kind: 'npc', x: 4, y: 4, name: 'Hob, once tenant of Ashcombe', lines: ['"A stranger, and armed."'], until: { flag: fx('fx_hob_gone') },
+        choice: { ask: '"Should I go to Gullwick?"', answers: [{ label: 'Go', sets: fx('fx_hob_gone'), says: ['"Then I go."'] }, { label: 'Stay', sets: fx('fx_hob_stays'), says: ['"Then I stay."'] }] } });
     });
     await press(page, 'ArrowUp');
     const menu = await top(page);
@@ -361,11 +362,11 @@ export async function asked({ page, ok }: Run): Promise<void> {
     const load: Load = (p) => import(p);
     const C = await load<typeof import('../../src/content/index.ts')>('/src/content/index.ts');
     (C.ITEMS as Record<string, (typeof C.ITEMS)[string]>).fx_letter = { id: 'fx_letter', name: 'A Sealed Letter', slot: 'none', price: 0, text: ['To Captain Hale, at the pass.', '"The riders cross the ford by night."'] };
-    const g = window.__game!.game!;
+    const g = window.__game!.game!, fx = (f: string): Flag => f as Flag;
     g.world.travel('harrow', 9, 6, 0);
     // Words after a flag nobody has set are not said: the first lines are.
-    g.talk({ kind: 'npc', x: 9, y: 5, name: 'Captain Fixture', lines: ['"Riders, by night."'], says: [{ after: { flag: 'fx_never' }, lines: ['"Not yet."'] }],
-      choice: { ask: 'Shall I write to Hale?', answers: [{ label: 'Write to him', sets: 'fx_write', gives: 'fx_letter', says: ['He writes, and seals it.'] }, { label: 'Keep it quiet', sets: 'fx_keep', says: ['He shrugs.'] }] } });
+    g.talk({ kind: 'npc', x: 9, y: 5, name: 'Captain Fixture', lines: ['"Riders, by night."'], says: [{ after: { flag: fx('fx_never') }, lines: ['"Not yet."'] }],
+      choice: { ask: 'Shall I write to Hale?', answers: [{ label: 'Write to him', sets: fx('fx_write'), gives: 'fx_letter', says: ['He writes, and seals it.'] }, { label: 'Keep it quiet', sets: fx('fx_keep'), says: ['He shrugs.'] }] } });
   });
   await settle(page);
   const words = await top();

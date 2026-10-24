@@ -21,9 +21,9 @@ import { ATLAS, MAP_DEFS, TABLES } from '../../src/content/index.ts';
 import { CROSSINGS, sells } from '../../src/content/crossings.ts';
 import type { Crossing, CrossingEnd } from '../../src/content/crossings.ts';
 import { landings } from '../kit/rules/gate.ts';
-import { ok } from './lib.ts';
+import { ok, fxFlag } from './lib.ts';
 
-const BOAT: Passage = { to: 'fx_isle', x: 2, y: 1, facing: NORTH, name: 'The isle', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6, free: { flag: 'fx_free' }, half: { flag: 'fx_half' } };
+const BOAT: Passage = { to: 'fx_isle', x: 2, y: 1, facing: NORTH, name: 'The isle', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6, free: { flag: fxFlag('fx_free') }, half: { flag: fxFlag('fx_half') } };
 const BACK: Passage = { to: 'fx_port', x: 1, y: 1, name: 'The port', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6 };
 const COACH: Passage = { to: 'fx_town', x: 1, y: 1, name: 'The town', by: 'coach', fare: 80, departs: 6, days: 2, arrives: 18, label: 'The coach rattles in.' };
 
@@ -219,7 +219,7 @@ export function passage(): void {
   ok(sold.length === 1 && one.to === 'fx_lodge' && one.x === 1 && one.y === 1 && one.facing === EAST && one.name === 'Lodge' && one.by === 'coach' && one.fare === 250 && one.departs === 6 && one.days === 1 && one.arrives === 12,
     `a crossing sold at one end goes to the other on its terms, landing where that end puts a company down (${offerLine(one, world).replace(/\t/g, ' | ')})`);
   ok(!sells('fx_haven', { ...DROVE, ends: [DROVE.ends[0], { at: 'fx_lodge', name: 'Lodge', owed: '#0' }] }).length, 'toward a town that writes nowhere to land, its town not built, it is not sold');
-  const worded: Crossing = { ...DROVE, ends: [{ ...DROVE.ends[0], warning: '"Lodge is cold."', half: { flag: 'fx_half' }, free: { flag: 'fx_free' } }, { ...DROVE.ends[1], label: 'The coach stops in the yard.' }] };
+  const worded: Crossing = { ...DROVE, ends: [{ ...DROVE.ends[0], warning: '"Lodge is cold."', half: { flag: fxFlag('fx_half') }, free: { flag: fxFlag('fx_free') } }, { ...DROVE.ends[1], label: 'The coach stops in the yard.' }] };
   const fromHaven = sells('fx_haven', worded)[0], fromLodge = sells('fx_lodge', worded)[0];
   ok(fromHaven.warning === '"Lodge is cold."' && JSON.stringify([fromHaven.half, fromHaven.free]) === '[{"flag":"fx_half"},{"flag":"fx_free"}]' && fromHaven.label === 'The coach stops in the yard.' && !fromLodge.warning && !fromLodge.half && !fromLodge.free && !fromLodge.label,
     'a seller\'s warning and the halving or waiving he gives go with what he sells, and an end\'s landing line with what lands there');

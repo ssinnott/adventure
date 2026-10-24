@@ -43,7 +43,7 @@ import type { GuildId } from '../../src/content/guilds.ts';
 import { MAP_DEFS, CLIMATES, ITEMS, TABLES } from '../../src/content/index.ts';
 import { SKILLS, SKILL_PRICE, SPIRIT_REACH, STRANGER, LEAVE_SKILLS, skillsOf, hasSkill, bornTo, skillNames, taughtBy, mayLearn, skillOffers, skillLine, skillRow, skillBar, learn, askSkill, askWhich, skilled } from '../../src/game/skills.ts';
 import type { SkillId } from '../../src/game/skills.ts';
-import { ok, withDefs } from './lib.ts';
+import { ok } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
 import { tablesWith } from '../kit/headless.ts';
 import type { Tables } from '../../src/game/tables.ts';

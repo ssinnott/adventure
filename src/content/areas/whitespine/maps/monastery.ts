@@ -26,7 +26,7 @@ export const ELEVEN_ASKED = 'q_eleven', ELEVEN_SUNG = 'q_eleven_sung';
  * from Crowness Light's table (#67). The flags are spelled out, not imported: Anvilhall's map reads
  * this one's, and the import would go round.
  */
-const VERSE_FLAGS = ['q_tide_bell_done', 'q_hymn_sung'], LOG_TAKEN = 'downs_e3:e3_log';
+const VERSE_FLAGS = ['q_tide_bell_done', 'q_hymn_sung'] as const, LOG_TAKEN = 'downs_e3:e3_log';
 export const VERSES: QuestCond = { flag: VERSE_FLAGS, seen: LOG_TAKEN };
 /** Asked, and the three held: they are sung to him the next time he is met. */
 export const SING: QuestCond = { flag: [ELEVEN_ASKED, ...VERSE_FLAGS], seen: LOG_TAKEN };

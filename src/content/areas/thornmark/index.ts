@@ -1,6 +1,7 @@
 // Thornmark, over the pass (band 5-10): the forest, Thornhold, the Grove Roots and the Cut Stone.
-// docs/areas/thornmark.md is its brief.
+// docs/areas/thornmark.md is its state, and docs/areas/thornmark/ its decisions and plan.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { THORNMARK } from './maps/thornmark.ts';
 import { THORNHOLD } from './maps/thornhold.ts';
 import { GROVE1 } from './maps/grove1.ts';
@@ -19,11 +20,13 @@ import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
 export const MAPS = [THORNMARK, THORNHOLD, GROVE1, GROVE2, DEEPTHORN_H3, DEEPTHORN_I3, DEEPTHORN_I4, DEEPTHORN_I5, DEEPTHORN_J4, DEEPTHORN_J5] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'thornmark' as const,
   // The zone before its town, unlike the Foreland: the order the outdoors is laid in is kept.
   maps: MAPS,
+  flags: FLAGS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

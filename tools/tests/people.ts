@@ -20,7 +20,7 @@ import { wrap, columnLabelWidth } from '../../src/ui/draw.ts';
 import { measureText as measure } from '../../src/lib/engine/text.ts';
 import { SAY_W, SAY_LINES, ASK_LINES, ASK_SIDE_LINES, SIDE_W } from '../../src/ui/frame.ts';
 import { onAutomap } from '../../src/game/ink.ts';
-import { ok, withDefs, fxKey, fxMap } from './lib.ts';
+import { ok, fxKey, fxMap, fxFlag } from './lib.ts';
 import { tablesWith } from '../kit/headless.ts';
 import type { Items, Tables } from '../../src/game/tables.ts';
 
@@ -120,7 +120,7 @@ export function people(): void {
     const quest = pages(early).find(ends);
     const questH = pages(hired).find((x) => x.id === quest?.id);
     ok(!!quest && quest.page.goal === null && !!questH?.page.done && questH.page.goal === null, `${who}: the log has ${quest?.page.def.title ?? 'the quest'} done, with no goal, either way round`);
-    const hiring = pages(early).flatMap(({ id, page }) => page.entries.filter((e) => [e.when].flat().every((c) => [(c as QuestCond).flag ?? []].flat().includes(hire))).map((e) => `${id}:${e.id}`));
+    const hiring = pages(early).flatMap(({ id, page }) => page.entries.filter((e) => [e.when].flat().every((c) => [(c as QuestCond).flag ?? []].flat().some((f) => f === hire))).map((e) => `${id}:${e.id}`));
     const extra = logKeys(early).filter((k) => !logKeys(hired).includes(k));
     ok(!hiring.length && !extra.length, `${who}, early: the log writes no hiring and nothing the hired order does not${hiring.length || extra.length ? ' -> ' + [...hiring, ...extra].join(', ') : ''}`);
   }
@@ -129,7 +129,7 @@ export function people(): void {
 
 /** The events, 'map:id', that the ends naming a hand-in's flag ask to have been seen as well. */
 function doneSeen(flag: string): string[] {
-  return QUESTS.flatMap((q): readonly QuestDef[] => q.chapters ?? [q as QuestDef]).flatMap((d) => [d.done ?? []].flat().filter((c) => [(c as QuestCond).flag ?? []].flat().includes(flag)).flatMap((c) => ((c as QuestCond).seen ? [(c as QuestCond).seen!] : [])));
+  return QUESTS.flatMap((q): readonly QuestDef[] => q.chapters ?? [q as QuestDef]).flatMap((d) => [d.done ?? []].flat().filter((c) => [(c as QuestCond).flag ?? []].flat().some((f) => f === flag)).flatMap((c) => ((c as QuestCond).seen ? [(c as QuestCond).seen!] : [])));
 }
 
 /**
@@ -176,14 +176,14 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
 
     // A question whose answer sets a flag and hands over a letter; words that change with the answer.
     const captain: Person = {
-      kind: 'npc', ...at, name: 'Captain Fixture, of the ford', lines: ['"Riders, by night."'], flag: 'fx_met',
+      kind: 'npc', ...at, name: 'Captain Fixture, of the ford', lines: ['"Riders, by night."'], flag: fxFlag('fx_met'),
       choice: { ask: 'Shall I write to Hale?', answers: [
-        { label: 'Write to him', sets: 'fx_write', gives: LETTER.id, says: ['He writes, and seals it.'] },
-        { label: 'Keep it quiet', sets: 'fx_keep', says: ['He shrugs.'] },
+        { label: 'Write to him', sets: fxFlag('fx_write'), gives: LETTER.id, says: ['He writes, and seals it.'] },
+        { label: 'Keep it quiet', sets: fxFlag('fx_keep'), says: ['He shrugs.'] },
       ] },
       says: [
-        { after: { flag: 'fx_write' }, lines: ['"Hale will have it by now."'] },
-        { after: { flag: 'fx_keep' }, lines: ['"Not a word to Hale."'] },
+        { after: { flag: fxFlag('fx_write') }, lines: ['"Hale will have it by now."'] },
+        { after: { flag: fxFlag('fx_keep') }, lines: ['"Not a word to Hale."'] },
       ],
     };
     const s = fresh(lent), first = meet(captain, s.party, heard(s.world, captain));
@@ -206,7 +206,7 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
     // An answer that pays: the gold to the company, the xp split among the living, and the line says both.
     const paid = fresh(lent), purse = paid.party.gold, xp = paid.party.members.map((m) => m.xp);
     paid.party.members[5].conditions.push('dead');
-    const fee: Answer = { label: 'Sell it', sets: 'fx_sold', gives: LETTER.id, pay: { gold: 300, xp: 500 }, says: ['He counts it out.'] };
+    const fee: Answer = { label: 'Sell it', sets: fxFlag('fx_sold'), gives: LETTER.id, pay: { gold: 300, xp: 500 }, says: ['He counts it out.'] };
     const sold = answer(lent.items, fee, paid.party);
     ok(sold.startsWith('He counts it out.\n\n(300 gold, 500 experience, A Sealed Letter.)') && paid.party.gold === purse + 300 && !!paid.party.flags.fx_sold && countItem(paid.party, LETTER.id) === 1,
       `an answer that pays: the gold to the company, the item handed over and the line says both (${sold.split('\n\n')[1]})`);
@@ -215,8 +215,8 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
 
     // An answer with a price, sold as a ware is: listed at it, barred to a company with less, which
     // it changes nothing for; paid as it is answered, and the line says so.
-    const deed: Answer = { label: 'Buy it', sets: 'fx_bought', price: 5000, says: ['He counts it.'] };
-    const dear: Choice = { ask: '"Five thousand."', answers: [deed, { label: 'Take it', sets: 'fx_taken', says: ['He shrugs.'] }] };
+    const deed: Answer = { label: 'Buy it', sets: fxFlag('fx_bought'), price: 5000, says: ['He counts it.'] };
+    const dear: Choice = { ask: '"Five thousand."', answers: [deed, { label: 'Take it', sets: fxFlag('fx_taken'), says: ['He shrugs.'] }] };
     const poor = fresh(lent);
     poor.party.gold = 4999;
     ok(answerLabel(deed) === 'Buy it\t5000g' && answerLabel(dear.answers[1]) === 'Take it' && asked(dear, poor.party) === '"Five thousand." (4999 gold.)' && asked(captain.choice!, poor.party) === captain.choice!.ask,
@@ -230,7 +230,7 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
 
     // An answer that takes an item, as a toll may (#544): barred to a company without it, which it
     // changes nothing for; given, it leaves the pack, and the line says so.
-    const coin: Answer = { label: 'Give him the letter', sets: 'fx_given', takes: LETTER.id, says: ['He weighs it.'] };
+    const coin: Answer = { label: 'Give him the letter', sets: fxFlag('fx_given'), takes: LETTER.id, says: ['He weighs it.'] };
     const empty = fresh(lent);
     ok(barred(coin, empty.party) && answer(lent.items, coin, empty.party) === NONE && !empty.party.flags.fx_given, 'an answer that takes an item is barred to a company without it, and answered anyway, nothing changes');
     empty.party.bag.push(LETTER.id);
@@ -239,9 +239,9 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
 
     // The log reads the answer's flag: a quest done either way, and the entry of the road taken.
     const quest: QuestDef = {
-      id: 'fx_ford', title: 'The Fixture Ford', start: { flag: 'fx_met' }, done: [{ flag: 'fx_write' }, { flag: 'fx_keep' }],
-      entries: [{ id: 'wrote', when: { flag: 'fx_write' }, text: 'The captain wrote to Hale.' }, { id: 'kept', when: { flag: 'fx_keep' }, text: 'The captain kept it quiet.' }],
-      goals: [{ when: { flag: 'fx_met' }, text: 'Answer the captain.' }],
+      id: 'fx_ford', title: 'The Fixture Ford', start: { flag: fxFlag('fx_met') }, done: [{ flag: fxFlag('fx_write') }, { flag: fxFlag('fx_keep') }],
+      entries: [{ id: 'wrote', when: { flag: fxFlag('fx_write') }, text: 'The captain wrote to Hale.' }, { id: 'kept', when: { flag: fxFlag('fx_keep') }, text: 'The captain kept it quiet.' }],
+      goals: [{ when: { flag: fxFlag('fx_met') }, text: 'Answer the captain.' }],
     };
     const log = (x: { world: World; party: Party }) => questLog(x.world.state, x.party, [quest])[0];
     ok(log(s)?.done && log(s).pages[0].entries.map((e) => e.id).join() === 'wrote' && log(kept)?.done && log(kept).pages[0].entries.map((e) => e.id).join() === 'kept', 'the quest log reads the answer: done either way, with the entry of the road taken');
@@ -250,17 +250,17 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
     ok(personGives(captain).join() === LETTER.id, "the letter is an item a person hands over");
 
     ok(!boxFaults(captain, true, lent.items).length, 'the captain fits the box');
-    const wordy = { ...captain, choice: { ask: Array(12).fill('Shall I write to Hale about the riders?').join(' '), answers: [{ label: 'Write to him at once, and seal it with the ford', sets: 'fx_write', says: Array(8).fill(captain.lines[0]) }] } };
+    const wordy = { ...captain, choice: { ask: Array(12).fill('Shall I write to Hale about the riders?').join(' '), answers: [{ label: 'Write to him at once, and seal it with the ford', sets: fxFlag('fx_write'), says: Array(8).fill(captain.lines[0]) }] } };
     const wordyBad = boxFaults(wordy, true, lent.items);
     ok(wordyBad.length === 3, `a long question, a long answer and long words fail (${wordyBad.length} of 3)`);
     // A group's parley is asked in the box, a person's question may be put in a business's side panel (#759): three lines of the box
     // and eight of the side panel fit a group and fail a person; a question past the box's lines fails both.
-    const nine = { ...captain, choice: { ask: Array(6).fill('Shall I write to Hale about the riders?').join(' '), answers: [{ label: 'Write', sets: 'fx_write', says: ['"Done."'] }] } };
+    const nine = { ...captain, choice: { ask: Array(6).fill('Shall I write to Hale about the riders?').join(' '), answers: [{ label: 'Write', sets: fxFlag('fx_write'), says: ['"Done."'] }] } };
     const tall = { ...nine, choice: { ...nine.choice, ask: Array(13).fill('Shall I write to Hale about the riders?').join(' ') } };
     ok(boxFaults(nine, true, lent.items).length === 1 && boxFaults(nine, false, lent.items).length === 0, 'a question of 3 lines in the box and 8 in the side panel fails a person and fits a group');
     ok(boxFaults(tall, true, lent.items).length === 1 && boxFaults(tall, false, lent.items).length === 1, 'a question past the box\'s lines fails a group and a person alike');
     // Which parleys may be asked (#544, #759): a refusal and a walk past; a refusal alone only in a group with a slain text of its own.
-    const refuse: Answer = { label: 'Stop him.', fight: true, says: ['"No."'] }, pass: Answer = { label: 'Pass.', sets: 'fx_passed', says: ['He lets you by.'] };
+    const refuse: Answer = { label: 'Stop him.', fight: true, says: ['"No."'] }, pass: Answer = { label: 'Pass.', sets: fxFlag('fx_passed'), says: ['He lets you by.'] };
     ok(refusable({ choice: { ask: 'Well?', answers: [refuse, pass] } }) && refusable({ choice: { ask: 'Well?', answers: [refuse] }, slainText: 'He falls.' }),
       'a refusal and a walk past may be asked, and so may a refusal alone in a group with a slain text of its own');
     ok(!refusable({ choice: { ask: 'Well?', answers: [refuse] } }) && !refusable({ choice: { ask: 'Well?', answers: [pass] }, slainText: 'He falls.' })
@@ -271,10 +271,10 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
 
     // Words by flag, furthest along first; words that set a flag.
     const hild: Person = {
-      kind: 'npc', ...at, name: 'Hild', lines: ['"Who are you?"'], flag: ['fx_hild', 'fx_hild2'],
+      kind: 'npc', ...at, name: 'Hild', lines: ['"Who are you?"'], flag: [fxFlag('fx_hild'), fxFlag('fx_hild2')],
       says: [
-        { after: { flag: 'fx_b' }, lines: ['"And the second."'] },
-        { after: { flag: 'fx_a' }, lines: ['"You did the first."'], sets: 'fx_wenna' },
+        { after: { flag: fxFlag('fx_b') }, lines: ['"And the second."'] },
+        { after: { flag: fxFlag('fx_a') }, lines: ['"You did the first."'], sets: fxFlag('fx_wenna') },
       ],
     };
     const h = fresh(lent), say = (): string => meet(hild, h.party, heard(h.world, hild)).text;
@@ -295,12 +295,12 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
     // Words name real things: their conditions pass the log's check, and one naming a flag nobody sets fails it.
     const wordsConds = (p: Person) => (p.says ?? []).flatMap((w) => [w.after, w.until].filter((c) => c !== undefined));
     for (const { map, p } of all) { const bad = wordsConds(p).flatMap((c) => condFaults(c)); ok(!bad.length, `${map} ${p.x},${p.y}: every words' condition names something real${bad.length ? ' -> ' + bad.join(', ') : ''}`); }
-    const loose: Person = { ...captain, says: [{ after: { flag: 'fx_nobody' }, until: { seen: fxKey('fx_town:nothing') }, lines: ['"Hm."'] }] };
+    const loose: Person = { ...captain, says: [{ after: { flag: fxFlag('fx_nobody') }, until: { seen: fxKey('fx_town:nothing') }, lines: ['"Hm."'] }] };
     ok(!wordsConds(captain).flatMap((c) => condFaults(c, [town])).length && condFaults(wordsConds(loose)[0], [{ ...town, features: [loose] }]).length === 1 && condFaults(wordsConds(loose)[1], [town]).length === 1,
       "the captain's words name his answers' flags, and words after a flag nobody sets, or until an event there is not, fail");
 
     // Words by the hours and until a flag, read as a group's presence is.
-    const alwin: Person = { kind: 'npc', ...at, name: 'Alwin', lines: ['"Good day."'], says: [{ when: { hours: 'night' }, until: { flag: 'fx_gone' }, lines: ['"Not by day, I said."'] }] };
+    const alwin: Person = { kind: 'npc', ...at, name: 'Alwin', lines: ['"Good day."'], says: [{ when: { hours: 'night' }, until: { flag: fxFlag('fx_gone') }, lines: ['"Not by day, I said."'] }] };
     const n = fresh(lent), day = Math.floor(n.world.state.minutes / 1440) * 1440;
     n.world.state.minutes = day + 12 * 60;
     const noon = meet(alwin, n.party, heard(n.world, alwin)).text;
@@ -311,10 +311,10 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
 
     // Several hand-ins: one a meeting, in order; one that pays nothing says no gold line; then the after-lines.
     const hale: Person = {
-      kind: 'npc', ...at, name: 'Captain Fixture', lines: ['"Well?"'], says: [{ after: { flag: 'fx_q_ledger' }, lines: ['"Anything else?"'] }],
+      kind: 'npc', ...at, name: 'Captain Fixture', lines: ['"Well?"'], says: [{ after: { flag: fxFlag('fx_q_ledger') }, lines: ['"Anything else?"'] }],
       quest: [
-        { item: 'fx_ledger', reward: 400, setFlag: 'fx_q_ledger', done: ['"The ledger."'], after: ['"The pass is yours."'] },
-        { item: LETTER.id, reward: 0, setFlag: 'fx_q_letter', done: ['"A letter from the ford."'] },
+        { item: 'fx_ledger', reward: 400, setFlag: fxFlag('fx_q_ledger'), done: ['"The ledger."'], after: ['"The pass is yours."'] },
+        { item: LETTER.id, reward: 0, setFlag: fxFlag('fx_q_letter'), done: ['"A letter from the ford."'] },
       ],
     };
     const g = fresh(lent);
@@ -373,12 +373,12 @@ function presence(): void {
   const def: MapDef = {
     id: 'fx_town', name: 'Fixture', kind: 'town', region: 'shelf', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,,,#', '#,,,#', '#####'],
     features: [
-      { kind: 'npc', x: 1, y: 1, name: 'Ebba, at the Eel', lines: ['"The Eel."'], until: { flag: 'fx_moved' } },
-      { kind: 'npc', x: 3, y: 1, name: 'Ebba, at the Chapel', lines: ['"The Chapel."'], after: { flag: 'fx_moved' } },
+      { kind: 'npc', x: 1, y: 1, name: 'Ebba, at the Eel', lines: ['"The Eel."'], until: { flag: fxFlag('fx_moved') } },
+      { kind: 'npc', x: 3, y: 1, name: 'Ebba, at the Chapel', lines: ['"The Chapel."'], after: { flag: fxFlag('fx_moved') } },
       { kind: 'npc', x: 2, y: 1, name: 'Alwin', lines: ['"By night."'], when: { hours: 'night' } },
-      { kind: 'event', x: 1, y: 2, id: 'fx_dark', text: 'Dark.', until: { flag: 'fx_lit' } },
-      { kind: 'event', x: 1, y: 2, id: 'fx_bright', text: 'Lit.', after: { flag: 'fx_lit' } },
-      { kind: 'event', x: 3, y: 2, id: 'fx_riders', text: 'Riders.', once: true, when: { hours: 'night' }, sets: 'fx_ridden' },
+      { kind: 'event', x: 1, y: 2, id: 'fx_dark', text: 'Dark.', until: { flag: fxFlag('fx_lit') } },
+      { kind: 'event', x: 1, y: 2, id: 'fx_bright', text: 'Lit.', after: { flag: fxFlag('fx_lit') } },
+      { kind: 'event', x: 3, y: 2, id: 'fx_riders', text: 'Riders.', once: true, when: { hours: 'night' }, sets: fxFlag('fx_ridden') },
     ],
   };
   const rng = makeRng(8), party = defaultParty(TABLES, rng), world = new World(TABLES, { fx_town: new GameMap(def) }, party, rng);
@@ -421,11 +421,11 @@ function presence(): void {
 function shut(): void {
   const def: MapDef = {
     id: 'fx_gate', name: 'Fixture', kind: 'town', region: 'shelf', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,,,#', '#####'],
-    exits: [{ x: 3, y: 1, to: fxMap('fx_gate'), tx: 1, ty: 1, shut: { flag: 'fx_shut', member: { race: 'orcblood' } }, lifts: [{ flag: 'fx_ended' }, { flag: 'fx_removed' }], blockedText: 'No orcblood past the gate.' }],
+    exits: [{ x: 3, y: 1, to: fxMap('fx_gate'), tx: 1, ty: 1, shut: { flag: fxFlag('fx_shut'), member: { race: 'orcblood' } }, lifts: [{ flag: fxFlag('fx_ended') }, { flag: fxFlag('fx_removed') }], blockedText: 'No orcblood past the gate.' }],
     features: [
-      { kind: 'temple', x: 1, y: 1, name: 'The Chapel', interior: 'lantern_chapel', until: { flag: 'fx_shut' } },
-      { kind: 'inn', x: 2, y: 1, name: 'The Inn', price: 12, interior: 'hearthlight_inn', until: { flag: 'fx_shut' } },
-      { kind: 'inn', x: 2, y: 1, name: 'The Inn, dearer', price: 18, interior: 'hearthlight_inn', after: { flag: 'fx_shut' } },
+      { kind: 'temple', x: 1, y: 1, name: 'The Chapel', interior: 'lantern_chapel', until: { flag: fxFlag('fx_shut') } },
+      { kind: 'inn', x: 2, y: 1, name: 'The Inn', price: 12, interior: 'hearthlight_inn', until: { flag: fxFlag('fx_shut') } },
+      { kind: 'inn', x: 2, y: 1, name: 'The Inn, dearer', price: 18, interior: 'hearthlight_inn', after: { flag: fxFlag('fx_shut') } },
     ],
   };
   const rng = makeRng(8), party = defaultParty(TABLES, rng), world = new World(TABLES, { fx_gate: new GameMap(def) }, party, rng);
@@ -448,7 +448,7 @@ function shut(): void {
   ok(lifted === 'moved' && again === 'No orcblood past the gate.', `the shut is over while its lifts holds, and the gate shuts again once it stops (${lifted}, ${again})`);
   const door: MapDef = {
     id: 'fx_door', name: 'Fixture', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
-    exits: [{ x: 3, y: 1, to: fxMap('fx_gate'), tx: 1, ty: 1, after: [{ flag: 'fx_open' }, { flag: 'fx_closed' }] }],
+    exits: [{ x: 3, y: 1, to: fxMap('fx_gate'), tx: 1, ty: 1, after: [{ flag: fxFlag('fx_open') }, { flag: fxFlag('fx_closed') }] }],
   };
   const deep = new World(TABLES, { fx_door: new GameMap(door), fx_gate: new GameMap(def) }, party, rng);
   const step = (): string => { deep.travel('fx_door', 2, 1, EAST); deep.move('forward'); return `${deep.state.mapId} ${deep.state.x},${deep.state.y} ${deep.there(door.exits![0]) ? 'there' : 'not'}`; };

@@ -15,7 +15,7 @@ import { buildMaps } from '../../src/content/maps.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { item } from '../../src/game/items.ts';
 import { TRAINERS } from '../../src/game/quests.ts';
-import { ok } from './lib.ts';
+import { ok, fxFlag } from './lib.ts';
 import { TABLES } from '../../src/content/index.ts';
 
 /** A member of a class trained to a level, its prestiges taken as far as the level allows, or `took`. */
@@ -53,7 +53,7 @@ export function prestige(): void {
 
   // The trainer: its class only, in order, from its level, for its price, the third for its quest.
   const rng2 = makeRng(19), party = defaultParty(TABLES, rng2), world = new World(TABLES, buildMaps(), party, rng2);
-  const errantry: Teaching = { cls: 'knight', prestige: 1 }, paramount: Teaching = { cls: 'knight', prestige: 3, done: { flag: 'fx_stair_held' } };
+  const errantry: Teaching = { cls: 'knight', prestige: 1 }, paramount: Teaching = { cls: 'knight', prestige: 3, done: { flag: fxFlag('fx_stair_held') } };
   const bram = party.members[0];
   party.gold = 5000;
   ok(offers(errantry, party, world.state).length === 1 && barOf(errantry, bram, party, world.state) === 'from level 11', `a knight at 1 is told the level (${barOf(errantry, bram, party, world.state)})`);

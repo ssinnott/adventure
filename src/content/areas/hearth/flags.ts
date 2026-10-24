@@ -1,0 +1,31 @@
+// The flags Hearth Isle sets, each with what holding it means (#995): its own, declared once here and
+// given on by public.ts. `Flag` is made of every declaration (src/content/index.ts), which refuses a flag
+// two declare, and the shipped suite holds them to the record (shipped.json).
+export const FLAGS = {
+  i6_anchoress_met: 'The anchoress met',
+  lamp_hearth: "The Hearth's lamp out",
+  lamp_house: "The House's lamp out",
+  lamp_sea: "The Sea's lamp out",
+  lamp_shore: "The Shore's lamp out",
+  q_bowl_pilgrims: 'A pilgrim of the three met',
+  q_crack_sealed: "The Sunder's crack sealed",
+  q_crack_wide: "The crack widened onto the Lanterns' hall",
+  q_crew_open: 'The crew door opened and left open',
+  q_crew_shut: 'The crew door gone through and shut',
+  q_eleven_asked: "The anchoress's ask heard: the eleven",
+  q_eleven_kept: "The eleven kept in the crypt's niches",
+  q_eleven_log: "The keeper's log given the anchoress",
+  q_end_arrive: 'The ending chosen: The Hull Opened',
+  q_end_finish: 'The ending chosen: The Voyage Finished',
+  q_end_reignite: 'The ending chosen: The Hearth Relit',
+  q_lamps: 'The sacristan met',
+  q_lamps_key: "The sacristan's key taken",
+  q_lamps_out: "The lamps out in the pillar's order",
+  q_lamps_wrong: 'A lamp put out before its turn',
+  q_ring_given: 'Wenna met at the panel: the ring in hand',
+  q_token_cousin: "The cousin's token carried down",
+  q_token_hold: "The hold's token carried down",
+  q_token_tallis: "Tallis's token carried down",
+  q_vask_fallen: 'Vask fallen',
+  q_voice_whole: 'The voice at the panel met',
+};

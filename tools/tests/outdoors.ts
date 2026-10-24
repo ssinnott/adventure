@@ -17,7 +17,7 @@ import { EAST, FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { findWeather, weatherAt, weatherSight } from '../../src/game/weather.ts';
 import { daylightAt } from '../../src/game/calendar.ts';
 import { areaRows, areaLists, gather, once } from '../kit/checks.ts';
-import { ok, owed, local, stopsWalk, fxMap } from './lib.ts';
+import { ok, owed, local, stopsWalk, fxMap, fxFlag } from './lib.ts';
 import { logLines } from '../../src/ui/frame.ts';
 
 /**
@@ -320,7 +320,7 @@ export function outdoors(): void {
   ok(out.gates.length === 0, `no gate closes the road through the outdoors${out.gates.length ? ' -> ' + out.gates.map((g) => `${g.x},${g.y}`).join(', ') : ''}`);
   { // The machinery stays for the story's own locks (EXPANSION §2.3): an exit into the zone next door
     // that asks for flags is laid as a gate on its square, and refuses the party until they are set.
-    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, needFlag: ['fixture_a', 'fixture_b'], blockedText: 'Fixture gate.' }) });
+    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, needFlag: [fxFlag('fixture_a'), fxFlag('fixture_b')], blockedText: 'Fixture gate.' }) });
     const laid = layOutdoors(ATLAS, defs), fx = new GameMap(laid.find((d) => d.id === OUTDOORS)!);
     const g = fx.gates;
     ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && [g[0].needFlag].flat().join() === 'fixture_a,fixture_b' && g[0].blockedText === 'Fixture gate.', `an exit with flags into the zone next door is laid as a gate on its square, with its words (${g.map((q) => `${q.x},${q.y}`).join(', ')})`);
@@ -337,7 +337,7 @@ export function outdoors(): void {
   }
   { // An exit into the zone next door that is shut while a condition holds is laid as a gate that
     // carries it, and refuses the party only while it holds (#157) and its lifts does not (#749).
-    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, shut: { flag: 'fixture_c', member: { race: 'orcblood' as const } }, lifts: { flag: 'fixture_d' }, blockedText: 'Fixture shut.' }) });
+    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, shut: { flag: fxFlag('fixture_c'), member: { race: 'orcblood' as const } }, lifts: { flag: fxFlag('fixture_d') }, blockedText: 'Fixture shut.' }) });
     const laid = layOutdoors(ATLAS, defs), fx = new GameMap(laid.find((d) => d.id === OUTDOORS)!);
     const g = fx.gates;
     ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && g[0].needFlag === undefined && JSON.stringify(g[0].shut) === JSON.stringify({ flag: 'fixture_c', member: { race: 'orcblood' } }) && JSON.stringify(g[0].lifts) === JSON.stringify({ flag: 'fixture_d' }) && g[0].blockedText === 'Fixture shut.',
@@ -361,7 +361,7 @@ export function outdoors(): void {
   { // An exit into the zone next door that is there only `after` a condition is no way across before
     // it holds: its gate refuses the party until then (#749). On the overlay it is the way it is, with
     // no padlock, since an appearance is no lock.
-    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, after: { flag: 'fixture_e' }, blockedText: 'Fixture after.' }) });
+    const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, after: { flag: fxFlag('fixture_e') }, blockedText: 'Fixture after.' }) });
     const laid = layOutdoors(ATLAS, defs);
     const rng = makeRng(3), party = defaultParty(TABLES, rng);
     const world = new World(TABLES, Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);

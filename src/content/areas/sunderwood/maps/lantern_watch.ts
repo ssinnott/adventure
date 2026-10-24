@@ -26,13 +26,13 @@ const MET = 'watch_reader_met', PRIOR_MET = 'watch_prior_met';
 const LAMP_NIGHT = 'The yard by night. Under the lamp the moths go up in one grey column, close enough to touch, and none comes down.';
 const SEAL = '"The Helmstow customs seal on every cargo, the same as on the crates in the caves. Under it on every page a countersign. The Regent\'s."';
 const READINGS = [
-  { has: 'ships_papers', not: 'ships_log', sets: ['papers_read', 'seal_read'], plain: 'She sees the papers before she sees you, and gets up, and shuts the door herself. "Sit." She lays them open under the window.',
+  { has: 'ships_papers', not: 'ships_log', sets: ['papers_read', 'seal_read'] as const, plain: 'She sees the papers before she sees you, and gets up, and shuts the door herself. "Sit." She lays them open under the window.',
     knoll: '"You have been on the knoll, then." She gets up and shuts the door herself, and lays the papers open under the window.',
     read: [`${SEAL} She puts them back in your hands.`] },
-  { has: 'ships_log', not: 'ships_papers', sets: ['papers_read', 'log_read'], plain: 'She sees the log before she sees you, and gets up, and shuts the door herself. "Sit." She opens it under the window.',
+  { has: 'ships_log', not: 'ships_papers', sets: ['papers_read', 'log_read'] as const, plain: 'She sees the log before she sees you, and gets up, and shuts the door herself. "Sit." She opens it under the window.',
     knoll: '"You have been on the knoll, then." She gets up and shuts the door herself, and opens the log under the window.',
     read: ['"The log is a clerk\'s cipher. I know it." At the foot of each entry, in another ink, one name: Vask. She puts it back in your hands.'] },
-  { has: 'ships_papers', sets: ['papers_read', 'seal_read', 'log_read'], plain: 'She sees what you carry before she sees you, and gets up, and shuts the door herself. "Sit." Papers and log go open under the window.',
+  { has: 'ships_papers', sets: ['papers_read', 'seal_read', 'log_read'] as const, plain: 'She sees what you carry before she sees you, and gets up, and shuts the door herself. "Sit." Papers and log go open under the window.',
     knoll: '"You have been on the knoll, then." She gets up and shuts the door herself, and lays papers and log open under the window.',
     read: [SEAL, '"The log is a clerk\'s cipher. I know it." At the foot of each entry, the other ink, one name: Vask. She puts both back in your hands.'] },
 ];

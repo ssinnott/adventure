@@ -22,3 +22,6 @@ export const IRONFELLS_GATE: Exit = anchored({ x: 28, y: 8, to: 'anvilhall', at:
 
 // Every item by name, with the rest of items.ts.
 export * from './items.ts';
+
+// Every flag it sets, each with what holding it means (#995).
+export { FLAGS } from './flags.ts';

@@ -36,7 +36,7 @@ import {
   tierLine, teachTier, teachesExpert, askLine, askTier, noneHere, favourDone, LEAVE_TIERS,
 } from '../../src/game/mastery.ts';
 import type { Tiers, Line, Mastery } from '../../src/game/mastery.ts';
-import { ok } from './lib.ts';
+import { ok, fxFlag } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
 
 /** The town trainers that teach Expert (ceiling 13 or over) and those that do not, written out and not read from the rule. */
@@ -231,7 +231,7 @@ function loft(): void {
  * line; refused before the favour holds, and a member Expert at 25 taught for 5,000 once it does.
  */
 function master(): void {
-  const g = headlessGame(4), p = g.party, rng = makeRng(6), FAVOUR = 'test_master_favour';
+  const g = headlessGame(4), p = g.party, rng = makeRng(6), FAVOUR = fxFlag('test_master_favour');
   const m: Mastery = { line: 'arms', tier: 'master', done: { flag: FAVOUR }, price: TIER_PRICES.master };
   const person: Person = { kind: 'npc', x: 1, y: 1, name: 'Old Hand', lines: ['"Steel answers steel."'], mastery: m };
   const fighters = p.members.map((c, i) => (linesOf(c.cls).includes('arms') ? i : -1)).filter((i) => i >= 0), casters = p.members.filter((c) => !linesOf(c.cls).includes('arms'));
@@ -353,7 +353,7 @@ function fits(): void {
     values.add(tierBar(line, tier, TIER_PRICES[tier], c, q, favour) || `${TIER_PRICES[tier]}g`);
   }
   const widest = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].sort((a, b) => measureText(b) - measureText(a))[0], name = widest.repeat(NAME_MAX);
-  const p = company('bard', 25), w = new World(TABLES, buildMaps(), p, makeRng(4)), m: Mastery = { line: 'magic', tier: 'master', done: { flag: 'x' }, price: TIER_PRICES.master };
+  const p = company('bard', 25), w = new World(TABLES, buildMaps(), p, makeRng(4)), m: Mastery = { line: 'magic', tier: 'master', done: { flag: fxFlag('x') }, price: TIER_PRICES.master };
   const rows = [...LINES.map((l) => LINE_ROWS[l]), LEAVE_TIERS, ...LINES.flatMap((l) => expertOffers(l, p).map((o) => tierLine(o, p))), ...masterOffers(m, p, w.state).map((o) => tierLine(o, p)), ...[...values].map((v) => `${name}\t${v}`)];
   const cut = rows.filter((r) => { const { label, value } = optionParts(r); return measureText(label) > columnLabelWidth(SIDE_W, value, true); });
   ok(values.size >= 8 && !cut.length, `every row of the tier menus fits the ${SIDE_W} px panel, a name of ${NAME_MAX} ${widest}s beside each of ${[...values].join(', ')}${cut.length ? ' -> cut: ' + cut.map((r) => r.replace('\t', ' ')).join('; ') : ''}`);
@@ -365,7 +365,7 @@ function fits(): void {
  * menu as it leaves a skill's, and nobody is taught.
  */
 function talked(): void {
-  const g = headlessGame(4), p = g.party, rng = makeRng(9), FAVOUR = 'test_talk_favour', st = g.world.state;
+  const g = headlessGame(4), p = g.party, rng = makeRng(9), FAVOUR = fxFlag('test_talk_favour'), st = g.world.state;
   for (const id of Object.keys(g.maps)) g.world.ensureMapState(id).explored.fill(-1);
   const who = p.members.findIndex((m) => linesOf(m.cls).join() === 'arms');
   p.members[who].xp = xpForLevel(25); levelUp(p.members[who], rng); p.members[who].tiers = { arms: 'expert' };
