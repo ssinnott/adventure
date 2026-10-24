@@ -878,3 +878,46 @@ Decided by the builder for #830, each the owner's to overturn:
     now for A6's own south edge, which stays void against A7, and for a walker on 0,31. A saved
     company on it stands on a mountain square and steps off north or east, as it would off the void
     (decision 21).
+37. **The enclave is Wytgat,** the white hole in the Tidefolk's tongue (*wyt* white, *gat* a hole),
+    the salters' name for their rock-salt working, white under its soot: a compound in the area's
+    tongue, as Sjonghol and Stienwierde are (§10, NAMES §3). Its features' and groups' ids begin
+    `wy_`.
+38. **Its door is the brief's square, B7's 22,22** (decision 28), the Scarp's mountain drawn as
+    stone, the cut, walked into from the grass at 22,21, where the way back sets a company down
+    facing the grass (B7's anchor `from_wytgat`). It is the one square of B7 that changes: B7 stands
+    615 squares where it stood 614, and its density counts the cut as a point, 98.5% within 12 where
+    it read 98.0%; nothing stands within four squares of it, and it is no edge square, so no seam
+    and no row of `tools/tests/outdoors.ts` moves. Its plate is at 62,217, five squares south of the
+    door under the Scarp, as Blackdraw's stands five south of its own (docs/areas/ashfall.md).
+39. **Its band is 13–14,** a band over B7's 11–12, as #845 asks of an enclave; its door warns a
+    company of 10 and says harder at 11 and 12.
+40. **Its groups are three of the Hand,** Wrackholm's smugglers and bowmen, as C6 and B7 place them,
+    Wrackholm's overseers and the Sunder's gleaners: the watch at the brazier, three smugglers and a
+    bowman, at 4 steps (12.0); the overseers of the chained rows, two overseers and three smugglers,
+    at 14 (12.4); the strongroom's keepers, three gleaners and an overseer, at 24 (14.5), the
+    curve's rise 1.00. At 13 the gate reads 6.66 fights to a rest (aim 6.25 to 8.25), every fight
+    won, and two under, at 11, 4.61, 63.6% of the floor's 7.25 (aim at most 66.7%).
+41. **The reward is the Brine Needle, Stiletto,** Saltmouth's stiletto (1d8+5, the sorcerer's, the
+    thief's and the bard's from 11) with a blade of brine glass and its blows carrying lightning, as
+    the brinelings' bites do, at 1,150 gold: 13 a blow against the stiletto's 9.5, the Stiletto +1's
+    10.5 (their rung at 13) and the Warden's Dirk's 11.5 (at 14). Found there alone and sold
+    nowhere, on no rung of the ladder and not the area's artifact (the Telstok, the lair's), inside
+    the enclave's window, Wrackholm's 2,500; the walkthrough asserts its numbers and that no shop,
+    other chest or monster gives it.
+42. **The secret is the salters' last gallery,** walled up when the Hand came, behind the store's
+    back wall at 13,8, found from the lamp soot drawn into one crack as if the rock breathes in
+    there, at 13,7 inside the store: 200 gold and an elixir. A draught is a hint no box of the
+    bounds uses (§12.1).
+43. **New here is the enclave itself** (#845); nothing is drawn for it, and its kinds stand in
+    Wrackholm and the Sunder already.
+44. **The walkthrough walks it in `theBounds`,** after B7's groups: the cut and its way, the door's
+    words at 10, 11 and 13 and the sign; the three groups won at 13; every sight; the Brine Needle's
+    numbers and that nothing else gives it; the gallery shut but for its walling, found from the
+    soot and walked into; the way out onto B7's 22,21 facing the grass. B7's check that 22,22 was
+    left bare gives way to the door's: the stone with the mountain either side and under it, its way
+    walked and nothing within four squares. Nothing is loosened.
+45. **The one shared-test edit is the owner's delegate's** (#830, 24 October): the fixture block of
+    `tools/tests/curve.ts` held that Saltreach had no enclave of its own, `ids(now.enclaves)` equal
+    to the fixture lair's id alone; with Wytgat it reads `wytgat,fx_lair`, and the assertion is now
+    `ids(now.enclaves) === ids([...was.enclaves, LAIR])`, the same on main before it, a
+    generalisation and no weakening.
