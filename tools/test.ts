@@ -58,7 +58,7 @@ const ASKED = ['survival', 'fullrun'];
  * process of its own, started in this order once the rest, packed into one process, has started.
  */
 const DEAR = process.env.TEST_DEAR ? process.env.TEST_DEAR.split(',') : ['labels', 'row', 'harness', 'gate:kilns', 'gate:ashfall', 'gate:rimewater', 'gate:whitespine', 'gate:saltreach',
-  'quests', 'gate:cairnmoor', 'gate:glasswold', 'gate:sunderwood', 'gate:wrackholm', 'gate:hearth', 'walkthrough:shelf', 'gate:shelf', 'scaffold', 'pilot', 'gate:thornmark'];
+  'quests:goals', 'gate:cairnmoor', 'gate:glasswold', 'gate:sunderwood', 'gate:wrackholm', 'gate:hearth', 'walkthrough:shelf', 'gate:shelf', 'scaffold', 'pilot', 'gate:thornmark'];
 
 type Suite = (part?: string) => void | Promise<void>;
 /**
