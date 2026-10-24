@@ -32,11 +32,12 @@ export function changedFiles(base: string): string[] {
  * re-laid into the outdoors and its walls re-rolled, so the atlases count too. The scenery
  * (ui/scenery.ts) paints a map and the monsters do not: the scene the sweep paints draws none, so
  * neither the dispatcher (ui/sprites.ts) nor a family counts (#915). The one file of the folder it
- * does paint with is monsters/common.ts (`B` and `stroke`), so that counts; so does game/ink.ts,
- * how a cell is drawn (`drawnCell`), which the painter and the sweep's plan both read.
+ * does paint with is monsters/common.ts (`B` and `stroke`), so that counts, and the monsters' kit's
+ * common.ts it re-exports; so do the paint kit's brush and the ink its outline takes (#983); so does
+ * game/ink.ts, how a cell is drawn (`drawnCell`), which the painter and the sweep's plan both read.
  */
 const EVERY_MAP = [
-  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/monsters\/common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|ink)\.ts$/,
+  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/paint\/(brush|ink)\.ts$/, /^src\/ui\/monsters\/(kit\/)?common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|ink)\.ts$/,
   /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|changed|sweep|kit\/sweep)\.ts$/,
 ];
 const MAP_FILE = /^src\/content\/areas\/[^/]+\/maps\/[^/]+\.ts$/;
@@ -65,8 +66,12 @@ function atBase(base: string, file: string): string {
 }
 const now = (file: string): string => (existsSync(path.join(ROOT, file)) ? readFileSync(path.join(ROOT, file), 'utf8') : '');
 
-/** What paints every monster: the dispatcher, ui/brush.ts and the art library; and a shared brush, a module of ui/monsters/ that registers no kinds. */
-const EVERY_MONSTER = [/^src\/ui\/(sprites|brush)\.ts$/, /^src\/lib\/art\//];
+/**
+ * What paints every monster: the dispatcher, ui/brush.ts and the art library, the paint kit and the
+ * monsters' kit (src/ui/paint/, src/ui/monsters/kit/, #983); and a shared brush, a module of
+ * ui/monsters/ that registers no kinds.
+ */
+const EVERY_MONSTER = [/^src\/ui\/(sprites|brush)\.ts$/, /^src\/ui\/(paint|monsters\/kit)\//, /^src\/lib\/art\//];
 const FAMILY_FILE = /^src\/ui\/monsters\/([^/]+)\.ts$/;
 /** The barrel that merges the families' kinds and says which family registers each. */
 const BARREL = 'src/ui/monsters/index.ts';
@@ -107,8 +112,13 @@ export async function changedMonsters(files: readonly string[], base?: string): 
   return { all, monsters: [...out] };
 }
 
-/** What paints every room: the dispatcher, the kit and the shared props and rooms beside it, the brushes they borrow (ui/brush.ts, ui/monsters/gloss.ts), the art library and the pixel font (some rooms letter their signs). */
-const EVERY_INTERIOR = [/^src\/ui\/(interior|brush)\.ts$/, /^src\/ui\/interiors\/[^/]+\.ts$/, /^src\/ui\/monsters\/gloss\.ts$/, /^src\/lib\/art\//, /^src\/lib\/engine\/text\.ts$/];
+/**
+ * What paints every room: the dispatcher, the kit and the shared props and rooms beside it, the rooms'
+ * kit and the paint kit (src/ui/interiors/kit/, src/ui/paint/, #983), the brushes they borrow by their
+ * old paths (ui/brush.ts, ui/monsters/gloss.ts), the art library and the pixel font (some rooms letter
+ * their signs).
+ */
+const EVERY_INTERIOR = [/^src\/ui\/(interior|brush)\.ts$/, /^src\/ui\/interiors\/[^/]+\.ts$/, /^src\/ui\/(paint|interiors\/kit)\//, /^src\/ui\/monsters\/gloss\.ts$/, /^src\/lib\/art\//, /^src\/lib\/engine\/text\.ts$/];
 /** A file under an area's folder of rooms (src/ui/interiors/<area>/): its scenes, the helpers they share and the folder's registry. */
 const AREA_ROOMS = /^src\/ui\/interiors\/([^/]+)\//;
 const AREA_INDEX = /^src\/content\/areas\/([^/]+)\/(index|interiors)\.ts$/;
