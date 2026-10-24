@@ -20,13 +20,16 @@ import { EAST } from '../../src/game/types.ts';
 import { rest, hasCondition, className, addCondition, MAX_LEVEL } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { startCombat, currentTurn, monsterAct, asGroup, aliveMonsters } from '../../src/game/combat.ts';
+import { startCombat, asGroup, aliveMonsters } from '../../src/game/combat.ts';
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
-import { gateCompany, gateFight, gateOpts, gateTurn, gateBot, fightSeed, winRate, gateAnswer, gatePass } from '../gate.ts';
-import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ANSWER } from '../harness.ts';
+import { gateFight, gateOpts, gateBot, fightSeed, winRate, gateAnswer, gatePass, rate, SEEDS } from '../kit/fight.ts';
+import { gateCompany } from '../kit/company.ts';
+import { days, fightsPerRest, mendBetween } from '../harness.ts';
+import { mustRest, markOf, ANSWER } from '../../src/game/bot.ts';
+import { companyAt } from '../kit/company.ts';
 import { ROUND_CAP, playOut } from '../kit/fight.ts';
-import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, basiliskEncounter } from '../testmonster.ts';
+import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, basiliskEncounter } from '../kit/line.ts';
 import { stepsFrom } from './curve.ts';
 import { FIXTURE, LAIR, GUARDIAN } from './enclave.ts';
 import { featureFlags } from './quests.ts';
@@ -74,8 +77,6 @@ const atLeast = (t: number) => (v: number): number => t - v;
 const atMost = (t: number) => (v: number): number => v - t;
 const within = ([lo, hi]: readonly [number, number]) => (v: number): number => Math.max(lo - v, v - hi);
 
-/** Seeds a cell, as tools/gate.ts's table has it. */
-const SEEDS = 100;
 /**
  * Seeds for fights to a rest: a day is a long run of fights, and over a hundred its mean moves by
  * a fifth of a fight with the seeds alone.
@@ -145,17 +146,6 @@ function check(key: string, v: number, aim: (v: number) => number, limit: (v: nu
 /** How a line reads its aim and its limit. */
 const aims = (aim: string, limit: string): string => `aim ${aim}, limit ${limit}`;
 
-const rates = new Map<string, number>();
-/**
- * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters, its
- * clock and that weather, each computed once: the maps and their areas share them.
- */
-export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under' | 'clock'>, level: number): number {
-  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}/${g.clock ? JSON.stringify(g.clock) : ''}@${level}~${opts.rangedPenalty ?? 0}`;
-  let r = rates.get(key);
-  if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
-  return r;
-}
 /**
  * The road behind's groups on an earlier act's maps, as the game names a group, 'map:id': each waits on
  * an answer given an act later on the road, so no company at its map's floor meets it, and the gate

@@ -13,8 +13,11 @@ import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, canAttac
 import type { CombatState, CombatGroup, PartyAction } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
-import { gateBlast, gateBurn, gateTurn } from '../gate.ts';
-import { wakeWith, markOf, mendLines, ANSWER, companyAt, thrifty, REST_AT } from '../harness.ts';
+import { gateBlast, gateBurn } from '../../src/game/bot.ts';
+import { gateTurn } from '../kit/fight.ts';
+import { thrifty } from '../harness.ts';
+import { wakeWith, markOf, mendLines, ANSWER, REST_AT } from '../../src/game/bot.ts';
+import { companyAt } from '../kit/company.ts';
 import { ROUND_CAP, playOut } from '../kit/fight.ts';
 import { botTurn, asSeen, asWritten, breathGuard, PLAYED } from '../../src/game/bot.ts';
 import type { BotOpts, Sees } from '../../src/game/bot.ts';

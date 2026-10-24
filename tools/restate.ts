@@ -13,8 +13,8 @@ import { execFileSync } from 'node:child_process';
 import { pathToFileURL } from 'node:url';
 import { MONSTERS } from '../src/content/index.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
-import { ROLE_IDS, HP, DAMAGE, TROLL, SWEEP, scaleAt, testMonster } from './testmonster.ts';
-import type { Role } from './testmonster.ts';
+import { ROLE_IDS, HP, DAMAGE, TROLL, SWEEP, scaleAt, testMonster } from './kit/line.ts';
+import type { Role } from './kit/line.ts';
 import { offLineOf, wholeOf } from './tests/harness.ts';
 
 type Table = Record<Role, readonly number[]>;

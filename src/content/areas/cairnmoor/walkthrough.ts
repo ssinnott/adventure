@@ -42,7 +42,7 @@ import { openCairn, answerRiddle } from '../../../game/wilds.ts';
 import { startCombat, currentTurn, partyAct, monsterAct } from '../../../game/combat.ts';
 import { elementMult } from '../../../game/monsters.ts';
 import { CURVE } from '../../progression.ts';
-import { GEAR, outfit } from '../../../../tools/harness.ts';
+import { GEAR, outfit } from '../../../../tools/kit/company.ts';
 import { headlessGame } from '../../../../tools/tests/lib.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';

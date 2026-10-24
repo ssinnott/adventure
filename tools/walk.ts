@@ -25,7 +25,7 @@ import { homeMap } from '../src/game/atlas.ts';
 import { useShrine } from '../src/game/wilds.ts';
 import type { Feature } from '../src/game/map.ts';
 import type { Facing } from '../src/game/types.ts';
-import { winRate, gateOpts } from './gate.ts';
+import { winRate, gateOpts } from './kit/fight.ts';
 
 type Ok = (cond: boolean, msg: string) => void;
 

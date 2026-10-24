@@ -9,7 +9,7 @@ import type { MapDef } from '../../src/game/map.ts';
 import { World, enclaveLine, HARDER_IN, WARNING_IN } from '../../src/game/world.ts';
 import { EAST, NORTH } from '../../src/game/types.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { gateCompany } from '../gate.ts';
+import { gateCompany } from '../kit/company.ts';
 import { ok } from './lib.ts';
 
 /** Where the fixture lair stands: beside Saltreach, a band-10 area, its door on C3 in the Upper Water (10-11). */

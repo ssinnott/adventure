@@ -30,7 +30,7 @@ import type { RaceId } from '../../src/game/party.ts';
 import { ok, headlessGame, drive } from './lib.ts';
 import { keep, need, needs, better, reserve, spare } from '../../src/game/pilot/keep.ts';
 import type { Need } from '../../src/game/pilot/keep.ts';
-import { companyAt } from '../harness.ts';
+import { companyAt } from '../kit/company.ts';
 import { restRefused } from '../../src/game/wilds.ts';
 import { hasCondition, xpForLevel, weaponOf, armorClass, templePrice } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';

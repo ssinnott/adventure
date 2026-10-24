@@ -4,10 +4,10 @@
 // tools/harness.ts measures that and re-derives HP and DAMAGE below. None of this is content: no map
 // places a test monster, and none has a drawing of its own (each borrows an existing kind, so a
 // gallery can still show one).
-import type { MonsterDef, MonsterSprite } from '../src/game/monsters.ts';
-import type { Fighters } from '../src/game/combat.ts';
-import { xpForLevel } from '../src/game/party.ts';
-import { MEMBERS } from '../src/content/progression.ts';
+import type { MonsterDef, MonsterSprite } from '../../src/game/monsters.ts';
+import type { Fighters } from '../../src/game/combat.ts';
+import { xpForLevel } from '../../src/game/party.ts';
+import { MEMBERS } from '../../src/content/progression.ts';
 
 export type Role = 'fodder' | 'skirmisher' | 'soldier' | 'archer' | 'caster' | 'controller' | 'armoured' | 'elite' | 'brute' | 'boss';
 
