@@ -1,7 +1,7 @@
 // What a pull request changed (tools/changed.ts), as the smoke test's sweep and the contact sheet
 // read it: which files count every map, monster or interior, which count every room of one area, and
 // which count only their own.
-import { changedMaps, changedMonsters, changedInteriors, familiesIn, reachedAreas, describeReach, type Reach } from '../changed.ts';
+import { changedMaps, changedMonsters, changedInteriors, familiesIn, reachedAreas, describeReach, type Reach } from '../kit/changed.ts';
 import { graph, treeFiles } from '../kit/graph.ts';
 import { AREAS, MONSTERS } from '../../src/content/index.ts';
 import { execFileSync } from 'node:child_process';
@@ -62,8 +62,8 @@ function reaches(): void {
   // 4: elsewhere.
   const none = reach(['docs/DESIGN.md', 'README.md', 'CLAUDE.md', 'types/globals.d.ts', '.github/labels.json', 'tools/tests/outdoors.ts', 'tools/smoke.ts', 'src/ui/monsters/wolf.ts', 'src/ui/interiors/kilns/hold.ts']);
   ok(!none.all && !none.areas.size, `the docs, the front pages, types/, .github/ but the workflow, a module neither the gate nor a walkthrough loads and a drawing reach no area (${describeReach(none)})`);
-  const all: [string, string][] = [['src/game/combat.ts', 'the gate or a walkthrough loads it'], ['tools/harness.ts', 'the gate or a walkthrough loads it'], ['tools/test.ts', 'it decides what runs'],
-    ['tools/changed.ts', 'it decides what runs'], ['tools/kit/graph.ts', 'it decides what runs'], ['.github/workflows/checks.yml', 'it decides what runs'], ['package.json', 'the graph does not read it'],
+  const all: [string, string][] = [['src/game/combat.ts', 'the gate or a walkthrough loads it'], ['tools/kit/harness.ts', 'the gate or a walkthrough loads it'], ['tools/test.ts', 'it decides what runs'],
+    ['tools/changed.ts', 'it decides what runs'], ['tools/kit/changed.ts', 'it decides what runs'], ['tools/kit/graph.ts', 'it decides what runs'], ['.github/workflows/checks.yml', 'it decides what runs'], ['package.json', 'the graph does not read it'],
     ['src/content/shipped.json', 'the graph does not read it'], ['tools/a_table_no_file_imports.json', 'the graph does not read it']];
   const missed = all.filter(([f, why]) => reach(['docs/DESIGN.md', f]).all?.why !== why).map(([f]) => f);
   ok(!missed.length, `a systems file, a tool the gate loads, what decides what runs and a file the graph does not read reach every area${missed.length ? ` (not: ${missed.join(', ')})` : ''}`);
@@ -84,6 +84,7 @@ export async function changed(): Promise<void> {
   ok(!(await changedMaps(['src/ui/sprites.ts'])).all && !(await changedMaps(['src/ui/monsters/wolf.ts', 'src/ui/monsters/index.ts'])).all, 'the dispatcher, a family and the barrel count no map');
   ok((await changedMaps(['src/ui/monsters/common.ts'])).all, 'ui/monsters/common.ts, whose B and stroke the scenery paints with, counts every map');
   ok((await changedMaps(['tools/kit/browser.ts'])).all && !(await changedMaps(['tools/kit/args.ts'])).all, "the browser kit, the Chromium and the page the smoke's sweep paints in, counts every map; the reading of the tools' flags none");
+  ok((await changedMaps(['tools/changed.ts'])).all && (await changedMaps(['tools/kit/changed.ts'])).all, 'the narrowing counts every map: its command line, and its library in the kit as the file it came from did (#984)');
   // The smoke is its runner and its parts (#1006): a change to any of them sweeps every map, as the sweep is one of them.
   const unswept: string[] = [];
   for (const f of ['tools/smoke.ts', ...['boot', 'flows', 'scenes', 'art', 'cracks'].map((p) => `tools/smoke/${p}.ts`)]) if (!(await changedMaps([f])).all) unswept.push(f);

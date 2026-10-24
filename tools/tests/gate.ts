@@ -20,49 +20,23 @@ import { EAST } from '../../src/game/types.ts';
 import { rest, hasCondition, className, addCondition, MAX_LEVEL } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { startCombat, currentTurn, monsterAct, asGroup, aliveMonsters } from '../../src/game/combat.ts';
+import { startCombat, asGroup, aliveMonsters } from '../../src/game/combat.ts';
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
-import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate, gateAnswer, gatePass } from '../gate.ts';
-import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP, ANSWER } from '../harness.ts';
-import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, basiliskEncounter } from '../testmonster.ts';
-import { stepsFrom } from './curve.ts';
-import { FIXTURE, LAIR, GUARDIAN } from './enclave.ts';
-import { featureFlags } from './quests.ts';
+import { gateFight, gateOpts, gateBot, fightSeed, winRate, gateAnswer, gatePass, rate, SEEDS } from '../kit/fight.ts';
+import { gateCompany } from '../kit/company.ts';
+import { days, fightsPerRest, mendBetween } from '../kit/harness.ts';
+import { mustRest, markOf, ANSWER } from '../../src/game/bot.ts';
+import { companyAt } from '../kit/company.ts';
+import { ROUND_CAP, playOut } from '../kit/fight.ts';
+import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, basiliskEncounter } from '../kit/line.ts';
+import { stepsFrom } from '../kit/rules/curve.ts';
+import { FIXTURE, LAIR, GUARDIAN } from '../kit/rules/enclave.ts';
+import { featureFlags } from '../kit/rules/quests.ts';
 import { groupFlags } from '../../src/game/people.ts';
 import type { QuestCond } from '../../src/game/quests.ts';
 import { ok, owed, withDefs, asked } from './lib.ts';
-
-/**
- * Each figure's aim, and its limit beyond it (#273): a figure inside its aim passes; one between its
- * aim and its limit passes and is listed as off its aim; one past its limit fails. The pilot weighed
- * them on every box of the Downs and moved none (#47, docs/areas/shelf.md §8).
- */
-export const GATE = {
-  /** At the floor, the share of the fights won: through. At least. */
-  through: { aim: 0.9, limit: 0.8 },
-  /** Two levels under the floor, the share won: back. At most. Under `dayFrom` alone: Act I's floors. */
-  back: { aim: 0.25, limit: 0.9 },
-  /**
-   * From `dayFrom`, two levels under the floor, its fights to a rest as a share of the floor's
-   * (harness's fightsPerRest): back by the day (#851). At most: two thirds, and never the floor's own.
-   */
-  backDay: { aim: 2 / 3, limit: 1 },
-  /** At the floor, the share of companies that walk the zone's road. At least. */
-  road: { aim: 0.8, limit: 0.65 },
-  /** The boss at its map's floor: about half. Within. */
-  boss: { aim: [0.3, 0.7], limit: [0.2, 0.8] } as { aim: readonly [number, number]; limit: readonly [number, number] },
-  /** The boss two levels above its map's floor: nearly always. At least. */
-  bossAbove: { aim: 0.9, limit: 0.75 },
-  /** How far fights to a rest may fall under and rise over harness's fightsPerRest: 5.5 to 7.5, and 4 to 10, at 6.5. */
-  perRest: { aim: [1, 1], limit: [2.5, 3.5] } as { aim: readonly [number, number]; limit: readonly [number, number] },
-  /** How far under its zone's median group the groups nearest its way in may be won. */
-  warning: { aim: 0.01, limit: 0.1 },
-  /** How far below its floor a company is held back. */
-  under: 2,
-  /** The floor from which two under is judged by the day (backDay), not the fight (back): Saltreach's, Act II's first. */
-  dayFrom: 10,
-};
+import { GATE, landings } from '../kit/rules/gate.ts';
 
 /** Which side of a line a figure is: inside its aim ('aim'), off it but inside its limit ('off'), past its limit ('past'). */
 export type Judged = 'aim' | 'off' | 'past';
@@ -73,8 +47,6 @@ const atLeast = (t: number) => (v: number): number => t - v;
 const atMost = (t: number) => (v: number): number => v - t;
 const within = ([lo, hi]: readonly [number, number]) => (v: number): number => Math.max(lo - v, v - hi);
 
-/** Seeds a cell, as tools/gate.ts's table has it. */
-const SEEDS = 100;
 /**
  * Seeds for fights to a rest: a day is a long run of fights, and over a hundred its mean moves by
  * a fifth of a fight with the seeds alone.
@@ -144,17 +116,6 @@ function check(key: string, v: number, aim: (v: number) => number, limit: (v: nu
 /** How a line reads its aim and its limit. */
 const aims = (aim: string, limit: string): string => `aim ${aim}, limit ${limit}`;
 
-const rates = new Map<string, number>();
-/**
- * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters, its
- * clock and that weather, each computed once: the maps and their areas share them.
- */
-export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under' | 'clock'>, level: number): number {
-  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}/${g.clock ? JSON.stringify(g.clock) : ''}@${level}~${opts.rangedPenalty ?? 0}`;
-  let r = rates.get(key);
-  if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
-  return r;
-}
 /**
  * The road behind's groups on an earlier act's maps, as the game names a group, 'map:id': each waits on
  * an answer given an act later on the road, so no company at its map's floor meets it, and the gate
@@ -178,24 +139,6 @@ const beforeBehind = (d: MapDef): MapDef =>
 /** The two groups nearest a zone's way in, as a company first finds it: none that waits on an `after`. */
 export const nearestWayIn = (groups: readonly EncounterDef[], steps: (x: number, y: number) => number): EncounterDef[] =>
   groups.filter((g) => !g.after).sort((a, b) => steps(a.x, a.y) - steps(b.x, b.y)).slice(0, 2);
-/**
- * Where the crossings people sell (game/passage.ts) put a company onto map `id`: a crossing's landing
- * on it, and where a crossing lands in a town, that town's ways out onto it. Each is a way in, as a
- * coach carries a company past country it has not earned (#164).
- */
-export function landings(defs: readonly MapDef[], id: string): { x: number; y: number; by: string }[] {
-  const out: { x: number; y: number; by: string }[] = [];
-  for (const d of defs) for (const f of d.features ?? []) {
-    if (f.kind !== 'npc') continue;
-    for (const p of f.passage ?? []) {
-      const by = `${p.by} from ${d.id}`;
-      if (p.to === id) out.push({ x: p.x, y: p.y, by });
-      const town = defs.find((t) => t.id === p.to && t.kind === 'town');
-      for (const e of town?.exits ?? []) if (e.to === id && !out.some((o) => o.x === e.tx && o.y === e.ty && o.by === by)) out.push({ x: e.tx, y: e.ty, by: `${by} through ${town!.id}` });
-    }
-  }
-  return out;
-}
 /**
  * A den's reading at a level: its keepers' win rate against each of its brood groups', how many
  * brood it keeps abroad and at what pace. Its fault, if any: keepers won more often than a brood
@@ -397,8 +340,7 @@ function fixed(): void {
     /** Seeds 1 to `seeds` of a gate fight, `cap` rounds at most, played as gateFight plays it, by the bots' `answer`: each fight's end. */
     const fought = (level: number, monsters: Fighters, cap = ROUND_CAP, dress = (p: Party): Party => p, answer = ANSWER): { s: CombatState; p: Party }[] => Array.from({ length: seeds }, (_, n) => {
       const k = n + 1, p = dress(gateCompany(level, k)), rng = makeRng(fightSeed(k)), s = startCombat(p, [asGroup('gate', monsters)], rng);
-      for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > cap) break; if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i, { answer }); }
-      return { s, p };
+      return { s: playOut(s, p, rng, gateBot, { answer }, cap), p };
     });
     const won = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.outcome === 'victory').length / fs.length;
     const fire = fought(19, trollEncounter(19), 4), none = fought(19, trollEncounter(19), 4, fireless), burnt = fire.filter(({ s }) => s.log.some((l) => / smoulders? and /.test(l))).length;

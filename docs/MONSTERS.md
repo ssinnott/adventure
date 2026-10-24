@@ -554,9 +554,10 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 2. **The line is not moved for it.** A group stays sized for its floor's day; a map past the limit is
    re-sized inside its floor's own aims, a role up or a group thinner and never more monsters (#865).
 
-`tools/testmonster.ts` stats a generic monster for every role at every level, and `tools/harness.ts`
-measures it. The company is the premade six at the level, in the gear the tables give it by then
-(the gear ladder, `GEAR`, from each area's rungs in its `checks.ts`: the kits, the Foreland's band
+`tools/kit/line.ts` stats a generic monster for every role at every level (its two tables
+in `tools/kit/line.json`), and `tools/harness.ts` measures it. The company is the
+premade six at the level, in the gear the tables give it by then (the gear ladder,
+`GEAR`, from each area's rungs in its `checks.ts`: the kits, the Foreland's band
 gear and its finds with a plus by 3 and 5, then Thornmark's past them, the Deepthorn's at 10). It
 fights the encounter again and again from a fresh start, mending between fights with spells as a
 player would, until it loses one or must rest. A bot plays it that mends whoever is in danger and

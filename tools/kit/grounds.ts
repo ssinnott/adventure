@@ -2,8 +2,8 @@
 // before a built map holds it: the smoke test paints each and sweeps it for cracks (tools/smoke/cracks.ts), and the contact
 // sheet shows each (`--ground`), as the Rift samples show the templates. Each has a ruin or a hut, so
 // the sweep has wall faces to look between, and is seen from its start. No area places them.
-import type { MapDef } from '../src/game/map.ts';
-import { NORTH } from '../src/game/types.ts';
+import type { MapDef } from '../../src/game/map.ts';
+import { NORTH } from '../../src/game/types.ts';
 
 export const GROUND_SAMPLES: readonly MapDef[] = [
   {

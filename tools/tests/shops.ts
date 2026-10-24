@@ -10,7 +10,8 @@ import type { ItemDef } from '../../src/game/items.ts';
 import { skilled } from '../../src/game/skills.ts';
 import { businessEntries } from '../../src/ui/screens.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { ok, headlessGame, drive, withDefs } from './lib.ts';
+import { ok, withDefs } from './lib.ts';
+import { headlessGame, drive } from '../kit/headless.ts';
 
 type Shop = Extract<Feature, { kind: 'shop' }>;
 /** A company of the road's, with a Merchant standing if asked: Cassian, the sixth, learnt it. */

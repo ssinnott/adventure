@@ -596,9 +596,9 @@ Decided by the owner's delegate for #892, each the owner's to overturn:
   flees, the likelier, from 15% to 90%; a failed flight costs the round (`flee`,
   `src/game/combat.ts`). The cost is where you end up.
 - **No round limit:** a fight runs until one side is down or gone or the party flees; no count of
-  rounds ends it in play. The harness's fifteen (`ROUND_CAP`, `tools/harness.ts`) is its own measure
-  of a slog: a fight still going at fifteen is broken off there, not won. Decided by the owner's
-  delegate, 16 October 2026 (#18, #808).
+  rounds ends it in play. The harness's fifteen (`ROUND_CAP`, `tools/kit/fight.ts`) is its own
+  measure of a slog: a fight still going at fifteen is broken off there, not won. Decided by the
+  owner's delegate, 16 October 2026 (#18, #808).
 - **Respawn:** cleared areas repopulate on a long timer with weaker groups, and never repopulate
   bosses or keyed rooms.
 - **An elemental weapon** adds 1d6 of its element to each blow that lands (`ELEMENT_DIE`, #855):

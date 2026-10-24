@@ -4,7 +4,7 @@
 // with a crossing alone keeps the seller, since no gate leads in.
 import { MAP_DEFS, ATLAS } from '../../src/content/index.ts';
 import { worldPoint } from '../../src/game/atlas.ts';
-import { waysOut, entrance } from '../ways.ts';
+import { waysOut, entrance } from '../kit/ways.ts';
 import { ok } from './lib.ts';
 
 type Pt = readonly [number, number];

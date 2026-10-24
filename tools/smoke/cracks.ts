@@ -4,7 +4,7 @@
 // sweep alone that SMOKE_PART=sweep runs, a shard of it in each of the sweep job's jobs.
 import type { Load, Page } from '../kit/browser.ts';
 import type { View } from '../kit/sweep.ts';
-import { GROUND_SAMPLES } from '../grounds.ts';
+import { GROUND_SAMPLES } from '../kit/grounds.ts';
 import type { MapDef } from '../../src/game/map.ts';
 import type { Run, Sweep } from './boot.ts';
 
@@ -104,7 +104,7 @@ const sweepLine = (ok: Run['ok'], s: Sweep, r: Swept): void => {
   if (r.audit) ok(r.audit.differ.length + r.audit.overSkip + r.audit.split === 0, `the audit: the old sweep and the new judge all ${r.views} views alike, no skipped view's flat band paints over the backdrop and no window's views differ in it (${r.audit.differ.length} judged otherwise, ${r.audit.overSkip} skipped views painting, ${r.audit.split} windows differing)${r.audit.differ.length ? ' -> ' + r.audit.differ.slice(0, 4).join(', ') : ''}`);
 };
 
-// The ground's samples (tools/grounds.ts) are swept one way on every run, first, put into the game's maps
+// The ground's samples (tools/kit/grounds.ts) are swept one way on every run, first, put into the game's maps
 // for it and taken out after, so a ground no built map holds yet is swept too and the party ends where it
 // did; then the cellar, Helmstow and its keep one way, and all four ways the maps asked for, unless the
 // sweep job sweeps them (SMOKE_PART=rest).

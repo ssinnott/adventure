@@ -20,11 +20,11 @@ import fs from 'node:fs';
 import { createServer } from './server.ts';
 import { open as openPage, type Load } from './kit/browser.ts';
 import { read, SHEET } from './kit/args.ts';
-import { changedFiles, changedMaps, changedMonsters, changedInteriors } from './changed.ts';
+import { changedFiles, changedMaps, changedMonsters, changedInteriors } from './kit/changed.ts';
 import { AREAS, MAP_DEFS as PLACED, MONSTERS, INTERIORS, ATLAS, CLIMATES } from '../src/content/index.ts';
 import { RIFT_SAMPLES } from '../src/content/rifts/index.ts';
-import { GROUND_SAMPLES } from './grounds.ts';
-import { waysOut, entrance } from './ways.ts';
+import { GROUND_SAMPLES } from './kit/grounds.ts';
+import { waysOut, entrance } from './kit/ways.ts';
 import { GameMap } from '../src/game/map.ts';
 import { mapAt } from '../src/game/atlas.ts';
 import type { MapDef } from '../src/game/map.ts';
@@ -65,9 +65,9 @@ if (areaId) {
 const base = opt('changed');
 if (base) {
   const files = changedFiles(base);
-  const everything = ['tools/sheet.ts', 'tools/ways.ts', 'tools/kit/browser.ts', 'tools/kit/args.ts'].some((f) => files.includes(f));
+  const everything = ['tools/sheet.ts', 'tools/kit/ways.ts', 'tools/kit/browser.ts', 'tools/kit/args.ts'].some((f) => files.includes(f));
   const m = await changedMaps(files), mo = await changedMonsters(files, base), i = await changedInteriors(files, base);
-  maps = [...maps, ...(everything || m.all ? MAP_DEFS.map((d) => d.id) : m.maps), ...(files.includes('tools/grounds.ts') ? GROUND_SAMPLES.map((d) => d.id) : [])];
+  maps = [...maps, ...(everything || m.all ? MAP_DEFS.map((d) => d.id) : m.maps), ...(files.includes('tools/kit/grounds.ts') ? GROUND_SAMPLES.map((d) => d.id) : [])];
   monsters = [...monsters, ...(everything || mo.all ? Object.keys(MONSTERS) : mo.monsters)];
   interiors = [...interiors, ...(everything || i.all ? INTERIORS : i.interiors)];
 }
