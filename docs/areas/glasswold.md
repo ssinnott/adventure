@@ -19,8 +19,8 @@ land without shallows or rivers, and "walkable" what is not mountain, peak, clif
 
 Built so far: E10's Wold half (#524, §4.2), on the box laid whole for Ashfall's Ember Waste (#517);
 D9, the steppe (#525, §4.3), which lists the area and places the glass scorpion E10 cut and the
-first glass walker; D10, the mesas (#527, §4.5), which joins E10 and D9 overland, so `CUT_OFF` is
-empty, and places the basilisk and spends stone first; D8, Akordu, the Riders' camp (#526, §4.4),
+first glass walker; D10, the mesas (#527, §4.5), which joins E10 and D9 overland, so no map is cut
+off, and places the basilisk and spends stone first; D8, Akordu, the Riders' camp (#526, §4.4),
 which lands the Rider's ride to Cinderport; C8, the Scarp's edge (#528, §4.6), where the Scarp stair
 from the Saltings' C7 comes up onto the lip, nine squares of C7 opened for it; B8, the Wold's heart
 (#529, §4.7), which places the Grey Lion, set off the line, and the way up Kushtash; B9, the Glass's
@@ -82,7 +82,7 @@ mountain (#923); D7 and E7, the Scarp's east end and the north of an island, are
 **D9 and E10 meet at a corner only,** D9's 31,31 (135,285) and E10's 0,0 (136,286), and D10 (#527)
 lies between them and joins them overland: E10's west-edge road, at its 0,6, meets D10 at its 31,6,
 and D10's north edge, at 22 to 23,0, meets D9's south edge, where the atlas's road crosses at 22 to
-23,31 (126 to 127,285). `CUT_OFF`, the outdoors reach test's list, is empty, D9 no longer owed (§9,
+23,31 (126 to 127,285). No area owes a map's joining (`Owes.cutOff`), D9 no longer owed (§9,
 #525's 6, #527's 16); D8 (#526) meets D9's north edge from the north, square for square, the Riders'
 track at 16,31 against D9's 16,0 (§4.4).
 

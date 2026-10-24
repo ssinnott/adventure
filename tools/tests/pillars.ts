@@ -30,7 +30,7 @@ import { hoardLine } from '../../src/game/dens.ts';
 import { ENDINGS } from '../../src/content/endings.ts';
 import type { Ending } from '../../src/content/endings.ts';
 import { PAGE, pageLines } from '../../src/ui/ending.ts';
-import { areaRows, besideLists, once } from '../checks.ts';
+import { areaRows, gatherLists, once } from '../checks.ts';
 import { ok, owed, familyModules, withDefs } from './lib.ts';
 
 /**
@@ -301,13 +301,6 @@ export function uses(area: Pick<Area, 'maps' | 'atlas'>, family: Map<string, rea
   return out;
 }
 
-/**
- * The reach (DESIGN §9): off the road by design, so the secret's pace does not bind it. Its zones are
- * named here until the atlas marks them itself (EXPANSION §5.8); a town or dungeon goes with the zone
- * it opens from.
- */
-export const REACH_ZONES: readonly string[] = [];
-
 /** A map as the pace check reads it: the area that lists it, and the atlas zone it lies in or opens from. */
 export interface PacedMap { def: MapDef; area: string; zone?: string }
 
@@ -337,8 +330,9 @@ export function roadPlace(atlas: Atlas, defs: readonly MapDef[]): (area: string,
 export function paceFaults(maps: readonly PacedMap[], kindOf: (monster: string) => MonsterDef['kind'] | undefined, atlas: Atlas = ATLAS, defs: readonly MapDef[] = maps.map((m) => m.def), grid?: { zone: Int16Array; width: number; height: number }): string[] {
   const order = (id: string): number => atlas.areas.find((a) => a.id === id)?.order ?? Infinity;
   const KILNS = order('kilns'), CAIRNMOOR = order('cairnmoor');
-  // The reach's zones, REACH_ZONES's and those that say so themselves (`AtlasZone.reach`, #897).
-  const reach = new Set([...REACH_ZONES, ...atlas.zones.filter((z) => z.reach).map((z) => z.id)]);
+  // The reach (DESIGN §9): off the road by design, so the secret's pace does not bind it. Its zones say
+  // so themselves (`AtlasZone.reach`, EXPANSION §5.8); a town or dungeon goes with the zone it opens from.
+  const reach = new Set(atlas.zones.filter((z) => z.reach).map((z) => z.id));
   const placeOf = roadPlace(atlas, defs);
   const mines = maps.map((m) => /^deep_mines(\d*)$/.exec(m.def.id)).filter((x): x is RegExpExecArray => !!x);
   const bottom = mines.length ? Math.max(...mines.map((x) => Number(x[1] || 0))) : null;
@@ -441,12 +435,11 @@ export function edgeFaults(atlas: Atlas, defs: readonly MapDef[]): EdgeFault[] {
 }
 
 /**
- * The squares where map and atlas disagree today, by whose fix they wait on: each is reported, and
- * fails once it agrees, so it is dropped here.
+ * The squares where map and atlas disagree today, owed by their areas by whose fix they wait on
+ * (`Owes.edges`): each is reported, and fails once it agrees, so it is dropped. An issue may be owed by
+ * several areas, and a square owed twice is refused.
  */
-const EDGES_OWED: Record<string, readonly string[]> = {};
-/** EDGES_OWED beside what the areas owe (`Owes.edges`), by the square: an issue may be owed by several areas, and a square owed twice is refused (#897). */
-const edgesOwed = besideLists(EDGES_OWED, areaRows((c) => c.owes?.edges));
+const edgesOwed = gatherLists(areaRows((c) => c.owes?.edges));
 
 /**
  * A flag that closes something, found in the maps: an exit, a hand-in, a service, or anything else
@@ -563,10 +556,11 @@ export function lockFaults(found: readonly FoundLock[], locks: readonly StoryLoc
 /** The ways on the atlas that open on the story, once a step is done: none may (EXPANSION §2.3). */
 export const storyWays = (links: Atlas['links']): string[] => links.filter((l) => l.opens !== undefined).map((l) => `${l.from}-${l.to} after step ${l.opens}`);
 
-/** Locks someone else fixes, reported as theirs until it lands: none today. */
-const LOCKS_OWED: Record<string, readonly string[]> = {};
-/** LOCKS_OWED beside what the areas owe (`Owes.locks`), by the lock: an issue may be owed by several areas, and a lock owed twice is refused (#897). */
-const locksOwed = besideLists(LOCKS_OWED, areaRows((c) => c.owes?.locks));
+/**
+ * Locks someone else fixes, owed by their areas by the issue that fixes them (`Owes.locks`) and reported
+ * as theirs until it lands: an issue may be owed by several areas, and a lock owed twice is refused.
+ */
+const locksOwed = gatherLists(areaRows((c) => c.owes?.locks));
 
 export async function pillars(): Promise<void> {
   // Hints: every secret door names one, on its near side.
@@ -793,12 +787,11 @@ export async function pillars(): Promise<void> {
       'Ashfall, placing them in a room of its own, may claim them (the level is not before it), and the Glasswold then may not');
   }
 
-  // A zone of the reach, an owed square and an owed lock are named here or on their zone or area, not both (#897).
-  const reachTwice = ATLAS.zones.filter((z) => z.reach && REACH_ZONES.includes(z.id)).map((z) => z.id);
-  ok(...once('every zone of the reach, owed square and owed lock is named once, in pillars.ts or on its zone or area', [...reachTwice, ...edgesOwed.twice, ...locksOwed.twice]));
-  const owedFx = besideLists({ '#1': ['fx_a 1,1', 'fx_a 2,1'] }, [['#1', ['fx_b 1,1']], ['#2', ['fx_a 1,1']]]);
+  // An owed square and an owed lock are owed once, by one area, though an issue may be owed by several.
+  ok(...once('every owed square and owed lock is named once', [...edgesOwed.twice, ...locksOwed.twice]));
+  const owedFx = gatherLists([['#1', ['fx_a 1,1', 'fx_a 2,1']], ['#1', ['fx_b 1,1']], ['#2', ['fx_a 1,1']]]);
   ok(Object.entries(owedFx.all).join(' ') === 'fx_a 1,1,#1 fx_a 2,1,#1 fx_b 1,1,#1' && owedFx.twice.join() === 'fx_a 1,1',
-    'an issue owed by two areas, or by the table and an area, is read from both, and a square or a lock owed twice is refused (#897)');
+    'an issue owed by two areas is read from both, and a square or a lock owed twice is refused (#897)');
   // The land agrees with the map: water and roads carry on across a zone map's edge.
   const edges = edgeFaults(ATLAS, MAP_DEFS);
   for (const area of AREAS) for (const def of area.maps.filter((d) => d.kind === 'outdoor')) {

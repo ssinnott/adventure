@@ -349,8 +349,8 @@ export function ladder(): void {
   // Every id in the ladder is an item, and every find is one within the Foreland's window.
   const missing = GEAR.flatMap(([, ids]) => ids).filter((id) => !ITEMS[id]);
   ok(!missing.length, `every rung of the ladder is an item${missing.length ? ` (not: ${missing.join(', ')})` : ''}`);
-  // A rung is held in tools/harness.ts or on its area (`AreaChecks.gear`), not both, nor on two areas (#897).
-  ok(...once('every rung of the ladder is given once, in GEAR or KIT or on its area', RUNGS_TWICE));
+  // A rung is held on one area (`AreaChecks.gear`), never on two (#897).
+  ok(...once('every rung of the ladder is given once, on one area', RUNGS_TWICE));
   // A rung stands whole on one area, the last on the road whose items it holds (#897): 13, Saltreach's and
   // Wrackholm's, is Wrackholm's.
   const onAreas = [...CHECKS].flatMap(([id, c]) => Object.entries(c.gear ?? {}).map(([at, ids]) => [id, Number(at), ids] as const));

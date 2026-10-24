@@ -291,9 +291,9 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   them: one rule over every seam (`tools/tests/outdoors.ts`, #898), and a seam that disagrees as
   built is its area's `seamsAsBuilt` row with its reason. Where it meets the atlas, its water and
   roads carry on into the land beyond its edge (`tools/tests/pillars.ts`), and each edge that faces
-  no built box is open to a walker exactly where a row of `OPEN_ON_NOTHING` says, with the box it
-  faces and why that is unbuilt: the bounds' border check (#828) in embryo. The box's pull request
-  adds the rows for its own edges onto nothing and deletes those of the edges it now faces.
+  no built box is open to a walker exactly where a row of its area's `openOnNothing` says, with the
+  box it faces and why that is unbuilt: the bounds' border check (#828) in embryo. The box's pull
+  request adds the rows for its own edges onto nothing and deletes those of the edges it now faces.
 - **Around it.** The automap draws a map that fits the panel whole, as before, and for the outdoors
   a window of 33 by 33 squares round the party at the size a 32-square map is drawn. Quests still
   name zone maps: `visited: 'thornmark'` holds once the party has set foot in the zone
@@ -1007,7 +1007,7 @@ over content broken on purpose too, and two tools to theirs:
 - `layers` (§8.1, #900): the runtime imports of `src/` and `tools/`, read from the files in about
   0.2 s, held to the layers: no cycle among `src`'s, nothing in `src/game` taking content, the UI or
   the app, nothing in the UI the app, no area another's files but its `public.ts` (#992), and the
-  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 148 crossings are the
+  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 146 crossings are the
   rows of its `KNOWN`, each under the issue that clears it; a new crossing fails, and so does a row
   that no longer crosses, so the table only shrinks.
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
