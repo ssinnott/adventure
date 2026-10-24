@@ -670,7 +670,7 @@ function sellScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
   return new ChoiceScreen('"Let me see it."', [...entries.map((e) => e.label), 'Done'], (i) => {
     if (i < 0 || i === entries.length) return;
     const e = entries[i];
-    g.say(sell(g.party, e.owner, e.id, ITEMS).line);
+    g.say(sell(ITEMS, g.party, e.owner, e.id).line);
     g.push(sellScreen(g, f));
   }, f.name);
 }

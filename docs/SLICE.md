@@ -1192,17 +1192,18 @@ Decided by the builder for #945, each the owner's to overturn:
 Decided by the builder for #971, each the owner's to overturn:
 
 1. **Each service returns `{ done, paid, line }`** (`Served`), as `learn` returns its line: `done`
-   because the hall's fee screen goes on to the offers only once paid, `paid` because the walkthroughs
-   print what was charged, and `line` empty where the screen says nothing.
+   because the hall's fee screen goes on to the offers only once paid, `paid` because the
+   walkthroughs print what was charged; `line` is empty where the screen says nothing.
 2. **`train` charges a purse** (`Pick<Party, 'gold'>`) and takes the trainer's level. A walkthrough
-   that trained a copy and charged nobody (Ashfall's, the Kilns' two, Rimewater's) hands it a copy of
-   the purse, so the company walks on as it was; Sunderwood's, which charged the company, hands it that.
+   that trained a copy and charged nobody (Ashfall's, the Kilns' two, Rimewater's) hands it a copy
+   of the purse, so the company walks on as it was; Sunderwood's charged the company and still does.
 3. **`train` refuses, saying nothing, one the trainer does not take** (`mayTrain`: ready by the xp,
-   under the trainer's level and standing), the rule the screen bars the row by; the screen reads it.
+   under the trainer's level and standing): the screen bars the row by the same rule.
 4. **The donation short of gold says nothing,** as the chapel did; every other refusal says the
    screen's own line.
-5. **`sell` is handed the item table;** `sellPrice` still finds a Merchant through `skilled`, and the
-   hall reads `spellsFor` and `spell`, as the screen did: L2's and L3's to pass in.
+5. **`sell` takes the item table first,** as #973 passes every table; `sellPrice` still finds a
+   Merchant through `skilled`, and the hall reads `spellsFor` and `spell`, as the screen did: #973's
+   and #974's to pass in.
 6. **`stay` returns the flag of the night it counts** (`set`), which Rimewater's four nights check;
    `stayNight` stays in `party.ts`, where a camp's nights call it too.
 7. **The walkthroughs take the night's price from `nightCost` and the spell from `hallOffers`** (the

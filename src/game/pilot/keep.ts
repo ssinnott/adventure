@@ -12,7 +12,7 @@ import type { Feature } from '../map.ts';
 import type { Character, Party } from '../party.ts';
 import { armorClass, canTrain, canTrainAt, hasCondition, isDown, PRESTIGES, templePrice, trainPrice, weaponOf } from '../party.ts';
 import { hits, item, priceIn } from '../items.ts';
-import { RATIONS_PRICE } from '../services.ts';
+import { DONATION, RATIONS, RATIONS_PRICE } from '../services.ts';
 import { mustRest, REST_AT } from '../bot.ts';
 import { restRefused } from '../wilds.ts';
 import { ChoiceScreen, InteriorScreen, SheetScreen, SpellScreen, TRADE } from '../../ui/screens.ts';
@@ -437,7 +437,7 @@ const asks = (row: string): number => Number(/\((\d+) gold\)/.exec(row)?.[1] ?? 
 
 /** An inn: the night while those standing need rest, then ten rations while under two a head, each while the gold holds; then Leave. */
 function inn(c: ChoiceScreen, p: Party, pilot: Pilot): Action | null {
-  const stay = c.options.findIndex((o) => o.startsWith('Stay the night')), buy = c.options.findIndex((o) => o.startsWith('Buy 10 rations'));
+  const stay = c.options.findIndex((o) => o.startsWith('Stay the night')), buy = c.options.findIndex((o) => o.startsWith(`Buy ${RATIONS} rations`));
   if (stay < 0 || buy < 0) return null;
   if (restless(p) && p.gold >= asks(c.options[stay])) { pilot.why = ['A room for the night.']; return go(c, stay); }
   if (stocking(p) && p.gold >= asks(c.options[buy])) { pilot.why = ['Rations for the road.']; return go(c, buy); }
@@ -447,7 +447,7 @@ function inn(c: ChoiceScreen, p: Party, pilot: Pilot): Action | null {
 /** A temple: the row of each member it can pay for (one with a fee shown), the dead first, then the stone, then the rest; then Leave. */
 function temple(c: ChoiceScreen, p: Party, pilot: Pilot): Action | null {
   const rows = c.options;
-  if (rows.at(-2) !== 'Donate 10 gold') return null;
+  if (rows.at(-2) !== `Donate ${DONATION} gold`) return null;
   let best = -1, worst = 3;
   rows.slice(0, -2).forEach((row, i) => {
     const { label, value } = optionParts(row), fee = /^(\d+)g$/.exec(value), ails = label.slice(label.indexOf(': ') + 2);

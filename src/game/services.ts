@@ -3,8 +3,9 @@
 // a function of what it changes, with the sums, the order of the effects and the words the screens had;
 // each returns whether it was done, the gold that changed hands and the line the screen says, as `learn`
 // (game/skills.ts) returns its line. The screens (ui/screens.ts) draw the menus and say the line, and
-// the walkthroughs call the same rules instead of writing them out again. Pure apart from what is
-// handed in, so a test serves as the game does, without a Game.
+// the walkthroughs call the same rules instead of writing them out again. Each changes only what it is
+// handed, so a test serves as the game does, without a Game; it still reads the item and spell tables
+// through `sellPrice`, `spell`, `spellsFor` and `levelUp` until #973 and #974 pass them in.
 import type { Feature } from './map.ts';
 import type { World } from './world.ts';
 import type { Character, Party } from './party.ts';
@@ -86,10 +87,10 @@ export function donate(party: Pick<Party, 'gold' | 'flags'>): Served {
 
 /**
  * An item sold to a shop out of its owner's list (the bag or a member's pack), for `sellPrice`
- * (game/items.ts): an artifact is refused (`REFUSED`) and a thing worth nothing is not bought. `items`
- * is the table the item is read from.
+ * (game/items.ts): an artifact is refused (`REFUSED`) and a thing worth nothing is not bought. `items`,
+ * first as #973 passes every table, is the table the item is read from.
  */
-export function sell(party: Party, owner: string[], id: string, items: Readonly<Record<string, ItemDef>>): Served {
+export function sell(items: Readonly<Record<string, ItemDef>>, party: Party, owner: string[], id: string): Served {
   const d = items[id], paid = sellPrice(party, d.price);
   if (d.artifact) return refused(REFUSED);
   if (paid === 0) return refused('"I will not buy that."');

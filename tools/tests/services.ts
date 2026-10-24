@@ -6,7 +6,7 @@ import { ITEMS } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/map.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { REFUSED } from '../../src/game/items.ts';
-import { defaultParty, addCondition, xpForLevel, trainPrice, levelUp, CLASSES } from '../../src/game/party.ts';
+import { defaultParty, addCondition, xpForLevel, levelUp, CLASSES } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell, spellsFor } from '../../src/game/spells.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
@@ -55,6 +55,12 @@ export function services(): void {
   ok(raised.paid === 100 && !bram.conditions.length && bram.hp === 1 && raised.line === 'Bram is restored.' && mended.paid === 25 && !idris.conditions.length
     && flock.gold === 375 && !well.done && well.paid === 0 && well.line === 'Wren is well.',
     `the dead raised for ${raised.paid} on 1 hit point, the poisoned for ${mended.paid} (500 -> ${flock.gold} gold), and "${well.line}"`);
+  // A level's worth: the dead 100 a level and the stoned 80.
+  const elders = company(1000), [elder, glass] = elders.members;
+  elder.level = 3; addCondition(elder, 'dead'); elder.hp = -10; glass.level = 2; addCondition(glass, 'stoned');
+  const raisedAt3 = cure(elders, elder), unstoned = cure(elders, glass);
+  ok(raisedAt3.paid === 300 && unstoned.paid === 160 && elders.gold === 540 && elder.hp === 1 && !glass.conditions.length,
+    `the dead of 3 raised for ${raisedAt3.paid} and the stoned of 2 freed for ${unstoned.paid}: 100 and 80 a level`);
   const pauper = company(99);
   addCondition(pauper.members[0], 'dead'); pauper.members[0].hp = -10;
   const wasPauper = JSON.stringify(pauper), unpaid = cure(pauper, pauper.members[0]);
@@ -72,10 +78,10 @@ export function services(): void {
   const table = { longsword: ITEMS.longsword, fx_relic: relic, fx_pebble: pebble };
   const seller = company(0);
   seller.bag = ['longsword', 'fx_relic', 'fx_pebble'];
-  const sold = sell(seller, seller.bag, 'longsword', table);
+  const sold = sell(table, seller, seller.bag, 'longsword');
   ok(sold.done && sold.paid === Math.floor(ITEMS.longsword.price / 2) && seller.gold === sold.paid && seller.bag.join() === 'fx_relic,fx_pebble' && sold.line === `Sold ${ITEMS.longsword.name} for ${sold.paid} gold.`,
     `a sword of ${ITEMS.longsword.price} sells for ${sold.paid}, out of the bag: "${sold.line}"`);
-  const wasSeller = JSON.stringify(seller), art = sell(seller, seller.bag, 'fx_relic', table), stone = sell(seller, seller.bag, 'fx_pebble', table);
+  const wasSeller = JSON.stringify(seller), art = sell(table, seller, seller.bag, 'fx_relic'), stone = sell(table, seller, seller.bag, 'fx_pebble');
   ok(!art.done && art.line === REFUSED && !stone.done && stone.line === '"I will not buy that."' && unchanged(seller, wasSeller),
     `an artifact of 900 is refused (${art.line}) and a pebble of 1, worth nothing back, is not bought (${stone.line}); the bag keeps both`);
 
@@ -106,9 +112,15 @@ export function services(): void {
   const visits = [train(yard, ready, makeRng(1), 3), train(yard, ready, makeRng(1), 3), train(yard, ready, makeRng(1), 3)];
   const one = defaultParty(makeRng(1)).members[0];
   one.xp = xpForLevel(2); levelUp(one, makeRng(1));
-  ok(visits[0].done && visits[0].paid === trainPrice({ level: 1 }) && visits[0].line === `Bram trains to level 2. HP ${one.maxHp}, SP ${one.maxSp}.` && visits[1].done && ready.level === 3
-    && !visits[2].done && visits[2].line === '' && ready.xp === xpForLevel(4) && yard.gold === 1000 - trainPrice({ level: 1 }) - trainPrice({ level: 2 }),
+  ok(visits[0].done && visits[0].paid === 25 && visits[0].line === `Bram trains to level 2. HP ${one.maxHp}, SP ${one.maxSp}.` && visits[1].done && visits[1].paid === 50 && ready.level === 3
+    && !visits[2].done && visits[2].line === '' && ready.xp === xpForLevel(4) && yard.gold === 925,
     `the cap: a member of 1 with the xp for 4 trains one level a visit, to 2 for ${visits[0].paid} and to 3 for ${visits[1].paid}, and a trainer to 3 takes him no further: "${visits[0].line}"`);
+  // The price: 25 a level to the fourth, 40 a level from the fifth.
+  const drilled = company(1000), [four, five] = drilled.members;
+  four.level = 4; four.xp = xpForLevel(5); five.level = 5; five.xp = xpForLevel(6);
+  const at4 = train(drilled, four, makeRng(1), 10), at5 = train(drilled, five, makeRng(1), 10);
+  ok(at4.paid === 100 && at5.paid === 200 && drilled.gold === 700 && four.level === 5 && five.level === 6,
+    `a member of 4 trains for ${at4.paid} and one of 5 for ${at5.paid}: 25 a level to the fourth, 40 from the fifth`);
   down.xp = xpForLevel(2); addCondition(down, 'unconscious');
   const wasYard = JSON.stringify(yard), fallen = train(yard, down, makeRng(1), 10);
   ok(!mayTrain(down, 10) && !fallen.done && fallen.line === '' && unchanged(yard, wasYard), `${down.name}, ready but down, is not trained and nothing is said, as the screen bars the row`);
