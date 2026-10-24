@@ -58,11 +58,11 @@ export const WYTGAT: MapDef<'wytgat'> = {
   ],
   secrets: [{ x: 13, y: 8, hint: 'wy_draught' }],
   encounters: [
-    // The watch at the brazier, the nearest.
-    { id: 'wy_watch', x: 7, y: 5, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_smuggler', 'wrack_bowman'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
-    // The overseer of the chained rows and his men.
+    // The watch at the brazier, the nearest, where every way on passes.
+    { id: 'wy_watch', x: 7, y: 4, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_smuggler', 'wrack_bowman'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
+    // The overseers of the chained rows and their men, across the gallery.
     { id: 'wy_chains', x: 2, y: 10, monsters: ['ashen_overseer', 'ashen_overseer', 'wrack_smuggler', 'wrack_smuggler', 'wrack_smuggler'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
-    // The strongroom's keepers, the farthest and the hardest.
-    { id: 'wy_keepers', x: 8, y: 12, monsters: ['ashen_gleaner', 'ashen_gleaner', 'ashen_gleaner', 'ashen_overseer'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
+    // The strongroom's keepers in its door, the farthest and the hardest.
+    { id: 'wy_keepers', x: 5, y: 13, monsters: ['ashen_gleaner', 'ashen_gleaner', 'ashen_gleaner', 'ashen_overseer'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

@@ -892,11 +892,12 @@ Decided by the builder for #830, each the owner's to overturn:
 39. **Its band is 13–14,** a band over B7's 11–12, as #845 asks of an enclave; its door warns a
     company of 10 and says harder at 11 and 12.
 40. **Its groups are three of the Hand,** Wrackholm's smugglers and bowmen, as C6 and B7 place them,
-    Wrackholm's overseers and the Sunder's gleaners: the watch at the brazier, three smugglers and a
-    bowman, at 4 steps (12.0); the overseers of the chained rows, two overseers and three smugglers,
-    at 14 (12.4); the strongroom's keepers, three gleaners and an overseer, at 24 (14.5), the
-    curve's rise 1.00. At 13 the gate reads 6.66 fights to a rest (aim 6.25 to 8.25), every fight
-    won, and two under, at 11, 4.61, 63.6% of the floor's 7.25 (aim at most 66.7%).
+    Wrackholm's overseers and the Sunder's gleaners, each where every way on passes it: the watch at
+    the brazier, three smugglers and a bowman, at 3 steps (12.0); the overseers of the chained rows,
+    two overseers and three smugglers, across the gallery at 14 (12.4); the strongroom's keepers,
+    three gleaners and an overseer, in its door at 20 (14.5), the curve's rise 1.00. At 13 the gate
+    reads 6.66 fights to a rest (aim 6.25 to 8.25) with every fight won; two under, at 11, 4.61,
+    63.6% of the floor's 7.25 (aim at most 66.7%).
 41. **The reward is the Brine Needle, Stiletto,** Saltmouth's stiletto (1d8+5, the sorcerer's, the
     thief's and the bard's from 11) with a blade of brine glass and its blows carrying lightning, as
     the brinelings' bites do, at 1,150 gold: 13 a blow against the stiletto's 9.5, the Stiletto +1's
@@ -911,11 +912,12 @@ Decided by the builder for #830, each the owner's to overturn:
 43. **New here is the enclave itself** (#845); nothing is drawn for it, and its kinds stand in
     Wrackholm and the Sunder already.
 44. **The walkthrough walks it in `theBounds`,** after B7's groups: the cut and its way, the door's
-    words at 10, 11 and 13 and the sign; the three groups won at 13; every sight; the Brine Needle's
-    numbers and that nothing else gives it; the gallery shut but for its walling, found from the
-    soot and walked into; the way out onto B7's 22,21 facing the grass. B7's check that 22,22 was
-    left bare gives way to the door's: the stone with the mountain either side and under it, its way
-    walked and nothing within four squares. Nothing is loosened.
+    words at 10, 11 and 13 and the sign; each group where every way on passes, so the store and the
+    soot lie past the watch and the strongbox past all three, and the three won at 13; every sight;
+    the Brine Needle's numbers and that nothing else gives it; the gallery shut but for its walling,
+    found from the soot and walked into; the way out onto B7's 22,21 facing the grass. B7's check
+    that 22,22 was left bare gives way to the door's: the stone with the mountain either side and
+    under it, its way walked and nothing within four squares. Nothing is loosened.
 45. **The one shared-test edit is the owner's delegate's** (#830, 24 October): the fixture block of
     `tools/tests/curve.ts` held that Saltreach had no enclave of its own, `ids(now.enclaves)` equal
     to the fixture lair's id alone; with Wytgat it reads `wytgat,fx_lair`, and the assertion is now

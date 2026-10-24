@@ -964,10 +964,11 @@ What the seven areas after Saltreach copy from these boxes, and what they avoid 
 - **Points of interest,** seven events and two chests: the cutting; the chained rows; the names
   scratched low on the wall; the strongroom and its strongbox; the store; the soot on the back
   wall, the hint; the salters' last gallery and its strongbox.
-- **Encounters.** Three groups of the Hand, rising from the way in: the watch at the brazier, three
-  smugglers and a bowman (12), the nearest; the overseers of the chained rows, two overseers and
-  three smugglers (13); the strongroom's keepers, three gleaners and an overseer (15), the farthest
-  and the hardest. None is a guardian, and each is back in two days.
+- **Encounters.** Three groups of the Hand, rising from the way in, each where every way on passes,
+  so that no company steps round it: the watch at the brazier, three smugglers and a bowman (12),
+  the nearest; the overseers of the chained rows, two overseers and three smugglers (13); the
+  strongroom's keepers in its door, three gleaners and an overseer (15), the farthest and the
+  hardest. None is a guardian, and each is back in two days.
 - **Ways in and out.** One, the cut at B7's 22,22, at the end of the grass along row 21: in from
   22,21 onto 7,1 facing south, the door's line the game's own, "Wytgat: levels 13-14.", with harder
   one or two under and the warning three or more; out up the cut onto B7's 22,21, facing the grass.
@@ -981,17 +982,18 @@ What the seven areas after Saltreach copy from these boxes, and what they avoid 
 - **As built** (#830, 24 October): `wytgat`, a dungeon of one level of 16 by 16, `enclave: true`,
   its plate at 62,217 in Saltreach's `PLACES`, five squares south of its door under the Scarp. B7's
   22,22, mountain, is drawn as stone, the cut, its one square changed; nothing stands within four
-  squares of it. Inside, 98 squares to stand on: the cutting at 4–10,3–6, the brazier's watch at
-  7,5, 4 steps in; west of it the gallery of the chained rows down columns 1 and 2, its overseers
-  at 2,10, 14 steps in, and the names scratched at 1,12; at its foot the strongroom at 5–10,11–14,
-  its keepers at 8,12, 24 steps in, and the Hand's strongbox at 9,14, 300 gold and the Brine Needle,
-  Stiletto (1d8+5 and a die of lightning, 1,150 gold: 13 a blow against the stiletto's 9.5); east of
-  the cutting the store at 12–14,3–7, the soot at 13,7 and, behind the walling at 13,8, the salters'
-  last gallery at 12–14,9–10, its strongbox at 13,10, 200 gold and an elixir, which no walker,
-  wader, climber or floater reaches but through the walling (91 squares reached without it). The
-  gate holds at 13: 6.66 fights to a rest, every fight won; two under, at 11, 4.61, 63.6% of the
-  floor's 7.25. Density: 100.0% within 7 steps, the furthest 4. By the curve's count it pays 1,104
-  xp a member and 921 gold, counted in no clear.
+  squares of it. Inside, 98 squares to stand on: the cutting at 4–10,3–6, held by the brazier's
+  watch at 7,4, 3 steps in, which every way on passes; west of it the gallery of the chained rows
+  down columns 1 and 2, held by its overseers at 2,10, 14 steps in, with the names scratched at 1,12
+  past them; at its foot the strongroom at 5–10,11–14, held at its door by its keepers at 5,13, 20
+  steps in, with the Hand's strongbox behind them at 9,14, 300 gold and the Brine Needle, Stiletto
+  (1d8+5 and a die of lightning, 1,150 gold: 13 a blow against the stiletto's 9.5); east of the
+  cutting, past the watch, the store at 12–14,3–7, the soot at 13,7 and, behind the walling at 13,8,
+  the salters' last gallery at 12–14,9–10, its strongbox at 13,10, 200 gold and an elixir, which no
+  walker, wader, climber or floater reaches but through the walling (91 squares reached without
+  it). The gate holds at 13: 6.66 fights to a rest, every fight won; two under, at 11, 4.61, 63.6%
+  of the floor's 7.25. Density: 100.0% within 7 steps, the furthest 4. By the curve's count it pays
+  1,104 xp a member and 921 gold, counted in no clear.
 
 ## Moved from the state
 

@@ -143,8 +143,8 @@ with its door on A5, and the Old Chanter who keeps it are #830's last pull reque
 
 MONSTERS §6.1's roster, in its monsters file: the Fen Eel and the Leech, the Grey Heron, the Fen
 Toad and the Bull Toad, the Bargeman and the Barge Master, the Salt Crab, the Brineling, the Drowned
-Man, the Drowned Chanter and the Choirmaster; the Rifts' tide elders are Wrackholm's Tide Elder, C6
-and B7 place Wrackholm's smugglers and bowmen, and Wytgat those, Wrackholm's overseers and the
+Man, the Drowned Chanter and the Choirmaster; the Rifts' tide elders are Wrackholm's Tide Elder; C6
+and B7 place Wrackholm's smugglers and bowmen, and Wytgat those with Wrackholm's overseers and the
 Sunder's gleaners. New here (`novel`): the long bodies and the toads, two new families, and salt
 underfoot.
 
