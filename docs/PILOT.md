@@ -9,7 +9,7 @@ against the area's hint chain, not the pilot. It is opt-in and changes nothing f
 (DESIGN §1, pillar 1).
 
 It lives on the `Game` (`g.pilot`), outside the save: nothing of it goes into `WorldState` or
-`party.flags`, and `SAVE_VERSION` stays 5. `src/main.ts` builds it; a `Game` a test builds has none
+`party.flags`, and it asks no save upgrade. `src/main.ts` builds it; a `Game` a test builds has none
 until the test gives it one. It presses the keys a player would: every move is an `Action` through
 `Game.update`, and nothing teleports or is bought off screen.
 
@@ -61,7 +61,7 @@ title." for the first three seconds over the pilot's own lines, and after them t
 over "Any key for the title." for as long as the game plays (`Game.band`, `ATTRACT_HOLD`). A Game
 with no pilot has nothing to start: its title counts and does nothing.
 
-`attracting` lives on the Game outside the save, which stays at version 5. While it is on,
+`attracting` lives on the Game outside the save, which asks no upgrade for it. While it is on,
 `saveGame` is a no-op (the save in storage is never written, an existing one left as it is) and the
 game has no sound to mute: nothing outside `src/lib` imports the engine's audio, which a test keeps
 true. The wake is in `Game.update`: a key that finds the pilot off brings the title back

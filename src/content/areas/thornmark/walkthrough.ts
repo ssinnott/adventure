@@ -5,7 +5,8 @@
 // Henlys seen before the Stone, where the chisel, found after, makes the match. Then its side
 // quests on the built maps (#219) and in the Deepthorn, each from its giver to its choice and both
 // ways: the log reads true and the people stand where it says; Act II's Hale's Sergeant both ways;
-// and the Eldest on Penspern. Last, the four prestige trainers here (#19), taught at 11 and 19.
+// the Eldest on Penspern; and the hermit on the shore and Wrackholm's Merryn, met in either order
+// (#941). Last, the four prestige trainers here (#19), taught at 11 and 19.
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
@@ -601,6 +602,22 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.world.state.minutes += 30 * 1440;
     w.world.travel('deepthorn_j5', 6, 18);
     w.ok(!w.world.liveGroups().some((g) => g.def.id === 'j5_eldest'), 'and a month on it is still asleep');
+  }
+  { // The two hermits (#941): the one on the shore sets a flag of his own, so whichever is met first,
+    // the other says the first meeting's words.
+    const HERMIT = who('deepthorn_j4', 15, 21, 'a hermit'), MERRYN = who('wrackholm_f6', 26, 13, 'Merryn');
+    const w = newWalk(ok), before = w.news.length;
+    const his = hear(w, 'deepthorn_j4', HERMIT), news = w.news.slice(before);
+    w.ok(his.startsWith('An old man sits') && !!w.party.flags.q_hermit_deepthorn && !w.party.flags.q_hermit && !page(w, 'hermit') && !news.length,
+      `the hermit met before Merryn sets q_hermit_deepthorn and not q_hermit, and opens no quest (${news.join(' / ') || 'no news'})`);
+    w.ok(hear(w, 'wrackholm_f6', MERRYN).startsWith('A woman sits in the mouth of a cell') && !!page(w, 'hermit'), 'then Merryn\'s words are her first meeting\'s, and The Hermit of the Point begins');
+    const v = newWalk(ok);
+    v.level = 8;
+    fight(v, 'grove2:g2_warden');
+    hear(v, 'wrackholm_f6', MERRYN);
+    const first = hear(v, 'deepthorn_j4', HERMIT), then = hear(v, 'deepthorn_j4', HERMIT);
+    v.ok(first.startsWith('An old man sits') && !first.includes('Yours is shut') && then.startsWith('"Yours is shut'),
+      'Merryn met first and the Rift closed, the hermit\'s words are his first meeting\'s, and "Yours is shut" comes at the next');
   }
 }
 

@@ -312,7 +312,10 @@ function untouched(): void {
   ok(!reads.length, `nothing under src/ reads a tier but ${READERS.join(', ')}: no map spell, cost or rounds can${reads.length ? ' -> also: ' + reads.join(', ') : ''}`);
 }
 
-/** A save keeps the tiers; one from before them loads with none, at SAVE_VERSION 5. */
+/**
+ * A save keeps the tiers; one from before them loads with none. The tiers came with SAVE_VERSION 5 and
+ * asked no upgrade of their own, nor does any version after it (6 is #941's, the hermit's flag).
+ */
 function saves(): void {
   const rng = makeRng(13), party = defaultParty(rng), world = new World(buildMaps(), party, rng);
   party.members[0].tiers = { arms: 'master' };
@@ -322,7 +325,7 @@ function saves(): void {
   const old = JSON.parse(serialize(world.state, party, 0)) as { party: Party };
   for (const m of old.party.members) delete m.tiers;
   const loaded = deserialize(JSON.stringify(old)).party;
-  ok(SAVE_VERSION === 5 && loaded.members.every((m) => LINES.every((l) => tierOf(m, l) === undefined) && armsBonus(m) === 0 && tierSteps(m) === 0), 'and a save from before them loads with none, at SAVE_VERSION 5');
+  ok(SAVE_VERSION >= 5 && loaded.members.every((m) => LINES.every((l) => tierOf(m, l) === undefined) && armsBonus(m) === 0 && tierSteps(m) === 0), `and a save from before them loads with none, at SAVE_VERSION 5 and after (${SAVE_VERSION})`);
 }
 
 /** Every word the tiers say, and the sheet's, is drawn by the font. */
