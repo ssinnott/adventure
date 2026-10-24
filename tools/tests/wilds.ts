@@ -13,7 +13,8 @@ import { defaultParty, resists, stayNight } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
 import { NORTH } from '../../src/game/types.ts';
-import { useShrine, openCairn, answerRiddle, restRefused, restParty, restAndWake, stepLine, normalWord, spentId, ANSWER_MAX } from '../../src/game/wilds.ts';
+import { useShrine, openCairn, answerRiddle, restRefused, restParty, restAndWake, stepLine, normalWord, spentId, ANSWER_MAX, drinkWell, castExplore } from '../../src/game/wilds.ts';
+import { spell } from '../../src/game/spells.ts';
 import { Input } from '../../src/input.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
 import type { Game } from '../../src/game/game.ts';
@@ -247,6 +248,55 @@ export function wilds(): void {
   const lost = hintless(MAP_DEFS);
   ok(!lost.length, `every statue in the content has its answer said elsewhere (${statues.length} placed)${lost.map((l) => '; ' + l).join('')}`);
   campNights();
+  wellAndSpells();
+}
+
+/** A well and the six exploration spells, rules of src/game the game and the spell screen say (#978). */
+function wellAndSpells(): void {
+  const wp = defaultParty(makeRng(5)), [w0, w1] = wp.members;
+  w0.hp = 1; w1.hp = 0; w1.conditions.push('unconscious');
+  const well = (heal: boolean): Extract<Feature, { kind: 'well' }> => ({ kind: 'well', x: 0, y: 0, text: 'A well.', ...(heal ? { heal } : {}) });
+  const drank = drinkWell(wp, well(true));
+  ok(drank.join(' ') === 'A well. The party drinks and feels restored.' && w0.hp === w0.maxHp && w1.hp === 0, `a healing well makes whole each member not down (${drank.join(' ')})`);
+  w0.hp = 1;
+  ok(drinkWell(wp, well(false)).join() === 'A well.' && w0.hp === 1, 'a well that does not heal says its words and heals nobody');
+
+  // The spells on a headless game's world, which has the towns a portal needs: each pays, works and says.
+  const g = headlessGame(4), w = g.world, mage = g.party.members[0];
+  const cast = (id: string, back?: boolean): { line: string; moved: boolean; paid: number } => {
+    mage.sp = 50;
+    const r = castExplore(w, g.party, 0, id, back);
+    return { line: r.lines.join(' '), moved: r.moved, paid: 50 - mage.sp };
+  };
+  const by = (id: string, then: string): string => `${mage.name} casts ${spell(id).name}${then}`;
+  const lit = cast('light');
+  ok(lit.line === by('light', '. The way ahead is lit.') && w.state.light === 200 && !lit.moved && lit.paid === spell('light').sp, `Light lights the way (${lit.line})`);
+  const eye = cast('wizard_eye'), dark: string[] = [];
+  for (let dy = -6; dy <= 6; dy++) for (let dx = -6; dx <= 6; dx++) { const x = w.state.x + dx, y = w.state.y + dy; if (w.map.inBounds(x, y) && !w.explored(x, y)) dark.push(`${x},${y}`); }
+  ok(eye.line === by('wizard_eye', '. The map fills in around you.') && !dark.length && eye.paid === spell('wizard_eye').sp, `Wizard Eye fills in the map six squares round (${eye.line})`);
+  const refused = cast('waymark');
+  ok(refused.line === by('waymark', ', but the mark will not take here.') && !refused.paid && !w.state.mark && !refused.moved, `Waymark will not take in ${w.state.mapId}, a town, and gives its points back (${refused.line})`);
+  w.travel('shelf', 16, 4);
+  const at = `${w.state.mapId} ${w.state.x},${w.state.y}`, where = (): string => `${w.state.mapId} ${w.state.x},${w.state.y}`;
+  const marked = cast('waymark');
+  ok(marked.line === by('waymark', '. The ground here is marked.') && `${w.state.mark?.mapId} ${w.state.mark?.x},${w.state.mark?.y}` === at && !marked.moved, `Waymark sets its mark on the Foreland, at ${at} (${marked.line})`);
+  const portal = cast('town_portal');
+  ok(portal.line === by('town_portal', `. The world folds, and you stand in ${w.map.name}.`) && w.map.kind === 'town' && portal.moved, `Town Portal takes the company to a town, and says it moved (${portal.line})`);
+  const home = cast('waymark', true);
+  ok(home.line === by('waymark', '. The world folds, and you stand at the mark.') && where() === at && home.moved, `and back to the mark (${home.line})`);
+  const walk = cast('walk_water'), float = cast('levitate');
+  ok(walk.line === by('walk_water', '. The shallows will bear you a while.') && float.line === by('levitate', '. Your feet leave the ground.') && !!w.state.walk && !!w.state.float && !walk.moved && !float.moved,
+    `Walk on Water and Levitate bear the company (${walk.line} ${float.line})`);
+  // The points exactly are enough; a party spell cast out of a fight heals by the fight's rule (`castOnParty`), never the dead.
+  mage.sp = spell('light').sp;
+  const exact = castExplore(w, g.party, 0, 'light'), left = mage.sp, [, hurt, gone] = g.party.members;
+  hurt.conditions = []; hurt.hp = 1; gone.conditions = ['dead']; gone.hp = -2; mage.sp = 50;
+  const mend = castExplore(w, g.party, 0, 'mend_all');
+  ok(exact.lines.join() === by('light', '. The way ahead is lit.') && !left && mend.lines.join() === by('mend_all', '. The party is healed.') && mage.sp === 50 - spell('mend_all').sp && hurt.hp > 1 && gone.hp === -2 && !mend.moved,
+    `the points exactly cast, and Mending Light heals the company but the dead (${mend.lines.join()})`);
+  mage.sp = 0;
+  const short = castExplore(w, g.party, 0, 'light');
+  ok(short.lines.join() === `${mage.name} lacks the spell points.` && mage.sp === 0 && !short.moved, `a caster short of the points casts nothing (${short.lines.join()})`);
 }
 
 /**
