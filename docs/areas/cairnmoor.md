@@ -1070,8 +1070,8 @@ the Hearth by its floor (EXPANSION §5.2, #845's 7), passes (§12.6).
   company leaves at 20.1, 0.1 over 20 (0.1 under before M7 and M8), and walking the road 0.7 over it.
   The bounds' P7, P8 and L8 (#834, §12) add 793, 377 and 852 as built: a clear gives 17,609, 1.20
   times the ask, and the company leaves at 20.3, 0.3 over the next floor and under the limit of 21;
-  Cairnmoor is in no `OVER_ROAD` row. Carn Fada, the enclave, pays 1,770 a member and Bearn Liath,
-  the lair, 3,396, its Rim Troll's 20,373 among six; both are counted in no clear (#845), so neither
+  Cairnmoor holds no `overRoad`. Carn Fada, the enclave, pays 1,770 a member and Bearn Liath, the
+  lair, 3,396, its Rim Troll's 20,373 among six; both are counted in no clear (#845), so neither
   figure moves (§12.5, §12.6). The Glasswold's leaves at 28.0, level with 28.
 - **Gold.** Training six members from 18 to 20 costs 8,880 with today's `trainPrice`, and the second
   prestiges about 4,000 each (DESIGN §5, #19); nothing on the moor sells or trains, so a clear's

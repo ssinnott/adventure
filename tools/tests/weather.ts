@@ -145,7 +145,7 @@ export function weather(): void {
     const mines = fx('deep_mines3', 'kilns'), regions = 'hearth kilns';
     const ways = (x: number, to = 'deep_mines3', region = 'hearth', crosses?: string): MapDef[] => [fx('underdeep', region, [{ x, y: 10, to, tx: 13, ty: 3, ...(crosses ? { crosses } : {}) }]), mines, fx('deep_mines2', 'kilns')];
     ok(!crossings(ways(2, 'deep_mines3', 'hearth', regions)).length, 'the door marked CREW ONLY, from the Ways under the Hearth into the Kilns\' deep mines, crosses by its written exception');
-    ok(crossings(ways(3)).length === 1 && crossings(ways(2, 'deep_mines2')).length === 1 && crossings(ways(2, 'deep_mines3', 'shelf', regions)).length === 1, 'and an exit from another square, to another map or between other regions does not');
+    ok(crossings(ways(3)).length === 1 && crossings(ways(2, 'deep_mines2')).length === 1 && crossings(ways(2, 'deep_mines3', 'shelf', regions)).length === 1, 'and an exit unmarked, from another square or to another map, does not, nor one marked between two other regions');
     const marked = (region: string): MapDef[] => [fx('underdeep', region, [{ x: 3, y: 10, to: 'deep_mines3', tx: 13, ty: 3, crosses: regions }]), mines];
     ok(!crossings(marked('hearth')).length && crossings(marked('shelf')).length === 1 && namedCrossings(marked('hearth')).length === 1 && namedCrossings([...marked('hearth'), ...ways(2, 'deep_mines3', 'hearth', regions)]).length === 2,
       'an exit marked as the crossing, with the two regions it joins, crosses alone, and between two others does not; a second exit marked is a second crossing named, which is refused');

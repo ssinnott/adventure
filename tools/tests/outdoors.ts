@@ -301,6 +301,9 @@ export function outdoors(): void {
     const misnamed = judgeEdges(bare, [...ON_NOTHING, { edge: 'downs_d4 west', open: '0', why: 'Fixture.' }, { edge: 'shelf up', open: '0', why: 'Fixture.' }], out.zones);
     ok(misnamed.faced.join() === 'downs_d4 west' && misnamed.stray.join() === 'shelf up',
       `an openOnNothing row naming an edge that faces a built box is refused, and so is one naming no edge of a built box (${misnamed.faced.join(', ')}; ${misnamed.stray.join(', ')})`);
+    const doubled = [judgeSeams(all, [...AS_BUILT, AS_BUILT[0]]).stray, judgeEdges(bare, [...ON_NOTHING, ON_NOTHING[0]], out.zones).stray];
+    ok(doubled.map((s) => s.join()).join(' / ') === `${AS_BUILT[0].seam} / ${ON_NOTHING[0].edge}`,
+      `a seam's or an edge's row given twice, on one area or two, is refused by its own check (${doubled.map((s) => s.join(', ')).join('; ')})`);
   }
   const sh = out.zones.find((z) => z.id === 'shelf')!, th = out.zones.find((z) => z.id === 'thornmark')!;
   // The ways: every one lands on open ground; none joins one zone to the next, which is walked, but the

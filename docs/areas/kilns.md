@@ -1824,8 +1824,8 @@ M4, M5, O3 and O4 (#474), which place the rock worm and the salamander again and
   monster's pay lowered for it (§9, #466's 9). O3 and O4 add 1,214 xp a member against the brief's
   900, 1.35 times (§9, #474's 17 and 20). A company that clears three quarters of the Kilns from 16,
   paid by level, left at 19.29 before the bounds and with K6 at 19.32, and with P5 and P6 leaves at
-  19.38 (19.384) and with L7 and P4 at 19.41 (19.4056), +1.4 over the next floor 18, and `OVER_ROAD`
-  names the Kilns at 19.5, raised from 19.3 by name with K6 and with L7 (§9, #474's 12 and 26,
+  19.38 (19.384) and with L7 and P4 at 19.41 (19.4056), +1.4 over the next floor 18, and the area's
+  `overRoad` holds it at 19.5, raised from 19.3 by name with K6 and with L7 (§9, #474's 12 and 26,
   #831's 5, 18 and 25). The Seestollen, the enclave, pays 1,221 xp a member and holds 700 gold in
   its chests, and the Randzeche, the lair, 3,396 and 500, each counted in no clear, so the lead
   stays at 19.4056 (§12.7, §12.8). What waits is the ship to Cinderport, on #512.

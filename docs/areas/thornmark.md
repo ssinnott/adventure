@@ -707,7 +707,7 @@ I5.
   floor, in Thornmark's pool, with the zone's at 3 and the dungeons' at 3, the area's floor less
   two; its floor above the area's, a box is not held two under on its own. The Deepthorn is a zone
   of its own, with its road walked at 8 and its warning at its way in from the Grove
-  (`ROADS.deepthorn`, from H3), and its boss the Eldest (`BOSSES.deepthorn`), won 55% at 8 and 100%
+  (the zone's `road`, from H3), and its boss the Eldest (its group's `boss`), won 55% at 8 and 100%
   at 10. Thornmark's own gate holds, as §3 has it. With all six boxes built, Thornmark two under its
   maps' floors wins 60.6% of its 75 groups' fights, off the aim of 25% and inside the limit: it comes of
   #209's pooling, which the size of a group does not move.
