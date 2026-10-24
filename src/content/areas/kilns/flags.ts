@@ -1,0 +1,33 @@
+// The flags the Kilns sets, each with what holding it means (#995): its own, declared once here and
+// given on by public.ts. `Flag` is made of every declaration (src/content/index.ts), which refuses a flag
+// two declare, and the shipped suite holds them to the record (shipped.json).
+export const FLAGS = {
+  anvil_bought: 'The thane answered: bought',
+  anvil_taken: 'The thane answered: taken',
+  anvil_verse_read: 'The verse read the old way',
+  kh_dwarf_met: 'The dwarf on the quay heard',
+  manifests_read: "The manifests read: the Compact ship's cargo named",
+  n2_hartmut_lesson: "Hartmut's lesson said",
+  n2_hartmut_met: 'Hartmut met on N2',
+  q_anvil_closed: "The Anvil's tear closed: its Warden down",
+  q_crown: 'Eckhart, the master smith, met',
+  q_crown_carried: "Eckhart's crown carried down",
+  q_crown_sailed: 'The crown sailed with Wiebe: Tallis owes',
+  q_crown_told: 'The thane told of the crown',
+  q_crown_wiebe: "Wiebe, Tallis's man, met",
+  q_crust: 'The woman at the well met',
+  q_crust_ring: 'Her ring taken down to her son',
+  q_crust_up: 'Her son up from the Tiefzeche',
+  q_hymn: 'The oldest miner met',
+  q_hymn_sung: "The miners' hymn heard whole",
+  q_lanterns_niche: 'The words over the dead taken on',
+  q_lanterns_niche_done: 'The words over the dead paid',
+  q_mark_read: 'The rubbing read at Anvilhall',
+  q_novice_home: "The novice's letter brought home",
+  q_primer: 'The scholar at the wall met',
+  q_primer_book: "His copybook the company's",
+  q_primer_kept: 'The scholar taken in at Anvilhall',
+  q_wardens_cages: "The Drillyard's cages taken on",
+  q_wardens_cages_done: "The Drillyard's cages paid",
+  thane_met: 'Thane Wolfram met',
+};

@@ -1,0 +1,33 @@
+// The flags Rimewater sets, each with what holding it means (#995): its own, declared once here and
+// given on by public.ts. `Flag` is made of every declaration (src/content/index.ts), which refuses a flag
+// two declare, and the shipped suite holds them to the record (shipped.json).
+export const FLAGS = {
+  "guild_The Lodge's Lantern Hall": "The Lodge's Lantern Hall's fee paid",
+  night_1: 'The first night at the lodge',
+  night_2: 'The second night at the lodge',
+  night_3: 'The third night at the lodge',
+  night_4: 'The fourth night at the lodge',
+  q_coach: 'The coachman met',
+  q_coach_hall: "The sleeper taken to the Lanterns' hall",
+  q_coach_sledge: "The healer's note brought: the sledge sent",
+  q_coach_temple: "The sleeper taken to the healer's house",
+  q_icebell: 'The bell under the ice asked of',
+  q_icebell_out: 'The lodge woman gone out to Fuar',
+  q_icebell_rung: 'The bell under the ice rung',
+  q_icebell_stay: 'The lodge woman stays by the fire',
+  q_pilgrims: 'The pilgrims met',
+  q_pilgrims_back: 'The pilgrims sent back to the lodge',
+  q_pilgrims_up: 'The pilgrims up with the brother',
+  q_sky: 'The guide gone up onto the ice',
+  q_sky_in: 'The guide carried in off the glacier',
+  q_sky_marked: "The guide's way handed her on the map",
+  q_sleepers_seen: 'The beds under Loch Fuar seen',
+  q_wardens_hole: "A Warden's sword from the hole taken on",
+  q_wardens_hole_done: "A Warden's sword from the hole paid",
+  q_wenna_lodge: "Wenna's words at the lodge door said",
+  q_wenna_up: 'Wenna met, up out of the hole',
+  q_wentback: 'The man at the hole met',
+  q_wentback_home: 'He went home on the coach',
+  q_wentback_witness: 'He stayed to tell the Lanterns',
+  rl_keeper_met: "The lodge's keeper met",
+};

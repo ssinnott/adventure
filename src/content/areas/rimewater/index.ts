@@ -1,6 +1,7 @@
 // Rimewater, the lochs under the glacier (band 20-22): Loch Fada, Loch Fuar and, beyond the glacier's
 // edge, Glacier Foot, the reach; the last of Act III. docs/areas/rimewater.md is its brief.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { LONGMERE_M9 } from './maps/longmere_m9.ts';
 import { RIME_LODGE } from './maps/rime_lodge.ts';
 import { LONGMERE_L9 } from './maps/longmere_l9.ts';
@@ -29,6 +30,7 @@ import { GUILDS } from './guilds.ts';
 import { QUESTS } from './quests.ts';
 
 export const MAPS = [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9, COLDMERE_K10, SLEEPERS_BAY, SLEEPERS_BAY2, COLDMERE_J9, COLDMERE_K11, LONGMERE_L10, LONGMERE_L11, LONGMERE_M10, LONGMERE_M11, LONGMERE_N9, COLDMERE_K12, LONGMERE_L12, CREAG_FIONN, SPITTAL, SPITTAL2] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'rimewater' as const,
@@ -36,6 +38,7 @@ export const AREA = {
   // L12's rim, at 22-23, and the Spittal, the Wakerobe's lair (#847) under the pass behind K12's door, at
   // the cap's 30-32.
   maps: MAPS,
+  flags: FLAGS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

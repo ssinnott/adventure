@@ -11,3 +11,6 @@ export const WENNA_LODGE = 'q_wenna_lodge';
 
 // Every item by name, with the rest of items.ts.
 export * from './items.ts';
+
+// Every flag it sets, each with what holding it means (#995).
+export { FLAGS } from './flags.ts';
