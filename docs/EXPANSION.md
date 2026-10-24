@@ -224,8 +224,9 @@ parts, which shuts nothing before it (#443, call 2; #450). Act V spends one, the
 - Its xp and gold sit on the curve (§5.2).
 - Its climate, terrain and palette exist.
 - It says what is new in it (§5.4), and that checks out.
-- `docs/areas/<area>.md` says what is there, where the secrets and their hints are, and what was
-  cut.
+- Its doc says what is there and where the secrets and their hints are: `docs/areas/<area>.md`, its
+  current state, with a row to each map and its secret and hint, and beside it in its folder,
+  `docs/areas/<area>/`, its decisions and its plan, what was cut among it (§8.2).
 - Old saves load, and nothing they refer to has moved (§5.5).
 - The owner has played it.
 
@@ -939,7 +940,9 @@ src/content/
     walkthrough.ts          its end-to-end test
 src/ui/monsters/<family>.ts             each exports its sprite kinds
 src/ui/interiors/<area>/<business>.ts   a scene to a file; the trade helpers shared
-docs/areas/<area>.md                    the area's brief, and what was built
+docs/areas/<area>.md                    the area's current state, 250 lines at most (§8.2)
+docs/areas/<area>/decisions.md          its decisions, appended to and never rewritten
+docs/areas/<area>/plan.md               its briefs, what was cut and what the state does not keep
 ```
 
 - The `MonsterSprite`, `Interior` and `RegionId` unions are derived from the registries
@@ -996,7 +999,7 @@ there, where repetition is the design, rather than on the map.
 | Lane | Touches | At once |
 |---|---|---|
 | Systems | `src/game/`, `src/ui/` outside the art modules, the kits (`src/ui/paint/`, `src/ui/monsters/kit/`, `src/ui/interiors/kit/`), the save format, the shape of the registries | one |
-| Area | `src/content/areas/<area>/`, `docs/areas/<area>.md` | one per area in flight |
+| Area | `src/content/areas/<area>/`, `docs/areas/<area>.md` and its folder, `docs/areas/<area>/` | one per area in flight |
 | Creatures | `src/ui/monsters/<family>.ts` | one per family |
 | Interiors | `src/ui/interiors/<area>/` | one per area |
 | Quality | `tools/`, CI, this contract | one |
@@ -1054,7 +1057,8 @@ Decided by the builder for #899, each the owner's to overturn:
    The area lane is one label, `lane: area`, with the area named beside it in the report:
    `src/content/areas/<area>/` (its `shipped.json` with it) and `docs/areas/<name>.md`, three of
    which are named for a place and not their area (`hearth_isle` is Hearth's, `dead_drop`
-   Wrackholm's and `meridian_camp` Ashfall's).
+   Wrackholm's and `meridian_camp` Ashfall's). Since #1011 the folder beside a doc,
+   `docs/areas/<name>/`, falls where the doc does.
 2. **The save format needs no line of its own:** `SAVE_VERSION`, the upgrades and the save keys all
    stand in `src/game/`, which is systems already. The central `src/content/shipped.json`, what a
    save may refer to that no area owns, is quality's, as the issue says.
@@ -1201,8 +1205,9 @@ Decided by the builder for #986, each the owner's to overturn:
 
 ### 8.2 The recipe for a zone map
 
-1. **Brief**, in `docs/areas/<area>.md`: purpose, band, landmarks, the secret and its hint, the
-   encounters, what is new.
+1. **Brief**, in the area's plan, `docs/areas/<area>/plan.md` (the area's doc, below; its §4 until
+   D3 moves it): purpose, band, landmarks, the secret and its hint, the encounters, what is new;
+   its "As built" once built.
 2. **Scaffold.** Every outdoor map is one box of the grid the Foreland and Thornmark sit on: 32
    squares a side, its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges, and
    named as the old maps were, by its column's letter and its row's number (the Foreland is G2). A
@@ -1283,6 +1288,44 @@ eleven and every `guilds.ts` one of six, and the layers suite refuses a loop. So
 another area's chapter from `THE_QUEST.chapters` by its id. Every area has one; a new area has one
 once another takes something from it, and a flag another area needs that `public.ts` lacks is one
 line there, added by the box that needs it and said in its pull request.
+
+**The area's doc is three files** (#1011). `docs/areas/<area>.md` is its current state, 250 lines at
+most, which a session reads first: its ids, where it is (§1), what it is for (§2), what is built, a
+row to each map with its id, kind and band, what is there and its secret with its hint (§3), the
+chapter and the side quests a line each (§5, §6), the numbers that hold (§8), the names (§10) and
+what is open and owed. It keeps the old numbers and headings of what it holds, and its first lines
+say which file holds each old section it does not. Beside it are its decisions and its plan. The
+decisions, `docs/areas/<area>/decisions.md`, hold the old §9 and every "Decided by" list, in order:
+a builder adds a list at the end, and a later decision that changes an earlier one says which; an
+earlier one is not edited, bar a plain slip the pull request that finds it says it mended. The plan,
+`docs/areas/<area>/plan.md`, holds the old §4, §11 and §12 whole, then under "Moved from the state"
+the lines of the state sections the state does not keep; a new box's brief goes there first, with
+its "As built" once it is built. A doc is moved, never rewritten: `node tools/docmove.ts` finds each
+line of the old among the new files as many times as it stood, and each of its paragraphs whole in
+one of them, in their old order there; `tools/tests/areadocs.ts` holds the shape. The Foreland's
+moved first, to `docs/areas/shelf/plan.md` and `docs/areas/shelf/decisions.md`; the other thirteen
+are owed to D3, and the suite lists them on every run.
+
+Decided by the builder for #1011, each the owner's to overturn:
+
+1. **The state holds what a session needs and no history:** the index, then §1 in words (zones,
+   bands, edges), §2 and §10 whole, §3's table, §5 to §8 a paragraph or a line each and "Open and
+   owed" last, unnumbered so the old numbers keep their meaning. Every figure in it is re-read on
+   the head from the suites' lines; the old lines stand in the plan as they were written.
+2. **A row says its secret as the door's squares, what it is, then the hint's squares and id**
+   (`4,7: a cold draught at 4,6 (mill_draught)`), as `secrets` and the hint's feature hold them, so
+   the row is found again in the map's file; a map with none says so.
+3. **The header's moved lines open "Moved from the state" with no heading,** as they had none but
+   the title; every other part stands under the heading it had, repeated where the state keeps it.
+4. **The proof holds paragraphs as well as lines:** a paragraph (a run of lines, broken at each
+   heading, list item and table row; a fenced block whole) stands whole and in order in one new
+   file, its blank lines where they were, and each file holds a section's paragraphs in their old
+   order, since every line found does not show that none was split or reordered. A line is
+   compared whole, its spaces and all.
+5. **The lanes line takes the doc's folder whole,** any file in it, as an area's content folder is
+   taken, through `DOC_AREA` for a place's doc.
+6. **The owed docs are named, and their lines read as they stand** each run, so no area's pull
+   request leaves the figure stale; the issue's count on `ea34c3ad` is in its pull request.
 
 Decided by the builder for #897, each the owner's to overturn:
 
