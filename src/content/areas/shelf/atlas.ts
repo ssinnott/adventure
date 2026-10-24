@@ -15,6 +15,7 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'greywater1', kind: 'dungeon', at: [196, 68] },
   { id: 'greywater2', kind: 'dungeon', at: [196, 74] },
   { id: 'berth', kind: 'dungeon', at: [108, 54] }, // below the Berth's mouth on D2 (116,42), clear of the Cradle
+  { id: 'hag_hole', kind: 'dungeon', band: [30, 32], at: [140, 100] }, // the lair, the sea cave behind E4's 3,6, where the Hag keeps the Hagstone (#837, #845, #846)
 ];
 
 export const SITES: readonly AtlasSite[] = [
