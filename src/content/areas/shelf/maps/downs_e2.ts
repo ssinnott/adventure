@@ -4,7 +4,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/shelf.md §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/keys.ts';
+import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 
 /** The rookery's brood fly with the wolves until it burns. */
 const BURNT = denBurnt('downs_e2', 'e2_rookery');
@@ -75,10 +75,10 @@ export const DOWNS_E2: MapDef = {
   ],
   secrets: [{ x: 22, y: 26, hint: 'e2_wheel' }],
   encounters: [
-    { id: 'e2_crows', x: 27, y: 8, monsters: BROOD, aware: 5, respawn: 1440, until: BURNT },
-    { id: 'e2_crows2', x: 25, y: 17, monsters: BROOD, aware: 5, respawn: 1440, until: BURNT },
+    { id: 'e2_crows', x: 27, y: 8, monsters: BROOD, aware: 5, respawn: RESPAWN.day, until: BURNT },
+    { id: 'e2_crows2', x: 25, y: 17, monsters: BROOD, aware: 5, respawn: RESPAWN.day, until: BURNT },
     { id: 'e2_keepers', x: 19, y: 21, monsters: ['old_rook', 'old_rook'], aware: 3, roams: false },
-    { id: 'e2_boar', x: 18, y: 24, monsters: ['tusker'], aware: 3, respawn: 2880 },
-    { id: 'e2_wolves', x: 6, y: 9, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: 1440 },
+    { id: 'e2_boar', x: 18, y: 24, monsters: ['tusker'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'e2_wolves', x: 6, y: 9, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: RESPAWN.day },
   ],
 };

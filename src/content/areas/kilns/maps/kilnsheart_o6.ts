@@ -7,6 +7,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.11 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The way down into Feuerstollen (#466): the adit cut into the ridge's foot at 22,20, under the
@@ -99,9 +100,9 @@ export const KILNSHEART_O6: MapDef = {
   encounters: [
     // Salamanders on the ash, north and south; fire beetles at the ridge's foot; and under the crag a
     // slag elder strayed from the Stone, until its tear is closed, the box's group at 18.
-    { id: 'o6_salamanders_n', x: 18, y: 9, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: 1440 },
-    { id: 'o6_beetles', x: 22, y: 16, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: 1440 },
-    { id: 'o6_salamanders_s', x: 21, y: 26, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: 1440 },
-    { id: 'o6_elder', x: 28, y: 5, monsters: ['slag_elder'], aware: 3, respawn: 2880, roams: false, until: { flag: 'q_anvil_closed' } },
+    { id: 'o6_salamanders_n', x: 18, y: 9, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: RESPAWN.day },
+    { id: 'o6_beetles', x: 22, y: 16, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'o6_salamanders_s', x: 21, y: 26, monsters: ['salamander', 'salamander', 'salamander', 'salamander'], aware: 3, respawn: RESPAWN.day },
+    { id: 'o6_elder', x: 28, y: 5, monsters: ['slag_elder'], aware: 3, respawn: RESPAWN.twoDays, roams: false, until: { flag: 'q_anvil_closed' } },
   ],
 };

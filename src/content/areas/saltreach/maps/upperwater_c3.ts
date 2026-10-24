@@ -8,6 +8,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Night-Light (#56's 21): Nynke's light handed over, to the priest or to Tobin. */
 export const LIGHT_TAKEN: QuestCond = { flag: 'q_nightlight_taken' };
@@ -200,13 +201,13 @@ export const UPPERWATER_C3: MapDef = {
   secrets: [{ x: 9, y: 13, hint: 'c3_stone' }],
   encounters: [
     // Herons in the stubble beside the track, nearest the way in.
-    { id: 'c3_herons', x: 8, y: 27, monsters: ['grey_heron', 'grey_heron', 'grey_heron', 'grey_heron'], aware: 3, respawn: 1440 },
+    { id: 'c3_herons', x: 8, y: 27, monsters: ['grey_heron', 'grey_heron', 'grey_heron', 'grey_heron'], aware: 3, respawn: RESPAWN.day },
     // A barge's crew on the quay by day, its master the one to fell.
-    { id: 'c3_quay', x: 3, y: 13, when: { hours: 'day' }, monsters: ['barge_master', 'bargeman', 'bargeman', 'bargeman'], leader: 'barge_master', aware: 2, roams: false, respawn: 2880 },
+    { id: 'c3_quay', x: 3, y: 13, when: { hours: 'day' }, monsters: ['barge_master', 'bargeman', 'bargeman', 'bargeman'], leader: 'barge_master', aware: 2, roams: false, respawn: RESPAWN.twoDays },
     // Brinelings at the child's window by night, come to her shard's light, until it is gone from
     // her window or gone out with the Stone home (The Night-Light, #56's 21).
-    { id: 'c3_brine', x: 2, y: 15, when: { hours: 'night' }, until: LIGHT_GONE, monsters: ['brineling', 'brineling', 'brineling', 'brineling'], aware: 3, roams: false, respawn: 1440 },
+    { id: 'c3_brine', x: 2, y: 15, when: { hours: 'night' }, until: LIGHT_GONE, monsters: ['brineling', 'brineling', 'brineling', 'brineling'], aware: 3, roams: false, respawn: RESPAWN.day },
     // A bull toad alone in the flooded drain at the east fields' end, the hardest, well away from Sjonghol's mouth.
-    { id: 'c3_toad', x: 24, y: 16, monsters: ['bull_toad'], aware: 4, respawn: 1440 },
+    { id: 'c3_toad', x: 24, y: 16, monsters: ['bull_toad'], aware: 4, respawn: RESPAWN.day },
   ],
 };

@@ -10,6 +10,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.10 is its brief (#522).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CINDERCOAST_F9: MapDef = {
   id: 'cindercoast_f9',
@@ -81,6 +82,6 @@ export const CINDERCOAST_F9: MapDef = {
   secrets: [{ x: 24, y: 24, hint: 'f9_track' }],
   encounters: [
     // The box's one fight: two drakes down on the Waste's ash at the slope's foot, hunting the shore.
-    { id: 'f9_drakes', x: 3, y: 28, monsters: ['cinder_drake', 'cinder_drake'], aware: 5, respawn: 2880 },
+    { id: 'f9_drakes', x: 3, y: 28, monsters: ['cinder_drake', 'cinder_drake'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

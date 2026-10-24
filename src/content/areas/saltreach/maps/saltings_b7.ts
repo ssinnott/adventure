@@ -8,6 +8,7 @@
 // tools/scaffold.ts and closed by hand; docs/areas/saltreach.md §12 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SALTINGS_B7: MapDef = {
   id: 'saltings_b7',
@@ -74,8 +75,8 @@ export const SALTINGS_B7: MapDef = {
   secrets: [{ x: 9, y: 16, hint: 'b7_fan' }],
   encounters: [
     // Three salt crabs on the salters' grass, the nearest.
-    { id: 'b7_crabs', x: 20, y: 13, monsters: ['salt_crab', 'salt_crab', 'salt_crab'], aware: 3, roams: false, respawn: 1440 },
+    { id: 'b7_crabs', x: 20, y: 13, monsters: ['salt_crab', 'salt_crab', 'salt_crab'], aware: 3, roams: false, respawn: RESPAWN.day },
     // The Hand's smugglers at a fire under the Scarp, the farthest and the hardest.
-    { id: 'b7_smugglers', x: 15, y: 20, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, roams: false, respawn: 1440 },
+    { id: 'b7_smugglers', x: 15, y: 20, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, roams: false, respawn: RESPAWN.day },
   ],
 };

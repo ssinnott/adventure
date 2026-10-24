@@ -19,7 +19,7 @@ import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { CHAPTER } from './chapter.ts';
 import { QUESTS } from './quests.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
 export const AREA = {
   id: 'sunderwood' as const,
@@ -33,5 +33,5 @@ export const AREA = {
     fogText: 'Mist comes down through the pines.', thunderText: 'Thunder rolls down the gorge.' },
   interiors: INTERIORS,
   novel: { families: ['bears', 'moths'], terrain: ['deadwood', 'crystal', 'chasm'], mechanics: ['inflict:asleep'], landmarks: ['falls'] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;

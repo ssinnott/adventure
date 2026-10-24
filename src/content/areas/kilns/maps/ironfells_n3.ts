@@ -7,6 +7,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.3 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The gate into Anvilhall (#459): a door on the gate's square in the crag's dressed front, into the
@@ -117,9 +118,9 @@ export const IRONFELLS_N3: MapDef = {
     // beetles and salamanders on the two heaps of spoil, beetles most on the low one by the road and
     // salamanders on the high one under the crag's warm working; and a rock worm in the collapsed
     // working, the box's group at 17.
-    { id: 'n3_slaglings', x: 4, y: 30, monsters: ['slagling', 'slagling', 'slagling'], aware: 4, respawn: 1440, when: { hours: 'night' }, until: { flag: 'q_anvil_closed' } },
-    { id: 'n3_spoil_low', x: 10, y: 22, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'salamander'], aware: 4, respawn: 1440 },
-    { id: 'n3_spoil_high', x: 20, y: 11, monsters: ['salamander', 'salamander', 'salamander', 'fire_beetle'], aware: 3, respawn: 1440, roams: false },
-    { id: 'n3_worm', x: 27, y: 29, monsters: ['rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'n3_slaglings', x: 4, y: 30, monsters: ['slagling', 'slagling', 'slagling'], aware: 4, respawn: RESPAWN.day, when: { hours: 'night' }, until: { flag: 'q_anvil_closed' } },
+    { id: 'n3_spoil_low', x: 10, y: 22, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'salamander'], aware: 4, respawn: RESPAWN.day },
+    { id: 'n3_spoil_high', x: 20, y: 11, monsters: ['salamander', 'salamander', 'salamander', 'fire_beetle'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'n3_worm', x: 27, y: 29, monsters: ['rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

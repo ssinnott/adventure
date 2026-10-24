@@ -25,7 +25,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // before the door marked CREW ONLY (#462), the lowest level's boss at 18; it never comes back, the door stays shut when it
   // falls and it drops its slate. Off MONSTERS §4.4's boss line (1,001 hp, 18d8+20, won 71% at 17 and 93% at 19), its hit
   // points and its blow are set for #462's gate: about half at its floor, 17, and nearly always at 19
-  { id: 'foreman', name: 'The Foreman', plural: 'Foremen', sprite: 'foreman', kind: 'machine', look: 'It checks you the way a clerk checks a list, and finds nobody on it.', level: 18, hp: 1500, ac: 22, attack: 13, dice: 15, sides: 8, bonus: 14, speed: 13, xp: 11413, gold: [0, 0], drops: [{ item: 'foreman_slate', chance: 1 }], tint: '#5c6068', size: 1.3 },
+  { id: 'foreman', name: 'The Foreman', plural: 'Foremen', sprite: 'foreman', kind: 'machine', look: 'It checks you the way a clerk checks a list, and finds nobody on it.', level: 18, hp: 1500, ac: 22, attack: 13, dice: 15, sides: 8, bonus: 14, speed: 13, xp: 11413, gold: [0, 0], drops: [{ item: 'foreman_slate', chance: 1 }], offLine: 'the Tiefzeche\'s boss, its hit points and its blow set by its gate (#462)', tint: '#5c6068', size: 1.3 },
   // the spoil heaps, the forges, the kilns and the Tiefzeche's warm galleries (#457, #458, #461, #462, #463, #467, #468),
   // armoured on MONSTERS §4.4's line at 16; fire does not touch it
   { id: 'fire_beetle', name: 'Fire Beetle', plural: 'Fire Beetles', sprite: 'fire_beetle', kind: 'beast', look: 'A beetle with a coal in its back.', level: 16, hp: 249, ac: 21, attack: 10, dice: 3, sides: 7, bonus: 6, speed: 8, xp: 844, gold: [0, 0], immune: ['fire'], tint: '#2e2622', size: 0.72 },
@@ -42,14 +42,14 @@ export const MONSTERS: readonly MonsterDef[] = [
   // when it falls and it drops its heart. Off MONSTERS §4.4's boss line (1,001 hp, 18d8+20, won 32% at 17 and 69% at 19),
   // its hit points and its blow are set for #465's gate: about half at its floor, 17, and nearly always at 19. Cold bites
   // it, and fire does half
-  { id: 'anvil_warden', name: 'Warden of the Anvil', plural: 'Wardens of the Anvil', sprite: 'anvil_warden', kind: 'rift', look: 'The Stone\'s heat, standing up out of the cut.', level: 18, hp: 1200, ac: 22, attack: 13, dice: 13, sides: 8, bonus: 12, speed: 13, xp: 11413, gold: [0, 0], immune: ['asleep'], weak: ['cold'], resist: ['fire'], drops: [{ item: 'anvil_heart', chance: 1 }], tint: '#3a2e2a', size: 1.45 },
+  { id: 'anvil_warden', name: 'Warden of the Anvil', plural: 'Wardens of the Anvil', sprite: 'anvil_warden', kind: 'rift', look: 'The Stone\'s heat, standing up out of the cut.', level: 18, hp: 1200, ac: 22, attack: 13, dice: 13, sides: 8, bonus: 12, speed: 13, xp: 11413, gold: [0, 0], immune: ['asleep'], weak: ['cold'], resist: ['fire'], drops: [{ item: 'anvil_heart', chance: 1 }], offLine: 'the Anvil Stone\'s Rift\'s boss, its hit points and its blow set by its gate (#465)', tint: '#3a2e2a', size: 1.45 },
   // the tubes, the spoil heaps and O6's ash (#458, #463, #466), a skirmisher on MONSTERS §4.4's line at 16: fire does not touch it, and cold bites
   { id: 'salamander', name: 'Salamander', plural: 'Salamanders', sprite: 'salamander', kind: 'beast', look: 'A lizard with the fire showing through its skin.', level: 16, hp: 179, ac: 19, attack: 10, dice: 3, sides: 8, bonus: 2, speed: 15, xp: 633, gold: [0, 0], immune: ['fire'], weak: ['cold'], tint: '#3a2c28', size: 0.68 },
   // the tubes' deepest chamber (#466), the tubes' boss at 18: fire does not touch it, and cold bites, as its kin's; it shrugs
   // off sleep, as the road's beasts that are bosses do, never comes back and drops its hide. Off MONSTERS §4.4's boss line
   // (1,001 hp, 18d8+20, won 29% at 17 and 65% at 19), its hit points and its blow are set for #466's gate: about half at its
   // floor, 17, and nearly always at 19
-  { id: 'great_salamander', name: 'Great Salamander', plural: 'Great Salamanders', sprite: 'great_salamander', kind: 'beast', look: 'The fire in the rock, with a head.', level: 18, hp: 950, ac: 22, attack: 13, dice: 15, sides: 8, bonus: 14, speed: 13, xp: 11413, gold: [0, 0], immune: ['asleep', 'fire'], weak: ['cold'], drops: [{ item: 'salamander_hide', chance: 1 }], tint: '#4a423c', size: 1.6 },
+  { id: 'great_salamander', name: 'Great Salamander', plural: 'Great Salamanders', sprite: 'great_salamander', kind: 'beast', look: 'The fire in the rock, with a head.', level: 18, hp: 950, ac: 22, attack: 13, dice: 15, sides: 8, bonus: 14, speed: 13, xp: 11413, gold: [0, 0], immune: ['asleep', 'fire'], weak: ['cold'], drops: [{ item: 'salamander_hide', chance: 1 }], offLine: 'Feuerstollen\'s boss, its hit points and its blow set by its gate (#466)', tint: '#4a423c', size: 1.6 },
   // the bounds' lair (#831): the Randzeche, P5's old working under the rim, where it keeps the Erzhemd in the Dark Seam.
   // The knockers' overseer, the lair's boss at 32 (MONSTERS §13): a machine, so it never breaks, and it calls a group of
   // deep knockers, three at a half a turn as the inspector does. Drawn at the line's boss at 32 (2,100 hp, 34d8+41), it

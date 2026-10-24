@@ -11,6 +11,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.2 is its brief.
 import type { Choice, Exit, MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The man at the hole's question (#56's 41, #494), put once he has said what he saw, to a company with
@@ -169,13 +170,13 @@ export const LONGMERE_M9: MapDef = {
     // box's hardest, ice bears at the glacier's edge. On the fourth night (#487), up through the hole
     // onto the ice, the tallyman and six knockers, the fire at the company's back, the tallyman
     // calling more (#537): once, and never again.
-    { id: 'm9_lynx_pines', x: 23, y: 10, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'm9_lynx_fells', x: 7, y: 8, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'm9_pike_wall', x: 13, y: 12, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: 1440, under: 'ice' },
-    { id: 'm9_pike_loch', x: 9, y: 18, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: 1440, under: 'ice' },
-    { id: 'm9_lynx_south', x: 23, y: 26, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: 1440 },
-    { id: 'm9_bear_north', x: 27, y: 17, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
-    { id: 'm9_bear_south', x: 27, y: 28, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
+    { id: 'm9_lynx_pines', x: 23, y: 10, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'm9_lynx_fells', x: 7, y: 8, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'm9_pike_wall', x: 13, y: 12, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice' },
+    { id: 'm9_pike_loch', x: 9, y: 18, monsters: ['ice_pike', 'ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice' },
+    { id: 'm9_lynx_south', x: 23, y: 26, monsters: ['snow_lynx', 'snow_lynx', 'snow_lynx', 'snow_lynx'], aware: 4, respawn: RESPAWN.day },
+    { id: 'm9_bear_north', x: 27, y: 17, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'm9_bear_south', x: 27, y: 28, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
     { id: 'm9_night_4', x: 12, y: 13, monsters: ['tallyman', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker', 'knocker'], aware: 3, roams: false, after: { flag: 'night_4' },
       slainText: 'The last of them goes back into the black water, and the clicking stops. Then a hand comes up out of the hole.' },
   ],

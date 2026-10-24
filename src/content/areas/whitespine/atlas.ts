@@ -1,23 +1,34 @@
 // The Whitespine's part of the world map: its three zones, the plates of its one dungeon's two levels,
 // and its sites. docs/areas/whitespine.md is its brief (#498).
-import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
     id: 'sheerpoint', name: 'Sheer Point', area: 'whitespine', band: [23, 24], maps: [{ map: 'sheerpoint_i9', at: [264, 254] }, { map: 'sheerpoint_i8', at: [264, 222] }, { map: 'sheerpoint_j8', at: [296, 222] }], seeds: [[282, 244], [276, 262]],
     // The crossing line said north along the ridge from the High Spine, at the same floor (#166, #503).
     crossing: { harder: 'Out here the land runs thin toward the sea, and nothing on it is any kinder than the range.', warning: 'Nothing on the Point would spare you. The way you came is still open.' },
+    // North along the ridge trail from the Stair's head, past the snow trolls lying in the gully off it
+    // and the masons on its end (#503), and down off the trail's end to the Point's shore, past the
+    // eagles over the tip, to the masons at the causeway's root and their foreman's on its end (#504).
+    road: ['sheerpoint_i9:i9_trolls', 'sheerpoint_i9:i9_masons', 'sheerpoint_i8:i8_eagles', 'sheerpoint_i8:i8_masons', 'sheerpoint_i8:i8_foreman'],
   },
   {
     id: 'highspine', name: 'The High Spine', area: 'whitespine', band: [23, 24], maps: [{ map: 'highspine_i11', at: [264, 318] }, { map: 'highspine_i10', at: [264, 286] }, { map: 'highspine_i12', at: [264, 350] }], seeds: [[292, 310], [290, 350]],
     // The crossing line said over the crest from the vale (#166, #501), and south along the ridge from
     // the Point (#503), so it says nothing of the way it was come by.
     crossing: { harder: 'On the crest the wind is at you, and nothing up here is any kinder.', warning: 'Nothing on this crest would spare you. The way back is still open.' },
+    // Over the crest from the vale and up the path to the Peak Stone, past the brothers walking it (#501);
+    // then up the ridge trail and west along the road to the Stair, past the giant and the troll in the
+    // snow short of the head (#502).
+    road: ['highspine_i11:i11_brothers', 'highspine_i10:i10_stair'],
   },
   {
     id: 'monksvale', name: 'Monks\' Vale', area: 'whitespine', band: [22, 23], maps: [{ map: 'monksvale_j11', at: [296, 318] }, { map: 'monksvale_j10', at: [296, 286] }, { map: 'monksvale_j12', at: [296, 350] }], seeds: [[322, 344], [318, 318]], label: [318, 326],
     // The crossing line said over the pass (#166, #499): how the range feels to a company under its floor.
     crossing: { harder: 'The range begins here, and it is harder than the lochs behind.', warning: 'The range, and nothing in it would spare you. The way back over the pass is still open.' },
+    // Down off the pass past the brothers at its foot, and on down the road to the gate past the brothers
+    // walking it (#499).
+    road: ['monksvale_j11:j11_brothers_foot', 'monksvale_j11:j11_brothers_road'],
   },
 ];
 
@@ -34,4 +45,8 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Stairwatch', icon: 'tower', at: [270, 312], label: 'right' }, // over the Giants' Stair: the Knight's third prestige; the ledge on I10, 6,26 (#502, #448)
   { name: 'Spine Summit', icon: 'camp', at: [300, 328], label: 'right' }, // the Monk's third prestige: the camp on J11, 4,10 (#499, #448)
   { name: 'Rook\'s Nest', icon: 'cave', at: [286, 230], label: 'right' }, // over the Hand's causeway: the Thief's third prestige; the hollow on I8, 22,8 (#504, #448)
+];
+
+export const LINKS: readonly AtlasLink[] = [
+  { from: 'monksvale', to: 'monastery', kind: 'enter', a: [322, 342] },
 ];

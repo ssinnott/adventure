@@ -5,6 +5,7 @@
 // as Kelp Hole's levels are; docs/areas/wrackholm.md §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 const NIGHT = { hours: 'night' } as const;
 
@@ -88,6 +89,6 @@ export const TIDE_SHIP: MapDef = {
   // with them is left off, since a group with him in it sits under the deck's top, 13, and alone he
   // stretched the deck's day past the gate's limit.
   encounters: [
-    { id: 'ts_over_side', x: 11, y: 8, when: NIGHT, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'ts_over_side', x: 11, y: 8, when: NIGHT, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

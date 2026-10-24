@@ -13,8 +13,8 @@ import { ok } from './lib.ts';
 function reaches(): void {
   const text = (f: string): string => readFileSync(new URL(`../../${f}`, import.meta.url), 'utf8');
   const g = graph(treeFiles(), text);
-  const reach = (files: string[], removed: Record<string, readonly string[] | null> = {}, added: Record<string, readonly string[]> = {}): Reach =>
-    reachedAreas(files, (f) => (removed[f] === null ? null : { removed: removed[f] ?? [], added: added[f] ?? [] }), g, text);
+  const reach = (files: string[], removed: Record<string, readonly string[] | null> = {}, added: Record<string, readonly string[]> = {}, was: Record<string, string> = {}): Reach =>
+    reachedAreas(files, (f) => (removed[f] === null ? null : { removed: removed[f] ?? [], added: added[f] ?? [] }), g, text, (f) => was[f] ?? '');
   const def = (f: string, id: string): string => text(f).split('\n').find((l) => l.includes(`id: '${id}'`)) ?? `no def ${id}`;
   // 2: a table's line changed or removed reaches every area; a def only added, its own area alone.
   const bones = 'src/content/areas/shelf/monsters.ts', axe = 'src/content/areas/sunderwood/items.ts';
@@ -41,12 +41,22 @@ function reaches(): void {
   ok(others.length === AREAS.length - 1 && !others.includes('kilns') && others.includes('thornmark') && [...map.areas.keys()].join() === 'kilns' && !note.walks.size && [...note.areas.keys()].join() === 'kilns',
     `a line of a Kilns map changed reaches the Kilns and every other walkthrough (${others.length}); a comment changed, the Kilns alone`);
   // A def only added to a table reaches every walkthrough too, as Rimewater's reads every monster's
-  // drops; a rung of the ladder (the Foreland's checks.ts) reaches every area; another area's rows its own.
+  // drops; a rung of the ladder (the Foreland's checks.ts) reaches every area; another area's rows its own,
+  // in a checks.ts that holds no rung (the Glasswold's: the Kilns' holds 17 since #968).
   const bred = reach([bones], {}, { [bones]: ["  { id: 'mut', name: 'Mut', plural: 'Muts', sprite: 'bandit', kind: 'person', level: 2, hp: 10 },"] });
   const rung = 'src/content/areas/shelf/checks.ts', laddered = reach([rung], { [rung]: ["    3: ['longsword', 'axe'],"] }, { [rung]: ["    3: ['longsword+2', 'axe'],"] });
-  const seams = 'src/content/areas/kilns/checks.ts', own = reach([seams], { [seams]: ['  seamsAsBuilt: [],'] });
-  ok(!bred.all && bred.walks.has('rimewater') && bred.walks.size === AREAS.length - 1 && laddered.all?.file === rung && !own.all && [...own.areas.keys()].join() === 'kilns',
-    `a def only added reaches every walkthrough (${bred.walks.size}); a rung of the ladder changed reaches every area (${describeReach(laddered)}); a row of the Kilns' own, the Kilns`);
+  const seams = 'src/content/areas/glasswold/checks.ts', own = reach([seams], { [seams]: ['  seamsAsBuilt: [],'] });
+  ok(!bred.all && bred.walks.has('rimewater') && bred.walks.size === AREAS.length - 1 && laddered.all?.file === rung && !own.all && [...own.areas.keys()].join() === 'glasswold',
+    `a def only added reaches every walkthrough (${bred.walks.size}); a rung of the ladder changed reaches every area (${describeReach(laddered)}); a row of the Glasswold's own, the Glasswold`);
+  // In a checks.ts that holds a rung (the Kilns', 17 since #968) a seam changed reaches its own area
+  // alone; a rung changed, the rungs added or the file deleted, every area (`was`, the file at the base).
+  const kilns = 'src/content/areas/kilns/checks.ts', kText = text(kilns), kLines = kText.split('\n');
+  const kSeam = kLines.find((l) => l.includes("seam: 'kilnsheart_n4|kilnsheart_o4'"))!, kRung = kLines.find((l) => /^\s*17: \[/.test(l))!, kOld = kRung.replace('forge_hammer', 'warhammer');
+  const seamed = reach([kilns], { [kilns]: [kSeam] }, { [kilns]: [kSeam.replace("walk: '14'", "walk: '13-14'")] }, { [kilns]: kText });
+  const stepped = reach([kilns], { [kilns]: [kOld] }, { [kilns]: [kRung] }, { [kilns]: kText.replace(kRung, kOld) });
+  const opened = reach([kilns], {}, { [kilns]: ['  gear: {', kRung, '  },'] }, { [kilns]: kText.replace(/^ {2}gear: \{\n[\s\S]*?^ {2}\},\n/m, '') });
+  ok(!seamed.all && [...seamed.areas.keys()].join() === 'kilns' && stepped.all?.file === kilns && opened.all?.file === kilns && reach([kilns], { [kilns]: null }).all?.why.startsWith('deleted') === true,
+    `a seam of the Kilns, whose checks.ts holds a rung, reaches the Kilns alone (${describeReach(seamed)}); a rung of it changed, its rungs added or the file deleted, every area (${describeReach(stepped)})`);
   const index = reach(['src/content/areas/hearth/index.ts']);
   ok(!index.all && index.areas.size < AREAS.length, `the walk stops at the files outside the areas, as src/content/index.ts imports every area's (${describeReach(index)})`);
   // 4: elsewhere.

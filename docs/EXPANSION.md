@@ -254,7 +254,7 @@ Added:
   group is held already: a map with more does not load.
 - **One rule for the seams** (#898). Every two built boxes that share an edge agree along it square
   for square on passable ground, water and road, and open a way between two areas only where the
-  atlas joins them; a seam that disagrees on purpose is a row of `SEAMS_AS_BUILT`
+  atlas joins them; a seam that disagrees on purpose is a row of its area's `seamsAsBuilt`
   (`tools/tests/outdoors.ts`) with its reason, and a box built since adds none. Every edge of a built
   box that faces no built box is open to a walker exactly where a row of `OPEN_ON_NOTHING` says, with
   the box it faces and why that is unbuilt; the box built there meets the seam rule, and its pull
@@ -317,7 +317,7 @@ leaves its pay and its finds out of its area: no clear counts its xp or gold, wh
 as a figure; its monsters sit in its own band, rising from its door; and its chests and drops sit in
 the window of the last area on the road whose floor is at or under its own, the Hearth's for a lair.
 The gate judges it at its own floor and two under it by the day from 10, its guardian's odds at its
-floor and two above (named in `BOSSES` under its box's zone) and leaves it out of its area's pools
+floor and two above (its group marked `boss: true` in its map) and leaves it out of its area's pools
 and day; no zone's road walks it, for a road walks its zone's own maps. No step of the quest lies in
 it (§5.8). Its door says its band and how it feels to the company, as a border does (DESIGN.md §9),
 and the pilot keeps out of one whose floor is over its company. A fixture lair at 30–32 beside
@@ -338,8 +338,9 @@ Decided by the builder for #845, each the owner's to overturn:
    budget has it: the Hearth's 7,000 for a lair at the cap. No window holds an artifact, so #847
    must exempt one from the curve's window by its mark.
 4. **Two under is asked of it alone, by the day from 10**, as of a map outside the budget, and its
-   guardian is a boss in `BOSSES` under its box's zone, as a dungeon's boss is; the fixture's figures
-   off their aim are said with it and kept out of the gate's list, which is the content's.
+   guardian is a boss, its group marked `boss: true` in its map, as a dungeon's boss is; the
+   fixture's figures off their aim are said with it and kept out of the gate's list, which is the
+   content's.
 5. **The door's line is the game's**, one entry after the way's own: "<name>: levels 30-32.", then
    harder one or two under its floor and the warning three or more under, in an enclave's words, not a
    zone's. None from a level of an enclave whose floor is at or over its own, for a border speaks
@@ -387,16 +388,16 @@ and Rimewater 20–22, their windows rising 500 a band to 3,500, 4,000 and 4,500
 in the same way (#542): the Whitespine 22–24, Ashfall 24–26 and the Glasswold 26–28, their windows
 to 5,000, 5,500 and 6,000.
 
-The gear ladder (`GEAR`, `tools/harness.ts`) is what a company has in hand by a level, and the
-harness and the gate dress their companies by it. Act I's: Mottram's by 3, the Downs' finds by 5,
-Thornmark's Armoury by 8, its chests' plus by 9 and the Deepthorn's +2s by 10. Act II's (#399):
-Saltmouth's armourer by 11, Saltreach's and Wrackholm's boxes' plus by 13, Lantern Watch's stores
-by 14 and the Sunder's plus by 16. Act III's (#535): Anvilhall's forge by 17, the Kilns' and
-Cairnmoor's boxes' plus by 19, Rime Lodge's furrier by 21 and Rimewater's plus by 22. Act IV's, one
-step (#542): Cinderport's armourer by 25. Act V's, the last (#746): the Hand's steel by 28, found on
-Hearth Isle and never sold. Each rung betters the last for every class, each find and ware inside its
-area's window; past the top, gear grows only in the harness's what-ifs, the bounds' artifacts among
-them (`--artifacts`, #847).
+The gear ladder (`GEAR`, `tools/harness.ts`, made from each area's rungs in its `checks.ts`) is what
+a company has in hand by a level, and the harness and the gate dress their companies by it. Act I's:
+Mottram's by 3, the Downs' finds by 5, Thornmark's Armoury by 8, its chests' plus by 9 and the
+Deepthorn's +2s by 10. Act II's (#399): Saltmouth's armourer by 11, Saltreach's and Wrackholm's
+boxes' plus by 13, Lantern Watch's stores by 14 and the Sunder's plus by 16. Act III's (#535):
+Anvilhall's forge by 17, the Kilns' and Cairnmoor's boxes' plus by 19, Rime Lodge's furrier by 21
+and Rimewater's plus by 22. Act IV's, one step (#542): Cinderport's armourer by 25. Act V's, the
+last (#746): the Hand's steel by 28, found on Hearth Isle and never sold. Each rung betters the last
+for every class, each find and ware inside its area's window; past the top, gear grows only in the
+harness's what-ifs, the bounds' artifacts among them (`--artifacts`, #847).
 
 Nor does the gate's company learn a secondary skill (DESIGN.md §5): Arms Master's first round and
 the two senses go unmeasured, so a company that buys one is stronger than the gate measured it, the
@@ -476,7 +477,7 @@ the cap, 4 to 10 fights to a rest and the warning's nearest groups ten points un
   Catcher, 57% at 30 and 80% at 32 on the gate's seeds, against an aim of 90% and a limit of 75%
   (#752, #796; docs/areas/hearth_isle.md §8).
   A boss set off the line is sized on these odds against the gate's bot, by its box's gate
-  (`OFF_LINE`, `tools/tests/harness.ts`).
+  (`offLine` on its def in its area's `monsters.ts`, which `tools/tests/harness.ts` reads).
 - **Six or seven fights to a rest.** A company can fight six or seven standard encounters at its own
   level between rests to level 10, and a fight more every four levels after as its power grows
   (twelve at 32, never fifteen). Its spell points count as much as its hit points: it rests once it
@@ -642,7 +643,8 @@ Decided by the owner's delegate for #891, each the owner's to overturn:
    company raises the monsters' blows where nothing bought raises defence (J2, above): optional
    power is the player's edge, not the road's floor. No lever moves (not the softening cap, `WORST`,
    the limits, a defence-side rule or a second judged company); the 91 monsters past 10, 22 of them
-   set off the line (`OFF_LINE`), stand, and the eight bounds areas (#830 to #837) meet the gate as it is.
+   set off the line (each by its `offLine`, in its area's `monsters.ts`), stand, and the eight
+   bounds areas (#830 to #837) meet the gate as it is.
 2. **What the optional power buys is written here** (#865, two under, 100 seeds). With Expert,
    Master and the three the company fights 4.6 to 8.4 of a role's standard encounter to a rest at 20
    where it fought 3.0 to 6.7 (9.0 asked at the floor), 9.9 to 13.6 at 25 where 5.9 to 8.8 (10.3
@@ -1137,8 +1139,9 @@ nothing, is a row in its `checks.ts` (`AreaChecks`), which nothing in the game i
 find as the runner finds a walkthrough; a field `AreaChecks` has not stops the run with its name. A
 seam is the area's of the first box its key names (`a|b` or `a/b`), an edge the area's whose box it
 is. Each suite reads those beside its own table and refuses a row in both, so a row moves one way.
-The Foreland's have moved; every other area's move by one script in a window with no area pull
-request open (#848), and until then a box adds its rows to the suites' tables as before.
+Every area's have moved, the Foreland's first (#897) and the rest by one script in a window with no
+area pull request open (#968), so a box adds its rows to its own folder only; the emptied tables go
+with #969.
 
 Decided by the builder for #897, each the owner's to overturn:
 
@@ -1177,6 +1180,34 @@ Decided by the builder for #897, each the owner's to overturn:
     three artifacts owed to #830, #831 and #833) go when the lairs place them, so they have no field.
 13. **An `unplaced` id that is no monster and no room fails by its name**, and a field `AreaChecks` has
     not stops the run by its name: the run passed both over before.
+
+Decided by the builder for #968, each the owner's to overturn:
+
+1. **Rungs 13 and 19 stand on Wrackholm and Cairnmoor**, the last area on the road whose items each
+   holds (#897's rule, which the ladder suite keeps), and KIT's 25 shares Ashfall's rung 25 with
+   GEAR's, worn first: the derived `GEAR` and `KIT` read as the tables did, rung for rung and in
+   order.
+2. **`Area.atlas.links` may be left out**, as the Foreland's is, having no link of its own.
+   `ATLAS.links` is each area's in road order and then the plan's 15 between two areas; the zone
+   overlay draws the same PNG from them.
+3. **A Rift's table may say its warden is a boss** (`RiftTable.boss`): the Tide Ship's Rift's warden
+   is made by `rift()`, so its mark goes on the table, and the group carries `boss: true` as written
+   ones do.
+4. **A row's comment goes with it** where it names one thing: a road's above its zone (above the
+   field in a zone of several lines), a boss row's above its one group. The three rows of several
+   groups (Wrackholm's, the Ember Waste's and Hearth Isle's) leave theirs, each group saying in its
+   map what it is; `SEAMS_AS_BUILT`'s headers, one an area, go, as each row now stands in its area's
+   file.
+5. **`offLine` stands before a def's `tint` and `boss: true` after a group's `roams`**, where the
+   lairs wrote theirs; a new `checks.ts` (Thornmark's, Saltreach's, the Sunderwood's, the
+   Whitespine's and Hearth Isle's) takes the others' form.
+6. **Every walkthrough check of a respawn takes its name**: thirteen in six walkthroughs, where the
+   issue counted four.
+7. **The quests suite reads `reach` alone**, so it imports nothing from the pillars suite, and that
+   row of the layers' `KNOWN` goes.
+8. **`OPEN_ON_NOTHING` (17 rows) and `OVER_ROAD` (2) stay**: each has had a field since #897
+   (`openOnNothing`, `overRoad`), but #968's table names neither, and it kept `OVER_ROAD` only until
+   it had one; #969 moves both by the same script, and its body names them.
 
 ### 8.3 Pull requests
 

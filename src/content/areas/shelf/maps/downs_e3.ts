@@ -5,6 +5,7 @@
 // atlas by tools/scaffold.ts; docs/areas/shelf.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DOWNS_E3: MapDef = {
   id: 'downs_e3',
@@ -118,14 +119,14 @@ export const DOWNS_E3: MapDef = {
   // night once Oil for the Lamp is done.
   landmarks: [{ x: 20, y: 28, kind: 'lighthouse', lit: 'q_oil_lit' }],
   encounters: [
-    { id: 'farm_rats', x: 19, y: 4, monsters: ['rat', 'rat', 'rat', 'rat', 'rat'], aware: 4, respawn: 720 },
-    { id: 'e3_crows', x: 27, y: 16, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: 1440 },
-    { id: 'e3_fog', x: 18, y: 18, when: { sky: 'fog' }, monsters: ['lampman', 'wrecker', 'wrecker', 'wrecker', 'wrecker'], aware: 3, respawn: 2880 },
-    { id: 'e3_rocks', x: 25, y: 20, when: { hours: 'night' }, monsters: ['wrecker', 'wrecker', 'lampman'], aware: 5, respawn: 2880 },
-    { id: 'e3_bay', x: 12, y: 29, when: { hours: 'night' }, monsters: ['wrecker', 'wrecker', 'lampman'], aware: 5, respawn: 2880 },
-    { id: 'e3_crabs', x: 21, y: 28, monsters: ['barnacle_crab', 'barnacle_crab', 'barnacle_crab', 'barnacle_crab'], aware: 3, respawn: 1440 },
-    { id: 'e3_bandits', x: 5, y: 27, monsters: ['billman', 'billman', 'slinger'], aware: 5, respawn: 2880 },
-    { id: 'e3_wolves', x: 12, y: 5, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: 1440 },
-    { id: 'e3_tusker', x: 2, y: 5, monsters: ['tusker'], aware: 3, respawn: 2880 },
+    { id: 'farm_rats', x: 19, y: 4, monsters: ['rat', 'rat', 'rat', 'rat', 'rat'], aware: 4, respawn: RESPAWN.half },
+    { id: 'e3_crows', x: 27, y: 16, monsters: ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow'], aware: 5, respawn: RESPAWN.day },
+    { id: 'e3_fog', x: 18, y: 18, when: { sky: 'fog' }, monsters: ['lampman', 'wrecker', 'wrecker', 'wrecker', 'wrecker'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'e3_rocks', x: 25, y: 20, when: { hours: 'night' }, monsters: ['wrecker', 'wrecker', 'lampman'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'e3_bay', x: 12, y: 29, when: { hours: 'night' }, monsters: ['wrecker', 'wrecker', 'lampman'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'e3_crabs', x: 21, y: 28, monsters: ['barnacle_crab', 'barnacle_crab', 'barnacle_crab', 'barnacle_crab'], aware: 3, respawn: RESPAWN.day },
+    { id: 'e3_bandits', x: 5, y: 27, monsters: ['billman', 'billman', 'slinger'], aware: 5, respawn: RESPAWN.twoDays },
+    { id: 'e3_wolves', x: 12, y: 5, monsters: ['chalk_wolf', 'chalk_wolf', 'chalk_wolf'], aware: 5, respawn: RESPAWN.day },
+    { id: 'e3_tusker', x: 2, y: 5, monsters: ['tusker'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

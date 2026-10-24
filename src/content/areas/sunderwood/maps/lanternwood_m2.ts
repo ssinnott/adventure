@@ -8,6 +8,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LANTERNWOOD_M2: MapDef = {
   id: 'lanternwood_m2',
@@ -73,8 +74,8 @@ export const LANTERNWOOD_M2: MapDef = {
   encounters: [
     // Sunder hounds up the river from the road with a moth among them, the gentlest; two deathsheads
     // to the camp's fire by night; and on the hills under the range two glass bears, the box's group at 16.
-    { id: 'm2_hounds', x: 2, y: 25, monsters: ['sunder_hound', 'sunder_hound', 'lantern_moth'], aware: 4, respawn: 2880, until: { flag: CRACK_SEALED }, leaves: true },
-    { id: 'm2_moths', x: 9, y: 10, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: 1440, when: { hours: 'night' } },
-    { id: 'm2_bears', x: 24, y: 15, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: 2880, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
+    { id: 'm2_hounds', x: 2, y: 25, monsters: ['sunder_hound', 'sunder_hound', 'lantern_moth'], aware: 4, respawn: RESPAWN.twoDays, until: { flag: CRACK_SEALED }, leaves: true },
+    { id: 'm2_moths', x: 9, y: 10, monsters: ['deathshead', 'deathshead'], aware: 5, respawn: RESPAWN.day, when: { hours: 'night' } },
+    { id: 'm2_bears', x: 24, y: 15, monsters: ['glass_bear', 'glass_bear'], aware: 5, respawn: RESPAWN.twoDays, roams: false, until: { flag: CRACK_SEALED }, leaves: true },
   ],
 };

@@ -1,6 +1,6 @@
 // Cairnmoor's part of the world map: its two zones, the plate of its one dungeon, and its sites.
 // docs/areas/cairnmoor.md is its brief (#475).
-import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 
 /** A row of seeds from x0 to x1 along y, and a column from y0 to y1 down x. */
 const row = (x0: number, x1: number, y: number): [number, number][] => Array.from({ length: x1 - x0 + 1 }, (_, i): [number, number] => [x0 + i, y]);
@@ -28,8 +28,14 @@ export const ZONES: readonly AtlasZone[] = [
     id: 'highmoor', name: 'High Moor', area: 'cairnmoor', band: [18, 19], maps: [{ map: 'highmoor_n7', at: [424, 190] }, { map: 'highmoor_o7', at: [456, 190] }, { map: 'highmoor_o8', at: [456, 222] }, { map: 'highmoor_p7', at: [488, 190] }, { map: 'highmoor_p8', at: [488, 222] }], seeds: [[462, 212], [488, 230], ...HIGHMOOR_HELD],
     // The crossing line said in snow (#166, #476): how the moor feels to a company under its floor.
     crossing: { harder: 'The snow begins here, and the land is harder than the road behind.', warning: 'Snow, and nothing on this moor would spare you. The road behind is still open.' },
+    // Over the low hills and down the drove road past the ravens on the first cairn, the bog bodies in
+    // the marsh beside it and, on its southern reach by night, the hounds (#476).
+    // On O7 (#477), the peat-cutter's track east to the ring past the lights that go round it by night.
+    road: ['highmoor_n7:n7_ravens', 'highmoor_n7:n7_bodies_north', 'highmoor_n7:n7_hounds', 'highmoor_o7:o7_lights'],
   },
-  { id: 'cairnfield', name: 'The Cairnfield', area: 'cairnmoor', band: [19, 20], maps: [{ map: 'cairnfield_n8', at: [424, 222] }, { map: 'cairnfield_m7', at: [392, 190] }, { map: 'cairnfield_m8', at: [392, 222] }, { map: 'cairnfield_l8', at: [360, 222] }], seeds: [[426, 236], [412, 220], ...CAIRNFIELD_HELD], label: [418, 214] },
+  // Down the drove road past the ravens on the first cairns, the wights at the open cairn below Carn
+  // Dubh and, at the road's head by night, the hounds (#479).
+  { id: 'cairnfield', name: 'The Cairnfield', area: 'cairnmoor', band: [19, 20], maps: [{ map: 'cairnfield_n8', at: [424, 222] }, { map: 'cairnfield_m7', at: [392, 190] }, { map: 'cairnfield_m8', at: [392, 222] }, { map: 'cairnfield_l8', at: [360, 222] }], seeds: [[426, 236], [412, 220], ...CAIRNFIELD_HELD], label: [418, 214], road: ['cairnfield_n8:n8_ravens', 'cairnfield_n8:n8_wights_open', 'cairnfield_n8:n8_hounds'] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
@@ -44,4 +50,8 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Fionnlios', icon: 'ring', map: 'highmoor_o7', at: [6.5, 24.5], label: 'below' }, // the Stone Ring, on its rise on O7, 6,24 (#477)
   { name: 'Carn Dubh', icon: 'barrow', at: [430, 240], label: 'below' }, // the Cairns, at the door on N8, 6,18 (#479, #480)
   { name: 'Watcher\'s Hut', icon: 'lodge', map: 'highmoor_o7', at: [10.5, 18.5], label: 'right' }, // the Sorcerer's second prestige: the hut beside the ring on O7, 10,18 (#477)
+];
+
+export const LINKS: readonly AtlasLink[] = [
+  { from: 'cairnfield', to: 'cairns', kind: 'enter', a: [430, 240] },
 ];

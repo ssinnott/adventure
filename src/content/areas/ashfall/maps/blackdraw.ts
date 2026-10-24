@@ -7,6 +7,7 @@
 // docs/areas/ashfall.md §12.3.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const BLACKDRAW: MapDef = {
   id: 'blackdraw',
@@ -56,9 +57,9 @@ export const BLACKDRAW: MapDef = {
   secrets: [{ x: 5, y: 6, hint: 'bd_bright' }],
   encounters: [
     // A flue walker in the flue below its first turn, a square wide: the nearer and the gentler, at 27.
-    { id: 'bd_walker', x: 12, y: 5, monsters: ['flue_walker'], aware: 3, roams: false, respawn: 2880 },
+    { id: 'bd_walker', x: 12, y: 5, monsters: ['flue_walker'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
     // An inspector with a deep knocker, and more it calls, just inside the furnace's mouth: the farthest
     // and the hardest, at 28.
-    { id: 'bd_inspector', x: 3, y: 10, monsters: ['inspector', 'deep_knocker'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'bd_inspector', x: 3, y: 10, monsters: ['inspector', 'deep_knocker'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

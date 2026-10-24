@@ -21,10 +21,8 @@ import type { QuestCond, QuestDef } from '../../src/game/quests.ts';
 import { SOUTH } from '../../src/game/types.ts';
 import { giftOf } from '../../src/game/wilds.ts';
 import { handIns } from '../../src/game/people.ts';
+import { RESPAWN } from '../../src/game/keys.ts';
 import { ok } from './lib.ts';
-
-/** Respawns in the range in use, in minutes, both ends included. */
-export const RESPAWN = [720, 2880] as const;
 
 /**
  * The locks some order of spending keys leaves shut. The party floods from the start with no swimmer
@@ -103,7 +101,7 @@ export function returningGuardians(def: MapDef, items: ReadonlySet<string>): str
   return (def.encounters ?? []).flatMap((e) => { const why = guardian(e, items); return e.respawn && why ? [`${e.id} (${why})`] : []; });
 }
 export function respawnsOutOfRange(def: MapDef): string[] {
-  return (def.encounters ?? []).flatMap((e) => (e.respawn && (e.respawn < RESPAWN[0] || e.respawn > RESPAWN[1]) ? [`${e.id} (${e.respawn})`] : []));
+  return (def.encounters ?? []).flatMap((e) => (e.respawn && (e.respawn < RESPAWN.half || e.respawn > RESPAWN.twoDays) ? [`${e.id} (${e.respawn})`] : []));
 }
 
 /**
@@ -165,7 +163,7 @@ export async function structure(): Promise<void> {
     const back = returningGuardians(def, items);
     ok(!back.length, `${def.id}: no guardian respawns (a group that drops a quest item or has a slainText)${list(back)}`);
     const out = respawnsOutOfRange(def);
-    ok(!out.length, `${def.id}: every respawn is ${RESPAWN[0]} to ${RESPAWN[1]} minutes${list(out)}`);
+    ok(!out.length, `${def.id}: every respawn is ${RESPAWN.half} to ${RESPAWN.twoDays} minutes${list(out)}`);
     const when = presenceFaults(def);
     ok(!when.length, `${def.id}: every group's, person's, event's, blessing's and camp night's until and after names something real, and none asks for a sky underground${list(when)}`);
   }

@@ -12,6 +12,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The eagles' nest opened, the Lantern's badge in it found: The Eagles' Nest begins on it (#56's 46, #506). */
 export const NEST_FOUND: QuestCond = { seen: 'highspine_i11:i11_nest_bones' };
@@ -103,9 +104,9 @@ export const HIGHSPINE_I11: MapDef = {
     // Spine eagles at the nest, the nearest to the way in; brothers walking the snow line between the
     // crest path from the monastery and the Stone; eagles over the snow line south of the path; and in
     // the snow at the crest's foot to the south, the far end, the snow trolls, the box's group at 23.
-    { id: 'i11_eagles_nest', x: 29, y: 9, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: 1440, roams: false },
-    { id: 'i11_brothers', x: 23, y: 5, monsters: ['brother', 'brother', 'brother', 'brother'], aware: 3, respawn: 1440 },
-    { id: 'i11_eagles_snow', x: 22, y: 14, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: 1440 },
-    { id: 'i11_trolls', x: 22, y: 21, monsters: ['snow_troll', 'snow_troll'], aware: 2, respawn: 2880, roams: false },
+    { id: 'i11_eagles_nest', x: 29, y: 9, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: RESPAWN.day, roams: false },
+    { id: 'i11_brothers', x: 23, y: 5, monsters: ['brother', 'brother', 'brother', 'brother'], aware: 3, respawn: RESPAWN.day },
+    { id: 'i11_eagles_snow', x: 22, y: 14, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: RESPAWN.day },
+    { id: 'i11_trolls', x: 22, y: 21, monsters: ['snow_troll', 'snow_troll'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

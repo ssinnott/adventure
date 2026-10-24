@@ -7,6 +7,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const HIGHMOOR_O8: MapDef = {
   id: 'highmoor_o8',
@@ -150,11 +151,11 @@ export const HIGHMOOR_O8: MapDef = {
     // draining spell points; the moor hounds on the hills east; and on the tors, two trolls and the
     // ravens, the box's hardest, mended each round unless burned (#537), the last tor's troll alone
     // until its face is finished (#56's 39). By day the bog is empty and the trolls are tors.
-    { id: 'o8_bodies', x: 7, y: 8, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: 1440, when: { hours: 'night' }, until: { flag: 'q_ring_back' } },
-    { id: 'o8_lights_west', x: 6, y: 14, monsters: ['bog_light', 'bog_light', 'bog_light'], aware: 4, respawn: 2880, when: { hours: 'night' } },
-    { id: 'o8_lights_east', x: 15, y: 19, monsters: ['bog_light', 'bog_light', 'bog_light'], aware: 4, respawn: 2880, when: { hours: 'night' } },
-    { id: 'o8_hounds', x: 27, y: 14, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 5, respawn: 2880, when: { hours: 'night' } },
-    { id: 'o8_trolls', x: 22, y: 28, monsters: ['tor_troll', 'raven', 'raven', 'raven', 'raven'], aware: 3, respawn: 2880, roams: false, when: { hours: 'night' } },
-    { id: 'o8_last_tor', x: 26, y: 28, monsters: ['tor_troll'], aware: 3, respawn: 2880, roams: false, when: { hours: 'night' }, until: { flag: 'q_faces_finished' } },
+    { id: 'o8_bodies', x: 7, y: 8, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: RESPAWN.day, when: { hours: 'night' }, until: { flag: 'q_ring_back' } },
+    { id: 'o8_lights_west', x: 6, y: 14, monsters: ['bog_light', 'bog_light', 'bog_light'], aware: 4, respawn: RESPAWN.twoDays, when: { hours: 'night' } },
+    { id: 'o8_lights_east', x: 15, y: 19, monsters: ['bog_light', 'bog_light', 'bog_light'], aware: 4, respawn: RESPAWN.twoDays, when: { hours: 'night' } },
+    { id: 'o8_hounds', x: 27, y: 14, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 5, respawn: RESPAWN.twoDays, when: { hours: 'night' } },
+    { id: 'o8_trolls', x: 22, y: 28, monsters: ['tor_troll', 'raven', 'raven', 'raven', 'raven'], aware: 3, respawn: RESPAWN.twoDays, roams: false, when: { hours: 'night' } },
+    { id: 'o8_last_tor', x: 26, y: 28, monsters: ['tor_troll'], aware: 3, respawn: RESPAWN.twoDays, roams: false, when: { hours: 'night' }, until: { flag: 'q_faces_finished' } },
   ],
 };

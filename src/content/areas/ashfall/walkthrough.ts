@@ -117,6 +117,7 @@ import { BLACKDRAW } from './maps/blackdraw.ts';
 import { GRIMS_HOWE } from './maps/grims_howe.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
+import { RESPAWN } from '../../../game/keys.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
 const person = (name: string, d = G10): Person => d.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -1398,7 +1399,7 @@ function mountainBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void
   ok(meet(watcher, w.party, heard(w.world, watcher)).text.includes('Leave the hollows be'), 'the drake-watcher at the pines\' edge says where the drakes lay, and to leave the hollows be');
   listen(w);
   // Each box's one group, won at its floor: six drakelings, the mountain's youngest, the band's top.
-  ok([H11, H12, G12].every((d) => d.encounters!.length === 1 && d.encounters!.every((g) => g.monsters.length === 6 && g.monsters.every((m) => m === 'drakeling') && !g.after && g.respawn === 2880)),
+  ok([H11, H12, G12].every((d) => d.encounters!.length === 1 && d.encounters!.every((g) => g.monsters.length === 6 && g.monsters.every((m) => m === 'drakeling') && !g.after && g.respawn === RESPAWN.twoDays)),
     'each box\'s one fight is six drakelings, the mountain\'s youngest, at the band\'s top');
   for (const g of H11.encounters!) fight(w, `${H11.id}:${g.id}`);
   // The secret: an old axe-head driven into a rock on the slope, and behind the rock the war-chest.
@@ -2524,7 +2525,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     w.level = 27;
     const [first, last] = [BD.encounters!.find((g) => g.id === 'bd_walker')!, BD.encounters!.find((g) => g.id === 'bd_inspector')!];
     ok(BD.encounters!.length === 2 && first.monsters.join() === 'flue_walker' && last.monsters.join() === 'inspector,deep_knocker' && !!MONSTERS.inspector.calls?.monsters.includes('deep_knocker')
-      && BD.encounters!.every((g) => g.respawn === 2880 && !g.slainText && g.roams === false), 'a flue walker in the flue and an inspector with a deep knocker, which it calls more of, at the furnace\'s mouth; no guardian');
+      && BD.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && g.roams === false), 'a flue walker in the flue and an inspector with a deep knocker, which it calls more of, at the furnace\'s mouth; no guardian');
     for (const g of BD.encounters!) fight(w, `${BD.id}:${g.id}`);
     for (const id of ['bd_mouth', 'bd_plates', 'bd_irons', 'bd_furnace', 'bd_flow', 'bd_stoker']) see(w, `${BD.id}:${id}`);
     const flue = new GameMap(BD), key = (x: number, y: number): string => `${x},${y}`, [plate] = BD.secrets!;

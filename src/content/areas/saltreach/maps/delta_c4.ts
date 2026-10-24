@@ -6,6 +6,7 @@
 // tools/scaffold.ts; docs/areas/saltreach.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** Passage Paid (#56's 22) answered either way: the shoal barge's master is gone off his shoal. */
 const PASSAGE_DONE = [{ flag: 'q_passage_freed' }, { flag: 'q_passage_owed' }];
@@ -98,10 +99,10 @@ export const DELTA_C4: MapDef = {
   encounters: [
     // The barge at the bank: its master, five bargemen and two herons over the reeds, the master the
     // one to fell first. Always tied there: dusk is in its words, and the curve's top fight is no quest's.
-    { id: 'c4_barge', x: 1, y: 9, monsters: ['barge_master', 'bargeman', 'bargeman', 'bargeman', 'bargeman', 'bargeman', 'grey_heron', 'grey_heron'], back: 2, leader: 'barge_master', aware: 2, roams: false, respawn: 2880 },
+    { id: 'c4_barge', x: 1, y: 9, monsters: ['barge_master', 'bargeman', 'bargeman', 'bargeman', 'bargeman', 'bargeman', 'grey_heron', 'grey_heron'], back: 2, leader: 'barge_master', aware: 2, roams: false, respawn: RESPAWN.twoDays },
     // A bull toad alone in a flooded drain in Rietum's fields, the far end from the fork: the hardest.
-    { id: 'c4_toad', x: 12, y: 4, monsters: ['bull_toad'], aware: 4, respawn: 1440 },
+    { id: 'c4_toad', x: 12, y: 4, monsters: ['bull_toad'], aware: 4, respawn: RESPAWN.day },
     // Passage Paid's passengers freed: a crew comes up the bank for the cargo.
-    { id: 'c4_crew', x: 4, y: 18, monsters: ['bargeman', 'bargeman', 'bargeman'], aware: 3, respawn: 2880, after: { flag: 'q_passage_freed' } },
+    { id: 'c4_crew', x: 4, y: 18, monsters: ['bargeman', 'bargeman', 'bargeman'], aware: 3, respawn: RESPAWN.twoDays, after: { flag: 'q_passage_freed' } },
   ],
 };

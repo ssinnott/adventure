@@ -17,6 +17,7 @@ import { ROAD_WEST } from '../../ashfall/maps/emberwaste_e10.ts';
 import { WATCH } from './wold_b9.ts';
 import { LION_ASKED, LION_HUNT, LION_LEFT, LION_TOLD, LION_TAKEN, LION_DOWN } from './wold_b8.ts';
 import { ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from './wold_c8.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The flag the eldest's telling sets, said once: The Warning's step at Akordu keys on it (#531). */
 export const STORY = 'akordu_story';
@@ -212,8 +213,8 @@ export const WOLD_D8: MapDef = {
     // glass scorpions hole up in the broken ground under the mesa's east face; and in its shade on the
     // north side the basilisk alone, the box's hardest at 27. The vultures over the garden are seen, not
     // fought: they wait for what does not die.
-    { id: 'd8_pride', x: 4, y: 21, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: 2880, when: { hours: 'night' } },
-    { id: 'd8_scorpions', x: 22, y: 17, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: 2880 },
-    { id: 'd8_basilisk', x: 13, y: 12, monsters: ['basilisk'], aware: 3, respawn: 2880 },
+    { id: 'd8_pride', x: 4, y: 21, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: RESPAWN.twoDays, when: { hours: 'night' } },
+    { id: 'd8_scorpions', x: 22, y: 17, monsters: ['glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion', 'glass_scorpion'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'd8_basilisk', x: 13, y: 12, monsters: ['basilisk'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

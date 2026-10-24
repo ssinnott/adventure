@@ -1,6 +1,6 @@
 // The Kilns' part of the world map: its three zones, the plates of its towns and dungeons, and its
 // sites. docs/areas/kilns.md is its brief (#456).
-import type { AtlasZone, AtlasPlace, AtlasSite } from '../../../game/atlas.ts';
+import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 
 /**
  * The Iron Fells' line held at M2's east edge, a seed a square down x 424 from the rim at y 33 to 61: a
@@ -19,9 +19,14 @@ const HELD_AT_M2: [number, number][] = Array.from({ length: 29 }, (_, i): [numbe
 const seam = (y: number): [number, number][] => Array.from({ length: 32 }, (_, i): [number, number] => [456 + i, y]);
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }, { map: 'ironfells_n3', at: [424, 62] }, { map: 'ironfells_n2', at: [424, 30] }, { map: 'ironfells_o3', at: [456, 62] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)] },
-  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }, { map: 'kilnsheart_n5', at: [424, 126] }, { map: 'kilnsheart_n6', at: [424, 158] }, { map: 'kilnsheart_o5', at: [456, 126] }, { map: 'kilnsheart_o6', at: [456, 158] }, { map: 'kilnsheart_o4', at: [456, 94] }, { map: 'kilnsheart_p5', at: [488, 126] }, { map: 'kilnsheart_p6', at: [488, 158] }, { map: 'kilnsheart_p4', at: [488, 94] }], seeds: [[452, 120], [470, 160], ...seam(94)] },
-  { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnmouth_m6', at: [392, 158] }, { map: 'kilnmouth_l6', at: [360, 158] }, { map: 'kilnmouth_m4', at: [392, 94] }, { map: 'kilnmouth_m5', at: [392, 126] }, { map: 'kilnmouth_k6', at: [328, 158] }, { map: 'kilnmouth_l7', at: [360, 190] }], seeds: [[408, 160]] },
+  // Over the pass and down the trail past the spoil heap's beetles (#457), then up the spur past the
+  // low heap by the road and the high one under the crag's working, to Anvilhall's gate (#458).
+  { id: 'ironfells', name: 'The Iron Fells', area: 'kilns', band: [16, 17], maps: [{ map: 'ironfells_m3', at: [392, 62] }, { map: 'ironfells_n3', at: [424, 62] }, { map: 'ironfells_n2', at: [424, 30] }, { map: 'ironfells_o3', at: [456, 62] }], seeds: [[432, 50], ...HELD_AT_M2, ...seam(93)], road: ['ironfells_m3:m3_beetles1', 'ironfells_m3:m3_beetles2', 'ironfells_n3:n3_spoil_low', 'ironfells_n3:n3_spoil_high'] },
+  // On down the trail past the fresh spoil below the Tiefzeche's shaft: the beetles at its head and
+  // the salamanders at its warm end (#461).
+  { id: 'kilnsheart', name: 'The Kilns', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnsheart_n4', at: [424, 94] }, { map: 'kilnsheart_n5', at: [424, 126] }, { map: 'kilnsheart_n6', at: [424, 158] }, { map: 'kilnsheart_o5', at: [456, 126] }, { map: 'kilnsheart_o6', at: [456, 158] }, { map: 'kilnsheart_o4', at: [456, 94] }, { map: 'kilnsheart_p5', at: [488, 126] }, { map: 'kilnsheart_p6', at: [488, 158] }, { map: 'kilnsheart_p4', at: [488, 94] }], seeds: [[452, 120], [470, 160], ...seam(94)], road: ['kilnsheart_n4:n4_beetles', 'kilnsheart_n4:n4_salamanders'] },
+  // Up the branch from N6's fork past the warm kilns' east end, where the beetles overlook the road (#467).
+  { id: 'kilnmouth', name: 'Kilnmouth', area: 'kilns', band: [16, 18], maps: [{ map: 'kilnmouth_m6', at: [392, 158] }, { map: 'kilnmouth_l6', at: [360, 158] }, { map: 'kilnmouth_m4', at: [392, 94] }, { map: 'kilnmouth_m5', at: [392, 126] }, { map: 'kilnmouth_k6', at: [328, 158] }, { map: 'kilnmouth_l7', at: [360, 190] }], seeds: [[408, 160]], road: ['kilnmouth_m6:m6_beetles_east'] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [
@@ -47,4 +52,12 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Feuerstollen', icon: 'cave', map: 'kilnsheart_o6', at: [22.5, 20.5], label: 'below' }, // the Lava Tubes: the adit in the ridge on O6, 22,20 (#466)
   { name: 'Kilnhaven', icon: 'port', at: [388, 162], label: 'right' }, // at the gate on L6, 28,4 (#468, #469)
   { name: 'Erzkamm', icon: 'cave', map: 'ironfells_n2', at: [8.5, 14.5], label: 'below' }, // Iron Crag: the cave in the crag on N2, 8,14, the Barbarian's second prestige (#460)
+];
+
+export const LINKS: readonly AtlasLink[] = [
+  { from: 'ironfells', to: 'anvilhall', kind: 'enter', a: [452, 70] },
+  { from: 'ironfells', to: 'deep_mines', kind: 'enter', a: [440, 96] },
+  { from: 'kilnsheart', to: 'anvil_stone', kind: 'enter', a: [468, 142] },
+  { from: 'kilnsheart', to: 'lava_tubes', kind: 'enter', a: [478, 178] },
+  { from: 'kilnmouth', to: 'kilnhaven', kind: 'enter', a: [388, 162] },
 ];

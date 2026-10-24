@@ -21,7 +21,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the sea cave at Kelp Hole's back (#188), the area's boss at 14; it keeps the family's reach and hold. Off MONSTERS §4.4's
   // boss line (674 hp, 13d7+19, won 11% at 12), it is set for #188's gate: about half at its floor, 12, and nearly always at 14;
   // set again by #806 against the company with its first prestige, at two in three at 12 so the cave's fights pool inside their aim
-  { id: 'great_devilfish', name: 'Great Devilfish', plural: 'Great Devilfish', sprite: 'great_devilfish', kind: 'beast', look: 'What the smugglers feed.', level: 14, hp: 650, ac: 20, attack: 11, dice: 12, sides: 7, bonus: 15, speed: 13, xp: 8853, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, immune: ['asleep'], tint: '#a8928a', size: 1.9 },
+  { id: 'great_devilfish', name: 'Great Devilfish', plural: 'Great Devilfish', sprite: 'great_devilfish', kind: 'beast', look: 'What the smugglers feed.', level: 14, hp: 650, ac: 20, attack: 11, dice: 12, sides: 7, bonus: 15, speed: 13, xp: 8853, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, immune: ['asleep'], offLine: 'Kelp Hole\'s boss, set by its gate (#188) and set again against the company with its first prestige (#806)', tint: '#a8928a', size: 1.9 },
   // the cove's chained and the hold's rows (#188, #190), a controller on MONSTERS §4.4's line at 13: the chain holds
   { id: 'ashen_overseer', name: 'Ashen Overseer', plural: 'Ashen Overseers', sprite: 'overseer', kind: 'person', steady: true, look: 'Grey to the wrist, and a chain in each hand.', level: 13, hp: 142, ac: 18, attack: 8, dice: 2, sides: 8, bonus: 4, speed: 12, xp: 513, gold: [20, 50], inflict: { cond: 'paralysed', chance: 0.25 }, tint: '#4a4248', size: 0.95 },
   // the cove and the Tide Ship's deck (#187, #188, #190), a soldier on MONSTERS §4.4's line at 12
@@ -38,7 +38,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // (13d7+19) it was won 38% at 12 and 76% at 14, and at the escorted boss's 7d7+11 97% at 12; it is set for #190's gate,
   // about two in three at its Rift's floor, 12, so the Rift's fights are won as its other maps' are, and nearly always at 14;
   // set again by #806 against the company with its first prestige, which holds the Rift's two groups to their limit at 12
-  { id: 'tide_warden', name: 'Warden of the Tide', plural: 'Wardens of the Tide', sprite: 'tide_warden', kind: 'rift', look: "The Stone's own light, standing guard over it.", level: 14, hp: 780, ac: 20, attack: 11, dice: 12, sides: 7, bonus: 18, speed: 13, xp: 8853, gold: [0, 0], immune: ['asleep'], tint: '#2a7a6c', size: 1.25 },
+  { id: 'tide_warden', name: 'Warden of the Tide', plural: 'Wardens of the Tide', sprite: 'tide_warden', kind: 'rift', look: "The Stone's own light, standing guard over it.", level: 14, hp: 780, ac: 20, attack: 11, dice: 12, sides: 7, bonus: 18, speed: 13, xp: 8853, gold: [0, 0], immune: ['asleep'], offLine: 'the Tide Ship\'s boss, set by its gate (#190) and set again against the company with its first prestige (#806)', tint: '#2a7a6c', size: 1.25 },
   // The Dead-Drop's (#22; MONSTERS §8.5), down the stair from the Tide Ship's hold and placed by its band, 26 to 28,
   // not Wrackholm's (§2.2): machines, every one (§2), drawn ahead of the levels that place them.
   // the drop and the shards' vault, a brute on MONSTERS §4.4's line at 26 as #549 made it, restated by the drop (#22):
@@ -57,7 +57,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // are the line's and its blow is set by dead_drop3's gate, 28d8+50, won 70% at 27 and 83% at 29. It fights only when
   // the company steps to its desk (the map's), and calls two clerks at a half a turn, who may call their loaders;
   // size 1.6 and drawn inside TALL_REACH
-  { id: 'tallymaster', name: 'The Tallymaster', plural: 'Tallymasters', sprite: 'tallymaster', kind: 'machine', look: 'It writes, and does not look up.', level: 28, hp: 1552, ac: 27, attack: 18, dice: 28, sides: 8, bonus: 50, speed: 13, xp: 17813, gold: [0, 0], calls: { monsters: ['tally_clerk', 'tally_clerk'], chance: 0.5 }, tint: '#6f7780', size: 1.6 },
+  { id: 'tallymaster', name: 'The Tallymaster', plural: 'Tallymasters', sprite: 'tallymaster', kind: 'machine', look: 'It writes, and does not look up.', level: 28, hp: 1552, ac: 27, attack: 18, dice: 28, sides: 8, bonus: 50, speed: 13, xp: 17813, gold: [0, 0], calls: { monsters: ['tally_clerk', 'tally_clerk'], chance: 0.5 }, offLine: 'the counting house\'s boss, the boss line made again by #549 with its hit points the line\'s and its blow set by its gate (#22)', tint: '#6f7780', size: 1.6 },
   // the bounds' lair (#835): Nick's Locker, F5's sea cave under the reef, where it lies in the cave's throat and keeps
   // Holdfast. What the smugglers fed first, the lair's boss at 32 (MONSTERS §13): it reaches the back row (`ranged`, as
   // the family's do) and its hits heal it (`drain`, as the leech's), and it stands at size 2 and is drawn inside TALL_REACH.

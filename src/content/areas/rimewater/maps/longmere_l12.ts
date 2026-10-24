@@ -10,6 +10,7 @@
 // 16,0 drawn where the atlas has the rim, to meet L11's; docs/areas/rimewater.md §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LONGMERE_L12: MapDef = {
   id: 'longmere_l12',
@@ -76,6 +77,6 @@ export const LONGMERE_L12: MapDef = {
   secrets: [{ x: 4, y: 6, hint: 'l12_cuts' }],
   encounters: [
     // The box's one group and its hardest: a pair of ice bears denned under the rim at the point.
-    { id: 'l12_bears', x: 1, y: 6, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880, roams: false },
+    { id: 'l12_bears', x: 1, y: 6, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

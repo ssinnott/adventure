@@ -7,6 +7,7 @@
 // steep stair down. Band 16-17; docs/areas/kilns.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DEEP_MINES2: MapDef = {
   id: 'deep_mines2',
@@ -64,7 +65,7 @@ export const DEEP_MINES2: MapDef = {
   secrets: [{ x: 5, y: 10, hint: 'dm2_draught' }],
   encounters: [
     // Fire beetles in the old stall; at the end of the worms' bore, their pair, the level's group at 17.
-    { id: 'dm2_beetles', x: 4, y: 6, monsters: ['fire_beetle', 'fire_beetle'], aware: 3, respawn: 1440, roams: false },
-    { id: 'dm2_worms', x: 13, y: 1, monsters: ['rock_worm', 'rock_worm'], aware: 2, respawn: 2880, roams: false },
+    { id: 'dm2_beetles', x: 4, y: 6, monsters: ['fire_beetle', 'fire_beetle'], aware: 3, respawn: RESPAWN.day, roams: false },
+    { id: 'dm2_worms', x: 13, y: 1, monsters: ['rock_worm', 'rock_worm'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
   ],
 };

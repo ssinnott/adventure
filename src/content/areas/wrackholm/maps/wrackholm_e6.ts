@@ -6,6 +6,7 @@
 // docs/areas/wrackholm.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const WRACKHOLM_E6: MapDef = {
   id: 'wrackholm_e6',
@@ -110,11 +111,11 @@ export const WRACKHOLM_E6: MapDef = {
   // at the lookout, two crews on the paths north and east, and devilfish in the pools under the south
   // hills at the far end. Each at the line's standard size.
   encounters: [
-    { id: 'e6_rats', x: 17, y: 18, monsters: new Array(8).fill('bilge_rat'), aware: 2, respawn: 1440 },
-    { id: 'e6_gulls_inlet', x: 13, y: 12, monsters: new Array(8).fill('wrack_gull'), aware: 4, respawn: 1440 },
-    { id: 'e6_path_north', x: 20, y: 6, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, respawn: 2880 },
-    { id: 'e6_gulls_lookout', x: 15, y: 3, monsters: new Array(8).fill('wrack_gull'), aware: 4, respawn: 1440 },
-    { id: 'e6_path_east', x: 27, y: 12, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, respawn: 2880 },
-    { id: 'e6_devilfish', x: 28, y: 30, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: 2880 },
+    { id: 'e6_rats', x: 17, y: 18, monsters: new Array(8).fill('bilge_rat'), aware: 2, respawn: RESPAWN.day },
+    { id: 'e6_gulls_inlet', x: 13, y: 12, monsters: new Array(8).fill('wrack_gull'), aware: 4, respawn: RESPAWN.day },
+    { id: 'e6_path_north', x: 20, y: 6, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'e6_gulls_lookout', x: 15, y: 3, monsters: new Array(8).fill('wrack_gull'), aware: 4, respawn: RESPAWN.day },
+    { id: 'e6_path_east', x: 27, y: 12, monsters: ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'], back: 2, aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'e6_devilfish', x: 28, y: 30, monsters: ['devilfish', 'devilfish', 'devilfish', 'devilfish'], aware: 2, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

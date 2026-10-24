@@ -94,6 +94,7 @@ import { LIT } from '../ashfall/maps/ember_stone.ts';
 import { ROAD_WEST } from '../ashfall/maps/emberwaste_e10.ts';
 import { WATCH, SCHOLAR_ASKED, ETCHING_GIVEN, ETCHING_READ } from './maps/wold_b9.ts';
 import { MASTER_MET, MASTER_FAVOUR } from './maps/wold_d10.ts';
+import { RESPAWN } from '../../../game/keys.ts';
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -891,7 +892,7 @@ function woldBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   // Glass in either box.
   const g9 = (id: string) => E9.encounters!.find((g) => g.id === id)!;
   ok(E9.encounters!.length === 3 && flock(g9('e9_vultures')) && pride(g9('e9_pride')) && g9('e9_basilisks').monsters.join() === 'basilisk,basilisk' && E9.rows[g9('e9_basilisks').y][g9('e9_basilisks').x] === '^'
-    && [E9, E8].every((d) => d.encounters!.every((g) => g.respawn === 2880 && !g.slainText && g.monsters.every((m) => ['wold_lion', 'vulture', 'basilisk'].includes(m)))),
+    && [E9, E8].every((d) => d.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && g.monsters.every((m) => ['wold_lion', 'vulture', 'basilisk'].includes(m)))),
     'three vultures on the crest, a pride of four lions and three vultures on the pasture and two basilisks on the hills\' north end; nothing of the Glass in either box');
   for (const g of E9.encounters!) fight(w, `${E9.id}:${g.id}`);
 
@@ -1728,7 +1729,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   // The groups, each won at 26: the vultures over the bones, the lions in the grass, the walkers at the end.
   const g7 = (id: string) => D7.encounters!.find((g) => g.id === id)!;
   ok(D7.encounters!.length === 3 && g7('d7_vultures').monsters.join() === 'vulture,vulture,vulture,vulture' && g7('d7_lions').monsters.join() === 'wold_lion,wold_lion,wold_lion'
-    && g7('d7_walker').monsters.join() === 'glass_walker,glass_walker' && D7.encounters!.every((g) => g.respawn === 2880 && !g.slainText && lip.has(at(d7, g.x, g.y))),
+    && g7('d7_walker').monsters.join() === 'glass_walker,glass_walker' && D7.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && lip.has(at(d7, g.x, g.y))),
     'four vultures over the bones, three lions in the long grass and two glass walkers at the Scarp\'s end, all on the lip');
   for (const g of D7.encounters!) fight(w, `${D7.id}:${g.id}`);
   // The secret: the beacon's cold hearth and the smell of tar, searched; the keepers' store behind it.
@@ -1771,7 +1772,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const gk = (id: string) => KO.encounters!.find((g) => g.id === id)!;
   ok(KO.encounters!.length === 2 && gk('kr_basilisks').monsters.join() === 'basilisk,basilisk,basilisk,basilisk'
     && gk('kr_rats').monsters.length === 8 && gk('kr_rats').monsters.every((m) => m === 'deep_rat')
-    && KO.encounters!.every((g) => g.respawn === 2880 && !g.slainText && g.roams === false), 'four basilisks at the passage\'s head and eight deep rats among the khans\' bones, and no guardian');
+    && KO.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && g.roams === false), 'four basilisks at the passage\'s head and eight deep rats among the khans\' bones, and no guardian');
   for (const g of KO.encounters!) fight(w, `${KO.id}:${g.id}`);
   for (const id of ['kr_cut', 'kr_diggers', 'kr_slabs', 'kr_khans', 'kr_horses', 'kr_gnawed']) see(w, `${KO.id}:${id}`);
   const grave = feature(KO, 'kr_grave');

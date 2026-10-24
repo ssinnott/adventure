@@ -7,6 +7,7 @@
 import type { Feature, MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
 import { WARDEN_SLAIN } from './anvil_stone.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The tear into the Anvil Stone's Rift (#465): on its square below the cut, 12,16, onto the Rift's
@@ -108,8 +109,8 @@ export const KILNSHEART_O5: MapDef = {
     // Slaglings out of the tear, on the track below and on the slope beside it, until the tear is
     // closed; the slag elder at its lip, the box's group at 18; and the thane's iron on the approach,
     // only once the Stone is taken. Neither the elder nor the Guard comes back.
-    { id: 'o5_slag_low', x: 6, y: 21, monsters: ['slagling', 'slagling', 'slagling', 'slagling', 'slagling'], aware: 4, respawn: 1440, until: { flag: 'q_anvil_closed' } },
-    { id: 'o5_slag_tear', x: 9, y: 17, monsters: ['slagling', 'slagling', 'slagling', 'slagling', 'slagling'], aware: 3, respawn: 1440, until: { flag: 'q_anvil_closed' } },
+    { id: 'o5_slag_low', x: 6, y: 21, monsters: ['slagling', 'slagling', 'slagling', 'slagling', 'slagling'], aware: 4, respawn: RESPAWN.day, until: { flag: 'q_anvil_closed' } },
+    { id: 'o5_slag_tear', x: 9, y: 17, monsters: ['slagling', 'slagling', 'slagling', 'slagling', 'slagling'], aware: 3, respawn: RESPAWN.day, until: { flag: 'q_anvil_closed' } },
     { id: 'o5_elder', x: 12, y: 17, monsters: ['slag_elder'], aware: 3, roams: false },
     { id: 'o5_guard', x: 12, y: 13, monsters: ['anvil_guard', 'anvil_guard', 'anvil_guard'], aware: 3, roams: false, after: { flag: 'anvil_taken' } },
   ],

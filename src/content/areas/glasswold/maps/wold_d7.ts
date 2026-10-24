@@ -13,6 +13,7 @@
 // docs/areas/glasswold.md §12 is its brief (#833).
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const WOLD_D7: MapDef = {
   id: 'wold_d7',
@@ -95,8 +96,8 @@ export const WOLD_D7: MapDef = {
     // From the way in: four vultures over the foal's bones on the shore, the nearest; three lions lying up
     // in the long grass; at the Scarp's end the two glass walkers that walked north to the edge and
     // stopped, the farthest and the hardest.
-    { id: 'd7_vultures', x: 22, y: 28, monsters: ['vulture', 'vulture', 'vulture', 'vulture'], aware: 3, respawn: 2880 },
-    { id: 'd7_lions', x: 13, y: 29, monsters: ['wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: 2880 },
-    { id: 'd7_walker', x: 12, y: 23, monsters: ['glass_walker', 'glass_walker'], aware: 3, roams: false, respawn: 2880 },
+    { id: 'd7_vultures', x: 22, y: 28, monsters: ['vulture', 'vulture', 'vulture', 'vulture'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'd7_lions', x: 13, y: 29, monsters: ['wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'd7_walker', x: 12, y: 23, monsters: ['glass_walker', 'glass_walker'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

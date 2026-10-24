@@ -9,6 +9,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { SLEEPERS_SEEN } from '../chapter.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const SLEEPERS_BAY2: MapDef = {
   id: 'sleepers_bay2',
@@ -63,10 +64,10 @@ export const SLEEPERS_BAY2: MapDef = {
   encounters: [
     // The bay's keepers, four to a row (three were too few for the band, #490), whose touch puts to
     // sleep and who mend each other.
-    { id: 'sb2_keepers1', x: 4, y: 9, monsters: ['bay_keeper', 'bay_keeper', 'bay_keeper', 'bay_keeper'], aware: 2, respawn: 2880, roams: false },
-    { id: 'sb2_keepers2', x: 10, y: 7, monsters: ['bay_keeper', 'bay_keeper', 'bay_keeper', 'bay_keeper'], aware: 2, respawn: 2880, roams: false },
-    { id: 'sb2_keepers3', x: 4, y: 5, monsters: ['bay_keeper', 'bay_keeper', 'bay_keeper', 'bay_keeper'], aware: 2, respawn: 2880, roams: false },
+    { id: 'sb2_keepers1', x: 4, y: 9, monsters: ['bay_keeper', 'bay_keeper', 'bay_keeper', 'bay_keeper'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'sb2_keepers2', x: 10, y: 7, monsters: ['bay_keeper', 'bay_keeper', 'bay_keeper', 'bay_keeper'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'sb2_keepers3', x: 4, y: 5, monsters: ['bay_keeper', 'bay_keeper', 'bay_keeper', 'bay_keeper'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // The Matron in the last row: she never comes back, and the sleepers sleep on when she falls.
-    { id: 'sb2_matron', x: 10, y: 3, monsters: ['matron'], aware: 2, roams: false, slainText: 'The Matron folds down over the last bed, her eight fingers spread on its frost. The sleepers sleep on.' },
+    { id: 'sb2_matron', x: 10, y: 3, monsters: ['matron'], aware: 2, roams: false, boss: true, slainText: 'The Matron folds down over the last bed, her eight fingers spread on its frost. The sleepers sleep on.' },
   ],
 };

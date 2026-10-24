@@ -14,6 +14,7 @@
 import type { MapDef, Choice } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
  * The Stair-king's toll (#544): put before the fight, the way a business puts its menu. Paid in gold,
@@ -177,9 +178,10 @@ export const HIGHSPINE_I10: MapDef = {
     // snow, a giant and a snow troll, the giant sweeping the front row and the troll mending unless
     // burned (MONSTERS §8.1); and at the head the Stair-king with two giants, the box's boss at 24,
     // who asks the toll before he fights. They are people, and break when he falls (#443, call 1).
-    { id: 'i10_eagles', x: 17, y: 25, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: 1440 },
-    { id: 'i10_stair', x: 13, y: 20, monsters: ['stair_giant', 'snow_troll'], aware: 3, respawn: 2880, roams: false },
-    { id: 'i10_king', x: 2, y: 20, monsters: ['stair_king', 'stair_giant', 'stair_giant'], leader: 'stair_king', aware: 3, roams: false, choice: TOLL,
+    { id: 'i10_eagles', x: 17, y: 25, monsters: ['spine_eagle', 'spine_eagle', 'spine_eagle'], aware: 5, respawn: RESPAWN.day },
+    { id: 'i10_stair', x: 13, y: 20, monsters: ['stair_giant', 'snow_troll'], aware: 3, respawn: RESPAWN.twoDays, roams: false },
+    // The Stair-king at the Stair's head, who asks the toll first; the bot refuses (#502).
+    { id: 'i10_king', x: 2, y: 20, monsters: ['stair_king', 'stair_giant', 'stair_giant'], leader: 'stair_king', aware: 3, roams: false, boss: true, choice: TOLL,
       slainText: 'The king is down. Nobody holds out a hand on the Stair now.' },
     // The Ledge (#448): once Edric is answered, by night two toll-takers come up the chimney's shaft
     // to the ledge, and once they are down two more, and never again. The Knight's third's fight, the

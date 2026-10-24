@@ -30,7 +30,7 @@ import { ITEMS } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
 export const AREA = {
   id: 'ashfall' as const,
@@ -70,5 +70,5 @@ export const AREA = {
   // (#513), and the hot springs, Scaldwell, with H10 (#510). Lava was the Kilns' first, and the sweep with
   // fire has no token to claim (#545).
   novel: { families: ['drakes', 'machines'], terrain: ['vines', 'volcano', 'vent'], mechanics: [], landmarks: ['volcano', 'springs'] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;

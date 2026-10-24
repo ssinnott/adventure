@@ -7,7 +7,7 @@
 // docs/areas/saltreach.md §4.11 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-import { denBurnt } from '../../../../game/keys.ts';
+import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 
 /** The heronry burnt: its brood stops coming back. */
 const HERONRY_BURNT = denBurnt('delta_b4', 'b4_heronry');
@@ -80,10 +80,10 @@ export const DELTA_B4: MapDef = {
   secrets: [{ x: 2, y: 12, hint: 'b4_bank' }],
   encounters: [
     // The heronry's brood on the grass by the water, back a day after they fall until it burns.
-    { id: 'b4_brood', x: 23, y: 5, monsters: ['grey_heron', 'grey_heron', 'grey_heron'], aware: 5, respawn: 1440, until: HERONRY_BURNT },
+    { id: 'b4_brood', x: 23, y: 5, monsters: ['grey_heron', 'grey_heron', 'grey_heron'], aware: 5, respawn: RESPAWN.day, until: HERONRY_BURNT },
     // Its keepers on the nests, the same birds in greater number.
     { id: 'b4_keepers', x: 8, y: 2, monsters: ['grey_heron', 'grey_heron', 'grey_heron', 'grey_heron', 'grey_heron'], aware: 3, roams: false },
     // A bull toad alone at the fen's north end, the farthest and the hardest.
-    { id: 'b4_toad', x: 7, y: 26, monsters: ['bull_toad'], aware: 4, respawn: 1440 },
+    { id: 'b4_toad', x: 7, y: 26, monsters: ['bull_toad'], aware: 4, respawn: RESPAWN.day },
   ],
 };

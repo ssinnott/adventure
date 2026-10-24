@@ -8,6 +8,7 @@ import type { When } from '../../../../game/quests.ts';
 import { WEST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
 import { STONE_HOME } from './drowned_temples.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Grove Stone stood at (the Grove's `g2_stone`), a hand-span of it cut away: what the plinth's socket is read against (#582). */
 const GROVE_STONE_SEEN: When = { seen: 'grove2:g2_stone' };
@@ -124,8 +125,8 @@ export const DELTA_B5: MapDef = {
   secrets: [{ x: 13, y: 14, hint: 'b5_landing' }],
   encounters: [
     // Fen toads on the duckboards; two bull toads, and no toad with them, on the island's far side.
-    { id: 'b5_toads_e', x: 26, y: 13, monsters: ['fen_toad', 'fen_toad', 'fen_toad', 'fen_toad', 'fen_toad'], aware: 3, roams: false, respawn: 1440 },
-    { id: 'b5_toads_w', x: 17, y: 13, monsters: ['fen_toad', 'fen_toad', 'fen_toad', 'fen_toad', 'fen_toad'], aware: 3, roams: false, respawn: 1440 },
-    { id: 'b5_bulls', x: 3, y: 16, monsters: ['bull_toad', 'bull_toad'], aware: 4, respawn: 1440 },
+    { id: 'b5_toads_e', x: 26, y: 13, monsters: ['fen_toad', 'fen_toad', 'fen_toad', 'fen_toad', 'fen_toad'], aware: 3, roams: false, respawn: RESPAWN.day },
+    { id: 'b5_toads_w', x: 17, y: 13, monsters: ['fen_toad', 'fen_toad', 'fen_toad', 'fen_toad', 'fen_toad'], aware: 3, roams: false, respawn: RESPAWN.day },
+    { id: 'b5_bulls', x: 3, y: 16, monsters: ['bull_toad', 'bull_toad'], aware: 4, respawn: RESPAWN.day },
   ],
 };

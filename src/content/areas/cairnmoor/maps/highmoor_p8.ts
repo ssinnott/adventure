@@ -7,6 +7,7 @@
 // §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const HIGHMOOR_P8: MapDef = {
   id: 'highmoor_p8',
@@ -64,6 +65,6 @@ export const HIGHMOOR_P8: MapDef = {
   secrets: [{ x: 4, y: 7, hint: 'p8_rowan' }],
   encounters: [
     // Three moor hounds lying up on the ledge, the box's one group and its hardest, at 19.
-    { id: 'p8_hounds', x: 0, y: 15, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 3, respawn: 1440 },
+    { id: 'p8_hounds', x: 0, y: 15, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 3, respawn: RESPAWN.day },
   ],
 };

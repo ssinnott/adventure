@@ -6,6 +6,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNSHEART_N5: MapDef = {
   id: 'kilnsheart_n5',
@@ -121,9 +122,9 @@ export const KILNSHEART_N5: MapDef = {
     // Fire beetles at the forges, behind the smelter and at the yard's foot; salamanders on the slag
     // heap; and on the cutters' track east, a slag elder strayed from the Stone, until its tear is
     // closed, the box's group at 18.
-    { id: 'n5_beetles_back', x: 15, y: 1, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: 1440 },
-    { id: 'n5_beetles_yard', x: 11, y: 6, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: 1440 },
-    { id: 'n5_salamanders', x: 3, y: 3, monsters: ['salamander', 'salamander', 'salamander', 'fire_beetle'], aware: 3, respawn: 1440 },
-    { id: 'n5_elder', x: 27, y: 24, monsters: ['slag_elder'], aware: 3, respawn: 2880, roams: false, until: { flag: 'q_anvil_closed' } },
+    { id: 'n5_beetles_back', x: 15, y: 1, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'n5_beetles_yard', x: 11, y: 6, monsters: ['fire_beetle', 'fire_beetle', 'fire_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'n5_salamanders', x: 3, y: 3, monsters: ['salamander', 'salamander', 'salamander', 'fire_beetle'], aware: 3, respawn: RESPAWN.day },
+    { id: 'n5_elder', x: 27, y: 24, monsters: ['slag_elder'], aware: 3, respawn: RESPAWN.twoDays, roams: false, until: { flag: 'q_anvil_closed' } },
   ],
 };

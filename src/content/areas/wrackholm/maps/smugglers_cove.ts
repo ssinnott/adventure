@@ -5,6 +5,7 @@
 // strongbox in the store beyond. Band 12-13; docs/areas/wrackholm.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 const CREW = ['wrack_smuggler', 'wrack_smuggler', 'wrack_bowman', 'wrack_bowman'];
 
@@ -73,10 +74,10 @@ export const SMUGGLERS_COVE: MapDef = {
     { kind: 'chest', x: 14, y: 1, id: 'kh1_strongbox', gold: 600, items: ['plate+1'] },
   ],
   encounters: [
-    { id: 'kh1_crew_fires', x: 10, y: 11, monsters: CREW, back: 2, aware: 3, respawn: 2880 },
+    { id: 'kh1_crew_fires', x: 10, y: 11, monsters: CREW, back: 2, aware: 3, respawn: RESPAWN.twoDays },
     // Kitto's boats tie up at the landing: told what his brother is, he carries for the cove no more,
     // and once this crew is next put down no other comes (The Captain's Brother, #192).
-    { id: 'kh1_crew_landing', x: 4, y: 9, monsters: CREW, back: 2, aware: 3, respawn: 2880, until: { flag: 'q_brother_told' } },
+    { id: 'kh1_crew_landing', x: 4, y: 9, monsters: CREW, back: 2, aware: 3, respawn: RESPAWN.twoDays, until: { flag: 'q_brother_told' } },
     { id: 'kh1_overseers', x: 9, y: 7, monsters: ['ashen_overseer', 'ashen_overseer', 'ashen_overseer', 'ashen_overseer'], aware: 2, roams: false },
   ],
 };

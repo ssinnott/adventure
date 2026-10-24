@@ -12,6 +12,7 @@
 // docs/areas/glasswold.md §4.9 is its brief (#534).
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const WOLD_E9: MapDef = {
   id: 'wold_e9',
@@ -98,8 +99,8 @@ export const WOLD_E9: MapDef = {
     // From the way in: the vultures along the crest over the horse they picked, the pride at the pasture's
     // south end, after the herd, with its own vultures; and on the hills' north end, over the sea, the two
     // basilisks, the hardest.
-    { id: 'e9_vultures', x: 14, y: 21, monsters: ['vulture', 'vulture', 'vulture'], aware: 3, respawn: 2880 },
-    { id: 'e9_pride', x: 22, y: 20, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: 2880 },
-    { id: 'e9_basilisks', x: 16, y: 6, monsters: ['basilisk', 'basilisk'], aware: 3, respawn: 2880 },
+    { id: 'e9_vultures', x: 14, y: 21, monsters: ['vulture', 'vulture', 'vulture'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'e9_pride', x: 22, y: 20, monsters: ['wold_lion', 'wold_lion', 'wold_lion', 'wold_lion', 'vulture', 'vulture', 'vulture'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'e9_basilisks', x: 16, y: 6, monsters: ['basilisk', 'basilisk'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

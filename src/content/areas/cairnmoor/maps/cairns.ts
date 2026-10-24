@@ -8,6 +8,7 @@
 // its brief, §4.8 the cell's.
 import type { MapDef } from '../../../../game/map.ts';
 import { EAST, NORTH, WEST } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CAIRNS: MapDef = {
   id: 'cairns',
@@ -68,11 +69,11 @@ export const CAIRNS: MapDef = {
   secrets: [{ x: 13, y: 10, hint: 'cd1_rust' }],
   encounters: [
     // The bog's dead, come in along the passage.
-    { id: 'cd1_bodies1', x: 4, y: 8, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: 2880, roams: false },
-    { id: 'cd1_bodies2', x: 7, y: 8, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: 2880, roams: false },
+    { id: 'cd1_bodies1', x: 4, y: 8, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'cd1_bodies2', x: 7, y: 8, monsters: ['bog_body', 'bog_body', 'bog_body', 'bog_body'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // A wight over each row, three to a cell.
-    { id: 'cd1_wights1', x: 9, y: 3, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 2, respawn: 2880, roams: false },
-    { id: 'cd1_wights2', x: 9, y: 13, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 2, respawn: 2880, roams: false },
+    { id: 'cd1_wights1', x: 9, y: 3, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    { id: 'cd1_wights2', x: 9, y: 13, monsters: ['cairn_wight', 'cairn_wight', 'cairn_wight'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // The Watcher's wight, over him: it never comes back.
     { id: 'cd1_watcher', x: 12, y: 3, monsters: ['cairn_wight'], aware: 1, roams: false, slainText: 'The Watcher\'s wight falls across his feet and lies still. His hands are still on the page.' },
   ],

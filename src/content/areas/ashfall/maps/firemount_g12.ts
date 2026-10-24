@@ -12,6 +12,7 @@
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const FIREMOUNT_G12: MapDef = {
   id: 'firemount_g12',
@@ -75,6 +76,6 @@ export const FIREMOUNT_G12: MapDef = {
   secrets: [{ x: 12, y: 11, hint: 'g12_claws' }],
   encounters: [
     // The box's one fight: the drakelings on the slope by their scrapes, the band's top.
-    { id: 'g12_drakelings', x: 21, y: 5, monsters: ['drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling'], aware: 3, respawn: 2880 },
+    { id: 'g12_drakelings', x: 21, y: 5, monsters: ['drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

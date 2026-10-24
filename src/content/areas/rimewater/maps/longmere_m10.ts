@@ -6,6 +6,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
+import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LONGMERE_M10: MapDef = {
   id: 'longmere_m10',
@@ -77,7 +78,7 @@ export const LONGMERE_M10: MapDef = {
   encounters: [
     // Ice pike under the ice off the fishers' holes, the nearer group; and a pair of ice bears in the
     // pines past the burn, the box's hardest, come down off the glacier.
-    { id: 'm10_pike', x: 8, y: 9, monsters: ['ice_pike', 'ice_pike'], aware: 3, respawn: 1440, under: 'ice' },
-    { id: 'm10_bears', x: 27, y: 25, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: 2880 },
+    { id: 'm10_pike', x: 8, y: 9, monsters: ['ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice' },
+    { id: 'm10_bears', x: 27, y: 25, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

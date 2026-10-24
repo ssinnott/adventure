@@ -261,38 +261,13 @@ async function newerOnTheLine(): Promise<void> {
  * The monsters past Act I set off the line on purpose (MONSTERS §4.4), each with why. Every other
  * monster of level 11 or more stands on the line at its level: some role's test monster's hit
  * points and blow, the test troll's (#537), giant's or drake's (#545) or a role's come down whole
- * by a share named in WHOLE. So when the line is made again a monster left on the old one fails
- * until it is re-derived. One a box's gate tunes off the line goes here with the issue that tuned
- * it.
+ * by a share it names (`MonsterDef.offLine`). So when the line is made again a monster left on the
+ * old one fails until it is re-derived. One a box's gate tunes off the line says why on its def
+ * (`MonsterDef.offLine`), with the issue that tuned it, as every one does (#968).
  */
-export const OFF_LINE: Record<string, string> = {
-  choirmaster: "the Drowned Temples' boss, set by their gate (#175) and its hit points set again against the company with its first prestige (#806)",
-  great_devilfish: "Kelp Hole's boss, set by its gate (#188) and set again against the company with its first prestige (#806)",
-  tide_warden: "the Tide Ship's boss, set by its gate (#190) and set again against the company with its first prestige (#806)",
-  sunder_warden: "the Sunder's boss, its hit points and its blow set by its gate (#199) and set again against the company with its first prestige (#806)",
-  foreman: "the Tiefzeche's boss, its hit points and its blow set by its gate (#462)",
-  anvil_warden: "the Anvil Stone's Rift's boss, its hit points and its blow set by its gate (#465)",
-  great_salamander: "Feuerstollen's boss, its hit points and its blow set by its gate (#466)",
-  cairn_king: "Carn Dubh's boss, its hit points and its blow set by its gate (#480)",
-  matron: "the Sleepers' Bay's boss, its hit points and its blow set by its gate (#490)",
-  abbot: "Highcell's boss, its hit points and its blow set by its gate (#500)",
-  stair_king: "the Stair's head's boss, its hit points and its blow set by its gate (#502)",
-  old_drake: "Old Cinder's boss, the boss line come down whole to a sweeper's share with the drakes' breath, its hit points set by its gate (#515)",
-  brood_drake: "the corridors' boss, the boss line come down whole to a sweeper's share with the drakes' breath, as the Old Drake, its blow set by the corridors' gate (#22)",
-  cinder_drake: "Cinderport's box's drake, placed on the test drake's line at 25 before #549 made it again, and held there by its gate (#660)",
-  sentinel: "the Ember Stone's boss, the boss line made again by #549 with its hit points set by its gate and its blow the line's (#516)",
-  grey_lion: "the Wold's boss, its hit points and its blow set by B8's gate (#529)",
-  tallymaster: "the counting house's boss, the boss line made again by #549 with its hit points the line's and its blow set by its gate (#22)",
-  catcher: "the Stair's boss, its hit points and its blow set by its gate (#758) and set again on its odds on the line made with the Hand's steel (#752)",
-  vask: "the Heart's boss, his hit points and his blow set by its gate with the clock played and the Hands killed first (#759), and set again on his odds on the line made with the Hand's steel (#752)",
-  core_sentry: "the Heart's sentries, called by its clock: the soldier's blow on twice its hit points as the line read them at 31 between 30 and 32, so a company that lets the clock run wins a quarter to a third (#752), and held there when #793 made 31",
-  deep_knocker: "Meridian Camp's knocker (#22), placed there and in the Dead-Drop on the armoured line at 28 as #549 made it, and held there when #752 made 28 again in the Hand's steel, so Act IV's figures stand; the Ways and the Stair take it as built",
-  inspector: "Meridian Camp's inspector (#22), placed there on the soldier line at 28 as #549 made it, and held there when #752 made 28 again in the Hand's steel, so Act IV's figures stand",
-};
+export const OFF_LINE: Record<string, string> = {};
 /** The monsters past 10 on a role's line come down whole, hit points and blow together (MONSTERS §4.4): the role, the share and why. */
-export const WHOLE: Record<string, { role: Role; share: number; why: string }> = {
-  bog_light: { role: 'controller', share: 0.575, why: "four on the line end a company's day in four fights (#597)" },
-};
+export const WHOLE: Record<string, { role: Role; share: number; why: string }> = {};
 /** Why a monster stands off the line: its row in OFF_LINE, or its own word (`MonsterDef.offLine`), not both (#897). */
 export const offLineOf = (id: string): string | undefined => {
   const own = MONSTERS[id]?.offLine;

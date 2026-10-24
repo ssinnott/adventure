@@ -10,7 +10,7 @@ import { UNDERDEEP2 } from './maps/underdeep2.ts';
 import { CORE } from './maps/core.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
-import { ZONES, PLACES, SITES } from './atlas.ts';
+import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
@@ -44,5 +44,5 @@ export const AREA = {
   // The Hearth, the site planned on the atlas since the start, built with the isle (#753; §7); the crawlers,
   // first placed in the Ways (#757); the Core's clock, on Vask's group at the Heart (#759).
   novel: { families: ['crawlers'], terrain: [], mechanics: ['encounter:clock'], landmarks: ['hearth'] },
-  atlas: { zones: ZONES, places: PLACES, sites: SITES },
+  atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
 } satisfies Area;
