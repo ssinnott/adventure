@@ -41,12 +41,13 @@ function reaches(): void {
   ok(others.length === AREAS.length - 1 && !others.includes('kilns') && others.includes('thornmark') && [...map.areas.keys()].join() === 'kilns' && !note.walks.size && [...note.areas.keys()].join() === 'kilns',
     `a line of a Kilns map changed reaches the Kilns and every other walkthrough (${others.length}); a comment changed, the Kilns alone`);
   // A def only added to a table reaches every walkthrough too, as Rimewater's reads every monster's
-  // drops; a rung of the ladder (the Foreland's checks.ts) reaches every area; another area's rows its own.
+  // drops; a rung of the ladder (the Foreland's checks.ts) reaches every area; another area's rows its own,
+  // in a checks.ts that holds no rung (the Glasswold's: the Kilns' holds 17 since #968).
   const bred = reach([bones], {}, { [bones]: ["  { id: 'mut', name: 'Mut', plural: 'Muts', sprite: 'bandit', kind: 'person', level: 2, hp: 10 },"] });
   const rung = 'src/content/areas/shelf/checks.ts', laddered = reach([rung], { [rung]: ["    3: ['longsword', 'axe'],"] }, { [rung]: ["    3: ['longsword+2', 'axe'],"] });
-  const seams = 'src/content/areas/kilns/checks.ts', own = reach([seams], { [seams]: ['  seamsAsBuilt: [],'] });
-  ok(!bred.all && bred.walks.has('rimewater') && bred.walks.size === AREAS.length - 1 && laddered.all?.file === rung && !own.all && [...own.areas.keys()].join() === 'kilns',
-    `a def only added reaches every walkthrough (${bred.walks.size}); a rung of the ladder changed reaches every area (${describeReach(laddered)}); a row of the Kilns' own, the Kilns`);
+  const seams = 'src/content/areas/glasswold/checks.ts', own = reach([seams], { [seams]: ['  seamsAsBuilt: [],'] });
+  ok(!bred.all && bred.walks.has('rimewater') && bred.walks.size === AREAS.length - 1 && laddered.all?.file === rung && !own.all && [...own.areas.keys()].join() === 'glasswold',
+    `a def only added reaches every walkthrough (${bred.walks.size}); a rung of the ladder changed reaches every area (${describeReach(laddered)}); a row of the Glasswold's own, the Glasswold`);
   const index = reach(['src/content/areas/hearth/index.ts']);
   ok(!index.all && index.areas.size < AREAS.length, `the walk stops at the files outside the areas, as src/content/index.ts imports every area's (${describeReach(index)})`);
   // 4: elsewhere.
