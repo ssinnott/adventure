@@ -7,6 +7,11 @@ import { ChoiceScreen } from '../../src/ui/screens.ts';
 import type { CombatScreen } from '../../src/ui/combat.ts';
 import type { WorldMapScreen } from '../../src/ui/worldmap.ts';
 import { ok, headlessGame, drive } from './lib.ts';
+import { makeRng } from '../../src/lib/engine/rng.ts';
+import { MONSTERS } from '../../src/content/index.ts';
+import type { Feature } from '../../src/game/map.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
+import { startCombat, currentTurn, monsterAct, partyAct, meetCalled } from '../../src/game/combat.ts';
 
 /** The screen on top, by its class. */
 const top = (g: Game): string => g.top.constructor.name;
@@ -59,4 +64,28 @@ export function game(): void {
   g.world.travel('shelf', 16, 4);
   g.fight(['road_rats']);
   ok(top(g) === 'CombatScreen' && (g.top as CombatScreen).groupIds.join() === 'road_rats', 'a fight with the road rats puts the combat screen on top');
+
+  // A chest gives by the wilds' rule (`give`, #978) and says what it gave, no gold where it holds none; opened, it is empty.
+  const chest = (id: string, gold: number): Feature => ({ kind: 'chest', id, x: 0, y: 0, gold, items: ['potion_heal'] });
+  const gold = g.party.gold, bag = g.party.bag.length;
+  g.interact(chest('test_chest', 500));
+  const opened = g.log.at(-1);
+  g.interact(chest('test_chest', 500));
+  ok(opened === 'You open the chest: 500 gold, Healing Draught.' && g.party.gold === gold + 500 && g.party.bag.length === bag + 1 && g.log.at(-1) === 'The chest is empty.',
+    `a chest gives its gold and its draught and says so, and is then empty (${opened})`);
+  g.interact(chest('test_chest_2', 0));
+  ok(g.log.at(-1) === 'You open the chest: Healing Draught.' && g.party.gold === gold + 500, `one with no gold names none (${g.log.at(-1)})`);
+
+  // A kind a monster calls into a fight says its look once, after the call, as the first groups' kinds do (`meetCalled`, #978).
+  const met = g.world.state.met ?? [], kind = Object.values(MONSTERS).find((d) => d.look && !met.includes(d.id))!;
+  const caller: MonsterDef = { ...MONSTERS.bandit, id: 'test_caller', name: 'Caller', calls: { monsters: [kind.id], chance: 1 } };
+  const s = startCombat(g.party, [{ id: 'test_callers', monsters: [caller] }], makeRng(3)), rng = makeRng(3);
+  let bands = s.groupIds.length;
+  for (let i = 0; i < 40 && s.groupIds.length === 1 && s.outcome === 'ongoing'; i++) {
+    const t = currentTurn(s, g.party, rng);
+    if (t?.side === 'monster') { monsterAct(s, g.party, rng); bands = meetCalled(g.world, s, bands); } else if (t) partyAct(s, g.party, rng, { type: 'defend' });
+  }
+  const called = s.log.findIndex((l) => l.startsWith('Caller calls, and ')), lines = s.log.length, again = meetCalled(g.world, s, bands);
+  ok(called >= 0 && s.log[called + 1] === kind.look && s.log.filter((l) => l === kind.look).length === 1 && bands === 2 && again === 2 && s.log.length === lines && !!g.world.state.met?.includes(kind.id),
+    `a call of a kind the company has not met (${kind.name}) says its look once, straight after the call`);
 }

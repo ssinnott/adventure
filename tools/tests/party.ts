@@ -2,7 +2,8 @@
 // a kill pays.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, SPELLS, MAP_DEFS } from '../../src/content/index.ts';
-import { defaultParty, createCharacter, CLASSES, xpForLevel, levelUp, equip, armorClass, canTrain, canTrainAt, spellTierAt, trainPrice, killPay, MAX_LEVEL } from '../../src/game/party.ts';
+import { defaultParty, createCharacter, CLASSES, xpForLevel, levelUp, equip, armorClass, canTrain, canTrainAt, spellTierAt, trainPrice, killPay, MAX_LEVEL, useItem, addCondition, hasCondition } from '../../src/game/party.ts';
+import type { ItemDef } from '../../src/game/items.ts';
 import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, victoryLine } from '../../src/game/combat.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
@@ -98,4 +99,30 @@ export function party(): void {
   const st = won(mixed, meek(11), 8), got = mixed.members.map((m, i) => m.xp - xpForLevel(i < 3 ? 10 : 12));
   ok(got.join() === '115,115,115,70,70,70' && st.log.at(-1) === victoryLine(st.loot!) && st.log.at(-1) === 'Victory! 70 to 115 experience by level, 0 gold.',
     `members of 10 and 12 take ${got.join(', ')} of a level-11 kill, and the log says so (${st.log.at(-1)})`);
+
+  // One use of an item, the fight's and the sheet's (#978): out of the holder's pack, else the bag, each
+  // effect in its words. A table of the suite's own lends a tonic that does all four, to show their order.
+  const tonic: ItemDef = { id: 'test_tonic', name: 'Tonic', slot: 'none', price: 1, use: { heal: 5, sp: 5, cure: ['poisoned'], food: 2 } };
+  const table = { ...ITEMS, [tonic.id]: tonic }, u = defaultParty(makeRng(9)), [a, b, cc] = u.members;
+  for (const m of u.members) m.pack = [];
+  a.pack.push('potion_heal'); u.bag = ['potion_heal', 'potion_sp', 'antidote', 'rations', 'club', tonic.id];
+  a.hp = 1;
+  const want = Math.min(a.maxHp, 16) - 1, healed = useItem(table, u, a, 'potion_heal', a);
+  ok(healed?.join() === `${a.name} recovers ${want}.` && a.hp === 1 + want && !a.pack.length && u.bag.includes('potion_heal'), `a Healing Draught comes out of the holder's pack before the bag (${healed})`);
+  a.hp = 1;
+  const again = useItem(table, u, a, 'potion_heal', a);
+  ok(again?.join() === `${a.name} recovers ${want}.` && !u.bag.includes('potion_heal'), `and with none in the pack, out of the bag (${again})`);
+  b.maxSp = 12; b.sp = 5;
+  const sharp = useItem(table, u, null, 'potion_sp', b);
+  ok(sharp?.join() === `${b.name} feels sharper.` && b.sp === 12, `a Blue Vial gives 10 spell points, to the most (${sharp} ${b.sp}/12)`);
+  addCondition(cc, 'poisoned');
+  const clean = useItem(table, u, null, 'antidote', cc);
+  ok(clean?.join() === `${cc.name} is cleansed.` && !hasCondition(cc, 'poisoned'), `an Antidote lifts the poison (${clean})`);
+  const food = u.food, fed = useItem(table, u, null, 'rations', a);
+  ok(fed?.join() === "The party's food grows by 5." && u.food === food + 5 && !u.bag.includes('rations'), `Rations go to the stores, the sheet's and now the fight's (${fed})`);
+  addCondition(cc, 'poisoned'); cc.hp = cc.maxHp - 5;
+  const all = useItem(table, u, null, tonic.id, cc);
+  ok(all?.join(' ') === `${cc.name} recovers 5. ${cc.name} feels sharper. ${cc.name} is cleansed. The party's food grows by 2.`, `a tonic that does all four says them in that order (${all?.join(' ')})`);
+  const kept = JSON.stringify(u);
+  ok(useItem(table, u, a, 'potion_heal', a) === null && useItem(table, u, a, 'club', a) === null && JSON.stringify(u) === kept, 'a draught nobody holds and a club, which has no use, are refused, and nothing changes');
 }

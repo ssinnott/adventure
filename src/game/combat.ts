@@ -10,11 +10,12 @@ import { item, ELEMENT_DIE, ARTIFACT_LEVEL, chargesLeft } from './items.ts';
 import {
   armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
   hasTrait, spellHeal, rankMult, spellRank, armsBonus, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
-  prestigeOf, deathAt, resists, lift, statOf, borne,
+  prestigeOf, deathAt, resists, lift, statOf, borne, useItem,
 } from './party.ts';
 import type { ClassId } from './party.ts';
 import type { ItemDef } from './items.ts';
 import type { Party, Character, Condition } from './party.ts';
+import type { World } from './world.ts';
 import { GLOVE_FLAG } from './keys.ts';
 
 export interface MonsterInst {
@@ -421,16 +422,11 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       s.log.push(`${c.name} braces.`);
       break;
     case 'use': {
-      const d = item(action.itemId);
-      if (!d.use) return false;
-      const holder = c.pack.includes(d.id) ? c.pack : party.bag.includes(d.id) ? party.bag : null;
-      if (!holder) return false;
-      const target = party.members[action.target];
-      if (!target) return false;
-      holder.splice(holder.indexOf(d.id), 1);
-      if (d.use.heal) s.log.push(`${target.name} recovers ${heal(target, d.use.heal)}.`);
-      if (d.use.sp) { target.sp = Math.min(target.maxSp, target.sp + d.use.sp); s.log.push(`${target.name} feels sharper.`); }
-      if (d.use.cure) s.log.push(lift(target, d.use.cure) ? `${target.name} is flesh again.` : `${target.name} is cleansed.`);
+      // The fight carries no item table until #973 hands it one: it reads the item as the rest of it does and lends `useItem` that.
+      const d = item(action.itemId), target = party.members[action.target];
+      const said = target ? useItem({ [d.id]: d }, party, c, d.id, target) : null;
+      if (!said) return false;
+      s.log.push(...said);
       break;
     }
     case 'flee': {
@@ -820,6 +816,17 @@ function call(s: CombatState, m: MonsterInst, defs: readonly MonsterDef[], into?
   s.monsters.push(...come);
   s.log.push(CALL_LINE(m.def.name, describe(come), come.length === 1));
   return band;
+}
+
+/**
+ * A group called into the fight says the look of each kind in it the company has not met, as the
+ * fight's first groups do (`World.meet`, #978). `bands` is how many groups the fight held when last
+ * looked at; the count it holds now is returned.
+ */
+export function meetCalled(world: Pick<World, 'meet'>, s: CombatState, bands: number): number {
+  if (s.groupIds.length === bands) return bands;
+  s.log.push(...world.meet(s.monsters.filter((m) => m.band >= bands).map((m) => m.def.id)));
+  return s.groupIds.length;
 }
 
 /** Resolve the acting monster's turn. */
