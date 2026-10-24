@@ -15,7 +15,7 @@ import { denBurnt } from '../../src/game/keys.ts';
 import type { Den } from '../../src/game/dens.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
-import { CONTENT, collect, compare } from '../shipped.ts';
+import { CONTENT, collect, compare } from '../kit/shipped.ts';
 import { judge, measure } from '../kit/rules/density.ts';
 import { lineFaults, texts } from '../kit/rules/pillars.ts';
 import { condFaults } from '../kit/rules/quests.ts';

@@ -1,7 +1,7 @@
 // What a pull request changed (tools/changed.ts), as the smoke test's sweep and the contact sheet
 // read it: which files count every map, monster or interior, which count every room of one area, and
 // which count only their own.
-import { changedMaps, changedMonsters, changedInteriors, familiesIn, reachedAreas, describeReach, type Reach } from '../changed.ts';
+import { changedMaps, changedMonsters, changedInteriors, familiesIn, reachedAreas, describeReach, type Reach } from '../kit/changed.ts';
 import { graph, treeFiles } from '../kit/graph.ts';
 import { AREAS, MONSTERS } from '../../src/content/index.ts';
 import { execFileSync } from 'node:child_process';

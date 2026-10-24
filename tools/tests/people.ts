@@ -14,7 +14,7 @@ import type { PageView, QuestCond, QuestDef } from '../../src/game/quests.ts';
 import type { MapDef, Words, Answer, Choice, EncounterDef } from '../../src/game/map.ts';
 import { NORTH, EAST } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
-import { CONTENT, collect } from '../shipped.ts';
+import { CONTENT, collect } from '../kit/shipped.ts';
 import { condFaults } from '../kit/rules/quests.ts';
 import { wrap, columnLabelWidth } from '../../src/ui/draw.ts';
 import { measureText as measure } from '../../src/lib/engine/text.ts';

@@ -20,7 +20,7 @@ import fs from 'node:fs';
 import { createServer } from './server.ts';
 import { open as openPage, type Load } from './kit/browser.ts';
 import { read, SHEET } from './kit/args.ts';
-import { changedFiles, changedMaps, changedMonsters, changedInteriors } from './changed.ts';
+import { changedFiles, changedMaps, changedMonsters, changedInteriors } from './kit/changed.ts';
 import { AREAS, MAP_DEFS as PLACED, MONSTERS, INTERIORS, ATLAS, CLIMATES } from '../src/content/index.ts';
 import { RIFT_SAMPLES } from '../src/content/rifts/index.ts';
 import { GROUND_SAMPLES } from './kit/grounds.ts';
