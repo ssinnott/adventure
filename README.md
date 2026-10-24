@@ -11,15 +11,20 @@ dependencies, and nothing compiled to disk during development.
 - [docs/CODEMAP.md](docs/CODEMAP.md) — a row to each file and its header's first paragraph, made
   by `node tools/codemap.ts`: a pull request edits the header of a file it adds or changes.
 - [docs/archive/](docs/archive/) — docs cut and kept whole as history: the slice's doc (#1023),
-  `docs/archive/SLICE-history.md`, with its Checks, its tools' usage and its hand-written code map.
+  `docs/archive/SLICE-history.md`, with its Checks, its tools' usage and its hand-written code map;
+  EXPANSION's history (#1024), `docs/archive/EXPANSION-history.md`: where it stood, the decisions
+  v1 waited on, the order of work, what to watch and the risks.
 - [docs/STORY.md](docs/STORY.md) — the main quest told as a story, the company's own chronicle of
   it: how the five acts of DESIGN.md §9 should feel.
 - [docs/MONSTERS.md](docs/MONSTERS.md) — what the company fights down the road, area by area: the
   five kinds of monster, what each area's monsters carry of the story, the numbers they start from,
   and what the combat resolver has yet to learn.
-- [docs/EXPANSION.md](docs/EXPANSION.md) — how the rest of Caldera gets built: the decisions v1
-  waits on, the checks every map, monster and quest must pass, how the work splits so sessions do
-  not collide, and the order of work.
+- [docs/EXPANSION.md](docs/EXPANSION.md) — how the rest of Caldera gets built: the principles,
+  when an area is done, the checks every map, monster and quest must pass and how the work splits
+  so sessions do not collide. The epics hold the order of work.
+- [docs/decisions.md](docs/decisions.md) — the "Decided by" lists that settle EXPANSION's rules,
+  each under its section's number and each the owner's to overturn; a builder adds the next there,
+  under the doc and section of the rule it settles, an area's decisions aside (EXPANSION §8.2).
 - [docs/ISSUES.md](docs/ISSUES.md) — how that work is filed: issue types, labels, epics, the
   Dependencies section every issue carries, and the sections of an issue.
 - [docs/areas/](docs/areas/) — each area's own doc: `docs/areas/<area>.md`, its current state in
@@ -81,7 +86,7 @@ The world's end is drawn as the atlas paints it, the sea running on and the rim 
 built in #849). The owner has filed the land the maps lie open to as an epic, #828, with eight area
 issues (#830 to #837); #845 to #847 (the bounds' enclave and artifacts) and #848 (the code's
 reorganisation, its sub-issues filed as they are taken up) go with it. All of these, and the finishing touches #889 to #893, are approved and unparked at the owner's
-word of 18 October 2026 and are being built in the order of docs/EXPANSION.md §9: the eight areas,
+word of 18 October 2026 and are being built in the order their epics hold: the eight areas,
 two in flight, Saltreach first and the Foreland last, with the reorganisation beside them, its
 moves that touch every area landing in two short windows between area pull requests. Of the
 touches, #889, #890 and #893 are merged (#903, #894 and #948) and #891 and #892 are closed, their

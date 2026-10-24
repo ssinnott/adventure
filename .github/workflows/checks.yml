@@ -51,7 +51,7 @@ jobs:
     # two (#873); since #954 they run in parallel, the dear runs a process each and the rest one, as many
     # at a time as the job has cores, which it prints (npm test, tools/test.ts --jobs). The cap is the
     # runner's budget, not a check, and comes down when three runs show room (#873). The aim stays under
-    # three minutes (EXPANSION §10).
+    # three minutes (EXPANSION §8.3).
     # A pull request runs the gate only for the areas its files reach (TEST_SINCE,
     # tools/changed.ts, #955) and every other suite whole, the walkthroughs for those areas or,
     # where more than a comment changed, all; any other event runs everything.
