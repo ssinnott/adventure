@@ -444,7 +444,34 @@ function road(groups: readonly EncounterDef[], level: number): number {
   return walked / SEEDS;
 }
 
-export function gate(): void {
+/**
+ * The gate's parts (#954), each a run of its own (`node tools/test.ts gate:kilns`) and under `--jobs` a
+ * process of its own: `fixed`, the blocks that hold the gate's own workings and the tables' checks, then
+ * one to each area the run asks for (tools/test.ts --areas, --since), the enclave's fixture with
+ * Saltreach's, whose pools it reads. Each lists its own figures off their aim and holds its own owed entries.
+ */
+export const parts = (): string[] => ['fixed', ...AREAS.filter((a) => asked(a.id)).map((a) => a.id)];
+
+/** The gate, or one part of it; whole, its parts one after another. */
+export function gate(part?: string): void {
+  if (part === undefined) { for (const p of parts()) gate(p); return; }
+  const area = AREAS.find((a) => a.id === part);
+  if (part === 'fixed') fixed();
+  else if (area) judgeArea(area.id);
+  else throw new Error(`the gate has no part named ${part}`);
+  if (offAim.length) console.log(`\n  Off their aim, inside their limits (${offAim.length}):\n${offAim.map((l) => `    ${l}`).join('\n')}`);
+  offAim.length = 0;
+  // An owed entry is the part's whose names its key starts with, an area's or, naming none, the fixed part's.
+  const stale = Object.keys(OWED).filter((k) => !used.has(k) && ownerOf(k) === area?.id);
+  ok(!stale.length, `every owed entry names a check that ran${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
+}
+
+/** The area an owed entry's key names: by its own name, a zone's or a map's, the fixture lair's Saltreach's. */
+const ownerOf = (key: string): string | undefined => AREAS.find((a) =>
+  [nameOf(a.id), ...a.atlas.zones.map((z) => zoneName(z.name)), ...a.maps.map((d) => d.id), ...(a.id === FIXTURE.area ? [LAIR.id] : [])].some((p) => key.startsWith(`${p}:`)))?.id;
+
+/** The fixed part: the gate's own workings on fixtures, and the tables' checks. */
+function fixed(): void {
   // The gate's company plays a member's resistance (#555): the bearer of a charm against cold takes
   // less from a frost-caster's spells, and the rest what they took without it.
   {
@@ -627,12 +654,35 @@ export function gate(): void {
       `and misses its aim where one map does not hold: too hard at its floor (${pc(hard.through ?? 0)}), or too soft two under it (${pc(soft.back ?? 0)})`);
     ok(areaPools([], 1).through === null, 'an area with no groups has no figure to judge');
   }
+  const zoneIds = new Set(ATLAS.zones.map((z) => z.id)), astray = [...Object.keys(ROADS), ...Object.keys(BOSSES)].filter((k) => !zoneIds.has(k));
+  ok(!astray.length, `every key of ROADS and BOSSES is a zone${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
+  const twice = [...ATLAS.zones.filter((z) => ROADS[z.id] && z.road).map((z) => `${z.id}'s road`),
+    ...Object.values(BOSSES).flat().filter((ref) => { const [map, id] = ref.split(':'); return MAP_DEFS.find((d) => d.id === map)?.encounters?.find((g) => g.id === id)?.boss; })];
+  ok(...once('every road and boss is named once, in ROADS or BOSSES or on its zone or group', twice));
+  // The road behind's groups (BEHIND): each names a group of a built map that waits on an `after`, so no
+  // group a company at its floor can meet is left out; and leaving them out drops that group alone.
+  const unbehind = BEHIND.filter((ref) => { const [map, id] = ref.split(':'); return !MAP_DEFS.find((d) => d.id === map)?.encounters?.find((e) => e.id === id)?.after; });
+  ok(!unbehind.length, `every group BEHIND leaves out is a built map's and waits on an after${unbehind.length ? ` (not: ${unbehind.join(', ')})` : ''}`);
+  {
+    const said = (id: string, sets: string): Feature => ({ kind: 'event', x: 1, y: 1, id, text: 'Fixture.', once: true, sets });
+    const group = (id: string, after?: EncounterDef['after']): EncounterDef => ({ id, x: 1, y: 1, monsters: ['knocker'], ...(after ? { after } : {}) });
+    const early: MapDef = { id: 'fx_early', name: '', kind: 'dungeon', start: { x: 0, y: 0, facing: 0 }, rows: [], features: [said('fx_now', 'fx_now')],
+      encounters: [group('fx_late', { flag: 'fx_then' }), group('fx_either', [{ flag: 'fx_then' }, { flag: 'fx_now' }]), group('fx_free')] };
+    const later: MapDef = { ...early, id: 'fx_later', features: [said('fx_then', 'fx_then')], encounters: [] };
+    ok(behindOf([{ maps: [early] }, { maps: [later] }]).join() === 'fx_early:fx_late',
+      'a group is behind when each of its after\'s alternatives waits on a flag only a later area sets, and met when one waits on its own area\'s or it waits on none (#897)');
+  }
+  const fx: MapDef = { id: 'deep_mines3', name: '', kind: 'dungeon', start: { x: 0, y: 0, facing: 0 }, rows: [], encounters: [
+    { id: 'ud_mines', x: 1, y: 1, monsters: ['knocker'], after: { flag: 'fx_open' } }, { id: 'fx_kept', x: 2, y: 1, monsters: ['knocker'] }] };
+  const ids = (d: MapDef): string => (d.encounters ?? []).map((g) => g.id).join();
+  ok(ids(beforeBehind(fx)) === 'fx_kept' && ids(beforeBehind({ ...fx, id: 'fx_elsewhere' })) === 'ud_mines,fx_kept' && beforeBehind({ ...fx, encounters: [fx.encounters![1]] }).encounters!.length === 1,
+    'leaving the road behind out drops the group BEHIND names from its map and no other: not its neighbour, nor the same id on another map');
+}
 
-  // The areas the run asks for (#955: tools/test.ts --areas, --since), every area unless narrowed. The
-  // keys of one left out, which start with its name, its zones' or its maps', the owed check passes over.
-  const skipped: string[] = [];
+/** An area's part: its maps, its pools and its zones against the curve; Saltreach's with the enclave's fixture. */
+function judgeArea(only: string): void {
   for (const area of AREAS) {
-    if (!asked(area.id)) { skipped.push(nameOf(area.id), ...area.atlas.zones.map((z) => zoneName(z.name)), ...area.maps.map((d) => d.id)); continue; }
+    if (area.id !== only) continue;
     const id: RegionId = area.id, band = CURVE[id].band;
     const zones = area.atlas.zones.filter((z) => z.maps?.length);
     const bosses = bossesOf(area);
@@ -695,8 +745,7 @@ export function gate(): void {
   // pools and day take what they took without it, and no zone's road walks it (a road walks its zone's
   // maps, and an enclave is none). Judged at its own band as any map is: its groups at 30, two under by
   // the day, its guardian at 30 and 32. It reads Saltreach's pools, so it runs with Saltreach's.
-  if (!asked(FIXTURE.area)) skipped.push(LAIR.id);
-  else {
+  if (only === FIXTURE.area) {
     const salt = AREAS.find((a) => a.id === FIXTURE.area)! as Area, floor = CURVE[FIXTURE.area].band[0];
     const bosses = bossesOf(salt);
     const was = gateMaps(salt, bosses), now = gateMaps({ ...salt, maps: [...salt.maps, LAIR] }, [...bosses, GUARDIAN]);
@@ -709,30 +758,4 @@ export function gate(): void {
     if (lair) judgeMap(lair, floor, [GUARDIAN], now.own(lair));
     for (const line of offAim.splice(listed)) console.log(`  info: the fixture lair, off its aim: ${line}`);
   }
-  const zoneIds = new Set(ATLAS.zones.map((z) => z.id)), astray = [...Object.keys(ROADS), ...Object.keys(BOSSES)].filter((k) => !zoneIds.has(k));
-  ok(!astray.length, `every key of ROADS and BOSSES is a zone${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
-  const twice = [...ATLAS.zones.filter((z) => ROADS[z.id] && z.road).map((z) => `${z.id}'s road`),
-    ...Object.values(BOSSES).flat().filter((ref) => { const [map, id] = ref.split(':'); return MAP_DEFS.find((d) => d.id === map)?.encounters?.find((g) => g.id === id)?.boss; })];
-  ok(...once('every road and boss is named once, in ROADS or BOSSES or on its zone or group', twice));
-  // The road behind's groups (BEHIND): each names a group of a built map that waits on an `after`, so no
-  // group a company at its floor can meet is left out; and leaving them out drops that group alone.
-  const unbehind = BEHIND.filter((ref) => { const [map, id] = ref.split(':'); return !MAP_DEFS.find((d) => d.id === map)?.encounters?.find((e) => e.id === id)?.after; });
-  ok(!unbehind.length, `every group BEHIND leaves out is a built map's and waits on an after${unbehind.length ? ` (not: ${unbehind.join(', ')})` : ''}`);
-  {
-    const said = (id: string, sets: string): Feature => ({ kind: 'event', x: 1, y: 1, id, text: 'Fixture.', once: true, sets });
-    const group = (id: string, after?: EncounterDef['after']): EncounterDef => ({ id, x: 1, y: 1, monsters: ['knocker'], ...(after ? { after } : {}) });
-    const early: MapDef = { id: 'fx_early', name: '', kind: 'dungeon', start: { x: 0, y: 0, facing: 0 }, rows: [], features: [said('fx_now', 'fx_now')],
-      encounters: [group('fx_late', { flag: 'fx_then' }), group('fx_either', [{ flag: 'fx_then' }, { flag: 'fx_now' }]), group('fx_free')] };
-    const later: MapDef = { ...early, id: 'fx_later', features: [said('fx_then', 'fx_then')], encounters: [] };
-    ok(behindOf([{ maps: [early] }, { maps: [later] }]).join() === 'fx_early:fx_late',
-      'a group is behind when each of its after\'s alternatives waits on a flag only a later area sets, and met when one waits on its own area\'s or it waits on none (#897)');
-  }
-  const fx: MapDef = { id: 'deep_mines3', name: '', kind: 'dungeon', start: { x: 0, y: 0, facing: 0 }, rows: [], encounters: [
-    { id: 'ud_mines', x: 1, y: 1, monsters: ['knocker'], after: { flag: 'fx_open' } }, { id: 'fx_kept', x: 2, y: 1, monsters: ['knocker'] }] };
-  const ids = (d: MapDef): string => (d.encounters ?? []).map((g) => g.id).join();
-  ok(ids(beforeBehind(fx)) === 'fx_kept' && ids(beforeBehind({ ...fx, id: 'fx_elsewhere' })) === 'ud_mines,fx_kept' && beforeBehind({ ...fx, encounters: [fx.encounters![1]] }).encounters!.length === 1,
-    'leaving the road behind out drops the group BEHIND names from its map and no other: not its neighbour, nor the same id on another map');
-  if (offAim.length) console.log(`\n  Off their aim, inside their limits (${offAim.length}):\n${offAim.map((l) => `    ${l}`).join('\n')}`);
-  const stale = Object.keys(OWED).filter((k) => !used.has(k) && !skipped.some((p) => k.startsWith(`${p}:`)));
-  ok(!stale.length, `every owed entry names a check that ran${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
 }

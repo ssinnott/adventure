@@ -47,8 +47,11 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    # The suites took 6 to 8.5 minutes on the heads measured, the runner's spread about two (#873): the
-    # cap is the runner's budget, not a check. The aim stays under three minutes (EXPANSION §10).
+    # The suites took 6 to 8.5 minutes in one process on the heads measured, the runner's spread about
+    # two (#873); since #954 they run in parallel, the dear runs a process each and the rest one, as many
+    # at a time as the job has cores, which it prints (npm test, tools/test.ts --jobs). The cap is the
+    # runner's budget, not a check, and comes down when three runs show room (#873). The aim stays under
+    # three minutes (EXPANSION §10).
     # A pull request runs the gate only for the areas its files reach (TEST_SINCE,
     # tools/changed.ts, #955) and every other suite whole, the walkthroughs for those areas or,
     # where more than a comment changed, all; any other event runs everything.
@@ -63,6 +66,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # The cores the runner shares its jobs among (#954); its line of the wall names them too.
+      - run: nproc
       # npm test ends with the pilot's full run on the shelf (tools/tests/fullrun.ts, FULLRUN unset): about ten seconds.
       # The runner says which areas ran and why, and writes that and its table of seconds into the
       # run's summary.

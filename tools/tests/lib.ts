@@ -84,17 +84,17 @@ export const ranLine = (r: Ran, width = 0): string =>
   (r.failed ? `, ${r.failed} failed` : '') + (r.owed ? `, ${r.owed} owed` : '');
 
 /**
- * The end of a run: the suites' lines, the slowest first, then the last line, 'ALL OK' or the
- * failures, and what is owed by whom.
+ * The end of a run: the suites' lines, the slowest first, the line of the run's wall (#954), then the
+ * last line, 'ALL OK' or the failures, and what is owed by whom.
  */
-export const summary = (failures: number, owing: ReadonlyMap<string, number>, ran: readonly Ran[] = []): string => {
+export const summary = (failures: number, owing: ReadonlyMap<string, number>, ran: readonly Ran[] = [], wall = ''): string => {
   const whose = [...owing].sort(([a], [b]) => a.localeCompare(b, 'en', { numeric: true }));
   const total = whose.reduce((n, [, k]) => n + k, 0);
   const owed = total ? ` (${total} owed: ${whose.map(([w, k]) => `${w} ×${k}`).join(', ')})` : '';
   const width = Math.max(0, ...ran.map((r) => r.name.length)), secs = ran.reduce((n, r) => n + r.secs, 0);
   const table = ran.length ? `Each suite's seconds, the slowest first (${secs.toFixed(1)} s in all):\n` +
     [...ran].sort((a, b) => b.secs - a.secs).map((r) => `  ${ranLine(r, width)}\n`).join('') + '\n' : '';
-  return table + (failures ? `${failures} FAILURE(S)` : 'ALL OK') + owed;
+  return table + (wall ? `${wall}\n` : '') + (failures ? `${failures} FAILURE(S)` : 'ALL OK') + owed;
 };
 
 /** Where the party stands on the maps as written: outdoors, its zone map and the cell on it. */
