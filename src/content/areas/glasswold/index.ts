@@ -2,6 +2,7 @@
 // (DESIGN §9), the third area of Act IV, the far side of the Cinder Hills. docs/areas/glasswold.md
 // is its state, and docs/areas/glasswold/ holds its plan and decisions.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { WOLD_D9 } from './maps/wold_d9.ts';
 import { WOLD_D10 } from './maps/wold_d10.ts';
 import { WOLD_D8 } from './maps/wold_d8.ts';
@@ -22,6 +23,7 @@ import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
 
 export const MAPS = [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8, WOLD_B8, WOLD_B9, WOLD_E9, WOLD_E8, WOLD_D7, WOLD_E7, KARAORDU, KUSHDAG] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'glasswold' as const,
@@ -34,6 +36,7 @@ export const AREA = {
   // under the hills over Akordu's box, at 28-29, and Kushdag, the artifact's lair (#847) in the Scarp's
   // east face, at 30-32.
   maps: MAPS,
+  flags: FLAGS,
   monsters: MONSTERS,
   sprites: SPRITES,
   // The boxes' finds, the Riders' leather their trader sells at Akordu (#526) and the Compact's letter in

@@ -16,7 +16,7 @@ import type { Store } from '../../src/game/save.ts';
 import type { Game } from '../../src/game/game.ts';
 import { endingOf, endingTaken, savedHearth, savedStones, hearthLook, hearthWord, flickerOf, steadier } from '../../src/game/stones.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
-import { ok } from './lib.ts';
+import { ok, fxFlag } from './lib.ts';
 
 export function endings(): void {
   // The table: the three answers by their flags and names, as the plan gives them, and ENDED any of them.
@@ -25,12 +25,12 @@ export function endings(): void {
   ok(ENDED.map((c) => c.flag).join() === 'q_end_reignite,q_end_arrive,q_end_finish', 'ENDED is any of the three, as a When list');
 
   // A fixture ending in the table: an answer that sets its flag takes it once the company holds the flag.
-  const fixture: Ending = { flag: 'fx_end', title: 'The Fixture Ended', pages: ['The first page.', 'The second page.', 'The third page.'] };
+  const fixture: Ending = { flag: fxFlag('fx_end'), title: 'The Fixture Ended', pages: ['The first page.', 'The second page.', 'The third page.'] };
   const table = ENDINGS as Record<string, Ending>;
   table.fx = fixture;
   try {
-    const party = defaultParty(makeRng(750)), took: Answer = { label: 'End it', says: ['So be it.'], sets: ['q_other', 'fx_end'] };
-    const short: Answer = { ...took, price: party.gold + 1 }, plain: Answer = { label: 'Not yet', says: ['Not yet.'], sets: 'q_other' };
+    const party = defaultParty(makeRng(750)), took: Answer = { label: 'End it', says: ['So be it.'], sets: [fxFlag('q_other'), fxFlag('fx_end')] };
+    const short: Answer = { ...took, price: party.gold + 1 }, plain: Answer = { label: 'Not yet', says: ['Not yet.'], sets: fxFlag('q_other') };
     ok(answer(short, party) === SHORT && !endingTaken(short, party.flags) && !party.flags.fx_end, 'an ending\'s answer the company cannot pay for takes no ending and sets nothing');
     ok(answer(plain, party) === 'Not yet.' && !endingTaken(plain, party.flags), 'an answer that sets no ending\'s flag takes none');
     ok(answer(took, party) === 'So be it.' && endingTaken(took, party.flags) === fixture && (endingOf(party.flags) as string) === 'fx', 'an answer that sets an ending\'s flag among others takes that ending, and the flags say so');

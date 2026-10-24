@@ -6,7 +6,7 @@ import type { Feature } from './map.ts';
 import type { Den } from './dens.ts';
 import type { QuestCond } from './quests.ts';
 import type { GuildId } from '../content/guilds.ts';
-import type { MapId } from '../content/index.ts';
+import type { MapId, Flag } from '../content/index.ts';
 
 /**
  * How soon a group comes back once beaten, in minutes (`EncounterDef.respawn`): half a day, a day
@@ -44,15 +44,21 @@ export const readId = (f: Feature): string | undefined => (f.kind === 'sign' && 
 /** The quest a seeking quest is for: its id, by slot and prestige. */
 export const seekId = (who: number, prestige: number): string => `seek:${who}:${prestige}`;
 
+// The flags the code makes (#995), each declared as a map's are: the glove's and the ranks' by the whole
+// (content/flags.ts), the rank's typed from GuildId, so a guild added fails the typecheck until its rank
+// is declared. A hall's fee and a guild quest's two flags are made from a string of the content's, a
+// hall's name or a quest's id, so they are `Flag` by assertion here, and the shipped suite holds each to
+// its area's declaration by name (tools/tests/shipped.ts).
+
 /** The flag a party holds once it has paid a spell hall's fee to study: made from the hall's name, so renaming a hall forgets who paid. */
-export const guildFlag = (hall: string): string => `guild_${hall}`;
+export const guildFlag = (hall: string): Flag => `guild_${hall}` as Flag;
 
 /** The flag that keeps the glove's line said, once a game (game/combat.ts's `GLOVE_LINE`). */
-export const GLOVE_FLAG = 'glove_seen';
+export const GLOVE_FLAG: Flag = 'glove_seen';
 
 /** The flag set when a company takes a guild quest, as a person's quests are: `q_<id>`. */
-export const takenFlag = (quest: string): string => `q_${quest}`;
+export const takenFlag = (quest: string): Flag => `q_${quest}` as Flag;
 /** The flag set when a guild quest is paid: `q_<id>_done`. */
-export const doneFlag = (quest: string): string => `q_${quest}_done`;
+export const doneFlag = (quest: string): Flag => `q_${quest}_done` as Flag;
 /** The flag that keeps the rank a company has reached in a guild, as its number: `rank_<guild>`. */
-export const rankFlag = (guild: GuildId): string => `rank_${guild}`;
+export const rankFlag = (guild: GuildId): Flag => `rank_${guild}`;

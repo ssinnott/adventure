@@ -1,6 +1,7 @@
 // Sunderwood, down the east road (band 14-16): the Eaves, the Sunder and Lanternwood, the last of
 // Act II. docs/areas/sunderwood.md is its state, and docs/areas/sunderwood/ its decisions and plan.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { EAVES_I2 } from './maps/eaves_i2.ts';
 import { EAVES_J2 } from './maps/eaves_j2.ts';
 import { EAVES_K2 } from './maps/eaves_k2.ts';
@@ -22,10 +23,12 @@ import { QUESTS } from './quests.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
 export const MAPS = [EAVES_I2, EAVES_J2, EAVES_K2, EAVES_K3, K3_RIFT.map, THE_SUNDER, THE_SUNDER2, EAVES_J3, LANTERNWOOD_L2, LANTERNWOOD_M2, LANTERNWOOD_L3, LANTERNWOOD_L4, LANTERNWOOD_K4, LANTERN_WATCH] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'sunderwood' as const,
   maps: MAPS,
+  flags: FLAGS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

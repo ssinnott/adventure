@@ -30,6 +30,7 @@ import { questLog } from '../../../game/quests.ts';
 import { GameMap } from '../../../game/map.ts';
 import { ENDINGS } from '../../endings.ts';
 import { WENNA_HOME, VOICE_WHOLE } from '../hearth/public.ts';
+import type { Flag } from '../../index.ts';
 
 
 /** At Crowness Light: the keeper met, and his log opened and read from the pack. */
@@ -376,7 +377,7 @@ function around(map: string, shut: Person, from: readonly [number, number], to: 
 
 
 /** Meet the person `meetWho` finds by `what`, and answer the question they put with `label`. */
-function answerWho(w: Walk, what: string, label: string): string {
+function answerWho(w: Walk, what: Flag, label: string): string {
   const d = MAP_DEFS.find((m) => m.features?.some((f) => f.kind === 'npc' && [f.flag ?? []].flat().includes(what)))!;
   const p = d.features!.find((f): f is Person => f.kind === 'npc' && [f.flag ?? []].flat().includes(what))!;
   w.world.travel(d.id, p.x, p.y);

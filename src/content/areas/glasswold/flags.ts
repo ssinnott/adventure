@@ -1,0 +1,31 @@
+// The flags the Glasswold sets, each with what holding it means (#995): its own, declared once here and
+// given on by public.ts. `Flag` is made of every declaration (src/content/index.ts), which refuses a flag
+// two declare, and the shipped suite holds them to the record (shipped.json).
+export const FLAGS = {
+  akordu_story: "The eldest's telling heard at Akordu",
+  b8_scout_met: 'Aysu met on B8',
+  b9_scholar_met: 'The scholar on B9 met',
+  gap_watch: 'The watch at the gap heard',
+  master_arms_favour: "Mergen's bow brought him: his teaching open",
+  master_arms_met: 'Mergen, the master of arms, met',
+  q_etching_given: 'The etched glass given to the scholar',
+  q_etching_read: "The etching read by the other's light",
+  q_garden: "The mother's ask heard: the Garden of Glass",
+  q_garden_carried: 'Her son of glass taken to carry',
+  q_horse_broken: 'What sat the horse broken by the Rider',
+  q_horse_carried: 'What sat the horse taken whole',
+  q_lion: "The boy's last blow at the lion asked",
+  q_lion_blow: "The Grey Lion down by the boy's blow",
+  q_lion_hunt: 'The Grey Lion hunted with the boy',
+  q_lion_left: 'The old lion left to die',
+  q_lion_taken: "The Grey Lion down unasked: nobody's blow",
+  q_lion_told: 'The rest told by the eldest',
+  q_road_east: 'Turned east for Cinderport: the Warning done',
+  q_scarp_burned: "The runner's orders burned",
+  q_scarp_carried: "The runner's orders taken for the Riders",
+  q_scarp_sealed: 'The orders given the eldest sealed',
+  q_scarp_told: 'The eldest told what the orders say',
+  q_scholar_asked: "The scholar's ask heard",
+  q_scout_asked: "Fane's map asked for by Aysu",
+  q_scout_map: "Fane's map given to Aysu",
+};
