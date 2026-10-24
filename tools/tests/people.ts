@@ -241,7 +241,7 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     };
     const log = (x: { world: World; party: Party }) => questLog(x.world.state, x.party, [quest])[0];
     ok(log(s)?.done && log(s).pages[0].entries.map((e) => e.id).join() === 'wrote' && log(kept)?.done && log(kept).pages[0].entries.map((e) => e.id).join() === 'kept', 'the quest log reads the answer: done either way, with the entry of the road taken');
-    const town: MapDef = { id: 'fx_town', name: 'Fixture', kind: 'town', start: { ...at, facing: NORTH }, rows: ['###', '#.#', '###'], features: [captain] };
+    const town: MapDef = { id: 'fx_town', name: 'Fixture', kind: 'town', region: 'shelf', start: { ...at, facing: NORTH }, rows: ['###', '#.#', '###'], features: [captain] };
     ok(!condFaults(quest.done!, [town]).length && !!condFaults(quest.done!, [{ ...town, features: [{ ...captain, choice: undefined, says: undefined }] }]).length, "the answers' flags are flags a person sets (and are not without them)");
     ok(personGives(captain).join() === LETTER.id, "the letter is an item a person hands over");
 
@@ -367,7 +367,7 @@ export function afterFaults(p: Person): string[] {
 /** People who come and go and events by night or by flag, on a fixture town, as `World` finds them. */
 function presence(): void {
   const def: MapDef = {
-    id: 'fx_town', name: 'Fixture', kind: 'town', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,,,#', '#,,,#', '#####'],
+    id: 'fx_town', name: 'Fixture', kind: 'town', region: 'shelf', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,,,#', '#,,,#', '#####'],
     features: [
       { kind: 'npc', x: 1, y: 1, name: 'Ebba, at the Eel', lines: ['"The Eel."'], until: { flag: 'fx_moved' } },
       { kind: 'npc', x: 3, y: 1, name: 'Ebba, at the Chapel', lines: ['"The Chapel."'], after: { flag: 'fx_moved' } },
@@ -416,7 +416,7 @@ function presence(): void {
  */
 function shut(): void {
   const def: MapDef = {
-    id: 'fx_gate', name: 'Fixture', kind: 'town', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,,,#', '#####'],
+    id: 'fx_gate', name: 'Fixture', kind: 'town', region: 'shelf', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,,,#', '#####'],
     exits: [{ x: 3, y: 1, to: 'fx_gate', tx: 1, ty: 1, shut: { flag: 'fx_shut', member: { race: 'orcblood' } }, lifts: [{ flag: 'fx_ended' }, { flag: 'fx_removed' }], blockedText: 'No orcblood past the gate.' }],
     features: [
       { kind: 'temple', x: 1, y: 1, name: 'The Chapel', interior: 'lantern_chapel', until: { flag: 'fx_shut' } },
@@ -443,7 +443,7 @@ function shut(): void {
   const again = east();
   ok(lifted === 'moved' && again === 'No orcblood past the gate.', `the shut is over while its lifts holds, and the gate shuts again once it stops (${lifted}, ${again})`);
   const door: MapDef = {
-    id: 'fx_door', name: 'Fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
+    id: 'fx_door', name: 'Fixture', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
     exits: [{ x: 3, y: 1, to: 'fx_gate', tx: 1, ty: 1, after: [{ flag: 'fx_open' }, { flag: 'fx_closed' }] }],
   };
   const deep = new World({ fx_door: new GameMap(door), fx_gate: new GameMap(def) }, party, rng);

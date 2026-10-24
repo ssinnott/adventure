@@ -14,6 +14,7 @@ export const DOWNS_F3: MapDef = {
   kind: 'outdoor',
   density: 'core',
   band: [2, 3],
+  region: 'shelf',
   start: { x: 16, y: 0, facing: SOUTH },
   rows: [
     'fffffffffffffff===,,,,,,,,,,,,,,',

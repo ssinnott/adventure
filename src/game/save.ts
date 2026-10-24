@@ -33,7 +33,9 @@ export function serialize(world: WorldState, party: Party, rngState: number): st
 }
 
 export function deserialize(text: string): SaveData {
-  const data = JSON.parse(text) as SaveData;
+  let data: SaveData;
+  // The engine's own words for bad text name marks the font has not got, and differ by browser (#945).
+  try { data = JSON.parse(text) as SaveData; } catch { throw new Error('the text in storage is not a save'); }
   if (!(data.version >= 1 && data.version <= SAVE_VERSION)) throw new Error(`save version ${data.version} is not one this build reads (1 to ${SAVE_VERSION})`);
   return upgrade(data);
 }
@@ -56,8 +58,9 @@ export function save(store: Store, world: WorldState, party: Party, rngState: nu
   try { store.setItem(SAVE_KEY, serialize(world, party, rngState)); return true; } catch { return false; }
 }
 
-export function load(store: Store): SaveData | null {
-  try { const t = store.getItem(SAVE_KEY); return t ? deserialize(t) : null; } catch { return null; }
+/** The save in storage, brought up to date; null with none; or, for one that will not load, the reason why, for the player (#945). */
+export function load(store: Store): SaveData | string | null {
+  try { const t = store.getItem(SAVE_KEY); return t ? deserialize(t) : null; } catch (e) { return e instanceof Error ? e.message : String(e); }
 }
 
 export function hasSave(store: Store | null): boolean { return !!store && !!store.getItem(SAVE_KEY); }

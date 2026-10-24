@@ -36,6 +36,7 @@ export const HARROW: MapDef = {
   name: 'Helmstow',
   kind: 'town',
   band: [1, 4],
+  region: 'shelf',
   start: { x: 7, y: 14, facing: NORTH },
   rows: [
     '#######==#######',

@@ -142,7 +142,7 @@ export function knownOf(g: Game): Known {
       // As the automap marks them: a den standing or burnt, any other spent thing gone.
       const spent = (f: Feature): boolean => { const id = spentId(f); return f.kind !== 'den' && !!id && !!used[id]; };
       const menus = shownTo(g.party);
-      return p.m.features.filter((f) => inBox(p.box, f.x, f.y) && seenOn(p.m, f.x, f.y) && onAutomap(w, f) && !spent(f)).map((f) => fair(f, menus.get(`${p.m.id}:${f.x},${f.y}`)));
+      return p.m.features.filter((f) => inBox(p.box, f.x, f.y) && seenOn(p.m, f.x, f.y) && onAutomap(w, f, p.m.id) && !spent(f)).map((f) => fair(f, menus.get(`${p.m.id}:${f.x},${f.y}`)));
     },
     exits(map) {
       const p = played(map);

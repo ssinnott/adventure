@@ -28,7 +28,7 @@ const BACK: Passage = { to: 'fx_port', x: 1, y: 1, name: 'The port', by: 'boat',
 const COACH: Passage = { to: 'fx_town', x: 1, y: 1, name: 'The town', by: 'coach', fare: 80, departs: 6, days: 2, arrives: 18, label: 'The coach rattles in.' };
 
 const town = (id: string, band: [number, number], features: MapDef['features'] = [], exits: MapDef['exits'] = []): MapDef =>
-  ({ id, name: id, kind: 'town', band, start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], features, exits });
+  ({ id, name: id, kind: 'town', region: 'shelf', band, start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#...#', '#####'], features, exits });
 const PORT = town('fx_port', [1, 4], [{ kind: 'npc', x: 3, y: 1, name: 'A boatman', lines: ['"The isle?"'], passage: [BOAT, COACH] }]);
 const ISLE = town('fx_isle', [12, 14], [{ kind: 'npc', x: 3, y: 1, name: 'A boatman', lines: ['"Back?"'], passage: [BACK] }]);
 const TOWN = town('fx_town', [5, 10], [], [{ x: 3, y: 1, to: 'thornmark', tx: 23, ty: 5 }]);

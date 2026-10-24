@@ -10,9 +10,13 @@ import { World, seen } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { defaultParty } from '../../src/game/party.ts';
-import { serialize, deserialize, upgrade, SAVE_VERSION } from '../../src/game/save.ts';
+import { serialize, deserialize, upgrade, load, SAVE_VERSION, SAVE_KEY } from '../../src/game/save.ts';
 import { UPGRADES } from '../../src/game/upgrades.ts';
-import type { SaveData } from '../../src/game/save.ts';
+import type { Upgrade } from '../../src/game/upgrades.ts';
+import type { SaveData, Store } from '../../src/game/save.ts';
+import { Game } from '../../src/game/game.ts';
+import { TitleScreen, NOTE_W, NOTE_LINES } from '../../src/ui/title.ts';
+import { wrap } from '../../src/ui/draw.ts';
 import { holds } from '../../src/game/quests.ts';
 import { LEGACY_WEATHER_SEED } from '../../src/game/world.ts';
 import type { WorldState } from '../../src/game/world.ts';
@@ -186,5 +190,25 @@ export function save(): void {
     let again: World | undefined;
     try { again = new World(buildMaps(), data.party, makeRng(1), data.world); } catch { /* reported below */ }
     ok(!!again && again.map.at(0, 0).door === 'none' && again.state.maps.harrow.doors['40,40'] === 'door', 'a save with doors off the map, in the void and on a wall loads, and none is put on a wall');
+  }
+  { // A save that will not load says why (#945): on the title's note, in its two lines, and on the load key.
+    const rng = makeRng(4), p = defaultParty(rng), w = new World(buildMaps(), p, rng), good = serialize(w.state, p, 1);
+    const store = (text: string | null): Store => ({ getItem: (k) => (k === SAVE_KEY ? text : null), setItem: () => {}, removeItem: () => {} });
+    const newer = JSON.stringify({ ...JSON.parse(good), version: SAVE_VERSION + 1 });
+    const gap: Record<number, Upgrade> = { ...UPGRADES };
+    delete gap[3];
+    const unreached = ((): string => { try { upgrade({ ...JSON.parse(good), version: 2 }, gap); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } })();
+    ok(load(store(newer)) === `save version ${SAVE_VERSION + 1} is not one this build reads (1 to ${SAVE_VERSION})` && unreached === 'no upgrade brings a save to version 3'
+      && load(store('{"version":')) === 'the text in storage is not a save' && load(store(null)) === null && typeof load(store(good)) === 'object',
+      `a save from a newer build, a version no upgrade reaches and text that is not a save each give their reason (${load(store(newer))}; ${unreached}; ${load(store('{"version":'))}); no save is none, and a good one loads`);
+    const title = (text: string | null): string => {
+      const t = new TitleScreen(true);
+      t.update(new Game(store(text)), 'interact');
+      return (t as unknown as { note: string }).note; // what the title shows under its menu
+    };
+    const notes = [newer, 'not a save'].map(title);
+    ok(notes[0] === `The save could not be read: save version ${SAVE_VERSION + 1} is not one this build reads (1 to ${SAVE_VERSION}).` && notes[1] === 'The save could not be read: the text in storage is not a save.'
+      && notes.every((n) => wrap(n, NOTE_W).length <= NOTE_LINES) && new Game(store(null)).loadGame() === 'No save to load.' && new Game(store(good)).loadGame() === true,
+      `Continue on the title shows the reason, in the note's ${NOTE_LINES} lines ("${notes[0]}"), and with no save the load key says "No save to load."`);
   }
 }

@@ -71,10 +71,11 @@ once('area', AREAS, (a) => a.id);
 /** The maps as written, in road order, Helmstow first. The outdoor ones are zones the atlas places. */
 export const MAP_DEFS: readonly MapDef[] = once('map', AREAS.flatMap((a) => a.maps), (d) => d.id);
 
-export const MONSTERS: Record<string, MonsterDef> = byId('monster', AREAS.flatMap((a) => a.monsters));
+/** Read-only: a suite lends a def through `withDefs` (tools/tests/lib.ts), and nothing else writes it (#945). */
+export const MONSTERS: Readonly<Record<string, MonsterDef>> = byId('monster', AREAS.flatMap((a) => a.monsters));
 
-/** The items no area owns first, then each area's. */
-export const ITEMS: Record<string, ItemDef> = byId('item', [...CORE_ITEMS, ...AREAS.flatMap((a) => a.items)]);
+/** The items no area owns first, then each area's. Read-only: `withDefs` and the harness's `forge` alone write it (#945). */
+export const ITEMS: Readonly<Record<string, ItemDef>> = byId('item', [...CORE_ITEMS, ...AREAS.flatMap((a) => a.items)]);
 
 export const SPELLS: Record<string, SpellDef> = byId('spell', ALL_SPELLS);
 

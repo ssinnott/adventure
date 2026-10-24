@@ -47,7 +47,7 @@ export interface Hearth { stones: number; ending?: EndingId }
 /** The Hearth in the save in storage, for the title: none restored and no ending with no save, or one that cannot be read. */
 export function savedHearth(store: Store | null): Hearth {
   const data = store ? load(store) : null;
-  return data ? { stones: stonesRestored(data.world, data.party), ending: endingOf(data.party.flags) } : { stones: 0 };
+  return data && typeof data !== 'string' ? { stones: stonesRestored(data.world, data.party), ending: endingOf(data.party.flags) } : { stones: 0 };
 }
 
 /**
@@ -71,7 +71,14 @@ const OPENED_SKY = { top: '#5c3a94', foot: '#e2a6c4' };
 
 let hearth: readonly [number, number] | undefined;
 /** Where the Hearth burns, in world cells: its site on the atlas, read on first use and kept, not as this module loads (#896). */
-export const HEARTH = (): readonly [number, number] => (hearth ??= ATLAS.sites.find((s) => s.icon === 'hearth')?.at ?? [256, 174]);
+export const HEARTH = (): readonly [number, number] => (hearth ??= hearthIn(ATLAS.sites));
+
+/** The square of the `hearth` site among an atlas's sites. None throws: the compass is never left pointing at an old square (#945). */
+export function hearthIn(sites: typeof ATLAS.sites): readonly [number, number] {
+  const site = sites.find((s) => s.icon === 'hearth');
+  if (!site) throw new Error('the atlas has no hearth site, so nothing says where the Hearth burns');
+  return site.at;
+}
 
 /** The compass bearing of the Hearth from a world cell, in degrees: 0 north, 90 east. */
 export function hearthBearing(x: number, y: number): number {
