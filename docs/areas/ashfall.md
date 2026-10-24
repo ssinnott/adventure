@@ -21,7 +21,7 @@ The tenth step of the road of levels (DESIGN §9) and the second of Act IV, band
 of the atlas (`src/content/areas/ashfall/atlas.ts`) on the grid of boxes 32 squares a side
 (EXPANSION §8.2), the E to H columns from row 9 to row 12. Cindercoast, band 24–25, is H10, G10,
 F9, G9 and H9; Fire Mountain, band 25–26, is G11, H11, H12 and G12; the Ember Waste, band 25–26, is
-F11, F10, E10, E11 and F12, F10 and E10 built at 24–26. F12 is the bounds' (#836). The town and the
+F11, F10, E10, E11 and F12, F10 built at 24–26. F12 is the bounds' (#836). The town and the
 dungeons stand off the grid: Cinderport behind G10's gate; Meridian Camp down G11's vents; Old
 Cinder through F11's crater and the Ember Stone under its field of cinders; Blackdraw and Grim's
 Howe in F12's mountain face and its dam.
@@ -74,7 +74,7 @@ and Meridian Camp's three levels have none.
 | `firemount_g11`, G11 | outdoor, 32×32, 25 | Fire Mountain's flank: the cone and its flows; Grimsforge and Petroc at the anvil (§6); the vents, the middle one the way down to Meridian Camp; the scavenger at his camp; five groups, a sentry after the Stone among them | 29,16, the scavenger's ledge: a rope of vine let down between the stones at 28,16 (`g11_rope`) |
 | `meridian_camp`, Meridian Camp | dungeon, 32×32, 25 | #22's first level, the vents' flue hall under G11's mouths: the stokers' rounds and their furnace room, the Stone's first part (`ember_part1`); four groups | none |
 | `meridian_camp2`, the Iron Corridors | dungeon, 32×32, 26 | #22's second: corridors of hot iron, the Company's cold camp, the Brood Drake on its eggs (boss) and the Stone's third part (`ember_part3`); four groups | none |
-| `meridian_camp3`, the Camp | dungeon, 32×32, 27–28 | #22's last, outside the area's budget: Oriel Fane at the Company's warm camp, the window, and the deep knockers' gallery with its door that opens for nobody; six groups | none |
+| `meridian_camp3`, the Camp | dungeon, 32×32, 27–28 | #22's last, outside the area's budget: Oriel Fane at the Company's warm camp, the window and the deep knockers' gallery with its door that opens for nobody; six groups | none |
 | `emberwaste_f11`, F11 | outdoor, 32×32, 25–26 | Old Cinder's and the Ember Stone's box: the buried town's crater and Wystan on its lip (§6); the west flow and its causeway of slag; the Stone half-built in its scaffold on a field of cinders; the hermit (§6); four groups | 3,23, the builders' hollow: the rock scored in straight lines at 4,23 (`f11_scored`) |
 | `old_cinder`, Old Cinder | dungeon, 16×16, 25–26 | the buried town: its people in their doorways, a cup in every hand; the well, the potters' kilns and the Old Drake asleep on the square (boss); the hall's stair down; two groups | 2,9, the room the ash never filled, the scholar's: a cup rinsed clean on the floor at 2,8 (`oc1_cup`) |
 | `old_cinder2`, Old Cinder | dungeon, 16×16, 24–25 | the undercroft: the founding stone in its niche (§6), the lamp-keeper's walk and the cold lamp, the Stone's second part (`ember_part2`); one group | 7,10, the lamp-keeper's cellar: a stair fallen against the wall at 8,10 (`oc2_fallen`) |
@@ -167,8 +167,8 @@ machines and the volcano with G11 and the springs with H10; the rest is on the r
   fights (aim 90%); two under, its groups pooled at 22, 7.61 fights to a rest, 76.1% of the floor's
   10. Old Cinder and the Ember Stone at 25 win 82.5% each, their bosses deciding it: the Old Drake
   65% at 25 and 99% at 27, the Sentinel 65% and 97%. The Brood Drake is won 61% at 26 and 100% at
-  28, the Grave Drake 59% at 30 and 81% at 32. Every other map wins every fight at its floor, and
-  the three zones' roads are walked every time.
+  28, the Grave Drake 59% at 30 and 81% at 32. The corridors win 90.3% at 26 and every other map
+  every fight at its floor; the three zones' roads are walked every time.
 - **Fights to a rest** (aim 9 to 11 at 24, a quarter more a level): H10 10.21, G10 10.88, F10 9.19,
   F9, G9 and H9 10.51 and the undercroft 10.10 at 24; G11 10.23, the vents 10.98, E10 10.49 and F11
   10.82 at 25, with the Ember Stone's 8.57, Old Cinder's 11.76 and E11's, H11's, H12's and G12's
