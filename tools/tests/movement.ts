@@ -23,10 +23,33 @@ import { ok, local, withDefs } from './lib.ts';
 import { tablesWith } from '../kit/headless.ts';
 import type { Tables } from '../../src/game/tables.ts';
 
-export function movement(): void {
+/** A company and its world for a part of the body, each part its own, begun as the suite began them: seed 7, in Helmstow at the gate. */
+const begin = (): { party: Party; world: World } => {
   const rng = makeRng(7);
   const party = defaultParty(TABLES, rng);
-  const world = new World(TABLES, buildMaps(), party, rng);
+  return { party, world: new World(TABLES, buildMaps(), party, rng) };
+};
+
+/**
+ * The suite's parts (#1016), each a run of its own (`node tools/test.ts movement:chasm`), in the order a
+ * whole run takes them: the body's headings, each on a world of its own, then the seven functions.
+ */
+export const parts = (): string[] => [...PARTS.keys()];
+
+/** Moving about, or one part of it; whole, the parts one after another. */
+export function movement(part?: string): void {
+  if (part === undefined) { for (const p of parts()) movement(p); return; }
+  const run = PARTS.get(part);
+  if (!run) throw new Error(`movement has no part named ${part}`);
+  run();
+}
+
+const PARTS = new Map<string, () => void>([['steps', steps], ['pass', pass], ['portal', portal], ['stair', stair], ['gatehouse', gatehouse], ['chasm', chasm],
+  ['spells', spells], ['tide', tide], ['underIce', underIce], ['range', range], ['farSide', farSide], ['opened', opened], ['paced', paced], ['picked', picked], ['archdruid', archdruid]]);
+
+/** Steps and the clock, a business left, doors, keys and secrets, water and mountains and the world's end. */
+function steps(): void {
+  const { party, world } = begin();
   ok(world.map.id === 'harrow' && world.state.x === 7 && world.state.y === 14, 'a new world starts in Helmstow at the gate');
   ok(world.hour === 7 && world.day === 1, `the clock starts on day 1 at 07:00 (${world.hour}:${world.minute})`);
   const r1 = world.move('forward');
@@ -97,6 +120,11 @@ export function movement(): void {
   world.travel('shelf', 10, 1, 0);
   ok(world.move('forward').kind === 'blocked' && local(world).y === 1, 'not even over the mountains that closed the Foreland in to the north');
   delete party.flags.skill_mountaineer;
+}
+
+/** The pass walked into Thornmark and back. */
+function pass(): void {
+  const { party, world } = begin();
   // The pass to Thornmark is open to any company, a level-1 one with no flags among them, and the
   // Warden checkpoint on the road warns it on the way: walked, not jumped, the road runs on through
   // the ridge, the log says where the Foreland ends, then Thornmark greets the party as it always has.
@@ -117,10 +145,20 @@ export function movement(): void {
   world.turn('back');
   const back = [world.move('forward'), world.move('forward')];
   ok(local(world).map === 'shelf' && back[1].kind === 'moved' && back[1].messages.includes('Back through the pass to the Foreland.') && world.region === 'shelf', 'back west through the pass it is the Foreland again');
+}
+
+/** Town Portal. */
+function portal(): void {
+  const { world } = begin();
   // Town Portal returns to the last town stood in.
   ok(world.townPortal() === 'Helmstow' && world.map.id === 'harrow', 'Town Portal goes to Helmstow before any other town is visited');
   world.travel('thornhold', 7, 14, 0); world.travel('grove2', 8, 8, 0);
   ok(world.townPortal() === 'Thornhold' && world.map.id === 'thornhold' && world.state.x === 7 && world.state.y === 14, 'Town Portal returns to the last town visited');
+}
+
+/** The stairs. */
+function stair(): void {
+  const { world } = begin();
   // Dungeon stairs go down and come back up.
   world.travel('grove1', 11, 11, 0);
   const down = world.move('forward');
@@ -128,6 +166,11 @@ export function movement(): void {
   world.travel('greywater1', 14, 13, 2);
   const shrine = world.move('forward');
   ok(shrine.kind === 'moved' && world.map.id === 'greywater2' && world.state.x === 1 && world.state.y === 1, 'the Brandy Hole stairs go down to the Seam');
+}
+
+/** Helmstow's two gates. */
+function gatehouse(): void {
+  const { world } = begin();
   // Helmstow's north gatehouse into the keep's ward and back, saying so and naming where the party
   // stands; and in from the Foreland road by the south gate.
   world.travel('harrow', 7, 1, 0);
@@ -141,6 +184,11 @@ export function movement(): void {
   world.travel('shelf', 16, 4, 0);
   const home = world.move('forward');
   ok(home.kind === 'moved' && world.map.id === 'harrow' && world.state.x === 7 && world.state.y === 14 && home.messages.includes('You enter Helmstow.'), `from the Foreland road the south gate leads back into Helmstow (${world.map.id} ${world.state.x},${world.state.y})`);
+}
+
+/** The chasm. */
+function chasm(): void {
+  const { world } = begin();
   // The chasm: a step into it is refused with a line of its own, as the sea is; a glass tree blocks
   // as a tree does. Laid on the Foreland and taken up.
   world.travel('shelf', 16, 16, 0);
@@ -168,6 +216,11 @@ export function movement(): void {
   ok(drop.kind === 'blocked' && drop.reason === 'The ground falls away. There is no way down here.' && world.state.y === stood, `a step into the chasm is refused, and says so (${drop.kind === 'blocked' ? drop.reason : drop.kind})`);
   ok(glass.kind === 'blocked' && glass.reason === 'Something blocks the way.', `a glass tree blocks the way (${glass.kind === 'blocked' ? glass.reason : glass.kind})`);
   ok(acrossChasm === py - 3 && acrossGround === py - 2, `a group aware of the party does not step into the chasm, and across open ground comes on (${py - acrossChasm} and ${py - acrossGround} squares off)`);
+}
+
+/** The map spells. */
+function spells(): void {
+  const { party, world } = begin(), m = world.maps[OUTDOORS];
   // The map spells (DESIGN §7): Walk on Water bears a company with no swimmer over shallow water for
   // its steps, Levitate floats it over the chasm and never leaves it there, and Waymark returns to a
   // mark set outdoors. Laid on the Foreland and taken up.
@@ -215,6 +268,11 @@ export function movement(): void {
     ok(!tidal && set && !indoors && back && world.state.mapId === mark.mapId && world.state.x === mark.x && world.state.y === mark.y && world.state.mark?.x === mark.x, 'Waymark sets its mark outdoors, not on tidal ground nor in a town, and returns to it from anywhere');
     delete world.state.mark;
   }
+}
+
+/** The tidal ground and the tide turning. */
+function tide(): void {
+  const { party, world } = begin(), m = world.maps[OUTDOORS];
   // Tidal ground: walked at low water; at high water refused with its own line, unless someone
   // swims, and a group keeps off it. Laid on the Foreland and taken up; the clock set to each tide.
   {
@@ -266,13 +324,6 @@ export function movement(): void {
     ok(comes.includes('The tide has turned. The sea comes in over the sand.') && goes.includes('The tide has turned. The sea draws off the sand.'), `the tide turning is said near the flats, coming in at 04:00 and going out at 08:00 (${comes.concat(goes).join(' / ')})`);
     ok(!unseen.some((t) => t.includes('tide')), 'and not where there are none');
   }
-  underIce();
-  range();
-  farSide();
-  opened();
-  paced();
-  picked();
-  archdruid();
 }
 
 /**

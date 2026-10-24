@@ -100,6 +100,16 @@ export const summary = (failures: number, owing: ReadonlyMap<string, number>, ra
   return table + (wall ? `${wall}\n` : '') + (failures ? `${failures} FAILURE(S)` : 'ALL OK') + owed;
 };
 
+/**
+ * A value two parts of a suite read (#1016), built the first time one asks for it and kept for the
+ * run: a part run alone builds what it reads, and a whole run builds it once. One that throws keeps
+ * nothing, so the next part to ask builds it again.
+ */
+export const lazy = <T>(make: () => T): (() => T) => {
+  let kept: { value: T } | undefined;
+  return () => (kept ??= { value: make() }).value;
+};
+
 /** Where the party stands on the maps as written: outdoors, its zone map and the cell on it. */
 export const local = (w: World): { map: string; x: number; y: number } => {
   const z = w.zone;
