@@ -291,8 +291,8 @@ for square with the painted map (`game/outdoors.ts`, which `content/maps.ts` run
   them: one rule over every seam (`tools/tests/outdoors.ts`, #898), and a seam that disagrees as
   built is its area's `seamsAsBuilt` row with its reason. Where it meets the atlas, its water and
   roads carry on into the land beyond its edge (`tools/tests/pillars.ts`), and each edge that faces
-  no built box is open to a walker exactly where a row of `OPEN_ON_NOTHING` says, with the box it
-  faces and why that is unbuilt: the bounds' border check (#828) in embryo. The box's pull request
+  no built box is open to a walker exactly where a row of its area's `openOnNothing` says, with the box
+  it faces and why that is unbuilt: the bounds' border check (#828) in embryo. The box's pull request
   adds the rows for its own edges onto nothing and deletes those of the edges it now faces.
 - **Around it.** The automap draws a map that fits the panel whole, as before, and for the outdoors
   a window of 33 by 33 squares round the party at the size a 32-square map is drawn. Quests still

@@ -256,10 +256,10 @@ Added:
   for square on passable ground, water and road, and open a way between two areas only where the
   atlas joins them; a seam that disagrees on purpose is a row of its area's `seamsAsBuilt`
   (`tools/tests/outdoors.ts`) with its reason, and a box built since adds none. Every edge of a built
-  box that faces no built box is open to a walker exactly where a row of `OPEN_ON_NOTHING` says, with
-  the box it faces and why that is unbuilt; the box built there meets the seam rule, and its pull
-  request deletes the row. That is the bounds' border check (#828) in embryo. A row of either may
-  stand in its area's `checks.ts` instead (§8.2, #897).
+  box that faces no built box is open to a walker exactly where a row of its area's `openOnNothing`
+  says, with the box it faces and why that is unbuilt; the box built there meets the seam rule, and its
+  pull request deletes the row. That is the bounds' border check (#828) in embryo. A row of either
+  stands in its area's `checks.ts` (§8.2).
 
 Decided by the builder for #898, each the owner's to overturn:
 
@@ -270,14 +270,14 @@ Decided by the builder for #898, each the owner's to overturn:
    does all three crosses, and the atlas joins two areas where a road does, by a map's exits or its
    links (`zoneEdges`), as a whole and not seam by seam: 285 squares on seams between two areas that
    no road crosses are walked open by design, so a wall opened on both sides of a seam between joined
-   areas, or of one inside an area, passes. `ONE_CROSSING` is a dungeon's door and no seam. One crossing the
+   areas, or of one inside an area, passes. The door marked `crosses` is a dungeon's door and no seam. One crossing the
    atlas does not draw is held as built: the shallows where the Deepthorn's I5 meets Hearth Isle's I6,
    which on I5's side are a pocket of seven squares shut by rock and deep water, so no company reaches
    the isle by them. The way is read on the two squares either side of a seam, so it never misses a
    crossing, and holds one into a closed pocket too.
 3. **A row is exact:** it lists, kind by kind, the squares that fail, so a square that comes to agree is
    refused with it. On 18 October: 153 seams, 62 rows, 329 squares.
-4. **The edges against unbuilt land are held exactly,** as the seams are: a row of `OPEN_ON_NOTHING`
+4. **The edges against unbuilt land are held exactly,** as the seams are: a row of `openOnNothing`
    for each edge with a square open to a walker, so a square opened or shut on such an edge fails; its
    reason names the box it faces and the issue that builds it, or the reach, a crumb or the sea. On 18
    October: 102 edges, 3,264 squares, 899 open in 50 rows, five of them onto the sea or the world's end,
@@ -367,8 +367,8 @@ full clear still pays, in gear, gold and secrets.
 So an area may give more than its ask (#634): paid by level, a lead does not build up, for the next
 area takes it back. What the curve holds is the lead itself: a company of six entering an area at
 its floor and clearing three quarters of it, paid by level, leaves it no more than a level over the
-next floor. Two built areas pass that line and are named in `OVER_ROAD` (`tools/tests/curve.ts`),
-each held at the level it leaves as built so that neither grows unnoticed: the Kilns at 19.3, their
+next floor. Two built areas pass that line and each holds its lead in its `checks.ts` (`overRoad`,
+`tools/tests/curve.ts`), at the level it leaves as built so that neither grows unnoticed: the Kilns at 19.3, their
 bosses paying the line's, and Ashfall at 27.4, for the Stone, the rungs, the quests, the sentries
 and the country behind the road. Decided by the owner's delegate, 16 October 2026 (#738): accepted
 as built, the Wold taking the lead back and leaving a company at 27.9, a tenth under the Hearth's
@@ -1138,10 +1138,10 @@ owes, its rungs of the ladder, its lead over the road, its seams as built and it
 nothing, is a row in its `checks.ts` (`AreaChecks`), which nothing in the game imports and the suites
 find as the runner finds a walkthrough; a field `AreaChecks` has not stops the run with its name. A
 seam is the area's of the first box its key names (`a|b` or `a/b`), an edge the area's whose box it
-is. Each suite reads those beside its own table and refuses a row in both, so a row moves one way.
-Every area's have moved, the Foreland's first (#897) and the rest by one script in a window with no
-area pull request open (#968), so a box adds its rows to its own folder only; the emptied tables go
-with #969.
+is. Each suite reads those alone. Every area's have moved, the Foreland's first (#897), the rest by
+one script in a window with no area pull request open (#968) and the last two tables' by the same
+script (#969), which dropped the emptied tables and the second reads beside them; so a box adds its
+rows to its own folder only.
 
 Decided by the builder for #897, each the owner's to overturn:
 
@@ -1208,6 +1208,28 @@ Decided by the builder for #968, each the owner's to overturn:
 8. **`OPEN_ON_NOTHING` (17 rows) and `OVER_ROAD` (2) stay**: each has had a field since #897
    (`openOnNothing`, `overRoad`), but #968's table names neither, and it kept `OVER_ROAD` only until
    it had one; #969 moves both by the same script, and its body names them.
+
+Decided by the builder for #969, each the owner's to overturn:
+
+1. **The script gives the two tables their owners**: an edge open on nothing to the area whose box it
+   is, a lead over the road to its area, after its rungs and before its seams as `AreaChecks` orders
+   them; `OPEN_ON_NOTHING`'s headers, one an area, go, as `SEAMS_AS_BUILT`'s did.
+2. **`MAX_GROUP` goes too**: #968 emptied it and the issue's list leaves it out, but no suite may read a
+   row from two places; the maps suite reads the zones' `maxGroup` alone.
+3. **A row two areas could both give is still refused twice** (an owed monster, room, flag, map, square
+   or lock, and a rung): that is no table's second read but the areas' own check, so `beside` becomes
+   `gather` over the areas alone and the line drops "in the table or by its area".
+4. **A refusal that only a table could trip goes with it**: a zone holds one road, a group one mark, a
+   monster one `offLine` and an area one `overRoad`, and a seam's or an edge's row is held once by its
+   own check; so those lines go, and the gate's "every key of `ROADS` and `BOSSES` is a zone".
+5. **The one crossing is still one**: a second exit marked `crosses` is refused, as the weather rule
+   allows one door; the fixtures that wrote the door in the table mark it on its exit.
+6. **The gate's `nameOf` loses its fallback to the id**: an area the atlas does not name throws, as the
+   issue asks of whatever fallback `NAMES` left.
+7. **The items suite's `UNPLACED`** (the Telstok's lair, owed to #830) is not an area's table, and the
+   issue names it neither in its What nor as an exception: it stands, though the issue's grep finds it.
+8. **A doc's rule says the field; a record keeps the name**: the decisions of #897 and #968 above and
+   the area docs' build history name the tables as they stood when each was written.
 
 ### 8.3 Pull requests
 
