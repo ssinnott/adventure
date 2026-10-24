@@ -7,7 +7,7 @@
 import type { Walkthrough } from '../../area.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import type { Feature } from '../../../game/map.ts';
+import type { Feature } from '../../../game/mapdef.ts';
 import { DOWNS_E4 } from './maps/downs_e4.ts';
 import { CHAPTER } from './chapter.ts';
 import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen, pilotPlays, said, hear, page, reads, there, open, search, clock, hired, ledgerGiven, mapOf, who, stock, taught } from '../../../../tools/kit/walk.ts';
@@ -16,7 +16,7 @@ import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { wrap } from '../../../ui/draw.ts';
 import { SAY_W, SAY_LINES, logLines } from '../../../ui/frame.ts';
-import { ITEMS, MAP_DEFS, MONSTERS } from '../../index.ts';
+import { ITEMS, MAP_DEFS, MONSTERS, TABLES } from '../../index.ts';
 import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES, countItem } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
@@ -37,7 +37,7 @@ import type { Flag } from '../../index.ts';
 function crowness(w: Walk): void {
   meetWho(w, 'q_keeper');
   open(w, 'downs_e3:e3_log');
-  w.ok(w.party.bag.includes('keepers_log') && (readText('keepers_log') ?? []).length === 5, "the keeper's log is on the cottage table, and reads from the pack");
+  w.ok(w.party.bag.includes('keepers_log') && (readText(TABLES.items, 'keepers_log') ?? []).length === 5, "the keeper's log is on the cottage table, and reads from the pack");
 }
 
 /**
@@ -305,8 +305,8 @@ function walkWorth(ok: (cond: boolean, msg: string) => void): void {
   // On the way out of the Foreland, the one place outside Helmstow that sells food.
   const shop = (map: string) => MAP_DEFS.find((d) => d.id === map)?.features?.find((f) => f.kind === 'shop');
   const farm = shop('shelf'), mottram = shop('harrow');
-  ok(farm?.kind === 'shop' && farm.name === 'Ellerby Farm' && farm.interior === 'farm_kitchen' && priceIn(farm, 'rations') === 3 && mottram?.kind === 'shop' && priceIn(mottram, 'rations') === 4,
-    `Ellerby's farm store sells rations at 3 gold, in the farm kitchen, and Mottram's still at 4 (${farm?.kind === 'shop' ? priceIn(farm, 'rations') : 'no store'}, ${mottram?.kind === 'shop' ? priceIn(mottram, 'rations') : 'no shop'})`);
+  ok(farm?.kind === 'shop' && farm.name === 'Ellerby Farm' && farm.interior === 'farm_kitchen' && priceIn(TABLES.items, farm, 'rations') === 3 && mottram?.kind === 'shop' && priceIn(TABLES.items, mottram, 'rations') === 4,
+    `Ellerby's farm store sells rations at 3 gold, in the farm kitchen, and Mottram's still at 4 (${farm?.kind === 'shop' ? priceIn(TABLES.items, farm, 'rations') : 'no store'}, ${mottram?.kind === 'shop' ? priceIn(TABLES.items, mottram, 'rations') : 'no shop'})`);
 }
 
 /** Gytha, found by the flag she sets. */
@@ -383,7 +383,7 @@ function answerWho(w: Walk, what: Flag, label: string): string {
   w.world.travel(d.id, p.x, p.y);
   const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.label === label);
   w.ok(!!a, `${p.name.split(',')[0]} asks, and '${label}' is an answer (${m.choice?.ask ?? 'no question'})`);
-  const said = a ? answer(a, w.party) : '';
+  const said = a ? answer(TABLES.items, a, w.party) : '';
   listen(w);
   return said;
 }
@@ -526,7 +526,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(hear(w, 'downs_f3', WAT()).startsWith('An old man sits') && w.news.at(-1) === 'New quest: A Boat With No Name-Board.', 'Wat begins the Boat');
     see(w, 'downs_f3:f3_hoard');
     open(w, 'downs_f3:f3_hoard_chest');
-    w.ok((readText('customs_chit') ?? []).length === 2 && w.party.bag.includes('name_boards'), 'the hoard holds the boards, and the chit reads from the pack');
+    w.ok((readText(TABLES.items, 'customs_chit') ?? []).length === 2 && w.party.bag.includes('name_boards'), 'the hoard holds the boards, and the chit reads from the pack');
     const gold = w.party.gold;
     w.ok(hear(w, 'downs_f3', WAT()).startsWith('Wat turns the board over') && w.party.gold === gold + 60, 'home: Wat takes the boards and pays 60');
     reads(w, 'board', ['wat', 'hoard', 'chit', 'home'], ['sold'], 'home');
@@ -786,7 +786,7 @@ function homecoming(ok: (cond: boolean, msg: string) => void): void {
   const day = (w: Walk, x: number, y: number): string[] => { clock(w, 12); w.world.travel('harrow', x, y, NORTH); return w.world.eventsHere(); };
   const step = (w: Walk, turn?: 'left' | 'right'): string[] => { if (turn) w.world.turn(turn); const r = w.world.move('forward'); return r.kind === 'moved' ? r.messages : [`blocked: ${'reason' in r ? r.reason : ''}`]; };
   const inn = (w: Walk) => { const f = business(w, 4, 4); return f?.kind === 'inn' ? f.price : 0; };
-  const shop = (w: Walk, id: string) => { const f = business(w, 4, 10); return f?.kind === 'shop' ? priceIn(f, id) : 0; };
+  const shop = (w: Walk, id: string) => { const f = business(w, 4, 10); return f?.kind === 'shop' ? priceIn(TABLES.items, f, id) : 0; };
   const CAPTAIN = (): Person => who('harrow', 3, 13, 'Captain Ordgar');
   { // The old city: the gate lets Idris in, the Chapel cures, the old Eel and prices, no bell or Wardens.
     const w = newWalk(ok);
@@ -834,7 +834,7 @@ function homecoming(ok: (cond: boolean, msg: string) => void): void {
     listen(w);
     const asked = page(w, 'survey')?.goal ?? '';
     w.ok(!!watch && !m.choice?.answers.some((a) => a.label.includes('Chapel')) && asked.startsWith('Tell Ailith where to go: Lantern Watch'), `she asks between the Watch and Thornhold, and the goal says so (${asked})`);
-    if (watch) answer(watch, w.party);
+    if (watch) answer(TABLES.items, watch, w.party);
     listen(w);
     reads(w, 'survey', ['ailith', 'watch'], ['chapel', 'thornhold'], 'Ailith sent to the Watch, after Act II');
     w.ok(!there(w, 'shelf', twin), 'and she is gone from the wood');
@@ -889,7 +889,7 @@ function walkHome(ok: (cond: boolean, msg: string) => void): void {
       `${how} Wenna sits on the shingle beside her mother, gone from the Core, and will not take the ring`);
     w.world.travel('downs_f3', SEA.x, SEA.y);
     const sea = meet(SEA, w.party, heard(w.world, SEA)), toss = sea.choice?.answers.find((a) => a.label === 'Throw it in.');
-    const thrown = toss ? answer(toss, w.party) : '';
+    const thrown = toss ? answer(TABLES.items, toss, w.party) : '';
     listen(w);
     w.ok(sea.text === SEA.lines.join('\n\n') && sea.choice?.ask === 'Throw the ring in?' && thrown.includes('the girl beside her does.') && !w.party.bag.includes('queens_signet') && !there(w, 'downs_f3', SEA) && !!page(w, 'signet')?.done,
       `${how}, Wenna home, the sea off Gullwick takes the ring and is gone, and The Signet is done`);
@@ -899,7 +899,7 @@ function walkHome(ok: (cond: boolean, msg: string) => void): void {
     w.party.flags[WENNA_HOME] = 1;
     w.world.travel('downs_f3', SEA.x, SEA.y);
     const c = meet(SEA, w.party, heard(w.world, SEA)).choice, toss = c?.answers.find((a) => a.label === 'Throw it in.'), keep = c?.answers.find((a) => a.label === 'Keep it.');
-    w.ok(!!toss && barred(toss, w.party) && !!keep && answer(keep, w.party) === 'The sea goes on giving nothing back.' && there(w, 'downs_f3', SEA),
+    w.ok(!!toss && barred(toss, w.party) && !!keep && answer(TABLES.items, keep, w.party) === 'The sea goes on giving nothing back.' && there(w, 'downs_f3', SEA),
       'a company with no ring is asked too, the throw barred; kept, the sea goes on giving nothing back and stays');
   }
 }
@@ -947,7 +947,7 @@ function council(ok: (cond: boolean, msg: string) => void): void {
     const p = CLERK();
     w.world.travel('keep', p.x, p.y, NORTH);
     const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.label === label);
-    if (a) answer(a, w.party);
+    if (a) answer(TABLES.items, a, w.party);
     listen(w);
     return m.choice?.answers.map((x) => x.label) ?? [];
   };
@@ -962,7 +962,7 @@ function council(ok: (cond: boolean, msg: string) => void): void {
   /** The inn's price, the Chapel open or shut, and a long sword's, rations' and the oil's price at Mottram's. */
   const shops = (w: Walk): string => {
     const inn = business(w, 4, 4), chapel = business(w, 11, 4), stores = business(w, 4, 10);
-    return [inn?.kind === 'inn' ? inn.price : 0, chapel?.kind === 'temple' ? 'open' : 'shut', ...(stores?.kind === 'shop' ? ['longsword', 'rations', 'lantern_oil'].map((id) => priceIn(stores, id)) : [])].join(' ');
+    return [inn?.kind === 'inn' ? inn.price : 0, chapel?.kind === 'temple' ? 'open' : 'shut', ...(stores?.kind === 'shop' ? ['longsword', 'rations', 'lantern_oil'].map((id) => priceIn(TABLES.items, stores, id)) : [])].join(' ');
   };
   /** Helmstow once a verdict has removed Vask: the inn at 12 again, the Chapel open for the hold alone, the stores a port's for Tallis alone. */
   const removed = (w: Walk, talk: string, how: string, trade = '12 shut 180 6 40'): void => {
@@ -1124,10 +1124,10 @@ function roadBehind(ok: (cond: boolean, msg: string) => void): void {
     const w = company(true, 'q_end_reignite');
     const clerk = CLERK(), seen = there(w, 'shelf', clerk);
     const bare = meet(clerk, w.party, heard(w.world, clerk)).choice!.answers.find((x) => x.label === 'To the cousin.')!;
-    const refused = answer(bare, w.party), unset = !w.party.flags.q_signet_cousin;
+    const refused = answer(TABLES.items, bare, w.party), unset = !w.party.flags.q_signet_cousin;
     w.party.bag.push('queens_signet');
     const m = meet(clerk, w.party, heard(w.world, clerk)), cousin = m.choice!.answers.find((x) => x.label === 'To the cousin.')!;
-    const said = answer(cousin, w.party);
+    const said = answer(TABLES.items, cousin, w.party);
     listen(w);
     w.ok(seen && refused === 'You have none to give.' && unset && m.choice!.answers.length === 4, 'after an ending the Council\'s clerk waits by the gate, and asks where the ring goes, four answers, the ring\'s three barred without it');
     w.ok(said.includes('The Council will sit on it within the week.') && !!w.party.flags.q_signet_cousin && countItem(w.party, 'queens_signet') === 0 && !there(w, 'shelf', clerk), `given to the cousin, the ring goes in a cloth and the clerk with it (${said})`);
@@ -1138,8 +1138,8 @@ function roadBehind(ok: (cond: boolean, msg: string) => void): void {
     const clerk = CLERK();
     w.world.travel('shelf', clerk.x, clerk.y);
     const m = meet(clerk, w.party, heard(w.world, clerk)), pick = (label: string) => m.choice!.answers.find((x) => x.label === label)!;
-    const kept = answer(pick('We keep it.'), w.party), stays = there(w, 'shelf', clerk) && countItem(w.party, 'queens_signet') === 1;
-    const said = answer(pick('To the hold.'), w.party);
+    const kept = answer(TABLES.items, pick('We keep it.'), w.party), stays = there(w, 'shelf', clerk) && countItem(w.party, 'queens_signet') === 1;
+    const said = answer(TABLES.items, pick('To the hold.'), w.party);
     listen(w);
     w.ok(kept.includes('counts without it') && stays && said.includes('It goes into the chair\'s keeping.') && !said.includes('within the week') && !!w.party.flags.q_signet_hold && !there(w, 'shelf', clerk),
       `once the Council has sat, the ring kept leaves the clerk waiting, and given goes into the chair's keeping (${said})`);
@@ -1242,7 +1242,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   for (const c of none.party.members) { c.xp = xpForLevel(11); c.level = 11; }
   none.party.members.splice(none.party.members.findIndex((c) => c.cls === 'paladin'), 1);
   const at11 = newWalk(ok);
-  at11.party.members[5] = createCharacter('Hollis', 'human', 'bard', {}, makeRng(11));
+  at11.party.members[5] = createCharacter(TABLES, 'Hollis', 'human', 'bard', {}, makeRng(11));
   for (const c of at11.party.members) { c.xp = xpForLevel(11); c.level = 11; }
   const first = lesson(at11), then = hear(at11, 'harrow', MOTTRAM());
   ok(first.includes('lamp') && first !== then && !lesson(none).includes(first.slice(0, 40)), 'Mottram holds a lamp to a paladin of 11 once, and to a company with none never');
@@ -1263,7 +1263,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
 
   // At 16, after Act II: Idris turned back at the gate and let in by the postern, and all three there.
   const changed = newWalk(ok);
-  changed.party.members[5] = createCharacter('Hollis', 'human', 'bard', {}, makeRng(11));
+  changed.party.members[5] = createCharacter(TABLES, 'Hollis', 'human', 'bard', {}, makeRng(11));
   for (const c of changed.party.members) { c.xp = xpForLevel(16); c.level = 16; }
   changed.party.flags.q_salt_done = 1;
   ok([WULFRIC, MOTTRAM(), ALDITH].every((p) => there(changed, p === WULFRIC ? 'keep' : 'harrow', p)), 'after Act II the three firsts\' trainers are all still there');

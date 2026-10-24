@@ -7,7 +7,7 @@
 // from the strand at 3,7 (#845, #846; docs/areas/shelf.md §12.3). In from E3 (#67) over its north
 // edge and from D4 (#72) over its west, square for square. No group. Laid whole in the Downs, cut from
 // the atlas with the rocks drawn in; docs/areas/shelf.md §12.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 

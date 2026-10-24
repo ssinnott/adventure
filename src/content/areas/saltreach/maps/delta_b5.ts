@@ -3,7 +3,7 @@
 // empty; two brine Rifts open in the fen round it because the Stone is gone; fen toads on the boards
 // and two bull toads on the island's far side. The toads are new here, and a Stone's plinth without
 // its Stone. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md §4.5 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';

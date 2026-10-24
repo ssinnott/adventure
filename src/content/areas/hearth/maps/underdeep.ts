@@ -5,7 +5,7 @@
 // way north to the Stair below its fights, and the way on east and north to the crack the Sunder made
 // (29,6, 61). West along the row-10 way, the CREW ONLY door from the inside (2,10, 60). Band 30;
 // docs/areas/hearth.md §4.6 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

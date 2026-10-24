@@ -8,7 +8,7 @@
 // under it, east of the stair's head, where the Compact's runners leave what the Riders will not
 // take. Its way in is the stair's head; over the east edge the grass runs on into D8.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/glasswold.md §4.6 is its brief (#528).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { ORDERS_ASKED, ORDERS_BURNED } from '../public.ts';

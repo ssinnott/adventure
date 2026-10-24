@@ -13,7 +13,7 @@
 // east edge meets I11's west (#501) square for square, the pines at rows 0 to 6, the grass at 7 and 21
 // and the ash, walked into the High Spine; the south edge meets H12's north square for square.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.10 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

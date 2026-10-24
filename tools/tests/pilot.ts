@@ -11,7 +11,7 @@ import { freshSeed } from '../../src/lib/engine/rng.ts';
 import { TitleScreen, IDLE_TICKS } from '../../src/ui/title.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Feature, MapZone } from '../../src/game/map.ts';
+import type { MapDef, Feature, MapZone } from '../../src/game/mapdef.ts';
 import { NORTH, EAST, SOUTH, WEST, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import type { Action } from '../../src/input.ts';
@@ -36,7 +36,7 @@ import { restRefused } from '../../src/game/wilds.ts';
 import { hasCondition, xpForLevel, weaponOf, armorClass, templePrice } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import { item, hits } from '../../src/game/items.ts';
-import { ITEMS } from '../../src/content/index.ts';
+import { ITEMS, TABLES } from '../../src/content/index.ts';
 import { optionParts } from '../../src/ui/draw.ts';
 import { chooseAim, aims, LOST_MINUTES } from '../../src/game/pilot/aims.ts';
 import { questLog, goalMap } from '../../src/game/quests.ts';
@@ -520,7 +520,7 @@ function helm(): void {
   // A load empties the corpus too: a loaded company has heard nothing but its own "Loaded."
   const disk = new Map<string, string>();
   const store: Store = { getItem: (key) => disk.get(key) ?? null, setItem: (key, v) => { disk.set(key, v); }, removeItem: (key) => { disk.delete(key); } };
-  const lg = new Game(store);
+  const lg = new Game(TABLES, store);
   lg.input = { textMode: false, drainText: (c) => c };
   lg.pilot = new Pilot({ instant: true });
   lg.newGame(4);
@@ -552,18 +552,18 @@ function pace(): void {
 
 /** P on the title: a new game on a fresh seed, with a company drawn from that seed alone. */
 function company(): void {
-  const t = new Game(null);
+  const t = new Game(TABLES, null);
   t.input = { textMode: false, drainText: (c) => c };
   t.pilot = new Pilot({ instant: true });
   t.pilot.toggle(t);
   ok(top(t) === 'ExploreScreen' && t.pilot.on && t.party.members.length === 6 && t.pilot.heard.includes('The pilot takes the helm.'),
     `P on the title starts a new game with the pilot at the helm (${top(t)}, ${t.party.members.map((c) => c.cls).join(' ')})`);
-  const a = randomParty(77), b = randomParty(77), c = randomParty(78);
+  const a = randomParty(TABLES, 77), b = randomParty(TABLES, 77), c = randomParty(TABLES, 78);
   const classes = a.members.map((m) => m.cls), hardy = classes.map((k) => CLASSES[k].hpDie);
   ok(JSON.stringify(a) === JSON.stringify(b) && JSON.stringify(a) !== JSON.stringify(c), 'the company is drawn from the seed alone: the same seed draws the same six');
   ok(new Set(classes).size === 6 && classes.some((k) => ['cleric', 'paladin', 'bard', 'druid'].includes(k)) && hardy.every((h, i) => i === 0 || hardy[i - 1] >= h),
     `six classes, a mender among them, the hardiest in front (${classes.join(' ')})`);
-  ok([...Array(40).keys()].every((s) => randomParty(s + 1).members.some((m) => ['cleric', 'paladin', 'bard', 'druid'].includes(m.cls))), 'forty seeds draw forty companies, each with a mender');
+  ok([...Array(40).keys()].every((s) => randomParty(TABLES, s + 1).members.some((m) => ['cleric', 'paladin', 'bard', 'druid'].includes(m.cls))), 'forty seeds draw forty companies, each with a mender');
 }
 
 /**
@@ -580,7 +580,7 @@ function attract(): void {
   const turning: Brain = (q, _k, p) => { if (!(q.top instanceof ExploreScreen)) return null; p.why = ['Turning about.']; turned++; return 'turnLeft'; };
   /** A game on a new title, over a store if given, with an instant pilot that is off. */
   const onTitle = (store?: Store): Game => {
-    const g = store ? new Game(store) : headlessGame();
+    const g = store ? new Game(TABLES, store) : headlessGame();
     g.input = { textMode: false, drainText: (c) => c };
     g.pilot = new Pilot({ instant: true });
     g.pilot.brains = [turning];
@@ -620,8 +620,8 @@ function attract(): void {
     drive(d, nothing(IDLE_TICKS));
     const first = JSON.stringify(d.party), state = d.rng.state, world = JSON.stringify(d.world.state), band = d.band(), why = 'The pilot plays. / Any key for the title.';
     const ref = onTitle();
-    ref.newGame(s1, randomParty(s1));
-    ok(d.attracting && first === JSON.stringify(randomParty(s1)) && first === JSON.stringify(ref.party) && state === ref.rng.state && world === JSON.stringify(ref.world.state),
+    ref.newGame(s1, randomParty(TABLES, s1));
+    ok(d.attracting && first === JSON.stringify(randomParty(TABLES, s1)) && first === JSON.stringify(ref.party) && state === ref.rng.state && world === JSON.stringify(ref.world.state),
       `attract starts on a fresh seed (${s1}) with the company drawn from that seed, seeded first: the seed plays the same start again (${d.party.members.map((c) => c.cls).join(' ')})`);
     ok(d.pilot!.why.join(' / ') === why && band?.lines.join(' / ') === why && band.tag === 'PILOT 1X', `the band opens with "${why}" and the pilot's tempo`);
 
@@ -647,7 +647,7 @@ function attract(): void {
     for (const c of old.members) c.conditions.push('dead');
     let n = 0;
     for (; n < 60 && d.party === old; n++) drive(d, nothing(1));
-    ok(s1 !== s2 && d.party !== old && JSON.stringify(d.party) === JSON.stringify(randomParty(s2)) && d.attracting && d.pilot!.on && d.screens.length === 1 && top(d) === 'ExploreScreen' && d.pilot!.stopped === null && d.band()?.lines.join(' / ') === why,
+    ok(s1 !== s2 && d.party !== old && JSON.stringify(d.party) === JSON.stringify(randomParty(TABLES, s2)) && d.attracting && d.pilot!.on && d.screens.length === 1 && top(d) === 'ExploreScreen' && d.pilot!.stopped === null && d.band()?.lines.join(' / ') === why,
       `a wipe while attracting starts another game at once, on a new seed (${s1} then ${s2}), with no title between (${n} ticks)`);
 
     // The viewer's key: the title, the key dropped; and the title counts again from 0.
@@ -1221,10 +1221,10 @@ function quartermaster(): void {
   fighter.equipment.weapon = 'shortsword';
   const only: Shop = { ...mottram, stock: ['longsword'], prices: {} };
   company.gold = 420;
-  const rich = better(fighter, only.stock, only, spare(company));
+  const rich = better(TABLES.items, fighter, only.stock, only, spare(company));
   company.gold = 400;
-  const poor = better(fighter, only.stock, only, spare(company));
-  ok(reserve(company) === 300 && item('longsword').price === 120 && rich === 'longsword' && poor === undefined,
+  const poor = better(TABLES.items, fighter, only.stock, only, spare(company));
+  ok(reserve(company) === 300 && item(TABLES.items, 'longsword').price === 120 && rich === 'longsword' && poor === undefined,
     `better: the long sword (120 gold) for the fighter with 420 gold and not with 400, the reserve 300 (${rich}, ${poor})`);
 
   // A rest where it stands: everyone at a tenth, food for two nights, four steps short of the town
@@ -1301,8 +1301,8 @@ function quartermaster(): void {
   drive(s, Array(300).fill(null));
   const stock = (s.maps.harrow.features.find((f) => f.kind === 'shop' && s.world.present(f)) as Shop).stock;
   const changed = s.party.members.flatMap((c, i) => (['weapon', 'armor', 'shield'] as const).filter((slot) => c.equipment[slot] !== worn[i][slot]).map((slot) => ({ c, id: c.equipment[slot]! })));
-  const up = s.party.members.every((c, i) => hits(weaponOf(c)) >= hits(weaponOf({ ...c, equipment: worn[i] })) && armorClass(c) >= armorClass({ ...c, equipment: worn[i] }));
-  ok(changed.length > 0 && up && changed.every(({ c, id }) => stock.includes(id) && s.log.includes(`${c.name} equips ${item(id).name}.`)) && !s.party.bag.some((id) => changed.some((w) => w.id === id)) && s.party.gold >= reserve(s.party),
+  const up = s.party.members.every((c, i) => hits(weaponOf(TABLES.items, c)) >= hits(weaponOf(TABLES.items, { ...c, equipment: worn[i] })) && armorClass(TABLES.items, c) >= armorClass(TABLES.items, { ...c, equipment: worn[i] }));
+  ok(changed.length > 0 && up && changed.every(({ c, id }) => stock.includes(id) && s.log.includes(`${c.name} equips ${item(TABLES.items, id).name}.`)) && !s.party.bag.some((id) => changed.some((w) => w.id === id)) && s.party.gold >= reserve(s.party),
     `with gold over the reserve, the shop's wares are looked at and what betters each is bought and worn: ${changed.map(({ c, id }) => `${c.name} ${id}`).join(', ')}; ${s.party.gold} gold left`);
   ok(keys.includes('inventory') && keys.includes('cancel') && top(s) === 'ExploreScreen', `worn through the sheet, by its keys (${[...new Set(keys)].join(' ')})`);
 
@@ -1539,7 +1539,7 @@ function survives(): void {
   const fight = (sees: Sees, before = 0, monsters: string[] = Array(6).fill('wolf'), after = 2): string[] => {
     const f = piloted(), q = f.party, down = (c: Party['members'][number]): void => { c.hp = 0; c.conditions = ['unconscious']; };
     q.members.slice(0, before).forEach(down);
-    const s = startCombat(q, [{ id: 'fx_pack', monsters }], f.rng);
+    const s = startCombat(TABLES, q, [{ id: 'fx_pack', monsters }], f.rng);
     q.members.slice(before, before + after).forEach(down);
     for (let n = 0; n < 80 && s.outcome === 'ongoing'; n++) {
       const t = currentTurn(s, q, f.rng);
@@ -1594,7 +1594,7 @@ function survives(): void {
   fixture(fg, { id: 'fx_fled', name: 'Fled', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['######', '#....#', '#.##.#', '#....#', '######'] }, [2, 1, EAST]);
   fp.brains = [route];
   fp.toggle(fg);
-  const fs = startCombat(fg.party, [{ id: 'fx_fled_g', monsters: ['rat'] }], fg.rng), fscreen = new CombatScreen(fs, ['fx_fled_g']);
+  const fs = startCombat(TABLES, fg.party, [{ id: 'fx_fled_g', monsters: ['rat'] }], fg.rng), fscreen = new CombatScreen(fs, ['fx_fled_g']);
   fg.push(fscreen);
   drive(fg, [null]);
   fs.outcome = 'fled';

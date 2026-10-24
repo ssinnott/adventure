@@ -5,7 +5,7 @@
 // it, and behind its face the hollow where someone hid in irons. In from F6 (#189) over its north edge,
 // square for square. No group. Laid whole in Wrackholm, cut from the atlas with the rocks drawn in;
 // docs/areas/wrackholm.md §12.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
 export const WRACKHOLM_F7: MapDef<'wrackholm_f7'> = {

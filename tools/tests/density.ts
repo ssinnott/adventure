@@ -6,7 +6,7 @@
 // that says nothing still counts: it is drawn, and it may heal.
 // The maps as written, not as played: the played outdoors joins the zones and makes their exits gates.
 import { AREAS } from '../../src/content/index.ts';
-import { type Exit, type Feature, type MapDef } from '../../src/game/map.ts';
+import type { Exit, Feature, MapDef } from '../../src/game/mapdef.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { ok, fxMap } from './lib.ts';
 import { judge } from '../kit/rules/density.ts';

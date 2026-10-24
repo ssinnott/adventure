@@ -4,7 +4,7 @@
 import { MAP_DEFS, MONSTERS, QUESTS } from '../../../src/content/index.ts';
 import { condFaults } from './quests.ts';
 import { GameMap } from '../../../src/game/map.ts';
-import type { EncounterDef, MapDef, Presence } from '../../../src/game/map.ts';
+import type { EncounterDef, MapDef, Presence } from '../../../src/game/mapdef.ts';
 import type { QuestCond, QuestDef } from '../../../src/game/quests.ts';
 import { giftOf } from '../../../src/game/wilds.ts';
 import { handIns } from '../../../src/game/people.ts';

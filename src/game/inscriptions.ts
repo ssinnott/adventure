@@ -7,10 +7,12 @@
 // which the hint check counts (tools/tests/pillars.ts). It sets no flag and opens no door: it never
 // opens the road (EXPANSION §2.2), only a hint, the shortcut a hint finds and the marks. Pure apart
 // from the world handed in.
-import type { Feature, GameMap } from './map.ts';
+import type { GameMap } from './map.ts';
+import type { Feature } from './mapdef.ts';
 import type { Party, Character } from './party.ts';
 import type { WorldState } from './world.ts';
 import { skilled } from './skills.ts';
+import type { Items } from './tables.ts';
 
 export type Sign = Extract<Feature, { kind: 'sign' }>;
 /** A sign with a reading: an inscription in Kiln-script. */
@@ -26,7 +28,7 @@ export const readLine = (who: string, read: string): string => `${who} reads: "$
 export const markLine = (who: string): string => `${who} marks the world map.`;
 
 /** Who reads Kiln-script for the company, if anyone does. */
-export const readerOf = (party: Party): Character | undefined => skilled(party, 'linguist');
+export const readerOf = (items: Items, party: Party): Character | undefined => skilled(items, party, 'linguist');
 
 /** The atlas places an inscription's reading marks on the world map. */
 export const marksOf = (f: Inscription): readonly string[] => (f.marks === undefined ? [] : typeof f.marks === 'string' ? [f.marks] : f.marks);
@@ -38,10 +40,10 @@ export { readId } from './keys.ts';
  * What a sign says as the log shows it: its words; and to a company with a reader, an inscription's
  * reading after them, which keeps it read, and the first time it marks the world map, the mark.
  */
-export function signSays(world: { party: Party; used(id: string): boolean; markUsed(id: string): void }, f: Sign): string[] {
+export function signSays(items: Items, world: { party: Party; used(id: string): boolean; markUsed(id: string): void }, f: Sign): string[] {
   const out = [signLine(f.text)];
   if (!isInscription(f)) return out;
-  const who = readerOf(world.party);
+  const who = readerOf(items, world.party);
   if (!who) return out;
   out.push(readLine(who.name, f.read));
   const first = !world.used(f.id);

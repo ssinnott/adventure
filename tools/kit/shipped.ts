@@ -4,7 +4,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import type { Atlas } from '../../src/game/atlas.ts';
 import { layOutdoors, OUTDOORS } from '../../src/game/outdoors.ts';
 import { CLASSES, RACES, CONDITION_ORDER, guildFlag } from '../../src/game/party.ts';

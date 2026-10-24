@@ -3,12 +3,14 @@
 // burnt den is its id in the map's `used`, as an opened chest is, and its brood's `until` reads
 // that; its look, once said, is `<id>.seen` there too. So nothing new is saved. Pure, so the tests
 // load it; world.ts runs the pace and the look, and game.ts puts the choice and says the lines.
-import type { Feature, GameMap, EncounterDef } from './map.ts';
+import type { GameMap } from './map.ts';
+import type { Feature, EncounterDef } from './mapdef.ts';
 import type { World } from './world.ts';
 import type { Party } from './party.ts';
 import { giftOf, give } from './wilds.ts';
 import { item } from './items.ts';
 import { lookKey } from './keys.ts';
+import type { Items } from './tables.ts';
 
 export type Den = Extract<Feature, { kind: 'den' }>;
 
@@ -50,8 +52,8 @@ export function pace(world: World): void {
 }
 
 /** The hoard in words, as the burning gives it; '' for none. */
-export function hoardLine(den: Den): string {
-  const got = [...(den.gold ? [`${den.gold} gold`] : []), ...den.items.map((id) => item(id).name)];
+export function hoardLine(items: Items, den: Den): string {
+  const got = [...(den.gold ? [`${den.gold} gold`] : []), ...den.items.map((id) => item(items, id).name)];
   return got.length ? `The hoard: ${got.join(', ')}.` : '';
 }
 
@@ -69,8 +71,8 @@ export function approach(world: World, den: Den): { lines: string[]; ask: boolea
 export function burn(world: World, party: Party, den: Den): string[] {
   if (burnt(world, den) || !keepersDead(world, den)) return [];
   world.markUsed(den.id);
-  give(party, giftOf(den)!);
-  const hoard = hoardLine(den);
+  give(world.tables.items, party, giftOf(den)!);
+  const hoard = hoardLine(world.tables.items, den);
   return [den.burnt, ...(hoard ? [hoard] : [])];
 }
 

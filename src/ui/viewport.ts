@@ -25,7 +25,8 @@
 import type { World } from '../game/world.ts';
 import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight, hillOver } from '../game/world.ts';
 import { drawnCell } from '../game/ink.ts';
-import type { GameMap, Cell, Terrain, MapPalette, Landmark, Feature } from '../game/map.ts';
+import type { GameMap } from '../game/map.ts';
+import type { Cell, Terrain, MapPalette, Landmark, Feature } from '../game/mapdef.ts';
 import { FACING_DX, FACING_DY } from '../game/types.ts';
 import type { Facing } from '../game/types.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';

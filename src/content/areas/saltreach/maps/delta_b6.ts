@@ -5,7 +5,7 @@
 // with a door in its wall under the tideline and a wet stair behind it down into the choir's back.
 // Tidal ground that shows and hides a door is new here. Cut from the atlas by tools/scaffold.ts;
 // docs/areas/saltreach.md §4.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { When } from '../../../../game/quests.ts';

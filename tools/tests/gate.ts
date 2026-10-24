@@ -12,7 +12,7 @@ import type { Area } from '../../src/content/area.ts';
 import { ATLAS, MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { CURVE } from '../../src/content/progression.ts';
-import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
+import type { EncounterDef, Feature, MapDef } from '../../src/game/mapdef.ts';
 import { rest, MAX_LEVEL } from '../../src/game/party.ts';
 import { gateFight, gateOpts, winRate, rate, SEEDS } from '../kit/fight.ts';
 import { gateCompany } from '../kit/company.ts';

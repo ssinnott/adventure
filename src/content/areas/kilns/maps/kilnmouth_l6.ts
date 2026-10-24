@@ -4,7 +4,7 @@
 // its beacon and the heath running down to the sea.
 // The gate at 28,4 is the way into Kilnhaven (#469, GATE).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.13 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

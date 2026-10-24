@@ -10,13 +10,14 @@ import type { Ending } from '../../src/content/endings.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { answer, SHORT } from '../../src/game/people.ts';
-import type { Answer } from '../../src/game/map.ts';
+import type { Answer } from '../../src/game/mapdef.ts';
 import { save } from '../../src/game/save.ts';
 import type { Store } from '../../src/game/save.ts';
 import type { Game } from '../../src/game/game.ts';
 import { endingOf, endingTaken, savedHearth, savedStones, hearthLook, hearthWord, flickerOf, steadier } from '../../src/game/stones.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
 import { ok, fxFlag } from './lib.ts';
+import { TABLES } from '../../src/content/index.ts';
 
 export function endings(): void {
   // The table: the three answers by their flags and names, as the plan gives them, and ENDED any of them.
@@ -29,11 +30,11 @@ export function endings(): void {
   const table = ENDINGS as Record<string, Ending>;
   table.fx = fixture;
   try {
-    const party = defaultParty(makeRng(750)), took: Answer = { label: 'End it', says: ['So be it.'], sets: [fxFlag('q_other'), fxFlag('fx_end')] };
+    const party = defaultParty(TABLES, makeRng(750)), took: Answer = { label: 'End it', says: ['So be it.'], sets: [fxFlag('q_other'), fxFlag('fx_end')] };
     const short: Answer = { ...took, price: party.gold + 1 }, plain: Answer = { label: 'Not yet', says: ['Not yet.'], sets: fxFlag('q_other') };
-    ok(answer(short, party) === SHORT && !endingTaken(short, party.flags) && !party.flags.fx_end, 'an ending\'s answer the company cannot pay for takes no ending and sets nothing');
-    ok(answer(plain, party) === 'Not yet.' && !endingTaken(plain, party.flags), 'an answer that sets no ending\'s flag takes none');
-    ok(answer(took, party) === 'So be it.' && endingTaken(took, party.flags) === fixture && (endingOf(party.flags) as string) === 'fx', 'an answer that sets an ending\'s flag among others takes that ending, and the flags say so');
+    ok(answer(TABLES.items, short, party) === SHORT && !endingTaken(short, party.flags) && !party.flags.fx_end, 'an ending\'s answer the company cannot pay for takes no ending and sets nothing');
+    ok(answer(TABLES.items, plain, party) === 'Not yet.' && !endingTaken(plain, party.flags), 'an answer that sets no ending\'s flag takes none');
+    ok(answer(TABLES.items, took, party) === 'So be it.' && endingTaken(took, party.flags) === fixture && (endingOf(party.flags) as string) === 'fx', 'an answer that sets an ending\'s flag among others takes that ending, and the flags say so');
 
     // Its pages, turned one at a time by Space or Esc, and past the last the screen beneath is on top again: the game goes on.
     const screens: string[] = ['explore'], g = { pop: () => void screens.pop() } as unknown as Game, pages = new EndingScreen(fixture);
@@ -54,7 +55,7 @@ export function endings(): void {
   ok(finished.step > relit.step && finished.flicker === 0 && !finished.cast, 'finished: the column taller than full, and still');
 
   // The almanac reads it from the world, beside the day; two endings held read as the table's first.
-  const rng = makeRng(750), party = defaultParty(rng), world = new World(buildMaps(), party, rng);
+  const rng = makeRng(750), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng);
   party.flags.q_tide_home = 1;
   const plain = world.almanac().split('\n')[0], day = plain.slice(0, plain.indexOf(steadier(1)) - 1);
   const said: Record<string, string> = {

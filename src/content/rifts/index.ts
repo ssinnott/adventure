@@ -6,7 +6,7 @@
 // area places them, so they are in no save.
 import { generateRift, riftWay, wardenFallen } from '../../game/rifts.ts';
 import type { RiftSpec, RiftTemplate, RiftMaterial } from '../../game/rifts.ts';
-import type { MapDef, Feature } from '../../game/map.ts';
+import type { MapDef, Feature } from '../../game/mapdef.ts';
 import { TEMPLATES } from './templates.ts';
 import { MATERIALS } from './materials.ts';
 

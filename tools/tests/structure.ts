@@ -19,7 +19,7 @@ import { TEAR_CLOSED } from '../../src/content/areas/thornmark/maps/grove2.ts';
 import { gridFaults } from '../../src/game/atlas.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { GameMap, anchored, landExits } from '../../src/game/map.ts';
-import type { Answer, EncounterDef, Exit, Feature, Gate, MapDef, Night, NpcQuest, Words } from '../../src/game/map.ts';
+import type { Answer, EncounterDef, Exit, Feature, Gate, MapDef, Night, NpcQuest, Words } from '../../src/game/mapdef.ts';
 import { EAST, SOUTH } from '../../src/game/types.ts';
 import { RESPAWN } from '../../src/game/keys.ts';
 import { ok, fxMap, fxFlag } from './lib.ts';

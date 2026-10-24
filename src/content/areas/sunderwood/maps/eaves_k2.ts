@@ -3,7 +3,7 @@
 // bridge and on through the pines for Lantern Watch; and Sunderfall, where the river from the rim goes
 // over the east lip, with its shrine, its hermit and the ledge behind the water.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

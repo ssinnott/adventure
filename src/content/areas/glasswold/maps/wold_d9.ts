@@ -7,7 +7,7 @@
 // Wold. The herd grazes in the north-west under a Rider, all but the grass on the long mound.
 // The Wold's first map (#525). Joined to no built box yet: E10 lies south-east, past D10's corner (#527).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/glasswold.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

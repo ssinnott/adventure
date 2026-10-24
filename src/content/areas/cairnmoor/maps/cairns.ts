@@ -6,7 +6,7 @@
 // own rock. South of it, behind a secret door found from a stain of rust, a cell with a locked chest
 // (#862). Nothing hangs on the walls and nothing burns. Band 18-20; docs/areas/cairnmoor.md §4.6 is
 // its brief, §4.8 the cell's.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

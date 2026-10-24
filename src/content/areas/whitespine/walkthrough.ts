@@ -50,7 +50,7 @@ import { seekId } from '../../../game/seeking.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
 import { stonesRestored } from '../../../game/stones.ts';
-import { AREAS, ATLAS, MAP_DEFS, MONSTERS as MONSTER_DEFS } from '../../index.ts';
+import { AREAS, ATLAS, MAP_DEFS, MONSTERS as MONSTER_DEFS, TABLES } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { elementMult } from '../../../game/monsters.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
@@ -60,7 +60,8 @@ import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer, barred, SHORT, NONE } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
+import type { Can } from '../../../game/map.ts';
+import type { Feature, MapDef, MapZone } from '../../../game/mapdef.ts';
 import { restAndWake } from '../../../game/wilds.ts';
 import { readLine } from '../../../game/inscriptions.ts';
 import { MONSTERS } from './monsters.ts';
@@ -340,7 +341,7 @@ export const walkthrough: Walkthrough = (ok) => {
     v.world.travel('highspine_i10', king.x + 2, king.y, WEST);
     const r = v.world.move('forward'), c = v.world.question(king.id), a = c?.answers.find((x) => x.label === label);
     v.ok(r.kind === 'moved' && r.asks === king.id && !r.encounter && !!a, `beside the king's group the toll is put before the fight, and '${label}' is an answer (${c?.ask ?? 'no question'})`);
-    const said = a ? answer(a, v.party) : '';
+    const said = a ? answer(TABLES.items, a, v.party) : '';
     listen(v);
     return said;
   };
@@ -369,7 +370,7 @@ export const walkthrough: Walkthrough = (ok) => {
     v.level = 23;
     v.party.gold = 1499;
     const [gold, part] = [TOLL.answers.find((a) => a.label === 'Pay the toll.')!, TOLL.answers.find((a) => a.label === 'Give him the grey part.')!];
-    v.ok(barred(gold, v.party) && answer(gold, v.party) === SHORT && barred(part, v.party) && answer(part, v.party) === NONE && !!TOLL.answers.find((a) => a.takes === 'faceless_coin'),
+    v.ok(barred(gold, v.party) && answer(TABLES.items, gold, v.party) === SHORT && barred(part, v.party) && answer(TABLES.items, part, v.party) === NONE && !!TOLL.answers.find((a) => a.takes === 'faceless_coin'),
       'one short of the 1,500 gold, or with no grey part, the toll is barred; the faceless coin is taken too');
     if (how === 'Pay the toll.') v.party.gold = 1500; else v.party.bag.push('grey_part');
     const said = parley(v, how);
@@ -842,8 +843,8 @@ function offTheRoad(out: GameMap, at: { x: number; y: number }): { apart: number
  * it, and it lies off the road, where the measure is named.
  */
 function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
-  const [axe, knife] = [item('thunderhead_axe'), item('talon_knife')];
-  const [ice, plus, skin, skinPlus] = [item('ice_axe'), item('ice_axe+1'), item('skinning_knife'), item('skinning_knife+1')];
+  const [axe, knife] = [item(TABLES.items, 'thunderhead_axe'), item(TABLES.items, 'talon_knife')];
+  const [ice, plus, skin, skinPlus] = [item(TABLES.items, 'ice_axe'), item(TABLES.items, 'ice_axe+1'), item(TABLES.items, 'skinning_knife'), item(TABLES.items, 'skinning_knife+1')];
   ok(axe.slot === 'weapon' && axe.element === 'lightning' && !axe.stat && !axe.plus && axe.dice === ice.dice && axe.sides === ice.sides && axe.bonus === ice.bonus && same(axe.classes, ice.classes) && !!axe.classes && axe.name.length <= 26,
     `the Thunderhead Axe is the Ice Axe's steel with lightning on it, for the Ice Axe's classes, its name ${axe.name.length} characters of the sheet's 26`);
   ok(hits(axe) - hits(ice) === 3.5 && hits(ice) < hits(plus) && hits(axe) > hits(plus),
@@ -854,10 +855,10 @@ function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
   // Priced, in the window, never sold, off the ladder, sold back at half.
   const stocked = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : []))));
   const ladder = new Set(GEAR.flatMap(([, ids]) => ids)), dropped = new Set(Object.values(MONSTER_DEFS).flatMap((m) => (m.drops ?? []).map((x) => x.item)));
-  const limit = CURVE.whitespine.price, six = defaultParty(makeRng(1));
+  const limit = CURVE.whitespine.price, six = defaultParty(TABLES, makeRng(1));
   for (const d of [axe, knife]) {
-    ok(d.price > 0 && d.price <= limit && !stocked.has(d.id) && !ladder.has(d.id) && !dropped.has(d.id) && sellPrice(six, d.price) === d.price / 2,
-      `${d.name} costs ${d.price} of the Whitespine's window of ${limit}, is sold by no shop, worn by no rung of the ladder and dropped by no monster, and sells back at ${sellPrice(six, d.price)}`);
+    ok(d.price > 0 && d.price <= limit && !stocked.has(d.id) && !ladder.has(d.id) && !dropped.has(d.id) && sellPrice(TABLES.items, six, d.price) === d.price / 2,
+      `${d.name} costs ${d.price} of the Whitespine's window of ${limit}, is sold by no shop, worn by no rung of the ladder and dropped by no monster, and sells back at ${sellPrice(TABLES.items, six, d.price)}`);
   }
   // Where they lie: the hollow's two chests, the iron-bound one the area's only locked chest.
   const mine = AREAS.find((a) => a.id === 'whitespine')!;
@@ -868,15 +869,15 @@ function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
     `the Thunderhead Axe lies in the iron-bound chest and the Talon Knife in the plain one beside it, no gold with either, and the iron-bound chest is the only locked one the Whitespine places (${lockedHere.join() || 'none'})`);
   // The raise and the blow, on the real items: worn, the knife adds 3 to accuracy and not to the bare stat, carried it adds nothing, and a point of aim over the ladder's own;
   // the classes that cannot wield the axe are refused it.
-  const crew = defaultParty(makeRng(1)), thief = crew.members.find((m) => m.cls === 'thief')!, knight = crew.members.find((m) => m.cls === 'knight')!;
-  equip(thief, skinPlus.id);
-  const ladderAim = attackBonus(thief), bare = statOf(thief, 'accuracy');
+  const crew = defaultParty(TABLES, makeRng(1)), thief = crew.members.find((m) => m.cls === 'thief')!, knight = crew.members.find((m) => m.cls === 'knight')!;
+  equip(TABLES.items, thief, skinPlus.id);
+  const ladderAim = attackBonus(TABLES.items, thief), bare = statOf(TABLES.items, thief, 'accuracy');
   thief.pack.push(knife.id);
-  const carried = statOf(thief, 'accuracy');
+  const carried = statOf(TABLES.items, thief, 'accuracy');
   thief.pack.pop();
-  ok(equip(thief, knife.id) && carried === bare && statOf(thief, 'accuracy') === bare + 3 && thief.stats.accuracy === bare && attackBonus(thief) === ladderAim + 1
-    && equip(knight, axe.id) && knight.equipment.weapon === axe.id && !equip(crew.members.find((m) => m.cls === 'sorcerer')!, axe.id) && !equip(crew.members.find((m) => m.cls === 'thief')!, axe.id),
-    `worn, the knife raises the thief's accuracy ${bare} to ${statOf(thief, 'accuracy')} (carried, nothing) and her aim a point over the ladder's knife's; the knight wields the axe, the sorcerer and the thief cannot`);
+  ok(equip(TABLES.items, thief, knife.id) && carried === bare && statOf(TABLES.items, thief, 'accuracy') === bare + 3 && thief.stats.accuracy === bare && attackBonus(TABLES.items, thief) === ladderAim + 1
+    && equip(TABLES.items, knight, axe.id) && knight.equipment.weapon === axe.id && !equip(TABLES.items, crew.members.find((m) => m.cls === 'sorcerer')!, axe.id) && !equip(TABLES.items, crew.members.find((m) => m.cls === 'thief')!, axe.id),
+    `worn, the knife raises the thief's accuracy ${bare} to ${statOf(TABLES.items, thief, 'accuracy')} (carried, nothing) and her aim a point over the ladder's knife's; the knight wields the axe, the sorcerer and the thief cannot`);
   // Lightning against what the range places and what the ash behind it does: none is immune or resists it; the weak are named.
   for (const id of ['whitespine', 'ashfall']) {
     const area = AREAS.find((a) => a.id === id)!;
@@ -916,7 +917,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   const company = (slot: number, cls: ClassId): Walk => {
     const w = newWalk(ok);
     w.level = LEVEL;
-    if (w.party.members[slot].cls !== cls) w.party.members[slot] = createCharacter(w.party.members[slot].name, 'human', cls, { might: 13, speed: 13, personality: 13 }, rng);
+    if (w.party.members[slot].cls !== cls) w.party.members[slot] = createCharacter(TABLES, w.party.members[slot].name, 'human', cls, { might: 13, speed: 13, personality: 13 }, rng);
     for (const m of w.party.members) { m.level = LEVEL; m.xp = xpForLevel(LEVEL); }
     takePrestige(w.party.members[slot]); takePrestige(w.party.members[slot]);
     return w;
@@ -925,7 +926,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
     w.world.travel(map, p.x, p.y);
     const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.sets === sets), not = m.choice?.answers.find((x) => !x.sets);
     ok(!!a && !!not, `${p.name} asks (${m.choice?.ask ?? 'no question'}), and an answer sets ${sets}`);
-    const said = a ? answer(a, w.party) : '';
+    const said = a ? answer(TABLES.items, a, w.party) : '';
     listen(w);
     return said;
   };
@@ -1228,7 +1229,7 @@ function parley(w: Walk, label: string): string {
   w.world.travel('highspine_i10', KING.x + 2, KING.y, WEST);
   const r = w.world.move('forward'), a = w.world.question(KING.id)?.answers.find((x) => x.label === label);
   w.ok(r.kind === 'moved' && r.asks === KING.id && !!a, `beside the king the toll is put before the fight, and '${label}' answers it`);
-  const said = a ? answer(a, w.party) : '';
+  const said = a ? answer(TABLES.items, a, w.party) : '';
   listen(w);
   return said;
 }
@@ -1324,7 +1325,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
       `${how}: the woman knits on Anvilhall's terrace with nobody beside her, and met first she begins nothing`);
     w.world.travel('monastery', NOVICE.x, NOVICE.y);
     const first = meet(NOVICE, w.party, heard(w.world, NOVICE)), not = first.choice?.answers.find((a) => !a.sets);
-    ok(!!not && answer(not, w.party).includes('Another day') && !w.party.bag.includes('novice_letter'), `${how}: not now, and he keeps his letter`);
+    ok(!!not && answer(TABLES.items, not, w.party).includes('Another day') && !w.party.bag.includes('novice_letter'), `${how}: not now, and he keeps his letter`);
     listen(w);
     ok(began(w, 'The Novice') && /last cell/.test(goal(w, 'novice')), `${how}: he begins it, and the goal is his answer (${goal(w, 'novice')})`);
     ok(answerTo(w, 'monastery', NOVICE, 'q_novice_letter', true).includes('candle wax') && w.party.bag.includes('novice_letter') && /Anvilhall/.test(goal(w, 'novice')),
@@ -1368,7 +1369,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
         'watch: the Reader takes the Lantern\'s Instruments at the first meeting, for nothing, and leaves the badge for the next');
       w.world.travel(map, who.x, who.y);
       const keep = meet(who, w.party, heard(w.world, who)).choice?.answers.find((a) => !a.sets);
-      ok(!!keep && answer(keep, w.party).includes('keep it close') && w.party.bag.includes('lantern_badge') && !page(w, 'nest')?.done, 'watch: refused, the Reader lets the company keep the badge');
+      ok(!!keep && answer(TABLES.items, keep, w.party).includes('keep it close') && w.party.bag.includes('lantern_badge') && !page(w, 'nest')?.done, 'watch: refused, the Reader lets the company keep the badge');
     }
     const xp = xpOf(w.party), said = answerTo(w, map, who, sets, true);
     ok(xpOf(w.party) - xp === 1200 && !w.party.bag.includes('lantern_badge'), `${how}: the badge given, 1,200 xp between the six (${said.split('\n\n')[0]})`);
@@ -1389,7 +1390,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
       `${how}: the caravan-master begins it, his girl at the head and nobody by the wagons (${goal(w, 'toll')})`);
     if (item) {
       const a = KING.choice!.answers.find((x) => x.takes === item)!;
-      ok(barred(a, w.party) && answer(a, w.party) === NONE, `${how}: without ${item} its answer is barred`);
+      ok(barred(a, w.party) && answer(TABLES.items, a, w.party) === NONE, `${how}: without ${item} its answer is barred`);
       w.party.bag.push(item);
     }
     const said = parley(w, label);
@@ -1413,7 +1414,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.world.travel('sheerpoint_i8', DESERTER.x, DESERTER.y);
     const buy = meet(DESERTER, w.party, heard(w.world, DESERTER)).choice?.answers.find((a) => a.sets === MASON_PASSAGE);
     listen(w);
-    ok(!!buy && buy.price === 600 && barred(buy, w.party) && answer(buy, w.party) === SHORT && !w.party.flags[MASON_PASSAGE] && began(w, 'The Mason\'s Tally') && /deserter/.test(goal(w, 'mason')),
+    ok(!!buy && buy.price === 600 && barred(buy, w.party) && answer(TABLES.items, buy, w.party) === SHORT && !w.party.flags[MASON_PASSAGE] && began(w, 'The Mason\'s Tally') && /deserter/.test(goal(w, 'mason')),
       `${how}: the deserter begins it, and a company with 599 gold cannot buy his passage (${goal(w, 'mason')})`);
     w.party.gold = 600;
     const xp = xpOf(w.party), said = answerTo(w, 'sheerpoint_i8', DESERTER, sets, true);

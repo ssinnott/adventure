@@ -6,7 +6,7 @@
 // hoist up to the drop is behind the aisle's wall, found by a search; the steps down to the writer's room, the
 // counting house (WRITER_STAIR), are at the aisle's end. Loaders at 26, keepers at 27, knockers at 28. It pays
 // outside any area's budget (EXPANSION §5.2; Wrackholm's `outside`). docs/areas/dead_drop.md §4.2 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

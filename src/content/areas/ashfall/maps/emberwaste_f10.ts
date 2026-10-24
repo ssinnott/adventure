@@ -7,7 +7,7 @@
 // Joined to G10 on its east edge and E10 on its west. The north edge ends the world
 // against F9 and the south against F11, which the road runs along at columns 5 to 11.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.9 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { SEEDLING_ASKED, SEEDLING_PLANTED } from './ember_stone.ts';
 import { LIT } from '../public.ts';

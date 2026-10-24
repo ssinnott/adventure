@@ -6,7 +6,7 @@
 // The door at 6,18 is the way into Carn Dubh (#480, DOOR); the notch at 0,28 is the way down to Rime
 // Lodge, taken onto M9 (#486, NOTCH).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.5 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

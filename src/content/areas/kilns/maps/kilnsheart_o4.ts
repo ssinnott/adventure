@@ -4,7 +4,7 @@
 // where it runs on into O5 and N4; and over it the bare hills under the mountain, run on east to the
 // world's end. In from N4 over the hills, from O3 under the pines and from O5 at either end of its
 // mountain; no road. Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.15 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

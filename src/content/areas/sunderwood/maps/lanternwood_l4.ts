@@ -5,7 +5,7 @@
 // opens north to L3 and west to K4 by wading the shore; its east and south stand closed.
 // Cut from the atlas by tools/scaffold.ts, the hills past the range drawn as the range;
 // docs/areas/sunderwood.md §4.10 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';

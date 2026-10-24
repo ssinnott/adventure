@@ -5,7 +5,7 @@
 // Off the way, a second walled niche with the prayer for the dead over it, and the shaft and its rungs
 // behind it; past the cages the rock worms' round bores, winding north to their nest and south to the
 // steep stair down. Band 16-17; docs/areas/kilns.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

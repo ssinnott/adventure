@@ -4,13 +4,13 @@
 // on a zone map walked through and back; the groups stopping and the tear going quiet once the
 // Stone is restored; and every tear an area places leading into a real map.
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
+import { MAP_DEFS, MONSTERS, ITEMS, TABLES } from '../../src/content/index.ts';
 import { PLAYED_DEFS } from '../../src/content/maps.ts';
 import { TEMPLATES, MATERIALS, RIFT_SAMPLES, rift } from '../../src/content/rifts/index.ts';
 import { generateRift, templateFaults, turn, RIFT_SIZE } from '../../src/game/rifts.ts';
 import type { RiftSpec } from '../../src/game/rifts.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { EAST } from '../../src/game/types.ts';
@@ -121,7 +121,7 @@ export function rifts(): void {
     const DELTA = rift({ ...spec(7), id: 'fx_delta_rift', material: 'brine', template: 'cells', until: { slain: fxKey('fx_delta_rift:fx_delta_rift_warden') }, out: { to: fxMap('fx_delta'), tx: 3, ty: 2, tf: EAST } });
     const box: MapDef = { id: 'fx_delta', name: 'Fixture Fen', kind: 'outdoor', region: 'shelf', density: 'core', start: { x: 1, y: 2, facing: EAST }, rows: ['MMMMMMM', 'M,,,,,M', 'M,,,,,M', 'M,,,,,M', 'MMMMMMM'], features: [DELTA.way(4, 2)] };
     const maps = { fx_delta: new GameMap(box), fx_delta_rift: new GameMap(DELTA.map) };
-    const r = makeRng(3), w = new World(maps, defaultParty(r), r);
+    const r = makeRng(3), w = new World(TABLES, maps, defaultParty(TABLES, r), r);
     w.move('forward'); w.move('forward');
     const inside = w.move('forward');
     ok(w.state.mapId === 'fx_delta_rift' && w.state.x === DELTA.map.start.x && w.state.y === DELTA.map.start.y && w.state.facing === DELTA.map.start.facing

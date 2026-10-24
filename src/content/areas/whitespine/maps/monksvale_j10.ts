@@ -12,7 +12,7 @@
 // edge meets J9 (#497), Loch Fuar's far shore, under the pines; the east edge K10, walked anywhere the
 // pines and the hills meet; the south edge J11; the west edge is the range against I10's.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

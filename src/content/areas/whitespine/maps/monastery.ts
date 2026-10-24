@@ -6,7 +6,7 @@
 // eleven and the Laureate hides among them; at its east end the night stair down to the lower house.
 // Brothers keep the hours by the cells, and ringers come down the tower's stair. Band 22-24, from the
 // area's floor as Carn Dubh's cairn is; docs/areas/whitespine.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import type { QuestCond } from '../../../../game/quests.ts';

@@ -4,7 +4,7 @@
 // holds to the lists here. The unions the game types its content with (MonsterSprite, Interior,
 // RegionId, MapId, Flag) are made from the areas, so nobody edits them by hand. The one quest is joined here
 // from the areas' chapters. The maps as played, with the outdoors laid out, are in ./maps.ts.
-import type { MapDef } from '../game/map.ts';
+import type { MapDef } from '../game/mapdef.ts';
 import { landExits } from '../game/map.ts';
 import type { MonsterDef } from '../game/monsters.ts';
 import type { ItemDef } from '../game/items.ts';
@@ -12,7 +12,10 @@ import type { SpellDef } from '../game/spells.ts';
 import type { LogQuest, ChapteredQuest } from '../game/quests.ts';
 import type { GuildQuest } from '../game/guilds.ts';
 import type { Area, Flags } from './area.ts';
-import { guildQuestDef } from './guilds.ts';
+import { guildQuestDef, GUILDS } from './guilds.ts';
+import { STONES } from './stones.ts';
+import { ENDINGS } from './endings.ts';
+import type { Tables } from '../game/tables.ts';
 import type { Climate } from '../game/weather.ts';
 import type { Atlas } from '../game/atlas.ts';
 import { AREA as shelf, MAPS as shelfMaps, FLAGS as shelfFlags } from './areas/shelf/index.ts';
@@ -122,10 +125,10 @@ export const FLAG_OWNERS = flagOwners([...AREAS, { id: 'core', flags: CORE_FLAGS
  */
 export const MAP_DEFS: readonly MapDef<MapId>[] = landExits(once('map', AREAS.flatMap<MapDef<MapId>>((a) => a.maps), (d) => d.id));
 
-/** Read-only: a suite lends a def through `withDefs` (tools/tests/lib.ts), and nothing else writes it (#945). */
+/** Read-only: a suite lends a monster through `withDefs` (tools/tests/lib.ts), and nothing else writes it (#945). */
 export const MONSTERS: Readonly<Record<string, MonsterDef>> = byId('monster', AREAS.flatMap((a) => a.monsters));
 
-/** The items no area owns first, then each area's. Read-only: `withDefs` and the harness's `forge` alone write it (#945). */
+/** The items no area owns first, then each area's. Read-only, and nothing writes it: a suite or the harness that lends one plays a table of its own (#973). */
 export const ITEMS: Readonly<Record<string, ItemDef>> = byId('item', [...CORE_ITEMS, ...AREAS.flatMap((a) => a.items)]);
 
 export const SPELLS: Record<string, SpellDef> = byId('spell', ALL_SPELLS);
@@ -173,4 +176,13 @@ export const ATLAS: Atlas = {
   places: chart('place', PLAN.places, AREAS.flatMap((a) => a.atlas.places), (p) => p.id),
   sites: chart('site', PLAN.sites, AREAS.flatMap((a) => a.atlas.sites), (s) => s.name),
   links: [...AREAS.flatMap((a: Area) => a.atlas.links ?? []), ...PLAN.links],
+};
+
+/**
+ * The tables src/game takes (game/tables.ts), all eleven, handed in by the app, the tools, the suites
+ * and the walkthroughs (#973); nothing writes them. The exports above stay, for the areas and the tools.
+ */
+export const TABLES: Tables = {
+  items: ITEMS, monsters: MONSTERS, spells: SPELLS, quests: QUESTS, guildQuests: GUILD_QUESTS, guilds: GUILDS,
+  climates: CLIMATES, stones: STONES, endings: ENDINGS, atlas: ATLAS, maps: MAP_DEFS,
 };

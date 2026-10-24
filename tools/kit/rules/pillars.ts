@@ -1,12 +1,12 @@
 // The pillars' text rules the suites share (#984): a map's lines and hints, the glyphs the font
 // lacks and the American spellings. The pillars suite holds every map to them; the dens, rifts and
 // wilds suites take them from here.
-import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS, GUILD_QUESTS } from '../../../src/content/index.ts';
+import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS, GUILD_QUESTS, TABLES } from '../../../src/content/index.ts';
 import { GUILDS } from '../../../src/content/guilds.ts';
 import { CROSSINGS } from '../../../src/content/crossings.ts';
 import type { Crossing } from '../../../src/content/crossings.ts';
 import { GameMap } from '../../../src/game/map.ts';
-import type { MapDef, Presence } from '../../../src/game/map.ts';
+import type { MapDef, Presence } from '../../../src/game/mapdef.ts';
 import { CLASSES, RACES, TRAITS, NAME_MAX } from '../../../src/game/party.ts';
 import { enclaveLine } from '../../../src/game/world.ts';
 import { signTexts } from '../../../src/game/inscriptions.ts';
@@ -77,7 +77,7 @@ export function lineFaults(def: MapDef): string[] {
   const out: string[] = [], squares = new Map<string, { n: number; p: Partial<Presence> }[]>();
   // A group's answer is said in the log as one entry, before the fight or the walk past (#544).
   for (const e of def.encounters ?? []) for (const a of e.choice?.answers ?? []) {
-    const n = logLines([...a.says, ...answerNote(a)].join(' ')).length;
+    const n = logLines([...a.says, ...answerNote(TABLES.items, a)].join(' ')).length;
     if (n > MOST_LINES) out.push(`${e.id}'s answer '${a.label}' takes ${n} lines`);
   }
   // An enclave's door line (#845), at its longest: its band and the warning, as one entry.
@@ -101,7 +101,7 @@ export function lineFaults(def: MapDef): string[] {
     }
     // A den's look is said as a monster's is, held to its lines; its burning and its hoard together, and its ruin, to the most.
     if (f.kind === 'den') {
-      const look = logLines(f.text).length, burning = logLines(f.burnt).length + (hoardLine(f) ? logLines(hoardLine(f)).length : 0), ruin = f.ruin ? logLines(f.ruin).length : 0;
+      const look = logLines(f.text).length, burning = logLines(f.burnt).length + (hoardLine(TABLES.items, f) ? logLines(hoardLine(TABLES.items, f)).length : 0), ruin = f.ruin ? logLines(f.ruin).length : 0;
       if (look > LOOK_LINES) out.push(`the den's look at ${f.x},${f.y} takes ${look} lines`);
       if (burning > MOST_LINES) out.push(`the den's burning at ${f.x},${f.y} takes ${burning} lines with its hoard`);
       if (ruin > MOST_LINES) out.push(`the den's ruin at ${f.x},${f.y} takes ${ruin} lines`);

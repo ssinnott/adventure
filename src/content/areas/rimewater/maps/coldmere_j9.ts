@@ -8,7 +8,7 @@
 // is the Sheer Point's mountain; the south edge meets J10 (#508) under the pines, walked; the north edge
 // meets J8's south (#832) square for square, its 0,0 shut to the mountain against J8's rock at 0,31.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief (#497).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

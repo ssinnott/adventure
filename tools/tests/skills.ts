@@ -19,7 +19,7 @@ import { defaultParty, partyCan, isDown, takePrestige, RACES, CLASSES, NAME_MAX 
 import type { Party, RaceId, ClassId } from '../../src/game/party.ts';
 import { World } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Feature } from '../../src/game/map.ts';
+import type { MapDef, Feature } from '../../src/game/mapdef.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { Person } from '../../src/game/people.ts';
 import { startCombat, currentTurn } from '../../src/game/combat.ts';
@@ -40,11 +40,13 @@ import { buildMaps } from '../../src/content/maps.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { rankFlag } from '../../src/content/guilds.ts';
 import type { GuildId } from '../../src/content/guilds.ts';
-import { MAP_DEFS, CLIMATES, ITEMS } from '../../src/content/index.ts';
+import { MAP_DEFS, CLIMATES, ITEMS, TABLES } from '../../src/content/index.ts';
 import { SKILLS, SKILL_PRICE, SPIRIT_REACH, STRANGER, LEAVE_SKILLS, skillsOf, hasSkill, bornTo, skillNames, taughtBy, mayLearn, skillOffers, skillLine, skillRow, skillBar, learn, askSkill, askWhich, skilled } from '../../src/game/skills.ts';
 import type { SkillId } from '../../src/game/skills.ts';
-import { ok, withDefs } from './lib.ts';
+import { ok } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Tables } from '../../src/game/tables.ts';
 
 /** DESIGN §8's table: the skills each guild teaches, three to a guild, twelve in all (DESIGN §5). */
 const TAUGHT: Record<GuildId, readonly string[]> = {
@@ -89,7 +91,7 @@ const FIVE: Partial<Record<SkillId, string>> = {
 /** A hall of the content: where it stands and what its guild's halls teach. */
 interface Hall { map: string; x: number; y: number; name: string; hall: GuildId; taught: SkillId[] }
 
-const company = (setup?: (p: Party) => void): Party => { const p = defaultParty(makeRng(11)); setup?.(p); return p; };
+const company = (setup?: (p: Party) => void): Party => { const p = defaultParty(TABLES, makeRng(11)); setup?.(p); return p; };
 
 /** Every people there is, and every class. */
 const PEOPLES = Object.keys(RACES) as RaceId[];
@@ -223,7 +225,7 @@ export function skills(): void {
   piloted();
   // A save keeps a member's skills; a member saved before them has none.
   {
-    const rng = makeRng(13), party = defaultParty(rng), world = new World(buildMaps(), party, rng);
+    const rng = makeRng(13), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng);
     party.members[2].skills = ['linguist'];
     const back = deserialize(serialize(world.state, party, 0)).party;
     ok(skillsOf(back.members[2]).join() === 'linguist' && back.members.filter((_, i) => i !== 2).every((m) => !skillsOf(m).length), 'a save keeps a member\'s skills');
@@ -255,11 +257,11 @@ function armsMaster(): void {
   const sides = (order: readonly TurnRef[]): string => order.map((r) => (r.side === 'party' ? 'p' : 'm')).join('');
   const seen = new Set<string>();
   const answers = PEOPLES.flatMap((race) => KINDS_OF.flatMap((cls) => (['none', 'learnt', 'down'] as const).map((how) => {
-    const rng = makeRng(23), p = defaultParty(rng);
+    const rng = makeRng(23), p = defaultParty(TABLES, rng);
     for (const m of p.members) { m.race = race; m.cls = cls; m.stats.speed = -100; }
     if (how !== 'none') p.members[0].skills = ['arms_master'];
     if (how === 'down') p.members[0].conditions.push('dead');
-    const s = startCombat(p, [{ id: 'g', monsters: ['wolf', 'wolf', 'wolf'] }], rng), one = sides(s.order);
+    const s = startCombat(TABLES, p, [{ id: 'g', monsters: ['wolf', 'wolf', 'wolf'] }], rng), one = sides(s.order);
     const strikes = p.members.some((m) => !isDown(m) && hasSkill(m, 'arms_master'));
     // The next round: past every turn of the first, who acts first.
     s.turn = s.order.length;
@@ -272,12 +274,12 @@ function armsMaster(): void {
   // A monk of the second prestige acts first of all (#856's builder's 5): before an Arms Master's
   // company, and before the wolves without one. He is the slowest of the six, so only that rule puts him first.
   const monk = (master: boolean): string => {
-    const rng = makeRng(23), p = defaultParty(rng);
+    const rng = makeRng(23), p = defaultParty(TABLES, rng);
     for (const m of p.members) { m.race = 'human'; m.cls = 'knight'; m.stats.speed = -100; }
     const mk = p.members[3];
     mk.cls = 'monk'; mk.stats.speed = -110; takePrestige(mk); takePrestige(mk);
     if (master) p.members[0].skills = ['arms_master'];
-    return startCombat(p, [{ id: 'g', monsters: ['wolf', 'wolf', 'wolf'] }], rng).order.map((r) => (r.side === 'party' ? String(r.i) : 'm')).join('');
+    return startCombat(TABLES, p, [{ id: 'g', monsters: ['wolf', 'wolf', 'wolf'] }], rng).order.map((r) => (r.side === 'party' ? String(r.i) : 'm')).join('');
   };
   const led = monk(true), alone = monk(false);
   ok(/^3[0-5]{5}mmm$/.test(led) && /^3mmm[0-5]{5}$/.test(alone), `a monk of the second prestige acts first of all: before the rest of a company with an Arms Master, then the wolves; before the wolves without one (${led} / ${alone})`);
@@ -447,10 +449,10 @@ function perception(): void {
   const finds = (setup: (q: Party) => void, x: number, y: number): number => {
     let n = 0;
     for (let seed = 1; seed <= TRIES; seed++) {
-      const rng = makeRng(seed), q = defaultParty(rng);
+      const rng = makeRng(seed), q = defaultParty(TABLES, rng);
       for (const m of q.members) m.cls = 'knight';
       setup(q);
-      const w = new World({ fx_search: new GameMap(def) }, q, rng);
+      const w = new World(TABLES, { fx_search: new GameMap(def) }, q, rng);
       w.travel('fx_search', x, y, EAST);
       if (w.search() && w.map.at(3, y).door === 'door' && w.mapState.doors[`3,${y}`] === 'door') n++;
     }
@@ -499,11 +501,11 @@ function senses(): void {
     ] };
   /** A company of `race` on the map's start, `id` learnt by its first member, standing or down, on a clear day: what the automap marks. */
   const marked = (def: MapDef, race: RaceId, id: SkillId, how: 'none' | 'learnt' | 'down'): string => {
-    const rng = makeRng(29), q = defaultParty(rng);
+    const rng = makeRng(29), q = defaultParty(TABLES, rng);
     for (const m of q.members) m.race = race;
     if (how !== 'none') q.members[0].skills = [id];
     if (how === 'down') q.members[0].conditions.push('dead');
-    const w = new World({ [def.id]: new GameMap(def) }, q, rng);
+    const w = new World(TABLES, { [def.id]: new GameMap(def) }, q, rng);
     w.state.minutes = findWeather(w.state.weatherSeed!, w.state.minutes, CLIMATES.shelf, DAY);
     w.mapState.explored.fill(0);
     w.travel(def.id, def.start.x, def.start.y, def.start.facing);
@@ -534,12 +536,12 @@ function cartographer(): void {
   const chart: ItemDef = { id: 'fx_chart', name: 'A Chart', slot: 'none', price: 400, skill: 'cartographer' };
   const NIGHT = (_: unknown, m: number): boolean => daylightAt(m) < 0.1;
   /** How many squares west of the company the automap takes, for a company `how` on `def` at a time `when` finds. */
-  const reach = (def: MapDef, when: (wx: Parameters<typeof weatherSight>[0], m: number) => boolean, how: 'none' | 'learnt' | 'down' | 'chart'): number => {
-    const rng = makeRng(41), q = defaultParty(rng);
+  const reach = (def: MapDef, when: (wx: Parameters<typeof weatherSight>[0], m: number) => boolean, how: 'none' | 'learnt' | 'down' | 'chart', t: Tables = TABLES): number => {
+    const rng = makeRng(41), q = defaultParty(t, rng);
     if (how === 'learnt' || how === 'down') q.members[0].skills = ['cartographer'];
     if (how === 'down') q.members[0].conditions.push('dead');
     if (how === 'chart') q.members[3].pack.push(chart.id);
-    const w = new World({ [def.id]: new GameMap(def) }, q, rng);
+    const w = new World(t, { [def.id]: new GameMap(def) }, q, rng);
     w.state.minutes = findWeather(w.state.weatherSeed!, w.state.minutes, CLIMATES.shelf, when);
     w.mapState.explored.fill(0);
     w.travel(def.id, 5, 5, NORTH);
@@ -547,18 +549,19 @@ function cartographer(): void {
     while (d < 4 && w.explored(4 - d, 5)) d++;
     return d;
   };
-  withDefs(ITEMS, [chart], () => {
+  {
+    const lent = tablesWith([chart]);
     const hows = ['none', 'learnt', 'down', 'chart'] as const;
-    const row = (def: MapDef, when: Parameters<typeof reach>[1]): string => hows.map((h) => reach(def, when, h)).join('/');
+    const row = (def: MapDef, when: Parameters<typeof reach>[1]): string => hows.map((h) => reach(def, when, h, lent)).join('/');
     const day = row(open, DAY), night = row(open, NIGHT), under = row(hall, DAY);
     ok(day === '2/3/2/3' && night === '1/2/1/2' && under === '1/2/1/2',
       `a Cartographer standing, or a chart carried, maps a square further: on open ground by day ${day}, by night ${night}, in a dungeon ${under} (none / learnt / down / a chart)`);
     // West of 3,3 open floor, east a closed door, north an unfound secret door; facing the wall south.
     const doors: MapDef = { id: 'fx_chart_doors', name: 'Chart doors', kind: 'dungeon', region: 'shelf', start: { x: 3, y: 3, facing: SOUTH }, rows: ['#######', '###.###', '###S###', '#...D.#', '#######'] };
     const past = (learnt: boolean): string => {
-      const rng = makeRng(43), q = defaultParty(rng);
+      const rng = makeRng(43), q = defaultParty(lent, rng);
       if (learnt) q.members[0].skills = ['cartographer'];
-      const w = new World({ fx_chart_doors: new GameMap(doors) }, q, rng);
+      const w = new World(lent, { fx_chart_doors: new GameMap(doors) }, q, rng);
       w.mapState.explored.fill(0);
       w.travel('fx_chart_doors', 3, 3, SOUTH);
       return [[1, 3], [5, 3], [3, 1]].map(([x, y]) => (w.explored(x, y) ? 'mapped' : '-')).join('/');
@@ -566,7 +569,7 @@ function cartographer(): void {
     const sighted = past(true), blind = past(false);
     ok(sighted === 'mapped/-/-' && blind === '-/-/-',
       `the extra square follows sight: two squares off past open floor it is mapped, past a closed door and past an unfound secret door it is not (floor / door / secret door: ${sighted}; without the skill ${blind})`);
-  });
+  }
 }
 
 /**
@@ -580,8 +583,8 @@ function lockedChest(): void {
   const chest = { kind: 'chest', x: 2, y: 1, id: 'fx_locked', gold: 40, items: ['torch'], locked: true } as const satisfies Feature;
   const plain = { kind: 'chest', x: 2, y: 1, id: 'fx_plain', gold: 40, items: ['torch'] } as const satisfies Feature;
   /** For the company `setup` makes, stood on the chest and Space pressed twice: what is said, the gold gained, the keys left, and whether it is spent. */
-  const opens = (setup: (p: Party) => void, f: Extract<Feature, { kind: 'chest' }> = chest): string => {
-    const g = headlessGame(4), p = g.party;
+  const opens = (setup: (p: Party) => void, f: Extract<Feature, { kind: 'chest' }> = chest, t: Tables = TABLES): string => {
+    const g = headlessGame(4, undefined, t), p = g.party;
     g.maps.fx_coffer = new GameMap({ id: 'fx_coffer', name: 'Coffer', kind: 'dungeon', start: { x: 1, y: 1, facing: EAST }, rows: ['####', '#..#', '####'], features: [{ ...f, items: [...f.items] }] });
     setup(p);
     g.world.travel('fx_coffer', 2, 1, EAST);
@@ -593,7 +596,8 @@ function lockedChest(): void {
   };
   const thiefDown = (p: Party): void => { p.members[3].conditions.push('dead'); };
   const got = `You open the chest: 40 gold, ${ITEMS.torch.name}. The chest is empty. | 40`;
-  withDefs(ITEMS, [picks], () => {
+  {
+    const lent = tablesWith([picks]);
     const cases: [string, (p: Party) => void, string][] = [
       ['the thief standing, born to Lockpick, no key', () => undefined, `A locked chest. Ottilie picks the lock. ${got} | 0 | spent`],
       ['the thief standing, a key carried', (p) => { p.bag.push('key_iron'); }, `A locked chest. Ottilie picks the lock. ${got} | 1 | spent`],
@@ -602,14 +606,14 @@ function lockedChest(): void {
       ['the thief down, Lockpick learnt by the knight', (p) => { thiefDown(p); p.members[0].skills = ['lockpick']; }, `A locked chest. Bram picks the lock. ${got} | 0 | spent`],
       ['the thief down, a set of picks in the cleric\'s pack and a key', (p) => { thiefDown(p); p.members[4].pack.push(picks.id); p.bag.push('key_iron'); }, `A locked chest. Maren picks the lock. ${got} | 1 | spent`],
     ];
-    const wrong = cases.flatMap(([who, setup, want]) => { const said = opens(setup); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
+    const wrong = cases.flatMap(([who, setup, want]) => { const said = opens(setup, chest, lent); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
     ok(!wrong.length, `a locked chest opens to a Lockpick standing or a set of picks carried, keeping the key, or to a key, spent, and to nothing else: "Locked." (${cases.map(([who]) => who).join('; ')})${wrong.length ? ' -> ' + wrong.join('; ') : ''}`);
-  });
+  }
   const unlocked = opens((p) => { p.members[3].conditions.push('dead'); p.bag.push('key_iron'); }, plain);
   ok(unlocked === `A chest. Space opens it. ${got} | 1 | spent`, `a chest with no lock opens as before, the key untouched ("${unlocked}")`);
   // Skilled, as the world asks it: the thief standing, born to it; a set of picks, carried by one standing.
   const p = company();
-  ok(skilled(p, 'lockpick')?.name === 'Ottilie' && skilled(p, 'pathfinder')?.name === 'Wren' && !skilled(p, 'cartographer') && !skilled(p, 'merchant') && !skilled(p, 'navigator'),
+  ok(skilled(TABLES.items, p, 'lockpick')?.name === 'Ottilie' && skilled(TABLES.items, p, 'pathfinder')?.name === 'Wren' && !skilled(TABLES.items, p, 'cartographer') && !skilled(TABLES.items, p, 'merchant') && !skilled(TABLES.items, p, 'navigator'),
     'the premade six\'s thief picks its locks and its ranger finds its path, and nobody maps, sells or navigates for it');
 }
 

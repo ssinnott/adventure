@@ -11,7 +11,7 @@
 // are on the quay (#183). The Star That Moved (#56's 24): Hiske asks, and the pilots' slate goes to
 // her press or to Tallis (#183).
 // docs/areas/saltreach.md §4.9 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { FERRY, sells } from '../../../crossings.ts';

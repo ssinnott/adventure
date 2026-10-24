@@ -3,7 +3,7 @@
 // box's south, and a woodcutter's camp off the road. The rim closes the north, the crest the south
 // against the Deepthorn's I3; the road runs on out of the east edge for J2 and the bridge.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

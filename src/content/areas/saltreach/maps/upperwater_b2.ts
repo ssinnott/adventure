@@ -3,7 +3,7 @@
 // at the rim's foot and its trough, the mire below it with a bull toad in it and an eel come up the
 // Long Water to its head, a cairn where the valley turns and a beehive hut of dry stone with no door. Cut from the atlas by tools/scaffold.ts, its void
 // written in; docs/areas/saltreach.md §12 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

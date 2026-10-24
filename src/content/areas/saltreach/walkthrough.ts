@@ -51,7 +51,7 @@ import { STEPS as FORELAND_STEPS } from '../shelf/walkthrough.ts';
 import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
+import type { Feature, MapDef } from '../../../game/mapdef.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { restRefused, answerRiddle } from '../../../game/wilds.ts';
 import { buy, item, priceIn } from '../../../game/items.ts';
@@ -70,7 +70,7 @@ import { World } from '../../../game/world.ts';
 import { buildMaps } from '../../maps.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { ACT_II } from '../../../../tools/kit/rules/ladder.ts';
-import { MAP_DEFS, GUILD_QUESTS, THE_QUEST } from '../../index.ts';
+import { MAP_DEFS, GUILD_QUESTS, THE_QUEST, TABLES } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { businessEntries, ChoiceScreen } from '../../../ui/screens.ts';
 import { optionParts, columnLabelWidth } from '../../../ui/draw.ts';
@@ -311,7 +311,7 @@ function theNightLight(w: Walk): void {
     const m = greeting(NYNKE), a = m.choice?.answers.find((x) => x.label === (way === 'kept' ? 'Keep it, Nynke.' : 'We\'ll take it.'));
     ok(!!a, `asked, Nynke puts the choice, and '${a?.label}' is an answer (${m.choice?.ask ?? 'no question'})`);
     if (!a) continue;
-    answer(a, w.party);
+    answer(TABLES.items, a, w.party);
     if (way === 'kept') {
       ok(!!w.party.flags.q_nightlight_kept && !w.party.bag.includes('night_light') && !!log(w, 'nightlight')?.done, `kept: the light stays at her window, and The Night-Light is done (${entries()})`);
       ok(byNight().brine && byNight().glow, 'kept: the glass people still come to her window by night');
@@ -438,7 +438,7 @@ function picksAndChart(ok: (cond: boolean, msg: string) => void): void {
   ok(!/don't sell|sell no|sells no/i.test(PENDER.lines.join(' ')), 'and Pender no longer says he sells no picks');
 
   // Slotless, of the skill each does, inside the window: Saltreach's 2,000 gold.
-  const [picks, chart] = [item(SET_OF_PICKS), item(GUILD_CHART)];
+  const [picks, chart] = [item(TABLES.items, SET_OF_PICKS), item(TABLES.items, GUILD_CHART)];
   ok([picks, chart].every((d) => d.slot === 'none' && !d.use && d.price > 0 && d.price <= CURVE.saltreach.price) && picks.skill === 'lockpick' && picks.price === 750 && chart.skill === 'cartographer' && chart.price === 400,
     `a set of picks (Lockpick, ${picks.price} gold) and a chart (Cartographer, ${chart.price}), each slotless and inside Saltreach's window of ${CURVE.saltreach.price.toLocaleString('en-GB')} gold`);
 
@@ -456,12 +456,12 @@ function picksAndChart(ok: (cond: boolean, msg: string) => void): void {
   // Bought: the price shown and charged, the item in the bag, the gold gone.
   const bought = [SET_OF_PICKS, GUILD_CHART].map((id) => {
     const s = shopOf(id);
-    p.gold = priceIn(s, id);
+    p.gold = priceIn(TABLES.items, s, id);
     const rows = list(g, s, false), row = rows[s.stock.indexOf(id)] ?? '';
     drive(g, choose(s.stock.indexOf(id)));
     return { id, rows, row, left: p.gold, held: p.bag.includes(id) };
   });
-  ok(bought.every((b) => b.held && b.left === 0 && optionParts(b.row).label === item(b.id).name && optionParts(b.row).value === `${item(b.id).price}g`),
+  ok(bought.every((b) => b.held && b.left === 0 && optionParts(b.row).label === item(TABLES.items, b.id).name && optionParts(b.row).value === `${item(TABLES.items, b.id).price}g`),
     `each is bought from its shop's Buy list at its price, the gold given directly (${bought.map((b) => b.row.replace(/\t+/g, ' ').trim()).join('; ')})`);
 
   // The names fit the shops' rows: each Buy list's, and the Sell list's worst case, a member whose name is the longest of the widest letters.
@@ -494,13 +494,13 @@ function picksAndChart(ok: (cond: boolean, msg: string) => void): void {
   };
   const picker = company('', true).members.find((m) => !isDown(m))!.name;
   const [withPicks, withoutPicks, thiefStanding] = [opens(company('', true)), opens(company(SET_OF_PICKS, true)), opens(company(SET_OF_PICKS))];
-  ok(withPicks === `A locked chest. ${picker} picks the lock. You open the chest: 40 gold, ${item('torch').name}. | 40 | spent` && withoutPicks === 'A locked chest. Locked. | 0 | shut' && thiefStanding.includes(`${thief.name} picks the lock.`),
+  ok(withPicks === `A locked chest. ${picker} picks the lock. You open the chest: 40 gold, ${item(TABLES.items, 'torch').name}. | 40 | spent` && withoutPicks === 'A locked chest. Locked. | 0 | shut' && thiefStanding.includes(`${thief.name} picks the lock.`),
     `the picks bought open a locked chest that the same company without them, its thief down, cannot ("${withPicks}" against "${withoutPicks}"); its thief standing opens it born to it`);
 
   const hall: MapDef = { id: 'fx_chart_hall', name: 'Chart hall', kind: 'dungeon', region: 'shelf', start: { x: 5, y: 5, facing: NORTH }, rows: Array<string>(11).fill('...........') };
   /** How many squares west of the company the automap takes, standing in the middle of an open hall. */
   const sight = (q: Party): number => {
-    const rng = makeRng(41), world = new World({ [hall.id]: new GameMap(hall) }, q, rng);
+    const rng = makeRng(41), world = new World(TABLES, { [hall.id]: new GameMap(hall) }, q, rng);
     world.mapState.explored.fill(0);
     world.travel(hall.id, 5, 5, NORTH);
     let d = 0;
@@ -512,12 +512,12 @@ function picksAndChart(ok: (cond: boolean, msg: string) => void): void {
 
   // Bought back at half, by the shop that sold it, through its Sell list.
   const back = [SET_OF_PICKS, GUILD_CHART].map((id) => {
-    const s = shopOf(id), sell = list(g, s, true), at = sell.findIndex((r) => optionParts(r).label.startsWith(`${item(id).name} (`)), gold = p.gold;
+    const s = shopOf(id), sell = list(g, s, true), at = sell.findIndex((r) => optionParts(r).label.startsWith(`${item(TABLES.items, id).name} (`)), gold = p.gold;
     drive(g, choose(at));
     return { id, row: sell[at] ?? '', paid: p.gold - gold, gone: !p.bag.includes(id) };
   });
-  ok(back.every((b) => b.gone && b.paid === Math.floor(item(b.id).price / 2)) && back[0].paid === 375 && back[1].paid === 200,
-    `a shop buys either back at half: ${back.map((b) => `${item(b.id).name} for ${b.paid}`).join(' and ')} (${back.map((b) => b.row.replace(/\t+/g, ' ')).join('; ')})`);
+  ok(back.every((b) => b.gone && b.paid === Math.floor(item(TABLES.items, b.id).price / 2)) && back[0].paid === 375 && back[1].paid === 200,
+    `a shop buys either back at half: ${back.map((b) => `${item(TABLES.items, b.id).name} for ${b.paid}`).join(' and ')} (${back.map((b) => b.row.replace(/\t+/g, ' ')).join('; ')})`);
 
   // Pender's teaching is still his: from the shop's first menu, "Talk to" him, and his words close onto the Thief's offer.
   while (g.screens.length > 1) g.pop();
@@ -625,7 +625,7 @@ export const walkthrough: Walkthrough = (ok) => {
     w.world.travel('delta_c4', MASTER.x, MASTER.y);
     const m = meet(MASTER, w.party, heard(w.world, MASTER)), a = m.choice?.answers.find((x) => x.label === label);
     ok(!!a && passage().includes('Hessel'), `the master on the shoal asks, '${label}' is an answer, and the log has his barge (${m.choice?.ask ?? 'no question'})`);
-    if (a) answer(a, w.party);
+    if (a) answer(TABLES.items, a, w.party);
     ok(!!w.party.flags[flag] && !w.world.present(MASTER), `'${label}' sets ${flag}, and the barge is gone off the shoal`);
     ok(w.world.walks(CREW, CREW.x, CREW.y) === (flag === 'q_passage_freed'), `'${label}': a crew comes up the bank ${flag === 'q_passage_freed' ? 'after it' : 'only if they are freed'}`);
     // After, a way each: the shoal, Geeske on Saltmouth's quay, the boy home at Rietum and Hessel in port.
@@ -691,7 +691,7 @@ export const walkthrough: Walkthrough = (ok) => {
   for (let i = 0; i < 20 && !faceOpen; i++) faceOpen = w.world.search();
   const intoCache = faceOpen ? [w.world.move('forward'), w.world.move('forward')] : [];
   ok(faceOpen && intoCache.every((r) => r.kind === 'moved') && w.world.used('c3_cache'), 'searched from the clean stone, the quay\'s face opens on the old smuggler\'s cache');
-  ok(quayCache.kind === 'chest' && ['chain+1', 'smugglers_sword', 'stiletto+1', 'tidefolk_robe+1'].every((id) => quayCache.items.includes(id)), `in the cache, the smuggler's mail and sword and the ladder's Stiletto +1 and Tidefolk Robe +1 (${quayCache.kind === 'chest' ? quayCache.items.map((id) => item(id).name).join(', ') : ''})`);
+  ok(quayCache.kind === 'chest' && ['chain+1', 'smugglers_sword', 'stiletto+1', 'tidefolk_robe+1'].every((id) => quayCache.items.includes(id)), `in the cache, the smuggler's mail and sword and the ladder's Stiletto +1 and Tidefolk Robe +1 (${quayCache.kind === 'chest' ? quayCache.items.map((id) => item(TABLES.items, id).name).join(', ') : ''})`);
   listen(w);
 
   // The two second prestiges here, off the road: the old smuggler's Nightjar in the north fields
@@ -704,7 +704,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(trainers.every((f) => C3.encounters!.every((g) => Math.abs(g.x - f.x) + Math.abs(g.y - f.y) > 10)), 'and more than ten squares from any group, so no trainer\'s door is a fight\'s doorstep');
   const later = newWalk(ok).party;
   // The premade six have no monk; one joins for the look ahead.
-  if (!later.members.some((c) => c.cls === 'monk')) later.members[later.members.length - 1] = createCharacter('Sjoerd', 'human', 'monk', {}, makeRng(19));
+  if (!later.members.some((c) => c.cls === 'monk')) later.members[later.members.length - 1] = createCharacter(TABLES, 'Sjoerd', 'human', 'monk', {}, makeRng(19));
   for (const c of later.members) { c.xp = xpForLevel(19); c.level = 19; if (c.cls === 'thief' || c.cls === 'monk') takePrestige(c); }
   const marked = sought(questLog(w.world.state, later)).filter((p) => p.at === 'upperwater_c3');
   ok(['thief', 'monk'].every((cls) => marked.some((p) => p.who.includes(later.members.find((c) => c.cls === cls)!.name))), `at 19 the thief and the monk are sent to Rietum's box (${marked.map((p) => p.who).join(', ')})`);
@@ -804,7 +804,7 @@ export const walkthrough: Walkthrough = (ok) => {
   };
   const silver = L2.features!.find((f) => f.kind === 'chest' && f.id === 'dt2_silver')!;
   ok(reachL2({ x: 14, y: 1 }, silver) && !reachL2(L2.start, silver), 'the god\'s silver is reached from the far roof\'s stair, and not from the choir\'s, even by a swimmer');
-  ok(silver.kind === 'chest' && ['silver_mace', 'tide_symbol'].every((id) => silver.items.includes(id)), `in the sacristy, the Silver Mace +1 and the Holy Symbol of the Tide (${silver.kind === 'chest' ? silver.items.map((id) => item(id).name).join(', ') : ''})`);
+  ok(silver.kind === 'chest' && ['silver_mace', 'tide_symbol'].every((id) => silver.items.includes(id)), `in the sacristy, the Silver Mace +1 and the Holy Symbol of the Tide (${silver.kind === 'chest' ? silver.items.map((id) => item(TABLES.items, id).name).join(', ') : ''})`);
   see(w, 'drowned_temples2:dt2_pool');
   walkThrough(w, 'drowned_temples2', 14, 2, NORTH, 'delta_b6', 2);
   ok(w.world.zone?.id === 'delta_b6' && w.world.state.x - w.world.zone.x === 8 && w.world.state.y - w.world.zone.y === 22, 'and back up the wet stair, the company stands on the far roof\'s ledge');
@@ -859,7 +859,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(hung.includes('Eleven') && hung.includes('Bring the Stone home') && sung.includes('singing the tide down') && !sung.includes('Eleven'), 'after, the priestess asks for the Stone home; with it home, the god sings and she is done counting');
   const endurance = w.party.members.map((m) => m.stats.endurance);
   kneel(w, 'drowned_temples:dt1_bell');
-  ok(w.party.members.every((m, i) => m.stats.endurance === endurance[i] + 1 && resists(m).includes('cold')), 'and kneeling at it, the Tidefolk\'s blessing: a point of Endurance to each of the company, and the cold kept off');
+  ok(w.party.members.every((m, i) => m.stats.endurance === endurance[i] + 1 && resists(TABLES.items, m).includes('cold')), 'and kneeling at it, the Tidefolk\'s blessing: a point of Endurance to each of the company, and the cold kept off');
   const rested = structuredClone(w.party.members);
   for (const m of rested) rest(m);
   ok(rested.every((m, i) => m.stats.endurance === endurance[i] + 1 && !m.blessed.length), 'until the next rest; the point stays');
@@ -908,7 +908,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const rung = ACT_II.find((r) => r.level === 11)!;
   ok(w.party.members.every((m) => rung.classes[m.cls].every((id) => armourer.stock.includes(id))), 'the armourer sells each of the company\'s classes its step at 11');
   w.party.gold = 20000;
-  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, armourer, id), `${m.name} buys a ${item(id).name} from the armourer`);
+  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(TABLES.items, w.party, armourer, id), `${m.name} buys a ${item(TABLES.items, id).name} from the armourer`);
   const loft = ofKind(TOWN, 'trainer')[0];
   const ottilie = w.party.members.find((m) => m.cls === 'thief')!;
   ottilie.level = 12; ottilie.xp = xpForLevel(13);
@@ -932,21 +932,21 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!!room && room.interior === 'cartographers_room', `the map room is the Cartographers' hall (${room?.name})`);
   const first = offered('cartographers', w.party);
   ok(rankOf('cartographers', w.party) === 0 && first.length === 1 && first[0].id === 'carto_chain', `a stranger is offered the first task alone (${first.map((q) => q.title).join(', ')})`);
-  ok(!takeWork(first[0], w.world.state, w.party).length, 'the first task is not paid on taking, though the company walked past both stones on the way in');
+  ok(!takeWork(TABLES, first[0], w.world.state, w.party).length, 'the first task is not paid on taking, though the company walked past both stones on the way in');
   const chain = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'carto_chain');
   ok(/Kestrel Edge/.test(chain()?.goal ?? ''), `the log sends the company back up the road (${chain()?.goal})`);
   see(w, 'delta_d5:d5_milestone');
   ok(/Saltings/.test(chain()?.goal ?? ''), `the chain begins at the stone under the Edge (${chain()?.goal})`);
   see(w, 'saltings_c6:c6_milestone');
   ok(/Map Room/.test(chain()?.goal ?? ''), `and holds to the stone in the Saltings (${chain()?.goal})`);
-  const paid = report('cartographers', w.world.state, w.party);
+  const paid = report(TABLES, 'cartographers', w.world.state, w.party);
   ok(rankOf('cartographers', w.party) === 1 && paid.at(-1) === `Your rank with the Cartographers' Guild is now ${rankName('cartographers', 1)}.` && !!chain()?.done, `the Map Room pays the chain and makes the company Chainmen (${paid.join(' | ').replace(/\n+/g, ' ')})`);
   const rank1 = offered('cartographers', w.party);
   ok(rank1.length === 2 && rank1.every((q) => q.rank === 1), `a Chainman is offered the first rank's two quests (${rank1.map((q) => q.title).join(', ')})`);
-  for (const q of rank1) takeWork(q, w.world.state, w.party);
+  for (const q of rank1) takeWork(TABLES, q, w.world.state, w.party);
   see(w, 'delta_b5:b5_west');
   see(w, 'saltings_c6:c6_hut');
-  report('cartographers', w.world.state, w.party);
+  report(TABLES, 'cartographers', w.world.state, w.party);
   ok(rankOf('cartographers', w.party) === 2 && rank1.every((q) => questLog(w.world.state, w.party).find((v) => v.def.id === q.id)?.done), `the fen's edge and the west arm found and reported make the company ${rankName('cartographers', 2)}s`);
   // Ysolde reads the first Meridian journal to a company that carries it, and gives it back.
   const ysolde = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Ysolde'))!;
@@ -967,25 +967,25 @@ export const walkthrough: Walkthrough = (ok) => {
   const work = (): string => offered('compact', w.party).map((q) => q.id).join(', ');
   ok(work() === 'compact_run' && fareOf(boat, w.world) === 150, `a stranger is offered the run alone (${work()}), and pays the boat's whole fare`);
   const run = GUILD_QUESTS.find((q) => q.id === 'compact_run')!;
-  takeWork(run, w.world.state, w.party);
+  takeWork(TABLES, run, w.world.state, w.party);
   const clerk = C6.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'the warehouse clerk')!;
   w.world.travel('saltings_c6', clerk.x, clerk.y + 1, NORTH);
   const sent = meet(clerk, w.party, heard(w.world, clerk));
   ok(!!sent.choice && sent.text.includes('The Keel sent you'), `the warehouse clerk has the cask for the Keel (${sent.text})`);
-  answer(sent.choice!.answers[0], w.party);
+  answer(TABLES.items, sent.choice!.answers[0], w.party);
   ok(w.party.bag.includes('brandy_cask'), 'and hands it over');
-  ok(report('compact', w.world.state, w.party).length === 0, 'the cask carried straight in is not the run: the hall pays nothing yet');
+  ok(report(TABLES, 'compact', w.world.state, w.party).length === 0, 'the cask carried straight in is not the run: the hall pays nothing yet');
   w.world.travel('saltmouth', 4, 13, WEST);
   const passed = w.world.eventsHere();
   ok(passed.some((t) => t.includes('customs house door stays shut')), `carried the long way, past the customs house door (${passed.join(' ')})`);
-  const runPaid = report('compact', w.world.state, w.party);
+  const runPaid = report(TABLES, 'compact', w.world.state, w.party);
   ok(rankOf('compact', w.party) === 1 && !w.party.bag.includes('brandy_cask') && runPaid.at(-1) === 'Your rank with the Salt Compact is now Runner.', `the hall takes the cask and the company is a Runner (${runPaid.join(' | ').replace(/\n+/g, ' ')})`);
   ok(questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_run')?.done === true, 'and the log has the run finished');
   ok(fareOf(boat, w.world) === 75, 'a member pays half the boat\'s fare, never more');
   ok(work() === 'compact_crate, compact_lookout', `a Runner is offered the first rank's two (${work()})`);
   // The first rank's crate, walked in the log: taken, the crate opened on C6's quay, reported.
   const crateWork = GUILD_QUESTS.find((q) => q.id === 'compact_crate')!;
-  takeWork(crateWork, w.world.state, w.party);
+  takeWork(TABLES, crateWork, w.world.state, w.party);
   const crateGoal = (): string => questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.goal ?? '';
   ok(crateGoal().includes('Open a crate'), `the log sends the company to the crews' crate (${crateGoal()})`);
   // Opened as the game opens a chest: its gold and the Scale Mail to the party, and spent.
@@ -994,7 +994,7 @@ export const walkthrough: Walkthrough = (ok) => {
   if (crate?.kind === 'chest') { w.world.markUsed(crate.id); w.party.gold += crate.gold; w.party.bag.push(...crate.items); }
   ok(w.party.bag.includes('scale+1'), 'and in it the Scale Mail +1');
   ok(crateGoal().includes('Report to the Keel'), `opened, the log sends it back to the Keel (${crateGoal()})`);
-  ok(report('compact', w.world.state, w.party).length > 0 && questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.done === true, 'and the Keel pays for it');
+  ok(report(TABLES, 'compact', w.world.state, w.party).length > 0 && questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.done === true, 'and the Keel pays for it');
 
   // The secret way down: the sawdust trodden out along the Keel's end wall, the search, and the
   // cellar's passage out under C6's sea wall, by the rope, the stair's own secret still to find.
@@ -1016,7 +1016,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(out.taken && w.party.gold === 125 && w.world.zone?.id === 'wrackholm_e6' && w.world.state.x - w.world.zone.x === 16 && w.world.state.y - w.world.zone.y === 15, `the boat from Saltmouth's quay lands the company on Wrackholm's stage for 75 gold, a member's fare (${out.lines.join(' ')})`);
   ok(Math.floor(w.world.state.minutes / MINUTES_PER_DAY) > day && w.world.hour === 6, `and the calendar has moved: it lands at ${w.world.hour}:00 the next day`);
   const saved = deserialize(serialize(w.world.state, w.party, 0));
-  const loaded = new World(buildMaps(), saved.party, makeRng(1), saved.world);
+  const loaded = new World(TABLES, buildMaps(), saved.party, makeRng(1), saved.world);
   ok(loaded.zone?.id === 'wrackholm_e6' && loaded.state.minutes === w.world.state.minutes, 'a save made on the isle loads there');
   const back = MAP_DEFS.find((d) => d.id === 'wrackholm_e6')!.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)?.passage?.[0];
   w.party.gold = 75;
@@ -1374,7 +1374,7 @@ function afterTheHeart(ok: (cond: boolean, msg: string) => void): void {
     w.party.bag.push('meridian_journal');
     w.world.travel('saltmouth', ruan.x, ruan.y);
     const over = meet(ruan, w.party, heard(w.world, ruan)).choice?.answers.find((a) => a.label === 'Take the Compact over.');
-    if (over) answer(over, w.party);
+    if (over) answer(TABLES.items, over, w.party);
     const read = hear(w, 'saltmouth', ysolde), now = [hear(w, 'saltmouth', ruan), hear(w, 'saltmouth', ysolde)];
     ok(!!over && !!w.party.flags.q_compact_over && read.includes('Fane\'s hand. Volume one.') && !!w.party.flags.meridian_read && now[0].startsWith(WORDS.q_end_arrive[0]) && now[1].startsWith(WORDS.q_end_arrive[1]),
       `after an ending Ruan still puts the Compact's question and Ysolde still reads the journal, and then each has the ending's word (${now.map((s) => s.slice(0, 24)).join(' / ')})`);

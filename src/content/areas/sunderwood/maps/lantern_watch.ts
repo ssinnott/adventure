@@ -6,7 +6,7 @@
 // Watch's Reader, sits in his room; Wouter Brink of the Cartographers sights the gorge from the west
 // wall. By day, once the papers are read and the wall touched, Vask waits at the gate (#204).
 // docs/areas/sunderwood.md §4.8 is its brief.
-import type { MapDef, Words } from '../../../../game/map.ts';
+import type { MapDef, Words } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { LAMP_LIT, WALL_WALKED } from '../quests.ts';

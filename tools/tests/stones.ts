@@ -3,11 +3,11 @@
 // from the save's flags alone, and the almanac, the title and the night sky read the count.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { ATLAS } from '../../src/content/index.ts';
+import { ATLAS, TABLES } from '../../src/content/index.ts';
 import { STONES, WHOLE } from '../../src/content/stones.ts';
 import { World } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { save } from '../../src/game/save.ts';
@@ -30,7 +30,7 @@ export function stones(): void {
   }
 
   // The count is read from the flags: the Grove's end alone is not its mending.
-  const rng = makeRng(168), party = defaultParty(rng), world = new World(buildMaps(), party, rng);
+  const rng = makeRng(168), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng);
   const plain = world.almanac().split('\n')[0];
   party.flags.q_grove_done = 1;
   ok(stonesRestored(world.state, party) === 0 && world.stones === 0 && world.almanac().split('\n')[0] === plain, `the Grove's end restores nothing, and the almanac says only the day ("${plain}")`);
@@ -53,7 +53,7 @@ export function stones(): void {
   ok(world.stones === 3, 'a tear closed before the thane was spoken to counts too: the choice is how the Stone came to the company, not what restores it');
   // The Ember Stone counts once it is lit (#548), its three parts set in the sockets (docs/areas/ashfall.md §9): the Stone's dungeon sets
   // the flag as it lights (#516), and a company that has not lit it has not restored it, whatever else it holds. It shuts nothing before it.
-  const unlit = world.stones, alone = defaultParty(makeRng(548));
+  const unlit = world.stones, alone = defaultParty(TABLES, makeRng(548));
   party.flags.q_ember_lit = 1; alone.flags.q_ember_lit = 1;
   ok(unlit === 3 && world.stones === 4 && steadier(4) !== steadier(3) && world.almanac().split('\n')[0] === `${plain} ${steadier(4)}`,
     `the Ember Stone counts once it is lit and not before, and the almanac says the Hearth hardly wavers ("${steadier(4)}")`);
@@ -68,7 +68,7 @@ export function stones(): void {
     id: 'fx_ashfall', name: 'Fixture', kind: 'outdoor', region: 'shelf', start: { x: 2, y: 3, facing: NORTH }, rows: Array.from({ length: 5 }, () => ','.repeat(5)),
     encounters: [{ id: 'fx_sentries', ...at, monsters: [sentry, sentry], roams: false, after: lit }],
   };
-  const camp = defaultParty(makeRng(548)), fx = new World({ [field.id]: new GameMap(field) }, camp, makeRng(548));
+  const camp = defaultParty(TABLES, makeRng(548)), fx = new World(TABLES, { [field.id]: new GameMap(field) }, camp, makeRng(548));
   const stands = (): boolean => fx.liveGroups().some((g) => g.def.id === 'fx_sentries' && g.state.dead === -1 && g.state.x === at.x && g.state.y === at.y);
   ok(!!lit && !presenceFaults(field).length, 'a sentry group\'s `after` names the Stone\'s flag, which a box may write before the Stone\'s dungeon sets it');
   ok(!stands() && !fx.adjacentGroups().length && !fx.groupAt(at.x, at.y), 'the sentries are not on the box before the Stone is lit: not drawn, in the way or fought');

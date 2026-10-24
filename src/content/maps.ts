@@ -1,7 +1,7 @@
 // The maps as played. Kept apart from the tables in ./index.ts, so what imports an item or a monster
 // does not lay out the whole outdoors.
 import { GameMap } from '../game/map.ts';
-import type { PlayedDef } from '../game/map.ts';
+import type { PlayedDef } from '../game/mapdef.ts';
 import { layOutdoors } from '../game/outdoors.ts';
 import { worldGrid } from '../game/atlas.ts';
 import type { WorldGrid } from '../game/atlas.ts';

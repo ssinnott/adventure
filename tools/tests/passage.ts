@@ -8,7 +8,7 @@
 // both ends land, and never toward a place not built.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Passage } from '../../src/game/map.ts';
+import type { MapDef, Passage } from '../../src/game/mapdef.ts';
 import { NORTH, EAST } from '../../src/game/types.ts';
 import { World, MINUTES_PER_DAY } from '../../src/game/world.ts';
 import { defaultParty, isDown } from '../../src/game/party.ts';
@@ -17,7 +17,7 @@ import { clock } from '../../src/game/calendar.ts';
 import { departure, arrival, take, terms, offerLine, payLabel, fareOf } from '../../src/game/passage.ts';
 import { zoneEdges } from '../../src/game/atlas.ts';
 import type { Atlas, LinkKind } from '../../src/game/atlas.ts';
-import { ATLAS, MAP_DEFS } from '../../src/content/index.ts';
+import { ATLAS, MAP_DEFS, TABLES } from '../../src/content/index.ts';
 import { CROSSINGS, sells } from '../../src/content/crossings.ts';
 import type { Crossing, CrossingEnd } from '../../src/content/crossings.ts';
 import { landings } from '../kit/rules/gate.ts';
@@ -137,8 +137,8 @@ export function passage(): void {
   ok(arrival(BOAT, at(1, 7)) === at(2, 6) && arrival(BOAT, at(1, 21)) === at(3, 6) && arrival(COACH, at(1, 5)) === at(3, 18), 'and lands at 06:00 the next day; a coach that leaves at 06:00 for two days lands on the third at 18:00');
 
   const maps = (): Record<string, GameMap> => Object.fromEntries([PORT, ISLE, TOWN].map((d) => [d.id, new GameMap(d)]));
-  const rng = makeRng(164), party = defaultParty(rng);
-  const world = new World(maps(), party, rng);
+  const rng = makeRng(164), party = defaultParty(TABLES, rng);
+  const world = new World(TABLES, maps(), party, rng);
   world.state.minutes = at(1, 7);
   party.gold = 200;
   const food = party.food, hurt = party.members[0], dead = party.members[1];
@@ -170,7 +170,7 @@ export function passage(): void {
 
   // A save made on the isle loads there.
   const data = deserialize(serialize(world.state, party, 0));
-  const loaded = new World(maps(), data.party, makeRng(1), data.world);
+  const loaded = new World(TABLES, maps(), data.party, makeRng(1), data.world);
   ok(loaded.state.mapId === 'fx_isle' && loaded.state.x === 2 && loaded.state.minutes === at(2, 6) && data.party.gold === 50, 'a save made on the isle loads there, on the day it landed');
 
   // Half once its `half` holds, and free once its `free` does: the fare cut or waived, never the boat.
@@ -235,14 +235,14 @@ export function passage(): void {
 
   // Bought at either end: the fare paid, the clock run to the landing, and a save made there loads there.
   const towns = (): Record<string, GameMap> => Object.fromEntries([HAVEN, LODGE].map((d) => [d.id, new GameMap(d)]));
-  const crng = makeRng(539), company = defaultParty(crng), road = new World(towns(), company, crng);
+  const crng = makeRng(539), company = defaultParty(TABLES, crng), road = new World(TABLES, towns(), company, crng);
   const coachman = (d: MapDef): Passage => d.features!.flatMap((f) => (f.kind === 'npc' ? f.passage ?? [] : []))[0];
   road.state.minutes = at(1, 7);
   company.gold = 600;
   const up = take(coachman(HAVEN), road, company);
   ok(up.taken && road.state.mapId === 'fx_lodge' && road.state.x === 1 && road.state.y === 1 && road.state.facing === EAST && company.gold === 350 && road.state.minutes === at(3, 12),
     `bought at Haven at 07:00, the coach leaves at 06:00 the next day and sets the company down at Lodge a day on, at 12:00 (day ${road.day}, ${road.hour}:00, ${company.gold} gold left)`);
-  const kept = deserialize(serialize(road.state, company, 0)), back = new World(towns(), kept.party, makeRng(1), kept.world);
+  const kept = deserialize(serialize(road.state, company, 0)), back = new World(TABLES, towns(), kept.party, makeRng(1), kept.world);
   ok(back.state.mapId === 'fx_lodge' && back.state.x === 1 && back.state.y === 1 && back.state.minutes === at(3, 12) && kept.party.gold === 350, 'a save made at Lodge loads there, on the day it landed');
   const down = take(coachman(LODGE), road, company);
   ok(down.taken && road.state.mapId === 'fx_haven' && road.state.x === 1 && road.state.y === 1 && company.gold === 100 && road.state.minutes === at(5, 12),
@@ -250,12 +250,12 @@ export function passage(): void {
   // And to a zone: on the box's map, its calendar moved, and a save made there loads there.
   const E6 = MAP_DEFS.find((d) => d.id === 'wrackholm_e6')!;
   const steppe = (): Record<string, GameMap> => ({ fx_haven: new GameMap(HAVEN), wrackholm_e6: new GameMap(E6) });
-  const rider = new World(steppe(), company, crng);
+  const rider = new World(TABLES, steppe(), company, crng);
   rider.state.minutes = at(1, 7);
   company.gold = 300;
   const told = terms(riding, rider);
   ok(told.startsWith('The Riders ride at 14:00 and come in the next day at 09:00.'), `a Rider's horse has terms of its own ("${told}")`);
-  const rode = take(riding, rider, company), held = deserialize(serialize(rider.state, company, 0)), camp = new World(steppe(), held.party, makeRng(1), held.world);
+  const rode = take(riding, rider, company), held = deserialize(serialize(rider.state, company, 0)), camp = new World(TABLES, steppe(), held.party, makeRng(1), held.world);
   ok(rode.taken && camp.state.mapId === 'wrackholm_e6' && camp.state.x === 16 && camp.state.y === 15 && camp.state.minutes === at(2, 9) && held.party.gold === 100,
     `bought at Haven at 07:00, the horse sets the company down on the camp's box the next day at 09:00, and a save made there loads there (day ${camp.day}, ${camp.hour}:00, ${held.party.gold} gold left)`);
 

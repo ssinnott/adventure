@@ -27,7 +27,7 @@ import { GROUND_SAMPLES } from './kit/grounds.ts';
 import { waysOut, entrance } from './kit/ways.ts';
 import { GameMap } from '../src/game/map.ts';
 import { mapAt } from '../src/game/atlas.ts';
-import type { MapDef } from '../src/game/map.ts';
+import type { MapDef } from '../src/game/mapdef.ts';
 import { FACING_DX, FACING_DY } from '../src/game/types.ts';
 import type { Facing } from '../src/game/types.ts';
 import { weatherAt, classify } from '../src/game/weather.ts';

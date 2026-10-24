@@ -5,7 +5,7 @@
 // warlord's chamber, his bones on a bier and Grim's Axe with them; in the wall behind the bier one stone
 // cut with a smoking mountain, and behind it the war-band's offerings walled into a niche. One level,
 // band 30-32; docs/areas/ashfall.md §12.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 

@@ -9,7 +9,7 @@
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
 import type { Action } from '../../input.ts';
-import type { Feature } from '../map.ts';
+import type { Feature } from '../mapdef.ts';
 import type { Party } from '../party.ts';
 import { FACING_DX, FACING_DY } from '../types.ts';
 import * as passage from '../passage.ts';

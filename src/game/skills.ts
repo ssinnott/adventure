@@ -14,7 +14,7 @@ import type { GuildId } from '../content/guilds.ts';
 import type { Character, Party, RaceId, ClassId } from './party.ts';
 import { isDown, countItem } from './party.ts';
 import { rankOf } from './ranks.ts';
-import { ITEMS } from '../content/index.ts';
+import type { Items } from './tables.ts';
 
 export type SkillId = 'linguist' | 'mountaineer' | 'swimmer' | 'perception' | 'spirit_sense' | 'danger_sense' | 'arms_master'
   | 'cartographer' | 'pathfinder' | 'lockpick' | 'merchant' | 'navigator';
@@ -79,11 +79,11 @@ export const skillNames = (c: Pick<Character, 'skills' | 'race' | 'cls'>): strin
  * an item that does it is carried (`ItemDef.skill`), the first standing member with one in the pack,
  * else the first standing member. Nobody, if none of that holds.
  */
-export function skilled(party: Party, id: SkillId): Character | undefined {
+export function skilled(items: Items, party: Party, id: SkillId): Character | undefined {
   const up = party.members.filter((m) => !isDown(m));
   const has = up.find((m) => hasSkill(m, id));
   if (has) return has;
-  const doers = Object.values(ITEMS).filter((i) => i.skill === id).map((i) => i.id);
+  const doers = Object.values(items).filter((i) => i.skill === id).map((i) => i.id);
   if (!doers.some((it) => countItem(party, it) > 0)) return undefined;
   return up.find((m) => m.pack.some((it) => doers.includes(it))) ?? up[0];
 }

@@ -36,6 +36,7 @@ import { item } from './items.ts';
 import type { ItemDef } from './items.ts';
 import { spell } from './spells.ts';
 import type { SpellDef, SpellTarget } from './spells.ts';
+import type { Items } from './tables.ts';
 
 /**
  * A company must rest once anyone in it is under this share of their hit points after mending, or it
@@ -248,7 +249,7 @@ export const letsLie = (p: Party, opts: Readonly<BotOpts>): boolean => !!opts.sl
 export function blessWith(s: CombatState, p: Party, i: number): SpellDef | undefined {
   if (s.round !== 1 || s.bless > 0 || aliveMonsters(s).length < 3) return undefined;
   const bless = (m: Character): SpellDef | undefined => m.spells.map(spell).find((x) => x.buff === 'bless' && x.context !== 'explore' && m.sp - x.sp >= m.maxSp * REST_AT);
-  const idle = (j: number): boolean => !canAttackFromRow(p.members[j], j);
+  const idle = (j: number): boolean => !canAttackFromRow(s.tables.items, p.members[j], j);
   const later = s.order.slice(s.turn + 1).some((t) => t.side === 'party' && idle(t.i) && canAct(p.members[t.i]) && p.members[t.i].level >= FIRST_PAST_ACT_I && !!bless(p.members[t.i]));
   return idle(i) || !later ? bless(p.members[i]) : undefined;
 }
@@ -285,11 +286,11 @@ export function sleepWith(s: CombatState, c: Character, sees: Sees = asWritten, 
  */
 export function striker(s: CombatState, p: Party, i: number): boolean {
   const foes = aliveMonsters(s);
-  return p.members.some((m, j) => j !== i && canAct(m) && canAttackFromRow(m, j) && foes.some((f) => canReach(s, m, f)));
+  return p.members.some((m, j) => j !== i && canAct(m) && canAttackFromRow(s.tables.items, m, j) && foes.some((f) => canReach(s, m, f)));
 }
 
 /** What a member can drink or give in a fight: its pack's draughts, then the company's bag's, as the resolver takes them. */
-const draughts = (p: Party, c: Character): ItemDef[] => [...c.pack, ...p.bag].map(item).filter((d) => d.use);
+const draughts = (items: Items, p: Party, c: Character): ItemDef[] => [...c.pack, ...p.bag].map((id) => item(items, id)).filter((d) => d.use);
 
 /**
  * The bots' drink (#853): where no member who can act could mend them, a healing draught for the
@@ -299,7 +300,7 @@ const draughts = (p: Party, c: Character): ItemDef[] => [...c.pack, ...p.bag].ma
  */
 export function drinkFor(s: CombatState, p: Party, c: Character, sees: Sees = asWritten, answer: BotAnswer = ANSWER): PartyAction | undefined {
   const can = (does: (x: SpellDef) => boolean): boolean => p.members.some((o) => canAct(o) && o.spells.map(spell).some((x) => x.context !== 'explore' && x.sp <= o.sp && does(x)));
-  const lines = mendLines(s, p, sees, answer), held = draughts(p, c);
+  const lines = mendLines(s, p, sees, answer), held = draughts(s.tables.items, p, c);
   const low = p.members.map((m, j) => ({ m, j })).filter(({ m, j }) => !isDown(m) && m.hp < lines[j]).sort((a, b) => a.m.hp - b.m.hp)[0];
   if (low && !can((x) => !!x.heal && !x.raise)) {
     const heals = held.filter((d) => d.use?.heal).sort((a, b) => a.use!.heal! - b.use!.heal!);
@@ -350,7 +351,7 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   if (blast && (a = took({ type: 'cast', spellId: blast.id, target: aim }))) return a;
   const drink = o.drink ? drinkFor(s, p, c, sees, answer) : undefined;
   if (drink && (a = took(drink))) return a;
-  if (canAttackFromRow(c, i) && (a = took({ type: 'attack', target: blade }))) return a;
+  if (canAttackFromRow(s.tables.items, c, i) && (a = took({ type: 'attack', target: blade }))) return a;
   const brace: PartyAction = { type: 'defend' };
   partyAct(s, p, rng, brace);
   return brace;

@@ -11,7 +11,7 @@
 // north at 18,0 into I9 (#503), Sheer Point's. The Stair west at 0,20 runs on into Ashfall's H10 (#510,
 // built); the east edge is the range against J10's (#508).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.5 is its brief.
-import type { MapDef, Choice } from '../../../../game/map.ts';
+import type { MapDef, Choice } from '../../../../game/mapdef.ts';
 import type { When } from '../../../../game/quests.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

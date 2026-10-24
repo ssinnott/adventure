@@ -5,7 +5,7 @@
 // where an inspector and its deep knocker keep the mouth: the farthest and the hardest.
 // Band 27-28, a band over F12's 25-26, out of the area's figures; its brief is
 // docs/areas/ashfall.md §12.3.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

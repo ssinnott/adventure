@@ -12,7 +12,7 @@
 // (I8, #504); until it is built the world ends past the north edge, as past the west (H9) and the east
 // (J9, Loch Fuar's peaks).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

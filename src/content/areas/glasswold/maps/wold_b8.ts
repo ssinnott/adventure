@@ -9,7 +9,7 @@
 // The way up Kushtash is the scree on its rim side, stepped by hand, and a ledge from the steps' head.
 // The Scarp's lip along the north edge and the rim down the west; B9 (#530) to the south is not built.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/glasswold.md §4.7 is its brief (#529).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

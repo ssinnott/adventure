@@ -8,7 +8,7 @@
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
 import type { Action } from '../../input.ts';
-import type { Feature } from '../map.ts';
+import type { Feature } from '../mapdef.ts';
 import type { Character, Party } from '../party.ts';
 import { armorClass, canTrain, canTrainAt, hasCondition, isDown, PRESTIGES, templePrice, trainPrice, weaponOf } from '../party.ts';
 import { hits, item, priceIn } from '../items.ts';
@@ -24,6 +24,7 @@ import { routeLengths, routeMaps } from './route.ts';
 import type { Goal } from './route.ts';
 import type { Brain, Pilot } from './pilot.ts';
 import { reserve, spare } from './purse.ts';
+import type { Items } from '../tables.ts';
 
 export { reserve, spare };
 
@@ -117,14 +118,14 @@ const raise = (p: Party): Character | undefined =>
  * `gold` is what the company may spend on it, its gold over the reserve (`spare`). Undefined when
  * nothing within the gold betters what it wears.
  */
-export function better(c: Character, stock: readonly string[], shop: Shop, gold: number): string | undefined {
-  const held = weaponOf(c), ac = armorClass(c);
+export function better(items: Items, c: Character, stock: readonly string[], shop: Shop, gold: number): string | undefined {
+  const held = weaponOf(items, c), ac = armorClass(items, c);
   let best: string | undefined, most = 0, cost = Infinity;
   for (const id of stock) {
-    const d = item(id), price = priceIn(shop, id);
+    const d = item(items, id), price = priceIn(items, shop, id);
     if (price > gold || d.slot === 'none' || (d.classes && !d.classes.includes(c.cls))) continue;
     if (d.slot === 'weapon' ? !!d.ranged !== !!held.ranged || (!!d.twoHanded && !!c.equipment.shield) : d.slot === 'shield' && !!held.twoHanded) continue;
-    const gain = d.slot === 'weapon' ? hits(d) - hits(held) : armorClass({ ...c, equipment: { ...c.equipment, [d.slot]: id } }) - ac;
+    const gain = d.slot === 'weapon' ? hits(d) - hits(held) : armorClass(items, { ...c, equipment: { ...c.equipment, [d.slot]: id } }) - ac;
     if (gain > most || (gain === most && gain > 0 && price < cost)) { best = id; most = gain; cost = price; }
   }
   return best;
@@ -141,7 +142,7 @@ export function needs(g: Game, k: Known = knownOf(g)): Need[] {
   if (restless(p)) out.push('rest');
   if (hungry(p)) out.push('food');
   if (ready(p)) out.push('train');
-  if (shops(k).length) out.push('gear');
+  if (shops(g.tables.items, k).length) out.push('gear');
   return out;
 }
 
@@ -164,21 +165,21 @@ function seen(k: Known, ok: (f: Feature) => boolean, reason: string): Spot[] {
  * for one standing that the gold over the reserve buys (`better`), or one not looked in yet while the
  * gold over the reserve is as much again as the reserve, to look.
  */
-function shops(k: Known): Spot[] {
+function shops(items: Items, k: Known): Spot[] {
   const p = k.party, cash = spare(p);
   return seen(k, (f) => f.kind === 'shop', '').flatMap((s): Spot[] => {
     const f = s.f as Shop;
     if (!f.stock.length) return cash >= reserve(p) ? [{ ...s, reason: 'a look at the stock' }] : [];
     for (const c of p.members) {
-      const id = fallen(c) ? undefined : better(c, f.stock, f, cash);
-      if (id) return [{ ...s, reason: `${item(id).name} for ${c.name}` }];
+      const id = fallen(c) ? undefined : better(items, c, f.stock, f, cash);
+      if (id) return [{ ...s, reason: `${item(items, id).name} for ${c.name}` }];
     }
     return [];
   });
 }
 
 /** Where `n` is met, in groups in the order tried (a camp before an inn), each spot with its reason. */
-function spots(k: Known, n: Need): Spot[][] {
+function spots(items: Items, k: Known, n: Need): Spot[][] {
   const p = k.party;
   switch (n) {
     case 'temple': {
@@ -186,12 +187,12 @@ function spots(k: Known, n: Need): Spot[][] {
       return c ? [seen(k, (f) => f.kind === 'temple', `${c.name} is ${hasCondition(c, 'dead') ? 'dead' : 'stone'}`)] : [];
     }
     case 'rest': return [p.food >= p.members.length ? seen(k, (f) => f.kind === 'camp', "a night's rest") : [], seen(k, (f) => f.kind === 'inn', "a night's rest")];
-    case 'food': return [seen(k, (f) => (f.kind === 'inn' && p.gold >= INN_RATIONS) || (f.kind === 'shop' && f.stock.includes('rations') && p.gold >= priceIn(f, 'rations')), 'rations')];
+    case 'food': return [seen(k, (f) => (f.kind === 'inn' && p.gold >= INN_RATIONS) || (f.kind === 'shop' && f.stock.includes('rations') && p.gold >= priceIn(items, f, 'rations')), 'rations')];
     case 'train': {
       const c = ready(p), can = (top: number): boolean => p.members.some((m) => canTrainAt(m, top) && !isDown(m) && p.gold >= trainPrice(m));
       return c ? [seen(k, (f) => f.kind === 'trainer' && (Number.isNaN(f.maxLevel) || can(f.maxLevel)), `${c.name} is ready to train`)] : [];
     }
-    case 'gear': return [shops(k)];
+    case 'gear': return [shops(items, k)];
   }
 }
 
@@ -272,7 +273,7 @@ function onMap(g: Game, k: Known, p: Pilot, mem: Keep): Action | null {
   for (const [key, gold] of mem.tried) if (gold !== party.gold || !list.some((n) => key.startsWith(`${n}|`))) mem.tried.delete(key);
   mem.bought = mem.bought.filter((b) => !!party.members[b.who] && party.bag.includes(b.id));
   if (mem.bought.length) {
-    p.why = [`${party.members[mem.bought[0].who].name} takes the ${item(mem.bought[0].id).name}.`];
+    p.why = [`${party.members[mem.bought[0].who].name} takes the ${item(g.tables.items, mem.bought[0].id).name}.`];
     return 'inventory';
   }
   // Between fights, one hurt is mended by a spell before any walk (#723), the cast key and then the
@@ -329,7 +330,7 @@ type Plan = { rest: string } | { need: Need | 'well'; s: Spot; d: number };
 function choose(g: Game, k: Known, mem: Keep, list: readonly Need[]): Plan | undefined {
   const p = k.party, st = g.world.state, here = (s: Spot): boolean => s.map === st.mapId && s.f.x === st.x && s.f.y === st.y;
   for (const n of list) {
-    const free = (s: Spot): boolean => !mem.tried.has(`${n}|${spotKey(s)}`), groups = spots(k, n);
+    const free = (s: Spot): boolean => !mem.tried.has(`${n}|${spotKey(s)}`), groups = spots(g.tables.items, k, n);
     if (n === 'rest') {
       const door = groups[1].find((s) => here(s) && free(s));
       if (door) return { need: n, s: door, d: 0 };
@@ -417,7 +418,7 @@ function answer(g: Game, k: Known, p: Pilot, c: ChoiceScreen, mem: Keep): Action
   switch (f.kind) {
     case 'inn': return inn(c, party, p);
     case 'temple': return temple(c, party, p);
-    case 'shop': return shop(c, party, p, f, v, mem);
+    case 'shop': return shop(g.tables.items, c, party, p, f, v, mem);
     case 'trainer': return trainer(c, party, p);
   }
 }
@@ -465,7 +466,7 @@ function temple(c: ChoiceScreen, p: Party, pilot: Pilot): Action | null {
  * standing the best it can wear over the reserve (`better`, one thing each a visit), noted to be worn;
  * then Esc. Nothing is sold: the pack is kept.
  */
-function shop(c: ChoiceScreen, p: Party, pilot: Pilot, f: Shop, v: Visit, mem: Keep): Action | null {
+function shop(items: Items, c: ChoiceScreen, p: Party, pilot: Pilot, f: Shop, v: Visit, mem: Keep): Action | null {
   if (c.options.join() === 'Buy,Sell,Leave') return pick(c, v.looked ? 'Leave' : 'Buy');
   const ws = wares(c);
   if (!ws) return c.options.at(-1) === 'Done' ? 'cancel' : null;
@@ -476,11 +477,11 @@ function shop(c: ChoiceScreen, p: Party, pilot: Pilot, f: Shop, v: Visit, mem: K
   }
   const stock = ws.map((w) => w.id), cash = spare(p);
   for (const [i, m] of p.members.entries()) {
-    const id = v.served.has(i) || fallen(m) ? undefined : better(m, stock, f, cash);
+    const id = v.served.has(i) || fallen(m) ? undefined : better(items, m, stock, f, cash);
     if (!id) continue;
     const a = go(c, stock.indexOf(id));
     if (a === 'interact') { v.served.add(i); mem.bought.push({ who: i, id }); }
-    pilot.why = [`${item(id).name} for ${m.name}.`];
+    pilot.why = [`${item(items, id).name} for ${m.name}.`];
     return a;
   }
   return 'cancel';
@@ -504,7 +505,7 @@ function wear(g: Game, k: Known, p: Pilot, s: SheetScreen, mem: Keep): Action {
   for (let b = mem.bought[0]; b; b = mem.bought[0]) {
     const c = party.members[b.who], at = party.bag.indexOf(b.id);
     if (!c || at < 0) { mem.bought.shift(); continue; }
-    p.why = [`${c.name} takes the ${item(b.id).name}.`];
+    p.why = [`${c.name} takes the ${item(g.tables.items, b.id).name}.`];
     if (g.selected !== b.who) return (b.who - g.selected + SHEET_ROUND) % SHEET_ROUND <= SHEET_ROUND / 2 ? 'right' : 'left';
     if (s.sel !== c.pack.length + at) return 'down';
     mem.bought.shift();

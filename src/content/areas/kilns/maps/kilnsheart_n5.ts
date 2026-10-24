@@ -4,7 +4,7 @@
 // their clamps in the woods; the stream the smelter draws on, down from the north-east corner to the
 // west edge; the mountain along the east; and the cutters' track off the road east for the Stone.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

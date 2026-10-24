@@ -5,7 +5,7 @@
 // bulkhead is fresh on one side, where a shard-cut in the planking lets a company past the door. A
 // hatch in the floor aft opens on the stair down. Band 12-14; docs/areas/wrackholm.md §4.5 is its
 // brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';

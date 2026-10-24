@@ -6,7 +6,7 @@
 // wall and stops: behind it, the locker, where the keepers put what the sleepers came with. At the
 // back, a door with Kiln-script over it that opens for nobody, as the Mines' CREW ONLY does not.
 // Band 21-22; docs/areas/rimewater.md §4.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { SLEEPERS_SEEN } from '../public.ts';

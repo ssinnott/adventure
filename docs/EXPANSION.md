@@ -311,7 +311,7 @@ its xp or gold, which the curve prints as a figure; and the gate judges it at it
 the area's pools. Meridian Camp's third level and the Dead-Drop's three are planned so.
 
 An enclave is a place of its own beside the road (#845): a dungeon entered from a box (a hollow, a
-cave, a ruin), declared on its map (`enclave` in `game/map.ts`) and held to its own band, over its
+cave, a ruin), declared on its map (`enclave` in `game/mapdef.ts`), held to its own band, over its
 box's: a band or two for an enclave, the cap's, 30–32, for an artifact lair (the owner, 17 October
 2026). The checks hold it as they hold a map outside the budget, wherever its band stands. The curve
 leaves its pay and its finds out of its area: no clear counts its xp or gold, which the curve prints
@@ -713,7 +713,9 @@ Decided by the builder for #946, each the owner's to overturn:
    `tools/tests/lib.ts`), and puts back what it covered, so the rat's and the wolf's looks go
    through it too; `gear` lends its four items with a plus up front, each only where absent, as it
    added them on the way. Main gained two writers since the issue (`curve`'s unmarked artifacts,
-   `items`' stone twin): 17 go through it.
+   `items`' stone twin): 17 go through it. Since #973 an item is lent by a table of the suite's own
+   (`tablesWith`, `tools/kit/headless.ts`), handed to what plays it, and `withDefs` lends the
+   monsters alone, three, until #974.
 4. **`unforge` drops the companies dressed in forged gear from the cache** as well, so a later
    `gearGrows` never meets an id the table no longer holds.
 5. **The runner's check fails the suite by name, listing each entry added, removed or replaced** (by
@@ -1031,12 +1033,12 @@ Decided by the builder for #900, each the owner's to overturn:
 4. **A row is `importer > imported`,** however often the import is written, under the first rule it
    breaks: the walkthroughs' and the suites', the layers, the areas. A cycle is one row, `cycle: `
    and its files sorted, a strongly connected component of `src`'s graph.
-5. **The keys are the plan's:** L2 the items (`items.ts`, `party.ts`, `skills.ts`), L3 the monsters
-   and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
-   `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
-   imports of `src/input.ts`; H8 a walkthrough taking another's chain (`STEPS`, and Saltreach's
-   two orders of play), keyed K8 until #985 moved `tools/walk.ts` into the kit. L8 and L9 hold
-   none: `src/game` takes a screen only in the pilot and `game.ts`.
+5. **The keys are the plan's:** L3 the monsters and spells, L4 the guilds and ranks, L5 the
+   climates, stones, endings and `quests.ts` (its `MAP_DEFS` goes with the atlas, the last table);
+   L6 the pilot's; L7 `game.ts`'s and the screens' imports of `src/input.ts`; H8 a walkthrough
+   taking another's chain (`STEPS`, and Saltreach's two orders of play), keyed K8 until #985 moved
+   `tools/walk.ts` into the kit. L8 and L9 hold none: `src/game` takes a screen only in the pilot
+   and `game.ts`.
 6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
    `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
    modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).

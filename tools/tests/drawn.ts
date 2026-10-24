@@ -5,11 +5,12 @@
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { PLAYED_DEFS } from '../../src/content/maps.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { World, groupDrawn, DRAWN_MAX } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { ok } from './lib.ts';
+import { TABLES } from '../../src/content/index.ts';
 
 /** What is wrong with a group as drawn: a kind of its first three missing, or the wrong number drawn. */
 export function drawnFaults(monsters: readonly string[], drawn: readonly string[] = groupDrawn(monsters)): string[] {
@@ -39,7 +40,7 @@ export function drawn(): void {
     rows: [',,,,,', ',,,,,', ',,,,,', ',,,,,', ',,,,,'],
     encounters: [{ id: 'band', x: 2, y: 2, monsters: [...Array(11).fill('brigand'), 'brigand_archer'], roams: false }],
   };
-  const rng = makeRng(5), w = new World({ drawn_field: new GameMap(field) }, defaultParty(rng), rng);
+  const rng = makeRng(5), w = new World(TABLES, { drawn_field: new GameMap(field) }, defaultParty(TABLES, rng), rng);
   w.sightings();
   const met = w.state.met ?? [];
   ok(met.includes('brigand') && met.includes('brigand_archer'), `a band seen ahead is met as each kind drawn, the archer among the brigands (${met.join(', ')})`);

@@ -181,11 +181,11 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   ctx.fillStyle = '#c6453c'; ctx.beginPath(); ctx.moveTo(rx, ry - 10); ctx.lineTo(rx + 3, ry); ctx.lineTo(rx - 3, ry); ctx.closePath(); ctx.fill();
 }
 
-export function drawPartyCards(ctx: CanvasRenderingContext2D, party: Party, selected: number, frame: number): void {
-  party.members.forEach((c, i) => drawCard(ctx, c, i, i === selected, frame));
+export function drawPartyCards(items: Items, ctx: CanvasRenderingContext2D, party: Party, selected: number, frame: number): void {
+  party.members.forEach((c, i) => drawCard(items, ctx, c, i, i === selected, frame));
 }
 
-function drawCard(ctx: CanvasRenderingContext2D, c: Character, i: number, selected: boolean, frame: number): void {
+function drawCard(items: Items, ctx: CanvasRenderingContext2D, c: Character, i: number, selected: boolean, frame: number): void {
   const r = cardRect(i);
   const down = isDown(c);
   panel(ctx, r.x, r.y, r.w, r.h, down ? '#241418' : PANEL, selected ? BRASS : undefined);
@@ -207,12 +207,13 @@ function drawCard(ctx: CanvasRenderingContext2D, c: Character, i: number, select
   const ready = c.xp >= xpForLevel(c.level + 1);
   if (cond) drawText(ctx, cond.toUpperCase().slice(0, 9), bx, r.y + 52, { size: 1, color: COND_COLOR[cond] });
   else if (ready && (frame >> 5) & 1) drawText(ctx, 'CAN TRAIN', bx, r.y + 52, { size: 1, color: YELLOW });
-  else drawText(ctx, `AC ${armorClassOf(c)}`, bx, r.y + 52, { size: 1, color: TEXT_DIM });
+  else drawText(ctx, `AC ${armorClassOf(items, c)}`, bx, r.y + 52, { size: 1, color: TEXT_DIM });
   // Row marker under the portrait: brass for the front row.
   ctx.fillStyle = i < 3 ? BRASS : PANEL_LIGHT; ctx.fillRect(r.x + 4, r.y + 62, 36, 2);
 }
 
 import { armorClass as armorClassOf } from '../game/party.ts';
+import type { Items } from '../game/tables.ts';
 
 /** How many lines the log shows. */
 export const LOG_LINES = 4;

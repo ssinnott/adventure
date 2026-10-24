@@ -6,7 +6,7 @@
 import { ok } from './lib.ts';
 import { pilotRun } from '../kit/walk.ts';
 import { randomParty } from '../../src/game/party.ts';
-import { THE_QUEST } from '../../src/content/index.ts';
+import { THE_QUEST, TABLES } from '../../src/content/index.ts';
 
 /** The seeds swept. */
 export const SEEDS: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
@@ -20,7 +20,7 @@ export function survival(): void {
   for (const kind of ['premade', 'drawn'] as const) {
     const done: number[] = [];
     for (const seed of SEEDS) {
-      const r = pilotRun(chapter, { seed, budget: RUN_BUDGET, party: kind === 'drawn' ? randomParty(seed) : undefined });
+      const r = pilotRun(chapter, { seed, budget: RUN_BUDGET, party: kind === 'drawn' ? randomParty(TABLES, seed) : undefined });
       if (r.done) done.push(seed);
       const how = r.done ? 'finished' : r.on ? `CAPPED (${r.capped === 'budget' ? 'the budget' : 'the ticks'}) in ${r.where} ("${r.why}")` : `${r.why === 'The company has fallen.' ? 'fell' : 'stopped'} in ${r.where} ("${r.why}")`;
       console.log(`  ${kind} seed ${seed}: ${how}, level ${r.level}, ${r.ticks.toLocaleString('en-GB')} ticks, ${r.secs} s`);

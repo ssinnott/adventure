@@ -8,7 +8,7 @@
 // waits on a reading.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Exit } from '../../src/game/map.ts';
+import type { MapDef, Exit } from '../../src/game/mapdef.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, addCondition } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
@@ -19,9 +19,11 @@ import { holds } from '../../src/game/quests.ts';
 import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { readerOf, readMarks, signLine, readLine, markLine, isInscription, marksOf, readId } from '../../src/game/inscriptions.ts';
-import { ATLAS, MAP_DEFS, ITEMS } from '../../src/content/index.ts';
+import { ATLAS, MAP_DEFS, ITEMS, TABLES } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../kit/shipped.ts';
-import { ok, withDefs, fxMap, fxKey, fxFlag } from './lib.ts';
+import { ok, fxMap, fxKey, fxFlag } from './lib.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Tables } from '../../src/game/tables.ts';
 
 const STORE = 'Cut over the wall, the dwarves\' words for plenty.', BREATH = 'The dwarves\' words for the mountain\'s breath.';
 
@@ -37,10 +39,10 @@ const FIXTURE: MapDef = {
   ],
 };
 
-const fresh = (setup?: (p: Party) => void, def: MapDef = FIXTURE): { world: World; party: Party } => {
-  const rng = makeRng(7), party = defaultParty(rng);
+const fresh = (setup?: (p: Party) => void, def: MapDef = FIXTURE, t: Tables = TABLES): { world: World; party: Party } => {
+  const rng = makeRng(7), party = defaultParty(t, rng);
   setup?.(party);
-  return { world: new World({ [def.id]: new GameMap(def) }, party, rng), party };
+  return { world: new World(t, { [def.id]: new GameMap(def) }, party, rng), party };
 };
 /** What stepping onto a square of the fixture says. */
 const stand = (world: World, x: number, y: number): string[] => { world.travel(FIXTURE.id, x, y); return world.eventsHere(); };
@@ -74,7 +76,7 @@ export function inscriptions(): void {
   // Who reads: nobody in the premade six, the elf and the gnome among them.
   {
     const { world, party } = fresh();
-    ok(!readerOf(party), 'nobody of the premade six reads Kiln-script: no dwarf, no Linguist, nothing carried that reads');
+    ok(!readerOf(TABLES.items, party), 'nobody of the premade six reads Kiln-script: no dwarf, no Linguist, nothing carried that reads');
     const said = stand(world, 2, 1);
     ok(said.join(' / ') === signLine(STORE) && !world.used('fx_store'), `with no reader an inscription is a sign, said and not kept read ("${said.join(' / ')}")`);
   }
@@ -83,32 +85,33 @@ export function inscriptions(): void {
     const { world, party } = fresh((p) => { p.members[1].race = 'dwarf'; });
     const idris = party.members[1], flags = JSON.stringify(party.flags);
     const said = stand(world, 2, 1);
-    ok(readerOf(party) === idris && said.join(' / ') === [signLine(STORE), readLine('Idris', 'STORE.')].join(' / '), `a dwarf reads it, after its words ("${said.join(' / ')}")`);
+    ok(readerOf(TABLES.items, party) === idris && said.join(' / ') === [signLine(STORE), readLine('Idris', 'STORE.')].join(' / '), `a dwarf reads it, after its words ("${said.join(' / ')}")`);
     ok(world.used('fx_store') && holds({ seen: fxKey('fixture_kiln:fx_store') }, world.state, party), 'and it is kept read by its id, which a quest condition\'s seen names');
     // Never the road: a reading sets no flag, opens no door and moves nobody, and its secret door stays to be found.
     ok(JSON.stringify(party.flags) === flags && !Object.keys(world.mapState.doors).length && world.map.at(3, 2).door === 'secret' && world.state.x === 2 && world.state.y === 1,
       'a reading sets no flag, changes no door and moves nobody: the door it hints at is found by a search, as any is');
-    addCondition(idris, 'unconscious');
-    ok(!readerOf(party) && stand(world, 2, 1).length === 1, 'a dwarf knocked down reads nothing');
+    addCondition(TABLES.items, idris, 'unconscious');
+    ok(!readerOf(TABLES.items, party) && stand(world, 2, 1).length === 1, 'a dwarf knocked down reads nothing');
   }
   // A member with Linguist reads, the first in the company who has it.
   {
     const { world, party } = fresh((p) => { p.members[4].skills = ['linguist']; });
     const said = stand(world, 2, 1);
-    ok(readerOf(party) === party.members[4] && said[1] === readLine('Maren', 'STORE.'), `a member with Linguist reads it ("${said[1]}")`);
+    ok(readerOf(TABLES.items, party) === party.members[4] && said[1] === readLine('Maren', 'STORE.'), `a member with Linguist reads it ("${said[1]}")`);
   }
   // An item that reads (#56's 34's copybook, built with #471): carried in the bag, the first standing
   // member reads by it; in a pack, its carrier does; put down, nobody.
   {
     const book: ItemDef = { id: 'fx_copybook', name: 'A Copybook', slot: 'none', price: 0, skill: 'linguist' };
-    withDefs(ITEMS, [book], () => {
-      const { world, party } = fresh((p) => { p.bag.push(book.id); });
-      ok(readerOf(party) === party.members[0] && stand(world, 2, 1)[1] === readLine('Bram', 'STORE.'), 'with the copybook in the bag the first standing member reads by it');
+    {
+      const lent = tablesWith([book]);
+      const { world, party } = fresh((p) => { p.bag.push(book.id); }, FIXTURE, lent);
+      ok(readerOf(lent.items, party) === party.members[0] && stand(world, 2, 1)[1] === readLine('Bram', 'STORE.'), 'with the copybook in the bag the first standing member reads by it');
       party.bag.splice(party.bag.indexOf(book.id), 1); party.members[2].pack.push(book.id);
-      ok(readerOf(party) === party.members[2], 'in a member\'s pack, its carrier reads');
+      ok(readerOf(lent.items, party) === party.members[2], 'in a member\'s pack, its carrier reads');
       party.members[2].pack.pop();
-      ok(!readerOf(party), 'and put down, nobody does');
-    });
+      ok(!readerOf(lent.items, party), 'and put down, nobody does');
+    }
   }
   // The marks: none before the reading; read, its two places, said once; a plain sign is kept by nothing.
   {
@@ -123,7 +126,7 @@ export function inscriptions(): void {
     ok(stand(world, 5, 1).length === 1 && readId(FIXTURE.features![2]) === undefined && Object.keys(world.mapState.used).join() === kept, 'a plain sign is said and kept by nothing, reader or none');
     // Through a save: the reading kept, the marks with it.
     const data = deserialize(serialize(world.state, party, 0));
-    const loaded = new World({ fixture_kiln: new GameMap(FIXTURE) }, data.party, makeRng(1), data.world);
+    const loaded = new World(TABLES, { fixture_kiln: new GameMap(FIXTURE) }, data.party, makeRng(1), data.world);
     ok(loaded.used('fx_vent') && readMarks(loaded).join() === marks.join(), 'a save keeps the reading and the marks it made');
   }
   // The shipped list keeps an inscription's reading as a map's, as an opened chest's, and catches it renamed.

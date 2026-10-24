@@ -5,7 +5,7 @@
 // run on: a cairn at the hills' head and a dip in the rim with the haze over it. The stream from the
 // north-west corner, in the shallows, runs on into O4. The P column is 24 wide: cut by hand from the
 // atlas, the void written '%'; docs/areas/kilns.md §12.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 
 export const KILNSHEART_P4: MapDef<'kilnsheart_p4'> = {

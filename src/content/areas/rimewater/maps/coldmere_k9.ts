@@ -8,7 +8,7 @@
 // north and west edges end the world against parked K8 and J9, and the south edge meets K10 (#491)
 // square for square, where the loch's water runs in at 29,31.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.5 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, WEST } from '../../../../game/types.ts';
 import { WENNA_UP } from './rime_lodge.ts';

@@ -11,7 +11,7 @@
 // Laid whole in Loch Fuar, its larger zone, the vale's land played at the loch's band. Cut by hand from
 // the atlas, the void written '%' and the rim's peaks drawn as its mountain, the peaks being the
 // Whitespine's own (its novelty); docs/areas/rimewater.md §12.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

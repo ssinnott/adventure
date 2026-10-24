@@ -27,7 +27,7 @@ import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, kneel, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, written, reads, there, here, open, search, xpOf, thiefDown, hour, atLevel, shows, alive, type Walk, type Step } from '../../../../tools/kit/walk.ts';
 import { zone, square, ALL, reach, shut, reached, paces, corner, drove, each, road, on } from '../../../../tools/kit/grid.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
-import { ATLAS, ITEMS, MAP_DEFS, MONSTERS as EVERY_MONSTER } from '../../index.ts';
+import { ATLAS, ITEMS, MAP_DEFS, MONSTERS as EVERY_MONSTER, TABLES } from '../../index.ts';
 import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -35,7 +35,7 @@ import { worldGrid } from '../../../game/atlas.ts';
 import { meet, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef, MapZone } from '../../../game/map.ts';
+import type { Feature, MapDef, MapZone } from '../../../game/mapdef.ts';
 import { LOCKS } from '../../locks.ts';
 import { xpForLevel, createCharacter, defaultParty, equip, statOf, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
 import { hits, sellPrice, ELEMENT_DIE } from '../../../game/items.ts';
@@ -73,7 +73,7 @@ function luminary(w: Walk): void {
   p.flags[rankFlag('lanterns')] = 3; p.flags[FOURTH_RANKS_OPEN] = 1;
   p.flags[takenFlag('lanterns_niche')] = p.flags[doneFlag('lanterns_niche')] = 1;
   const q = GUILD_QUESTS.find((g) => g.id === 'lanterns_ring')!;
-  const said = take(q, w.world.state, p);
+  const said = take(TABLES, q, w.world.state, p);
   w.ok(said.length === 2 && said[0].startsWith(q.early![0]) && said[1] === 'Your rank with the Lanterns is now Luminary.' && rankOf('lanterns', p) === 4,
     `the ring heard, the Lanterns' ask is paid at the taking, and a company that copied the Tiefzeche's words is made a Luminary (${said.join(' ').replace(/\n+/g, ' ')})`);
 }
@@ -469,7 +469,7 @@ function stoneRing(ok: (cond: boolean, msg: string) => void): void {
     ok(!!who.teaches?.seek?.includes(who.name) && who.teaches.seek.includes('High Moor') && who.teaches.seek.includes(place) && who.teaches.seek.includes(second), `${who.name}'s seeking names him, his ${place} on High Moor and the title he gives`);
     const at = (level: number): Walk => {
       const v = newWalk(ok);
-      v.party.members[0] = createCharacter('Ailsa', 'human', cls, cls === 'sorcerer' ? { intellect: 15, endurance: 12, speed: 12 } : { personality: 15, might: 12, speed: 12 }, makeRng(19));
+      v.party.members[0] = createCharacter(TABLES, 'Ailsa', 'human', cls, cls === 'sorcerer' ? { intellect: 15, endurance: 12, speed: 12 } : { personality: 15, might: 12, speed: 12 }, makeRng(19));
       for (const c of v.party.members) { c.xp = xpForLevel(level); c.level = level; }
       return v;
     };
@@ -877,10 +877,10 @@ function offTheLadder(ok: (cond: boolean, msg: string) => void): void {
   // seven monsters takes fire amiss: all seven take it at full.
   const troll = MONSTERS.find((m) => m.id === 'tor_troll')!;
   const swing = (seed: number, weapon: string): { dmg: number; burnt: boolean } => {
-    const p = defaultParty(makeRng(1)), rng = makeRng(seed);
+    const p = defaultParty(TABLES, makeRng(1)), rng = makeRng(seed);
     for (const c of p.members) c.hp = c.maxHp = 999;
-    equip(p.members[0], weapon);
-    const s = startCombat(p, [{ id: 'a', monsters: [troll] }], rng);
+    equip(TABLES.items, p.members[0], weapon);
+    const s = startCombat(TABLES, p, [{ id: 'a', monsters: [troll] }], rng);
     for (let guard = 0; guard < 50 && s.outcome === 'ongoing'; guard++) {
       const t = currentTurn(s, p, rng);
       if (!t) break;
@@ -899,21 +899,21 @@ function offTheLadder(ok: (cond: boolean, msg: string) => void): void {
   ok(mail.slot === 'armor' && mail.ac === dwarf.ac && mail.classes?.join() === dwarf.classes?.join() && !mail.plus && !mail.element
     && Object.keys(mail.stat ?? {}).join() === 'might' && mail.stat?.might === 3 && rung('dwarf_mail') === 17,
   `Cairnbuilder's Mail is the ladder's mail at 17: dwarf mail's armour class ${dwarf.ac} and wearers, raising might by 3 and nothing else`);
-  const knight = defaultParty(makeRng(4)).members[0], base = statOf(knight, 'might');
-  const worn = equip(knight, mail.id) ? statOf(knight, 'might') : -1;
+  const knight = defaultParty(TABLES, makeRng(4)).members[0], base = statOf(TABLES.items, knight, 'might');
+  const worn = equip(TABLES.items, knight, mail.id) ? statOf(TABLES.items, knight, 'might') : -1;
   knight.equipment.armor = null;
   knight.pack.push(mail.id);
-  ok(worn === base + 3 && statOf(knight, 'might') === base, `worn by the knight it raises might from ${base} to ${worn}; carried in the pack it raises nothing (${statOf(knight, 'might')})`);
+  ok(worn === base + 3 && statOf(TABLES.items, knight, 'might') === base, `worn by the knight it raises might from ${base} to ${worn}; carried in the pack it raises nothing (${statOf(TABLES.items, knight, 'might')})`);
 
   // Both: priced in the window, sold by no shop, in no row of the ladder, dressed by none, sold back at half.
   const stocked = new Set(MAP_DEFS.flatMap((m) => (m.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : []))));
-  const six = defaultParty(makeRng(4));
+  const six = defaultParty(TABLES, makeRng(4));
   for (const d of [hammer, mail]) {
     ok(d.price > 0 && d.price <= CURVE.cairnmoor.price, `${d.name} costs ${d.price} gold, above nothing and inside Cairnmoor's window of ${CURVE.cairnmoor.price}`);
     ok(!stocked.has(d.id) && rung(d.id) === undefined, `${d.name} is sold by no shop and is in no row of the ladder`);
-    ok(sellPrice(six, d.price) === d.price / 2, `${d.name} sells back at half, ${sellPrice(six, d.price)} gold`);
+    ok(sellPrice(TABLES.items, six, d.price) === d.price / 2, `${d.name} sells back at half, ${sellPrice(TABLES.items, six, d.price)} gold`);
   }
-  const dressed = defaultParty(makeRng(4)).members;
+  const dressed = defaultParty(TABLES, makeRng(4)).members;
   for (const m of dressed) outfit(m, 32);
   ok(dressed.every((m) => m.equipment.weapon !== hammer.id && m.equipment.armor !== mail.id && !m.pack.includes(hammer.id) && !m.pack.includes(mail.id)),
     'dressed from the ladder at any level, a company never wears either: the gate\'s company goes without');

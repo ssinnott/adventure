@@ -3,7 +3,7 @@
 // reachable. What a clear of them is worth is the curve's (tools/tests/curve.ts).
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { Feature, Landmark, MapDef } from '../../src/game/map.ts';
+import type { Feature, Landmark, MapDef } from '../../src/game/mapdef.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';

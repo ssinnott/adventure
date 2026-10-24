@@ -10,11 +10,10 @@ import { LAYOUT, drawPartyCards, drawLog, drawViewportFrame, SAY_W, SAY_LINES, S
 import { drawPortraitLarge } from './portraits.ts';
 import { drawInterior } from './interior.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
-import type { Feature, Interior } from '../game/map.ts';
+import type { Feature, Interior } from '../game/mapdef.ts';
 import { item, priceIn, buy, sellPrice } from '../game/items.ts';
 import type { ItemDef } from '../game/items.ts';
 import { readText } from '../game/people.ts';
-import { ITEMS } from '../content/index.ts';
 import { spell } from '../game/spells.ts';
 import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, useItem, templePrice, isDown, hasCondition, xpForLevel, canTrain, trainPrice, MAX_LEVEL, className, resists, statOf, borne } from '../game/party.ts';
 import { nightCost, stay, buyRations, RATIONS, RATIONS_PRICE, cure, donate, DONATION, sell, joined, payFee, hallOffers, learnSpell, mayTrain, train } from '../game/services.ts';
@@ -27,6 +26,7 @@ import { taughtBy, mayLearn, skillOffers, skillLine, skillRow, learn, askSkill, 
 import type { SkillId } from '../game/skills.ts';
 import { teachesExpert, expertOffers, masterOffers, favourDone, tierLine, teachTier, tierOf, askLine, askTier, noneHere, LINES, LINE_ROWS, LEAVE_TIERS, EXPERT_ENTRY, TIER_NAMES } from '../game/mastery.ts';
 import type { Line, Mastery } from '../game/mastery.ts';
+import type { Items } from '../game/tables.ts';
 
 const BOX = { x: 40, y: 40, w: SAY_W + 24, h: 220 };
 
@@ -251,9 +251,9 @@ export class SheetScreen implements Screen {
     else if (is(a, 'down') && items.length) this.sel = (this.sel + 1) % items.length;
     else if (is(a, 'interact') && items.length) {
       const it = items[this.sel];
-      const d = item(it.id);
+      const d = item(g.tables.items, it.id);
       if (d.slot !== 'none') {
-        if (equip(c, it.id)) { if (it.from === 'bag') g.party.bag.splice(g.party.bag.indexOf(it.id), 1); g.say(`${c.name} equips ${d.name}.`); }
+        if (equip(g.tables.items, c, it.id)) { if (it.from === 'bag') g.party.bag.splice(g.party.bag.indexOf(it.id), 1); g.say(`${c.name} equips ${d.name}.`); }
         else g.say(`${c.name} cannot use ${d.name}.`);
         // A piece's words are read as it is taken up from the pack (#847, DESIGN §9), once it is gone from the list.
         if (d.text) g.push(new MessageScreen(d.text.join('\n\n'), undefined, d.name));
@@ -261,9 +261,9 @@ export class SheetScreen implements Screen {
         pickMember(g, `Use ${d.name} on whom?`, (i) => {
           if (i < 0) return;
           // The line says where it lies: one listed from the bag comes from the bag, though the member's pack holds one too.
-          for (const l of useItem(ITEMS, g.party, it.from === 'pack' ? c : null, it.id, g.party.members[i]) ?? []) g.say(l);
+          for (const l of useItem(g.tables.items, g.party, it.from === 'pack' ? c : null, it.id, g.party.members[i]) ?? []) g.say(l);
         });
-      } else if (readText(it.id)) g.push(new MessageScreen(readText(it.id)!.join('\n\n'), undefined, d.name));
+      } else if (readText(g.tables.items, it.id)) g.push(new MessageScreen(readText(g.tables.items, it.id)!.join('\n\n'), undefined, d.name));
       else g.say(`${d.name}: nothing to do with it here.`);
       if (this.sel >= this.items(g).length) this.sel = Math.max(0, this.items(g).length - 1);
     }
@@ -280,42 +280,42 @@ export class SheetScreen implements Screen {
     drawPortraitLarge(ctx, c, 20, 34);
     let y = 36;
     for (const s of STATS) {
-      const [total, raise] = statText(c, s);
+      const [total, raise] = statText(g.tables.items, c, s);
       drawText(ctx, s.toUpperCase().slice(0, 3), 100, y, { size: 1, color: TEXT_DIM });
       drawText(ctx, total, 140, y, { size: 1, color: TEXT, align: 'right' });
       // The raise follows the total a glyph's gap on, in brackets: "13(+3)", 13 of which 3 is borne.
       if (raise) drawText(ctx, raise, 141, y, { size: 1, color: YELLOW });
       y += 10;
     }
-    for (const r of sheetRows(c)) drawText(ctx, r.text, 20, r.y, { size: 1, color: r.color });
+    for (const r of sheetRows(g.tables.items, c)) drawText(ctx, r.text, 20, r.y, { size: 1, color: r.color });
     // Items column
     const items = this.items(g);
     drawText(ctx, 'ITEMS (SPACE: EQUIP OR USE)', 340, 36, { size: 1, color: TEXT_DIM });
     if (!items.length) drawText(ctx, 'nothing carried', 340, 50, { size: 1, color: TEXT_DIM });
-    else menu(ctx, items.slice(0, SHEET_ITEMS).map((it) => `${item(it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, SHEET_ITEMS_Y, this.sel);
+    else menu(ctx, items.slice(0, SHEET_ITEMS).map((it) => `${item(g.tables.items, it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, SHEET_ITEMS_Y, this.sel);
     drawText(ctx, '< > OR 1-6 SWITCH   ESC CLOSE', 620, 264, { size: 1, color: TEXT_DIM, align: 'right' });
-    drawPartyCards(ctx, g.party, this.who, frame);
+    drawPartyCards(g.tables.items, ctx, g.party, this.who, frame);
   }
 }
 
 /** A whole number as a raise is written: "+3", "-1". */
 const signed = (n: number): string => (n > 0 ? `+${n}` : String(n));
 /** A stat as the sheet prints it: the total a fight reads (`statOf`), and in brackets the raise of what is borne, if any ("13", "(+3)"). */
-export function statText(c: Character, s: Stat): [string, string] {
-  const total = statOf(c, s), raise = total - c.stats[s];
+export function statText(items: Items, c: Character, s: Stat): [string, string] {
+  const total = statOf(items, c, s), raise = total - c.stats[s];
   return [String(total), raise ? `(${signed(raise)})` : ''];
 }
 /**
  * The sheet's WEAPON line: what is in hand and the element its blows carry, then the member's tier at
  * arms ("WEAPON Longsword, EXPERT", "WEAPON Grey Blade, LIGHTNING").
  */
-export function weaponLine(c: Character): string {
-  const t = tierOf(c, 'arms'), w = c.equipment.weapon ? item(c.equipment.weapon) : null;
+export function weaponLine(items: Items, c: Character): string {
+  const t = tierOf(c, 'arms'), w = c.equipment.weapon ? item(items, c.equipment.weapon) : null;
   return 'WEAPON ' + (w ? w.name + (w.artifact ? `, ${power(w)}` : w.element ? `, ${w.element.toUpperCase()}` : '') : 'none') + (t ? `, ${TIER_NAMES[t].toUpperCase()}` : '');
 }
 /** The sheet's ARMOUR and SHIELD lines: what is worn there, and an artifact's power after it (#847: "ARMOUR The Erzhemd, SPEED +5"). */
-export function slotLine(c: Character, slot: 'armor' | 'shield'): string {
-  const id = c.equipment[slot], d = id ? item(id) : null;
+export function slotLine(items: Items, c: Character, slot: 'armor' | 'shield'): string {
+  const id = c.equipment[slot], d = id ? item(items, id) : null;
   return `${slot === 'armor' ? 'ARMOUR' : 'SHIELD'} ` + (d ? d.name + (d.artifact ? `, ${power(d)}` : '') : 'none');
 }
 /**
@@ -332,7 +332,7 @@ export function power(d: ItemDef): string {
  * The sheet's ARTIFACT lines: each artifact the member carries in their pack (`borne`) and its power,
  * a line each ("ARTIFACT The Hagstone, NEVER PARALYSED"). One with a slot says its power on its slot's line.
  */
-export const artifactLines = (c: Character): string[] => borne(c).map((id) => item(id)).filter((d) => d.artifact && d.slot === 'none').map((d) => `ARTIFACT ${d.name}, ${power(d)}`);
+export const artifactLines = (items: Items, c: Character): string[] => borne(items, c).map((id) => item(items, id)).filter((d) => d.artifact && d.slot === 'none').map((d) => `ARTIFACT ${d.name}, ${power(d)}`);
 /** Where the sheet's panel's border begins at its foot: the column under the portrait ends above it. */
 export const SHEET_FOOT = 274;
 /** The sheet's item list: its first row's y and the most rows it shows, a menu's step apart. */
@@ -347,19 +347,19 @@ export const SPELLS_TOP = 208;
  * points and armour share a line, and an artifact with a slot says its power on its slot's, so the
  * fullest member of any class ends above the panel's foot (`SHEET_FOOT`).
  */
-export function sheetRows(c: Character): { text: string; color: string; y: number }[] {
+export function sheetRows(items: Items, c: Character): { text: string; color: string; y: number }[] {
   const rows: { text: string; color: string; y: number }[] = [];
   let y = 134;
   const add = (text: string, color = TEXT, gap = 10): void => { rows.push({ text, color, y }); y += gap; };
-  const worn = (id: string | null): string => (id && item(id).artifact ? YELLOW : TEXT);
-  add(`HP ${c.hp}/${c.maxHp}   SP ${c.sp}/${c.maxSp}   AC ${armorClass(c)}   TO-HIT +${attackBonus(c)}`);
+  const worn = (id: string | null): string => (id && item(items, id).artifact ? YELLOW : TEXT);
+  add(`HP ${c.hp}/${c.maxHp}   SP ${c.sp}/${c.maxSp}   AC ${armorClass(items, c)}   TO-HIT +${attackBonus(items, c)}`);
   add(c.conditions.length ? c.conditions.join(', ').toUpperCase() : 'WELL', c.conditions.length ? RED : TEXT_DIM, 14);
-  add(weaponLine(c), worn(c.equipment.weapon));
-  add(slotLine(c, 'armor'), worn(c.equipment.armor));
-  add(slotLine(c, 'shield'), worn(c.equipment.shield));
-  const res = resists(c);
+  add(weaponLine(items, c), worn(c.equipment.weapon));
+  add(slotLine(items, c, 'armor'), worn(c.equipment.armor));
+  add(slotLine(items, c, 'shield'), worn(c.equipment.shield));
+  const res = resists(items, c);
   if (res.length) add('RESISTS ' + res.join(', ').toUpperCase());
-  for (const l of artifactLines(c)) add(l, YELLOW);
+  for (const l of artifactLines(items, c)) add(l, YELLOW);
   add('TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '));
   for (const l of skillsLines(c)) add(l);
   if (c.spells.length) { y = Math.max(y, SPELLS_TOP); add(spellsLine(c)); }
@@ -418,7 +418,7 @@ export class SpellScreen implements Screen {
           const c = g.party.members[caster];
           if (c.sp < sp.sp) { g.say(`${c.name} lacks the spell points.`); return; }
           c.sp -= sp.sp;
-          g.say(castOnAlly(c, sp, g.party.members[i]));
+          g.say(castOnAlly(g.tables.items, c, sp, g.party.members[i]));
         });
       } else if (sp.explore === 'mark' && g.world.state.mark) {
         g.push(new ChoiceScreen('The mark is set. Which?', ['Return to the mark', 'Set it here'], (i) => { if (i >= 0) explore(g, caster, sp.id, i === 0); }, sp.name));
@@ -523,7 +523,7 @@ function standing(g: Game, id: GuildId): string {
 
 /** The guild's work: first the report, which pays what is done, then what the hall offers. */
 function guildWork(g: Game, id: GuildId, hallName: string): Screen {
-  const paid = report(id, g.world.state, g.party);
+  const paid = report(g.tables, id, g.world.state, g.party);
   if (paid.length) return new MessageScreen(paid.join('\n\n'), () => g.push(guildOffers(g, id, hallName)), hallName);
   return guildOffers(g, id, hallName);
 }
@@ -537,7 +537,7 @@ function guildOffers(g: Game, id: GuildId, hallName: string): Screen {
     const q = offers[i];
     g.push(new MessageScreen(q.offer.join('\n\n'), () => g.push(new ChoiceScreen(q.title, ['Take it', 'Not now'], (j) => {
       if (j === 0) {
-        const said = take(q, g.world.state, g.party);
+        const said = take(g.tables, q, g.world.state, g.party);
         g.say(`You take the work: ${q.title}.`);
         if (said.length) { g.push(new MessageScreen(said.join('\n\n'), () => g.push(guildOffers(g, id, hallName)), hallName)); return; }
       }
@@ -650,37 +650,37 @@ function shop(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
 }
 
 function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
-  const names = f.stock.map((id) => `${item(id).name}\t${priceIn(f, id)}g\t${describe(id)}`);
+  const names = f.stock.map((id) => `${item(g.tables.items, id).name}\t${priceIn(g.tables.items, f, id)}g\t${describe(g.tables.items, id)}`);
   const s: ChoiceScreen = new ChoiceScreen(`What will it be? (${g.party.gold} gold.)`, [...names, 'Done'], (i) => {
     if (i < 0 || i === names.length) return;
-    const d = buy(g.party, f, f.stock[i]);
+    const d = buy(g.tables.items, g.party, f, f.stock[i]);
     if (!d) { g.say('Not enough gold.'); g.push(buyScreen(g, f)); return; }
     if (d.use?.food) g.say(`Bought ${d.name}: food is now ${g.party.food}.`);
     else g.say(`Bought ${d.name}.`);
     const next = buyScreen(g, f); (next as ChoiceScreen).sel = i; g.push(next);
-  }, f.name, [...f.stock.map((id) => priceIn(f, id) > g.party.gold), false]);
+  }, f.name, [...f.stock.map((id) => priceIn(g.tables.items, f, id) > g.party.gold), false]);
   return s;
 }
 
 function sellScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
   const entries: { id: string; owner: string[]; label: string }[] = [];
-  const pays = (id: string): number => sellPrice(g.party, item(id).price);
+  const pays = (id: string): number => sellPrice(g.tables.items, g.party, item(g.tables.items, id).price);
   // An artifact shows no price, and no shop takes one (#847).
-  const row = (id: string, whose: string): string => `${item(id).name} (${whose})${item(id).artifact ? '' : `\t${pays(id)}g`}`;
+  const row = (id: string, whose: string): string => `${item(g.tables.items, id).name} (${whose})${item(g.tables.items, id).artifact ? '' : `\t${pays(id)}g`}`;
   for (const id of g.party.bag) entries.push({ id, owner: g.party.bag, label: row(id, 'bag') });
   for (const m of g.party.members) for (const id of m.pack) entries.push({ id, owner: m.pack, label: row(id, m.name) });
   if (!entries.length) return new MessageScreen('"You have nothing I want."', undefined, f.name);
   return new ChoiceScreen('"Let me see it."', [...entries.map((e) => e.label), 'Done'], (i) => {
     if (i < 0 || i === entries.length) return;
     const e = entries[i];
-    g.say(sell(ITEMS, g.party, e.owner, e.id).line);
+    g.say(sell(g.tables.items, g.party, e.owner, e.id).line);
     g.push(sellScreen(g, f));
   }, f.name);
 }
 
 /** A ware as a shop shows it: a weapon's dice and the element its blows carry, armour's AC, a draught's use; then the stats it raises. */
-export function describe(id: string): string {
-  const d = ITEMS[id];
+export function describe(items: Items, id: string): string {
+  const d = items[id];
   const raises = STATS.filter((s) => d.stat?.[s]).map((s) => ` ${s}${signed(d.stat?.[s] ?? 0)}`).join('');
   if (d.slot === 'weapon') return `${d.dice}d${d.sides}${d.bonus ? '+' + d.bonus : ''}${d.ranged ? ' ranged' : ''}${d.twoHanded ? ' 2h' : ''}${d.element ? ' ' + d.element : ''}${raises}`;
   if (d.ac) return `AC+${d.ac}${raises}`;

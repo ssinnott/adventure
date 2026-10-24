@@ -6,7 +6,7 @@
 // is laid with the box whole: open to Callow Downs' D2 and walked to only from it, with the boundary
 // stone, the lip and a shepherd of the Downs on it and no group. Cut from the atlas by
 // tools/scaffold.ts, its void written in; docs/areas/saltreach.md §12 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

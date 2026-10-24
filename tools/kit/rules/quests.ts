@@ -4,7 +4,7 @@ import { MAP_DEFS, ITEMS, GUILD_QUESTS } from '../../../src/content/index.ts';
 import { takenFlag, doneFlag } from '../../../src/content/guilds.ts';
 import { personFlags, groupFlags } from '../../../src/game/people.ts';
 import type { QuestCond, When } from '../../../src/game/quests.ts';
-import type { Feature, MapDef } from '../../../src/game/map.ts';
+import type { Feature, MapDef } from '../../../src/game/mapdef.ts';
 import { spentId } from '../../../src/game/wilds.ts';
 import { readId } from '../../../src/game/inscriptions.ts';
 import { areaRows, gather } from '../checks.ts';

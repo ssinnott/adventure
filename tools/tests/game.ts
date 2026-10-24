@@ -9,8 +9,8 @@ import type { WorldMapScreen } from '../../src/ui/worldmap.ts';
 import { ok } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { MONSTERS } from '../../src/content/index.ts';
-import type { Feature } from '../../src/game/map.ts';
+import { MONSTERS, TABLES } from '../../src/content/index.ts';
+import type { Feature } from '../../src/game/mapdef.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { startCombat, currentTurn, monsterAct, partyAct, meetCalled } from '../../src/game/combat.ts';
 
@@ -19,7 +19,7 @@ const top = (g: Game): string => g.top.constructor.name;
 
 export function game(): void {
   // From the title, as a player starts: the premade company, and a new game on Harrow.
-  const t = new Game(null);
+  const t = new Game(TABLES, null);
   ok(top(t) === 'TitleScreen', 'a Game built without storage opens on the title');
   drive(t, ['interact']);
   ok(top(t) === 'CreateScreen', 'New Game on the title opens the company screen');
@@ -80,7 +80,7 @@ export function game(): void {
   // A kind a monster calls into a fight says its look once, after the call, as the first groups' kinds do (`meetCalled`, #978).
   const met = g.world.state.met ?? [], kind = Object.values(MONSTERS).find((d) => d.look && !met.includes(d.id))!;
   const caller: MonsterDef = { ...MONSTERS.bandit, id: 'test_caller', name: 'Caller', calls: { monsters: [kind.id], chance: 1 } };
-  const s = startCombat(g.party, [{ id: 'test_callers', monsters: [caller] }], makeRng(3)), rng = makeRng(3);
+  const s = startCombat(TABLES, g.party, [{ id: 'test_callers', monsters: [caller] }], makeRng(3)), rng = makeRng(3);
   let bands = s.groupIds.length;
   for (let i = 0; i < 40 && s.groupIds.length === 1 && s.outcome === 'ongoing'; i++) {
     const t = currentTurn(s, g.party, rng);
@@ -93,7 +93,7 @@ export function game(): void {
   // And through the combat screen, as the game meets them: straight after the monster's turn that called.
   const unmet = Object.values(MONSTERS).find((d) => d.look && !g.world.state.met?.includes(d.id))!;
   const twice: MonsterDef = { ...caller, hp: 400, speed: 40, calls: { monsters: [unmet.id], chance: 1 } };
-  const shown = startCombat(g.party, [{ id: 'test_callers', monsters: [twice, twice] }], g.rng), screen = new CombatScreen(shown, ['test_callers']), was = CombatScreen.instant;
+  const shown = startCombat(TABLES, g.party, [{ id: 'test_callers', monsters: [twice, twice] }], g.rng), screen = new CombatScreen(shown, ['test_callers']), was = CombatScreen.instant;
   CombatScreen.instant = true; screen.auto = true; g.push(screen);
   for (let i = 0; i < 4000 && shown.groupIds.length === 1 && shown.outcome === 'ongoing'; i++) g.update(null);
   CombatScreen.instant = was; g.pop();

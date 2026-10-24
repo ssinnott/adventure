@@ -3,7 +3,9 @@
 // one is its id in the map's `used`, as an opened chest is, so nothing new is saved. A well and the
 // exploration spells are here too (#978). Pure, so the tests load it; game.ts and the spell screen
 // call it and say what it returns.
-import type { Feature, Gift, Night } from './map.ts';
+import type { Feature } from './mapdef.ts';
+import type { When } from './quests.ts';
+import type { Flag } from '../content/index.ts';
 import type { World } from './world.ts';
 import type { Party, Stat } from './party.ts';
 import { rest as restMember, stayNight, isDown } from './party.ts';
@@ -11,6 +13,20 @@ import { manhattan } from './types.ts';
 import { item } from './items.ts';
 import { spell } from './spells.ts';
 import { castOnParty } from './combat.ts';
+import type { Items } from './tables.ts';
+
+/**
+ * What a statue gives for its riddle's answer: gold, items, a stat point to every member or an
+ * element kept off every member (game/wilds.ts).
+ */
+export interface Gift { gold?: number; items?: string[]; stat?: import('./party.ts').Stat; amount?: number; resist?: import('./party.ts').Blessed }
+
+/**
+ * A night a camp counts (#730), as an inn counts the flags of its `nights`: a rest there sets `sets`,
+ * once `after` holds, and its `says` are said on waking in place of the usual line (game/wilds.ts
+ * `campNight`, `restAndWake`).
+ */
+export interface Night { after?: When; sets: Flag; says?: readonly string[] }
 
 /** The features this module plays. */
 export type Wild = Extract<Feature, { kind: 'shrine' | 'fountain' | 'cairn' | 'statue' | 'camp' }>;
@@ -35,10 +51,10 @@ const STAT_NAMES: Record<Stat, string> = { might: 'Might', intellect: 'Intellect
  * element `resist` keeps off to every member, whatever their state, unless it is kept off them for
  * as long already. Returns it in words for the log.
  */
-export function give(party: Party, gift: Gift): string[] {
+export function give(items: Items, party: Party, gift: Gift): string[] {
   const words: string[] = [];
   if (gift.gold) { party.gold += gift.gold; words.push(`${gift.gold} gold`); }
-  for (const id of gift.items ?? []) { party.bag.push(id); words.push(item(id).name); }
+  for (const id of gift.items ?? []) { party.bag.push(id); words.push(item(items, id).name); }
   if (gift.stat) {
     const n = gift.amount ?? 1;
     for (const m of party.members) m.stats[gift.stat] += n;
@@ -75,14 +91,14 @@ export function useShrine(world: World, party: Party, f: Extract<Wild, { kind: '
   if (!world.present(f)) return [];
   if (world.used(f.id)) return [f.done];
   world.markUsed(f.id);
-  return [f.text, give(party, giftOf(f)!).join(', ') + '.'];
+  return [f.text, give(world.tables.items, party, giftOf(f)!).join(', ') + '.'];
 }
 
 /** Lift a cairn's stones: its cache the first time. */
 export function openCairn(world: World, party: Party, f: Extract<Wild, { kind: 'cairn' }>): string[] {
   if (world.used(f.id)) return ['The cairn has been emptied.'];
   world.markUsed(f.id);
-  const got = give(party, giftOf(f)!);
+  const got = give(world.tables.items, party, giftOf(f)!);
   return [...(f.text ? [f.text] : []), got.length ? `Under the stones: ${got.join(', ')}.` : 'Under the stones: nothing.'];
 }
 
@@ -100,7 +116,7 @@ export function answerRiddle(world: World, party: Party, f: Extract<Wild, { kind
   if (world.used(f.id)) return { right: false, lines: [f.done] };
   if (!normalWord(word) || normalWord(word) !== normalWord(f.answer)) return { right: false, lines: ['The statue is silent.'] };
   world.markUsed(f.id);
-  const got = give(party, f.gift);
+  const got = give(world.tables.items, party, f.gift);
   return { right: true, lines: [f.done, ...(got.length ? [`At its feet: ${got.join(', ')}.`] : [])] };
 }
 
@@ -168,7 +184,7 @@ export interface Explored { lines: string[]; moved: boolean }
  * its work done on the world. Waymark sets its mark, or with `back` returns to it, and gives the points
  * back where the mark will not take.
  */
-export function castExplore(world: Pick<World, 'state' | 'revealAll' | 'townPortal' | 'bear' | 'setMark' | 'toMark'>, party: Party, casterIndex: number, spellId: string, back = false): Explored {
+export function castExplore(world: Pick<World, 'tables' | 'state' | 'revealAll' | 'townPortal' | 'bear' | 'setMark' | 'toMark'>, party: Party, casterIndex: number, spellId: string, back = false): Explored {
   const c = party.members[casterIndex];
   const sp = spell(spellId);
   const said = (line: string, moved = false): Explored => ({ lines: [line], moved });
@@ -185,6 +201,6 @@ export function castExplore(world: Pick<World, 'state' | 'revealAll' | 'townPort
       c.sp += sp.sp;
       return said(`${c.name} casts ${sp.name}, but the mark will not take here.`);
     default:
-      return said(sp.target === 'party' && (sp.heal || sp.cure) ? castOnParty(c, sp, party) : `${c.name} casts ${sp.name}.`);
+      return said(sp.target === 'party' && (sp.heal || sp.cure) ? castOnParty(world.tables.items, c, sp, party) : `${c.name} casts ${sp.name}.`);
   }
 }
