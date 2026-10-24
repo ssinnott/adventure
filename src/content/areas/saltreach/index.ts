@@ -1,6 +1,6 @@
 // Saltreach, down Kestrel Edge (band 10-12): the Long Water from the Edge's foot through the fen to
 // the sea, the Tide Stone's country with its Stone gone, and Saltmouth. docs/areas/saltreach.md is
-// its brief.
+// its state, and docs/areas/saltreach/ holds its plan and decisions.
 import type { Area } from '../../area.ts';
 import { FLAGS } from './flags.ts';
 import { DELTA_D5 } from './maps/delta_d5.ts';

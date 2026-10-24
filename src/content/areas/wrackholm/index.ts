@@ -1,5 +1,6 @@
 // Wrackholm, the smugglers' isle (band 12-14): the moor and the landing, Kelp Hole, the east rocks
-// and the Tide Ship. docs/areas/wrackholm.md is its brief.
+// and the Tide Ship. docs/areas/wrackholm.md is its state, and docs/areas/wrackholm/ holds its plan
+// and decisions.
 import type { Area } from '../../area.ts';
 import { FLAGS } from './flags.ts';
 import { WRACKHOLM_E6 } from './maps/wrackholm_e6.ts';
