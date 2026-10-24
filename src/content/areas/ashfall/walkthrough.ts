@@ -74,7 +74,7 @@ import { restRefused, answerRiddle } from '../../../game/wilds.ts';
 import { meet, heard, answer, barred, handIns, personFlags } from '../../../game/people.ts';
 import { questLog, holds } from '../../../game/quests.ts';
 import type { Person } from '../../../game/people.ts';
-import { buy, item } from '../../../game/items.ts';
+import { buy, item, hits, ELEMENT_DIE } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, rest, trainPrice, levelUp, templePrice, addCondition, createCharacter, takePrestige, className, rankMult, RANK_STEP, PRESTIGES } from '../../../game/party.ts';
 import { teach, barOf } from '../../../game/prestige.ts';
 import { seekId, sought } from '../../../game/seeking.ts';
@@ -85,9 +85,10 @@ import type { Party } from '../../../game/party.ts';
 import { take as sail, fareOf } from '../../../game/passage.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
-import { World } from '../../../game/world.ts';
+import { World, HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING } from '../../crossings.ts';
-import { ACT_IV } from '../../../../tools/tests/ladder.ts';
+import { ACT_IV, ACT_V } from '../../../../tools/tests/ladder.ts';
+import { CURVE } from '../../progression.ts';
 import { ARMOURER, CURES } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { GATE, FOUNDING_RAISED, ELDEST_HEARD } from './maps/cindercoast_g10.ts';
@@ -110,6 +111,7 @@ import { QUESTS } from './quests.ts';
 import { masterOffers, favourDone, teachTier, TIER_PRICES } from '../../../game/mastery.ts';
 import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
 import { ENDINGS, ENDED } from '../../endings.ts';
+import { BLACKDRAW } from './maps/blackdraw.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
 const person = (name: string, d = G10): Person => d.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -2402,8 +2404,12 @@ function theWindow(ok: (cond: boolean, msg: string) => void): void {
  * south off F11's ash onto its north edge, walked, the land not named again. The cairn under the
  * mountain's wall, the man of stone's riddle, the sulphur, the flow's cut and its end; the flakes of
  * black glass at the rock's foot and the knapper's store behind it, shut but through its door; the
- * dam's rock at 20,14 left bare for the lair's door and the mountain's face at 10,3 for the enclave's.
- * Each edge as built.
+ * dam's rock at 20,14 left bare for the lair's door. Each edge as built. Last, Blackdraw, the enclave
+ * (#845): in at the flue's mouth in the mountain's face at F12's 10,3, its door saying its band and
+ * how it feels at 24, 25 and 27 and its sign its band; its two groups won at 27 and met in order by a
+ * company on foot or any way else, which passes neither; the clerks' room behind the bright plate
+ * found from it and shut to the four ways but through the plate; Kindler in the stokers' locker; and
+ * out onto F12's 10,2 again.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -2436,8 +2442,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
   const row = (z: MapZone, y: number, can: Can = {}): string => open(32, (i) => out.passable(z.x + i, z.y + y, can) === 'ok');
   const col = (z: MapZone, x: number, can: Can = {}): string => open(32, (i) => out.passable(z.x + x, z.y + i, can) === 'ok');
-  ok(!(F12.encounters ?? []).length && !(F12.exits ?? []).length && F12.start.x === 20 && F12.start.y === 0 && F12.start.facing === SOUTH,
-    'F12 holds no group and nothing is taken out of it yet; it starts at its north edge on the ash, facing south');
+  ok(!(F12.encounters ?? []).length && (F12.exits ?? []).map((e) => e.to).join() === BLACKDRAW.id && F12.start.x === 20 && F12.start.y === 0 && F12.start.facing === SOUTH,
+    'F12 holds no group and nothing is taken out of it but its one way, the flue\'s mouth into Blackdraw; it starts at its north edge on the ash, facing south');
 
   // West off G12's ash at 0,5 onto F12's 31,5, walked: out of Fire Mountain into the Waste, named at its floor.
   w.world.travel(g12.id, 0, 5, WEST);
@@ -2475,12 +2481,11 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const purse = F12.features!.find((f) => f.kind === 'chest' && f.id === 'f12_purse');
   ok(purse?.kind === 'chest' && purse.gold === 100 && purse.items.join() === 'elixir' && purse.x === 29 && purse.y === 14, 'on the ledge, a purse with 100 gold and an Elixir');
 
-  // The doors (docs §12.4, §12.5) are left bare: the dam's rock where the flow stopped, 20,14, for the
-  // lair's, and the mountain's face over the ash under the west wall, 10,3, for the enclave's.
+  // The lair's door (docs §12.4) is left bare: the dam's rock where the flow stopped, 20,14. The
+  // enclave's (docs §12.3) is the flue's mouth in the mountain's face over the ash under the west
+  // wall, 10,3: walked into last.
   const lair = bare(F12, ash, f12, [20, 14], [0, -1]);
   ok(!lair.length, `the dam's rock at F12's 20,14 is left bare for the lair's door, walked to from 20,13, nothing within four squares${lair.length ? ` (not: ${lair.join(', ')})` : ''}`);
-  const flue = bare(F12, ash, f12, [10, 3], [0, -1]);
-  ok(!flue.length, `the mountain's face at F12's 10,3 is left bare for the enclave's door, walked to from 10,2, nothing within four squares${flue.length ? ` (not: ${flue.join(', ')})` : ''}`);
 
   // The edges: F12's north meets F11's south, open at 4 to 31, the mountain at 0 to 3; its east meets
   // G12's west, open at 0 to 10, the mountain and the void below. West against E12, where the world ends,
@@ -2491,4 +2496,90 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const past = open(32, (i) => out.passable(f12.x - 1, f12.y + i, ALL) === 'ok');
   ok(col(f12, 0) === none && past === none && row(f12, 31, ALL) === none,
     'past the west edge (E12) and the south edge the world ends: the west edge shut to a walker and nothing past it open to any company, the south edge the void');
+
+  // Blackdraw, the enclave (#845): in at the flue's mouth, F12's 10,3, one stone in the mountain's face,
+  // the mountain either side and under it, walked onto from the ash at 10,2, and nothing within four
+  // squares of it. Its door says its band and how it feels, as a border's line: the warning at 24,
+  // harder at 25 and its band alone at 27; inside, its sign gives its band.
+  {
+    const BD = BLACKDRAW, mouth = F12.exits!.find((e) => e.to === BD.id)!, levels = w.party.members.map((m) => m.level);
+    type Group = NonNullable<MapDef['encounters']>[number];
+    const near4 = [...F12.features!, ...(F12.encounters ?? []), ...F12.secrets!].filter((f) => Math.abs(f.x - 10) + Math.abs(f.y - 3) <= 4);
+    ok(mouth.x === 10 && mouth.y === 3 && mouth.tx === BD.start.x && mouth.ty === BD.start.y && mouth.tf === BD.start.facing && F12.rows[3].slice(9, 12) === 'M"M' && F12.rows[4][10] === 'M'
+      && ash.has(at(f12, 10, 2)) && ash.has(at(f12, 10, 3)) && !near4.length,
+      `the flue's mouth into Blackdraw is the one stone in the mountain's face at F12's 10,3, the mountain either side and under it, walked to from the ash at 10,2, and nothing stands within four squares of it${near4.length ? ` (${near4.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+    const door = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(F12.id, 10, 2, SOUTH);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === BD.id && w.world.state.x === BD.start.x && w.world.state.y === BD.start.y && w.world.state.facing === SOUTH ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'Blackdraw: levels 27-28.', far = door(24), near = door(25), at27 = door(27);
+    ok(far === `${mouth.label} | ${band} ${WARNING_IN}` && near === `${mouth.label} | ${band} ${HARDER_IN}` && at27 === `${mouth.label} | ${band}`,
+      `in at the flue's mouth from F12's 10,2, the way's own line and then its band, with the warning at 24, harder at 25 and nothing more at 27 (${far}; ${near}; ${at27})`);
+    ok(!!BD.enclave && w.world.here.name === 'Blackdraw' && w.world.here.band?.join('-') === '27-28', `inside, its sign gives its own band, over F12's 25-26 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    // Its two groups, won at its floor, the nearer the gentler (27 and 28): a flue walker in the flue below its first
+    // turn and an inspector with a deep knocker, and more it calls, just inside the furnace's mouth. A company on foot
+    // or any way else meets them in that order and passes neither: the flue is a square wide where the first stands,
+    // and the second stands in the furnace's one mouth.
+    w.level = 27;
+    const [first, last] = [BD.encounters!.find((g) => g.id === 'bd_walker')!, BD.encounters!.find((g) => g.id === 'bd_inspector')!];
+    ok(BD.encounters!.length === 2 && first.monsters.join() === 'flue_walker' && last.monsters.join() === 'inspector,deep_knocker' && !!MONSTERS.inspector.calls?.monsters.includes('deep_knocker')
+      && BD.encounters!.every((g) => g.respawn === 2880 && !g.slainText && g.roams === false), 'a flue walker in the flue and an inspector with a deep knocker, which it calls more of, at the furnace\'s mouth; no guardian');
+    for (const g of BD.encounters!) fight(w, `${BD.id}:${g.id}`);
+    for (const id of ['bd_mouth', 'bd_plates', 'bd_irons', 'bd_furnace', 'bd_flow', 'bd_stoker']) see(w, `${BD.id}:${id}`);
+    const flue = new GameMap(BD), key = (x: number, y: number): string => `${x},${y}`, [plate] = BD.secrets!;
+    /** What a company reaches from the way in, the bright plate shut and the squares within a step of a live group not entered (a fight takes them), and the live groups it comes up to. */
+    const walk = (live: readonly Group[], can: Can): { seen: Set<string>; met: string[] } => {
+      const seen = new Set<string>(), met = new Set<string>(), todo: [number, number][] = [[BD.start.x, BD.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (seen.has(key(x, y)) || (x === plate.x && y === plate.y) || flue.passable(x, y, can) !== 'ok') continue;
+        const next = live.filter((g) => Math.abs(g.x - x) + Math.abs(g.y - y) <= 1);
+        next.forEach((g) => met.add(g.id));
+        if (next.length) continue;
+        seen.add(key(x, y));
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return { seen, met: [...met] };
+    };
+    const both = walk([first, last], {}), swum = walk([first, last], ALL), second = walk([last], {}), waded = walk([last], ALL), done = walk([], ALL);
+    ok(both.met.join() === first.id && swum.met.join() === first.id && !both.seen.has(key(12, 7)) && !swum.seen.has(key(12, 7))
+      && second.met.join() === last.id && waded.met.join() === last.id && second.seen.has(key(5, 7)) && waded.seen.has(key(5, 7))
+      && !second.seen.has(key(4, 11)) && !waded.seen.has(key(4, 11)) && !waded.seen.has(key(8, 13)) && done.seen.has(key(8, 13)),
+      'a company on foot or any way else meets the flue walker first and cannot pass it down the flue; with it down it comes up to the bright plate and to the inspector, and cannot pass it to the furnace and the stokers\' locker');
+    const feat = (id: string): Feature => BD.features!.find((f) => 'id' in f && f.id === id)!;
+    // The secret: the one plate of the flue's wall knocked bright, the search there and the clerks' room behind it.
+    // Walked, waded, climbed or floated, it is never reached but through the plate.
+    ok(plate.hint === 'bd_bright' && feat('bd_bright').x === plate.x && feat('bd_bright').y === plate.y + 1 && done.seen.size === 55 && !done.seen.has(key(5, 5)) && !done.seen.has(key(4, 4)),
+      `the clerks' room is shut but for the bright plate: none of Blackdraw's ${done.seen.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${BD.id}:bd_bright`);
+    w.world.travel(BD.id, plate.x, plate.y + 1, NORTH);
+    let opened = false;
+    for (let i = 0; i < 20 && !opened; i++) opened = w.world.search();
+    const inside = opened ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    ok(opened && inside.every((r) => r.kind === 'moved') && w.world.used('bd_clerks'), 'searched where the plate is knocked bright, it gives, and the clerks\' room behind it can be walked into');
+    const pay = feat('bd_pay'), locker = feat('bd_locker');
+    ok(pay.kind === 'chest' && pay.gold === 300 && pay.items.join() === 'elixir,potion_sp_great', 'in the clerks\' room, their pay chest: 300 gold, an Elixir and a Sapphire Vial');
+    ok(locker.kind === 'chest' && locker.gold === 400 && locker.items.join() === 'kindler'
+      && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('kindler')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'bd_locker' && f.items?.includes('kindler'))))
+      && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'kindler')),
+      'in the stokers\' locker by the furnace, 400 gold and Kindler; no shop sells it, no other chest or cairn holds it and no monster drops it');
+    const spike = item('kindler'), plain = item('marlinspike'), knife = item('grey_knife');
+    const rung = (rows: readonly { level: number; classes: Partial<Record<string, readonly string[]>> }[], level: number, id: string): boolean =>
+      rows.some((r) => r.level === level && ['thief', 'bard'].every((c) => r.classes[c]?.includes(id)));
+    ok(spike.element === 'lightning' && !spike.artifact && spike.price <= CURVE.glasswold.price && hits(spike) === hits(plain) + (ELEMENT_DIE + 1) / 2 && hits(spike) > hits(knife)
+      && rung(ACT_IV, 25, plain.id) && rung(ACT_V, 28, knife.id) && ![...ACT_IV, ...ACT_V].some((r) => Object.values(r.classes).some((ids) => ids?.includes(spike.id))),
+      `Kindler, the marlinspike with a die of lightning and on no rung of the act's ladders, hits ${hits(spike)} against the marlinspike's ${hits(plain)}, the thief's and the bard's from 25, and the Grey Knife's ${hits(knife)}, theirs from 28, at ${spike.price} inside the Glasswold's ${CURVE.glasswold.price}`);
+    // And out: up the flue onto F12's 10,2, facing the ash, with the way's own line and no other.
+    w.world.travel(BD.id, BD.start.x, BD.start.y + 1, NORTH);
+    const back = w.world.move('forward');
+    ok(back.kind === 'moved' && w.world.zone?.id === F12.id && w.world.state.x === f12.x + 10 && w.world.state.y === f12.y + 2 && w.world.state.facing === NORTH && back.messages.join(' | ') === BD.exits![0].label,
+      `out up the flue onto F12's 10,2, facing the ash, the way's own line alone (${said(back)})`);
+    listen(w);
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+    w.level = 25;
+  }
 }
