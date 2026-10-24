@@ -8,7 +8,7 @@
 import { appendFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { changedFiles, changedMaps } from './changed.ts';
+import { changedFiles, changedMaps } from './kit/changed.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
 import { buildMaps } from '../src/content/maps.ts';
 import { atlasOf, pairsOf, plan, shardsFor } from './kit/sweep.ts';

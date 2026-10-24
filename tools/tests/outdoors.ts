@@ -16,7 +16,7 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { EAST, FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { findWeather, weatherAt, weatherSight } from '../../src/game/weather.ts';
 import { daylightAt } from '../../src/game/calendar.ts';
-import { areaRows, areaLists, gather, once } from '../checks.ts';
+import { areaRows, areaLists, gather, once } from '../kit/checks.ts';
 import { ok, owed, local, stopsWalk } from './lib.ts';
 import { logLines } from '../../src/ui/frame.ts';
 

@@ -24,9 +24,10 @@ import { personFlags, personGives } from '../../src/game/people.ts';
 import { businessEntries } from '../../src/ui/screens.ts';
 import { SIDE_W } from '../../src/ui/frame.ts';
 import { columnLabelWidth } from '../../src/ui/draw.ts';
-import { CONTENT, collect } from '../shipped.ts';
-import { condFaults } from './quests.ts';
-import { ok, owed, headlessGame } from './lib.ts';
+import { CONTENT, collect } from '../kit/shipped.ts';
+import { condFaults } from '../kit/rules/quests.ts';
+import { ok, owed } from './lib.ts';
+import { headlessGame } from '../kit/headless.ts';
 
 const quest = (id: string, rank: number, deed: Partial<GuildQuest>, guild: GuildId = 'wardens'): GuildQuest => ({
   id, guild, rank, offer: [`Offer ${id}.`], paid: [`Paid ${id}.`], early: [`Early ${id}.`],

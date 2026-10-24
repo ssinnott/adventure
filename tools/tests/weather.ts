@@ -15,7 +15,7 @@ import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { GameMap, HILL_DRAG, DRAG } from '../../src/game/map.ts';
 import type { Terrain } from '../../src/game/map.ts';
 import { SOUTH } from '../../src/game/types.ts';
-import { once } from '../checks.ts';
+import { once } from '../kit/checks.ts';
 import { ok } from './lib.ts';
 
 export function weather(): void {

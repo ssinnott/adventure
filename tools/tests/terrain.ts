@@ -18,7 +18,7 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { MAP_TERRAIN } from '../../src/game/atlas.ts';
 import { TERRAIN_COLORS, PARCHMENT, AUTOMAP_WASH } from '../../src/ui/palette.ts';
 import { MAP_DEFS, CLIMATES } from '../../src/content/index.ts';
-import { GROUND_SAMPLES } from '../grounds.ts';
+import { GROUND_SAMPLES } from '../kit/grounds.ts';
 import { mix, hexToRgb } from '../../src/lib/art/palettes.ts';
 import { ok } from './lib.ts';
 

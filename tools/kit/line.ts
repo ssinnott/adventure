@@ -1,13 +1,14 @@
 // The test monster: one generic monster for each role of docs/MONSTERS.md §4.2, statted at any level
 // from 1 to the road's cap, so that a company of that level can fight six or seven of its standard
 // encounter between rests (more past level 10), its spell points counted with its hit points (§4.4).
-// tools/harness.ts measures that and re-derives HP and DAMAGE below. None of this is content: no map
-// places a test monster, and none has a drawing of its own (each borrows an existing kind, so a
-// gallery can still show one).
-import type { MonsterDef, MonsterSprite } from '../src/game/monsters.ts';
-import type { Fighters } from '../src/game/combat.ts';
-import { xpForLevel } from '../src/game/party.ts';
-import { MEMBERS } from '../src/content/progression.ts';
+// tools/harness.ts measures that and re-derives HP and DAMAGE, kept in line.json beside this file. None
+// of this is content: no map places a test monster, and none has a drawing of its own (each borrows an
+// existing kind, so a gallery can still show one). Moved here from tools/testmonster.ts by #984.
+import { readFileSync } from 'node:fs';
+import type { MonsterDef, MonsterSprite } from '../../src/game/monsters.ts';
+import type { Fighters } from '../../src/game/combat.ts';
+import { xpForLevel } from '../../src/game/party.ts';
+import { MEMBERS } from '../../src/content/progression.ts';
 
 export type Role = 'fodder' | 'skirmisher' | 'soldier' | 'archer' | 'caster' | 'controller' | 'armoured' | 'elite' | 'brute' | 'boss';
 
@@ -60,6 +61,15 @@ export function line(level: number): { hp: number; ac: number; hit: number; dmg:
  */
 export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 17, 18, 19, 20, 21, 22, 24, 25, 26, 27, 28, 29, 30, 31, 32] as const;
 
+/** The calibration's two tables, HP and DAMAGE, each a factor a role at each of LEVELS. */
+export interface Tables { HP: Record<Role, readonly number[]>; DAMAGE: Record<Role, readonly number[]> }
+/** Where the tables are kept: data, written by the calibration and read here, never by hand. */
+export const LINE_FILE = new URL('./line.json', import.meta.url);
+/** The tables as LINE_FILE holds them, a role a line, each row as JSON writes it. */
+export const lineJson = (t: Tables): string =>
+  `{\n${(['HP', 'DAMAGE'] as const).map((k) => `  ${JSON.stringify(k)}: {\n${ROLE_IDS.map((r) => `    ${JSON.stringify(r)}: ${JSON.stringify(t[k][r])}`).join(',\n')}\n  }`).join(',\n')}\n}\n`;
+const TABLES = JSON.parse(readFileSync(LINE_FILE, 'utf8')) as Tables;
+
 /**
  * The calibration, two factors on each role's shape at each of LEVELS: HP on its hit points, DAMAGE on
  * its damage. A regular role hits as today's monsters do (damage 1, on the line) and has the hit points
@@ -71,32 +81,11 @@ export const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 16, 17, 18, 19, 20, 21
  * where the line itself is too much, both come down together; and no monster has fewer hit points
  * than the one a level under it. The boss takes one factor for both, set so that a company two levels
  * under it wins half the time, as EXPANSION.md §5.2 asks, and held as the rest are where its hit
- * points would dip. Written by `node tools/harness.ts --calibrate --write`; do not tune by hand.
+ * points would dip. Kept in line.json beside this file, which `node tools/harness.ts --calibrate
+ * --write` writes (`lineJson`); do not tune by hand.
  */
-export const HP: Record<Role, readonly number[]> = {
-  fodder:     [0.83, 1.08, 0.88, 1.4, 1.53, 1.63, 1.83, 2.77, 2.71, 2.93, 4.46, 4.08, 3.87, 3.78, 4.33, 4.42, 4.24, 4.44, 4.12, 3.97, 3.89, 5.1, 5.3, 5.14, 4.99, 4.85, 4.96],
-  skirmisher: [0.83, 1.25, 1.27, 1.47, 1.4, 1.43, 1.54, 2.05, 2.34, 2.61, 3.33, 3.44, 3.56, 3.67, 4.42, 4.5, 4.31, 4.68, 4.34, 4.19, 4.05, 4.51, 5.29, 5.13, 4.98, 4.84, 4.7],
-  soldier:    [1.07, 1.45, 1.27, 1.41, 1.35, 1.34, 1.38, 2.09, 2.34, 2.64, 3.45, 3.5, 3.62, 3.45, 4.82, 4.9, 4.7, 4.53, 4.2, 4.05, 3.91, 4.45, 4.77, 4.78, 4.63, 4.5, 4.55],
-  archer:     [0.93, 1.59, 1.49, 1.73, 1.64, 1.57, 1.82, 2.37, 2.75, 2.99, 4.05, 4.23, 4.13, 4.13, 4.7, 4.86, 4.71, 5.45, 5.06, 4.88, 4.71, 5.57, 5.84, 5.66, 5.68, 5.56, 5.65],
-  caster:     [1.13, 2.16, 1.91, 2.01, 1.85, 1.84, 1.88, 2.62, 2.76, 3.16, 4.84, 5.63, 5.34, 5.08, 6.23, 6.46, 6.19, 6.42, 6.14, 5.92, 6.15, 6.6, 7.68, 7.44, 7.22, 7.01, 6.82],
-  controller: [0.98, 1.25, 1.11, 1.28, 1.29, 1.3, 1.34, 2.02, 2.24, 2.57, 3.11, 3.9, 3.7, 3.52, 3.81, 3.86, 3.7, 4.03, 3.74, 3.66, 3.54, 4.42, 4.67, 4.53, 4.57, 4.44, 4.49],
-  armoured:   [1.54, 1.4, 1.26, 1.45, 1.45, 1.28, 1.32, 1.99, 2.14, 2.33, 3.15, 3.83, 3.64, 3.47, 4.26, 4.47, 4.28, 4.11, 4.18, 4.03, 3.89, 4.91, 5.79, 5.61, 5.45, 5.29, 5.15],
-  elite:      [1.23, 1.82, 1.68, 2.16, 1.87, 1.65, 1.59, 2.16, 2.27, 2.47, 4.21, 4.66, 4.51, 4.34, 4.91, 4.85, 5.19, 4.98, 4.62, 5.2, 5.02, 5.44, 6.11, 5.93, 5.75, 5.58, 5.43],
-  brute:      [1.99, 1.82, 1.64, 2.19, 2.21, 1.95, 1.75, 2.23, 2.31, 2.56, 3.66, 3.98, 3.87, 3.79, 4.56, 4.56, 4.48, 4.67, 4.44, 4.43, 4.44, 6.12, 6.29, 6.11, 5.92, 5.75, 5.59],
-  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.49, 3.86, 4.79, 5.04, 4.93, 5.16, 4.97, 5.52, 5.3, 5.19, 5.41, 5.22, 5.21, 5.04, 6.07, 6.35, 6.17, 6],
-};
-export const DAMAGE: Record<Role, readonly number[]> = {
-  fodder:     [0.83, 1.15, 1.39, 1.42, 1.44, 1.04, 1, 1.13, 2.11, 1.98, 1.16, 1.7, 2.04, 1.87, 1.9, 1.73, 1.88, 1.7, 1.69, 1.85, 1.8, 1.64, 1.74, 1.65, 1.69, 1.6, 1.47],
-  skirmisher: [0.83, 1, 1.11, 1.38, 1.44, 1.32, 1.06, 1.28, 1.05, 1.25, 1.37, 1.46, 1.49, 1.34, 1.45, 1.39, 1.35, 1.37, 1.24, 1.24, 1.29, 1.67, 1.62, 1.55, 1.51, 1.44, 1.45],
-  soldier:    [1, 1.06, 1.17, 1.5, 1.55, 1.42, 1.31, 1.22, 1.13, 1.19, 1.39, 1.52, 1.5, 1.4, 1.38, 1.29, 1.17, 1.46, 1.32, 1.32, 1.34, 1.74, 1.81, 1.73, 1.7, 1.61, 1.57],
-  archer:     [0.93, 1, 1.11, 1.11, 1.34, 1.29, 1.04, 1.43, 1.18, 1.25, 1.37, 1.44, 1.51, 1.39, 1.62, 1.61, 1.55, 1.53, 1.43, 1.46, 1.51, 1.9, 2.03, 1.93, 1.92, 1.8, 1.79],
-  caster:     [1, 1, 1, 1.25, 1.3, 1.35, 1.1, 1.16, 1.08, 1.34, 1.43, 1.36, 1.3, 1.41, 1.43, 1.44, 1.39, 1.53, 1.5, 1.39, 1.39, 1.81, 1.81, 1.67, 1.77, 1.62, 1.78],
-  controller: [0.98, 1.33, 1.46, 1.87, 1.93, 1.56, 1.64, 1.7, 1.58, 1.49, 1.73, 1.53, 1.61, 1.59, 2.05, 1.84, 1.83, 1.83, 1.64, 1.65, 1.68, 2.03, 2.18, 2.05, 1.97, 1.84, 1.76],
-  armoured:   [1, 1.79, 1.58, 2, 1.81, 1.66, 1.65, 1.43, 1.33, 1.61, 1.72, 1.58, 1.51, 1.63, 1.64, 1.5, 1.29, 1.66, 1.43, 1.26, 1.46, 1.79, 1.66, 1.38, 1.55, 1.21, 1.46],
-  elite:      [1, 1.15, 1.33, 1.67, 1.64, 1.4, 1.45, 1.43, 1.44, 1.52, 1.36, 1.4, 1.5, 1.37, 1.67, 1.56, 1.45, 1.56, 1.45, 1.35, 1.32, 1.87, 1.83, 1.84, 1.7, 1.72, 1.63],
-  brute:      [1, 1.3, 1.45, 1.55, 1.42, 1.21, 1.19, 1.24, 1.25, 1.32, 1.39, 1.42, 1.47, 1.35, 1.47, 1.34, 1.39, 1.37, 1.28, 1.35, 1.29, 1.44, 1.51, 1.51, 1.42, 1.42, 1.39],
-  boss:       [3.95, 2.96, 2.45, 2.47, 2.62, 2.88, 3.03, 3.17, 3.23, 3.49, 3.86, 4.79, 5.04, 4.93, 5.16, 4.97, 5.52, 5.3, 5.19, 5.41, 5.22, 5.21, 5.04, 6.07, 6.35, 6.17, 6],
-};
+export const HP: Record<Role, readonly number[]> = TABLES.HP;
+export const DAMAGE: Record<Role, readonly number[]> = TABLES.DAMAGE;
 
 /** A role's factor from a table at a level, straight between the levels it was made at. */
 export function scaleAt(table: Record<Role, readonly number[]>, role: Role, level: number): number {

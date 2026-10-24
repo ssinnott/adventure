@@ -30,7 +30,8 @@ import type { ChoiceScreen } from '../../src/ui/screens.ts';
 import { FONT_CHARS, measureText, lineHeight } from '../../src/lib/engine/text.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
-import { ok, owed, headlessGame, drive, withDefs } from './lib.ts';
+import { ok, owed, withDefs } from './lib.ts';
+import { headlessGame, drive } from '../kit/headless.ts';
 
 /** The stats a fight reads; endurance, intellect and luck have no live effect (DESIGN §5). */
 const LIVE: readonly Stat[] = ['might', 'accuracy', 'speed', 'personality'];

@@ -61,7 +61,7 @@ import { CLASSES, canTrainAt, xpForLevel } from '../../../game/party.ts';
 import { nightCost, stay, payFee, hallOffers, learnSpell, train } from '../../../game/services.ts';
 import { spellsFor } from '../../../game/spells.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
-import { ACT_III } from '../../../../tools/tests/ladder.ts';
+import { ACT_III } from '../../../../tools/kit/rules/ladder.ts';
 import { FURRIER } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { NIGHTS, WENNA_UP } from './maps/rime_lodge.ts';

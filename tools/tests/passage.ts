@@ -20,7 +20,7 @@ import type { Atlas, LinkKind } from '../../src/game/atlas.ts';
 import { ATLAS, MAP_DEFS } from '../../src/content/index.ts';
 import { CROSSINGS, sells } from '../../src/content/crossings.ts';
 import type { Crossing, CrossingEnd } from '../../src/content/crossings.ts';
-import { landings } from './gate.ts';
+import { landings } from '../kit/rules/gate.ts';
 import { ok } from './lib.ts';
 
 const BOAT: Passage = { to: 'fx_isle', x: 2, y: 1, facing: NORTH, name: 'The isle', by: 'boat', fare: 150, departs: 20, days: 1, arrives: 6, free: { flag: 'fx_free' }, half: { flag: 'fx_half' } };

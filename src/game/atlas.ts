@@ -837,6 +837,22 @@ export function areaBand(atlas: Atlas, defs: readonly MapDef[], areaId: string):
   return Number.isFinite(lo) ? [lo, hi] : undefined;
 }
 
+/**
+ * A map's place on the road, decided once for the pace check and the novelty check: the order of
+ * its area, or, where its floor is over its area's band (the Dead-Drop under the Tide Ship, 26 to
+ * 28 in Act II's isle), the order of the last area whose floor is at or under its own. A map with
+ * no floor, or an area with no band, stands where its area does.
+ */
+export function roadPlace(atlas: Atlas, defs: readonly MapDef[]): (area: string, def: Pick<MapDef, 'band'>) => number {
+  const order = (id: string): number => atlas.areas.find((a) => a.id === id)?.order ?? Infinity;
+  const bands = atlas.areas.map((a) => ({ order: a.order, band: areaBand(atlas, defs, a.id) })).filter((a): a is { order: number; band: [number, number] } => !!a.band);
+  return (area, def) => {
+    const own = order(area), top = bands.find((b) => b.order === own)?.band[1], floor = def.band?.[0];
+    if (floor === undefined || top === undefined || floor <= top) return own;
+    return Math.max(own, ...bands.filter((b) => b.band[0] <= floor).map((b) => b.order));
+  };
+}
+
 /** One arrow of the zone overlay. */
 export interface ZoneEdge {
   from: string;
