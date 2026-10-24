@@ -75,6 +75,23 @@ jobs:
         env:
           TEST_SINCE: ${{ github.event_name == 'pull_request' && 'HEAD^1' || '' }}
 
+  # For #954's measure alone, taken out before the merge: every suite in one process, then in
+  # parallel, on one machine, each printing its table and its wall.
+  measure:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: nproc
+      - run: node tools/test.ts
+      - if: ${{ !cancelled() }}
+        run: node tools/test.ts --jobs
+
   smoke:
     runs-on: ubuntu-latest
     # The smoke but the four-way crack sweep, which the sweep job runs: 118 to 167 s of `npm run smoke`
