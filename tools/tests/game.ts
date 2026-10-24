@@ -3,8 +3,8 @@
 // only strips types, so the screens that once took their arguments as parameter properties are each
 // built and read back here as well.
 import { Game } from '../../src/game/game.ts';
-import { ChoiceScreen } from '../../src/ui/screens.ts';
-import type { CombatScreen } from '../../src/ui/combat.ts';
+import { ChoiceScreen, SheetScreen } from '../../src/ui/screens.ts';
+import { CombatScreen } from '../../src/ui/combat.ts';
 import type { WorldMapScreen } from '../../src/ui/worldmap.ts';
 import { ok, headlessGame, drive } from './lib.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
@@ -88,4 +88,22 @@ export function game(): void {
   const called = s.log.findIndex((l) => l.startsWith('Caller calls, and ')), lines = s.log.length, again = meetCalled(g.world, s, bands);
   ok(called >= 0 && s.log[called + 1] === kind.look && s.log.filter((l) => l === kind.look).length === 1 && bands === 2 && again === 2 && s.log.length === lines && !!g.world.state.met?.includes(kind.id),
     `a call of a kind the company has not met (${kind.name}) says its look once, straight after the call`);
+
+  // And through the combat screen, as the game meets them: straight after the monster's turn that called.
+  const unmet = Object.values(MONSTERS).find((d) => d.look && !g.world.state.met?.includes(d.id))!;
+  const twice: MonsterDef = { ...caller, hp: 400, speed: 40, calls: { monsters: [unmet.id], chance: 1 } };
+  const shown = startCombat(g.party, [{ id: 'test_callers', monsters: [twice, twice] }], g.rng), screen = new CombatScreen(shown, ['test_callers']), was = CombatScreen.instant;
+  CombatScreen.instant = true; screen.auto = true; g.push(screen);
+  for (let i = 0; i < 4000 && shown.groupIds.length === 1 && shown.outcome === 'ongoing'; i++) g.update(null);
+  CombatScreen.instant = was; g.pop();
+  const heard = shown.log.findIndex((l) => l.startsWith('Caller calls, and '));
+  ok(heard >= 0 && shown.log[heard + 1] === unmet.look, `the combat screen says a called kind's look straight after the call (${unmet.name})`);
+
+  // The sheet uses an item by the same rule: a draught listed from the bag, on the fourth member, though the first's pack holds one too.
+  const [first, , , fourth] = g.party.members;
+  first.pack = ['potion_heal']; g.party.bag = ['potion_heal']; fourth.conditions = []; fourth.maxHp = 40; fourth.hp = 1;
+  g.push(new SheetScreen(0));
+  drive(g, ['down', 'interact', 'n4']);
+  ok(first.pack.join() === 'potion_heal' && !g.party.bag.length && fourth.hp === 16 && g.log.at(-1) === `${fourth.name} recovers 15.`, `the sheet gives the bag's draught to the fourth member, not the pack's (${g.log.at(-1)})`);
+  g.pop();
 }

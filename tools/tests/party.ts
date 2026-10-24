@@ -106,23 +106,30 @@ export function party(): void {
   const table = { ...ITEMS, [tonic.id]: tonic }, u = defaultParty(makeRng(9)), [a, b, cc] = u.members;
   for (const m of u.members) m.pack = [];
   a.pack.push('potion_heal'); u.bag = ['potion_heal', 'potion_sp', 'antidote', 'rations', 'club', tonic.id];
-  a.hp = 1;
-  const want = Math.min(a.maxHp, 16) - 1, healed = useItem(table, u, a, 'potion_heal', a);
-  ok(healed?.join() === `${a.name} recovers ${want}.` && a.hp === 1 + want && !a.pack.length && u.bag.includes('potion_heal'), `a Healing Draught comes out of the holder's pack before the bag (${healed})`);
-  a.hp = 1;
+  // Room for the whole draught, then a member 3 short of the most: its 15 and the cap.
+  a.maxHp = 40; a.hp = 1;
+  const healed = useItem(table, u, a, 'potion_heal', a);
+  ok(healed?.join() === `${a.name} recovers 15.` && a.hp === 16 && !a.pack.length && u.bag.includes('potion_heal'), `a Healing Draught comes out of the holder's pack before the bag, 15 hit points (${healed})`);
+  a.hp = 37;
   const again = useItem(table, u, a, 'potion_heal', a);
-  ok(again?.join() === `${a.name} recovers ${want}.` && !u.bag.includes('potion_heal'), `and with none in the pack, out of the bag (${again})`);
-  b.maxSp = 12; b.sp = 5;
+  ok(again?.join() === `${a.name} recovers 3.` && a.hp === 40 && !u.bag.includes('potion_heal'), `and with none in the pack, out of the bag, to the most (${again})`);
+  b.maxSp = 20; b.sp = 5;
   const sharp = useItem(table, u, null, 'potion_sp', b);
-  ok(sharp?.join() === `${b.name} feels sharper.` && b.sp === 12, `a Blue Vial gives 10 spell points, to the most (${sharp} ${b.sp}/12)`);
+  ok(sharp?.join() === `${b.name} feels sharper.` && b.sp === 15, `a Blue Vial gives 10 spell points (${sharp} ${b.sp}/20)`);
   addCondition(cc, 'poisoned');
   const clean = useItem(table, u, null, 'antidote', cc);
   ok(clean?.join() === `${cc.name} is cleansed.` && !hasCondition(cc, 'poisoned'), `an Antidote lifts the poison (${clean})`);
   const food = u.food, fed = useItem(table, u, null, 'rations', a);
   ok(fed?.join() === "The party's food grows by 5." && u.food === food + 5 && !u.bag.includes('rations'), `Rations go to the stores, the sheet's and now the fight's (${fed})`);
-  addCondition(cc, 'poisoned'); cc.hp = cc.maxHp - 5;
+  addCondition(cc, 'poisoned'); cc.hp = cc.maxHp - 5; cc.maxSp = 10; cc.sp = 8;
   const all = useItem(table, u, null, tonic.id, cc);
-  ok(all?.join(' ') === `${cc.name} recovers 5. ${cc.name} feels sharper. ${cc.name} is cleansed. The party's food grows by 2.`, `a tonic that does all four says them in that order (${all?.join(' ')})`);
+  ok(all?.join(' ') === `${cc.name} recovers 5. ${cc.name} feels sharper. ${cc.name} is cleansed. The party's food grows by 2.` && cc.sp === 10, `a tonic that does all four says them in that order, its spell points to the most (${all?.join(' ')})`);
   const kept = JSON.stringify(u);
   ok(useItem(table, u, a, 'potion_heal', a) === null && useItem(table, u, a, 'club', a) === null && JSON.stringify(u) === kept, 'a draught nobody holds and a club, which has no use, are refused, and nothing changes');
+  // So in a fight: `partyAct` refuses the use, says nothing and keeps the turn.
+  const fight = startCombat(u, [{ id: 'm', monsters: [meek(1)] }], makeRng(4)), frng = makeRng(4);
+  for (let k = 0; k < 20 && currentTurn(fight, u, frng)?.side === 'monster'; k++) monsterAct(fight, u, frng);
+  const turn = JSON.stringify(currentTurn(fight, u, frng)), logged = fight.log.length;
+  ok(!partyAct(fight, u, frng, { type: 'use', itemId: 'potion_heal', target: 0 }) && !partyAct(fight, u, frng, { type: 'use', itemId: 'club', target: 0 })
+    && JSON.stringify(currentTurn(fight, u, frng)) === turn && fight.log.length === logged, 'and in a fight the same two are refused, with the turn kept');
 }

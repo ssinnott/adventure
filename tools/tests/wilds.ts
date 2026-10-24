@@ -287,6 +287,13 @@ function wellAndSpells(): void {
   const walk = cast('walk_water'), float = cast('levitate');
   ok(walk.line === by('walk_water', '. The shallows will bear you a while.') && float.line === by('levitate', '. Your feet leave the ground.') && !!w.state.walk && !!w.state.float && !walk.moved && !float.moved,
     `Walk on Water and Levitate bear the company (${walk.line} ${float.line})`);
+  // The points exactly are enough; a party spell cast out of a fight heals by the fight's rule (`castOnParty`), never the dead.
+  mage.sp = spell('light').sp;
+  const exact = castExplore(w, g.party, 0, 'light'), left = mage.sp, [, hurt, gone] = g.party.members;
+  hurt.conditions = []; hurt.hp = 1; gone.conditions = ['dead']; gone.hp = -2; mage.sp = 50;
+  const mend = castExplore(w, g.party, 0, 'mend_all');
+  ok(exact.lines.join() === by('light', '. The way ahead is lit.') && !left && mend.lines.join() === by('mend_all', '. The party is healed.') && mage.sp === 50 - spell('mend_all').sp && hurt.hp > 1 && gone.hp === -2 && !mend.moved,
+    `the points exactly cast, and Mending Light heals the company but the dead (${mend.lines.join()})`);
   mage.sp = 0;
   const short = castExplore(w, g.party, 0, 'light');
   ok(short.lines.join() === `${mage.name} lacks the spell points.` && mage.sp === 0 && !short.moved, `a caster short of the points casts nothing (${short.lines.join()})`);

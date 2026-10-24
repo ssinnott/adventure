@@ -1227,8 +1227,8 @@ Decided by the builder for #978, each the owner's to overturn:
    `spell(id)` as `Game` did: #974's to pass in.
 6. **`Game.castExplore` goes.** The spell screen calls the rule, says its lines and calls
    `enterCell` where the party moved, as the method did after a portal or a return to the mark.
-7. **`meetCalled` sits in `combat.ts` beside `call`,** taking `Pick<World, 'meet'>` by a type import,
-   which the layers check leaves out.
+7. **`meetCalled` sits in `combat.ts` beside `call`,** taking `Pick<World, 'meet'>` by a type
+   import, which the layers check leaves out.
 8. **The new suite parts go to suites that need not print the same:** `useItem` to `party`, the
    well and the spells to `wilds` (on a headless game, whose world has the towns a portal needs),
    the chest and the call to `game`. The combat suite's draught on the walk calls `useItem` under
