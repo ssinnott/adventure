@@ -82,6 +82,8 @@ function placed(n: ts.Node, slice: Slice): string | null | 'refused' {
   }
   return null;
 }
+/** Whether a node runs in the smoke's page (`page.evaluate(…)`), where only the page's game is to hand. */
+const inPage = (n: ts.Node): boolean => { for (let p = n.parent; p; p = p.parent) if (ts.isCallExpression(p) && /\.evaluate$/.test(p.expression.getText())) return true; return false; };
 /** Whether a member is the world's or the game's, which holds `this.tables`. */
 function held(p: ts.Node): boolean {
   const cls = p.parent;
@@ -124,7 +126,8 @@ for (const sf of program.getSourceFiles()) {
       const t = ts.isIdentifier(callee) ? takes.get(aliased(checker.getSymbolAtLocation(callee))!) : undefined;
       if (t && !(n.arguments[0] && isTable(n.arguments[0], t.slice))) {
         let at = placed(n, t.slice);
-        if (at === 'refused') refused.push(`${where(n)}: ${t.key} wants the ${t.slice} where another slice is held`);
+        if (inPage(n)) refused.push(`${where(n)}: ${t.key} called in the page, where content's tables are not to hand`);
+        else if (at === 'refused') refused.push(`${where(n)}: ${t.key} wants the ${t.slice} where another slice is held`);
         else {
           if (!at && (inGame || file.startsWith('src/ui/'))) { refused.push(`${where(n)}: ${t.key} called where no table is held`); at = null; }
           else if (!at) { at = `${top}.${t.slice}`; if (file !== KIT_COMPANY) needs(file, top); }
