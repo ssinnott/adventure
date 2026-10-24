@@ -1,8 +1,8 @@
 // Each area's checks.ts (src/content/areas/<area>/checks.ts), found by its file in road order as the
 // runner finds a walkthrough: the rows the suites hold of an area that are its own and no part of the
-// game (`AreaChecks`, src/content/area.ts), which nothing in the game imports. A suite reads them beside
-// its own table, as it reads the zones', groups', monsters' and exits' own fields beside theirs, and
-// refuses a row in both (`beside`), so that a row moves one way, onto its area (#897).
+// game (`AreaChecks`, src/content/area.ts), which nothing in the game imports. A suite reads them alone,
+// as it reads the zones', groups', monsters' and exits' own fields: the tables they moved from are gone
+// (#969), and a row given twice, on two areas or twice on one, is refused (`gather`).
 import { existsSync, readdirSync } from 'node:fs';
 import { AREAS } from '../src/content/index.ts';
 import type { AreaChecks, Owes } from '../src/content/area.ts';
@@ -40,12 +40,11 @@ export const areaLists = <V>(pick: (c: AreaChecks) => readonly V[] | undefined):
   [...CHECKS].flatMap(([id, c]) => (pick(c) ?? []).map((v): [string, V] => [id, v]));
 
 /**
- * A suite's table read beside the rows on its areas: every row, the table's first and then the areas'
- * in the order given, and each key given twice (in the table and on an area, or on two), which the
- * suite refuses.
+ * One kind of row from the areas, keyed: every row, the first of each key, in the order given, and each
+ * key given twice (on two areas, or twice on one), which the suite refuses.
  */
-export function beside<V>(table: Readonly<Record<string, V>>, rows: Iterable<readonly [string, V]>): { all: Record<string, V>; twice: string[] } {
-  const all: Record<string, V> = { ...table }, twice: string[] = [];
+export function gather<V>(rows: Iterable<readonly [string, V]>): { all: Record<string, V>; twice: string[] } {
+  const all: Record<string, V> = {}, twice: string[] = [];
   for (const [key, value] of rows) {
     if (Object.hasOwn(all, key)) twice.push(key);
     else all[key] = value;
@@ -54,15 +53,13 @@ export function beside<V>(table: Readonly<Record<string, V>>, rows: Iterable<rea
 }
 
 /**
- * A table of lists keyed by who owes each (`EDGES_OWED`, `LOCKS_OWED`) read beside the areas' rows of the
- * same kind: who owes each thing listed, the table's first, so that several areas may owe one issue; and
- * each thing listed twice, in the table, on an area or on both, which the suite refuses.
+ * The areas' lists keyed by who owes each (`Owes.edges`, `Owes.locks`): who owes each thing listed, so
+ * that several areas may owe one issue; and each thing listed twice, which the suite refuses.
  */
-export function besideLists(table: Readonly<Record<string, readonly string[]>>, rows: Iterable<readonly [string, readonly string[]]>): { all: Record<string, string>; twice: string[] } {
-  const each = (r: Iterable<readonly [string, readonly string[]]>): [string, string][] => [...r].flatMap(([whose, keys]) => keys.map((k): [string, string] => [k, whose]));
-  return beside({}, [...each(Object.entries(table)), ...each(rows)]);
+export function gatherLists(rows: Iterable<readonly [string, readonly string[]]>): { all: Record<string, string>; twice: string[] } {
+  return gather([...rows].flatMap(([whose, keys]) => keys.map((k): [string, string] => [k, whose])));
 }
 
-/** The line a suite refuses a row in both with: nothing given twice, or each key that is. */
+/** The line a suite refuses a row given twice with: nothing given twice, or each key that is. */
 export const once = (what: string, twice: readonly string[]): [boolean, string] =>
   [!twice.length, `${what}${twice.length ? ` (twice: ${twice.join(', ')})` : ''}`];

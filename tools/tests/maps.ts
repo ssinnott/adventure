@@ -10,28 +10,17 @@ import { MAX_LEVEL } from '../../src/game/party.ts';
 import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
 import { handIns, personFlags, personGives, groupFlags } from '../../src/game/people.ts';
-import { areaRows, beside, once, unknownFields } from '../checks.ts';
+import { areaRows, gather, once, unknownFields } from '../checks.ts';
 import { ok, owed, stopsWalk } from './lib.ts';
 
 /**
- * What is drawn before the map that places it, and whose map places it: a monster no map puts in a
- * group yet, a room no business opens into yet. Each is reported as that issue's while it waits,
- * and fails once it is placed, so its entry is dropped here. Cairnmoor's part is empty: every monster
- * its map files draw is placed, the last of them, the Cairn King, by #480; and Rimewater's, the
- * keepers and the Matron by #490. Hearth Isle's isle (H6, #753) places its moths, champions, preacher
- * and rats and opens the camp's three tents; its crypt (#756) the first keeper; its Ways (#757) the first
- * crawlers; its Stair (#758) the rearguard and the Catcher; its Heart (#759) Vask and the Grey Hands, and
- * the Core Sentries Vask calls.
+ * What is drawn before the map that places it, owed by its area to the issue whose map places it
+ * (`Owes.unplaced`): a monster no map puts in a group yet, a room no business opens into yet. Each is
+ * reported as that issue's while it waits, and fails once it is placed, so its row is dropped; one owed
+ * twice is refused.
  */
-const UNPLACED: Record<string, string> = {};
-/** UNPLACED beside what the areas owe (`Owes.unplaced`), an id in both refused (#897). */
-const unplaced = beside(UNPLACED, areaRows((c) => c.owes?.unplaced));
+const unplaced = gather(areaRows((c) => c.owes?.unplaced));
 
-/**
- * The most monsters a group may hold on a zone's maps, by the zone: the Deepthorn's monsters are
- * harder, not more. A zone may say so itself (`AtlasZone.maxGroup`), and is then named here no longer (#897).
- */
-const MAX_GROUP: Record<string, number> = {};
 const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 'eleven', 'twelve'];
 
 /** The monsters a company can meet on `defs`: those their groups place, and those a placed one calls (`calls`), and so on down. */
@@ -259,11 +248,10 @@ export function maps(): void {
     ok(!nightFaults(camp(undefined)).length && !nightFaults(camp([])).length && !nightFaults(camp([{ sets: 'fx_one', says: ['Rain.'] }, { sets: 'fx_two', after: { flag: 'fx_one' } }])).length, 'a camp with no nights, none or two of its own passes');
     ok(nightFaults(camp([{ sets: ' ' }])).length === 1 && nightFaults(camp([{ sets: 'fx_one' }, { sets: 'fx_one' }])).length === 1 && nightFaults(camp([{ sets: 'fx_one', says: ['Rain.', ' '] }])).length === 1, 'and a night that sets no flag, two that set the same and one that says a blank line each fail');
   }
-  // The Deepthorn's monsters are harder, not more: no group on its maps is above eight (MAX_GROUP).
-  const most = beside(MAX_GROUP, ATLAS.zones.filter((z) => z.maxGroup).map((z) => [z.id, z.maxGroup!] as const));
-  ok(...once('every zone\'s largest group is named once, in MAX_GROUP or on its zone', most.twice));
-  for (const [id, n] of Object.entries(most.all)) {
-    const z = ATLAS.zones.find((x) => x.id === id), name = (z?.name ?? id).replace(/^The /, 'the '), own = new Set(z?.maps?.map((m) => m.map));
+  // The Deepthorn's monsters are harder, not more: no group on its maps is above eight, as its zone says
+  // (`AtlasZone.maxGroup`).
+  for (const z of ATLAS.zones.filter((x) => x.maxGroup)) {
+    const n = z.maxGroup!, name = z.name.replace(/^The /, 'the '), own = new Set(z.maps?.map((m) => m.map));
     ok(own.size > 0, `${name} has maps`);
     const big = MAP_DEFS.filter((d) => own.has(d.id)).flatMap((d) => (d.encounters ?? []).filter((e) => e.monsters.length > n).map((e) => `${e.id} (${e.monsters.length})`));
     ok(!big.length, `no group in ${name} is above ${WORDS[n] ?? n}${big.length ? ' -> ' + big.join(', ') : ''}`);
@@ -323,12 +311,12 @@ export function maps(): void {
   const opened = INTERIORS.filter((i) => !Object.hasOwn(unplaced.all, i));
   ok(interiors.length === opened.length && new Set(interiors).size === interiors.length && opened.every((i) => interiors.includes(i)), `every business has an interior of its own (${interiors.length}, ${new Set(interiors).size} distinct)`);
   for (const i of INTERIORS.filter((i) => Object.hasOwn(unplaced.all, i))) owed(interiors.includes(i), `a business opens into ${i}`, unplaced.all[i]);
-  ok(...once('every monster and room owed its place is owed once, in UNPLACED or by its area', unplaced.twice));
+  ok(...once('every monster and room owed its place is owed once', unplaced.twice));
   const nothing = Object.keys(unplaced.all).filter((k) => !MONSTERS[k] && !(INTERIORS as readonly string[]).includes(k));
   ok(!nothing.length, `and each names a monster or a room${nothing.length ? ` (not: ${nothing.join(', ')})` : ''}`);
-  const fx = beside({ fx_a: 'x' }, [['fx_b', 'y'], ['fx_a', 'z'], ['fx_b', 'w']]);
+  const fx = gather([['fx_a', 'x'], ['fx_b', 'y'], ['fx_a', 'z'], ['fx_b', 'w']]);
   ok(fx.twice.join() === 'fx_a,fx_b' && Object.entries(fx.all).join() === 'fx_a,x,fx_b,y' && !once('', fx.twice)[0] && once('', [])[0],
-    'a row in a suite\'s table and on an area, or on two areas, is refused, and one in either alone is read (#897)');
+    'a row on two areas is refused, and one on an area alone is read (#897)');
   ok(unknownFields({ gear: {}, gaer: {}, owes: { cutOff: {}, cutoff: {} } }).join() === 'gaer,owes.cutoff',
     'a checks.ts giving a field AreaChecks has not is refused by its name, \'gaer\' or \'owes.cutoff\' (#897)');
   // The trainer ladder: each town's trainers teach to its area's band's top plus one (EXPANSION

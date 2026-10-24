@@ -18,7 +18,6 @@ import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, H
 import type { Role } from '../testmonster.ts';
 import { measure, days, fight, play, outcomeOf, companyAt, newerCompany, edgeOf, spent, mustRest, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, ROUND_CAP, REST_AT, WORST, CAP, unforge, GEAR, GEAR_TOP, ANSWER, wakeWith, breathGuard, whatIfs, writeRefusal, casting, cellsOnCores, artifactIds } from '../harness.ts';
 import type { BotOpts } from '../harness.ts';
-import { once } from '../checks.ts';
 import { ok } from './lib.ts';
 
 export async function harness(): Promise<void> {
@@ -258,25 +257,20 @@ async function newerOnTheLine(): Promise<void> {
 }
 
 /**
- * The monsters past Act I set off the line on purpose (MONSTERS §4.4), each with why. Every other
- * monster of level 11 or more stands on the line at its level: some role's test monster's hit
- * points and blow, the test troll's (#537), giant's or drake's (#545) or a role's come down whole
- * by a share it names (`MonsterDef.offLine`). So when the line is made again a monster left on the
- * old one fails until it is re-derived. One a box's gate tunes off the line says why on its def
- * (`MonsterDef.offLine`), with the issue that tuned it, as every one does (#968).
+ * Why a monster past Act I is set off the line on purpose (MONSTERS §4.4): its own word on its def
+ * (`MonsterDef.offLine`), with the issue that tuned it. Every other monster of level 11 or more stands
+ * on the line at its level: some role's test monster's hit points and blow, the test troll's (#537),
+ * giant's or drake's (#545) or a role's come down whole by a share it names (`wholeOf`). So when the
+ * line is made again a monster left on the old one fails until it is re-derived.
  */
-export const OFF_LINE: Record<string, string> = {};
-/** The monsters past 10 on a role's line come down whole, hit points and blow together (MONSTERS §4.4): the role, the share and why. */
-export const WHOLE: Record<string, { role: Role; share: number; why: string }> = {};
-/** Why a monster stands off the line: its row in OFF_LINE, or its own word (`MonsterDef.offLine`), not both (#897). */
 export const offLineOf = (id: string): string | undefined => {
   const own = MONSTERS[id]?.offLine;
-  return OFF_LINE[id] ?? (typeof own === 'string' ? own : undefined);
+  return typeof own === 'string' ? own : undefined;
 };
-/** The role and share a monster comes down whole by: its row in WHOLE, or its own (`MonsterDef.offLine`), not both (#897). */
+/** The role, the share and why a monster past 10 on a role's line comes down whole, hit points and blow together (MONSTERS §4.4): its own (`MonsterDef.offLine`). */
 export const wholeOf = (id: string): { role: Role; share: number; why: string } | undefined => {
   const own = MONSTERS[id]?.offLine;
-  return WHOLE[id] ?? (typeof own === 'object' ? { ...own, role: own.role as Role } : undefined);
+  return typeof own === 'object' ? { ...own, role: own.role as Role } : undefined;
 };
 /**
  * The monsters drawn on the line before #549 made 25 to 28 again, and placed in no box yet: each is
@@ -285,10 +279,10 @@ export const wholeOf = (id: string): { role: Role; share: number; why: string } 
  */
 export const RESTATE: Record<string, string> = {};
 
-/** Every monster past 10 on the line at its level, or set off it with a reason (OFF_LINE). */
+/** Every monster past 10 on the line at its level, or set off it with a reason (`offLineOf`). */
 function onTheLine(): void {
   const blow = (m: Pick<MonsterDef, 'dice' | 'sides' | 'bonus'>): number => (m.dice * (m.sides + 1)) / 2 + m.bonus;
-  /** The shapes a monster of its level may stand on: each role's line, the test troll's and its share in WHOLE. */
+  /** The shapes a monster of its level may stand on: each role's line, the test troll's and the share it comes down whole by (`wholeOf`). */
   const shapes = (m: MonsterDef): MonsterDef[] => {
     const w = wholeOf(m.id), l = m.level;
     return [...ROLE_IDS.map((r) => testMonster(r, l)), testTroll(l), testGiant(l), testDrake(l), ...(w ? [testMonster(w.role, l, scaleAt(HP, w.role, l) * w.share, scaleAt(DAMAGE, w.role, l) * w.share)] : [])];
@@ -301,9 +295,8 @@ function onTheLine(): void {
   });
   ok(!off.length, `every monster past 10 stands on the line at its level, its hit points and its blow, or is set off it with a reason: ${past.length - set.length} on it, ${set.length} set off it${off.length ? ` (off it: ${off.join('; ')})` : ''}`);
   const own = Object.values(MONSTERS).filter((m) => m.offLine).map((m) => m.id);
-  const stale = [...Object.keys(OFF_LINE), ...Object.keys(WHOLE), ...own, ...Object.keys(RESTATE)].filter((id) => !MONSTERS[id] || MONSTERS[id].level <= 10 || ((offLineOf(id) || RESTATE[id]) && on(MONSTERS[id])));
+  const stale = [...own, ...Object.keys(RESTATE)].filter((id) => !MONSTERS[id] || MONSTERS[id].level <= 10 || ((offLineOf(id) || RESTATE[id]) && on(MONSTERS[id])));
   ok(!stale.length, `and every monster set off it, come down whole or owed a restating is a monster past 10, and one set off it or owed is off it${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
-  ok(...once('and each is set off it or come down whole once, in OFF_LINE or WHOLE or on itself', own.filter((id) => OFF_LINE[id] || WHOLE[id])));
   // One owed a restating is placed in no box: the box that places it restates it (#549).
   const placed = new Set(MAP_DEFS.flatMap((d) => (d.encounters ?? []).flatMap((g) => g.monsters)));
   const owedPlaced = Object.keys(RESTATE).filter((id) => placed.has(id));
