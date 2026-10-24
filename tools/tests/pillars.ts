@@ -356,7 +356,25 @@ export const storyWays = (links: Atlas['links']): string[] => links.filter((l) =
  */
 const locksOwed = gatherLists(areaRows((c) => c.owes?.locks));
 
-export async function pillars(): Promise<void> {
+/**
+ * The suite's parts (#1016), each a run of its own (`node tools/test.ts pillars:edges`), in the order a
+ * whole run takes them.
+ */
+export const parts = (): string[] => [...PARTS.keys()];
+
+/** The pillars, or one part of them; whole, the parts one after another. */
+export async function pillars(part?: string): Promise<void> {
+  if (part === undefined) { for (const q of parts()) await pillars(q); return; }
+  const run = PARTS.get(part);
+  if (!run) throw new Error(`the pillars have no part named ${part}`);
+  await run();
+}
+
+const PARTS = new Map<string, () => void | Promise<void>>([['hints', hints], ['text', text], ['looks', looks], ['crossings', crossings], ['glyphs', glyphs],
+  ['pace', pace], ['novelty', novelty], ['edges', edges], ['locks', locks]]);
+
+/** Every secret door's hint. */
+function hints(): void {
   // Hints: every secret door names one, on its near side.
   for (const area of AREAS) {
     let doors = 0, bad = 0;
@@ -384,7 +402,10 @@ export async function pillars(): Promise<void> {
     const scribed = (x: number): MapDef => ({ ...room([{ x: 3, y: 1, hint: 'store' }]), features: [{ kind: 'sign', x, y: 1, id: 'store', text: 'The dwarves\' words for plenty.', read: 'STORE.' }] });
     ok(!hintFaults(scribed(2)).length && hintFaults(scribed(4)).length === 1, 'an inscription\'s reading on the near side is a hint the check counts, and behind the door it is not');
   }
+}
 
+/** Events and signs, the lair's door line, the endings' pages and the doubled "A sign reads". */
+function text(): void {
   // Text: no event or sign wraps past three lines of the log as it shows them.
   for (const area of AREAS) {
     const count = [0, 0, 0, 0, 0];
@@ -441,7 +462,10 @@ export async function pillars(): Promise<void> {
       'a reading a line longer fails while it marks the map, and passes when it marks nothing');
     ok(lineFaults(vent(mouth, two + ' ' + two)).some((f) => f.includes('reading')), 'and a reading of four lines fails on its own');
   }
+}
 
+/** The monsters' looks. */
+function looks(): void {
   // A monster's look fits two lines of the log; the looks go through the glyph and spelling checks below with every text.
   {
     const faults = lookFaults(Object.values(MONSTERS)), looks = Object.values(MONSTERS).filter((m) => m.look).length;
@@ -458,7 +482,10 @@ export async function pillars(): Promise<void> {
     const bad = withLook.filter((t) => t.where === 'monster rat');
     ok(bad.some((t) => missingGlyphs(t.text).length === 1 && americanisms(t.text).length === 1), 'a look is read with every text: a dash and gray in one are caught');
   }
+}
 
+/** A crossing's words. */
+function crossings(): void {
   // A crossing's words (#539, game/passage.ts): where it goes as the menu names it, the line said as it lands and the seller's
   // warning. Those of every person who sells one and of both ends of every crossing between towns go through the glyph and
   // spelling checks below with every text, and the landing line and the warning are held to the lines of the log as an event is.
@@ -494,7 +521,10 @@ export async function pillars(): Promise<void> {
     const long = [crossingLineFaults([person({ label: four })], []), crossingLineFaults([person({ warning: four })], []), crossingLineFaults([], [run({ label: four })]), crossingLineFaults([], [run({ warning: four })])];
     ok(long.every((f) => f.length === 1), `and of ${MOST_LINES + 1} fail, on a person who sells the passage and on the end of a crossing (${long.map((f) => f.join()).join('; ')})`);
   }
+}
 
+/** Every glyph and the spelling, in every text. */
+function glyphs(): void {
   // Every glyph is in the font, and the spelling is British, in every text.
   const all = texts();
   const unglyphed = all.flatMap((t) => missingGlyphs(t.text).map((ch) => `'${ch}' in ${t.where}`));
@@ -503,7 +533,10 @@ export async function pillars(): Promise<void> {
   ok(!american.length, `the ${all.length} texts spell as the game does, not American${american.length ? ' -> ' + american.join(', ') : ''}`);
   ok(missingGlyphs('Ashcombe—the café’s door').length === 3, 'a dash, an accent and a curled quote have no glyph, and fail');
   ok(americanisms('The gray walls lose their Color.').length === 2 && !americanisms('Armour of every size, a prize to seize.').length, 'gray and color fail; armour, size, prize and seize do not');
+}
 
+/** The secret's pace. */
+function pace(): void {
   // The secret's pace (#158): no machine before the bottom of the Deep Mines, no Rift after Cairnmoor.
   {
     const kindOf = (id: string): MonsterDef['kind'] | undefined => MONSTERS[id]?.kind;
@@ -530,7 +563,10 @@ export async function pillars(): Promise<void> {
       'a Rift in Cairnmoor passes, and a riftling or a tear in Rimewater after it fails');
     ok(!judge({ def: fx('ice_caves', [20, 22], ['riftling', 'keeper']), area: 'rimewater', zone: 'glacierfoot' }).length, 'the reach is exempt: Glacier Foot may hold either');
   }
+}
 
+/** What each area claims is new. */
+async function novelty(): Promise<void> {
   // Novelty: each area's claim of what is new in it exists, is used in it and is nowhere earlier on the road.
   const family = new Map((await familyModules()).map((m) => [m.name, m.kinds]));
   ok(family.size > 0, `the monster families: ${[...family.keys()].join(', ')}`);
@@ -580,7 +616,10 @@ export async function pillars(): Promise<void> {
     ok(!claims({ ashfall: keepers }, own).length && only(claims({ ashfall: keepers, glasswold: keepers }, own), /^glasswold: .*on the road before it/),
       'Ashfall, placing them in a room of its own, may claim them (the level is not before it), and the Glasswold then may not');
   }
+}
 
+/** The owed rows read once, and the land agreeing with the map at a zone map's edge. */
+function edges(): void {
   // An owed square and an owed lock are owed once, by one area, though an issue may be owed by several.
   ok(...once('every owed square and owed lock is named once', [...edgesOwed.twice, ...locksOwed.twice]));
   const owedFx = gatherLists([['#1', ['fx_a 1,1', 'fx_a 2,1']], ['#1', ['fx_b 1,1']], ['#2', ['fx_a 1,1']]]);
@@ -636,7 +675,10 @@ export async function pillars(): Promise<void> {
     ok(edgeAgrees('road', ford) === true && ['shallow', 'sea', 'grass'].every((m) => edgeAgrees(m, ford) === false), 'at a ford beyond the edge a road passes, and shallows, sea and grass fail');
     ok(edgeAgrees('grass', { t: TI.shallow, road: false, river: true }) === false && edgeAgrees('shallow', { t: TI.shallow, road: false, river: true }) === true, 'a river beyond the edge wants water on the map');
   }
+}
 
+/** The story locks. */
+function locks(): void {
   // Story locks: every one signed in, within the counts, none between areas; every hand-in takes
   // its item at the first meeting.
   const found = findLocks(AREAS);
