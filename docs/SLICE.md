@@ -1277,9 +1277,15 @@ Decided by the builder for #979, each the owner's to overturn:
 3. **`finishedBy(quests, flag)` takes the quests with no default** (`questLog` falls back to
    `QUESTS`): its one caller passes them, and #975's slice needs no reach into content. It gives the
    quest or chapter or undefined; `gateName` keeps the lettering and its fallback.
-4. **The check of `randomParty` is a line of the `party` suite** pinning seed 77's company (names,
-   peoples, classes, hit points and stats) as `create.ts` drew it, so a change to the draws fails by
-   name; the pilot suite's three stand as they were. `finishedBy`'s is a line of `quests` on its own
-   fixtures: a side quest, a chapter, a flag that only starts a quest and one nothing finishes.
+4. **The checks of `randomParty` are two lines of the `party` suite,** pinning seed 77's company
+   (names, peoples, classes, hit points and stats) as `create.ts` drew it, so a change to the draws
+   fails by name, and six seeds' classes for the mender rule: two drawn again for want of a mender
+   and one for each mender alone. The pilot suite's three stand as they were. `finishedBy`'s is a
+   line of `quests` on its own fixtures: a side quest, a chapter, a flag that only starts a quest,
+   one nothing finishes and two quests ending on one flag, of which it gives the first.
 5. **The code map's `game/party.ts` and `game/quests.ts` rows name `randomParty` and `finishedBy`**
    beside the four rows the issue names, so the map still says where each lives.
+6. **The smoke's seeded screenshot is shown the same outside the fog, not as the same PNG,**
+   which the issue's Done when asks for: no two runs give the same PNG on any tree, the fog banks
+   drifting by the frame count (`drawMurk`, `src/ui/viewport.ts:794`). A shot held byte for byte
+   would need the frame pinned in the smoke, a change the issue does not name.

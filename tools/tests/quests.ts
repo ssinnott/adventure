@@ -117,9 +117,11 @@ export function quests(): void {
   // finishedBy (#979): the quest or chapter whose end names a flag, as the world map letters a gate.
   const side: QuestDef = { id: 'fx_side', title: 'The Side', start: { flag: 'fx_side' }, done: [{ item: 'fx_key' }, { flag: ['fx_seal', 'fx_side_done'] }], entries: [], goals: [] };
   const chapter: Chapter = { ...shelf, id: 'fx_chapter', title: 'The Chapter', done: { flag: 'fx_chapter_done' } };
-  const ends: readonly LogQuest[] = [{ id: 'fx_whole', title: 'Whole', chapters: [chapter] }, side];
+  // Of two whose ends name a flag, the first: three end on q_tide_home, and its gate takes the first's title.
+  const later: QuestDef = { ...side, id: 'fx_later', title: 'The Later' };
+  const ends: readonly LogQuest[] = [{ id: 'fx_whole', title: 'Whole', chapters: [chapter] }, side, later];
   ok(finishedBy(ends, 'fx_side_done') === side && finishedBy(ends, 'fx_chapter_done') === chapter && finishedBy(ends, 'fx_side') === undefined && finishedBy(ends, 'fx_never') === undefined,
-    'finishedBy gives the quest one of whose ends names the flag and the chapter whose end does, and nothing for a flag that only starts a quest or that nothing finishes');
+    'finishedBy gives the quest one of whose ends names the flag (the first of two) and the chapter whose end does, and nothing for a flag that only starts a quest or that nothing finishes');
   // A reading is kept by its inscription's id (#538), so `seen` names it; a plain sign is kept by nothing.
   const lintel: MapDef = { ...crossing, features: [{ kind: 'sign', x: 0, y: 0, id: 'fx_lintel', text: 'Marks.', read: 'STORE.' }, { kind: 'sign', x: 1, y: 0, text: 'A post.' }] };
   ok(!condFaults({ seen: 'fx_shore:fx_lintel' }, [lintel]).length && condFaults({ seen: 'fx_shore:fx_post' }, [lintel]).join() === 'seen fx_shore:fx_post',

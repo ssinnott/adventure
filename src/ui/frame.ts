@@ -2,7 +2,6 @@
 // log. Layout for the 640x360 canvas is fixed here in LAYOUT so every screen agrees on it.
 import { drawText } from '../lib/engine/text.ts';
 import type { World } from '../game/world.ts';
-import type { Feature } from '../game/map.ts';
 import type { Party, Character, Condition } from '../game/party.ts';
 import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
 import { FACING_NAMES } from '../game/types.ts';
