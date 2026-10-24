@@ -13,7 +13,8 @@
 // Cut from the atlas by tools/scaffold.ts's own cut, the world's end written as void; docs/areas/ashfall.md
 // §12.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const EMBERWASTE_F12: MapDef = {
   id: 'emberwaste_f12',
@@ -23,6 +24,7 @@ export const EMBERWASTE_F12: MapDef = {
   band: [25, 26],
   region: 'ashfall',
   start: { x: 20, y: 0, facing: SOUTH },
+  anchors: { from_blackdraw: { x: 10, y: 2, facing: NORTH }, from_grims_howe: { x: 20, y: 13, facing: NORTH } },
   rows: [
     'MMMMaaaaaaaaaaaaaaaaaaaaaaa!!aaa',
     'MMMMMMaaaaaaaaaaaaaaaaaaaa!!!aaa',
@@ -61,8 +63,8 @@ export const EMBERWASTE_F12: MapDef = {
   // walked into from the ash at 10,2. Grim's Howe, the lair (#845, #846): the way in under the dam's
   // crust at 20,14, drawn as stone with the rock either side and walked into from the flow at 20,13.
   exits: [
-    { x: 10, y: 3, to: 'blackdraw', tx: 7, ty: 1, tf: SOUTH, label: 'You go in at a mouth in the mountain\'s face, out of the wind and down into the dark.' },
-    { x: 20, y: 14, to: 'grims_howe', tx: 7, ty: 1, tf: SOUTH, label: 'You stoop in under the dam, where its crust stands off the rock, and down into the warm dark.' },
+    anchored({ x: 10, y: 3, to: 'blackdraw', at: 'start', label: 'You go in at a mouth in the mountain\'s face, out of the wind and down into the dark.' }),
+    anchored({ x: 20, y: 14, to: 'grims_howe', at: 'start', label: 'You stoop in under the dam, where its crust stands off the rock, and down into the warm dark.' }),
   ],
   features: [
     // In off F11's ash: the slope down to the mountain's wall, and the flow going down beside it.

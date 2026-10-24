@@ -6,6 +6,7 @@
 // Band 14-15, a band over E5's 12-13, out of the isle's figures; docs/areas/wrackholm.md §12.5 is its
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -37,7 +38,7 @@ export const BROKENBACK: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'wrackholm_e5', tx: 18, ty: 29, tf: SOUTH, label: 'Out through the break and over the black rocks, onto the strand and into the wind.' },
+    anchored({ x: 7, y: 1, to: 'wrackholm_e5', at: 'from_brokenback', label: 'Out through the break and over the black rocks, onto the strand and into the wind.' }),
   ],
   features: [
     // The break in her side, where the sea comes in, and the tide's leavings.

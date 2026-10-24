@@ -6,6 +6,7 @@
 // what comes out of it stops once the crack is sealed far below (#765).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
@@ -19,7 +20,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
  */
 const TEAR = rift({
   id: 'k3_rift', template: 'spiral', material: 'glass', seed: 2, band: [14, 15], region: 'sunderwood',
-  out: { to: 'eaves_k3', tx: 15, ty: 26, tf: WEST },
+  out: { to: 'eaves_k3', at: 'from_k3_rift' },
   table: { groups: [['sunderling', 'sunderling', 'sunderling', 'sunderling'], ['glass_spider', 'glass_spider', 'glass_spider', 'glass_spider']] },
   hoard: { gold: 150, items: ['potion_heal'] },
 });
@@ -33,6 +34,7 @@ export const EAVES_K3: MapDef = {
   band: [15, 16],
   region: 'sunderwood',
   start: { x: 13, y: 0, facing: SOUTH },
+  anchors: { from_k3_rift: { x: 15, y: 26, facing: WEST }, from_the_sunder: { x: 9, y: 8, facing: WEST } },
   rows: [
     'MdddvvvvvrrrddTTTTTTTTTTTTTTTTTM',
     'Mdddvvvvvvvv"ddddddTTTTTTTTTTTTM',
@@ -68,7 +70,7 @@ export const EAVES_K3: MapDef = {
     'MMMMMMMMMMMMMMMMMMMMMdddddMMMMMM',
   ],
   exits: [
-    { x: 10, y: 8, to: 'the_sunder', tx: 28, ty: 2, tf: SOUTH, label: 'In out of the rain, into the rock.' },
+    anchored({ x: 10, y: 8, to: 'the_sunder', at: 'start', label: 'In out of the rain, into the rock.' }),
   ],
   features: [
     // The ledges' head on the east lip: the step. The way cut into the rock at 10,8 is the Sunder's

@@ -7,6 +7,7 @@
 // back, a door with Kiln-script over it that opens for nobody, as the Mines' CREW ONLY does not.
 // Band 21-22; docs/areas/rimewater.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { SLEEPERS_SEEN } from '../public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
@@ -42,7 +43,7 @@ export const SLEEPERS_BAY2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 14, to: 'sleepers_bay', tx: 6, ty: 13, tf: NORTH, label: 'You climb the stair, up out of the cold.' },
+    anchored({ x: 7, y: 14, to: 'sleepers_bay', at: 'from_sleepers_bay2', label: 'You climb the stair, up out of the cold.' }),
   ],
   features: [
     // The stair's foot, and the beds: the first wiped, and a face in it (the chapter's step, §5).

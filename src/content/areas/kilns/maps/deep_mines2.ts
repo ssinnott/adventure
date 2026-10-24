@@ -6,7 +6,8 @@
 // behind it; past the cages the rock worms' round bores, winding north to their nest and south to the
 // steep stair down. Band 16-17; docs/areas/kilns.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DEEP_MINES2: MapDef = {
@@ -16,6 +17,7 @@ export const DEEP_MINES2: MapDef = {
   band: [16, 17],
   region: 'kilns',
   start: { x: 1, y: 2, facing: SOUTH },
+  anchors: { from_deep_mines: { x: 5, y: 11, facing: NORTH }, from_deep_mines3: { x: 14, y: 13, facing: NORTH } },
   palette: { wall: '#5e564c', wallDark: '#3c362e', floor: '#3e3832', ceiling: '#141110', door: '#4a3c2c', wallStyle: 'stone', ceilingStyle: 'beams', banner: '#5a2a24' },
   rows: [
     '################',
@@ -36,11 +38,11 @@ export const DEEP_MINES2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 1, to: 'deep_mines', tx: 2, ty: 1, tf: EAST, label: 'You climb the stair to the workings.' },
-    { x: 14, y: 14, to: 'deep_mines3', tx: 13, ty: 14, tf: NORTH, label: 'You go down the steep stair to the bottom.' },
+    anchored({ x: 1, y: 1, to: 'deep_mines', at: 'from_deep_mines2', label: 'You climb the stair to the workings.' }),
+    anchored({ x: 14, y: 14, to: 'deep_mines3', at: 'start', label: 'You go down the steep stair to the bottom.' }),
     // The shaft behind the niche: its rungs up to the workings and on down to the bottom.
-    { x: 4, y: 11, to: 'deep_mines', tx: 14, ty: 10, tf: WEST, label: 'You climb the iron rungs up to the workings.' },
-    { x: 6, y: 11, to: 'deep_mines3', tx: 14, ty: 10, tf: SOUTH, label: 'You climb down the rungs. The hum grows, and the shaft ends in a clean square hole.' },
+    anchored({ x: 4, y: 11, to: 'deep_mines', at: 'from_deep_mines2_2', label: 'You climb the iron rungs up to the workings.' }),
+    anchored({ x: 6, y: 11, to: 'deep_mines3', at: 'from_deep_mines2', label: 'You climb down the rungs. The hum grows, and the shaft ends in a clean square hole.' }),
   ],
   features: [
     { kind: 'event', x: 1, y: 3, id: 'dm2_in', once: true, text: 'The old workings. The timbers are grey and split, and the air is still and warm. Nobody has worked here in years.' },

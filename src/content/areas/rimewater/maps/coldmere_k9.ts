@@ -9,7 +9,8 @@
 // square for square, where the loch's water runs in at 29,31.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, WEST } from '../../../../game/types.ts';
 import { WENNA_UP } from './rime_lodge.ts';
 import { WENNA_LODGE, SLEEPERS_SEEN } from '../public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
@@ -21,9 +22,9 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * signed in to src/content/locks.ts (#440, #490). It lands on the bay's landing at 8,1, facing south,
  * still in the ice; the way back up lands on 24,29, the crack's foot, facing north.
  */
-export const DOOR: Exit = { x: 24, y: 30, to: 'sleepers_bay', tx: 8, ty: 1, tf: SOUTH, needFlag: WENNA_UP,
+export const DOOR: Exit = anchored({ x: 24, y: 30, to: 'sleepers_bay', at: 'start', needFlag: WENNA_UP,
   blockedText: 'A wall of grey under the ice, with a door in it: no handle, no seam, and no frost on it anywhere.',
-  label: 'The door opens under her palm, and a voice in the wall says "Captain?" She flinches, and waits at it while you go down.' };
+  label: 'The door opens under her palm, and a voice in the wall says "Captain?" She flinches, and waits at it while you go down.' });
 
 export const COLDMERE_K9: MapDef = {
   id: 'coldmere_k9',
@@ -33,6 +34,7 @@ export const COLDMERE_K9: MapDef = {
   band: [20, 22],
   region: 'rimewater',
   start: { x: 31, y: 21, facing: WEST },
+  anchors: { from_sleepers_bay: { x: 24, y: 29, facing: NORTH } },
   exits: [DOOR],
   rows: [
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWiii',

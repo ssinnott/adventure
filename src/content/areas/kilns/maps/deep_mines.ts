@@ -6,7 +6,8 @@
 // it, a square shaft with iron rungs, the service ladder down. Band 16-17; docs/areas/kilns.md §4.7 is
 // its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, NORTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DEEP_MINES: MapDef = {
@@ -16,6 +17,7 @@ export const DEEP_MINES: MapDef = {
   band: [16, 17],
   region: 'kilns',
   start: { x: 7, y: 14, facing: NORTH },
+  anchors: { from_deep_mines2: { x: 2, y: 1, facing: EAST }, from_deep_mines2_2: { x: 14, y: 10, facing: WEST } },
   palette: { wall: '#6e6050', wallDark: '#4a3e32', floor: '#4a4036', ceiling: '#1a1410', door: '#5c4430', wallStyle: 'stone', ceilingStyle: 'beams', banner: '#7a2e24' },
   rows: [
     '################',
@@ -37,10 +39,10 @@ export const DEEP_MINES: MapDef = {
   ],
   exits: [
     // The cage at the shaft's foot, back up to the spur's end before the shaft on N4 (MOUTH).
-    { x: 7, y: 14, to: 'kilnsheart_n4', tx: 15, ty: 2, tf: WEST, label: 'The cage goes up the shaft, the wheel creaking over it, and out into the air.' },
-    { x: 1, y: 1, to: 'deep_mines2', tx: 1, ty: 2, tf: SOUTH, label: 'You go down the worn stair into the old workings.' },
+    anchored({ x: 7, y: 14, to: 'kilnsheart_n4', at: 'from_deep_mines', label: 'The cage goes up the shaft, the wheel creaking over it, and out into the air.' }),
+    anchored({ x: 1, y: 1, to: 'deep_mines2', at: 'start', label: 'You go down the worn stair into the old workings.' }),
     // The service ladder, behind the niche, down to the old workings' shaft.
-    { x: 14, y: 11, to: 'deep_mines2', tx: 5, ty: 11, tf: NORTH, label: 'You climb down the iron rungs a long way, into the dark.' },
+    anchored({ x: 14, y: 11, to: 'deep_mines2', at: 'from_deep_mines', label: 'You climb down the iron rungs a long way, into the dark.' }),
   ],
   features: [
     { kind: 'event', x: 7, y: 13, id: 'dm1_in', once: true, text: 'The shaft\'s foot. Timbered galleries go off into the dark, and somewhere ahead picks are going.' },

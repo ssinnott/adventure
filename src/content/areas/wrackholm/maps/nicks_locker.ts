@@ -6,7 +6,8 @@
 // where no wave comes, and behind it the master's sea chest in a dry cleft. One level, band 30-32;
 // docs/areas/wrackholm.md §12.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH } from '../../../../game/types.ts';
 
 /** Old Nick slain, as the game names a group: Merryn's rumour of it ends with it (wrackholm_f6.ts). */
 export const NICK_DOWN = 'nicks_locker:nl_nick';
@@ -40,7 +41,7 @@ export const NICKS_LOCKER: MapDef = {
     '################',
   ],
   exits: [
-    { x: 5, y: 14, to: 'wrackholm_f5', tx: 16, ty: 31, tf: SOUTH, label: 'Out under the reef with the sea at your knees, and onto the strand in the wind.' },
+    anchored({ x: 5, y: 14, to: 'wrackholm_f5', at: 'from_nicks_locker', label: 'Out under the reef with the sea at your knees, and onto the strand in the wind.' }),
   ],
   features: [
     // The mouth under the reef and the flooded passage up from it.

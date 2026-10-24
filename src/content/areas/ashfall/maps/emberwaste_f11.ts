@@ -12,7 +12,8 @@
 // edge meets F12's north (#836) square for square, the ash and the second flow going on into it.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.6 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { LAMP_ASKED, LAMP_LIT } from './old_cinder2.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
@@ -22,7 +23,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * town was built, onto the buried town's first level at 8,1, facing south. Its way back up lands on
  * the lip's front, 18,4, facing west, away from the pit.
  */
-export const CRATER: Exit = { x: 19, y: 4, to: 'old_cinder', tx: 8, ty: 1, tf: SOUTH, label: 'You climb down off the lip between the roofs, into a street the ash has left.' };
+export const CRATER: Exit = anchored({ x: 19, y: 4, to: 'old_cinder', at: 'start', label: 'You climb down off the lip between the roofs, into a street the ash has left.' });
 
 /**
  * The way into the Ember Stone (#516): the Stone itself, 8,24, inside its iron scaffold, its square
@@ -30,7 +31,7 @@ export const CRATER: Exit = { x: 19, y: 4, to: 'old_cinder', tx: 8, ty: 1, tf: S
  * south. Its way back up lands on 8,23, facing north, the Stone's front between the scaffold's uprights,
  * away from the Stone.
  */
-export const STONE: Exit = { x: 8, y: 24, to: 'ember_stone', tx: 8, ty: 1, tf: SOUTH, label: 'You go down into the Stone between the uprights, by a stair its builders left.' };
+export const STONE: Exit = anchored({ x: 8, y: 24, to: 'ember_stone', at: 'start', label: 'You go down into the Stone between the uprights, by a stair its builders left.' });
 
 export const EMBERWASTE_F11: MapDef = {
   id: 'emberwaste_f11',
@@ -40,6 +41,7 @@ export const EMBERWASTE_F11: MapDef = {
   band: [25, 26],
   region: 'ashfall',
   start: { x: 16, y: 0, facing: SOUTH },
+  anchors: { from_old_cinder: { x: 18, y: 4, facing: WEST }, from_ember_stone: { x: 8, y: 23, facing: NORTH } },
   rows: [
     'rrrrr=======rrraaaaaaaaaaaaaaaaa',
     'rrrrrrrrrrrrrrrraaaaavvvaaaaaaaa',

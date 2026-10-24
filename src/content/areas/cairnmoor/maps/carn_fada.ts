@@ -7,7 +7,8 @@
 // den over the oldest dead's cist and the Sunwise Mace in it. Band 20-21, a band over L8's, out of
 // Cairnmoor's figures; docs/areas/cairnmoor.md §12.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CARN_FADA: MapDef = {
@@ -40,7 +41,7 @@ export const CARN_FADA: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'cairnfield_l8', tx: 23, ty: 27, tf: EAST, label: 'Out through the gap in the facing stones onto the hill, the tide loud at the mound\'s foot.' },
+    anchored({ x: 7, y: 1, to: 'cairnfield_l8', at: 'from_carn_fada', label: 'Out through the gap in the facing stones onto the hill, the tide loud at the mound\'s foot.' }),
   ],
   features: [
     // The gap and the old passage at the tide's head, the sea standing in its seaward end.

@@ -3,6 +3,7 @@
 // and no chest; the sign is the warning, not a wall (EXPANSION §5.2). docs/areas/wrackholm.md §4.5 is its
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const DEAD_DROP_STAIR: MapDef = {
@@ -12,6 +13,7 @@ export const DEAD_DROP_STAIR: MapDef = {
   band: [26, 28],
   region: 'wrackholm',
   start: { x: 4, y: 7, facing: NORTH },
+  anchors: { from_dead_drop: { x: 4, y: 2, facing: SOUTH } },
   palette: { wall: '#8a8c90', wallDark: '#5e6064', floor: '#6a6c70', ceiling: '#4a4c50', door: '#5a5c60', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#3a3c40' },
   bare: true,
   rows: [
@@ -26,9 +28,9 @@ export const DEAD_DROP_STAIR: MapDef = {
     '##########',
   ],
   exits: [
-    { x: 4, y: 7, to: 'tide_ship3', tx: 7, ty: 13, tf: NORTH, label: 'You climb the stair back up into the straw and the stink of the hold.' },
+    anchored({ x: 4, y: 7, to: 'tide_ship3', at: 'from_dead_drop_stair', label: 'You climb the stair back up into the straw and the stink of the hold.' }),
     // The far end, on down to the drop's first square, facing in; the drop's way back up lands in front of it.
-    { x: 4, y: 1, to: 'dead_drop', tx: 3, ty: 1, tf: SOUTH, label: 'The way goes down a long while, and the light goes with you.' },
+    anchored({ x: 4, y: 1, to: 'dead_drop', at: 'start', label: 'The way goes down a long while, and the light goes with you.' }),
   ],
   features: [
     { kind: 'event', x: 4, y: 6, id: 'dd_foot', once: true, text: 'The stair ends on a floor too level to have been laid. The walls are smooth and cold and lit from nowhere. Nothing in the air is yours.' },

@@ -6,6 +6,7 @@
 // hatch in the floor aft opens on the stair down. Band 12-14; docs/areas/wrackholm.md §4.5 is its
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
@@ -30,7 +31,7 @@ export const TIDE_RIFT_CLOSED: When = { slain: 'tide_ship_rift:tide_ship_rift_wa
  */
 export const TIDE_RIFT = rift({
   id: 'tide_ship_rift', template: 'hall', material: 'brine', seed: 2, band: [12, 14], region: 'wrackholm',
-  out: { to: 'tide_ship3', tx: 8, ty: 3, tf: SOUTH },
+  out: { to: 'tide_ship3', at: 'from_tide_ship_rift' },
   table: { groups: [['tide_elder', 'brineling', 'brineling', 'brineling']], warden: ['tide_warden'], boss: true },
   hoard: { gold: 700, items: ['tide_stone'] },
   until: TIDE_RIFT_CLOSED,
@@ -50,6 +51,7 @@ export const TIDE_SHIP3: MapDef = {
   band: [12, 14],
   region: 'wrackholm',
   start: { x: 4, y: 10, facing: NORTH },
+  anchors: { from_tide_ship_rift: { x: 8, y: 3, facing: SOUTH }, from_dead_drop_stair: { x: 7, y: 13, facing: NORTH } },
   palette: { wall: '#4e3e2e', wallDark: '#32261a', floor: '#3a2e22', ceiling: '#221a12', door: '#3e2e20', wallStyle: 'brick', ceilingStyle: 'beams', banner: '#2a5a4a' },
   rows: [
     '################',
@@ -70,8 +72,8 @@ export const TIDE_SHIP3: MapDef = {
     '################',
   ],
   exits: [
-    { x: 4, y: 10, to: 'tide_ship2', tx: 4, ty: 9, tf: NORTH, label: 'You climb up through the grating to the lower deck.' },
-    { x: 7, y: 14, to: 'dead_drop_stair', tx: 4, ty: 7, tf: NORTH, label: 'You lift the hatch and go down the stair into the cold.' },
+    anchored({ x: 4, y: 10, to: 'tide_ship2', at: 'from_tide_ship3', label: 'You climb up through the grating to the lower deck.' }),
+    anchored({ x: 7, y: 14, to: 'dead_drop_stair', at: 'start', label: 'You lift the hatch and go down the stair into the cold.' }),
   ],
   features: [
     { kind: 'event', x: 4, y: 11, id: 'ts3_in', once: true, text: 'The hold. The smell first, straw and people and old iron; then the dark; then rows of eyes turned to the ladder, and not a sound.' },

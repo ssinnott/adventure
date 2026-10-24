@@ -5,7 +5,8 @@
 // bay shore east to the box's edge. Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md
 // §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, NORTH } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -17,6 +18,7 @@ export const DEEPTHORN_J4: MapDef = {
   band: [8, 10],
   region: 'thornmark',
   start: { x: 1, y: 12, facing: EAST },
+  anchors: { from_deepthorn_j5: { x: 4, y: 30, facing: NORTH } },
   rows: [
     'MMMMMTTTTTTTTTTTTTTTTTTTTTTTTTTT',
     'MMMMMMTTTTTTTTTTTTTTTTTTTTTTTTTT',
@@ -52,7 +54,7 @@ export const DEEPTHORN_J4: MapDef = {
     'TT,,:,,,,_~~WWWWWWWWWWWWWWWWWWWW',
   ],
   exits: [
-    { x: 0, y: 12, to: 'deepthorn_i4', tx: 30, ty: 12, tf: WEST },
+    anchored({ x: 0, y: 12, to: 'deepthorn_i4', at: 'from_deepthorn_j4' }),
   ],
   features: [
     // The glade road, and the Hoarhills' end.

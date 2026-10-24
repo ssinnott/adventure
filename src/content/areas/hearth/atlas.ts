@@ -6,12 +6,14 @@
 // bands are the plan's (§8): the isle 28-29,
 // the Ways 30, the Stair 30-31, the Heart 32, so the area's row is the curve's, 28-32.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
+import { laid } from '../../../game/atlas.ts';
+import { PLAN } from '../../atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
     // The isle's body, H6 (#753), then the east rim, I6 (#754).
     id: 'hearthisle', name: 'Hearth Isle', area: 'hearth', band: [28, 29],
-    maps: [{ map: 'hearthisle_h6', at: [232, 158] }, { map: 'hearthisle_i6', at: [264, 158] }],
+    maps: [laid(PLAN, 'hearthisle_h6'), laid(PLAN, 'hearthisle_i6')],
     seeds: [[256, 172]],
     // The crossing line (#166, #524): said where the isle is first walked into, off the last crossing's boat.
     crossing: { harder: 'The isle, and the light\'s heat on your face. What keeps the temple is harder than anything on the far side.', warning: 'The isle. Nothing on it would spare you, and the boat is the only way back.' },

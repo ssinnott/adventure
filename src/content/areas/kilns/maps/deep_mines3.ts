@@ -7,7 +7,8 @@
 // opens from the other side in Act V, #56's 60). East of the hole the service ladder comes down out
 // of the ceiling. Band 17-18; docs/areas/kilns.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { CREW_OPEN } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -18,6 +19,7 @@ export const DEEP_MINES3: MapDef = {
   band: [17, 18],
   region: 'kilns',
   start: { x: 13, y: 14, facing: NORTH },
+  anchors: { from_deep_mines2: { x: 14, y: 10, facing: SOUTH }, from_underdeep: { x: 13, y: 3, facing: WEST } },
   // The corridor is the hull's, one face with no join; the dwarves' tunnel ends in rock at its face.
   palette: { wall: '#9ea2a6', wallDark: '#6e7276', floor: '#5e6266', ceiling: '#2e3236', door: '#9ea2a6', wallStyle: 'smooth', ceilingStyle: 'vault', banner: '#5c6068' },
   bare: true,
@@ -42,9 +44,9 @@ export const DEEP_MINES3: MapDef = {
     '################',
   ],
   exits: [
-    { x: 14, y: 14, to: 'deep_mines2', tx: 14, ty: 13, tf: NORTH, label: 'You climb the steep stair to the old workings.' },
+    anchored({ x: 14, y: 14, to: 'deep_mines2', at: 'from_deep_mines3', label: 'You climb the steep stair to the old workings.' }),
     // The service ladder, up the shaft to the old workings.
-    { x: 14, y: 9, to: 'deep_mines2', tx: 5, ty: 11, tf: NORTH, label: 'You climb the rungs up out of the hum, a long way, to the old workings.' },
+    anchored({ x: 14, y: 9, to: 'deep_mines2', at: 'from_deep_mines', label: 'You climb the rungs up out of the hum, a long way, to the old workings.' }),
   ],
   features: [
     // The end of the dwarves' tunnel, and the hole into the corridor; the crusts on their ledge, where

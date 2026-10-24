@@ -25,6 +25,7 @@ export const KILNSHEART_O5: MapDef = {
   band: [17, 18],
   region: 'kilns',
   start: { x: 0, y: 24, facing: EAST },
+  anchors: { from_anvil_stone: { x: 12, y: 15, facing: NORTH } },
   rows: [
     '~~^^^^^^^^MMMMMMMMMMMMMMMMM^^^^^',
     '^^^^^^^^^MMMMMMMMMMMMMMMM^^^^^^^',

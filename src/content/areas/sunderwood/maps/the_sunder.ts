@@ -5,7 +5,8 @@
 // to the last landing, where a stair goes down to the floor. Band 14-15; docs/areas/sunderwood.md
 // §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -16,6 +17,7 @@ export const THE_SUNDER: MapDef = {
   band: [14, 15],
   region: 'sunderwood',
   start: { x: 28, y: 2, facing: SOUTH },
+  anchors: { from_the_sunder2: { x: 5, y: 29, facing: NORTH } },
   palette: { wall: '#4a4850', wallDark: '#2e2c34', floor: '#3a3840', ceiling: '#0c0b10', door: '#3a3840', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#2c2e38' },
   bare: true,
   // The glass threads strung across the drop: walked a square wide.
@@ -55,8 +57,8 @@ export const THE_SUNDER: MapDef = {
     '############vvvvvvvv############',
   ],
   exits: [
-    { x: 28, y: 1, to: 'eaves_k3', tx: 9, ty: 8, tf: WEST, label: 'Back up the stair, out onto the landing and the rain.' },
-    { x: 5, y: 30, to: 'the_sunder2', tx: 8, ty: 2, tf: SOUTH, label: 'Down the cut stair, to the floor.' },
+    anchored({ x: 28, y: 1, to: 'eaves_k3', at: 'from_the_sunder', label: 'Back up the stair, out onto the landing and the rain.' }),
+    anchored({ x: 5, y: 30, to: 'the_sunder2', at: 'start', label: 'Down the cut stair, to the floor.' }),
   ],
   features: [
     { kind: 'event', x: 28, y: 3, id: 'su1_in', once: true, text: 'A stair cut down inside the rock, the chipping fresh and white on every step. The rain is a sound now, not a weight.' },

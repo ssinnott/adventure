@@ -8,7 +8,8 @@
 // hills run on north into P4's south pocket. The P column is 24 wide: cut by hand from the atlas, the
 // void written '%'; docs/areas/kilns.md §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const KILNSHEART_P5: MapDef = {
@@ -19,6 +20,7 @@ export const KILNSHEART_P5: MapDef = {
   band: [16, 18],
   region: 'kilns',
   start: { x: 0, y: 16, facing: EAST },
+  anchors: { from_randzeche: { x: 10, y: 23, facing: WEST } },
   rows: [
     '^^^^^^MMMMMMM%%%%%%%%%%%',
     '^^^^^^^MMMMMMMM%%%%%%%%%',
@@ -80,7 +82,7 @@ export const KILNSHEART_P5: MapDef = {
   secrets: [{ x: 11, y: 16, hint: 'p5_fan' }],
   // The adit of the old working in the rim's foot, the way into the Randzeche, the artifact's lair (#845, #846).
   exits: [
-    { x: 11, y: 23, to: 'randzeche', tx: 1, ty: 7, tf: EAST, label: 'You duck into an adit in the rim\'s foot. Cold air comes out of it, and a sound like knocking.' },
+    anchored({ x: 11, y: 23, to: 'randzeche', at: 'start', label: 'You duck into an adit in the rim\'s foot. Cold air comes out of it, and a sound like knocking.' }),
   ],
   encounters: [
     // Three fire beetles on the spoil fans under the north pit, the nearest and the gentlest, at 16; and in

@@ -4,7 +4,8 @@
 // the north-east corner, across the Wend from Gullwick, Ashcombe and its cellar (#87). Cut from the
 // atlas by tools/scaffold.ts; docs/areas/shelf.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DOWNS_E3: MapDef = {
@@ -15,6 +16,7 @@ export const DOWNS_E3: MapDef = {
   band: [3, 4],
   region: 'shelf',
   start: { x: 31, y: 10, facing: WEST },
+  anchors: { from_mill: { x: 21, y: 4, facing: WEST } },
   rows: [
     ',,,,,,,,,,,fffffffffffffffff~fff',
     ',,,,,,,,,,,fffffffffffffffff~~ff',
@@ -50,7 +52,7 @@ export const DOWNS_E3: MapDef = {
     ',,,,^^^^,__~~~WWWWWWWWWWWWWWWWWW',
   ],
   exits: [
-    { x: 21, y: 4, to: 'mill', tx: 1, ty: 1, tf: EAST, label: 'The farmhouse door hangs open. Stairs lead down into the cellar.' },
+    anchored({ x: 21, y: 4, to: 'mill', at: 'from_downs_e3', label: 'The farmhouse door hangs open. Stairs lead down into the cellar.' }),
   ],
   features: [
     { kind: 'event', x: 30, y: 2, id: 'e3_ford', once: true, text: 'The Wend\'s last bend, and a ford of flat stones. Gullwick\'s smoke across the water.' },
