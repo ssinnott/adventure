@@ -14,6 +14,18 @@ export interface Box { x: number; y: number; w: number; h: number }
 /** The zone of the outdoors `map` whose id is `id`. */
 export const zone = (map: GameMap, id: string): MapZone => map.zones.find((z) => z.id === id)!;
 
+/** Whether square x, y lies in box `z`. */
+export const inBox = (z: Box, x: number, y: number): boolean => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
+
+/** Box `z`'s test of a square: whether x, y lies in it. */
+export const on = (z: Box) => (x: number, y: number): boolean => inBox(z, x, y);
+
+/** The key on `map` of square x, y. */
+export const cell = (map: GameMap, x: number, y: number): number => y * map.width + x;
+
+/** Whether square x, y of `map` is a road's (`=`). */
+export const road = (map: GameMap, x: number, y: number): boolean => map.at(x, y).ch === '=';
+
 /** The key on `map` of square x, y of box `z`. */
 export const square = (map: GameMap, z: Box, x: number, y: number): number => (z.y + y) * map.width + z.x + x;
 

@@ -50,8 +50,8 @@
 // arrows point at, the hollow and Mergen in it, the bow in the herders' store on E9 and the lesson (`masterOfArms`).
 // Last the chapter, three ways in (`theWarning`).
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, goalOf, written, began, reads, there, search, xpOf, walkAt, atLevel } from '../../../../tools/kit/walk.ts';
-import { zone, square, ALL, reach, spread } from '../../../../tools/kit/grid.ts';
+import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, goalOf, written, began, reads, there, search, xpOf, walkAt, atLevel, npc, ev, chest } from '../../../../tools/kit/walk.ts';
+import { zone, square, ALL, reach, spread, cell, inBox } from '../../../../tools/kit/grid.ts';
 import { headlessGame } from '../../../../tools/kit/headless.ts';
 import type { Walk, Step } from '../../../../tools/kit/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
@@ -101,9 +101,7 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const m of w.party.members) m.level = 26;
   const D9 = MAP_DEFS.find((d) => d.id === 'wold_d9')!, d9 = out.zones.find((z) => z.id === 'wold_d9')!;
   const WOLD = ATLAS.zones.find((z) => z.id === 'wold')!;
-  const key = (x: number, y: number): number => y * out.width + x;
-  const inBox = (x: number, y: number): boolean => x >= d9.x && x < d9.x + d9.w && y >= d9.y && y < d9.y + d9.h;
-  const beside = (x: number, y: number, set: Set<number>): boolean => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => set.has(key(d9.x + x + dx, d9.y + y + dy)));
+  const beside = (x: number, y: number, set: Set<number>): boolean => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => set.has(cell(out, d9.x + x + dx, d9.y + y + dy)));
   const ch = (x: number, y: number): string => out.at(d9.x + x, d9.y + y).ch;
   const feature = (id: string) => D9.features!.find((f) => 'id' in f && f.id === id)!;
   const person = (name: string): Person => D9.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -240,20 +238,20 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('wold_d9', D9.start.x, D9.start.y, NORTH);
   ok(w.world.zone?.id === 'wold_d9' && D9.start.x === 22 && D9.start.y === 31 && ch(22, 31) === '=' && ch(23, 31) === '=',
     'put down on the road at the south edge, 22,31, the box\'s way in');
-  const road = spread(out, d9.x + 22, d9.y + 31, (x, y) => inBox(x, y) && out.at(x, y).ch === '=');
+  const road = spread(out, d9.x + 22, d9.y + 31, (x, y) => inBox(d9, x, y) && out.at(x, y).ch === '=');
   const laid = D9.rows.join('').split('').filter((c) => c === '=').length;
-  ok(road.size === laid && road.has(key(d9.x, d9.y + 21)) && out.passable(d9.x - 1, d9.y + 21) !== 'ok' && out.at(d9.x + 22, d9.y + 32).ch === '=',
+  ok(road.size === laid && road.has(cell(out, d9.x, d9.y + 21)) && out.passable(d9.x - 1, d9.y + 21) !== 'ok' && out.at(d9.x + 22, d9.y + 32).ch === '=',
     `the road runs square to square, all ${laid} of its squares, from the south edge at 22 and 23, where D10's road comes on, to the west edge at 0,21, past which, for now, the world ends`);
   const glass = feature('d9_glass');
-  ok(road.has(key(d9.x + glass.x, d9.y + glass.y)), 'on the road in, the glass in the grass');
+  ok(road.has(cell(out, d9.x + glass.x, d9.y + glass.y)), 'on the road in, the glass in the grass');
   see(w, 'wold_d9:d9_glass');
   ok(w.world.used('d9_glass'), 'the glass in the grass seen, the chapter\'s to key on (#531)');
 
   // The Riders' well where their track leaves the road, their camp beside it; the track north past the
   // tents seen from the middle and the cairn on the watch-mound, to the north edge at 16,0, toward Akordu.
-  const track = spread(out, d9.x + 16, d9.y, (x, y) => inBox(x, y) && out.at(x, y).ch === ':');
+  const track = spread(out, d9.x + 16, d9.y, (x, y) => inBox(d9, x, y) && out.at(x, y).ch === ':');
   const well = feature('d9_well'), camps = D9.features!.filter((f) => f.kind === 'camp');
-  ok(track.has(key(d9.x + 15, d9.y + 26)) && beside(15, 26, road) && beside(well.x, well.y, track) && well.kind === 'fountain'
+  ok(track.has(cell(out, d9.x + 15, d9.y + 26)) && beside(15, 26, road) && beside(well.x, well.y, track) && well.kind === 'fountain'
     && camps.length === 1 && Math.abs(camps[0].x - well.x) + Math.abs(camps[0].y - well.y) === 2,
     `the Riders' track, ${track.size} squares, runs from the road north to the north edge at 16,0, their well beside it and their camp by the well`);
   w.world.travel('wold_d9', well.x, well.y);
@@ -262,7 +260,7 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('wold_d9', camps[0].x, camps[0].y);
   ok(restRefused(w.world) === '', 'and a company may rest at the camp');
   const tents = feature('d9_tents');
-  ok(track.has(key(d9.x + tents.x, d9.y + tents.y)) && Math.abs(tents.x - 16) <= 2 && Math.abs(tents.y - 16) <= 2 && tents.kind === 'event' && tents.text.includes('north'),
+  ok(track.has(cell(out, d9.x + tents.x, d9.y + tents.y)) && Math.abs(tents.x - 16) <= 2 && Math.abs(tents.y - 16) <= 2 && tents.kind === 'event' && tents.text.includes('north'),
     'from the box\'s middle, on the track, the white tents seen to the north');
   see(w, 'wold_d9:d9_tents');
   const cairn = feature('d9_cairn');
@@ -283,9 +281,9 @@ export const walkthrough: Walkthrough = (ok) => {
   // its quest), the cairn where the grass gives out, the Glass seen from the dunes, and the glass walker's
   // tracks across their edge.
   for (const id of ['d9_kill', 'd9_bones', 'd9_lie', 'd9_horse', 'd9_glass_seen', 'd9_tracks']) see(w, `wold_d9:${id}`);
-  const dunes = new Set(D9.rows.flatMap((r, y) => [...r].flatMap((c, x) => (c === 'u' ? [key(d9.x + x, d9.y + y)] : []))));
+  const dunes = new Set(D9.rows.flatMap((r, y) => [...r].flatMap((c, x) => (c === 'u' ? [cell(out, d9.x + x, d9.y + y)] : []))));
   const edge = feature('d9_edge_cairn'), seen = feature('d9_glass_seen'), tracks = feature('d9_tracks'), horse = feature('d9_horse');
-  ok(edge.kind === 'cairn' && edge.gold > 0 && beside(edge.x, edge.y, dunes) && dunes.has(key(d9.x + seen.x, d9.y + seen.y)) && beside(tracks.x, tracks.y, dunes)
+  ok(edge.kind === 'cairn' && edge.gold > 0 && beside(edge.x, edge.y, dunes) && dunes.has(cell(out, d9.x + seen.x, d9.y + seen.y)) && beside(tracks.x, tracks.y, dunes)
     && horse.kind === 'event' && beside(horse.x, horse.y, dunes) && !horse.sets && !D9.features!.some((f) => f.kind === 'npc' && (f.quest || f.flag)),
     'at the dunes\' edge the horse that came back, seen and no more, a cairn where the grass gives out, the Glass seen from the dunes, and tracks across their edge');
 
@@ -296,7 +294,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const [near, scorpions, walker, north] = ['d9_pride', 'd9_scorpions', 'd9_walker', 'd9_pride_north'].map(group);
   const pride = (g: typeof near): boolean => g.monsters.filter((m) => m === 'wold_lion').length >= 3 && g.monsters.filter((m) => m === 'wold_lion').length <= 4 && g.monsters.includes('vulture');
   ok(D9.encounters!.length === 4 && pride(near) && pride(north) && scorpions.monsters.every((m) => m === 'glass_scorpion') && beside(scorpions.x, scorpions.y, dunes)
-    && walker.monsters.join() === 'glass_walker' && dunes.has(key(d9.x + walker.x, d9.y + walker.y)) && walker.x <= 2 && walker.y >= 29 && MONSTERS.glass_walker.level === 27
+    && walker.monsters.join() === 'glass_walker' && dunes.has(cell(out, d9.x + walker.x, d9.y + walker.y)) && walker.x <= 2 && walker.y >= 29 && MONSTERS.glass_walker.level === 27
     && D9.encounters!.every((g) => !!g.respawn),
     'two prides of lions with the vultures down on their kills, the glass scorpions at the dunes\' edge and a glass walker alone at the far south-west, at 27');
   for (const g of D9.encounters!) fight(w, `wold_d9:${g.id}`);
@@ -306,8 +304,8 @@ export const walkthrough: Walkthrough = (ok) => {
   // climbed or floated, the hollow is never reached but through its mouth.
   const [mound] = D9.secrets!;
   ok(mound.hint === 'd9_ungrazed' && feature('d9_ungrazed').x === mound.x + 1 && feature('d9_ungrazed').y === mound.y, 'the grass that stands long lies at the long mound\'s mouth');
-  const shut = spread(out, d9.x + mound.x + 1, d9.y + mound.y, (x, y) => !(x === d9.x + mound.x && y === d9.y + mound.y) && inBox(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
-  ok(shut.size > 900 && !shut.has(key(d9.x + mound.x - 1, d9.y + mound.y)) && !shut.has(key(d9.x + mound.x - 2, d9.y + mound.y)),
+  const shut = spread(out, d9.x + mound.x + 1, d9.y + mound.y, (x, y) => !(x === d9.x + mound.x && y === d9.y + mound.y) && inBox(d9, x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
+  ok(shut.size > 900 && !shut.has(cell(out, d9.x + mound.x - 1, d9.y + mound.y)) && !shut.has(cell(out, d9.x + mound.x - 2, d9.y + mound.y)),
     `the long mound is shut but for its mouth: none of D9's ${shut.size} squares walked, waded, climbed or floated reaches its hollow`);
   see(w, 'wold_d9:d9_ungrazed');
   w.world.travel('wold_d9', mound.x + 1, mound.y, WEST);
@@ -430,7 +428,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(dry.hint === 'd8_ropeless' && feature8('d8_ropeless').x === dry.x && feature8('d8_ropeless').y === dry.y + 1, 'the well with no rope stands at the dry well\'s mouth');
   const inBox8 = (x: number, y: number): boolean => x >= d8.x && x < d8.x + d8.w && y >= d8.y && y < d8.y + d8.h;
   const walled = spread(out, d8.x + dry.x, d8.y + dry.y + 1, (x, y) => !(x === d8.x + dry.x && y === d8.y + dry.y) && inBox8(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
-  ok(walled.size > 800 && !walled.has(key(d8.x + dry.x, d8.y + dry.y - 1)) && !walled.has(key(d8.x + dry.x - 1, d8.y + dry.y - 1)),
+  ok(walled.size > 800 && !walled.has(cell(out, d8.x + dry.x, d8.y + dry.y - 1)) && !walled.has(cell(out, d8.x + dry.x - 1, d8.y + dry.y - 1)),
     `the hollow is shut but for the dry well: none of D8's ${walled.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'wold_d8:d8_ropeless');
   w.world.travel('wold_d8', dry.x, dry.y + 1, NORTH);
@@ -524,7 +522,7 @@ export const walkthrough: Walkthrough = (ok) => {
     'the horse\'s prints along the lip come to a rock east of the stair\'s head');
   const inBoxC8 = (x: number, y: number): boolean => x >= c8.x && x < c8.x + c8.w && y >= c8.y && y < c8.y + c8.h;
   const shutC8 = spread(out, c8.x + cleft.x, c8.y + cleft.y + 1, (x, y) => !(x === c8.x + cleft.x && y === c8.y + cleft.y) && inBoxC8(x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
-  ok(shutC8.size > 900 && !shutC8.has(key(c8.x + cleft.x, c8.y + cleft.y - 1)) && !shutC8.has(key(c8.x + cleft.x + 1, c8.y + cleft.y - 1)) && chC8(cleft.x, cleft.y - 2) === 'r',
+  ok(shutC8.size > 900 && !shutC8.has(cell(out, c8.x + cleft.x, c8.y + cleft.y - 1)) && !shutC8.has(cell(out, c8.x + cleft.x + 1, c8.y + cleft.y - 1)) && chC8(cleft.x, cleft.y - 2) === 'r',
     `the cleft is shut but for its mouth, its rock between it and the Scarp: none of C8's ${shutC8.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'wold_c8:c8_prints');
   w.world.travel('wold_c8', cleft.x, cleft.y + 1, NORTH);
@@ -549,7 +547,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The Wold's heart (B8, #529): on the Wold's row at 40,222, west of the Scarp's edge, core, at 27-28, the
   // band's top; Kushtash on the world map no longer planned.
   const B8 = MAP_DEFS.find((d) => d.id === 'wold_b8')!, b8 = out.zones.find((z) => z.id === 'wold_b8')!;
-  const atB8 = (x: number, y: number): number => key(b8.x + x, b8.y + y);
+  const atB8 = (x: number, y: number): number => cell(out, b8.x + x, b8.y + y);
   const inB8 = (x: number, y: number): boolean => x >= b8.x && x < b8.x + b8.w && y >= b8.y && y < b8.y + b8.h;
   const chB8 = (x: number, y: number): string => out.at(b8.x + x, b8.y + y).ch;
   const featureB8 = (id: string) => B8.features!.find((f) => 'id' in f && f.id === id)!;
@@ -663,7 +661,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The Glass's edge (B9, #530): on the Wold's row at 40,254, south of the Wold's heart, country, at 26-28.
   const B9 = MAP_DEFS.find((d) => d.id === 'wold_b9')!, b9 = out.zones.find((z) => z.id === 'wold_b9')!;
-  const atB9 = (x: number, y: number): number => key(b9.x + x, b9.y + y);
+  const atB9 = (x: number, y: number): number => cell(out, b9.x + x, b9.y + y);
   const inB9 = (x: number, y: number): boolean => x >= b9.x && x < b9.x + b9.w && y >= b9.y && y < b9.y + b9.h;
   const chB9 = (x: number, y: number): string => out.at(b9.x + x, b9.y + y).ch;
   const openB9 = (x: number, y: number): boolean => out.passable(b9.x + x, b9.y + y) === 'ok';
@@ -999,7 +997,6 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
   const [B9, D9] = ['wold_b9', 'wold_d9'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
   const scholar = B9.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Eadmer, the scholar')!;
   const teaching = scholar.teaches!, [hand] = [scholar.quest!].flat(), own = scholar.lines.join('\n\n');
-  const chest = (d: MapDef, id: string) => d.features!.find((f): f is Extract<Feature, { kind: 'chest' }> => f.kind === 'chest' && f.id === id)!;
   const hollow = chest(D9, 'd9_hollow'), cache = chest(B9, 'b9_cache');
   ok(scholar.x === 30 && scholar.y === 27 && teaching.cls === 'sorcerer' && teaching.prestige === 3 && teaching.asks === 'walkers_carried' && JSON.stringify(teaching.done) === JSON.stringify({ flag: ETCHING_READ })
     && hand.item === 'etched_glass' && hand.reward === 0 && hand.setFlag === ETCHING_GIVEN && hollow.items.includes('etched_glass') && cache.items.join() === 'glass_light',
@@ -1124,9 +1121,6 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
  * lifts the stone at the temple's price, or a draught does; he wakes, and is home beside her.
  */
 function woldQuests(ok: (cond: boolean, msg: string) => void): void {
-  const mapOf = (id: string) => MAP_DEFS.find((d) => d.id === id)!;
-  const npc = (map: string, name: string): Person => mapOf(map).features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
-  const ev = (map: string, id: string): Feature => mapOf(map).features!.find((f) => f.kind === 'event' && f.id === id)!;
   const told = QUESTS.filter((q) => q.id !== 'scout_map').flatMap((q) => [...q.entries.map((e) => e.text), ...q.goals.map((g) => g.text)]).join(' ');
   ok(!/hull|ship|orbit|voyage|custodian/i.test(told), 'nothing in the side quests\' log of a hull, a ship, an orbit, a voyage or a Custodian');
 

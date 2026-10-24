@@ -45,7 +45,8 @@
 // clearing (#19): heard after his hint, and taught at 19; and the Cleric's second, taught by the sister
 // at L3's moth shrine (#203): her lesson after her own words, and taught at 19.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, gone, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest, hear, answerTo, page, written, reads, there, clock, hired } from '../../../../tools/kit/walk.ts';
+import { newWalk, walkThrough, see, fight, gone, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest, hear, answerTo, page, written, reads, there, clock, hired, who, shows, live, ofKind } from '../../../../tools/kit/walk.ts';
+import { inBox } from '../../../../tools/kit/grid.ts';
 import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { CHAPTER } from './chapter.ts';
 import { STEPS as FORELAND_STEPS } from '../shelf/walkthrough.ts';
@@ -278,14 +279,13 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The crest: from the road, walking or wading, the Deepthorn's I3 below it is never reached.
   const out = buildMaps()[OUTDOORS], i2 = out.zones.find((z) => z.id === 'eaves_i2')!, i3 = out.zones.find((z) => z.id === 'deepthorn_i3')!;
-  const inside = (x: number, y: number, z: typeof i2): boolean => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
   const seen = new Set<number>(), stack = [[i2.x + 12, i2.y + 9]];
   let crossed = false;
   while (stack.length) {
     const [x, y] = stack.pop()!, k = y * out.width + x;
-    if (seen.has(k) || !(inside(x, y, i2) || inside(x, y, i3)) || out.passable(x, y, { swim: true }) !== 'ok') continue;
+    if (seen.has(k) || !(inBox(i2, x, y) || inBox(i3, x, y)) || out.passable(x, y, { swim: true }) !== 'ok') continue;
     seen.add(k);
-    if (inside(x, y, i3)) crossed = true;
+    if (inBox(i3, x, y)) crossed = true;
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) stack.push([x + dx, y + dy]);
   }
   ok(seen.size > 400 && !crossed, `the crest shuts I2 from the Deepthorn's I3: none of its ${seen.size} squares walked leads down into it`);
@@ -364,19 +364,18 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // A company of 14 rests, buys the band's gear, studies to the sixth tier and trains to 17, each by
   // the rule its business's screen serves (src/game/services.ts). No temple: Sunderfall's shrine cures.
-  const business = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => WATCH.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
-  ok(business('inn').length === 1 && !business('temple').length, 'the Watch has a refectory to rest in, and no temple');
+  ok(ofKind(WATCH, 'inn').length === 1 && !ofKind(WATCH, 'temple').length, 'the Watch has a refectory to rest in, and no temple');
   w.party.gold = 20000;
-  const refectory = business('inn')[0], night = nightCost(refectory, w.party);
+  const refectory = ofKind(WATCH, 'inn')[0], night = nightCost(refectory, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
   stay(w.party, w.world, refectory);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 20000 - night, `a night in the refectory for ${night} gold, and the company wakes whole in the morning`);
-  const stores = business('shop').find((f) => f.interior === 'watch_stores')!;
+  const stores = ofKind(WATCH, 'shop').find((f) => f.interior === 'watch_stores')!;
   const rung = ACT_II.find((r) => r.level === 14)!;
   for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, stores, id), `${m.name} buys a ${item(id).name} from the stores`);
   ok(stores.stock.includes('lantern_oil'), 'and the stores sell lamp oil');
-  const hall = business('guild')[0];
-  ok(business('guild').length === 1 && hall.hall === 'lanterns' && hall.interior === 'watch_hall' && hall.maxTier === 6, `the Lantern hall is the Lanterns' hall and teaches to the sixth tier (${hall.name})`);
+  const hall = ofKind(WATCH, 'guild')[0];
+  ok(ofKind(WATCH, 'guild').length === 1 && hall.hall === 'lanterns' && hall.interior === 'watch_hall' && hall.maxTier === 6, `the Lantern hall is the Lanterns' hall and teaches to the sixth tier (${hall.name})`);
   const caster = w.party.members.find((m) => CLASSES[m.cls].spells && hall.classes.includes(m.cls))!;
   const sixth = spellsFor(CLASSES[caster.cls].spells!, hall.maxTier!).find((sp) => sp.level === 6 && !caster.spells.includes(sp.id))!;
   // The fee to study, once, then the spell as the hall offers it, at its price for the tier (spellPrice).
@@ -384,7 +383,7 @@ export const walkthrough: Walkthrough = (ok) => {
   payFee(w.party, hall);
   const { paid: price } = learnSpell(w.party, hallOffers(w.party, hall).find((o) => w.party.members[o.who] === caster && o.id === sixth.id)!);
   ok(!!sixth && w.party.gold === before - hall.fee - price && caster.spells.includes(sixth.id), `${caster.name} pays the hall's fee of ${hall.fee} and learns ${sixth.name} for ${price}`);
-  const gallery = business('trainer')[0];
+  const gallery = ofKind(WATCH, 'trainer')[0];
   // Trained on a copy, so the company walks on as it was; the company pays.
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 16; trainee.xp = xpForLevel(17);
@@ -816,12 +815,6 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
 // ---- the side quests (#205) ----
 
 
-/** The person on `map` whose name starts so and who stands on `x,y`: one of a person's places. */
-function who(map: string, x: number, y: number, name: string): Person {
-  const p = MAP_DEFS.find((d) => d.id === map)?.features?.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name));
-  if (!p) throw new Error(`no ${name} at ${map} ${x},${y}`);
-  return p;
-}
 const GARRET = (): Person => who('eaves_j2', 22, 8, 'Garret'), NELL = (): Person => who('eaves_j2', 23, 8, 'Nell');
 const GARRET_IN = (): Person => who('lantern_watch', 10, 7, 'Garret'), NELL_IN = (): Person => who('lantern_watch', 10, 7, 'Nell');
 const AVERIL_ROAD = (): Person => who('lanternwood_l2', 17, 22, 'Averil'), AVERIL_HALL = (): Person => who('lantern_watch', 7, 8, 'Averil');
@@ -833,13 +826,6 @@ const BRINK = (): Person => who('lantern_watch', 2, 4, 'Wouter Brink');
 
 
 
-/** A feature or group of `map` by its id, and whether it is there now. */
-function shows(w: Walk, map: string, id: string): boolean {
-  const d = MAP_DEFS.find((m) => m.id === map)!;
-  const f = [...(d.features ?? []), ...(d.encounters ?? [])].find((x) => 'id' in x && x.id === id) as Feature | EncounterDef;
-  w.world.travel(map, f.x, f.y);
-  return 'monsters' in f ? w.world.walks(f, f.x, f.y, map) && !w.world.ended(f) : w.world.present(f, map);
-}
 
 
 /** Each member's xp now, to see what an answer paid. */
@@ -995,7 +981,6 @@ const STILLED = ['eaves_j2:j2_hounds', 'eaves_k2:k2_hounds', 'eaves_k2:k2_bears'
  */
 function stilled(ok: (cond: boolean, msg: string) => void): void {
   const group = (at: string): EncounterDef => { const [map, id] = at.split(':'); return MAP_DEFS.find((d) => d.id === map)!.encounters!.find((g) => g.id === id)!; };
-  const live = (v: Walk, at: string): boolean => { const g = group(at); v.world.travel(at.split(':')[0], g.x, g.y); return v.world.liveGroups().some((x) => x.def.id === g.id); };
   const HESTER = MAP_DEFS.find((d) => d.id === 'lantern_watch')!.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Hester Dunmore'))!;
   const ready = (...flags: string[]): Walk => { const v = newWalk(ok); for (const f of ['watch_reader_met', 'papers_read', ...flags]) v.party.flags[f] = 1; return v; };
   const says = (v: Walk): string => { v.world.travel('lantern_watch', HESTER.x, HESTER.y); const t = meet(HESTER, v.party, heard(v.world, HESTER)).text; listen(v); return t; };

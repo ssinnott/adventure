@@ -42,7 +42,7 @@
 // from the trodden wall, and the crabs and the toads won at 11; and The Star That Moved (#183)
 // played every way. Then the bounds (#830), as `theBounds` walks them, box by box.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, fight, listen, see, kneel, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, written, search, hired, ledgerGiven } from '../../../../tools/kit/walk.ts';
+import { newWalk, walkThrough, fight, listen, see, kneel, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, written, search, hired, ledgerGiven, log, ofKind } from '../../../../tools/kit/walk.ts';
 import { square, ALL, reach } from '../../../../tools/kit/grid.ts';
 import { headlessGame, drive } from '../../../../tools/kit/headless.ts';
 import type { Step, Walk } from '../../../../tools/kit/walk.ts';
@@ -284,8 +284,7 @@ function theNightLight(w: Walk): void {
   const FLAGS = ['q_nightlight', 'q_nightlight_taken', 'q_nightlight_kept', 'q_nightlight_temple', 'q_nightlight_sold', 'q_tide_home'];
   const reset = (): void => { for (const f of FLAGS) delete w.party.flags[f]; w.party.bag = w.party.bag.filter((i) => i !== 'night_light'); };
   const greeting = (p: Person): ReturnType<typeof meet> => { w.world.travel('upperwater_c3', p.x, p.y); return meet(p, w.party, heard(w.world, p)); };
-  const nightlight = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'nightlight');
-  const entries = (): string => nightlight()?.pages[0]?.entries.map((e) => e.id).join(', ') ?? '';
+  const entries = (): string => log(w, 'nightlight')?.pages[0]?.entries.map((e) => e.id).join(', ') ?? '';
   // By night, at the window: the glass people and the light on the water.
   const byNight = (): { brine: boolean; glow: boolean } => {
     const then = w.world.state.minutes;
@@ -299,10 +298,10 @@ function theNightLight(w: Walk): void {
 
   reset();
   const first = greeting(NYNKE);
-  ok(first.text.includes('goes green underneath') && !first.choice && !nightlight(), 'before the priest asks, Nynke at her window gives the hint and no more, and the log has nothing');
+  ok(first.text.includes('goes green underneath') && !first.choice && !log(w, 'nightlight'), 'before the priest asks, Nynke at her window gives the hint and no more, and the log has nothing');
   ok(byNight().brine && byNight().glow, 'by night the glass people come to her window, and her light throws green along the diep');
   const asked = greeting(PRIEST);
-  ok(!!w.party.flags.q_nightlight && asked.text.includes('pole') && asked.text.includes('Nynke') && nightlight()?.goal === 'See Nynke at her window in Rietum about her night-light.', `the priest asks for the child's light, and still reads a pole's mark (${nightlight()?.goal})`);
+  ok(!!w.party.flags.q_nightlight && asked.text.includes('pole') && asked.text.includes('Nynke') && log(w, 'nightlight')?.goal === 'See Nynke at her window in Rietum about her night-light.', `the priest asks for the child's light, and still reads a pole's mark (${log(w, 'nightlight')?.goal})`);
   ok(greeting(TOBIN).text.includes('buyer downriver'), 'Tobin, across the diep, would buy it for a buyer downriver');
 
   for (const way of ['the priest', 'Tobin', 'kept'] as const) {
@@ -314,7 +313,7 @@ function theNightLight(w: Walk): void {
     if (!a) continue;
     answer(a, w.party);
     if (way === 'kept') {
-      ok(!!w.party.flags.q_nightlight_kept && !w.party.bag.includes('night_light') && !!nightlight()?.done, `kept: the light stays at her window, and The Night-Light is done (${entries()})`);
+      ok(!!w.party.flags.q_nightlight_kept && !w.party.bag.includes('night_light') && !!log(w, 'nightlight')?.done, `kept: the light stays at her window, and The Night-Light is done (${entries()})`);
       ok(byNight().brine && byNight().glow, 'kept: the glass people still come to her window by night');
       ok(greeting(NYNKE).text.includes('sweet shop') && greeting(PRIEST).text.includes('kindness to a child') && greeting(TOBIN).text.includes('I can wait') && w.world.present(TOBIN), 'kept: Nynke, the priest and Tobin each say so, and Tobin waits');
       w.party.flags.q_tide_home = 1;
@@ -322,15 +321,15 @@ function theNightLight(w: Walk): void {
       ok(!night.brine && !night.glow && greeting(NYNKE).text.includes('went out') && entries().includes('home'), `the Stone home, the light goes out: the glass people stop coming and the log says so (${entries()})`);
       continue;
     }
-    ok(w.party.bag.includes('night_light') && !byNight().brine && !byNight().glow && nightlight()?.goal?.startsWith('Take the night-light') === true, `taken: the company has the light, the glass people stop coming and the goal is the priest or Tobin (${nightlight()?.goal})`);
+    ok(w.party.bag.includes('night_light') && !byNight().brine && !byNight().glow && log(w, 'nightlight')?.goal?.startsWith('Take the night-light') === true, `taken: the company has the light, the glass people stop coming and the goal is the priest or Tobin (${log(w, 'nightlight')?.goal})`);
     ok(greeting(NYNKE).text.includes('stopped coming'), 'taken: Nynke\'s window is dark, and she says so');
     if (way === 'the priest') {
       greeting(PRIEST);
-      ok(!!w.party.flags.q_nightlight_temple && !w.party.bag.includes('night_light') && w.party.gold === gold0 + 100 && !!nightlight()?.done, `the priest takes it at the first meeting and pays 100, and The Night-Light is done (${entries()})`);
+      ok(!!w.party.flags.q_nightlight_temple && !w.party.bag.includes('night_light') && w.party.gold === gold0 + 100 && !!log(w, 'nightlight')?.done, `the priest takes it at the first meeting and pays 100, and The Night-Light is done (${entries()})`);
       ok(greeting(PRIEST).text.includes('In the bowl') && w.world.present(TOBIN) && greeting(TOBIN).text.includes('a man who counts') && !w.world.present(BERTH), 'after, the light lies in the bowl, and Tobin stays at his barge, sour');
     } else {
       greeting(TOBIN);
-      ok(!!w.party.flags.q_nightlight_sold && !w.party.bag.includes('night_light') && w.party.gold === gold0 + 250 && !!nightlight()?.done, `Tobin takes it at the first meeting and pays 250, and The Night-Light is done (${entries()})`);
+      ok(!!w.party.flags.q_nightlight_sold && !w.party.bag.includes('night_light') && w.party.gold === gold0 + 250 && !!log(w, 'nightlight')?.done, `Tobin takes it at the first meeting and pays 250, and The Night-Light is done (${entries()})`);
       ok(!w.world.present(TOBIN) && w.world.present(BERTH) && greeting(PRIEST).text.includes('sold it'), 'after, Tobin is gone down the river, a heron has his berth, and the priest knows it was sold');
     }
     w.party.flags.q_tide_home = 1;
@@ -342,7 +341,7 @@ function theNightLight(w: Walk): void {
   greeting(PRIEST);
   w.party.flags.q_tide_home = 1;
   const dark = greeting(NYNKE);
-  ok(!dark.choice && dark.text.includes('went out') && !!nightlight()?.done && entries() === 'asked, home', `asked and never answered, the Stone home puts the light out and ends it (${entries()})`);
+  ok(!dark.choice && dark.text.includes('went out') && !!log(w, 'nightlight')?.done && entries() === 'asked, home', `asked and never answered, the Stone home puts the light out and ends it (${entries()})`);
 
   reset();
   w.party.gold = gold0;
@@ -363,8 +362,7 @@ function theStar(w: Walk): void {
   const FLAGS = ['q_star', 'q_star_press', 'q_star_tallis', 'sm_tallis_word'];
   const reset = (): void => { for (const f of FLAGS) delete w.party.flags[f]; w.party.bag = w.party.bag.filter((i) => i !== 'pilots_slate'); };
   const greet = (p: Person): string => { w.world.travel('saltmouth', p.x, p.y); return meet(p, w.party, heard(w.world, p)).text; };
-  const star = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'star');
-  const entries = (): string => star()?.pages[0]?.entries.map((e) => e.id).join(', ') ?? '';
+  const entries = (): string => log(w, 'star')?.pages[0]?.entries.map((e) => e.id).join(', ') ?? '';
   const gold0 = w.party.gold;
   reset();
 
@@ -377,32 +375,32 @@ function theStar(w: Walk): void {
   w.world.travel('saltings_c7', SLATE.x, SLATE.y);
   w.world.markUsed('c7_slate');
   if (SLATE.kind === 'chest') w.party.bag.push(...SLATE.items);
-  ok(w.party.bag.includes('pilots_slate') && star()?.goal === 'Take the pilots\' slate to Hiske in the street or to Tallis at his door on the quay, in Saltmouth.', `at its foot the pilots' slate, found before anyone asked, and the log has it (${star()?.goal})`);
+  ok(w.party.bag.includes('pilots_slate') && log(w, 'star')?.goal === 'Take the pilots\' slate to Hiske in the street or to Tallis at his door on the quay, in Saltmouth.', `at its foot the pilots' slate, found before anyone asked, and the log has it (${log(w, 'star')?.goal})`);
   w.world.state.minutes = day + 23 * 60;
   w.world.travel('saltings_c7', 25, 7, SOUTH);
   ok(w.world.eventsHere().some((m) => m.includes('one star burns too steady')) && w.world.used('c7_star') && entries().includes('watch'), `by night the star walks in the notch, and the log has the watch (${entries()})`);
   w.world.state.minutes = day + 12 * 60;
   // Early: Hiske never asked, and takes it all the same.
   const early = greet(HISKE);
-  ok(early.includes('unasked') && !!w.party.flags.q_star_press && w.party.gold === gold0 + 200 && !!star()?.done, `Hiske takes the slate from a company she never asked, pays 200, and The Star That Moved is done (${entries()})`);
+  ok(early.includes('unasked') && !!w.party.flags.q_star_press && w.party.gold === gold0 + 200 && !!log(w, 'star')?.done, `Hiske takes the slate from a company she never asked, pays 200, and The Star That Moved is done (${entries()})`);
 
   // Asked, both ways: to Tallis, then to her press.
   for (const to of ['Tallis', 'Hiske'] as const) {
     reset();
     w.party.gold = gold0;
     const asks = greet(HISKE);
-    ok(!!w.party.flags.q_star && asks.includes('pilots\' stone') && asks.includes('rote') && star()?.goal?.startsWith('Watch the sky') === true, `Hiske asks for a watch from the pilots' stone, and still offers her prestige (${star()?.goal})`);
+    ok(!!w.party.flags.q_star && asks.includes('pilots\' stone') && asks.includes('rote') && log(w, 'star')?.goal?.startsWith('Watch the sky') === true, `Hiske asks for a watch from the pilots' stone, and still offers her prestige (${log(w, 'star')?.goal})`);
     ok(greet(HISKE).startsWith('"The pilots\' stone'), 'asked again, she says where the stone is');
     const first = greet(TALLIS), second = greet(TALLIS);
     ok(first.includes('older than the port') && !!w.party.flags.sm_tallis_word && second.includes('nervous animal'), 'Tallis\'s throne words come first, and then his words on the star');
     w.party.bag.push('pilots_slate');
     if (to === 'Tallis') {
       greet(TALLIS);
-      ok(!!w.party.flags.q_star_tallis && !w.party.bag.includes('pilots_slate') && w.party.gold === gold0 + 400 && !!star()?.done && entries().includes('tallis'), `Tallis takes the slate at the first meeting, pays 400, and the log says so (${entries()})`);
+      ok(!!w.party.flags.q_star_tallis && !w.party.bag.includes('pilots_slate') && w.party.gold === gold0 + 400 && !!log(w, 'star')?.done && entries().includes('tallis'), `Tallis takes the slate at the first meeting, pays 400, and the log says so (${entries()})`);
       ok(greet(TALLIS).includes('the word star') && greet(HISKE).includes('dockmaster'), 'after, Tallis has his calm port, and Hiske knows where it went');
     } else {
       const done = greet(HISKE);
-      ok(done.includes('Twelve pilots') && !!w.party.flags.q_star_press && w.party.gold === gold0 + 200 && !!star()?.done && entries().includes('press'), `Hiske takes the slate at the first meeting, pays 200, and the log says so (${entries()})`);
+      ok(done.includes('Twelve pilots') && !!w.party.flags.q_star_press && w.party.gold === gold0 + 200 && !!log(w, 'star')?.done && entries().includes('press'), `Hiske takes the slate at the first meeting, pays 200, and the log says so (${entries()})`);
       ok(greet(HISKE).includes('pinned up') && greet(TALLIS).includes('She printed it'), 'after, the chart hangs where the pilots pass, and Tallis counts its cost');
     }
   }
@@ -847,8 +845,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // Up with the bell to the priestess: she takes it, hangs it on its frame and rings it.
   meetWho(w, 'tide_bell');
-  const bell = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'tide_bell');
-  ok(!!w.party.flags.q_tide_bell_done && !w.party.bag.includes('tide_bell') && !!bell()?.done, `the priestess takes the bell, and The Tide Bell is done (${bell()?.pages[0]?.entries.map((e) => e.id).join(', ')})`);
+  ok(!!w.party.flags.q_tide_bell_done && !w.party.bag.includes('tide_bell') && !!log(w, 'tide_bell')?.done, `the priestess takes the bell, and The Tide Bell is done (${log(w, 'tide_bell')?.pages[0]?.entries.map((e) => e.id).join(', ')})`);
   see(w, 'delta_b6:b6_rung');
   ok(w.world.used('b6_rung'), 'and she rings it inside the door');
   see(w, 'drowned_temples:dt1_frame_hung');
@@ -906,14 +903,13 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.zone?.id === 'saltings_c6' && w.world.state.x - w.world.zone.x === 26 && w.world.state.y - w.world.zone.y === 18, 'and out again onto the road before the gate');
 
   // A company of 10 rests, is cured, buys the band's gear, trains to 13 and takes a first prestige.
-  const business = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => TOWN.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
-  ok(business('inn').length === 1 && business('temple').length === 1, 'Saltmouth has an inn to rest at and a shrine that cures');
-  const armourer = business('shop').find((f) => f.interior === 'saltmouth_armourer')!;
+  ok(ofKind(TOWN, 'inn').length === 1 && ofKind(TOWN, 'temple').length === 1, 'Saltmouth has an inn to rest at and a shrine that cures');
+  const armourer = ofKind(TOWN, 'shop').find((f) => f.interior === 'saltmouth_armourer')!;
   const rung = ACT_II.find((r) => r.level === 11)!;
   ok(w.party.members.every((m) => rung.classes[m.cls].every((id) => armourer.stock.includes(id))), 'the armourer sells each of the company\'s classes its step at 11');
   w.party.gold = 20000;
   for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, armourer, id), `${m.name} buys a ${item(id).name} from the armourer`);
-  const loft = business('trainer')[0];
+  const loft = ofKind(TOWN, 'trainer')[0];
   const ottilie = w.party.members.find((m) => m.cls === 'thief')!;
   ottilie.level = 12; ottilie.xp = xpForLevel(13);
   ok(loft.maxLevel === 13 && canTrainAt(ottilie, loft.maxLevel) && (ottilie.level = 13, !canTrainAt(ottilie, loft.maxLevel)), 'the loft trains a member of 12 to 13, and no further');
@@ -932,7 +928,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The Cartographers' Guild (#181): a stranger takes the first task at the Map Room, chains the
   // Salt Road from the stone under the Edge to the one in the Saltings, and reports; a Chainman is
   // offered the first rank's two quests, and done they make the company Surveyors.
-  const room = business('shop').find((f) => f.hall === 'cartographers');
+  const room = ofKind(TOWN, 'shop').find((f) => f.hall === 'cartographers');
   ok(!!room && room.interior === 'cartographers_room', `the map room is the Cartographers' hall (${room?.name})`);
   const first = offered('cartographers', w.party);
   ok(rankOf('cartographers', w.party) === 0 && first.length === 1 && first[0].id === 'carto_chain', `a stranger is offered the first task alone (${first.map((q) => q.title).join(', ')})`);
@@ -1103,7 +1099,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const [c2, b2, a3, a4, a5, a6, b7, d6] = [C2.id, B2.id, A3.id, A4.id, A5.id, A6.id, B7.id, D6.id].map((id) => out.zones.find((z) => z.id === id)!);
   // The squares of a box reached from one of its own, inside the box: on foot, or walked, waded, climbed
   // and floated with its secret door shut.
-  const chest = (def: MapDef, id: string): string[] => { const f = def.features!.find((x) => x.kind === 'chest' && x.id === id); return f?.kind === 'chest' ? f.items : []; };
+  const contents = (def: MapDef, id: string): string[] => { const f = def.features!.find((x) => x.kind === 'chest' && x.id === id); return f?.kind === 'chest' ? f.items : []; };
 
   // The Edge's top first, at level 1: west from D2's 0,10 onto C2's 31,10, the land named and the warning.
   w.world.travel('downs_d2', 0, 10, WEST);
@@ -1142,7 +1138,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(cleft.size > 600 && !cleft.has(square(out, c2, 17, 11)), `the cleft is shut but for its walling: none of C2's ${cleft.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${C2.id}:c2_walling`);
   ok(search(w, C2.id, 17, 13, NORTH, 'c2_cleft'), 'searched at the rubbed walling, it opens, and the cleft behind it can be walked into');
-  ok(chest(C2, 'c2_cleft_chest').includes('long_axe+1'), 'in the cleft, a Long Axe +1');
+  ok(contents(C2, 'c2_cleft_chest').includes('long_axe+1'), 'in the cleft, a Long Axe +1');
 
   // The valley's head: west from C2's 0,20 onto B2's 31,20, and north out of B3's grass at 24,0, walked.
   w.world.travel(C2.id, 0, 20, WEST);
@@ -1158,7 +1154,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(cell.size > 200 && !cell.has(square(out, b2, 19, 20)), `the cell is shut but for the wrens' gap: none of B2's ${cell.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${B2.id}:b2_hut`);
   ok(search(w, B2.id, 19, 22, NORTH, 'b2_cell'), 'searched where the wrens go in, the hut opens, and the cell under its turf can be walked into');
-  ok(chest(B2, 'b2_cell_chest').includes('sharkskin+1'), 'in the cell, a Sharkskin Coat +1');
+  ok(contents(B2, 'b2_cell_chest').includes('sharkskin+1'), 'in the cell, a Sharkskin Coat +1');
   const gold = (def: MapDef, id: string): number => { const f = def.features!.find((x) => x.kind === 'chest' && x.id === id); return f?.kind === 'chest' ? f.gold : 0; };
 
   // The rim's foot behind the willows: west out of B3's grass at 0,28 onto A3's 31,28, walked.
@@ -1174,7 +1170,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(well.size > 40 && !well.has(square(out, a3, 24, 27)), `the well-house is shut but for its walling: none of A3's ${well.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${A3.id}:a3_willow`);
   ok(search(w, A3.id, 26, 27, WEST, 'a3_wellhouse'), 'searched by the rag willow, the walling opens, and the well-house behind it can be walked into');
-  ok(gold(A3, 'a3_wellhouse_chest') === 120 && chest(A3, 'a3_wellhouse_chest').includes('potion_heal'), 'among the shells, 120 gold and a draught');
+  ok(gold(A3, 'a3_wellhouse_chest') === 120 && contents(A3, 'a3_wellhouse_chest').includes('potion_heal'), 'among the shells, 120 gold and a draught');
 
   // The hills over the heronry: west out of B4's grass at 0,16 onto A4's 31,16, and south out of A3's
   // corner at 29,31 onto A4's 29,0, both walked, the Delta named only from the Upper Water.
@@ -1207,7 +1203,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(still.size > 500 && !still.has(square(out, a4, 11, 18)), `the still is shut but for its walling: none of A4's ${still.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${A4.id}:a4_reek`);
   ok(search(w, A4.id, 13, 18, WEST, 'a4_still'), 'searched where the bed ends at the rock, the stones give, and the still behind them can be walked into');
-  ok(gold(A4, 'a4_still_chest') === 200 && chest(A4, 'a4_still_chest').includes('elixir'), 'in the still, a crock of 200 gold and an elixir');
+  ok(gold(A4, 'a4_still_chest') === 200 && contents(A4, 'a4_still_chest').includes('elixir'), 'in the still, a crock of 200 gold and an elixir');
 
   // The fen's west shore: west out of B5's reeds at 0,16 onto A5's 31,16, and south out of A4's marsh
   // corner at 31,31 onto A5's 31,0, both walked, in the Delta still.
@@ -1246,7 +1242,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(sluice.size > 450 && !sluice.has(square(out, a5, 20, 15)), `the sluice-house is shut but for its walling: none of A5's ${sluice.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${A5.id}:a5_water`);
   ok(search(w, A5.id, 22, 15, WEST, 'a5_sluice'), 'searched where the clear water runs out, the walling gives, and the sluice-house behind it can be walked into');
-  ok(gold(A5, 'a5_sluice_chest') === 180 && chest(A5, 'a5_sluice_chest').includes('potion_heal'), 'in the sluice-house, the keeper\'s pay-box of 180 gold and a draught');
+  ok(gold(A5, 'a5_sluice_chest') === 180 && contents(A5, 'a5_sluice_chest').includes('potion_heal'), 'in the sluice-house, the keeper\'s pay-box of 180 gold and a draught');
 
   // The fen under the rim: west out of B6's reeds at 0,16 onto A6's 31,16, and south out of A5's corner
   // at 31,31 onto A6's 31,0, both walked.
@@ -1280,7 +1276,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(anchorite.size > 450 && !anchorite.has(square(out, a6, 17, 10)), `the cell is shut but for its walling: none of A6's ${anchorite.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${A6.id}:a6_slit`);
   ok(search(w, A6.id, 19, 10, WEST, 'a6_cell'), 'searched below the slit, the walling gives, and the cell behind it can be walked into');
-  ok(gold(A6, 'a6_cell_chest') === 250 && chest(A6, 'a6_cell_chest').includes('elixir'), 'in the cell, what the faithful left her: 250 gold and an elixir');
+  ok(gold(A6, 'a6_cell_chest') === 250 && contents(A6, 'a6_cell_chest').includes('elixir'), 'in the cell, what the faithful left her: 250 gold and an elixir');
 
   // The Scarp's foot west of the pans: south out of B6's reeds at 16,31 onto B7's 16,0, which names the
   // Saltings, and west out of C7's pans at 0,16 onto B7's 31,16, both walked.
@@ -1320,7 +1316,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(bothy.size > 500 && !bothy.has(square(out, b7, 9, 17)), `the bothy is shut but for its salted door: none of B7's ${bothy.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${B7.id}:b7_fan`);
   ok(search(w, B7.id, 9, 15, SOUTH, 'b7_bothy'), 'searched at the fan\'s point, the salt gives, and the bothy behind it can be walked into');
-  ok(gold(B7, 'b7_bothy_chest') === 250 && chest(B7, 'b7_bothy_chest').includes('elixir'), 'in the bothy, the salters\' strongbox of 250 gold and an elixir');
+  ok(gold(B7, 'b7_bothy_chest') === 250 && contents(B7, 'b7_bothy_chest').includes('elixir'), 'in the bothy, the salters\' strongbox of 250 gold and an elixir');
 
   // The plate's old place: south out of D5's spit at 10,31 onto D6's 10,0, which names the Saltings, and east
   // out of C6's shore at 31,16 onto D6's 0,16, both walked.
@@ -1345,7 +1341,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(store.size > 20 && !store.has(square(out, d6, 11, 5)), `the store is shut but for its walled door: none of D6's ${store.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${D6.id}:d6_boom`);
   ok(search(w, D6.id, 11, 3, SOUTH, 'd6_store'), 'searched at the footing, the stone gives, and the keeper\'s store behind it can be walked into');
-  ok(gold(D6, 'd6_store_chest') === 150 && chest(D6, 'd6_store_chest').includes('potion_heal'), 'in the store, the keeper\'s chest of 150 gold and a draught');
+  ok(gold(D6, 'd6_store_chest') === 150 && contents(D6, 'd6_store_chest').includes('potion_heal'), 'in the store, the keeper\'s chest of 150 gold and a draught');
   see(w, `${D6.id}:d6_ribs`);
 }
 

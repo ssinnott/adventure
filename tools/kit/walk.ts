@@ -27,7 +27,7 @@ import { Pilot } from '../../src/game/pilot/pilot.ts';
 import { headlessGame, drive } from './headless.ts';
 import { homeMap } from '../../src/game/atlas.ts';
 import { useShrine } from '../../src/game/wilds.ts';
-import type { Feature } from '../../src/game/map.ts';
+import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { winRate, gateOpts } from './fight.ts';
 
@@ -404,6 +404,72 @@ export function search(w: Walk, map: string, x: number, y: number, facing: Facin
   listen(w);
   return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
 }
+
+/** The map whose id is `id`. */
+export const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
+
+/** The `n`th person (the first, unless told) on `map` whose name is `name`. */
+export const npc = (map: string, name: string, n = 0): Person => mapOf(map).features!.filter((f) => f.kind === 'npc' && f.name === name)[n] as Person;
+
+/** The person on `map` at x, y whose name begins `name` (and who hires with `flag`, if one is given); there has to be one. */
+export function who(map: string, x: number, y: number, name: string, flag?: string): Person {
+  const p = MAP_DEFS.find((d) => d.id === map)?.features?.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name) && (flag === undefined || f.flag === flag));
+  if (!p) throw new Error(`no ${name} at ${map} ${x},${y}`);
+  return p;
+}
+
+/** The features of `kind` on map `d`. */
+export const ofKind = <K extends Feature['kind']>(d: MapDef, kind: K): Extract<Feature, { kind: K }>[] => d.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
+
+/** The event `id` on `map`. */
+export const ev = (map: string, id: string): Feature => mapOf(map).features!.find((f) => f.kind === 'event' && f.id === id)!;
+
+/** The chest `id` on map `d`. */
+export const chest = (d: MapDef, id: string): Extract<Feature, { kind: 'chest' }> => d.features!.find((f): f is Extract<Feature, { kind: 'chest' }> => f.kind === 'chest' && f.id === id)!;
+
+/** What chest `id` on map `d` holds, its gold and its items, as words. */
+export const stock = (d: MapDef, id: string): string => { const c = d.features!.find((f) => f.kind === 'chest' && f.id === id); return c?.kind === 'chest' ? `${c.gold} ${c.items.join()}` : 'none'; };
+
+/** What the people on `map` teach. */
+export const taught = (map: string) => (mapOf(map).features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
+
+/** The quest `id` as the log shows it now. */
+export const log = (w: Walk, id: string): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+
+/** Whether event or group `id` of `map` is there: the company taken to its square, and it placed on the map it is written on. */
+export function shows(w: Walk, map: string, id: string): boolean {
+  const d = MAP_DEFS.find((m) => m.id === map)!;
+  const f = [...(d.features ?? []), ...(d.encounters ?? [])].find((x) => 'id' in x && x.id === id) as Feature | EncounterDef;
+  w.world.travel(map, f.x, f.y);
+  return 'monsters' in f ? w.world.walks(f, f.x, f.y, map) && !w.world.ended(f) : w.world.present(f, map);
+}
+
+/** Whether group `id` of `map` still stands there: the company taken to it. */
+export function alive(w: Walk, map: string, id: string): boolean {
+  const g = MAP_DEFS.find((d) => d.id === map)!.encounters!.find((e) => e.id === id)!;
+  w.world.travel(map, g.x, g.y);
+  return w.world.liveGroups().some((l) => l.def.id === id);
+}
+
+/** Whether group 'map:id' still stands there: the company taken to it. */
+export const live = (w: Walk, at: string): boolean => alive(w, ...ref(at));
+
+/** An iron key into the party's bag. */
+export const key = (p: Party): void => { p.bag.push('key_iron'); };
+
+/**
+ * A locked chest pressed on a game of its own, the company dressed by `dress` first: what the log
+ * says, whether the chest is spent, whether its items are taken and how many iron keys are left.
+ */
+export const press = (map: string, facing: Facing, c: Extract<Feature, { kind: 'chest' }>, dress: (p: Party) => void): string => {
+  const g = headlessGame(4), p = g.party;
+  dress(p);
+  g.world.travel(map, c.x, c.y, facing);
+  const there = g.world.featureHere(), from = g.log.length;
+  g.enterCell();
+  if (there) { g.interact(there); g.interact(there); }
+  return `${g.log.slice(from).join(' ')} | ${g.world.used(c.id) ? 'spent' : 'shut'} | ${c.items.every((i) => p.bag.includes(i)) ? 'taken' : 'left'} | ${p.bag.filter((i) => i === 'key_iron').length} keys`;
+};
 
 /** Every chest of every map, with its map: read once, when first asked. */
 let CHESTS: { map: string; f: Extract<Feature, { kind: 'chest' }> }[] | undefined;

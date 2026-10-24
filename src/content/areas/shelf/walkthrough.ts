@@ -7,10 +7,10 @@
 import type { Walkthrough } from '../../area.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
+import type { Feature } from '../../../game/map.ts';
 import { DOWNS_E4 } from './maps/downs_e4.ts';
 import { CHAPTER } from './chapter.ts';
-import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen, pilotPlays, said, hear, page, reads, there, open, search, clock, hired, ledgerGiven } from '../../../../tools/kit/walk.ts';
+import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen, pilotPlays, said, hear, page, reads, there, open, search, clock, hired, ledgerGiven, mapOf, who, stock, taught } from '../../../../tools/kit/walk.ts';
 import { zone, square, ALL, reach, each, row, col } from '../../../../tools/kit/grid.ts';
 import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
@@ -148,7 +148,6 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   w.level = 4;
   const out = buildMaps()[OUTDOORS];
   const E4 = DOWNS_E4, e4 = zone(out, E4.id), e3 = zone(out, 'downs_e3'), d4 = zone(out, 'downs_d4'), e5 = zone(out, 'wrackholm_e5');
-  const chest = (d: MapDef, id: string): string => { const c = d.features!.find((f) => f.kind === 'chest' && f.id === id); return c?.kind === 'chest' ? `${c.gold} ${c.items.join()}` : 'none'; };
   ok(!(E4.encounters ?? []).length, 'E4 holds no group');
 
   // South from Crowness's down at E3's 6,31 onto E4's 6,0, walked, in the Downs still.
@@ -177,7 +176,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(pots.size > 60 && !pots.has(square(out, e4, 11, 2)), `the store is shut but for its door in the stack: none of E4's ${pots.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${E4.id}:e4_shells`);
   ok(search(w, E4.id, 9, 2, EAST, 'e4_store'), 'searched where the crab shells are heaped, the rock gives, and the store behind it can be walked into');
-  ok(chest(E4, 'e4_crock') === '80 elixir', `under the pots, a crock with 80 gold and an Elixir (${chest(E4, 'e4_crock')})`);
+  ok(stock(E4, 'e4_crock') === '80 elixir', `under the pots, a crock with 80 gold and an Elixir (${stock(E4, 'e4_crock')})`);
   // The lair's door (docs §12.3): the mouth in the low cliff's face at 3,6, drawn as stone, the cliff's
   // rock either side of it and behind it, walked onto from the strand at 3,7 alone, with nothing within
   // four squares: E4's one way out but its edges, into Hag Hole.
@@ -246,7 +245,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     ok(closed.size > 20 && !['2,2', '3,2'].some((k) => closed.has(k)), `the ledge is shut but for its fall of rock: none of Hag Hole's ${closed.size} squares walked, waded, climbed or floated reaches it`);
     see(w, `${HH.id}:hh_smoke`);
     ok(search(w, HH.id, 3, 4, NORTH, 'hh_ledge'), 'searched under the lamp smoke, the fallen rock gives, and the ledge behind it can be walked onto');
-    ok(chest(HH, 'hh_purse') === '500 ', `on the ledge, by the lamp burnt dry, a purse with 500 gold (${chest(HH, 'hh_purse')})`);
+    ok(stock(HH, 'hh_purse') === '500 ', `on the ledge, by the lamp burnt dry, a purse with 500 gold (${stock(HH, 'hh_purse')})`);
     // And out at the mouth onto the strand at 3,7, facing the sea, with the way's own line and no other.
     w.world.travel(HH.id, HH.start.x, HH.start.y - 1, SOUTH);
     const back = w.world.move('forward');
@@ -350,12 +349,6 @@ function lodestone(w: Walk, how: string): void {
 // ---- the side quests (#77) ----
 
 
-/** The person on `map` whose name starts so and who stands on `x,y`: one of a person's places. */
-function who(map: string, x: number, y: number, name: string): Person {
-  const p = MAP_DEFS.find((d) => d.id === map)?.features?.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name));
-  if (!p) throw new Error(`no ${name} at ${map} ${x},${y}`);
-  return p;
-}
 const MAUD = (): Person => who('harrow', 12, 13, 'Maud');
 const EBBA_EEL = (): Person => who('harrow', 12, 13, 'Ebba'), EBBA_CHAPEL = (): Person => who('harrow', 11, 4, 'Ebba');
 const FISHERMAN = (): Person => who('harrow', 12, 13, 'the fisherman'), WALL = (): Person => who('harrow', 14, 3, 'a Warden on the wall');
@@ -419,12 +412,12 @@ function bellAsked(w: Walk): void {
 
 
 /** Whether an event of Helmstow's is there to be seen now. */
-const shows = (w: Walk, id: string): boolean => { const e = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f) => f.kind === 'event' && f.id === id)!; return w.world.present(e); };
+const inHarrow = (w: Walk, id: string): boolean => { const e = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f) => f.kind === 'event' && f.id === id)!; return w.world.present(e); };
 
 /** The Well Tastes of Iron to its question: Mottram hires, and by night the cart and Alwin at the gatehouse. */
 function wellAsked(w: Walk, alwinFirst: boolean): void {
   clock(w, 12);
-  w.ok(!there(w, 'harrow', ALWIN()) && !shows(w, 'well_cart'), 'by day neither Alwin nor the cart is at the gatehouse');
+  w.ok(!there(w, 'harrow', ALWIN()) && !inHarrow(w, 'well_cart'), 'by day neither Alwin nor the cart is at the gatehouse');
   const hire = (): void => {
     w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('Mottram sets a bucket') && w.news.at(-1) === 'New quest: The Well Tastes of Iron.' && !!page(w, 'well')?.goal,
       `Mottram's first meeting begins The Well Tastes of Iron, with a goal (${w.news.at(-1)})`);
@@ -654,9 +647,9 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(said.startsWith('"The Wardens. Good. Yes."'), 'the Wardens told, Mottram breathes out');
     reads(w, 'well', ['mottram', 'alwin', 'wardens'], ['lanterns'], 'the Wardens told');
     clock(w, 12);
-    w.ok(!shows(w, 'well_swept'), 'the Wardens told, by day the gatehouse is not swept');
+    w.ok(!inHarrow(w, 'well_swept'), 'the Wardens told, by day the gatehouse is not swept');
     clock(w, 0);
-    w.ok(!there(w, 'harrow', ALWIN()) && !shows(w, 'well_cart'), 'the Wardens told, by night Alwin and the cart are gone');
+    w.ok(!there(w, 'harrow', ALWIN()) && !inHarrow(w, 'well_cart'), 'the Wardens told, by night Alwin and the cart are gone');
     see(w, 'harrow:well_swept');
     w.ok(w.world.used('well_swept'), 'and the gatehouse is swept');
     w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('"Still iron." He does not offer'), "Mottram's after-lines are the Wardens'");
@@ -669,7 +662,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     answerWho(w, 'q_well', 'The Lanterns.');
     reads(w, 'well', ['mottram', 'alwin', 'lanterns'], ['wardens'], 'the Lanterns told');
     clock(w, 0);
-    w.ok(there(w, 'harrow', ALWIN()) && shows(w, 'well_cart') && !shows(w, 'well_swept'), 'the Lanterns told, by night Alwin and the cart are still there, and nothing is swept');
+    w.ok(there(w, 'harrow', ALWIN()) && inHarrow(w, 'well_cart') && !inHarrow(w, 'well_swept'), 'the Lanterns told, by night Alwin and the cart are still there, and nothing is swept');
     w.ok(hear(w, 'harrow', MOTTRAM()).startsWith('"Still iron. It\'s in a book now'), "Mottram's after-lines are the Lanterns'");
     const first = hear(w, 'harrow', OSMUND()), record = hear(w, 'harrow', OSMUND()), then = hear(w, 'harrow', OSMUND());
     w.ok(first.startsWith('A thin man in a leather apron') && record.startsWith('"Written. Stone dust') && then.startsWith('A thin man in a leather apron'), "Osmund's first meeting comes first, then his record, once");
@@ -793,7 +786,6 @@ function homecoming(ok: (cond: boolean, msg: string) => void): void {
   const step = (w: Walk, turn?: 'left' | 'right'): string[] => { if (turn) w.world.turn(turn); const r = w.world.move('forward'); return r.kind === 'moved' ? r.messages : [`blocked: ${'reason' in r ? r.reason : ''}`]; };
   const inn = (w: Walk) => { const f = business(w, 4, 4); return f?.kind === 'inn' ? f.price : 0; };
   const shop = (w: Walk, id: string) => { const f = business(w, 4, 10); return f?.kind === 'shop' ? priceIn(f, id) : 0; };
-  const bell = (w: Walk) => questLog(w.world.state, w.party).find((v) => v.def.id === 'bell')?.pages[0];
   const CAPTAIN = (): Person => who('harrow', 3, 13, 'Captain Ordgar');
   { // The old city: the gate lets Idris in, the Chapel cures, the old Eel and prices, no bell or Wardens.
     const w = newWalk(ok);
@@ -821,7 +813,7 @@ function homecoming(ok: (cond: boolean, msg: string) => void): void {
     w.ok(wardens.some((m) => m.startsWith('Wardens on the wall above the postern')) && !again.length, 'the Wardens over the postern are said on the first step inside, once');
     w.ok(business(w, 11, 4)?.kind !== 'temple' && !there(w, 'harrow', OSMUND()) && !there(w, 'harrow', EBBA_EEL()), 'the Chapel is shut: no cure, no Osmund and no Ebba');
     see(w, 'harrow:chapel_shut');
-    const rung = bell(w);
+    const rung = page(w, 'bell');
     w.ok(w.world.used('chapel_shut') && !!rung?.done && rung.entries.some((e) => e.id === 'shut') && w.news.includes('Quest complete: The Bell That Rang Twice.'), 'its notice read, an unanswered bell ends at the shut door, and says where the sexton went');
     const night6 = night(w, 7, 6), day6 = day(w, 8, 6);
     w.ok(night6.length === 1 && night6[0].startsWith('The curfew bell') && !day6.length && night(w, 7, 6).length === 1, 'the curfew bell rings by night on the middle street, every time, and not by day');
@@ -1234,15 +1226,13 @@ function keepHandIns(ok: (cond: boolean, msg: string) => void): void {
  */
 function trainers(ok: (cond: boolean, msg: string) => void): void {
   const WULFRIC = who('keep', 4, 7, 'Wulfric'), ALDITH = who('harrow', 5, 5, 'Aldith'), SIWARD = who('downs_f2', 19, 16, 'Siward');
-  const def = (id: string) => MAP_DEFS.find((d) => d.id === id)!;
-  const taught = (id: string) => (def(id).features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
   const only = (id: string, want: [string, number][]) => taught(id).length === want.length && want.every(([c, n]) => taught(id).some((t) => t.cls === c && t.prestige === n));
   ok(only('keep', [['knight', 1]]) && only('harrow', [['paladin', 1], ['bard', 1]]) && only('downs_f2', [['knight', 2]]), 'the keep teaches the Knight\'s first, Helmstow the Paladin\'s and the Bard\'s, and Coldharbour\'s box the Knight\'s second');
-  const others = (map: string, p: Person) => (def(map).features ?? []).filter((f) => f.x === p.x && f.y === p.y && f !== p);
+  const others = (map: string, p: Person) => (mapOf(map).features ?? []).filter((f) => f.x === p.x && f.y === p.y && f !== p);
   const stores = others('harrow', MOTTRAM()).filter((f) => f.kind === 'shop');
   ok(stores.length === 3 && stores.every((f) => f.kind === 'shop' && ['lantern_oil', 'torch'].every((id) => f.stock.includes(id))), 'Mottram the chandler stands in his stores, in the old city, Vask\'s and Tallis\'s, and they sell Lantern Oil and torches');
-  ok(def('keep').rows[WULFRIC.y][WULFRIC.x] === '.' && !others('keep', WULFRIC).length, 'the armourer works at a bench in the ward, before the shut armoury, with no door');
-  ok(def('harrow').rows[ALDITH.y][ALDITH.x] === ',' && !others('harrow', ALDITH).length, 'the luthier sits in the street, and keeps no shop');
+  ok(mapOf('keep').rows[WULFRIC.y][WULFRIC.x] === '.' && !others('keep', WULFRIC).length, 'the armourer works at a bench in the ward, before the shut armoury, with no door');
+  ok(mapOf('harrow').rows[ALDITH.y][ALDITH.x] === ',' && !others('harrow', ALDITH).length, 'the luthier sits in the street, and keeps no shop');
   ok([WULFRIC, MOTTRAM(), ALDITH, SIWARD].every((p) => !!p.teaches?.seek?.includes(p.name.split(',')[0].split(' ')[0]) && p.teaches.seek.includes(PRESTIGES[p.teaches.cls].titles[p.teaches.prestige - 1])), 'each one\'s seeking names them and the title they give');
 
   // Mottram's lesson: said once to a company he has hired with a paladin of 11, never to one without.
@@ -1285,7 +1275,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   teachAll(changed, 'at 16, after Act II');
 
   // The second, off the beaten path: off the road and off the fights, and reached on foot.
-  const f2 = def('downs_f2'), sw = SIWARD;
+  const f2 = mapOf('downs_f2'), sw = SIWARD;
   const road = f2.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '=' ? [{ x, y }] : [])));
   ok(road.every((r) => Math.abs(r.x - sw.x) + Math.abs(r.y - sw.y) > 10), 'the old standard-bearer is more than ten squares off the road');
   ok(f2.encounters!.every((g) => Math.abs(g.x - sw.x) + Math.abs(g.y - sw.y) > 10), 'and more than ten squares from any group, so no trainer\'s door is a fight\'s doorstep');

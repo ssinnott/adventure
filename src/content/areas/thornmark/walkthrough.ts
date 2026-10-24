@@ -10,14 +10,13 @@
 import type { Walkthrough } from '../../area.ts';
 import { CHAPTER } from './chapter.ts';
 import { STEPS as FORELAND_STEPS, FARM_FIRST } from '../shelf/walkthrough.ts';
-import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen, hear, answerTo, page, reads, there, open, clock, HIRE, hired } from '../../../../tools/kit/walk.ts';
+import { newWalk, meetWho, walkThrough, see, fight, playChapter, goalFromBegun, ending, everyGoalWalked, quest, listen, hear, answerTo, page, reads, there, open, clock, HIRE, hired, mapOf, who, taught, shows } from '../../../../tools/kit/walk.ts';
 import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { EAST, NORTH, SOUTH } from '../../../game/types.ts';
 import { MAP_DEFS, THE_QUEST } from '../../index.ts';
 import { answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { questLog } from '../../../game/quests.ts';
-import type { EncounterDef, Feature } from '../../../game/map.ts';
 import { dateAt } from '../../../game/calendar.ts';
 import { GameMap } from '../../../game/map.ts';
 import { xpForLevel, prestigeOf, takePrestige, createCharacter, PRESTIGES } from '../../../game/party.ts';
@@ -166,12 +165,6 @@ function henlys(w: Walk, how: string): void {
 // ---- the side quests (#219) ----
 
 
-/** The person on `map` whose name starts so and who stands on `x,y`: one of a person's places. */
-function who(map: string, x: number, y: number, name: string): Person {
-  const p = MAP_DEFS.find((d) => d.id === map)?.features?.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name));
-  if (!p) throw new Error(`no ${name} at ${map} ${x},${y}`);
-  return p;
-}
 const SYLVANE = (): Person => who('thornhold', 9, 5, 'Elder Sylvane');
 const SENARA = (): Person => who('deepthorn_i4', 10, 9, 'Senara'), MAWGAN = (): Person => who('deepthorn_i4', 9, 12, 'Mawgan');
 const TEGEN = (): Person => who('thornhold', 12, 13, 'Tegen'), LEOFWIN = (): Person => who('thornmark', 17, 15, 'Leofwin');
@@ -204,13 +197,6 @@ function parley(w: Walk, at: string, label: string): string {
 }
 
 
-/** A feature or group of `map` by its id, and whether it is there now. */
-function shows(w: Walk, map: string, id: string): boolean {
-  const d = MAP_DEFS.find((m) => m.id === map)!;
-  const f = [...(d.features ?? []), ...(d.encounters ?? [])].find((x) => 'id' in x && x.id === id) as Feature | EncounterDef;
-  w.world.travel(map, f.x, f.y);
-  return 'monsters' in f ? w.world.walks(f, f.x, f.y, map) && !w.world.ended(f) : w.world.present(f, map);
-}
 
 
 /** The chisel paid for, and Sylvane's Grove words heard once: what her side quests wait on. */
@@ -589,16 +575,14 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
  * tip of the wood to the head, who comes out of the trees once the Grove Stone is mended.
  */
 function trainers(ok: (cond: boolean, msg: string) => void): void {
-  const def = (id: string) => MAP_DEFS.find((d) => d.id === id)!;
-  const taught = (id: string) => (def(id).features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
   const town = taught('thornhold'), lodge = taught('deepthorn_i3');
   ok(town.length === 3 && ['ranger', 'cleric', 'druid'].every((c) => town.some((t) => t.cls === c && t.prestige === 1)), 'Thornhold teaches the first prestige of the ranger, the cleric and the druid');
   ok(lodge.length === 1 && lodge[0].cls === 'ranger' && lodge[0].prestige === 2, 'the lodge\'s box teaches the Ranger\'s second');
-  const at = (p: Person) => (def('thornhold').features ?? []).filter((f) => f.x === p.x && f.y === p.y && f.kind !== 'npc');
+  const at = (p: Person) => (mapOf('thornhold').features ?? []).filter((f) => f.x === p.x && f.y === p.y && f.kind !== 'npc');
   const armoury = at(JAGO()).find((f) => f.kind === 'shop');
   ok(armoury?.kind === 'shop' && ['elfbow', 'crossbow'].every((id) => armoury.stock.includes(id)), 'the fletcher stands in the Armoury, which sells his bows');
   ok(at(DERWA()).some((f) => f.kind === 'temple'), 'the bone-setter stands in the Chapterhouse');
-  ok(def('thornhold').rows[LOWEN().y][LOWEN().x] === ',' && !at(LOWEN()).length, 'the beekeeper stands in the street, and keeps no shop');
+  ok(mapOf('thornhold').rows[LOWEN().y][LOWEN().x] === ',' && !at(LOWEN()).length, 'the beekeeper stands in the street, and keeps no shop');
   const w = newWalk(ok);
   ok([JAGO(), DERWA(), LOWEN()].every((p) => there(w, 'thornhold', p)) && there(w, 'deepthorn_i3', CUTHRED()), 'all four are there from a new game, the bowman before the yard is cut');
   w.world.travel('thornhold', 4, 10);
@@ -620,7 +604,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   }
 
   // The second, off the beaten path: off the road and off the fights, and reached on foot.
-  const i3 = def('deepthorn_i3'), c = CUTHRED();
+  const i3 = mapOf('deepthorn_i3'), c = CUTHRED();
   const road = i3.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '=' ? [{ x, y }] : [])));
   ok(road.every((r) => Math.abs(r.x - c.x) + Math.abs(r.y - c.y) > 10), 'the bowman is more than ten squares off the road');
   ok(i3.encounters!.every((g) => Math.abs(g.x - c.x) + Math.abs(g.y - c.y) > 10), 'and more than ten squares from any group, so no trainer\'s door is a fight\'s doorstep');
@@ -651,10 +635,10 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   // The Druid's second, at the tip of the wood to the head (DESIGN §5): the elf comes out of the trees
   // once the Grove Stone is mended, when the rootwalkers beside her sleep, since the mending needs the
   // tear shut; she is reached on foot by no secret door, and at 19 the druid is sent to her and taught.
-  const i5 = def('deepthorn_i5'), elf = who('deepthorn_i5', 30, 18, 'Hendar');
+  const i5 = mapOf('deepthorn_i5'), elf = who('deepthorn_i5', 30, 18, 'Hendar');
   ok(taught('deepthorn_i5').length === 1 && elf.teaches?.cls === 'druid' && elf.teaches.prestige === 2, 'the wood to the head teaches the Druid\'s second');
   ok(!!elf.teaches?.seek?.includes('Hendar') && elf.teaches.seek.includes(PRESTIGES.druid.titles[1]), 'her seeking names her and the title she gives');
-  const edith = (def('grove2').features ?? []).find((f) => f.kind === 'npc' && f.flag === 'q_mender_done');
+  const edith = (mapOf('grove2').features ?? []).find((f) => f.kind === 'npc' && f.flag === 'q_mender_done');
   const roots = i5.encounters!.find((g) => g.id === 'i5_rootwalkers');
   ok(JSON.stringify(roots?.until) === JSON.stringify(TEAR_CLOSED) && edith?.kind === 'npc' && JSON.stringify(edith.after).includes('grove2:g2_warden'),
     'the rootwalkers at the tip sleep once the tear is shut, which the mending needs');

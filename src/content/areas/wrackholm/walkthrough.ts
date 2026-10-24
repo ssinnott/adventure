@@ -36,7 +36,7 @@
 //
 // And the bounds (#835), the three strands round the isle, in a walk of their own (`theBounds`), last.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, written, reads, there, here, open, search, holding, keys, xpOf, thiefDown, same, clock } from '../../../../tools/kit/walk.ts';
+import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, written, reads, there, here, open, search, holding, keys, xpOf, thiefDown, same, clock, who, stock, shows, alive, key, press, chest } from '../../../../tools/kit/walk.ts';
 import { zone, square, ALL, reach, each, row, col, apartFrom } from '../../../../tools/kit/grid.ts';
 import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { CHAPTER } from './chapter.ts';
@@ -57,7 +57,6 @@ import { defaultParty, equip, statOf } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { elementMult } from '../../../game/monsters.ts';
-import { headlessGame } from '../../../../tools/kit/headless.ts';
 import { GEAR } from '../../../../tools/kit/company.ts';
 import { WRACKHOLM_E6 } from './maps/wrackholm_e6.ts';
 import { WRACKHOLM_F6 } from './maps/wrackholm_f6.ts';
@@ -269,8 +268,6 @@ function causewaySeen(ok: (cond: boolean, msg: string) => void): void {
 
 type Chest = Extract<Feature, { kind: 'chest' }>;
 type Happening = Extract<Feature, { kind: 'event' }>;
-/** F6's chest, or its event, by id. */
-const chestOf = (id: string): Chest => WRACKHOLM_F6.features!.find((f): f is Chest => f.kind === 'chest' && f.id === id)!;
 const eventOf = (id: string): Happening => WRACKHOLM_F6.features!.find((f): f is Happening => f.kind === 'event' && f.id === id)!;
 
 
@@ -282,7 +279,7 @@ const eventOf = (id: string): Happening => WRACKHOLM_F6.features!.find((f): f is
  */
 function theHollow(w: Walk): void {
   const f6 = WRACKHOLM_F6, door = f6.secrets![1], drag = eventOf('f6_drag'), inside = eventOf('f6_hollow');
-  const sea = chestOf('f6_hollow_chest'), iron = chestOf('f6_hollow_locked');
+  const sea = chest(WRACKHOLM_F6, 'f6_hollow_chest'), iron = chest(WRACKHOLM_F6, 'f6_hollow_locked');
   const at = (c: { x: number; y: number }): boolean => { const o = w.world.locate(f6.id, c.x, c.y); return !!o && w.world.state.x === o.x && w.world.state.y === o.y; };
   w.ok(door.hint === drag.id && drag.x === door.x + 1 && drag.y === door.y && f6.rows[door.y][door.x] === 'S' && f6.rows[door.y - 1][door.x] === 'r' && f6.rows[door.y + 1][door.x] === 'r',
     'the hollow\'s door is the box\'s second secret, in the rock\'s east face between rock above and below, and the groove ends on its near side');
@@ -313,18 +310,7 @@ function theHollow(w: Walk): void {
  * has no lock and opens to the company that cannot open the other.
  */
 function hollowLocked(ok: (cond: boolean, msg: string) => void): void {
-  const iron = chestOf('f6_hollow_locked'), sea = chestOf('f6_hollow_chest');
-  /** A new game, the company dressed by `dress`, stood on the chest and Space pressed twice: what the log said, and what became of the chest, the prize and the keys. */
-  const press = (c: Chest, dress: (p: Party) => void): string => {
-    const g = headlessGame(4), p = g.party;
-    dress(p);
-    g.world.travel(WRACKHOLM_F6.id, c.x, c.y, WEST);
-    const there = g.world.featureHere(), from = g.log.length;
-    g.enterCell();
-    if (there) { g.interact(there); g.interact(there); }
-    return `${g.log.slice(from).join(' ')} | ${g.world.used(c.id) ? 'spent' : 'shut'} | ${c.items.every((i) => p.bag.includes(i)) ? 'taken' : 'left'} | ${p.bag.filter((i) => i === 'key_iron').length} keys`;
-  };
-  const key = (p: Party): void => { p.bag.push('key_iron'); };
+  const iron = chest(WRACKHOLM_F6, 'f6_hollow_locked'), sea = chest(WRACKHOLM_F6, 'f6_hollow_chest');
   const prize = 'You open the chest: Corposant, Morning Star. The chest is empty.';
   const cases: [string, Chest, (p: Party) => void, string][] = [
     ['no Lockpick standing and no key', iron, thiefDown, 'A locked chest. Locked. Locked. | shut | left | 0 keys'],
@@ -333,7 +319,7 @@ function hollowLocked(ok: (cond: boolean, msg: string) => void): void {
     ['no Lockpick standing and an iron key, which is spent', iron, (p) => { thiefDown(p); key(p); }, `A locked chest. The lock turns. The key crumbles. ${prize} | spent | taken | 0 keys`],
     ['no Lockpick and no key, at the sea chest beside it', sea, thiefDown, 'A chest. Space opens it. You open the chest: Runner\'s Coat. The chest is empty. | spent | taken | 0 keys'],
   ];
-  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press(c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
+  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press(WRACKHOLM_F6.id, WEST, c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
   ok(iron.locked === true && !sea.locked && !wrong.length,
     `the iron-bound chest refuses a company with neither a Lockpick nor an iron key and opens to either, the sea chest beside it opening to any (${cases.map(([who]) => who).join('; ')})${wrong.length ? ' -> ' + wrong.join('; ') : ''}`);
 }
@@ -369,7 +355,7 @@ function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
   // The isle's own maps: another area's locked chest (the epic's items are one an area, #18) is no concern of its count.
   const locked = chests.filter(({ map, f }) => f.locked && AREAS.find((a) => a.id === 'wrackholm')!.maps.some((m) => m.id === map)).map(({ map, f }) => `${map}:${f.id}`);
   ok(holding('corposant') === 'wrackholm_f6:f6_hollow_locked' && holding('runners_coat') === 'wrackholm_f6:f6_hollow_chest' && locked.join() === 'wrackholm_f6:f6_hollow_locked'
-    && chestOf('f6_hollow_locked').gold === 0 && chestOf('f6_hollow_chest').gold === 0,
+    && chest(WRACKHOLM_F6, 'f6_hollow_locked').gold === 0 && chest(WRACKHOLM_F6, 'f6_hollow_chest').gold === 0,
     `Corposant lies in the iron-bound chest and the coat in the sea chest beside it, no gold with either, and the iron-bound chest is the only locked one the isle places (${locked.join() || 'none'})`);
   // The raise and the blow, on the real items: worn, the coat adds 3 to speed and not to the bare stat, carried it adds nothing, and the classes that cannot wear it or wield the blade are refused.
   const crew = defaultParty(makeRng(1)), thief = crew.members.find((m) => m.cls === 'thief')!, knight = crew.members.find((m) => m.cls === 'knight')!;
@@ -901,12 +887,6 @@ function countingHouse(w: Walk): void {
 // ---- the side quests (#192) ----
 
 
-/** The person on `map` whose name starts so and who stands on `x,y`, and is keyed by `flag` if given: one of a person's places. */
-function who(map: string, x: number, y: number, name: string, flag?: string): Person {
-  const p = MAP_DEFS.find((d) => d.id === map)?.features?.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name) && (flag === undefined || f.flag === flag));
-  if (!p) throw new Error(`no ${name} at ${map} ${x},${y}`);
-  return p;
-}
 const KITTO_E6 = (): Person => who('wrackholm_e6', 15, 14, 'Kitto'), COLAN = (): Person => who('smugglers_cove', 12, 5, 'Colan');
 const MERRYN = (): Person => who('wrackholm_f6', 26, 13, 'Merryn');
 const RUAN = (): Person => who('saltmouth', 12, 4, 'Ruan'), TALLIS = (): Person => who('saltmouth', 8, 11, 'Jory Tallis');
@@ -923,19 +903,7 @@ const TAM_HOME = (): Person => who('saltmouth', 9, 13, 'Tam');
 const words = (p: Person, flag: string): string => (p.says ?? []).find((x) => [x.after ?? []].flat().some((c) => [c.flag ?? []].flat().includes(flag)))?.lines.join('\n\n') ?? `(no words of ${p.name} after ${flag})`;
 
 
-/** A group of `map` by its id, alive now. */
-function alive(w: Walk, map: string, id: string): boolean {
-  const g = MAP_DEFS.find((d) => d.id === map)!.encounters!.find((e) => e.id === id)!;
-  w.world.travel(map, g.x, g.y);
-  return w.world.liveGroups().some((l) => l.def.id === id);
-}
 
-/** An event of `map` by its id, there now. */
-function shows(w: Walk, map: string, id: string): boolean {
-  const f = MAP_DEFS.find((d) => d.id === map)!.features!.find((x) => x.kind === 'event' && x.id === id)!;
-  w.world.travel(map, f.x, f.y);
-  return w.world.present(f);
-}
 
 
 
@@ -1102,7 +1070,6 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const out = buildMaps()[OUTDOORS];
   const E5 = WRACKHOLM_E5, F5 = WRACKHOLM_F5, F7 = WRACKHOLM_F7;
   const e5 = zone(out, E5.id), f5 = zone(out, F5.id), f7 = zone(out, F7.id), e6 = zone(out, E6.id), f6 = zone(out, F6.id), e7 = zone(out, 'wold_e7');
-  const chest = (d: MapDef, id: string): string => { const c = d.features!.find((f) => f.kind === 'chest' && f.id === id); return c?.kind === 'chest' ? `${c.gold} ${c.items.join()}` : 'none'; };
   ok([E5, F5, F7].every((d) => !(d.encounters ?? []).length) && (E5.exits ?? []).map((e) => e.to).join() === BROKENBACK.id && (F5.exits ?? []).map((e) => e.to).join() === NICKS_LOCKER.id && !(F7.exits ?? []).length,
     'the strands hold no group, and nothing is taken out of them but E5\'s one way, in at the break into the Brokenback, and F5\'s, in under the reef into Nick\'s Locker');
 
@@ -1125,7 +1092,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(lamp.size > 60 && !lamp.has(square(out, e5, 28, 25)), `the hollow is shut but for its door in the stack: none of E5's ${lamp.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${E5.id}:e5_soot`);
   ok(search(w, E5.id, 28, 27, NORTH, 'e5_lamp'), 'searched where the soot is, the rock gives, and the hollow behind it can be walked into');
-  ok(chest(E5, 'e5_chest') === '150 elixir', `in the hollow, a sea chest with 150 gold and an Elixir (${chest(E5, 'e5_chest')})`);
+  ok(stock(E5, 'e5_chest') === '150 elixir', `in the hollow, a sea chest with 150 gold and an Elixir (${stock(E5, 'e5_chest')})`);
   // The enclave's door (docs §12.5) is the break in the wreck's side, 18,28 in the black rocks at the strand's west end: walked into last.
   // And on east along the strand into F5, walked.
   w.world.travel(E5.id, 31, 28, EAST);
@@ -1150,7 +1117,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(bait.size > 60 && !bait.has(square(out, f5, 9, 26)), `the bait store is shut but for its door in the stack: none of F5's ${bait.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${F5.id}:f5_scales`);
   ok(search(w, F5.id, 9, 28, NORTH, 'f5_store'), 'searched where the scales are dried on the rock\'s foot, the rock gives, and the store behind it can be walked into');
-  ok(chest(F5, 'f5_box') === '120 elixir', `under the casks, a box with 120 gold and an Elixir (${chest(F5, 'f5_box')})`);
+  ok(stock(F5, 'f5_box') === '120 elixir', `under the casks, a box with 120 gold and an Elixir (${stock(F5, 'f5_box')})`);
   // The lair's door (docs §12.6) is the way in under the reef at the strand's east end, 16,30: walked into last.
 
   // F7: south from F6's shingle at 14,31 onto the strand's 14,0, walked.
@@ -1169,7 +1136,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(irons.size > 40 && !irons.has(square(out, f7, 10, 5)), `the hollow is shut but for its door in the rock: none of F7's ${irons.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${F7.id}:f7_links`);
   ok(search(w, F7.id, 10, 3, SOUTH, 'f7_hole'), 'searched where the cut chain lies, the rock gives, and the hollow behind it can be walked into');
-  ok(chest(F7, 'f7_purse') === '100 potion_sp_great', `in the weed, a purse with 100 gold and a Sapphire Vial (${chest(F7, 'f7_purse')})`);
+  ok(stock(F7, 'f7_purse') === '100 potion_sp_great', `in the weed, a purse with 100 gold and a Sapphire Vial (${stock(F7, 'f7_purse')})`);
 
   // The edges: E5's south meets E6's north, open at 15 to 31; E5's east meets F5's west, open at 26 to
   // 31; F5's south meets F6's north, open at 0 to 18; F7's north meets F6's south, open at 1 to 10, 13 to
@@ -1234,7 +1201,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       && second.met.join() === last.id && waded.met.join() === last.id && second.seen.has(key(4, 10)) && !second.seen.has(key(11, 13)) && !waded.seen.has(key(11, 13)) && done.seen.has(key(11, 13)),
       'a company on foot or any way else meets the overseers first and cannot pass them to the hold; with them down it comes up to the gleaners and cannot pass them, the cargo behind it and the cabin and the plank beyond them');
     const feat = (id: string): Feature => WB.features!.find((f) => 'id' in f && f.id === id)!;
-    ok(chest(WB, 'wb_cargo') === '250 elixir', `in the hold, the cargo's chest: 250 gold and an Elixir (${chest(WB, 'wb_cargo')})`);
+    ok(stock(WB, 'wb_cargo') === '250 elixir', `in the hold, the cargo's chest: 250 gold and an Elixir (${stock(WB, 'wb_cargo')})`);
     // The secret: the one plank of the cabin's deck worn bright, the search there and the hollow under the deck behind the
     // wall. Walked, waded, climbed or floated, it is never reached but through the wall.
     ok(wall.hint === 'wb_plank' && feat('wb_plank').x === wall.x - 1 && feat('wb_plank').y === wall.y && done.seen.size > 80 && !done.seen.has(key(wall.x + 1, wall.y)) && !done.seen.has(key(wall.x + 2, wall.y)),
@@ -1242,7 +1209,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     see(w, `${WB.id}:wb_plank`);
     ok(search(w, WB.id, wall.x - 1, wall.y, EAST, 'wb_under'), 'searched where the plank is worn bright, the wall gives, and the hollow under the deck can be walked into');
     const axe = item('keelhaul'), great = item('great_axe'), plus = item('great_axe+1');
-    ok(chest(WB, 'wb_strongbox') === '300 keelhaul'
+    ok(stock(WB, 'wb_strongbox') === '300 keelhaul'
       && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('keelhaul')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'wb_strongbox' && f.items?.includes('keelhaul'))))
       && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'keelhaul')),
       'in the master\'s strongbox, 300 gold and Keelhaul; no shop sells it, no other chest or cairn holds it and no monster drops it');
@@ -1317,7 +1284,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       `the cleft is shut but for its rock: none of Nick's Locker's ${closed.size} squares walked, waded, climbed or floated reaches it`);
     see(w, `${NL.id}:nl_kelp`);
     ok(search(w, NL.id, 9, 3, NORTH, 'nl_cleft'), 'searched where the kelp grows, the rock gives, and the cleft behind it can be walked into');
-    ok(chest(NL, 'nl_sea_chest') === '500 elixir,potion_sp_great', `in the cleft, her master's sea chest: 500 gold, an Elixir and a Sapphire Vial (${chest(NL, 'nl_sea_chest')})`);
+    ok(stock(NL, 'nl_sea_chest') === '500 elixir,potion_sp_great', `in the cleft, her master's sea chest: 500 gold, an Elixir and a Sapphire Vial (${stock(NL, 'nl_sea_chest')})`);
     // And out under the reef onto F5's 16,31, facing the land, with the way's own line and no other.
     w.world.travel(NL.id, NL.start.x, NL.start.y - 1, SOUTH);
     const back = w.world.move('forward');

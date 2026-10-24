@@ -62,8 +62,8 @@
 // mouth; and last Grim's Howe, the lair, under the dam, where the Grave Drake keeps Grim's Axe, and
 // Petroc's rumour of it.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, gone, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, goalOf, written, began, reads, there, here, open, search, xpOf, walkAt, atLevel } from '../../../../tools/kit/walk.ts';
-import { zone, square, ALL, reach, shut, reached, spread, each, row, col } from '../../../../tools/kit/grid.ts';
+import { newWalk, see, fight, gone, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, goalOf, written, began, reads, there, here, open, search, xpOf, walkAt, atLevel, mapOf, npc, ev, chest, log, live, ofKind } from '../../../../tools/kit/walk.ts';
+import { zone, square, ALL, reach, shut, reached, spread, each, row, col, cell, inBox } from '../../../../tools/kit/grid.ts';
 import type { Walk, Step } from '../../../../tools/kit/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -539,12 +539,10 @@ export const walkthrough: Walkthrough = (ok) => {
   // F10's ash, west along its south rows past F11's corner at columns 5 to 11, where F11's north row
   // carries it too (#514), over onto E10 at rows 29 and 30, through the Hills' notch and down to the west
   // edge at 0,6, where the Wold's road carries it on over D10 (#527).
-  const key = (x: number, y: number): number => y * out.width + x;
-  const inBox = (z: typeof f10, x: number, y: number): boolean => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
-  const beside = (z: typeof f10, x: number, y: number, set: Set<number>): boolean => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => set.has(key(z.x + x + dx, z.y + y + dy)));
+  const beside = (z: typeof f10, x: number, y: number, set: Set<number>): boolean => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => set.has(cell(out, z.x + x + dx, z.y + y + dy)));
   const wasteRoad = spread(out, f10.x + 31, f10.y + 7, (x, y) => (inBox(f10, x, y) || inBox(e10, x, y)) && out.at(x, y).ch === '=');
-  ok([7, 8].every((y) => wasteRoad.has(key(f10.x + 31, f10.y + y))) && [5, 6, 7, 8, 9, 10, 11].every((x) => wasteRoad.has(key(f10.x + x, f10.y + 31)))
-    && [29, 30].every((y) => wasteRoad.has(key(f10.x, f10.y + y)) && wasteRoad.has(key(e10.x + 31, e10.y + y))) && wasteRoad.has(key(e10.x, e10.y + 6))
+  ok([7, 8].every((y) => wasteRoad.has(cell(out, f10.x + 31, f10.y + y))) && [5, 6, 7, 8, 9, 10, 11].every((x) => wasteRoad.has(cell(out, f10.x + x, f10.y + 31)))
+    && [29, 30].every((y) => wasteRoad.has(cell(out, f10.x, f10.y + y)) && wasteRoad.has(cell(out, e10.x + 31, e10.y + y))) && wasteRoad.has(cell(out, e10.x, e10.y + 6))
     && [5, 6, 7, 8, 9, 10, 11].every((x) => out.at(f10.x + x, f10.y + 32).ch === '=') && out.at(e10.x - 1, e10.y + 6).ch === '=' && out.passable(e10.x - 1, e10.y + 6) === 'ok',
     'the road runs square to square from G10\'s edge over F10, along its south rows past F11\'s corner, where F11\'s north row carries it too, and over E10 to its west edge at 0,6, where D10\'s road carries it on');
   const mile = F10.features!.find((f) => f.kind === 'event' && f.id === 'f10_milestone');
@@ -633,7 +631,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const [grave] = E10.secrets!;
   ok(['e10_cairn', 'e10_cairns'].every((id) => E10.features!.some((f) => (f.kind === 'cairn' || f.kind === 'event') && f.id === id && !!f.text?.includes('west face'))), 'the Hills\' cairns face west, toward the steppe');
   const shutE = spread(out, e10.x + grave.x + 1, e10.y + grave.y, (x, y) => !(x === e10.x + grave.x && y === e10.y + grave.y) && inBox(e10, x, y) && out.passable(x, y, { swim: true, climb: true, float: true }) === 'ok');
-  ok(shutE.size > 300 && !shutE.has(key(e10.x + grave.x - 1, e10.y + grave.y)) && !shutE.has(key(e10.x + grave.x - 2, e10.y + grave.y)),
+  ok(shutE.size > 300 && !shutE.has(cell(out, e10.x + grave.x - 1, e10.y + grave.y)) && !shutE.has(cell(out, e10.x + grave.x - 2, e10.y + grave.y)),
     `the grave is shut but for its mouth: none of E10's ${shutE.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'emberwaste_e10:e10_back');
   w.world.travel('emberwaste_e10', grave.x + 1, grave.y, WEST);
@@ -651,7 +649,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // Over G11's west edge onto F11's 31,16, the land named and its words; straight back, nothing.
   const F11 = MAP_DEFS.find((d) => d.id === 'emberwaste_f11')!, f11 = out.zones.find((z) => z.id === 'emberwaste_f11')!;
   const on11f = (x: number, y: number): boolean => inBox(f11, x, y);
-  const at11f = (x: number, y: number): number => key(f11.x + x, f11.y + y);
+  const at11f = (x: number, y: number): number => cell(out, f11.x + x, f11.y + y);
   const inLow = cross(22, 'emberwaste_f10', F11.start.x, 31, SOUTH), inTwo = cross(24, 'emberwaste_f10', F11.start.x, 31, SOUTH), inDue = cross(25, 'emberwaste_f10', F11.start.x, 31, SOUTH);
   ok(w.world.zone?.id === 'emberwaste_f11' && w.world.state.x === f11.x + F11.start.x && w.world.state.y === f11.y && f11.x === f10.x && f11.y === f10.y + 32 && F11.start.y === 0 && F11.start.facing === SOUTH && (F11.exits ?? []).length === 2 && F11.exits![0] === CRATER && F11.exits![1] === STONE,
     'over F10\'s south edge from its 16,31 onto F11\'s 16,0, walked, the box\'s way in, and it has no way out but its edges, the crater\'s, down into Old Cinder, and the Stone\'s, down into the Ember Stone');
@@ -1109,7 +1107,6 @@ function roadBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
 function heartBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const SENTRIES = ['emberwaste_e10:e10_sentries', 'emberwaste_f10:f10_sentries', 'emberwaste_f11:f11_sentries', 'firemount_g11:g11_sentry', 'meridian_camp:mc1_sentry', 'meridian_camp2:mc2_sentry', 'meridian_camp3:mc3_sentry'];
   const group = (at: string) => { const [map, id] = at.split(':'); return MAP_DEFS.find((d) => d.id === map)!.encounters!.find((g) => g.id === id)!; };
-  const live = (v: Walk, at: string): boolean => { const g = group(at); v.world.travel(at.split(':')[0], g.x, g.y); return v.world.liveGroups().some((x) => x.def.id === g.id); };
   const harbour = MAP_DEFS.find((d) => d.id === 'cinderport')!.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Morwenna'))!;
   const says = (v: Walk): string => { v.world.travel('cinderport', harbour.x, harbour.y); const t = meet(harbour, v.party, heard(v.world, harbour)).text; listen(v); return t; };
   const stood = '"The things on the road have stopped. Stood where they were, the drovers say, and are standing yet. Whatever they were looking for, somebody found it."';
@@ -1161,7 +1158,6 @@ function coastBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const WOLD = ATLAS.zones.find((z) => z.id === 'wold')!;
   const at = (z: typeof f9, x: number, y: number): boolean => w.world.zone?.id === z.id && w.world.state.x === z.x + x && w.world.state.y === z.y + y;
   const words = (d: MapDef, name: string): string => { const p = person(name, d); w.world.travel(d.id, p.x, p.y); const t = meet(p, w.party, heard(w.world, p)).text; listen(w); return t.replace(/\n+/g, ' '); };
-  const chest = (d: MapDef, id: string): Feature | undefined => d.features!.find((f) => f.kind === 'chest' && f.id === id);
   w.level = 24;
 
   // Cinderport's harbour side: north from G10's road at 3,0 onto G9's 3,31, walked, in Cindercoast still,
@@ -1277,7 +1273,6 @@ function coastBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  */
 function mountainBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const out = buildMaps()[OUTDOORS];
-  const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
   const [H11, H12, G12] = ['firemount_h11', 'firemount_h12', 'firemount_g12'].map(mapOf);
   const [h10, h11, h12, g11, g12, i11] = ['cindercoast_h10', H11.id, H12.id, 'firemount_g11', G12.id, 'highspine_i11'].map((id) => out.zones.find((z) => z.id === id)!);
   const MOUNT = ATLAS.zones.find((z) => z.id === 'firemount')!;
@@ -1286,7 +1281,6 @@ function mountainBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void
     w.world.travel(map, x, y, facing);
     return w.world.move('forward');
   };
-  const chest = (def: MapDef, id: string) => def.features!.find((f) => f.kind === 'chest' && f.id === id);
   w.level = 25;
 
   // The east flank: south off H10's ash onto H11's 20,0, walked, the mountain named and no more at its
@@ -1442,8 +1436,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   w.level = 27;
   const [idris, ragna, bryn] = [1, 2, 3].map((i) => w.party.members[i]);
   const [F10, F11, L1, L2, MC, MC2, ES, TM] = ['emberwaste_f10', 'emberwaste_f11', 'old_cinder', 'old_cinder2', 'meridian_camp', 'meridian_camp2', 'ember_stone', 'thornmark'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
-  const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
-  const entered = (id: string): string[] => log(id)?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? [];
+  const entered = (id: string): string[] => log(w, id)?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? [];
   const talk = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
   const ask = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const [a] = meet(p, w.party, heard(w.world, p)).choice?.answers ?? []; const said = a ? answer(a, w.party) : ''; listen(w); return said; };
   const old = person('Wystan, an old Lightbearer', F11), heir = person('Petroc, the warlord\'s heir', G11), druid = person('Kenver, the Archdruid', F10);
@@ -1453,20 +1446,20 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   /** A trainer's own words, then the ask once, which begins the quest and ends the seeking, then `later`, his words at a meeting after; the third waits on the deed. */
   const asked = (d: MapDef, p: Person, who: number, flag: string, quest: string, words: string, later: readonly string[] = p.lines): void => {
     const said = [talk(d, p), talk(d, p), talk(d, p)];
-    ok(said[0] === p.lines.join('\n\n') && said[1].includes(words) && said[2] === later.join('\n\n') && !!w.party.flags[flag] && log(seekId(who, 3))?.done === true && log(quest)?.done === false
+    ok(said[0] === p.lines.join('\n\n') && said[1].includes(words) && said[2] === later.join('\n\n') && !!w.party.flags[flag] && log(w, seekId(who, 3))?.done === true && log(w, quest)?.done === false
       && barOf(p.teaches!, w.party.members[who], w.party, w.world.state) === 'the quest first' && !teach(p.teaches!, w.party, w.world.state, who).taught,
-      `${p.name}: his own words first, then his ask, once: ${said[1].split('\n\n')[1]}, which begins ${log(quest)?.def.title} and ends the seeking; the third waits on it`);
+      `${p.name}: his own words first, then his ask, once: ${said[1].split('\n\n')[1]}, which begins ${log(w, quest)?.def.title} and ends the seeking; the third waits on it`);
   };
   /** Back to the trainer: his last words, and the third taught for the deed, not gold, the quest done. */
   const taught = (d: MapDef, p: Person, who: number, quest: string, words: string): void => {
     const gold = w.party.gold, said = talk(d, p), c = w.party.members[who];
-    ok(said.includes(words) && teach(p.teaches!, w.party, w.world.state, who).taught && className(c) === PRESTIGES[c.cls].titles[2] && w.party.gold === gold && log(quest)?.done === true,
-      `${p.name}: ${said.split('\n\n')[1] ?? said} And ${c.name} is ${className(c)} for the deed and no gold, ${log(quest)?.def.title} done`);
+    ok(said.includes(words) && teach(p.teaches!, w.party, w.world.state, who).taught && className(c) === PRESTIGES[c.cls].titles[2] && w.party.gold === gold && log(w, quest)?.done === true,
+      `${p.name}: ${said.split('\n\n')[1] ?? said} And ${c.name} is ${className(c)} for the deed and no gold, ${log(w, quest)?.def.title} done`);
   };
 
   // The Paladin's: the lamp at the bottom of Old Cinder's undercroft.
   asked(F11, old, 1, LAMP_ASKED, 'old_lamp', 'flask and a flint');
-  ok(log('old_lamp')?.goal === 'Go down under Old Cinder, and light the lamp at the bottom.', `the log sends the company down (${log('old_lamp')?.goal})`);
+  ok(log(w, 'old_lamp')?.goal === 'Go down under Old Cinder, and light the lamp at the bottom.', `the log sends the company down (${log(w, 'old_lamp')?.goal})`);
   walkThrough(w, 'emberwaste_f11', CRATER.x - 1, CRATER.y, EAST, 'old_cinder', 1);
   fight(w, `old_cinder:${L1.encounters![0].id}`);
   const stair = L1.exits!.find((e) => e.to === 'old_cinder2')!;
@@ -1478,7 +1471,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   ok(lighting.join(' ') === `${cold.text} ${relit.text}` && !!w.party.flags[LAMP_LIT] && after.every((said) => said.join(' ') === burning.text) && [burning, relit].every((e) => e.x === cold.x && e.y === cold.y),
     `the lamp at the bottom, cold, lit with the old man's oil and flint ("${relit.text}"), and burning each time after`);
-  ok(log('old_lamp')?.goal === 'Climb back up to the old Lightbearer on Old Cinder\'s lip.', `lit, the log sends the company back up (${log('old_lamp')?.goal})`);
+  ok(log(w, 'old_lamp')?.goal === 'Climb back up to the old Lightbearer on Old Cinder\'s lip.', `lit, the log sends the company back up (${log(w, 'old_lamp')?.goal})`);
   walkThrough(w, 'old_cinder2', L2.start.x, L2.start.y + 1, NORTH, 'old_cinder', 1);
   walkThrough(w, 'old_cinder', L1.start.x, L1.start.y + 1, NORTH, 'emberwaste_f11', 1);
   taught(F11, old, 1, 'old_lamp', 'Then I sat here for something');
@@ -1491,7 +1484,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   walkThrough(w, 'meridian_camp', STAIR.x, STAIR.y - 1, SOUTH, 'meridian_camp2', 1);
   ok(!entered('brood').includes('nest') && BROOD === 'meridian_camp2:mc2_brood', 'the nest stands until the company comes to it');
   for (const g of MC2.encounters!) if (w.world.walks(g, g.x, g.y) && !w.world.ended(g)) fight(w, `meridian_camp2:${g.id}`);
-  ok(entered('brood').includes('nest') === true && log('brood')?.goal === 'Climb back up to the warlord\'s heir at Grimsforge.', `the Brood Drake dead over its eggs, the log sends the company back up (${log('brood')?.goal})`);
+  ok(entered('brood').includes('nest') === true && log(w, 'brood')?.goal === 'Climb back up to the warlord\'s heir at Grimsforge.', `the Brood Drake dead over its eggs, the log sends the company back up (${log(w, 'brood')?.goal})`);
   taught(G11, heir, 2, 'brood', 'Quiet down there');
 
   // The Druid's: the seedling from the Grove, kept in the Waste till the Ember Stone is lit.
@@ -1514,7 +1507,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   const greyed = w.world.eventsHere();
   ok(!!w.party.flags[SEEDLING_PLANTED] && !w.party.bag.includes(SEEDLING) && !w.world.present(bed) && greyed.join(' ') === grey.text && !w.party.flags[LIT],
     `planted, the seedling stands grey in its bed while the Stone is dark (${planted.replace(/\n+/g, ' ')} / ${greyed.join(' ')})`);
-  ok(talk(F10, druid).includes('waiting for something') && barOf(druid.teaches!, bryn, w.party, w.world.state) === 'the quest first' && log('seedling')?.goal === 'Keep the seedling living till the Ember Stone is lit.',
+  ok(talk(F10, druid).includes('waiting for something') && barOf(druid.teaches!, bryn, w.party, w.world.state) === 'the quest first' && log(w, 'seedling')?.goal === 'Keep the seedling living till the Ember Stone is lit.',
     'the Archdruid\'s word that it waits, and the third waits with it');
   const sockets = ES.features!.filter((f): f is Person => f.kind === 'npc' && !!f.choice?.answers.some((a) => a.takes?.startsWith('ember_part')));
   w.party.bag.push('ember_part1', 'ember_part2', 'ember_part3');
@@ -1571,21 +1564,21 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
 
   // The hide: the room and its door are the only part of the town the street does not reach, and it stands
   // off the straight way from the lip to the hall's stair, which the Paladin's lamp walks.
-  const gm = new GameMap(L1), key = (x: number, y: number): number => y * gm.width + x, free = (x: number, y: number): boolean => gm.passable(x, y, { swim: true, climb: true, float: true }) === 'ok';
+  const gm = new GameMap(L1), free = (x: number, y: number): boolean => gm.passable(x, y, { swim: true, climb: true, float: true }) === 'ok';
   const reached = new Set<number>(), todo: [number, number][] = [[L1.start.x, L1.start.y]];
   while (todo.length) {
     const [x, y] = todo.pop()!;
-    if (reached.has(key(x, y)) || !gm.inBounds(x, y) || gm.at(x, y).door === 'secret' || !free(x, y)) continue;
-    reached.add(key(x, y));
+    if (reached.has(cell(gm, x, y)) || !gm.inBounds(x, y) || gm.at(x, y).door === 'secret' || !free(x, y)) continue;
+    reached.add(cell(gm, x, y));
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
   }
   const [door] = L1.secrets!, cut: string[] = [];
-  for (let y = 0; y < gm.height; y++) for (let x = 0; x < gm.width; x++) if (free(x, y) && !reached.has(key(x, y))) cut.push(`${x},${y}`);
+  for (let y = 0; y < gm.height; y++) for (let x = 0; x < gm.width; x++) if (free(x, y) && !reached.has(cell(gm, x, y))) cut.push(`${x},${y}`);
   const stair = L1.exits!.find((e) => e.to === 'old_cinder2')!, lamp = Array.from({ length: stair.y - L1.start.y + 1 }, (_, i) => [L1.start.x, L1.start.y + i]);
   const nearest0 = Math.min(...lamp.map(([x, y]) => Math.abs(x - door.x) + Math.abs(y - door.y)));
   ok(L1.secrets!.length === 1 && door.hint === 'oc1_cup' && gm.at(door.x, door.y).door === 'secret' && cut.join(' ') === '2,9 1,10 2,10 1,11 2,11 1,12 2,12 1,13 2,13' && reached.size > 60 && eseld.x === 2 && eseld.y === 12,
     `the room is shut but for its door: of the town's squares only 2,9 and the eight behind it, where she sits, are not reached on foot (${cut.length} cut off, ${reached.size} reached)`);
-  ok(stair.x === L1.start.x && lamp.every(([x, y]) => reached.has(key(x, y))) && nearest0 >= 6 && cut.every((s) => !lamp.some(([x, y]) => s === `${x},${y}`)),
+  ok(stair.x === L1.start.x && lamp.every(([x, y]) => reached.has(cell(gm, x, y))) && nearest0 >= 6 && cut.every((s) => !lamp.some(([x, y]) => s === `${x},${y}`)),
     `and off the street's straight way from the lip to the hall's stair, ${lamp.length - 1} squares down x ${stair.x}, which the Paladin's lamp walks: the door is ${nearest0} squares from it at the nearest`);
 
   // Down off the lip: the cup in the lane (seen without the door), the wall searched there, the room, her.
@@ -1594,7 +1587,7 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
   ok(down.kind === 'moved' && w.world.state.mapId === L1.id, 'down off the crater\'s lip into the buried town');
   see(w, `${L1.id}:oc1_cup`);
   const cup = L1.features!.find((f) => f.kind === 'event' && f.id === 'oc1_cup')!;
-  ok(cup.kind === 'event' && !cup.when && !cup.after && !cup.until && cup.x === door.x && cup.y === door.y - 1 && reached.has(key(cup.x, cup.y)) && w.world.used('oc1_cup'),
+  ok(cup.kind === 'event' && !cup.when && !cup.after && !cup.until && cup.x === door.x && cup.y === door.y - 1 && reached.has(cell(gm, cup.x, cup.y)) && w.world.used('oc1_cup'),
     'a cup set down clean, the ash swept round it in a curve, on the square before the wall, always there');
   w.world.travel(L1.id, door.x, door.y - 1, SOUTH);
   const found = feel(), into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
@@ -1806,8 +1799,7 @@ function stairFoot(ok: (cond: boolean, msg: string) => void): void {
  */
 function cinderport(ok: (cond: boolean, msg: string) => void): void {
   const PORT = MAP_DEFS.find((d) => d.id === 'cinderport')!;
-  const inPort = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => PORT.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
-  const who = (name: string): Person => inPort('npc').find((f) => f.name.startsWith(name)) as Person;
+  const who = (name: string): Person => ofKind(PORT, 'npc').find((f) => f.name.startsWith(name)) as Person;
   const says = (w: Walk, p: Person): string => { w.world.travel('cinderport', p.x, p.y); return meet(p, w.party, heard(w.world, p)).text; };
   const RIDER = who('A Rider'), MORWENNA = who('Morwenna'), JAGO = who('Jago'), GORRAN = who('Gorran'), JENIFER = who('Jenifer'), CADOR = who('Cador'), HENDRA = who('Hendra');
   const w = newWalk(ok);
@@ -1832,18 +1824,18 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   listen(w);
 
   // A night at the inn, by the rule its screen serves (src/game/services.ts).
-  ok(inPort('inn').length === 1 && inPort('temple').length === 1 && inPort('trainer').length === 1 && inPort('shop').length === 2 && !inPort('guild').length
+  ok(ofKind(PORT, 'inn').length === 1 && ofKind(PORT, 'temple').length === 1 && ofKind(PORT, 'trainer').length === 1 && ofKind(PORT, 'shop').length === 2 && !ofKind(PORT, 'guild').length
     && INTERIORS.every((id) => PORT.features!.some((f) => 'interior' in f && f.interior === id)),
     'Cinderport has its eight businesses, each opening into its room: the inn, the temple, the armourer\'s, the chandler\'s, the yard, the two halls and the potter\'s; and no spell hall');
   w.party.gold = 60000;
-  const inn = inPort('inn')[0], night = nightCost(inn, w.party);
+  const inn = ofKind(PORT, 'inn')[0], night = nightCost(inn, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
   stay(w.party, w.world, inn);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 60000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
 
   // The armourer's sells the act's one step (#542), each class its rung at 25, at list price; the
   // chandler's the provisions, lamp oil and the stone cure (#546), and no steel.
-  const armourer = inPort('shop').find((f) => f.interior === 'cinderport_armourer')!, chandler = inPort('shop').find((f) => f.interior === 'cinderport_chandlery')!;
+  const armourer = ofKind(PORT, 'shop').find((f) => f.interior === 'cinderport_armourer')!, chandler = ofKind(PORT, 'shop').find((f) => f.interior === 'cinderport_chandlery')!;
   ok(armourer.stock.length === ARMOURER.length && ARMOURER.every((id) => armourer.stock.includes(id)) && !armourer.prices, `${armourer.name} sells the act's step, all ${ARMOURER.length} wares and nothing else, at list price`);
   for (const m of w.party.members) for (const id of ACT_IV[0].classes[m.cls]) {
     const before = w.party.gold;
@@ -1857,10 +1849,10 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   // The temple lifts the stone at 80 gold a level: for a member of 25, the cure's own price (#546).
   const glassed = structuredClone(w.party.members[0]);
   glassed.level = 25; addCondition(glassed, 'stoned');
-  ok(templePrice(glassed) === cure.price && inPort('temple')[0].interior === 'cinderport_temple', `${inPort('temple')[0].name} lifts the stone from a member of 25 for ${templePrice(glassed)} gold, the cure's price`);
+  ok(templePrice(glassed) === cure.price && ofKind(PORT, 'temple')[0].interior === 'cinderport_temple', `${ofKind(PORT, 'temple')[0].name} lifts the stone from a member of 25 for ${templePrice(glassed)} gold, the cure's price`);
 
   // Training to 27 at the yard, a copy from a copy of the purse, so the company walks on as it was.
-  const yard = inPort('trainer')[0], trainee = structuredClone(w.party.members[0]);
+  const yard = ofKind(PORT, 'trainer')[0], trainee = structuredClone(w.party.members[0]);
   trainee.level = 26; trainee.xp = xpForLevel(27);
   ok(yard.maxLevel === 27 && yard.interior === 'cinderport_yard' && canTrainAt(trainee, yard.maxLevel), `${yard.name} will train a member of 26`);
   const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), yard.maxLevel);
@@ -1868,7 +1860,7 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
 
   // The two halls (#443, call 7), each a room: the Chart House the Cartographers' second, and the
   // factor's house the Compact's. A new company joins either ladder here, its first task offered and taken.
-  const chart = inPort('npc').find((f) => f.interior === 'cinderport_cartographers')!, house = inPort('npc').find((f) => f.interior === 'cinderport_factor')!;
+  const chart = ofKind(PORT, 'npc').find((f) => f.interior === 'cinderport_cartographers')!, house = ofKind(PORT, 'npc').find((f) => f.interior === 'cinderport_factor')!;
   ok(chart.hall === 'cartographers' && house.hall === 'compact', `${chart.name} is the Cartographers' hall and ${house.name} the Compact's`);
   for (const g of ['cartographers', 'compact'] as const) {
     const p = structuredClone(w.party), [first] = offered(g, p);
@@ -1919,7 +1911,7 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
 
   // The quay's line where the street comes down to it: the ship, and the light beyond the Sound.
   see(w, 'cinderport:cp_quay');
-  const quay = inPort('event').find((e) => e.id === 'cp_quay')!;
+  const quay = ofKind(PORT, 'event').find((e) => e.id === 'cp_quay')!;
   ok(w.world.used('cp_quay') && quay.text === 'The Compact\'s ship rides at the quay with Kilnhaven\'s mark on her. Beyond the Sound, a column of light.', 'on the quay, the ship with Kilnhaven\'s mark and a column of light beyond the Sound');
 
   // The ride and the last crossing (#547): Cinderport writes where each puts a company down, just inside
@@ -1972,9 +1964,6 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
  * hafted. Each pays its xp whichever way it goes.
  */
 function sideQuests(ok: (cond: boolean, msg: string) => void): void {
-  const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
-  const npc = (map: string, name: string): Person => mapOf(map).features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
-  const ev = (map: string, id: string): Feature => mapOf(map).features!.find((f) => f.kind === 'event' && f.id === id)!;
 
   // What the Springs Bring Up (#56's 49), at 25: the keeper's four lines begin it, and the stoker seen
   // at the rock, she asks. Left, she gives the grey part that came up and the springs stay warm; broken,
@@ -2068,7 +2057,6 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
 
 // ---- the chapter (#518) ----
 
-const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
 const SOCKETED = mapOf('ember_stone').features!.filter((f): f is Person => f.kind === 'npc' && /socket/i.test(f.name));
 const FANE = mapOf('meridian_camp3').features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Oriel Fane')!;
 

@@ -79,8 +79,8 @@
 // ends once on the moor where the Ring takes it on, and the Hearth counts the Stone either way.
 // Then the bounds (#831), as `theBounds` walks them, box by box.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, kneel, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, page, goal, written, began, reads, there, here, search, xpOf, walkAt, atLevel } from '../../../../tools/kit/walk.ts';
-import { square, ALL, reach, shut, reached, paces } from '../../../../tools/kit/grid.ts';
+import { newWalk, walkThrough, see, kneel, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, page, goal, written, began, reads, there, here, search, xpOf, walkAt, atLevel, npc, ofKind } from '../../../../tools/kit/walk.ts';
+import { square, ALL, reach, shut, reached, paces, inBox } from '../../../../tools/kit/grid.ts';
 import type { Walk, Step } from '../../../../tools/kit/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, ATLAS, THE_QUEST } from '../../index.ts';
@@ -158,8 +158,7 @@ const CROSSING = 'The Iron Fells. Pine, and the ground going up. Somewhere ahead
 const TOWN = MAP_DEFS.find((d) => d.id === 'anvilhall')!;
 const person = (name: string): Person => TOWN.features!.find((f) => f.kind === 'npc' && f.name.startsWith(name)) as Person;
 const THANE = person('Thane Wolfram'), CRANE = person('Wystan Crane'), GERDA = person('Gerda'), KONRAD = person('Konrad');
-const business = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => TOWN.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
-const FORGE_SHOP = business('shop').find((f) => f.interior === 'anvilhall_forge')!;
+const FORGE_SHOP = ofKind(TOWN, 'shop').find((f) => f.interior === 'anvilhall_forge')!;
 /** What a person says to a walk's company now, met as the game meets them. */
 const says = (w: Walk, p: Person): string => meet(p, w.party, heard(w.world, p)).text;
 
@@ -213,14 +212,13 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // Lanternwood's trees: from the road, walking or wading, L3 beside M3 is never reached.
   const l3 = out.zones.find((z) => z.id === 'lanternwood_l3')!;
-  const inside = (x: number, y: number, z: typeof m3): boolean => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
   const walked = new Set<number>(), stack = [[m3.x + 18, m3.y + 14]];
   let crossed = false;
   while (stack.length) {
     const [x, y] = stack.pop()!, k = y * out.width + x;
-    if (walked.has(k) || !(inside(x, y, m3) || inside(x, y, l3)) || out.passable(x, y, { swim: true }) !== 'ok') continue;
+    if (walked.has(k) || !(inBox(m3, x, y) || inBox(l3, x, y)) || out.passable(x, y, { swim: true }) !== 'ok') continue;
     walked.add(k);
-    if (inside(x, y, l3)) crossed = true;
+    if (inBox(l3, x, y)) crossed = true;
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) stack.push([x + dx, y + dy]);
   }
   ok(walked.size > 400 && !crossed, `Lanternwood's trees shut M3 from L3: none of its ${walked.size} squares walked leads into it`);
@@ -986,22 +984,22 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
 
   // A company of 16 rests, buys the act's first step and trains to 19, each by the rule its business's
   // screen serves (src/game/services.ts).
-  ok(business('inn').length === 1 && business('temple').length === 1, 'Anvilhall has an inn to rest at and a mine-surgeon who cures');
+  ok(ofKind(TOWN, 'inn').length === 1 && ofKind(TOWN, 'temple').length === 1, 'Anvilhall has an inn to rest at and a mine-surgeon who cures');
   w.party.gold = 30000;
-  const inn = business('inn')[0], night = nightCost(inn, w.party);
+  const inn = ofKind(TOWN, 'inn')[0], night = nightCost(inn, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
   stay(w.party, w.world, inn);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 30000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
   const rung = ACT_III.find((r) => r.level === 17)!;
   ok(FORGE_SHOP.stock.length === FORGE.length && FORGE.every((id) => FORGE_SHOP.stock.includes(id)), `the smiths' forge sells the act's first step, all ${FORGE.length} wares and nothing else`);
   for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, FORGE_SHOP, id), `${m.name} buys a ${item(id).name} at the forge`);
-  const stores = business('shop').find((f) => f.interior === 'anvilhall_stores')!;
+  const stores = ofKind(TOWN, 'shop').find((f) => f.interior === 'anvilhall_stores')!;
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => stores.stock.includes(id)) && !stores.stock.some((id) => FORGE.includes(id)), 'the stores sell provisions and lamp oil, and no steel');
-  const yard = business('trainer')[0];
+  const yard = ofKind(TOWN, 'trainer')[0];
   // Trained on a copy, from a copy of the purse, so the company walks on as it was.
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 18; trainee.xp = xpForLevel(19);
-  ok(business('trainer').length === 1 && yard.maxLevel === 19 && yard.interior === 'anvilhall_training_hall' && canTrainAt(trainee, yard.maxLevel), `${yard.name} will train a member of 18`);
+  ok(ofKind(TOWN, 'trainer').length === 1 && yard.maxLevel === 19 && yard.interior === 'anvilhall_training_hall' && canTrainAt(trainee, yard.maxLevel), `${yard.name} will train a member of 18`);
   const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), yard.maxLevel);
   ok(trainee.level === 19 && !canTrainAt(trainee, yard.maxLevel), `who trains to 19 for ${fee} gold, and no further`);
 
@@ -1076,7 +1074,7 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
     const open = t.world.present(FORGE_SHOP) && t.world.present(GERDA);
     ok(way === BOUGHT ? open && !shut.length && says(t, GERDA).includes('He will not thank you') : !open && shut.join() === 'The forge door is barred. Behind it the hammering goes on, and nobody comes to it.',
       way === BOUGHT ? 'bought, the forge stays open, and Gerda thanks the company for the thane' : 'taken, the forge is shut for good: its smiths gone, its door barred');
-    ok(says(t, KONRAD).includes(way === BOUGHT ? 'paid' : 'in red now') && [...business('inn'), ...business('shop').filter((f) => f !== FORGE_SHOP)].every((f) => t.world.present(f)), `${way}: the warder's book says so, and the inn and the stores keep their doors open`);
+    ok(says(t, KONRAD).includes(way === BOUGHT ? 'paid' : 'in red now') && [...ofKind(TOWN, 'inn'), ...ofKind(TOWN, 'shop').filter((f) => f !== FORGE_SHOP)].every((f) => t.world.present(f)), `${way}: the warder's book says so, and the inn and the stores keep their doors open`);
   }
 }
 
@@ -1092,10 +1090,9 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  */
 function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   const HAVEN = MAP_DEFS.find((d) => d.id === 'kilnhaven')!;
-  const inHaven = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => HAVEN.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
-  const who = (name: string): Person => inHaven('npc').find((f) => f.name.startsWith(name)) as Person;
+  const who = (name: string): Person => ofKind(HAVEN, 'npc').find((f) => f.name.startsWith(name)) as Person;
   const IRMGARD = who('Irmgard'), DUNSTAN = who('Dunstan'), JAGO = who('Jago'), MURDO = who('Murdo'), DIETMAR = who('Dietmar'), DWARF = who('A dwarf on a bollard'), WIEBE = who('Wiebe');
-  const SMITHY = inHaven('shop').find((f) => f.interior === 'kilnhaven_smith')!;
+  const SMITHY = ofKind(HAVEN, 'shop').find((f) => f.interior === 'kilnhaven_smith')!;
   const w = newWalk(ok);
   w.level = 16;
   for (const m of w.party.members) m.level = 16;
@@ -1118,9 +1115,9 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   listen(w);
 
   // A night at the inn, by the rule its screen serves (src/game/services.ts).
-  ok(inHaven('inn').length === 1 && inHaven('temple').length === 1 && inHaven('trainer').length === 1, 'Kilnhaven has an inn to rest at, a chapel that cures and a shed that trains');
+  ok(ofKind(HAVEN, 'inn').length === 1 && ofKind(HAVEN, 'temple').length === 1 && ofKind(HAVEN, 'trainer').length === 1, 'Kilnhaven has an inn to rest at, a chapel that cures and a shed that trains');
   w.party.gold = 30000;
-  const inn = inHaven('inn')[0], night = nightCost(inn, w.party);
+  const inn = ofKind(HAVEN, 'inn')[0], night = nightCost(inn, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
   stay(w.party, w.world, inn);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 30000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
@@ -1134,7 +1131,7 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
     const before = w.party.gold;
     ok(!!buy(w.party, SMITHY, id) && before - w.party.gold === SMITH_PRICES[id], `${m.name} buys a ${item(id).name} at the smith for ${SMITH_PRICES[id]} gold`);
   }
-  const chandler = inHaven('shop').find((f) => f.interior === 'kilnhaven_chandlery')!;
+  const chandler = ofKind(HAVEN, 'shop').find((f) => f.interior === 'kilnhaven_chandlery')!;
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => chandler.stock.includes(id)) && !chandler.stock.some((id) => FORGE.includes(id)) && !chandler.prices, 'the chandler\'s sells the provisions and lamp oil at list price, and no steel');
 
   // The Stone taken, Anvilhall's forge is shut to the company for good, and the smith is open still.
@@ -1144,7 +1141,7 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   ok(taker.world.present(SMITHY) && taker.world.present(DIETMAR) && !taker.world.present(FORGE_SHOP) && says(taker, DIETMAR).includes('Mine is open'), 'the Stone taken, Anvilhall\'s forge is shut, and the smith is open still and says so');
 
   // Training to 19 at the ore shed, a copy from a copy of the purse, so the company walks on as it was.
-  const shed = inHaven('trainer')[0];
+  const shed = ofKind(HAVEN, 'trainer')[0];
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 18; trainee.xp = xpForLevel(19);
   ok(shed.maxLevel === 19 && shed.interior === 'kilnhaven_training_hall' && canTrainAt(trainee, shed.maxLevel), `${shed.name} will train a member of 18`);
@@ -1153,7 +1150,7 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
 
   // The manifests, read by the harbourmaster in her office: iron to Cinderport, and the Compact's
   // sealed crates for Cinderport and Sheer Point, the chapter's step (#470); after, her words change.
-  ok(inHaven('npc').some((f) => f.interior === 'kilnhaven_harbourmaster' && f.x === IRMGARD.x && f.y === IRMGARD.y), 'the harbourmaster is in her office, a room of its own');
+  ok(ofKind(HAVEN, 'npc').some((f) => f.interior === 'kilnhaven_harbourmaster' && f.x === IRMGARD.x && f.y === IRMGARD.y), 'the harbourmaster is in her office, a room of its own');
   w.world.travel('kilnhaven', IRMGARD.x, IRMGARD.y);
   const book = says(w, IRMGARD);
   ok(book.includes('Iron to Cinderport, by the ton. Then a page in another hand: crates, sealed, for Cinderport and Sheer Point. No weight given.') && !!w.party.flags[MANIFESTS_READ],
@@ -1171,7 +1168,7 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   // landing it at the ferry's steps on Kilnhaven's quay.
   const [over, ...more] = DUNSTAN.passage ?? [];
   ok(!!over && !more.length && over.to === 'saltmouth' && over.x === 13 && over.y === 10 && over.fare === FERRY.fare && over.days === FERRY.days, `the ferry's master sells the ferry to Saltmouth's quay, ${over?.fare} gold and ${over?.days} days`);
-  const sold = inHaven('npc').flatMap((f) => f.passage ?? []);
+  const sold = ofKind(HAVEN, 'npc').flatMap((f) => f.passage ?? []);
   ok(sold.every((p) => !p.half && !p.free), 'and nobody in Kilnhaven halves a fare for any guild');
   w.world.travel('kilnhaven', DUNSTAN.x, DUNSTAN.y);
   w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 9 * 60;
@@ -1614,7 +1611,6 @@ function fourthRanks(w: Walk): void {
  * doors' verses heard going down, then the last sung by the oldest miner at Anvilhall.
  */
 function sideQuests(ok: (cond: boolean, msg: string) => void): void {
-  const npc = (map: string, name: string): Person => MAP_DEFS.find((d) => d.id === map)!.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
   const signAt = (def: MapDef, id: string): Feature => def.features!.find((f) => f.kind === 'sign' && f.id === id)!;
 
   // The Crust-Bearer (#56's 33), at 17: the mother at the well asks, and a company that says not now is

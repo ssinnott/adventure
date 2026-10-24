@@ -36,7 +36,7 @@
 // she takes from them begins no journal. Then the chapter, The Heart (#760), played to each of its three
 // ends from the road behind done, and once by a company over early on four of the road's five.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, kneel, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending, goalOf, written, holding, keys, thiefDown, same, hour } from '../../../../tools/kit/walk.ts';
+import { newWalk, see, kneel, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending, goalOf, written, holding, keys, thiefDown, same, hour, log, key, press, chest } from '../../../../tools/kit/walk.ts';
 import { apartFrom } from '../../../../tools/kit/grid.ts';
 import type { Walk, Step } from '../../../../tools/kit/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
@@ -51,7 +51,6 @@ import type { Feature, MapDef } from '../../../game/map.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
 import { elementMult } from '../../../game/monsters.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
-import { headlessGame } from '../../../../tools/kit/headless.ts';
 import { xpForLevel, takePrestige, className, PRESTIGES, defaultParty, equip, statOf, spellHeal } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
 import { teach, barOf } from '../../../game/prestige.ts';
@@ -92,8 +91,6 @@ const ISLE = ATLAS.zones.find((z) => z.id === 'hearthisle')!;
 const RIM = MAP_DEFS.find((d) => d.id === 'hearthisle_i6')!;
 type Chest = Extract<Feature, { kind: 'chest' }>;
 type Happening = Extract<Feature, { kind: 'event' }>;
-/** I6's chest, or its event, by id. */
-const chestOf = (id: string): Chest => RIM.features!.find((f): f is Chest => f.kind === 'chest' && f.id === id)!;
 const eventOf = (id: string): Happening => RIM.features!.find((f): f is Happening => f.kind === 'event' && f.id === id)!;
 
 /** The isle's two boxes laid side by side as the world lays them, I6 32 squares on from H6, so that a walk may cross the seam between them. */
@@ -107,7 +104,7 @@ const WHOLE_ISLE: MapDef = { ...H6, id: 'hearthisle', features: [], exits: [], s
  */
 function theVigil(w: Walk): void {
   const door = RIM.secrets![1], glass = eventOf('i6_scorch'), inside = eventOf('i6_vigil');
-  const plain = chestOf('i6_vigil_chest'), banded = chestOf('i6_vigil_locked');
+  const plain = chest(RIM, 'i6_vigil_chest'), banded = chest(RIM, 'i6_vigil_locked');
   const standsOn = (c: { x: number; y: number }): boolean => { const o = w.world.locate(RIM.id, c.x, c.y); return !!o && w.world.state.x === o.x && w.world.state.y === o.y; };
   w.ok(door.hint === glass.id && glass.x === door.x + 1 && glass.y === door.y && RIM.rows[door.y][door.x] === 'S' && RIM.rows[door.y - 1][door.x] === 'r' && RIM.rows[door.y + 1][door.x] === 'r',
     'the vigil cell\'s door is the box\'s second secret, in the rim\'s east face between rock above and below, and the vein of glass ends on its near side');
@@ -138,18 +135,7 @@ function theVigil(w: Walk): void {
  * has no lock and opens to the company that cannot open the other.
  */
 function vigilLocked(ok: (cond: boolean, msg: string) => void): void {
-  const banded = chestOf('i6_vigil_locked'), plain = chestOf('i6_vigil_chest');
-  /** A new game, the company dressed by `dress`, stood on the chest and Space pressed twice: what the log said, and what became of the chest, the prize and the keys. */
-  const press = (c: Chest, dress: (p: Party) => void): string => {
-    const g = headlessGame(4), p = g.party;
-    dress(p);
-    g.world.travel(RIM.id, c.x, c.y, WEST);
-    const there = g.world.featureHere(), from = g.log.length;
-    g.enterCell();
-    if (there) { g.interact(there); g.interact(there); }
-    return `${g.log.slice(from).join(' ')} | ${g.world.used(c.id) ? 'spent' : 'shut'} | ${c.items.every((i) => p.bag.includes(i)) ? 'taken' : 'left'} | ${p.bag.filter((i) => i === 'key_iron').length} keys`;
-  };
-  const key = (p: Party): void => { p.bag.push('key_iron'); };
+  const banded = chest(RIM, 'i6_vigil_locked'), plain = chest(RIM, 'i6_vigil_chest');
   const prize = 'You open the chest: Levin Mace. The chest is empty.';
   const cases: [string, Chest, (p: Party) => void, string][] = [
     ['no Lockpick standing and no key', banded, thiefDown, 'A locked chest. Locked. Locked. | shut | left | 0 keys'],
@@ -158,7 +144,7 @@ function vigilLocked(ok: (cond: boolean, msg: string) => void): void {
     ['no Lockpick standing and an iron key, which is spent', banded, (p) => { thiefDown(p); key(p); }, `A locked chest. The lock turns. The key crumbles. ${prize} | spent | taken | 0 keys`],
     ['no Lockpick and no key, at the plain chest beside it', plain, thiefDown, 'A chest. Space opens it. You open the chest: Vigil Robe. The chest is empty. | spent | taken | 0 keys'],
   ];
-  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press(c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
+  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press(RIM.id, WEST, c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
   ok(banded.locked === true && !plain.locked && !wrong.length,
     `the grey-banded chest refuses a company with neither a Lockpick nor an iron key and opens to either, the plain chest beside it opening to any (${cases.map(([who]) => who).join('; ')})${wrong.length ? ' -> ' + wrong.join('; ') : ''}`);
 }
@@ -194,7 +180,7 @@ function vigilFinds(ok: (cond: boolean, msg: string) => void): void {
   const chests = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f): f is Chest => f.kind === 'chest').map((f) => ({ map: d.id, f })));
   const locked = chests.filter(({ map, f }) => f.locked && hearth.maps.some((m) => m.id === map)).map(({ map, f }) => `${map}:${f.id}`);
   ok(holding('levin_mace') === 'hearthisle_i6:i6_vigil_locked' && holding('vigil_robe') === 'hearthisle_i6:i6_vigil_chest' && locked.join() === 'hearthisle_i6:i6_vigil_locked'
-    && chestOf('i6_vigil_locked').gold === 0 && chestOf('i6_vigil_chest').gold === 0,
+    && chest(RIM, 'i6_vigil_locked').gold === 0 && chest(RIM, 'i6_vigil_chest').gold === 0,
     `the Levin Mace lies in the grey-banded chest and the robe in the plain chest beside it, no gold with either, and the grey-banded chest is the only locked one the isle places (${locked.join() || 'none'})`);
   // The raise and the blow, on the real items: worn, the robe adds 3 to personality and not to the bare stat, and to what the cleric heals; carried it adds nothing; and the classes that cannot wield the mace are refused.
   const crew = defaultParty(makeRng(1)), cleric = crew.members.find((m) => m.cls === 'cleric')!, paladin = crew.members.find((m) => m.cls === 'paladin')!;
@@ -596,11 +582,10 @@ export const walkthrough: Walkthrough = (ok) => {
   // ways' groups won as they come; behind the first west frame the keepers' store.
   w.level = 30;
   for (const m of w.party.members) m.level = 30;
-  const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
   see(w, 'underdeep:ud_in');
   fight(w, 'underdeep:ud_rats1');
   see(w, 'underdeep:ud_knot1');
-  ok(!!log('frames') && !log('frames')!.done && log('frames')!.goal === 'Follow her knots through the ways, frame by frame.', 'her knot on the first frame begins Every Frame She Marked');
+  ok(!!log(w, 'frames') && !log(w, 'frames')!.done && log(w, 'frames')!.goal === 'Follow her knots through the ways, frame by frame.', 'her knot on the first frame begins Every Frame She Marked');
   fight(w, 'underdeep:ud_knockers1');
   const ways = (id: string) => WAYS.features!.find((f) => f.kind === 'chest' && f.id === id);
   const store = ways('ud_store'), crawl = ways('ud_crawl_chest'), crew = ways('ud_crew_store'), store2 = ways('ud_store2');
@@ -620,7 +605,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'underdeep:ud_knot7');
   fight(w, 'underdeep:ud_rats2');
   see(w, 'underdeep:ud_knot8');
-  ok([1, 2, 3, 4, 5, 6, 7, 8].every((n) => w.world.used(`ud_knot${n}`)) && log('frames')!.pages[0].entries.length === 2 && !log('frames')!.done,
+  ok([1, 2, 3, 4, 5, 6, 7, 8].every((n) => w.world.used(`ud_knot${n}`)) && log(w, 'frames')!.pages[0].entries.length === 2 && !log(w, 'frames')!.done,
     'every frame read, the eighth cut deeper over a thin wall, and the quest goes on down to the Stair\'s last frame (#758)');
 
   // The hatch behind the eighth frame, found from it: searched at the wall in the room behind it, it
@@ -630,7 +615,7 @@ export const walkthrough: Walkthrough = (ok) => {
   let hatchFound = false;
   for (let i = 0; i < 20 && !hatchFound; i++) hatchFound = w.world.search();
   const crawled = hatchFound ? [w.world.move('forward'), w.world.move('forward')] : [];
-  ok(hatch.hint === 'ud_knot8' && hatchFound && crawled.every((r) => r.kind === 'moved') && w.world.used('ud_hatch') && log('frames')!.pages[0].entries.length === 3,
+  ok(hatch.hint === 'ud_knot8' && hatchFound && crawled.every((r) => r.kind === 'moved') && w.world.used('ud_hatch') && log(w, 'frames')!.pages[0].entries.length === 3,
     'searched at the wall behind the eighth frame, the hatch opens on the crawl way, and the log keeps it');
   listen(w);
   ok(crawl?.kind === 'chest' && crawl.gold === 2200 && crawl.items.join() === 'potion_sp_great,potion_sp_great,potion_sp_great' && crawl.x === 24 && crawl.y === 4,
@@ -665,9 +650,9 @@ export const walkthrough: Walkthrough = (ok) => {
     answer(speak(v, p, at.x, at.y, at.f).choice!.answers.find((a) => a.label === label)!, v.party);
     return v.party.members[0].xp - xp;
   };
-  ok(!!log('crack') && !log('crack')!.done, 'at the crack, The Knocker That Stopped begins');
+  ok(!!log(w, 'crack') && !log(w, 'crack')!.done, 'at the crack, The Knocker That Stopped begins');
   const sealed = pay(w, knocker, 'Seal it.');
-  ok(Math.abs(sealed - 4000 / 6) < 1 && !!w.party.flags[CRACK_SEALED] && !w.world.present(knocker) && log('crack')!.done, 'sealed with its hammer: 4,000 experience among the company, the knocker finished and the quest done');
+  ok(Math.abs(sealed - 4000 / 6) < 1 && !!w.party.flags[CRACK_SEALED] && !w.world.present(knocker) && log(w, 'crack')!.done, 'sealed with its hammer: 4,000 experience among the company, the knocker finished and the quest done');
   left(w, 'underdeep:ud_knockers3');
   const b = newWalk(ok);
   see(b, 'underdeep:ud_crack');
@@ -692,12 +677,12 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.state.x === 4 && w.world.state.y === 10 && (lettered || !unread.includes('CREW ONLY.')) && marks.includes('CREW ONLY. THE MINES BEYOND.') && w.world.used('ud_crew_sign'),
     `the marks over the door, on the way to it, read with a reader and kept read (${marks})`);
   const feet = stepOn(w);
-  ok(w.world.state.x === 3 && w.world.state.y === 10 && feet.includes('footprints') && w.world.used('ud_feet') && !!log('crew_only') && !log('crew_only')!.done,
+  ok(w.world.state.x === 3 && w.world.state.y === 10 && feet.includes('footprints') && w.world.used('ud_feet') && !!log(w, 'crew_only') && !log(w, 'crew_only')!.done,
     'the feet on the square before the door, and Crew Only, From the Inside begun');
   w.world.move('forward');
   ok(w.world.state.mapId === 'underdeep' && w.world.state.x === 2, 'the door stays shut on the mines until it is answered');
   const opened = pay(w, crewDoor, 'Open it, and leave it open.');
-  ok(Math.abs(opened - 2000 / 6) < 1 && !!w.party.flags[CREW_OPEN] && !w.world.present(crewDoor) && log('crew_only')!.done, 'opened and left open: 2,000 experience among the company, and the quest done');
+  ok(Math.abs(opened - 2000 / 6) < 1 && !!w.party.flags[CREW_OPEN] && !w.world.present(crewDoor) && log(w, 'crew_only')!.done, 'opened and left open: 2,000 experience among the company, and the quest done');
   const through = w.world.move('forward');
   ok(through.kind === 'moved' && !!through.arrived && w.world.state.mapId === 'deep_mines3' && w.world.state.x === 13 && w.world.state.y === 3 && w.world.state.facing === WEST,
     'a step forward from the feet\'s square goes through onto the Clean Corridor\'s floor before its other side, 13,3, facing west');
@@ -728,7 +713,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'underdeep2:ud2_held');
   left(w, 'underdeep2:ud2_rearguard');
   w.world.travel('underdeep2', captain.x, captain.y);
-  ok(meet(captain, w.party, heard(w.world, captain)).text.includes('Sergeant Aelfric\'s badge') && log('bowl_pilgrims')!.done,
+  ok(meet(captain, w.party, heard(w.world, captain)).text.includes('Sergeant Aelfric\'s badge') && log(w, 'bowl_pilgrims')!.done,
     'the cousin\'s people hold the first landing for the badge, their captain says so, and The Pilgrims in the Bowl is done');
   const ud2 = (id: string) => UD2.features!.find((f) => f.kind === 'chest' && f.id === id);
   const [rearguardChest, letter, packs, packs2, takings] = ['ud2_rearguard_chest', 'ud2_letter_chest', 'ud2_packs', 'ud2_packs2', 'ud2_takings'].map(ud2);
@@ -760,7 +745,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'underdeep2:ud2_letter');
   ok(letter?.kind === 'chest' && letter.x === 15 && letter.y === 21 && letter.gold === 0 && letter.items.join() === 'gullwick_letter', 'under the champion\'s hands, the letter for Gullwick');
   w.party.bag.push('gullwick_letter');
-  ok(log('letter')?.goal === 'Take Jowan\'s letter to his mother at Gullwick, the third house from the slip.' && !log('letter')!.done,
+  ok(log(w, 'letter')?.goal === 'Take Jowan\'s letter to his mother at Gullwick, the third house from the slip.' && !log(w, 'letter')!.done,
     'the letter taken begins A Letter for Gullwick, its end at his mother\'s door (#765)');
   fight(w, 'underdeep2:ud2_crawlers1');
   see(w, 'underdeep2:ud2_marks');
@@ -770,9 +755,9 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('underdeep2', 16, 10);
   ok(w.world.eventsHere().join(' ').includes('THE DOOR IS CLOSE. KEEP GOING.'), 'chalked on the shaft\'s wall by a shaking hand: THE DOOR IS CLOSE. KEEP GOING.');
   fight(w, 'underdeep2:ud2_knockers');
-  ok(log('frames')!.goal === 'Follow her knots down to the last frame before the foot of the stair.', 'the knots followed down the stair to the last frame');
+  ok(log(w, 'frames')!.goal === 'Follow her knots down to the last frame before the foot of the stair.', 'the knots followed down the stair to the last frame');
   see(w, 'underdeep2:ud2_word');
-  ok(log('frames')!.done && log('frames')!.pages[0].entries.some((e) => e.id === 'name'), 'on the last frame her name, not her knot: Every Frame She Marked is done');
+  ok(log(w, 'frames')!.done && log(w, 'frames')!.pages[0].entries.some((e) => e.id === 'name'), 'on the last frame her name, not her knot: Every Frame She Marked is done');
 
   // The foot at 31, where the Catcher is sized on its odds, and the last door (#759): on four of the road's
   // five it stays shut, listening for five voices, and the way back up to the camp is open; the Hand's own
@@ -848,7 +833,7 @@ export const walkthrough: Walkthrough = (ok) => {
     'after it she waits to be walked home, the question not put again, and Vask gone from the room');
   w.party.flags[THRONE_REMOVED] = 1;
   left(w, 'core:core_vask_thinned');
-  const ring = log('signet');
+  const ring = log(w, 'signet');
   ok(!!ring && !ring.done && ring.goal === 'Where the ring goes: the Council\'s clerk waits at Helmstow\'s gate, and the sea off Gullwick is where the boat went out.',
     'the ring in the pack begins The Signet, its end at Helmstow\'s gate or the sea off Gullwick (#765)');
 

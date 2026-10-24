@@ -24,8 +24,8 @@
 // answered every way (sideQuests). The last walk holds the two finds to their rules (offTheLadder, #862).
 // Then the bounds (#834), the rim behind O7 and O8, in a walk of their own (theBounds).
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, kneel, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, written, reads, there, here, open, search, xpOf, thiefDown, hour, atLevel, type Walk, type Step } from '../../../../tools/kit/walk.ts';
-import { zone, square, ALL, reach, shut, reached, paces, corner, drove, each } from '../../../../tools/kit/grid.ts';
+import { newWalk, walkThrough, see, fight, kneel, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, written, reads, there, here, open, search, xpOf, thiefDown, hour, atLevel, shows, alive, type Walk, type Step } from '../../../../tools/kit/walk.ts';
+import { zone, square, ALL, reach, shut, reached, paces, corner, drove, each, road, on } from '../../../../tools/kit/grid.ts';
 import { NORTH, SOUTH, EAST, WEST } from '../../../game/types.ts';
 import { ATLAS, ITEMS, MAP_DEFS, MONSTERS as EVERY_MONSTER } from '../../index.ts';
 import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
@@ -109,11 +109,9 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The road square to square over the hills and on south into N8, and the peat-cutter's track off it
   // east onto O7, walked last (stoneRing).
-  const road = (x: number, y: number): boolean => out.at(x, y).ch === '=';
-  const on = (z: MapZone) => (x: number, y: number): boolean => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
   const onN7 = on(n7), onN8 = on(n8);
-  ok(paces(out, n7.x + 3, n7.y, (x, y) => road(x, y) && onN7(x, y)).has((n7.y + 31) * out.width + n7.x + 7), 'the drove road runs square to square over N7 from 3,0 to 7,31');
-  ok(road(n7.x + 7, n7.y + 31) && n8.x === n7.x && n8.y === n7.y + 32 && road(n8.x + 7, n8.y), 'the drove road leaves N7 by its south edge at 7,31 and runs on onto N8\'s 7,0');
+  ok(paces(out, n7.x + 3, n7.y, (x, y) => road(out, x, y) && onN7(x, y)).has((n7.y + 31) * out.width + n7.x + 7), 'the drove road runs square to square over N7 from 3,0 to 7,31');
+  ok(road(out, n7.x + 7, n7.y + 31) && n8.x === n7.x && n8.y === n7.y + 32 && road(out, n8.x + 7, n8.y), 'the drove road leaves N7 by its south edge at 7,31 and runs on onto N8\'s 7,0');
   ok(out.at(n7.x + 31, n7.y + 22).ch === ':' && out.at(n7.x + 7, n7.y + 20).ch === ':' && out.zoneAt(n7.x + 32, n7.y + 22)?.id === 'highmoor_o7' && out.at(n7.x + 32, n7.y + 22).ch === ':', 'the peat-cutter\'s track leaves the road at the fork and N7 by its east edge onto O7\'s 0,22');
 
   // The milestones, counted along the roads at 13 squares to the unit, a corner walked where a road
@@ -123,7 +121,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const grid = worldGrid(ATLAS, MAP_DEFS);
   const [lx, ly] = ATLAS.sites.find((s) => s.name === 'Rime Lodge')!.at;
   const count = (sx: number, sy: number): { lodge: number; hall: number } => {
-    const hall = paces(out, sx, sy, corner(out, road)).get((n3.y + IRONFELLS_GATE.y + 1) * out.width + n3.x + IRONFELLS_GATE.x) ?? Infinity;
+    const hall = paces(out, sx, sy, corner(out, (x, y) => road(out, x, y))).get((n3.y + IRONFELLS_GATE.y + 1) * out.width + n3.x + IRONFELLS_GATE.x) ?? Infinity;
     const end = [...paces(out, sx, sy, corner(out, drove(out, grid)))].map(([k, n]) => ({ n, left: Math.abs(k % out.width - lx) + Math.abs(Math.floor(k / out.width) - ly) }))
       .reduce((a, b) => (b.left < a.left || (b.left === a.left && b.n < a.n) ? b : a));
     return { lodge: end.n + end.left, hall };
@@ -131,7 +129,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const stone = N7.features!.find((f) => f.kind === 'event' && f.id === 'n7_milestone')!;
   const [sx, sy] = [n7.x + stone.x, n7.y + stone.y];
   const { lodge: toLodge, hall: toHall } = count(sx, sy);
-  ok(road(sx, sy) && stone.kind === 'event' && stone.text.includes(`RIME LODGE ${Math.round(toLodge / 13)} `) && stone.text.includes(`ANVILHALL ${Math.round(toHall / 13)} `),
+  ok(road(out, sx, sy) && stone.kind === 'event' && stone.text.includes(`RIME LODGE ${Math.round(toLodge / 13)} `) && stone.text.includes(`ANVILHALL ${Math.round(toHall / 13)} `),
     `the milestone says RIME LODGE ${Math.round(toLodge / 13)} and ANVILHALL ${Math.round(toHall / 13)}: ${toLodge} squares along the drove road to the lodge and ${toHall} to Anvilhall's gate`);
   const coach = N7.features!.find((f) => f.kind === 'event' && f.id === 'n7_coach');
   ok(coach?.kind === 'event' && coach.x === stone.x && coach.y === stone.y && JSON.stringify(coach.when) === JSON.stringify({ hours: 'day' }) && ![N7, N8, O7].some((d) => d.features!.some((f) => f.kind === 'npc' && f.passage)),
@@ -171,7 +169,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The road square to square down the west side to its head, and the notch at its end, where it is
   // taken down onto M9's road (NOTCH, the atlas's way); past it, M8's crags at the Rimefells' shoulder (#484).
-  ok(paces(out, n8.x + 7, n8.y, (x, y) => road(x, y) && onN8(x, y)).has((n8.y + 28) * out.width + n8.x + 1), 'the drove road runs square to square over N8 from 7,0 down its west side to its head at 1,28');
+  ok(paces(out, n8.x + 7, n8.y, (x, y) => road(out, x, y) && onN8(x, y)).has((n8.y + 28) * out.width + n8.x + 1), 'the drove road runs square to square over N8 from 7,0 down its west side to its head at 1,28');
   const down = ATLAS.links.find((l) => l.from === 'cairnfield' && l.to === 'longmere');
   ok(NOTCH.x === 0 && NOTCH.y === 28 && NOTCH.to === 'longmere_m9' && !!N8.exits?.includes(NOTCH) && out.passable(n8.x + NOTCH.x, n8.y + NOTCH.y) === 'ok' && out.passable(n8.x + NOTCH.x - 1, n8.y + NOTCH.y) !== 'ok'
     && down?.a?.[0] === n8.x + NOTCH.x && down.a[1] === n8.y + NOTCH.y && down.b?.[0] === 392 + NOTCH.tx && down.b[1] === 254 + NOTCH.ty,
@@ -180,7 +178,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // Carn Dubh's door in its side, where the atlas puts the Cairns' way in (DOOR), walked in `carnDubh`
   // below (#480).
   const carn = ATLAS.sites.find((s) => s.name === 'Carn Dubh')!.at;
-  ok(DOOR.to === 'cairns' && carn[0] === n8.x + DOOR.x && carn[1] === n8.y + DOOR.y && out.at(n8.x + DOOR.x, n8.y + DOOR.y).door === 'door' && !!N8.exits?.includes(DOOR) && road(n8.x + DOOR.x - 1, n8.y + DOOR.y),
+  ok(DOOR.to === 'cairns' && carn[0] === n8.x + DOOR.x && carn[1] === n8.y + DOOR.y && out.at(n8.x + DOOR.x, n8.y + DOOR.y).door === 'door' && !!N8.exits?.includes(DOOR) && road(out, n8.x + DOOR.x - 1, n8.y + DOOR.y),
     'Carn Dubh\'s door is in its side at 6,18, where the atlas puts the Cairns\' way in, beside the road, and it is a door, the way into the Cairns');
   w.world.travel('cairnfield_n8', DOOR.x - 1, DOOR.y, EAST);
   ok(!w.world.eventsHere().length, 'before the door nothing more is said: it is no longer shut fast');
@@ -191,7 +189,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The milestone at the road's head, counted as the first is.
   const head = N8.features!.find((f) => f.kind === 'event' && f.id === 'n8_milestone')!;
   const at = count(n8.x + head.x, n8.y + head.y);
-  ok(road(n8.x + head.x, n8.y + head.y) && head.kind === 'event' && head.text.includes(`RIME LODGE ${Math.round(at.lodge / 13)} `) && head.text.includes(`ANVILHALL ${Math.round(at.hall / 13)} `),
+  ok(road(out, n8.x + head.x, n8.y + head.y) && head.kind === 'event' && head.text.includes(`RIME LODGE ${Math.round(at.lodge / 13)} `) && head.text.includes(`ANVILHALL ${Math.round(at.hall / 13)} `),
     `the milestone at the road's head says RIME LODGE ${Math.round(at.lodge / 13)} and ANVILHALL ${Math.round(at.hall / 13)}: ${at.lodge} squares to the lodge and ${at.hall} to Anvilhall's gate`);
 
   // The hermit among the cairns, who knows which is oldest.
@@ -763,16 +761,6 @@ const person = (map: string, name: string): Person => MAP_DEFS.find((d) => d.id 
 
 
 
-const shows = (w: Walk, map: string, id: string): boolean => {
-  const f = MAP_DEFS.find((d) => d.id === map)!.features!.find((x) => x.kind === 'event' && x.id === id)!;
-  w.world.travel(map, f.x, f.y);
-  return w.world.present(f);
-};
-const alive = (w: Walk, map: string, id: string): boolean => {
-  const g = MAP_DEFS.find((d) => d.id === map)!.encounters!.find((e) => e.id === id)!;
-  w.world.travel(map, g.x, g.y);
-  return w.world.liveGroups().some((l) => l.def.id === id);
-};
 
 
 

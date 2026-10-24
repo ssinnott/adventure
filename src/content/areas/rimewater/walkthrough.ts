@@ -48,8 +48,8 @@
 // behind it. Then the bounds (#832), Monks' Vale's east under the pass and the rim south of Loch Fuar,
 // in a walk of their own (theBounds).
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, kneel, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, page, goal, written, began, reads, there, here, search, xpOf, hour, walkAt, atLevel } from '../../../../tools/kit/walk.ts';
-import { zone, square, ALL, reach, shut, reached, paces, corner, drove, each } from '../../../../tools/kit/grid.ts';
+import { newWalk, walkThrough, see, fight, kneel, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, page, goal, written, began, reads, there, here, search, xpOf, hour, walkAt, atLevel, npc, shows, ofKind } from '../../../../tools/kit/walk.ts';
+import { zone, square, ALL, reach, shut, reached, paces, corner, drove, each, road, on } from '../../../../tools/kit/grid.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
@@ -114,7 +114,6 @@ const K9 = MAP_DEFS.find((d) => d.id === 'coldmere_k9')!;
 const FUAR = ATLAS.zones.find((z) => z.id === 'coldmere')!;
 const person = (def: typeof M9, name: string): Person => def.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
 const TOWN = MAP_DEFS.find((d) => d.id === 'rime_lodge')!;
-const business = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => TOWN.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
 
 export const walkthrough: Walkthrough = (ok) => {
   const w = newWalk(ok);
@@ -161,13 +160,11 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The road square to square from the landing to the gate's front, and from there down beside the
   // lodge, over the loch's head on the causeway and out by the west edge at 0,20 onto L9's road.
-  const road = (x: number, y: number): boolean => out.at(x, y).ch === '=';
-  const on = (z: typeof m9) => (x: number, y: number): boolean => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
   const onM9 = on(m9), onL9 = on(l9);
-  const byRoad = paces(out, m9.x + NOTCH.tx, m9.y + NOTCH.ty, (x, y) => road(x, y) && onM9(x, y));
+  const byRoad = paces(out, m9.x + NOTCH.tx, m9.y + NOTCH.ty, (x, y) => road(out, x, y) && onM9(x, y));
   ok(byRoad.has((m9.y + GATE.y) * out.width + m9.x + GATE.x + 1) && byRoad.has((m9.y + 20) * out.width + m9.x),
     'the road runs square to square over M9 from the landing to the gate\'s front at 19,8, and on over the causeway to the west edge at 0,20');
-  ok(road(m9.x, m9.y + 20) && road(m9.x - 1, m9.y + 20) && l9.x + l9.w === m9.x, 'the road leaves M9 by its west edge at 0,20 onto L9\'s at 31,20');
+  ok(road(out, m9.x, m9.y + 20) && road(out, m9.x - 1, m9.y + 20) && l9.x + l9.w === m9.x, 'the road leaves M9 by its west edge at 0,20 onto L9\'s at 31,20');
 
   // The gate in the lodge's east wall, and the door in its lake wall onto the ice: doors, the ways
   // into Rime Lodge (#487), walked below.
@@ -189,7 +186,7 @@ export const walkthrough: Walkthrough = (ok) => {
     const end = [...fromStone].map(([k, n]) => ({ n, left: Math.abs(k % out.width - ahead.at[0]) + Math.abs(Math.floor(k / out.width) - ahead.at[1]) }))
       .reduce((a, b) => (b.left < a.left || (b.left === a.left && b.n < a.n) ? b : a));
     const toPass = end.n + end.left;
-    const says = road(sx, sy) && stone.kind === 'event' && stone.text.includes(`RIME LODGE ${units(toLodge)},`) && stone.text.includes(`${ahead.name} ${units(toPass)}.`);
+    const says = road(out, sx, sy) && stone.kind === 'event' && stone.text.includes(`RIME LODGE ${units(toLodge)},`) && stone.text.includes(`${ahead.name} ${units(toPass)}.`);
     return { says, toLodge, toPass };
   };
   const m9Stone = counted(m9, M9, 'm9_milestone');
@@ -257,15 +254,15 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // A company of 20 rests, buys the act's last step at the furrier's, studies to the seventh tier at
   // the Lanterns' fourth hall and trains to 23, each by the rule its business's screen serves (src/game/services.ts).
-  ok(business('inn').length === 1 && business('temple').length === 1 && business('guild').length === 1 && business('trainer').length === 1 && business('shop').length === 2
+  ok(ofKind(TOWN, 'inn').length === 1 && ofKind(TOWN, 'temple').length === 1 && ofKind(TOWN, 'guild').length === 1 && ofKind(TOWN, 'trainer').length === 1 && ofKind(TOWN, 'shop').length === 2
     && INTERIORS.every((id) => TOWN.features!.some((f) => 'interior' in f && f.interior === id)), 'Rime Lodge has its six businesses, each opening into its room: the inn, the hall, the temple, the furrier\'s, the provisioner\'s and the yard');
   w.party.gold = 40000;
-  const furrier = business('shop').find((f) => f.interior === 'rime_furrier')!, rung = ACT_III.find((r) => r.level === 21)!;
+  const furrier = ofKind(TOWN, 'shop').find((f) => f.interior === 'rime_furrier')!, rung = ACT_III.find((r) => r.level === 21)!;
   ok(furrier.stock.length === FURRIER.length && FURRIER.every((id) => furrier.stock.includes(id)), `the furrier's sells the act's last step, all ${FURRIER.length} wares and nothing else`);
   for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, furrier, id), `${m.name} buys a ${item(id).name} at the furrier's`);
-  const stores = business('shop').find((f) => f.interior === 'rime_provisioner')!;
+  const stores = ofKind(TOWN, 'shop').find((f) => f.interior === 'rime_provisioner')!;
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => stores.stock.includes(id)) && !stores.stock.some((id) => FURRIER.includes(id)), 'the provisioner\'s sells provisions and lamp oil, and no gear');
-  const hall = business('guild')[0];
+  const hall = ofKind(TOWN, 'guild')[0];
   ok(hall.hall === 'lanterns' && hall.interior === 'rime_hall' && hall.maxTier === 7, `the Lanterns' fourth hall teaches to the seventh tier (${hall.name})`);
   const caster = w.party.members.find((m) => CLASSES[m.cls].spells && hall.classes.includes(m.cls))!;
   const seventh = spellsFor(CLASSES[caster.cls].spells!, hall.maxTier!).find((sp) => sp.level === 7 && !caster.spells.includes(sp.id))!;
@@ -274,7 +271,7 @@ export const walkthrough: Walkthrough = (ok) => {
   payFee(w.party, hall);
   const { paid: price } = learnSpell(w.party, hallOffers(w.party, hall).find((o) => w.party.members[o.who] === caster && o.id === seventh.id)!);
   ok(w.party.gold === before - hall.fee - price && caster.spells.includes(seventh.id), `${caster.name} pays the hall's fee of ${hall.fee} and learns ${seventh.name} for ${price}`);
-  const drill = business('trainer')[0];
+  const drill = ofKind(TOWN, 'trainer')[0];
   // Trained on a copy, from a copy of the purse, so the company walks on as it was.
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 22; trainee.xp = xpForLevel(23);
@@ -291,7 +288,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The four nights: a stay at the inn each, by the rule its screen serves, and the morning after the night's
   // arrivals in the yard outside its door; the hole's fight, up on M9's ice, comes on the fourth only.
-  const inn = business('inn')[0], night = nightCost(inn, w.party);
+  const inn = ofKind(TOWN, 'inn')[0], night = nightCost(inn, w.party);
   const hole = M9.encounters!.find((e) => e.id === 'm9_night_4')!, girl = person(M9, 'A girl out of the hole');
   const risen = (): boolean => { w.world.travel('longmere_m9', hole.x, hole.y - 1); return w.world.walks(hole, m9.x + hole.x, m9.y + hole.y); };
   ok(inn.interior === 'rime_inn' && JSON.stringify(inn.nights) === JSON.stringify(NIGHTS), `${inn.name} counts the nights, ${NIGHTS.join(', ')}`);
@@ -326,8 +323,8 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(over.kind === 'moved' && w.world.zone?.id === 'longmere_l9' && w.world.state.x === l9.x + 31 && w.world.state.y === l9.y + 20 && !over.messages.some((m) => m.includes('Loch Fada.')),
     `west from M9's 0,20 onto L9's 31,20, walked, and the land not named again (${over.kind === 'moved' ? over.messages.join(' / ') || 'nothing said' : over.kind})`);
   ok(L9.start.x === 31 && L9.start.y === 20 && (L9.exits ?? []).length === 0, 'the box starts on the road at its east edge, and has no way out but its edges');
-  const l9Road = paces(out, l9.x + 31, l9.y + 20, (x, y) => road(x, y) && onL9(x, y));
-  ok([6, 7].every((x) => l9Road.has((l9.y + 31) * out.width + l9.x + x)) && [6, 7].every((x) => road(l9.x + x, l9.y + 32)),
+  const l9Road = paces(out, l9.x + 31, l9.y + 20, (x, y) => road(out, x, y) && onL9(x, y));
+  ok([6, 7].every((x) => l9Road.has((l9.y + 31) * out.width + l9.x + x)) && [6, 7].every((x) => road(out, l9.x + x, l9.y + 32)),
     'the road runs square to square over L9 from 31,20 over the ridge to the south edge at 6,31 and 7,31, and on onto L10\'s');
   const l9Stone = counted(l9, L9, 'l9_milestone');
   ok(l9Stone.says, `on the ridge the milestone says RIME LODGE ${units(l9Stone.toLodge)} and THE PASS ${units(l9Stone.toPass)}: ${l9Stone.toLodge} squares along the road to the lodge's gate and ${l9Stone.toPass} to the high pass`);
@@ -373,7 +370,7 @@ export const walkthrough: Walkthrough = (ok) => {
     return r.kind === 'moved' ? r.messages : [r.kind];
   };
   const passLow = pass(17), passTwo = pass(18), passIn = pass(20);
-  ok(w.world.zone?.id === 'coldmere_k10' && w.world.state.x === k10.x + 31 && w.world.state.y === k10.y + 3 && l10.x === k10.x + k10.w && road(l10.x, l10.y + 3) && road(k10.x + 31, k10.y + 3),
+  ok(w.world.zone?.id === 'coldmere_k10' && w.world.state.x === k10.x + 31 && w.world.state.y === k10.y + 3 && l10.x === k10.x + k10.w && road(out, l10.x, l10.y + 3) && road(out, k10.x + 31, k10.y + 3),
     'west along the road from L10\'s 0,3 onto K10\'s 31,3, walked, the road\'s last square beside the bridge');
   ok(passIn.join(' / ') === 'Loch Fuar.', `at 20, the cold loch named, no more (${passIn.join(' / ')})`);
   ok(passTwo.join(' / ') === `Loch Fuar. ${FUAR.crossing?.harder}`, `at 18, the rest in the cold loch's own words (${passTwo.join(' / ')})`);
@@ -398,8 +395,8 @@ export const walkthrough: Walkthrough = (ok) => {
   // walked on over the pass onto J10's road and across its corner to J11 (#508: the Whitespine's
   // walkthrough walks it; taken across parked J10, SADDLE, until it was laid); the milestone at the
   // pass's foot, to the lodge's gate and over the pass to the road's end at the monks' gate in Monks' Vale.
-  const onK10 = on(k10), k10Road = paces(out, k10.x + 30, k10.y + 3, (x, y) => road(x, y) && onK10(x, y));
-  ok(k10Road.has((k10.y + 3) * out.width + k10.x + 31) && k10Road.has((k10.y + 15) * out.width + k10.x + 5) && k10Road.has((k10.y + 19) * out.width + k10.x) && road(k10.x - 1, k10.y + 19) && out.zoneAt(k10.x - 1, k10.y + 19)?.id === 'monksvale_j10',
+  const onK10 = on(k10), k10Road = paces(out, k10.x + 30, k10.y + 3, (x, y) => road(out, x, y) && onK10(x, y));
+  ok(k10Road.has((k10.y + 3) * out.width + k10.x + 31) && k10Road.has((k10.y + 15) * out.width + k10.x + 5) && k10Road.has((k10.y + 19) * out.width + k10.x) && road(out, k10.x - 1, k10.y + 19) && out.zoneAt(k10.x - 1, k10.y + 19)?.id === 'monksvale_j10',
     'the road runs square to square over K10 from the bridge at 30,3 to the pass\'s mouth at 5,15 and out by the west edge at 0,19, on onto J10\'s road over the pass');
   const vale = ATLAS.links.find((l) => l.from === 'monksvale' && l.to === 'monastery')!.a!;
   const k10Stone = counted(k10, K10, 'k10_milestone', { name: 'MONKS\' VALE', at: vale });
@@ -515,7 +512,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const toL10 = w.world.move('forward');
   ok(toL10.kind === 'moved' && w.world.zone?.id === 'longmere_l10' && w.world.state.x === l10.x + 7 && w.world.state.y === l10.y && !toL10.messages.some((m) => m.includes('Loch Fada.')),
     `south from L9's 7,31 onto L10's 7,0, walked, and the land not named again (${toL10.kind === 'moved' ? toL10.messages.join(' / ') || 'nothing said' : toL10.kind})`);
-  const l10Road = paces(out, l10.x + 6, l10.y, (x, y) => road(x, y) && onL10(x, y));
+  const l10Road = paces(out, l10.x + 6, l10.y, (x, y) => road(out, x, y) && onL10(x, y));
   ok(l9.y + l9.h === l10.y && l10.x === l9.x && (L10.exits ?? []).length === 0 && l10Road.has((l10.y + 3) * out.width + l10.x),
     'the road runs square to square over L10\'s corner from 6,0 and 7,0 to the west edge at 0,3; the box has no way out but its edges');
 
@@ -854,12 +851,6 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  * to the lodge; and the stonecutter at the lodge once he is sent home from the tors, and not before.
  */
 function sideQuests(ok: (cond: boolean, msg: string) => void): void {
-  const npc = (map: string, name: string, n = 0): Person => MAP_DEFS.find((d) => d.id === map)!.features!.filter((f) => f.kind === 'npc' && f.name === name)[n] as Person;
-  const shows = (w: Walk, map: string, id: string): boolean => {
-    const f = MAP_DEFS.find((d) => d.id === map)!.features!.find((x) => x.kind === 'event' && x.id === id)!;
-    w.world.travel(map, f.x, f.y);
-    return w.world.present(f);
-  };
 
   // The Coach That Never Came (#56's 40), at 20: the coachman asks; by the coach on the moor the man in
   // the healer's coat writes his note; carried down, it sends the sledge, and the sleeper goes to the
@@ -1024,7 +1015,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
  * the morning in the yard. Each night's entry is written as its flag is set, and no more.
  */
 const NIGHTS_STOOD: Step = { name: 'the four nights', play: (w) => {
-  const inn = business('inn')[0], night = nightCost(inn, w.party);
+  const inn = ofKind(TOWN, 'inn')[0], night = nightCost(inn, w.party);
   for (const [i, flag] of NIGHTS.entries()) {
     const purse = w.party.gold;
     const { set } = stay(w.party, w.world, inn);

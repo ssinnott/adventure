@@ -40,8 +40,8 @@
 // read to Hereward in Rook's Nest (`thirdPrestiges`). Last, the bounds (#832): the pines over the water
 // by Sheer Point (J8), in a walk of their own (`theBounds`).
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, listen, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, page, goal, written, began, reads, there, here, search, holding, keys, xpOf, thiefDown, same, walkAt, atLevel, type Walk, type Step } from '../../../../tools/kit/walk.ts';
-import { zone, square, ALL, shut, reached, spread, each } from '../../../../tools/kit/grid.ts';
+import { newWalk, walkThrough, see, fight, listen, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, page, goal, written, began, reads, there, here, search, holding, keys, xpOf, thiefDown, same, walkAt, atLevel, mapOf, npc, chest, log, key, press, type Walk, type Step } from '../../../../tools/kit/walk.ts';
+import { zone, square, ALL, shut, reached, spread, each, road } from '../../../../tools/kit/grid.ts';
 import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { xpForLevel, createCharacter, takePrestige, prestigeOf, defaultParty, equip, statOf, attackBonus } from '../../../game/party.ts';
 import type { ClassId, Party } from '../../../game/party.ts';
@@ -54,7 +54,6 @@ import { AREAS, ATLAS, MAP_DEFS, MONSTERS as MONSTER_DEFS } from '../../index.ts
 import { CURVE } from '../../progression.ts';
 import { elementMult } from '../../../game/monsters.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
-import { headlessGame } from '../../../../tools/kit/headless.ts';
 import { GEAR } from '../../../../tools/kit/company.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -72,7 +71,6 @@ import { WENNA_LODGE } from '../rimewater/public.ts';
 import { TOLL_DONE, LEDGE_ASKED, LEDGE_HELD } from './maps/highspine_i10.ts';
 import { ELEVEN_ASKED, ELEVEN_SUNG } from './maps/monastery.ts';
 import { NEST_CELL } from './maps/highspine_i11.ts';
-import { questLog } from '../../../game/quests.ts';
 import { CHAPTER } from './chapter.ts';
 
 const J11 = MAP_DEFS.find((d) => d.id === 'monksvale_j11')!;
@@ -84,7 +82,6 @@ export const walkthrough: Walkthrough = (ok) => {
   const out = buildMaps()[OUTDOORS];
   const j11 = out.zones.find((z) => z.id === 'monksvale_j11')!, k10 = out.zones.find((z) => z.id === 'coldmere_k10')!;
   const j10 = out.zones.find((z) => z.id === 'monksvale_j10')!;
-  const road = (x: number, y: number): boolean => out.at(x, y).ch === '=';
 
   // Over the pass: from K10's road at its west edge onto J10's, walked (#508; taken across parked J10's
   // corner until it was laid, SADDLE and CLIMB). Three under the vale's floor the harsher words, two
@@ -96,7 +93,7 @@ export const walkthrough: Walkthrough = (ok) => {
     return r.kind === 'moved' ? r.messages : [r.kind];
   };
   const low = over(19), two = over(20), due = over(22);
-  ok(w.world.zone?.id === 'monksvale_j10' && w.world.state.x === j10.x + 31 && w.world.state.y === j10.y + 19 && j10.x + j10.w === k10.x && road(k10.x, k10.y + 19) && road(j10.x + 31, j10.y + 19),
+  ok(w.world.zone?.id === 'monksvale_j10' && w.world.state.x === j10.x + 31 && w.world.state.y === j10.y + 19 && j10.x + j10.w === k10.x && road(out, k10.x, k10.y + 19) && road(out, j10.x + 31, j10.y + 19),
     'over the pass west along the road from K10\'s 0,19 onto J10\'s 31,19, walked');
   ok(due.join(' / ') === 'Monks\' Vale.', `at 22, the vale named, no more (${due.join(' / ')})`);
   ok(two.join(' / ') === `Monks' Vale. ${VALE.crossing?.harder}`, `at 20, the rest in the range's own words (${two.join(' / ')})`);
@@ -123,14 +120,14 @@ export const walkthrough: Walkthrough = (ok) => {
   const onJ11 = (x: number, y: number): boolean => x >= j11.x && x < j11.x + j11.w && y >= j11.y && y < j11.y + j11.h;
   const way = ATLAS.links.find((l) => l.from === 'monksvale' && l.to === 'monastery')!.a!;
   const onJ10 = (x: number, y: number): boolean => x >= j10.x && x < j10.x + j10.w && y >= j10.y && y < j10.y + j10.h;
-  const byRoad = spread(out, j10.x + 31, j10.y + 19, (x, y) => road(x, y) && (onJ10(x, y) || onJ11(x, y)));
-  ok(byRoad.has(j11.y * out.width + j11.x + 20) && byRoad.has((j11.y + GATE.y - 1) * out.width + j11.x + GATE.x) && road(j10.x + 32, j10.y + 19),
+  const byRoad = spread(out, j10.x + 31, j10.y + 19, (x, y) => road(out, x, y) && (onJ10(x, y) || onJ11(x, y)));
+  ok(byRoad.has(j11.y * out.width + j11.x + 20) && byRoad.has((j11.y + GATE.y - 1) * out.width + j11.x + GATE.x) && road(out, j10.x + 32, j10.y + 19),
     'the road runs square to square from K10\'s edge over J10\'s corner to its south edge at 20,31, and over J11 from the pass\'s foot at 20,0 to the gate\'s front at 26,23');
   ok(Math.floor(way[0]) === j11.x + GATE.x && Math.floor(way[1]) === j11.y + GATE.y, `the gate at 26,24 is the atlas's way into Highcell (${way.join(',')})`);
 
   // The bells, heard at the pass's foot on the road, the step's first line.
   const bells = J11.features!.find((f) => f.kind === 'event' && f.id === 'j11_bells');
-  ok(bells?.kind === 'event' && road(j11.x + bells.x, j11.y + bells.y) && bells.y <= 3 && bells.text.startsWith('Across the snow, bells.'), 'the bells are heard on the road at the pass\'s foot');
+  ok(bells?.kind === 'event' && road(out, j11.x + bells.x, j11.y + bells.y) && bells.y <= 3 && bells.text.startsWith('Across the snow, bells.'), 'the bells are heard on the road at the pass\'s foot');
   see(w, 'monksvale_j11:j11_bells');
 
   // The gate (GATE), the way into Highcell, walked in `highcell` below (#500): a door in the wall, the
@@ -159,7 +156,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The monks' shrine by the road, its bell with no rope.
   const shrine = J11.features!.find((f): f is Extract<typeof f, { kind: 'shrine' }> => f.kind === 'shrine' && f.id === 'j11_shrine');
-  ok(!!shrine && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => road(j11.x + shrine.x + dx, j11.y + shrine.y + dy)) && shrine.text.includes('no rope'), 'the monks\' shrine stands by the road, its bell on a post with no rope');
+  ok(!!shrine && [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => road(out, j11.x + shrine.x + dx, j11.y + shrine.y + dy)) && shrine.text.includes('no rope'), 'the monks\' shrine stands by the road, its bell on a post with no rope');
 
   // The box's groups, each won at its floor: the brothers on the road, the eagles over the hills and the
   // snow trolls on the summit's path, the box's group at 23.
@@ -214,7 +211,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const stone = I11.features!.find((f) => f.kind === 'event' && f.id === 'i11_stone')!;
   ok(i11.x + stone.x === Math.floor(peak.at[0]) && i11.y + stone.y === Math.floor(peak.at[1]) && !peak.planned && walked.has(square(out, i11, stone.x, stone.y)),
     'the Peak Stone stands at the atlas\'s site, 28,0, built, and the crest path reaches it from the crossing');
-  ok(road(i11.x + 27, i11.y) && walked.has(square(out, i11, ({ x: 27, y: 0 }).x, ({ x: 27, y: 0 }).y)) && road(i11.x + 27, i11.y - 1),
+  ok(road(out, i11.x + 27, i11.y) && walked.has(square(out, i11, ({ x: 27, y: 0 }).x, ({ x: 27, y: 0 }).y)) && road(out, i11.x + 27, i11.y - 1),
     'the ridge trail leaves north beside the Stone at 27,0, on into I10 (#502)');
   // The Stone, whole: stood at, it counts toward the Hearth, though nothing was wrong with it.
   const lit = stonesRestored(w.world.state, w.party);
@@ -303,12 +300,12 @@ export const walkthrough: Walkthrough = (ok) => {
   // walkthrough walks it.
   const onI10 = (x: number, y: number): boolean => x >= i10.x && x < i10.x + i10.w && y >= i10.y && y < i10.y + i10.h;
   const walked10 = spread(out, i10.x + 27, i10.y + 31, (x, y) => onI10(x, y) && out.passable(x, y) === 'ok');
-  ok(road(i10.x + 18, i10.y) && walked10.has(square(out, i10, ({ x: 18, y: 0 }).x, ({ x: 18, y: 0 }).y)) && road(i10.x + 18, i10.y - 1),
+  ok(road(out, i10.x + 18, i10.y) && walked10.has(square(out, i10, ({ x: 18, y: 0 }).x, ({ x: 18, y: 0 }).y)) && road(out, i10.x + 18, i10.y - 1),
     'the ridge trail leaves north at 18,0, on into I9 (#503)');
   const link = ATLAS.links.find((l) => l.note === 'the Giants\' Stair')!;
-  ok(link.b?.[0] === i10.x + 8 && link.b?.[1] === i10.y + 20 && [...Array(16).keys()].every((i) => road(i10.x + 8 + i, i10.y + 20)),
+  ok(link.b?.[0] === i10.x + 8 && link.b?.[1] === i10.y + 20 && [...Array(16).keys()].every((i) => road(out, i10.x + 8 + i, i10.y + 20)),
     'the road leaves the trail west for the Stair\'s head, at the atlas\'s link, 272,306');
-  ok(road(i10.x, i10.y + 20) && road(i10.x + 1, i10.y + 20) && out.at(i10.x, i10.y + 19).ch === '|' && out.at(i10.x + 1, i10.y + 21).ch === '|' && walked10.has(square(out, i10, ({ x: 0, y: 20 }).x, ({ x: 0, y: 20 }).y)) && road(i10.x - 1, i10.y + 20) && out.zones.find((z) => z.id === 'cindercoast_h10')?.x === i10.x - 32,
+  ok(road(out, i10.x, i10.y + 20) && road(out, i10.x + 1, i10.y + 20) && out.at(i10.x, i10.y + 19).ch === '|' && out.at(i10.x + 1, i10.y + 21).ch === '|' && walked10.has(square(out, i10, ({ x: 0, y: 20 }).x, ({ x: 0, y: 20 }).y)) && road(out, i10.x - 1, i10.y + 20) && out.zones.find((z) => z.id === 'cindercoast_h10')?.x === i10.x - 32,
     'the Stair goes down through the Sheer to the west edge at 0,20, and on down onto Ashfall\'s H10 at its 31,20');
 
   // The caravan drawn up short of the head that cannot pay (#56's 47, #506's), past the Stair in snow:
@@ -450,9 +447,9 @@ export const walkthrough: Walkthrough = (ok) => {
   // The ridge trail square to square from the way in at 18,31 to the north edge at 20,0, where the
   // atlas's trail crosses, and on into I8 (#504); the pines open across the south edge into I10's.
   const onI9 = (x: number, y: number): boolean => x >= i9.x && x < i9.x + i9.w && y >= i9.y && y < i9.y + i9.h;
-  const trail9 = spread(out, i9.x + 18, i9.y + 31, (x, y) => onI9(x, y) && road(x, y));
+  const trail9 = spread(out, i9.x + 18, i9.y + 31, (x, y) => onI9(x, y) && road(out, x, y));
   const walked9 = spread(out, i9.x + 18, i9.y + 31, (x, y) => onI9(x, y) && out.passable(x, y) === 'ok');
-  ok(trail9.has(square(out, i9, ({ x: 20, y: 0 }).x, ({ x: 20, y: 0 }).y)) && road(i9.x + 20, i9.y) && road(i9.x + 20, i9.y - 1) && out.passable(i9.x + 20, i9.y - 1) === 'ok',
+  ok(trail9.has(square(out, i9, ({ x: 20, y: 0 }).x, ({ x: 20, y: 0 }).y)) && road(out, i9.x + 20, i9.y) && road(out, i9.x + 20, i9.y - 1) && out.passable(i9.x + 20, i9.y - 1) === 'ok',
     'the ridge trail runs square to square from 18,31 to the north edge at 20,0, and on into I8');
   ok([...Array(17).keys()].every((i) => out.at(i9.x + 1 + i, i9.y + 31).ch === 'p' && out.passable(i9.x + 1 + i, i9.y + 32) === 'ok'), 'the pines run on across the south edge into I10\'s');
 
@@ -539,10 +536,10 @@ export const walkthrough: Walkthrough = (ok) => {
   // on the north and west ends the world; the east edge meets J8's west (#832, `theBounds`).
   const onI8 = (x: number, y: number): boolean => x >= i8.x && x < i8.x + i8.w && y >= i8.y && y < i8.y + i8.h;
   const at8 = (f: { x: number; y: number }): number => (i8.y + f.y) * out.width + i8.x + f.x;
-  const trail8 = spread(out, i8.x + 20, i8.y + 31, (x, y) => onI8(x, y) && road(x, y));
+  const trail8 = spread(out, i8.x + 20, i8.y + 31, (x, y) => onI8(x, y) && road(out, x, y));
   const walked8 = spread(out, i8.x + 20, i8.y + 31, (x, y) => onI8(x, y) && out.passable(x, y) === 'ok');
   const ev8 = (id: string): { x: number; y: number } => I8.features!.find((f) => f.kind === 'event' && f.id === id)!;
-  ok(trail8.has(at8({ x: 22, y: 14 })) && i8.x + 22 === 286 && i8.y + 14 === 236 && [21, 23].every((x) => !road(i8.x + x, i8.y + 13)) && !road(i8.x + 22, i8.y + 13),
+  ok(trail8.has(at8({ x: 22, y: 14 })) && i8.x + 22 === 286 && i8.y + 14 === 236 && [21, 23].every((x) => !road(out, i8.x + x, i8.y + 13)) && !road(out, i8.x + 22, i8.y + 13),
     'the ridge trail runs square to square from 20,31 to its end at 22,14, the atlas\'s 286,236');
   ok(trail8.has(at8(ev8('i8_warm'))) && ev8('i8_trail_end').x === 22 && ev8('i8_trail_end').y === 14, 'on the trail the rock warm under it, and at its end the Point below');
   for (const id of ['i8_warm', 'i8_trail_end']) see(w, `sheerpoint_i8:${id}`);
@@ -686,8 +683,7 @@ function spineBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const out = buildMaps()[OUTDOORS];
   const [J10, I12, J12] = ['monksvale_j10', 'highspine_i12', 'monksvale_j12'].map(mapOf);
   const [j10, i11, i12, j11, j12] = [J10.id, 'highspine_i11', I12.id, 'monksvale_j11', J12.id].map((id) => out.zones.find((z) => z.id === id)!);
-  const npc = (def: MapDef, name: string): Person => def.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
-  const chest = (def: MapDef, id: string) => def.features!.find((f) => f.kind === 'chest' && f.id === id);
+  const npcOn = (def: MapDef, name: string): Person => def.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
   w.level = 22;
   for (const m of w.party.members) m.level = 22;
 
@@ -706,7 +702,7 @@ function spineBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   listen(w);
 
   // The goatherd who grazes their ground, who says they ask nothing off the Stair.
-  const goatherd = npc(J10, 'A goatherd');
+  const goatherd = npcOn(J10, 'A goatherd');
   w.world.travel(J10.id, goatherd.x, goatherd.y);
   ok(meet(goatherd, w.party, heard(w.world, goatherd)).text.includes('Off the Stair they ask nothing'), 'the goatherd grazes the giants\' ground, and off the Stair they ask nothing of anybody');
   listen(w);
@@ -735,7 +731,7 @@ function spineBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   ok(I12.start.x === 18 && I12.start.y === 0 && I12.start.facing === SOUTH && !(I12.exits ?? []).length, 'the Spine\'s south starts at its north edge under the pines, and nothing is taken out of it');
   for (const id of ['i12_south', 'i12_edge', 'i12_eyrie', 'i12_rim', 'i12_stripped', 'i12_under', 'i12_pack']) see(w, `${I12.id}:${id}`);
-  const burner = npc(I12, 'A charcoal-burner');
+  const burner = npcOn(I12, 'A charcoal-burner');
   w.world.travel(I12.id, burner.x, burner.y);
   ok(meet(burner, w.party, heard(w.world, burner)).text.includes('where the pines stop'), 'the charcoal-burner at his clamp knows where the trolls lie up');
   listen(w);
@@ -807,17 +803,6 @@ const hollowEvent = (id: string): Happening => mapOf('monksvale_j12').features!.
  */
 function hollowLocked(ok: (cond: boolean, msg: string) => void): void {
   const iron = hollowChest('j12_hollow_locked'), plain = hollowChest('j12_hollow_chest');
-  /** A new game, the company dressed by `dress`, stood on the chest and Space pressed twice: what the log said, and what became of the chest, the prize and the keys. */
-  const press = (c: Chest, dress: (p: Party) => void): string => {
-    const g = headlessGame(4), p = g.party;
-    dress(p);
-    g.world.travel('monksvale_j12', c.x, c.y, SOUTH);
-    const there = g.world.featureHere(), from = g.log.length;
-    g.enterCell();
-    if (there) { g.interact(there); g.interact(there); }
-    return `${g.log.slice(from).join(' ')} | ${g.world.used(c.id) ? 'spent' : 'shut'} | ${c.items.every((i) => p.bag.includes(i)) ? 'taken' : 'left'} | ${p.bag.filter((i) => i === 'key_iron').length} keys`;
-  };
-  const key = (p: Party): void => { p.bag.push('key_iron'); };
   const prize = 'You open the chest: Thunderhead Axe. The chest is empty.';
   const cases: [string, Chest, (p: Party) => void, string][] = [
     ['no Lockpick standing and no key', iron, thiefDown, 'A locked chest. Locked. Locked. | shut | left | 0 keys'],
@@ -826,7 +811,7 @@ function hollowLocked(ok: (cond: boolean, msg: string) => void): void {
     ['no Lockpick standing and an iron key, which is spent', iron, (p) => { thiefDown(p); key(p); }, `A locked chest. The lock turns. The key crumbles. ${prize} | spent | taken | 0 keys`],
     ['no Lockpick and no key, at the plain chest beside it', plain, thiefDown, 'A chest. Space opens it. You open the chest: Talon Knife. The chest is empty. | spent | taken | 0 keys'],
   ];
-  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press(c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
+  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press('monksvale_j12', SOUTH, c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
   ok(iron.locked === true && !plain.locked && !wrong.length,
     `the iron-bound chest refuses a company with neither a Lockpick nor an iron key and opens to either, the plain chest beside it opening to any (${cases.map(([who]) => who).join('; ')})${wrong.length ? ' -> ' + wrong.join('; ') : ''}`);
 }
@@ -936,8 +921,6 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
     takePrestige(w.party.members[slot]); takePrestige(w.party.members[slot]);
     return w;
   };
-  const npc = (map: string, name: string): Person => mapOf(map).features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
-  const questOf = (w: Walk, id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
   const ask = (w: Walk, map: string, p: Person, sets: string): string => {
     w.world.travel(map, p.x, p.y);
     const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.sets === sets), not = m.choice?.answers.find((x) => !x.sets);
@@ -960,11 +943,11 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   };
   /** The quest done once, with no goal, its entries all written. */
   const finished = (w: Walk, id: string, entries: readonly string[], how: string): void => {
-    const v = questOf(w, id), title = v?.def.title ?? id, ids = v?.pages[0].entries.map((e) => e.id) ?? [];
+    const v = log(w, id), title = v?.def.title ?? id, ids = v?.pages[0].entries.map((e) => e.id) ?? [];
     ok(!!v?.done && v.goal === null && entries.every((e) => ids.includes(e)) && w.news.filter((n) => n === `Quest complete: ${title}.`).length === 1,
       `${how}: done with no goal, its entries ${ids.join(', ')}, and said complete once`);
   };
-  const seeking = (w: Walk, slot: number): string | null | undefined => questOf(w, seekId(slot, 3))?.goal;
+  const seeking = (w: Walk, slot: number): string | null | undefined => log(w, seekId(slot, 3))?.goal;
 
   // The two nights: asked by day, each group is not there by day and is by night, the next only once the
   // one before is down; won at 27, the trainer's words at first light set the quest done, and the menu
@@ -979,8 +962,8 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
     ok(sent === `Find ${n.who} in ${mapOf(n.map).name}.`, `${n.how}: at ${LEVEL} with the second, ${w.party.members[n.slot].name} is sent to the trainer (${sent})`);
     until(w, 12);
     ask(w, n.map, p, n.asked);
-    ok(!!questOf(w, n.quest)?.pages[0].begun && n.goal.test(questOf(w, n.quest)?.goal ?? '') && questOf(w, seekId(n.slot, 3))?.done === true,
-      `${n.how}: asked, it begins and the seeking is done (${questOf(w, n.quest)?.goal})`);
+    ok(!!log(w, n.quest)?.pages[0].begun && n.goal.test(log(w, n.quest)?.goal ?? '') && log(w, seekId(n.slot, 3))?.done === true,
+      `${n.how}: asked, it begins and the seeking is done (${log(w, n.quest)?.goal})`);
     ok(offers(p.teaches!, w.party, w.world.state)[0]?.bar === 'the quest first' && !teach(p.teaches!, w.party, w.world.state, n.slot).taught, `${n.how}: and the menu waits on the quest`);
     for (const g of gs) {
       w.world.travel(n.map, p.x, p.y);
@@ -1004,17 +987,17 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
     const w = company(2, 'bard'), lark = npc('monastery', 'Brother Lark');
     ok(seeking(w, 2) === 'Find Brother Lark in Highcell.', `The Eleven: at ${LEVEL} with the second, the bard is sent to the bell tower (${seeking(w, 2)})`);
     ask(w, 'monastery', lark, ELEVEN_ASKED);
-    ok(/Find the eleven/.test(questOf(w, 'eleven')?.goal ?? '') && questOf(w, seekId(2, 3))?.done === true, `The Eleven: asked, the goal is the verses (${questOf(w, 'eleven')?.goal})`);
+    ok(/Find the eleven/.test(log(w, 'eleven')?.goal ?? '') && log(w, seekId(2, 3))?.done === true, `The Eleven: asked, the goal is the verses (${log(w, 'eleven')?.goal})`);
     // The keeper's log off Crowness Light's table; the Tide Bell back to the priestess at the dry door;
     // the hymn's doors heard going down, and the oldest miner's last verse.
-    const log = mapOf('downs_e3').features!.find((f) => f.kind === 'chest' && f.id === 'e3_log');
-    if (log?.kind === 'chest') { w.world.travel('downs_e3', log.x, log.y); w.world.markUsed(log.id); w.party.bag.push(...log.items); }
+    const keeperLog = mapOf('downs_e3').features!.find((f) => f.kind === 'chest' && f.id === 'e3_log');
+    if (keeperLog?.kind === 'chest') { w.world.travel('downs_e3', keeperLog.x, keeperLog.y); w.world.markUsed(keeperLog.id); w.party.bag.push(...keeperLog.items); }
     w.party.bag.push('tide_bell');
     hear(w, 'delta_b6', npc('delta_b6', 'a priestess at the dry door'));
     see(w, 'deep_mines:dm1_door3');
     hear(w, 'anvilhall', npc('anvilhall', 'The oldest miner'));
-    ok(['count', 'doors', 'light'].every((e) => questOf(w, 'eleven')?.pages[0].entries.some((x) => x.id === e)) && /Sing the verses/.test(questOf(w, 'eleven')?.goal ?? ''),
-      `The Eleven: the count, the doors and the light gathered, the goal is the bell tower (${questOf(w, 'eleven')?.goal})`);
+    ok(['count', 'doors', 'light'].every((e) => log(w, 'eleven')?.pages[0].entries.some((x) => x.id === e)) && /Sing the verses/.test(log(w, 'eleven')?.goal ?? ''),
+      `The Eleven: the count, the doors and the light gathered, the goal is the bell tower (${log(w, 'eleven')?.goal})`);
     const sung = hear(w, 'monastery', lark);
     ok(sung.includes('every word falls on a stroke') && !!w.party.flags[ELEVEN_SUNG], `The Eleven: sung to him under the bells (${sung.split('\n\n')[1] ?? sung})`);
     finished(w, 'eleven', ['asked', 'count', 'doors', 'light', 'sung'], 'The Eleven');
@@ -1029,9 +1012,9 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
     const w = company(3, 'thief'), hereward = npc('sheerpoint_i8', 'Hereward, the watcher');
     ok(seeking(w, 3) === 'Find Hereward, the watcher in Sheer Point.', `Whose Hand: at ${LEVEL} with the second, the thief is sent to Rook's Nest (${seeking(w, 3)})`);
     const said = [hear(w, 'sheerpoint_i8', hereward), hear(w, 'sheerpoint_i8', hereward), hear(w, 'sheerpoint_i8', hereward)];
-    ok(said[0] === hereward.lines.join('\n\n') && said[1].includes('whose hand writes them') && said[2] === said[0] && !!w.party.flags[ORDERS_ASKED] && questOf(w, seekId(3, 3))?.done === true
-      && offers(hereward.teaches!, w.party, w.world.state)[0]?.bar === 'the quest first' && /Go down the Dead-Drop/.test(questOf(w, 'whose_hand')?.goal ?? ''),
-      `Whose Hand: his own words first, then his ask, once, which begins it and ends the seeking, and the menu waits on it (${questOf(w, 'whose_hand')?.goal})`);
+    ok(said[0] === hereward.lines.join('\n\n') && said[1].includes('whose hand writes them') && said[2] === said[0] && !!w.party.flags[ORDERS_ASKED] && log(w, seekId(3, 3))?.done === true
+      && offers(hereward.teaches!, w.party, w.world.state)[0]?.bar === 'the quest first' && /Go down the Dead-Drop/.test(log(w, 'whose_hand')?.goal ?? ''),
+      `Whose Hand: his own words first, then his ask, once, which begins it and ends the seeking, and the menu waits on it (${log(w, 'whose_hand')?.goal})`);
     const won = (id: string): void => { for (const g of mapOf(id).encounters ?? []) if (w.world.walks(g, g.x, g.y) && !w.world.ended(g)) fight(w, `${id}:${g.id}`); };
     const way = (from: string, to: string) => mapOf(from).exits!.find((e) => e.to === to)!;
     const foot = way('dead_drop_stair', 'dead_drop');
@@ -1047,8 +1030,8 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
     if (tray.kind === 'chest') { w.world.markUsed(tray.id); w.party.bag.push(...tray.items); }
     listen(w);
     ok(!!w.party.flags.q_writer_seen && w.party.bag.includes('compact_orders') && !besideWrites && !besideTray && !w.world.ended(desk) && writes.x === desk.x
-      && questOf(w, 'whose_hand')?.goal === 'Take the orders up to Hereward in Rook\'s Nest, on Sheer Point.',
-      `Whose Hand: through the gate in the rail the Tallymaster seen writing, and the orders out of the tray at its right hand with no group beside, the Tallymaster left at its desk (${questOf(w, 'whose_hand')?.goal})`);
+      && log(w, 'whose_hand')?.goal === 'Take the orders up to Hereward in Rook\'s Nest, on Sheer Point.',
+      `Whose Hand: through the gate in the rail the Tallymaster seen writing, and the orders out of the tray at its right hand with no group beside, the Tallymaster left at its desk (${log(w, 'whose_hand')?.goal})`);
     for (const [from, to] of [['dead_drop3', 'dead_drop2'], ['dead_drop2', 'dead_drop'], ['dead_drop', 'dead_drop_stair']]) { const s = mapOf(from).start; walkThrough(w, from, s.x, s.y + 1, NORTH, to, 1); }
     const read = hear(w, 'sheerpoint_i8', hereward);
     ok(read.includes('reads the orders through twice') && !!w.party.flags[ORDERS_READ] && w.party.bag.includes('compact_orders'),
@@ -1175,7 +1158,6 @@ function highcell(w: Walk, ok: (cond: boolean, msg: string) => void): void {
 
 // ---- the chapter (#505) ----
 
-const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
 const KING = mapOf('highspine_i10').encounters!.find((g) => g.id === 'i10_king')!;
 
 
@@ -1330,7 +1312,6 @@ function theBells(ok: (cond: boolean, msg: string) => void): void {
  * xp whichever way it goes.
  */
 function sideQuests(ok: (cond: boolean, msg: string) => void): void {
-  const npc = (map: string, name: string): Person => mapOf(map).features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
 
   // The Novice (#56's 45), at 23: the boy in the last cell asks, and a company that says not now is
   // asked again; his letter carried to the woman knitting on Anvilhall's terrace, she reads it at the
