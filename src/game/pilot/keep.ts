@@ -12,6 +12,7 @@ import type { Feature } from '../map.ts';
 import type { Character, Party } from '../party.ts';
 import { armorClass, canTrain, canTrainAt, hasCondition, isDown, PRESTIGES, templePrice, trainPrice, weaponOf } from '../party.ts';
 import { hits, item, priceIn } from '../items.ts';
+import { RATIONS_PRICE } from '../services.ts';
 import { mustRest, REST_AT } from '../bot.ts';
 import { restRefused } from '../wilds.ts';
 import { ChoiceScreen, InteriorScreen, SheetScreen, SpellScreen, TRADE } from '../../ui/screens.ts';
@@ -36,8 +37,8 @@ type Business = Extract<Feature, { kind: 'inn' | 'temple' | 'shop' | 'trainer' }
 
 /** The keys of route a well may be off for the company to go and drink. */
 const WELL_KEYS = 6;
-/** What ten rations cost at an inn, as its menu says ("Buy 10 rations (20 gold)"). */
-const INN_RATIONS = 20;
+/** What ten rations cost at an inn, the rule's own price (`RATIONS_PRICE`, game/services.ts). */
+const INN_RATIONS = RATIONS_PRICE;
 /** A feature on another map counts this many keys for each map between, so that one on this map comes first. */
 const FAR = 1e6;
 /** The members the sheet goes round with `left` and `right`. */
