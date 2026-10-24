@@ -7,7 +7,8 @@
 // kiln, found by a cup set down clean, a room the ash never filled and a scholar in it, the Master of magic
 // (#859). Band 25-26, the boss the top; docs/areas/ashfall.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Master of magic's favour done (#859): the town's roll handed to the scholar, which her Master tests. */
@@ -20,6 +21,7 @@ export const OLD_CINDER: MapDef = {
   band: [25, 26],
   region: 'ashfall',
   start: { x: 8, y: 1, facing: SOUTH },
+  anchors: { from_old_cinder2: { x: 8, y: 12, facing: NORTH } },
   // The potters' fired brick gone grey under the ash, the street's floor ash, and the crater's crust
   // overhead.
   palette: { wall: '#8e877c', wallDark: '#5f5951', floor: '#6b665e', ceiling: '#26221f', door: '#4a3a2c', wallStyle: 'brick', ceilingStyle: 'vault', banner: '#5a4a3c' },
@@ -44,9 +46,9 @@ export const OLD_CINDER: MapDef = {
   ],
   exits: [
     // Back up onto the crater's lip on F11, facing away from the pit.
-    { x: 8, y: 1, to: 'emberwaste_f11', tx: 18, ty: 4, tf: WEST, label: 'You climb back up over the lip, and the wind off the Waste finds you.' },
+    anchored({ x: 8, y: 1, to: 'emberwaste_f11', at: 'from_old_cinder', label: 'You climb back up over the lip, and the wind off the Waste finds you.' }),
     // The hall's stair, down to the cellars.
-    { x: 8, y: 14, to: 'old_cinder2', tx: 8, ty: 1, tf: SOUTH, label: 'You go down the hall\'s stair, under the square, into its cellars.' },
+    anchored({ x: 8, y: 14, to: 'old_cinder2', at: 'start', label: 'You go down the hall\'s stair, under the square, into its cellars.' }),
   ],
   features: [
     // The street the ash has left, and its people in the doorways.

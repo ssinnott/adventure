@@ -4,7 +4,8 @@
 // his old standard-bearer, who teaches the Knight's second prestige (#19). Cut from the atlas by
 // tools/scaffold.ts; docs/areas/shelf.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DOWNS_F2: MapDef = {
@@ -15,6 +16,7 @@ export const DOWNS_F2: MapDef = {
   band: [2, 3],
   region: 'shelf',
   start: { x: 31, y: 29, facing: WEST },
+  anchors: { from_shelf: { x: 30, y: 29, facing: WEST } },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     '^^^^^^TTTTTTTTTTTTTTTTTTTTTT^^^^',
@@ -50,7 +52,7 @@ export const DOWNS_F2: MapDef = {
     'fffffffffffffff===ff,,,,,,,,,,,,',
   ],
   exits: [
-    { x: 31, y: 29, to: 'shelf', tx: 1, ty: 29, tf: EAST, label: 'The road drops to the sand. The Foreland.' },
+    anchored({ x: 31, y: 29, to: 'shelf', at: 'from_downs_f2', label: 'The road drops to the sand. The Foreland.' }),
   ],
   features: [
     { kind: 'sign', x: 30, y: 28, text: 'A milestone: GULLWICK 2. CROWNESS 4.' },

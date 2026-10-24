@@ -5,6 +5,7 @@
 // in it, to the grey door down into the Ways (#757) with Wenna's knot on its frame (§5). Band 29;
 // docs/areas/hearth_isle.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -22,7 +23,7 @@ export const LOG_GIVEN = 'q_eleven_log';
  * 8,2, facing south. The door's sign stands two squares before it, at 8,3: an exit takes the company on
  * arrival, before the square's texts are said, so a sign on the door's own square would never be read.
  */
-export const GREY_DOOR: Exit = { x: 8, y: 1, to: 'underdeep', tx: 16, ty: 30, tf: NORTH, label: 'Through the grey door she opened, and the ice of the crypt gives way to the hum. Light comes from the walls, and no lamp.' };
+export const GREY_DOOR: Exit = anchored({ x: 8, y: 1, to: 'underdeep', at: 'start', label: 'Through the grey door she opened, and the ice of the crypt gives way to the hum. Light comes from the walls, and no lamp.' });
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 
@@ -34,6 +35,7 @@ export const HEARTHFANE2: MapDef = {
   region: 'hearth',
   // At the stair's foot, facing up the passage.
   start: { x: 8, y: 14, facing: NORTH },
+  anchors: { from_underdeep: { x: 8, y: 2, facing: SOUTH } },
   // The temple's rock going grey toward the bottom, cold, and nothing hung on it.
   palette: { wall: '#a49c90', wallDark: '#6c665e', floor: '#7a766c', ceiling: '#262422', door: '#7a7874', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#6a6866' },
   bare: true,
@@ -57,7 +59,7 @@ export const HEARTHFANE2: MapDef = {
   ],
   exits: [
     // Up the stair onto the altar's square in the temple's court, facing away from the stair.
-    { x: 8, y: 15, to: 'hearthfane', tx: 8, ty: 2, tf: SOUTH, label: 'Up the stair behind the altar into the court.' },
+    anchored({ x: 8, y: 15, to: 'hearthfane', at: 'from_hearthfane2', label: 'Up the stair behind the altar into the court.' }),
     // Through the grey door down into the Ways (#757).
     GREY_DOOR,
   ],

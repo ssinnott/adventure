@@ -7,7 +7,8 @@
 // Brothers keep the hours by the cells, and ringers come down the tower's stair. Band 22-24, from the
 // area's floor as Carn Dubh's cairn is; docs/areas/whitespine.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH, WEST } from '../../../../game/types.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { NEST_CELL } from './highspine_i11.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
@@ -37,6 +38,7 @@ export const MONASTERY: MapDef = {
   band: [22, 24],
   region: 'whitespine',
   start: { x: 7, y: 1, facing: SOUTH },
+  anchors: { from_monastery2: { x: 12, y: 13, facing: WEST } },
   // The range's grey stone, limewashed pale and swept, and the floor flags worn in the walks.
   palette: { wall: '#a8a294', wallDark: '#726c60', floor: '#5c564c', ceiling: '#24211d', door: '#5a4430', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#6e5a45' },
   bare: true,
@@ -60,9 +62,9 @@ export const MONASTERY: MapDef = {
   ],
   exits: [
     // The gate, back out onto the road's end on J11 (GATE).
-    { x: 7, y: 1, to: 'monksvale_j11', tx: 26, ty: 23, tf: NORTH, label: 'Out at the gate, and the brother in it bows you out into the cold.' },
+    anchored({ x: 7, y: 1, to: 'monksvale_j11', at: 'from_monastery', label: 'Out at the gate, and the brother in it bows you out into the cold.' }),
     // The night stair, down to the chapter house.
-    { x: 13, y: 13, to: 'monastery2', tx: 7, ty: 1, tf: SOUTH, label: 'You go down the night stair, a long way down, into the lower house.' },
+    anchored({ x: 13, y: 13, to: 'monastery2', at: 'start', label: 'You go down the night stair, a long way down, into the lower house.' }),
   ],
   features: [
     // The gate's passage and the cloister, the garth and its well.

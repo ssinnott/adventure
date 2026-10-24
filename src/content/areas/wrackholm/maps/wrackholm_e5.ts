@@ -8,6 +8,7 @@
 // Laid whole in Wrackholm, cut from the atlas with the rocks drawn in; docs/areas/wrackholm.md §12.2
 // is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const WRACKHOLM_E5: MapDef = {
@@ -18,6 +19,7 @@ export const WRACKHOLM_E5: MapDef = {
   band: [12, 13],
   region: 'wrackholm',
   start: { x: 24, y: 31, facing: NORTH },
+  anchors: { from_brokenback: { x: 18, y: 29, facing: SOUTH } },
   rows: [
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
@@ -55,7 +57,7 @@ export const WRACKHOLM_E5: MapDef = {
   // The Brokenback, the enclave (#845): the break in the wreck's side at 18,28, drawn as stone among the
   // black rocks and walked onto from the strand at 18,29.
   exits: [
-    { x: 18, y: 28, to: 'brokenback', tx: 7, ty: 1, tf: SOUTH, label: 'You climb in at the break in her side, over the black rocks and the torn planks.' },
+    anchored({ x: 18, y: 28, to: 'brokenback', at: 'start', label: 'You climb in at the break in her side, over the black rocks and the torn planks.' }),
   ],
   features: [
     // In from E6's moor, the grass running down to the strand.

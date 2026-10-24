@@ -5,8 +5,9 @@
 // Ranger's second prestige (#19). The elves' road comes in from H3 and goes on south for Henlys (I4).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
-import { EAST, WEST } from '../../../../game/types.ts';
+import { EAST } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 
@@ -60,7 +61,7 @@ export const DEEPTHORN_I3: MapDef = {
     'TTTTTTTTTTTT=TTTTTTTTTTTTTTTTTTM',
   ],
   exits: [
-    { x: 0, y: 23, to: 'deepthorn_h3', tx: 30, ty: 23, tf: WEST },
+    anchored({ x: 0, y: 23, to: 'deepthorn_h3', at: 'from_deepthorn_i3' }),
   ],
   features: [
     // The lodge on its rise, its yard shut by brambles.

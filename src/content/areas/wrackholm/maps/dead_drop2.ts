@@ -7,7 +7,8 @@
 // counting house (WRITER_STAIR), are at the aisle's end. Loaders at 26, keepers at 27, knockers at 28. It pays
 // outside any area's budget (EXPANSION §5.2; Wrackholm's `outside`). docs/areas/dead_drop.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { NORTH, EAST, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
@@ -15,12 +16,12 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * 16,30, onto the counting house's first square at 16,1, facing south, its door two squares on; its way back
  * up lands on 16,29, facing north.
  */
-export const WRITER_STAIR: Exit = { x: 16, y: 30, to: 'dead_drop3', tx: 16, ty: 1, tf: SOUTH,
-  label: 'Down the steps a long way, to a door. The scratching is louder.' };
+export const WRITER_STAIR: Exit = anchored({ x: 16, y: 30, to: 'dead_drop3', at: 'start',
+  label: 'Down the steps a long way, to a door. The scratching is louder.' });
 
 /** The cargo hoist (an addition, dead_drop.md §1): behind the secret door at 14,28, the cage, one way up onto the drop's 1,10. */
-export const HOIST: Exit = { x: 13, y: 28, to: 'dead_drop', tx: 1, ty: 10, tf: EAST,
-  label: 'The cage goes up a long while in the dark, rattling, and stops with a jolt.' };
+export const HOIST: Exit = anchored({ x: 13, y: 28, to: 'dead_drop', at: 'from_dead_drop2_2',
+  label: 'The cage goes up a long while in the dark, rattling, and stops with a jolt.' });
 
 export const DEAD_DROP2: MapDef = {
   id: 'dead_drop2',
@@ -29,6 +30,7 @@ export const DEAD_DROP2: MapDef = {
   band: [27, 28],
   region: 'wrackholm',
   start: { x: 25, y: 1, facing: SOUTH },
+  anchors: { from_dead_drop3: { x: 16, y: 29, facing: NORTH } },
   // The drop's stone, smooth and cold and lit from nowhere, all the way down.
   palette: { wall: '#8a8c90', wallDark: '#5e6064', floor: '#6a6c70', ceiling: '#4a4c50', door: '#5a5c60', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#3a3c40' },
   bare: true,
@@ -70,7 +72,7 @@ export const DEAD_DROP2: MapDef = {
   ],
   exits: [
     // The way back up the rails' slope, onto the drop's 25,29 at the head of its way down, facing away from it.
-    { x: 25, y: 1, to: 'dead_drop', tx: 25, ty: 29, tf: NORTH, label: 'Up the rails\' slope a long way, and the drop\'s far end again.' },
+    anchored({ x: 25, y: 1, to: 'dead_drop', at: 'from_dead_drop2', label: 'Up the rails\' slope a long way, and the drop\'s far end again.' }),
     HOIST,
     WRITER_STAIR,
   ],

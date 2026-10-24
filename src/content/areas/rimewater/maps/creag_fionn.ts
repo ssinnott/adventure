@@ -6,7 +6,8 @@
 // Trollbrand in it. Band 22-23, a band over Loch Fada's, out of Rimewater's figures;
 // docs/areas/rimewater.md §12.4 is its brief (#832).
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CREAG_FIONN: MapDef = {
@@ -37,7 +38,7 @@ export const CREAG_FIONN: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'longmere_l12', tx: 11, ty: 3, tf: NORTH, label: 'Up the ramp and out of the rim\'s face, into the pines and the thin light.' },
+    anchored({ x: 7, y: 1, to: 'longmere_l12', at: 'from_creag_fionn', label: 'Up the ramp and out of the rim\'s face, into the pines and the thin light.' }),
   ],
   features: [
     // The cleft down from the door, and the cave's mouth, where the eagles sit to eat.

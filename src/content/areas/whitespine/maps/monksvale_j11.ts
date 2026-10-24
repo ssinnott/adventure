@@ -12,7 +12,8 @@
 // hills and the pines either side of the road. Wenna waits by the gate on her way to the Point (I8, #504).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.2 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { WENNA_LODGE } from '../../rimewater/public.ts';
 import { NEST_FOUND } from './highspine_i11.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
@@ -22,8 +23,8 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * it, onto the upper house's first square inside, 7,1, facing south; the way back out lands on 26,23,
  * facing north, on the road's end before the gate.
  */
-export const GATE: Exit = { x: 26, y: 24, to: 'monastery', tx: 7, ty: 1, tf: SOUTH,
-  label: 'The gate stands open, and a brother stands in it. It bows, and the bow is a shape someone described to it.' };
+export const GATE: Exit = anchored({ x: 26, y: 24, to: 'monastery', at: 'start',
+  label: 'The gate stands open, and a brother stands in it. It bows, and the bow is a shape someone described to it.' });
 
 /**
  * The Monk's third (#448), The Vigil: Oswin asks a company with a Windwalker of 27 to sit the night
@@ -40,6 +41,7 @@ export const MONKSVALE_J11: MapDef = {
   band: [22, 23],
   region: 'whitespine',
   start: { x: 20, y: 1, facing: SOUTH },
+  anchors: { from_monastery: { x: 26, y: 23, facing: NORTH } },
   exits: [GATE],
   // Highcell drawn tall: its bell towers over the wall, on the square behind the gate the road ends at.
   landmarks: [{ x: 26, y: 25, kind: 'monastery' }],

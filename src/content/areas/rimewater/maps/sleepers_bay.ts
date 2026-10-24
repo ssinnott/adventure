@@ -6,6 +6,7 @@
 // through the hole keep both, and at the stair's foot, where the two ways meet, the first keeper
 // waits alone. Band 20-22; docs/areas/rimewater.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -16,6 +17,7 @@ export const SLEEPERS_BAY: MapDef = {
   band: [20, 22],
   region: 'rimewater',
   start: { x: 8, y: 1, facing: SOUTH },
+  anchors: { from_sleepers_bay2: { x: 6, y: 13, facing: NORTH } },
   // The ice at the top, and below it the Sunder's smooth wall (docs/areas/sunderwood.md §4.6), grey
   // and lit from itself; the door is the wall's own grey.
   palette: { wall: '#8e959c', wallDark: '#5f666d', floor: '#474d55', ceiling: '#15191e', door: '#8e959c', wallStyle: 'smooth', ceilingStyle: 'vault', banner: '#3a4654' },
@@ -40,9 +42,9 @@ export const SLEEPERS_BAY: MapDef = {
   ],
   exits: [
     // The door, back up into the crack in the ice on K9 (DOOR there).
-    { x: 8, y: 0, to: 'coldmere_k9', tx: 24, ty: 29, tf: NORTH, label: 'You climb back up through the door into the crack in the ice.' },
+    anchored({ x: 8, y: 0, to: 'coldmere_k9', at: 'from_sleepers_bay', label: 'You climb back up through the door into the crack in the ice.' }),
     // The stair's last flight, down to the bay.
-    { x: 6, y: 14, to: 'sleepers_bay2', tx: 7, ty: 13, tf: NORTH, label: 'You go down the last of the stair, into the cold.' },
+    anchored({ x: 6, y: 14, to: 'sleepers_bay2', at: 'start', label: 'You go down the last of the stair, into the cold.' }),
   ],
   features: [
     // The landing in the ice, and the door's inside (DESIGN §9).

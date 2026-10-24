@@ -3,6 +3,7 @@
 // eastern hills, a river with one bridge, and the Grove in the deep woods to the south-west.
 // Difficulty band 5-10.
 import type { MapDef, Choice } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import type { When } from '../../../../game/quests.ts';
 import { TEAR_CLOSED } from './grove2.ts';
@@ -31,6 +32,12 @@ export const THORNMARK: MapDef = {
   band: [5, 10],
   region: 'thornmark',
   start: { x: 1, y: 9, facing: EAST },
+  anchors: {
+    from_thornhold: { x: 23, y: 5, facing: SOUTH },
+    from_grove1: { x: 7, y: 28, facing: NORTH },
+    from_deepthorn_h3: { x: 8, y: 30, facing: NORTH },
+    from_eaves_i2: { x: 30, y: 10, facing: WEST },
+  },
   palette: { floor: '#3f8a34', banner: '#2a6a3a' },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
@@ -67,13 +74,13 @@ export const THORNMARK: MapDef = {
     'MMMMMMMM=MMMMMMMMMMMMMMMMMMMMMMM',
   ],
   exits: [
-    { x: 0, y: 9, to: 'shelf', tx: 30, ty: 9, tf: WEST, label: 'Back through the pass to the Foreland.' },
-    { x: 23, y: 4, to: 'thornhold', tx: 7, ty: 14, tf: NORTH, label: 'You pass under the oak gate of Thornhold.' },
-    { x: 7, y: 29, to: 'grove1', tx: 1, ty: 1, tf: SOUTH, label: 'Steps cut into the roots lead down beneath the Grove.' },
+    anchored({ x: 0, y: 9, to: 'shelf', at: 'from_thornmark', label: 'Back through the pass to the Foreland.' }),
+    anchored({ x: 23, y: 4, to: 'thornhold', at: 'start', label: 'You pass under the oak gate of Thornhold.' }),
+    anchored({ x: 7, y: 29, to: 'grove1', at: 'start', label: 'Steps cut into the roots lead down beneath the Grove.' }),
     // The elves' road south out of the hollow, into the Deepthorn (#214).
-    { x: 8, y: 31, to: 'deepthorn_h3', tx: 8, ty: 1, tf: SOUTH, label: 'The Deepthorn. Past the Grove the road is the elves\', and the oaks are older than the elves.' },
+    anchored({ x: 8, y: 31, to: 'deepthorn_h3', at: 'start', label: 'The Deepthorn. Past the Grove the road is the elves\', and the oaks are older than the elves.' }),
     // The east road over the Hoarhills, into Sunderwood (#195).
-    { x: 31, y: 10, to: 'eaves_i2', tx: 1, ty: 10, tf: EAST, label: 'The Eaves. Over the Hoarhills\' shoulder the road goes in under the pines, and the mist under them does not lift.' },
+    anchored({ x: 31, y: 10, to: 'eaves_i2', at: 'from_thornmark', label: 'The Eaves. Over the Hoarhills\' shoulder the road goes in under the pines, and the mist under them does not lift.' }),
   ],
   features: [
     { kind: 'event', x: 1, y: 9, id: 'thornmark_in', once: true, text: 'Thornmark. The trees here are older than Helmstow, and the Warden road under them has not been swept in weeks.' },

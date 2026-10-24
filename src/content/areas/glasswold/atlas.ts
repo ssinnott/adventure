@@ -5,6 +5,8 @@
 // the Ember Waste, so the Riders' gap at the dunes is its one way in (#443, call 5). The Buried Tower's
 // band is the cap's, 30-32, and the row changes with the reach's own atlas work.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
+import { laid } from '../../../game/atlas.ts';
+import { PLAN } from '../../atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
@@ -14,9 +16,9 @@ export const ZONES: readonly AtlasZone[] = [
     // the shore north of them (#534); and the bounds (#833), the Scarp's east end over the gulf north of
     // Akordu's box and the north of the other island off the shore.
     id: 'wold', name: 'The Wold', area: 'glasswold', band: [26, 28],
-    maps: [{ map: 'wold_d10', at: [104, 286] }, { map: 'wold_d9', at: [104, 254] }, { map: 'wold_d8', at: [104, 222] }, { map: 'wold_c8', at: [72, 222] }, { map: 'wold_b8', at: [40, 222] },
-      { map: 'wold_b9', at: [40, 254] }, { map: 'wold_e9', at: [136, 254] }, { map: 'wold_e8', at: [136, 222] },
-      { map: 'wold_d7', at: [104, 190] }, { map: 'wold_e7', at: [136, 190] }],
+    maps: [laid(PLAN, 'wold_d10'), laid(PLAN, 'wold_d9'), laid(PLAN, 'wold_d8'), laid(PLAN, 'wold_c8'), laid(PLAN, 'wold_b8'),
+      laid(PLAN, 'wold_b9'), laid(PLAN, 'wold_e9'), laid(PLAN, 'wold_e8'),
+      laid(PLAN, 'wold_d7'), laid(PLAN, 'wold_e7')],
     seeds: [[100, 232], [132, 262], [50, 230], [134, 296], [120, 296]], // 140,296 moved west of E10, laid for the Waste (#517)
     // The crossing line (#166, #524), said where a Wold map is first walked into over E10's west edge
     // (D10, #527, walked) or climbed into up the Scarp stair, walked from the Saltings' C7 onto C8's lip

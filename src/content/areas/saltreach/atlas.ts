@@ -1,16 +1,18 @@
 // Saltreach's part of the world map: its three zones, the plates of its town and temples, and its
 // sites. docs/areas/saltreach.md is its brief.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
+import { laid } from '../../../game/atlas.ts';
+import { PLAN } from '../../atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   // Up the last of the spur past the herons in the stubble, onto the mound and the quay by day (#172).
   { id: 'upperwater', name: 'The Upper Water', area: 'saltreach', band: [10, 11], seeds: [[56, 76], [80, 56], [36, 110]],
-    maps: [{ map: 'upperwater_c3', at: [72, 62] }, { map: 'upperwater_b3', at: [40, 62] }, { map: 'upperwater_c2', at: [72, 30] }, { map: 'upperwater_b2', at: [40, 30] }, { map: 'upperwater_a3', at: [8, 62] }], road: ['upperwater_c3:c3_herons', 'upperwater_c3:c3_quay'] },
+    maps: [laid(PLAN, 'upperwater_c3'), laid(PLAN, 'upperwater_b3'), laid(PLAN, 'upperwater_c2'), laid(PLAN, 'upperwater_b2'), laid(PLAN, 'upperwater_a3')], road: ['upperwater_c3:c3_herons', 'upperwater_c3:c3_quay'] },
   // On to the fork, where the bull toad sees the company, and up the spur past the barge (#171).
   { id: 'delta', name: 'The Delta', area: 'saltreach', band: [10, 12], seeds: [[62, 150], [84, 136]], label: [76, 128],
-    maps: [{ map: 'delta_d5', at: [104, 126] }, { map: 'delta_c5', at: [72, 126] }, { map: 'delta_c4', at: [72, 94] }, { map: 'delta_b5', at: [40, 126] }, { map: 'delta_b6', at: [40, 158] }, { map: 'delta_b4', at: [40, 94] }, { map: 'delta_a4', at: [8, 94] }, { map: 'delta_a5', at: [8, 126] }, { map: 'delta_a6', at: [8, 158] }], road: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad', 'delta_c4:c4_barge'] },
+    maps: [laid(PLAN, 'delta_d5'), laid(PLAN, 'delta_c5'), laid(PLAN, 'delta_c4'), laid(PLAN, 'delta_b5'), laid(PLAN, 'delta_b6'), laid(PLAN, 'delta_b4'), laid(PLAN, 'delta_a4'), laid(PLAN, 'delta_a5'), laid(PLAN, 'delta_a6')], road: ['delta_c5:c5_pools_n', 'delta_c5:c5_pools_s', 'delta_c5:c5_toad', 'delta_c4:c4_barge'] },
   { id: 'saltings', name: 'The Saltings', area: 'saltreach', band: [11, 12], seeds: [[98, 194], [70, 194]],
-    maps: [{ map: 'saltings_c6', at: [72, 158] }, { map: 'saltings_c7', at: [72, 190] }, { map: 'saltings_b7', at: [40, 190] }, { map: 'saltings_d6', at: [104, 158] }], road: ['saltings_c6:c6_bargemen', 'saltings_c6:c6_smugglers', 'saltings_c6:c6_crabs'] },
+    maps: [laid(PLAN, 'saltings_c6'), laid(PLAN, 'saltings_c7'), laid(PLAN, 'saltings_b7'), laid(PLAN, 'saltings_d6')], road: ['saltings_c6:c6_bargemen', 'saltings_c6:c6_smugglers', 'saltings_c6:c6_crabs'] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [

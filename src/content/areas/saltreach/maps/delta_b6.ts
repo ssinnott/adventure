@@ -6,6 +6,7 @@
 // Tidal ground that shows and hides a door is new here. Cut from the atlas by tools/scaffold.ts;
 // docs/areas/saltreach.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { When } from '../../../../game/quests.ts';
 import { COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
@@ -24,10 +25,11 @@ export const DELTA_B6: MapDef = {
   band: [11, 12],
   region: 'saltreach',
   start: { x: 16, y: 0, facing: SOUTH },
+  anchors: { from_drowned_temples: { x: 16, y: 12, facing: SOUTH }, from_drowned_temples2: { x: 8, y: 22, facing: NORTH } },
   exits: [
     // The dry door, into the upper temple; and the far roof's porch, down the wet stair into the choir's back.
-    { x: 16, y: 11, to: 'drowned_temples', tx: 8, ty: 14, tf: NORTH, label: 'You go down the dry stair into the temple.' },
-    { x: 8, y: 24, to: 'drowned_temples2', tx: 14, ty: 1, tf: SOUTH, label: 'You go down the wet stair and through the door at its foot.' },
+    anchored({ x: 16, y: 11, to: 'drowned_temples', at: 'start', label: 'You go down the dry stair into the temple.' }),
+    anchored({ x: 8, y: 24, to: 'drowned_temples2', at: 'from_delta_b6', label: 'You go down the wet stair and through the door at its foot.' }),
   ],
   rows: [
     'wwwwwwwwwwwwwwww:w~~wwwwwwwwwwww',

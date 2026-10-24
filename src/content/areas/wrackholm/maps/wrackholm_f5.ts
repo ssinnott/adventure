@@ -7,7 +7,8 @@
 // (#189) over its south edge and from E5 (#835) over its west, square for square. No group. Laid whole
 // in Wrackholm, cut from the atlas with the rocks drawn in; docs/areas/wrackholm.md §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const WRACKHOLM_F5: MapDef = {
   id: 'wrackholm_f5',
@@ -17,6 +18,7 @@ export const WRACKHOLM_F5: MapDef = {
   band: [13, 14],
   region: 'wrackholm',
   start: { x: 7, y: 31, facing: NORTH },
+  anchors: { from_nicks_locker: { x: 16, y: 31, facing: SOUTH } },
   rows: [
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
     'WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW',
@@ -52,7 +54,7 @@ export const WRACKHOLM_F5: MapDef = {
     ',,,,,,,,,,,,,,,____~~~WWWWWWWWWW',
   ],
   exits: [
-    { x: 16, y: 30, to: 'nicks_locker', tx: 5, ty: 14, tf: NORTH, label: 'You duck in under the reef where the sea goes in, into the dark and the smell of weed.' },
+    anchored({ x: 16, y: 30, to: 'nicks_locker', at: 'start', label: 'You duck in under the reef where the sea goes in, into the dark and the smell of weed.' }),
   ],
   features: [
     // In from F6's grass, the strand running east to the reef.

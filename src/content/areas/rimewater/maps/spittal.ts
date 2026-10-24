@@ -6,6 +6,7 @@
 // Infirmarer keeps the Wakerobe. It holds no group and no find. Band 30-32, the cap's, out of Rimewater's
 // figures; docs/areas/rimewater.md §12.5 is its brief (#832).
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
 export const SPITTAL: MapDef = {
@@ -16,6 +17,7 @@ export const SPITTAL: MapDef = {
   enclave: true,
   region: 'rimewater',
   start: { x: 7, y: 1, facing: SOUTH },
+  anchors: { from_spittal2: { x: 7, y: 11, facing: NORTH } },
   palette: { wall: '#8e9297', wallDark: '#5a5e63', floor: '#45484c', ceiling: '#141619', door: '#5b4a3a', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#9aa9b2' },
   rows: [
     '################',
@@ -36,8 +38,8 @@ export const SPITTAL: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'coldmere_k12', tx: 2, ty: 14, tf: NORTH, label: 'Out of the door in the rock, into the pines and the snow light under the pass.' },
-    { x: 7, y: 12, to: 'spittal2', tx: 7, ty: 1, tf: SOUTH, label: 'You go down the stair cut in the rock, round and down, into air warmer than it should be.' },
+    anchored({ x: 7, y: 1, to: 'coldmere_k12', at: 'from_spittal', label: 'Out of the door in the rock, into the pines and the snow light under the pass.' }),
+    anchored({ x: 7, y: 12, to: 'spittal2', at: 'start', label: 'You go down the stair cut in the rock, round and down, into air warmer than it should be.' }),
   ],
   features: [
     // Inside the door: the slate of names, the warming room's hearth and the boots along its wall.

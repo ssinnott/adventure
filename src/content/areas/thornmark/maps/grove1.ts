@@ -1,6 +1,7 @@
 // Beneath the Grove, level one: the roots. Two halves joined only by a locked door; the key is in
 // a room behind a secret door on the west side. The stairs down are in the south-east room.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
@@ -12,6 +13,7 @@ export const GROVE1: MapDef = {
   band: [6, 9],
   region: 'thornmark',
   start: { x: 1, y: 1, facing: SOUTH },
+  anchors: { from_grove2: { x: 11, y: 11, facing: NORTH } },
   palette: { wall: '#6a5a3a', wallDark: '#463a26', floor: '#3a3628', ceiling: '#2c2418', wallStyle: 'stone', ceilingStyle: 'beams', banner: '#2a6a3a' },
   rows: [
     '################',
@@ -32,8 +34,8 @@ export const GROVE1: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 1, to: 'thornmark', tx: 7, ty: 28, tf: NORTH, label: 'You climb out of the roots into the Grove.' },
-    { x: 11, y: 10, to: 'grove2', tx: 1, ty: 1, tf: SOUTH, label: 'Stairs cut into living stone go down. The hum grows.' },
+    anchored({ x: 1, y: 1, to: 'thornmark', at: 'from_grove1', label: 'You climb out of the roots into the Grove.' }),
+    anchored({ x: 11, y: 10, to: 'grove2', at: 'start', label: 'Stairs cut into living stone go down. The hum grows.' }),
   ],
   features: [
     { kind: 'event', x: 1, y: 2, id: 'g1_in', once: true, text: 'Roots as thick as pillars hold the earth up. Someone has cut steps into them. Recent work.' },

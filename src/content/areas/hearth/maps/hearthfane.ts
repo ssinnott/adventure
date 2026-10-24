@@ -5,6 +5,7 @@
 // its head, open to the column, where the preachers stand; and the altar, the stair down behind it to
 // the crypt (#756). Band 28-29; docs/areas/hearth_isle.md §4.4 is its brief, §6 56's.
 import type { Exit, Feature, MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { THRONE_REMOVED } from '../../shelf/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
@@ -28,7 +29,7 @@ export const LAMP_FLAGS = ['lamp_sea', 'lamp_shore', 'lamp_house', 'lamp_hearth'
  * The stair down behind the altar into the crypt, `hearthfane2` (#756), onto its foot facing up the
  * passage; the crypt's way back up lands on the altar's square, 8,2, facing south.
  */
-export const STAIR: Exit = { x: 8, y: 1, to: 'hearthfane2', tx: 8, ty: 14, tf: NORTH, label: 'Down the stair behind the altar, into the crypt. The hum is louder below.' };
+export const STAIR: Exit = anchored({ x: 8, y: 1, to: 'hearthfane2', at: 'start', label: 'Down the stair behind the altar, into the crypt. The hum is louder below.' });
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 
@@ -60,6 +61,7 @@ export const HEARTHFANE: MapDef = {
   region: 'hearth',
   // In at the door from the Bowl, at the nave's foot, facing up it.
   start: { x: 8, y: 14, facing: NORTH },
+  anchors: { from_hearthfane2: { x: 8, y: 2, facing: SOUTH } },
   // The rim's rock, pale and warm, and the Hand's grey hung in the pilgrims' temple.
   palette: { wall: '#b8a890', wallDark: '#7a6c58', floor: '#8a7c64', ceiling: '#2a2420', door: '#5a4030', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#6a6866' },
   rows: [
@@ -84,7 +86,7 @@ export const HEARTHFANE: MapDef = {
   banners: [{ x: 12, y: 2 }, { x: 12, y: 4 }],
   exits: [
     // Out by the door onto the Bowl before the mound, facing away from it.
-    { x: 8, y: 15, to: 'hearthisle_h6', tx: 18, ty: 15, tf: SOUTH, label: 'Out of the temple into the Bowl. The light is at your back.' },
+    anchored({ x: 8, y: 15, to: 'hearthisle_h6', at: 'from_hearthfane', label: 'Out of the temple into the Bowl. The light is at your back.' }),
     // Down the stair behind the altar into the crypt (#756).
     STAIR,
   ],

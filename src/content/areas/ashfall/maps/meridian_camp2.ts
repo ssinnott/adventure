@@ -8,6 +8,7 @@
 // lit a sentry comes up that stair. Band 26, the area's top, its nest and
 // its elite at 27; docs/areas/meridian_camp.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
@@ -20,6 +21,7 @@ export const MERIDIAN_CAMP2: MapDef = {
   band: [26, 26],
   region: 'ashfall',
   start: { x: 4, y: 1, facing: SOUTH },
+  anchors: { from_meridian_camp3: { x: 4, y: 29, facing: NORTH } },
   // Iron gone rust-dark with heat, smooth and seamless, and nothing hung on it.
   palette: { wall: '#5a3a2e', wallDark: '#36221a', floor: '#3e2c26', ceiling: '#140c0a', door: '#663c24', wallStyle: 'smooth', ceilingStyle: 'vault', banner: '#8a3418' },
   bare: true,
@@ -59,7 +61,7 @@ export const MERIDIAN_CAMP2: MapDef = {
   ],
   exits: [
     // The stair's foot, up onto the vents' floor at the stair's head (STAIR), facing away from it.
-    { x: 4, y: 1, to: 'meridian_camp', tx: 4, ty: 29, tf: NORTH, label: 'Up the steps, out of the worst of the heat, onto the vents\' floor.' },
+    anchored({ x: 4, y: 1, to: 'meridian_camp', at: 'from_meridian_camp2', label: 'Up the steps, out of the worst of the heat, onto the vents\' floor.' }),
     // The stair at the corridors' end, down to the camp (STAIR2).
     STAIR2,
   ],

@@ -9,7 +9,8 @@
 // sentry is on the stair, going up. Band 26, the area's top, its gallery at 28; docs/areas/meridian_camp.md
 // §4.3 is its brief.
 import type { Choice, MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { ROPE } from '../public.ts';
@@ -72,7 +73,7 @@ export const MERIDIAN_CAMP3: MapDef = {
   ],
   exits: [
     // The stair's foot, up onto the corridors' end at the stair's head (STAIR2), facing away from it.
-    { x: 4, y: 1, to: 'meridian_camp2', tx: 4, ty: 29, tf: NORTH, label: 'Up the steps into the heat again, onto the corridors\' end.' },
+    anchored({ x: 4, y: 1, to: 'meridian_camp2', at: 'from_meridian_camp3', label: 'Up the steps into the heat again, onto the corridors\' end.' }),
     // The foot of Fane's rope, up the cold flue to G11's lookout: out, and never in (ROPE).
     ROPE,
   ],
