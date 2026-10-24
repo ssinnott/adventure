@@ -62,7 +62,7 @@ export const EMBERWASTE_F12: MapDef = {
   // crust at 20,14, drawn as stone with the rock either side and walked into from the flow at 20,13.
   exits: [
     { x: 10, y: 3, to: 'blackdraw', tx: 7, ty: 1, tf: SOUTH, label: 'You go in at a mouth in the mountain\'s face, out of the wind and down into the dark.' },
-    { x: 20, y: 14, to: 'grims_howe', tx: 7, ty: 1, tf: SOUTH, label: 'You stoop in under the dam, where its crust stands off the rock, and down into air as warm as breath.' },
+    { x: 20, y: 14, to: 'grims_howe', tx: 7, ty: 1, tf: SOUTH, label: 'You stoop in under the dam, where its crust stands off the rock, and down into the warm dark.' },
   ],
   features: [
     // In off F11's ash: the slope down to the mountain's wall, and the flow going down beside it.

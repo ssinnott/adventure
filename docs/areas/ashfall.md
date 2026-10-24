@@ -3257,7 +3257,8 @@ Decided by the builder for #836, each the owner's to overturn:
    west and south edges hold no open square.
 10. **The flow ends at a dam of rock across its cut,** the rim's mountain under it: the atlas runs
     the flow on to the void at rows 15 and 16, so F12's 19 to 21 on row 14 are rock and the four
-    squares under them mountain: no square of the flow meets the void.
+    squares under them mountain: no square of the flow meets the void. The middle of the three,
+    20,14, is the lair's door since, drawn as stone (#836's 22).
 11. **F12 differs from the atlas at 24 squares:** the seams' two, the flow's three where it crosses
     from F11, the dam's three, the rim's four under it and the store's twelve. With the flue's mouth
     at 10,3 since, 25 (#836's 14); the lair's door at 20,14, one of the dam's three, leaves it at 25
@@ -3359,9 +3360,9 @@ Decided by the builder for #836, each the owner's to overturn:
     whether it stands or has fallen; they fit his box, 9 and 12 of its 14 lines. A later meeting
     repeats his own words before them; a company from an old save that has met him hears them at its
     next meeting.
-27. **New here:** the lair itself (#845, #846), the area's one place at the cap, its guardian a
-    drake whose breath burns a row and the area's artifact an axe that casts Meteor Swarm twice a
-    day (#847).
+27. **New here:** the lair itself (#845, #846), the area's one place at the cap, its guardian the
+    Grave Drake (the drakes' new kind, whose breath burns a row as the Old Drake's does in Old
+    Cinder) and the area's artifact, an axe that casts Meteor Swarm twice a day (#847).
 28. **The owed rows go,** as EXPANSION §8.2 (#897's 12) and #847's 6 say: `grims_axe` leaves
     `UNPLACED` in `tools/tests/items.ts` and the Grave Drake's row the area's `checks.ts`, which
     owes nothing now.
@@ -3714,7 +3715,7 @@ and adds its "As built".
   from the atlas by the scaffold's own cut, the void written `%`. The slope's look (`f12_down`,
   20,1) a step in from F11; the cairn (`f12_cairn`, 7,1); the man of stone (`f12_caller`, 16,2); the
   sulphur (`f12_sulphur`, 30,1); the cut (`f12_cut`, 25,8) and the flow's end (`f12_end`, 22,10).
-  The flow runs down its cut to row 13 and its front is rock at 19 to 21 on row 14, the rim's
+  The flow runs down its cut to row 13 and its front is the dam at 19 to 21 on row 14, the rim's
   mountain under it (§9, #836's 10). The store is a ring of rock at 28 to 30 on rows 12 to 15, its
   door at 29,12 and the flakes before it (`f12_flakes`, 29,11), the store (`f12_store`, 29,13) with
   the purse (`f12_purse`, 29,14). The lair's door is 20,14, the dam's rock drawn as stone, the way
@@ -3794,7 +3795,8 @@ and adds its "As built".
   bier's back. The hint: a smoking mountain cut in that one stone of the wall, as under the name on
   the axe's cheek (§6).
 - **New here.** The lair itself (#845, #846), the area's one place at the cap; the Grave Drake,
-  whose breath burns a row; and Grim's Axe, which casts Meteor Swarm twice a day (#847).
+  the drakes' new kind, whose breath burns a row as the Old Drake's does in Old Cinder (§4.7); and
+  Grim's Axe, which casts Meteor Swarm twice a day (#847).
 - **Finds.** Grim's Axe, a broad axe of black iron, 2d12+8, Meteor Swarm two a day, found and never
   sold (§6), alone on the bier; in the niche, 500 gold, an Elixir and a Sapphire Vial, the dearest
   healing and spell points Cinderport's chandler's sells.
