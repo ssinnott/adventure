@@ -11,12 +11,13 @@ import { drawPortraitLarge } from './portraits.ts';
 import { drawInterior } from './interior.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
 import type { Feature, Interior } from '../game/map.ts';
-import { item, priceIn, buy, sellPrice, REFUSED } from '../game/items.ts';
+import { item, priceIn, buy, sellPrice } from '../game/items.ts';
 import type { ItemDef } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
-import { spell, spellsFor } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, lift, templePrice, isDown, hasCondition, xpForLevel, levelUp, rest, stayNight, canTrain, canTrainAt, trainPrice, MAX_LEVEL, guildFlag, className, resists, statOf, borne } from '../game/party.ts';
+import { spell } from '../game/spells.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, lift, templePrice, isDown, hasCondition, xpForLevel, canTrain, trainPrice, MAX_LEVEL, className, resists, statOf, borne } from '../game/party.ts';
+import { nightCost, stay, buyRations, RATIONS, RATIONS_PRICE, cure, donate, DONATION, sell, joined, payFee, hallOffers, learnSpell, mayTrain, train } from '../game/services.ts';
 import { castOnAlly } from '../game/combat.ts';
 import type { Character, Stat } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
@@ -617,22 +618,13 @@ export function masterMenu(g: Game, m: Mastery, title: string): Screen {
   }, title, [...list.map((o) => !!o.bar), false]);
 }
 
+// The town's services: each screen draws its menu and says what the rule of game/services.ts returns.
 function inn(g: Game, f: Extract<Feature, { kind: 'inn' }>): Screen {
-  const cost = f.price * g.party.members.length;
+  const cost = nightCost(f, g.party);
   return new ChoiceScreen(`"Welcome to ${f.name}. A night for the six of you is ${cost} gold, supper included." (You have ${g.party.gold}.)`,
-    [`Stay the night (${cost} gold)`, `Buy 10 rations (${20} gold)`, 'Leave'], (i) => {
-      if (i === 0) {
-        if (g.party.gold < cost) { g.say('You cannot afford a room.'); return; }
-        g.party.gold -= cost;
-        for (const m of g.party.members) rest(m);
-        // Sleep until 07:00, or first light in the depth of winter: a night, which an inn may count.
-        g.world.sleepUntilMorning();
-        stayNight(g.party, f.nights);
-        g.say('You sleep well. Morning.');
-      } else if (i === 1) {
-        if (g.party.gold < 20) { g.say('Not enough gold.'); return; }
-        g.party.gold -= 20; g.party.food += 10; g.say('The kitchen packs you ten days of rations.');
-      }
+    [`Stay the night (${cost} gold)`, `Buy ${RATIONS} rations (${RATIONS_PRICE} gold)`, 'Leave'], (i) => {
+      if (i === 0) g.say(stay(g.party, g.world, f).line);
+      else if (i === 1) g.say(buyRations(g.party).line);
     }, f.name);
 }
 
@@ -640,17 +632,10 @@ function temple(g: Game, f: Extract<Feature, { kind: 'temple' }>): Screen {
   const priceOf = templePrice;
   const names = g.party.members.map((m) => `${m.name}: ${m.conditions.length ? m.conditions.join(', ') : 'well'}\t${priceOf(m) ? `${priceOf(m)}g` : ''}`);
   return new ChoiceScreen(`The Lanterns keep the chapel lit day and night. "Who needs the light?" (${g.party.gold} gold.)`,
-    [...names, 'Donate 10 gold', 'Leave'], (i) => {
+    [...names, `Donate ${DONATION} gold`, 'Leave'], (i) => {
       if (i < 0 || i === names.length + 1) return;
-      if (i === names.length) { if (g.party.gold >= 10) { g.party.gold -= 10; g.say('The Lanterns thank you.'); g.party.flags.donations = (g.party.flags.donations ?? 0) + 1; } return; }
-      const c = g.party.members[i];
-      const p = priceOf(c);
-      if (!p) { g.say(`${c.name} is well.`); return; }
-      if (g.party.gold < p) { g.say('You cannot afford it.'); return; }
-      g.party.gold -= p;
-      c.conditions = [];
-      if (c.hp <= 0) c.hp = 1;
-      g.say(`${c.name} is restored.`);
+      const { line } = i === names.length ? donate(g.party) : cure(g.party, g.party.members[i]);
+      if (line) g.say(line);
     }, f.name, [...g.party.members.map((m) => priceOf(m) === 0), false, false]);
 }
 
@@ -684,12 +669,8 @@ function sellScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
   if (!entries.length) return new MessageScreen('"You have nothing I want."', undefined, f.name);
   return new ChoiceScreen('"Let me see it."', [...entries.map((e) => e.label), 'Done'], (i) => {
     if (i < 0 || i === entries.length) return;
-    const e = entries[i], paid = pays(e.id);
-    if (item(e.id).artifact) { g.say(REFUSED); g.push(sellScreen(g, f)); return; }
-    if (paid === 0) { g.say(`"I will not buy that."`); g.push(sellScreen(g, f)); return; }
-    e.owner.splice(e.owner.indexOf(e.id), 1);
-    g.party.gold += paid;
-    g.say(`Sold ${item(e.id).name} for ${paid} gold.`);
+    const e = entries[i];
+    g.say(sell(ITEMS, g.party, e.owner, e.id).line);
     g.push(sellScreen(g, f));
   }, f.name);
 }
@@ -707,49 +688,32 @@ export function describe(id: string): string {
 }
 
 function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
-  const members = g.party.members.map((m, i) => ({ m, i })).filter(({ m }) => f.classes.includes(m.cls));
-  const joined = !!g.party.flags[guildFlag(f.name)];
-  if (!joined) {
+  if (!joined(g.party, f)) {
     return new ChoiceScreen(`"${f.name}. The fee to study here is ${f.fee} gold, paid once." (${g.party.gold} gold.)`, [`Pay the fee (${f.fee} gold)`, 'Leave'], (i) => {
       if (i !== 0) return;
-      if (g.party.gold < f.fee) { g.say('Not enough gold.'); return; }
-      g.party.gold -= f.fee; g.party.flags[guildFlag(f.name)] = 1; g.say('You may study here.');
-      g.push(guild(g, f));
+      const { done, line } = payFee(g.party, f);
+      g.say(line);
+      if (done) g.push(guild(g, f));
     }, f.name);
   }
   // Spells up to the guild's tier for sale, per caster; the price climbs with the tier.
-  const offers: { who: number; id: string; price: number }[] = [];
-  for (const { m, i } of members) {
-    const list = CLASSES[m.cls].spells; if (!list) continue;
-    for (const sp of spellsFor(list, f.maxTier ?? 2)) if (!m.spells.includes(sp.id)) offers.push({ who: i, id: sp.id, price: spellPrice(sp.level) });
-  }
+  const offers = hallOffers(g.party, f);
   if (!offers.length) return new MessageScreen('"We have taught you all we can for now. Come back when you have grown."', undefined, f.name);
   return new ChoiceScreen(`"What would you learn?" (${g.party.gold} gold.)`, [...offers.map((o) => `${g.party.members[o.who].name}: ${spell(o.id).name}\t${o.price}g\t${spell(o.id).text}`), 'Leave'], (i) => {
     if (i < 0 || i === offers.length) return;
-    const o = offers[i];
-    if (g.party.gold < o.price) { g.say('Not enough gold.'); g.push(guild(g, f)); return; }
-    g.party.gold -= o.price; g.party.members[o.who].spells.push(o.id);
-    g.say(`${g.party.members[o.who].name} learns ${spell(o.id).name}.`);
+    g.say(learnSpell(g.party, offers[i]).line);
     g.push(guild(g, f));
   }, f.name, [...offers.map((o) => o.price > g.party.gold), false]);
 }
 
-/** What a guild charges for a spell of the given tier: 40, 80, 160, 320. */
-export function spellPrice(tier: number): number { return 40 * Math.pow(2, tier - 1); }
-
 function trainer(g: Game, f: Extract<Feature, { kind: 'trainer' }>): Screen {
   const cost = trainPrice;
-  const can = g.party.members.map((c) => canTrainAt(c, f.maxLevel) && !isDown(c));
+  const can = g.party.members.map((c) => mayTrain(c, f.maxLevel));
   const names = g.party.members.map((c, i) => `${c.name}  L${c.level}\t${can[i] ? `train ${cost(c)}g` : c.level >= f.maxLevel ? 'beyond me' : `needs ${xpForLevel(c.level + 1) - c.xp} xp`}`);
   return new ChoiceScreen(`"${f.name}. I train to level ${f.maxLevel}. Who is ready?" (${g.party.gold} gold.)`, [...names, 'Leave'], (i) => {
     if (i < 0 || i === names.length) return;
-    const c = g.party.members[i];
-    if (g.party.gold < cost(c)) { g.say('Not enough gold.'); g.push(trainer(g, f)); return; }
-    g.party.gold -= cost(c);
-    const before = c.level;
-    // levelUp grants every level the xp allows; the trainer charges for one, so cap it.
-    const xp = c.xp; c.xp = Math.min(c.xp, xpForLevel(c.level + 2) - 1); levelUp(c, g.rng); c.xp = xp;
-    g.say(`${c.name} trains to level ${c.level}.` + (c.level === before ? '' : ` HP ${c.maxHp}, SP ${c.maxSp}.`));
+    const { line } = train(g.party, g.party.members[i], g.rng, f.maxLevel);
+    if (line) g.say(line);
     g.push(trainer(g, f));
   }, f.name, [...can.map((x) => !x), false]);
 }
