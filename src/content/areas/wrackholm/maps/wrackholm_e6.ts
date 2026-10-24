@@ -5,7 +5,8 @@
 // the lee of the south hills and the pools under them. Cut from the atlas by tools/scaffold.ts;
 // docs/areas/wrackholm.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const WRACKHOLM_E6: MapDef = {
@@ -16,6 +17,7 @@ export const WRACKHOLM_E6: MapDef = {
   band: [12, 13],
   region: 'wrackholm',
   start: { x: 16, y: 14, facing: NORTH },
+  anchors: { from_smugglers_cove: { x: 18, y: 13, facing: SOUTH } },
   rows: [
     'WWWWWWWWWWWWW~~_,,,,,,,,,,,,,,,,',
     'WWWWWWWWWWWW~~_,,,,,,,,,,,,,,,,,',
@@ -51,7 +53,7 @@ export const WRACKHOLM_E6: MapDef = {
     'WWWWWWWWWWW~~~~~~~~~~~~~~~~~~~~~',
   ],
   exits: [
-    { x: 18, y: 12, to: 'smugglers_cove', tx: 12, ty: 14, tf: NORTH, label: 'You climb the wet path into the mouth of Kelp Hole.' },
+    anchored({ x: 18, y: 12, to: 'smugglers_cove', at: 'start', label: 'You climb the wet path into the mouth of Kelp Hole.' }),
   ],
   features: [
     // The landing: the stage at the inlet's head, the boat's captain on it, and the cove's mouth above.

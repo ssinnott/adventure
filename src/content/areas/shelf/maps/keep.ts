@@ -4,8 +4,9 @@
 // shut armoury the keep's armourer teaches the Knight's first prestige (#19). Once the Hand has Wenna
 // the Council's clerk waits at the chapel's door, and the Council sits on the case once (#764).
 import type { Answer, MapDef, Words } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { NORTH } from '../../../../game/types.ts';
 import { ENDED, ENDINGS } from '../../../endings.ts';
 import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, THRONE_REMOVED } from '../public.ts';
 
@@ -76,6 +77,7 @@ export const KEEP: MapDef = {
   band: [1, 4],
   region: 'shelf',
   start: { x: 7, y: 8, facing: NORTH },
+  anchors: { from_harrow: { x: 8, y: 8, facing: NORTH } },
   rows: [
     '################',
     '###,,######,,###',
@@ -93,8 +95,8 @@ export const KEEP: MapDef = {
   // Either side of the keep's door, and either side of the gate as you come in.
   banners: [{ x: 6, y: 4 }, { x: 8, y: 4 }, { x: 6, y: 9 }, { x: 9, y: 9 }],
   exits: [
-    { x: 7, y: 9, to: 'harrow', tx: 7, ty: 1, tf: SOUTH, label: 'You pass back under the gatehouse into Helmstow.' },
-    { x: 8, y: 9, to: 'harrow', tx: 8, ty: 1, tf: SOUTH, label: 'You pass back under the gatehouse into Helmstow.' },
+    anchored({ x: 7, y: 9, to: 'harrow', at: 'from_keep', label: 'You pass back under the gatehouse into Helmstow.' }),
+    anchored({ x: 8, y: 9, to: 'harrow', at: 'from_keep_2', label: 'You pass back under the gatehouse into Helmstow.' }),
   ],
   features: [
     { kind: 'sign', x: 9, y: 8, text: 'A proclamation on the gatehouse: the Regent-Warden holds Helmstow in the Crown\'s name until the succession is settled.' },

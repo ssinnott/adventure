@@ -6,14 +6,15 @@
 // (29,6, 61). West along the row-10 way, the CREW ONLY door from the inside (2,10, 60). Band 30;
 // docs/areas/hearth_isle.md §4.6 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE } from '../public.ts';
 
 /** The Stair's head (#758), through the door at 16,2. */
-export const STAIR_DOOR: Exit = { x: 16, y: 1, to: 'underdeep2', tx: 16, ty: 30, tf: NORTH, label: 'Through the door at the ways\' end, onto a stair that goes down further than your lamp.' };
+export const STAIR_DOOR: Exit = anchored({ x: 16, y: 1, to: 'underdeep2', at: 'start', label: 'Through the door at the ways\' end, onto a stair that goes down further than your lamp.' });
 /** The crawl way's door onto the Stair's fourth landing, below its fights (59, #758). */
-export const CRAWL_DOOR: Exit = { x: 24, y: 1, to: 'underdeep2', tx: 24, ty: 18, tf: SOUTH, label: 'Out of the crawl way onto the stair, well below its head. Nothing up here saw you.' };
+export const CRAWL_DOOR: Exit = anchored({ x: 24, y: 1, to: 'underdeep2', at: 'from_underdeep', label: 'Out of the crawl way onto the stair, well below its head. Nothing up here saw you.' });
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 const knot = (n: number, x: number, y: number, text: string) => ({ kind: 'event' as const, x, y, id: `ud_knot${n}`, once: true, text });
@@ -27,6 +28,7 @@ export const UNDERDEEP: MapDef = {
   region: 'hearth',
   // At the grey door's foot, facing up the main way.
   start: { x: 16, y: 30, facing: NORTH },
+  anchors: { from_underdeep2: { x: 16, y: 2, facing: SOUTH } },
   // The Dead-Drop's grey, smooth and cold, lit from nowhere, and nothing hung on it.
   palette: { wall: '#8a8c90', wallDark: '#5e6064', floor: '#6a6c70', ceiling: '#4a4c50', door: '#5a5c60', wallStyle: 'smooth', ceilingStyle: 'vault', banner: '#3a3c40' },
   bare: true,
@@ -66,10 +68,10 @@ export const UNDERDEEP: MapDef = {
   ],
   exits: [
     // Back up through the grey door onto the knot's square in the crypt, facing away from the door.
-    { x: 16, y: 31, to: 'hearthfane2', tx: 8, ty: 2, tf: SOUTH, label: 'Back through the grey door, up into the cold of the crypt.' },
+    anchored({ x: 16, y: 31, to: 'hearthfane2', at: 'from_underdeep', label: 'Back through the grey door, up into the cold of the crypt.' }),
     // The CREW ONLY door, there once it is answered either way (60): onto the Clean Corridor's floor before
     // the mines' side of it, which stays a door drawn in a wall (deep_mines3 13,3).
-    { x: 2, y: 10, to: 'deep_mines3', tx: 13, ty: 3, tf: WEST, after: [{ flag: CREW_OPEN }, { flag: CREW_SHUT }], label: 'Through the door marked CREW ONLY, from the inside, into the Tiefzeche\'s lowest level.', crosses: 'hearth kilns' },
+    anchored({ x: 2, y: 10, to: 'deep_mines3', at: 'from_underdeep', after: [{ flag: CREW_OPEN }, { flag: CREW_SHUT }], label: 'Through the door marked CREW ONLY, from the inside, into the Tiefzeche\'s lowest level.', crosses: 'hearth kilns' }),
     // Down onto the Stair (#758): through the last door at the ways' end onto its head, and out of the crawl
     // way onto its fourth landing, below its fights.
     STAIR_DOOR,

@@ -5,7 +5,8 @@
 // niches, every niche filled, and the last one's lip cut with a count in Kiln-script that ends on
 // eleven, and the monks' things laid by. Band 23-24; docs/areas/whitespine.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const MONASTERY2: MapDef = {
@@ -37,7 +38,7 @@ export const MONASTERY2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'monastery', tx: 12, ty: 13, tf: WEST, label: 'You climb the night stair, up into the cloister.' },
+    anchored({ x: 7, y: 1, to: 'monastery', at: 'from_monastery2', label: 'You climb the night stair, up into the cloister.' }),
   ],
   features: [
     // The stair's foot, and the chapter house.

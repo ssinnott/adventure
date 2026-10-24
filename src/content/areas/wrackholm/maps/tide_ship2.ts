@@ -3,6 +3,7 @@
 // its door at the stern, with the ship's papers and its log on the table and his sea chest. Band
 // 12-13; docs/areas/wrackholm.md §4.5 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -13,6 +14,7 @@ export const TIDE_SHIP2: MapDef = {
   band: [12, 13],
   region: 'wrackholm',
   start: { x: 8, y: 4, facing: SOUTH },
+  anchors: { from_tide_ship3: { x: 4, y: 9, facing: NORTH } },
   palette: { wall: '#5a4634', wallDark: '#3a2c20', floor: '#3e3024', ceiling: '#2a2018', door: '#3e2e20', wallStyle: 'brick', ceilingStyle: 'beams', banner: '#2a3a4a' },
   rows: [
     '################',
@@ -33,8 +35,8 @@ export const TIDE_SHIP2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 8, y: 4, to: 'tide_ship', tx: 8, ty: 5, tf: SOUTH, label: 'You climb the ladder up into the night on the weather deck.' },
-    { x: 4, y: 10, to: 'tide_ship3', tx: 4, ty: 10, tf: NORTH, label: 'You go down through the grating into the hold.' },
+    anchored({ x: 8, y: 4, to: 'tide_ship', at: 'from_tide_ship2', label: 'You climb the ladder up into the night on the weather deck.' }),
+    anchored({ x: 4, y: 10, to: 'tide_ship3', at: 'start', label: 'You go down through the grating into the hold.' }),
   ],
   features: [
     { kind: 'event', x: 8, y: 5, id: 'ts2_in', once: true, text: 'Down the ladder into dark and the smell of men. Hammocks hang in rows, slack and empty, and swing all together as the ship rolls.' },

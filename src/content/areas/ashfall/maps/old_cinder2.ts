@@ -7,7 +7,8 @@
 // upper house is; docs/areas/ashfall.md §4.7 is its brief. The Paladin's third prestige (#448) is to
 // light the lamp: asked by the old Lightbearer on F11's lip, it is lit here.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Paladin's third (#448): the old Lightbearer on F11's lip has asked for the lamp lit, and given his oil and flint. */
@@ -44,7 +45,7 @@ export const OLD_CINDER2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 8, y: 1, to: 'old_cinder', tx: 8, ty: 12, tf: NORTH, label: 'You climb the stair, out at the hall\'s door onto the square.' },
+    anchored({ x: 8, y: 1, to: 'old_cinder', at: 'from_old_cinder2', label: 'You climb the stair, out at the hall\'s door onto the square.' }),
   ],
   features: [
     // The stair's foot, and the hall's cellars.

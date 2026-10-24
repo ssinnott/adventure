@@ -6,7 +6,8 @@
 // The shaft at 16,2 is the way into the Tiefzeche (#462, MOUTH).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.6 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
@@ -14,8 +15,8 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * first level at 7,14, facing north, at the shaft's foot; the cage's way back up lands on 15,2,
  * facing west, the end of the spur before the shaft.
  */
-export const MOUTH: Exit = { x: 16, y: 2, to: 'deep_mines', tx: 7, ty: 14, tf: NORTH,
-  label: 'The cage drops down the shaft, the daylight going small overhead, and bumps to a stop at the bottom.' };
+export const MOUTH: Exit = anchored({ x: 16, y: 2, to: 'deep_mines', at: 'start',
+  label: 'The cage drops down the shaft, the daylight going small overhead, and bumps to a stop at the bottom.' });
 
 export const KILNSHEART_N4: MapDef = {
   id: 'kilnsheart_n4',
@@ -25,6 +26,7 @@ export const KILNSHEART_N4: MapDef = {
   band: [16, 17],
   region: 'kilns',
   start: { x: 4, y: 0, facing: SOUTH },
+  anchors: { from_deep_mines: { x: 15, y: 2, facing: WEST } },
   rows: [
     ',,,,==,,,,,,,,,,,,,,,,,,rrrrrrrr',
     ',,,,,=,,,,,,,,,::BB,,,rrrrrrrrrr',

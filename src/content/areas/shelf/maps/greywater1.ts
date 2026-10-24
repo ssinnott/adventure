@@ -3,7 +3,8 @@
 // iron key in the south, and the locked door east of it is the only way to the stairs down. Band
 // 2-4.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const GREYWATER1: MapDef = {
@@ -13,6 +14,7 @@ export const GREYWATER1: MapDef = {
   band: [2, 4],
   region: 'shelf',
   start: { x: 1, y: 1, facing: SOUTH },
+  anchors: { from_greywater2: { x: 14, y: 13, facing: NORTH } },
   palette: { wall: '#6a7a80', wallDark: '#465258', floor: '#3a4448', ceiling: '#2a3236', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#2a5a7a' },
   rows: [
     '################',
@@ -33,8 +35,8 @@ export const GREYWATER1: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 1, to: 'shelf', tx: 3, ty: 28, tf: EAST, label: 'You climb out of the caves onto the beach.' },
-    { x: 14, y: 14, to: 'greywater2', tx: 1, ty: 1, tf: SOUTH, label: 'Steps cut into the rock lead down. Someone has chiselled a hand into every one.' },
+    anchored({ x: 1, y: 1, to: 'shelf', at: 'from_greywater1', label: 'You climb out of the caves onto the beach.' }),
+    anchored({ x: 14, y: 14, to: 'greywater2', at: 'start', label: 'Steps cut into the rock lead down. Someone has chiselled a hand into every one.' }),
   ],
   features: [
     { kind: 'event', x: 1, y: 2, id: 'gw1_in', once: true, text: 'The caves smell of salt and lamp oil. Crates stamped with the Helmstow customs seal lie broken open along the walls.' },

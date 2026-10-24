@@ -1,7 +1,7 @@
 // The way into Cairnmoor from another area, and the only one (#992; EXPANSION §8.2): the flags and
 // exits the others take, declared here and imported back by the files they stood in, and every item by name.
 import type { Exit } from '../../../game/map.ts';
-import { WEST } from '../../../game/types.ts';
+import { anchored } from '../../../game/map.ts';
 
 // From maps/cairnfield_n8.ts.
 /**
@@ -11,7 +11,7 @@ import { WEST } from '../../../game/types.ts';
  * exits; its way back (M9's UP) lands on 1,28, facing east, the road's last square. The label leaves
  * the loch's name to the crossing line said after it (World's `crossing`, #166).
  */
-export const NOTCH: Exit = { x: 0, y: 28, to: 'longmere_m9', tx: 22, ty: 8, tf: WEST, label: 'Down through the notch to the frozen loch.' };
+export const NOTCH: Exit = anchored({ x: 0, y: 28, to: 'longmere_m9', at: 'start', label: 'Down through the notch to the frozen loch.' });
 
 // Every item by name, with the rest of items.ts.
 export * from './items.ts';

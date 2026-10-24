@@ -7,12 +7,13 @@
 // Cut from the atlas by hand, its rim's pine drawn as forest (tools/scaffold.ts has no character for
 // pine); docs/areas/sunderwood.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { AVERIL, AVERIL_MET } from './lantern_watch.ts';
 import { LAMP_LIT } from '../quests.ts';
 
 const GATE_DAY = 'The gate stands open. Over it the tower goes up into the rain, one lamp at the top lit in broad day.';
 const GATE_NIGHT = 'The gate stands open. Over it the tower goes up into the night, one lamp lit and the moths round it.';
-import { EAST, NORTH } from '../../../../game/types.ts';
+import { EAST, SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -24,6 +25,7 @@ export const LANTERNWOOD_L2: MapDef = {
   band: [15, 16],
   region: 'sunderwood',
   start: { x: 0, y: 22, facing: EAST },
+  anchors: { from_lantern_watch: { x: 12, y: 17, facing: SOUTH } },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT',
@@ -59,7 +61,7 @@ export const LANTERNWOOD_L2: MapDef = {
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMtt~~',
   ],
   exits: [
-    { x: 12, y: 16, to: 'lantern_watch', tx: 7, ty: 14, tf: NORTH, label: 'You go in under the gate, through the moth dust on the step, into the Watch\'s yard.' },
+    anchored({ x: 12, y: 16, to: 'lantern_watch', at: 'start', label: 'You go in under the gate, through the moth dust on the step, into the Watch\'s yard.' }),
   ],
   features: [
     // The road in off the bridge, and the lit lamp by it.

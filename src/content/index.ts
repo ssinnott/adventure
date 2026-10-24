@@ -5,6 +5,7 @@
 // RegionId) are made from the areas, so nobody edits them by hand. The one quest is joined here
 // from the areas' chapters. The maps as played, with the outdoors laid out, are in ./maps.ts.
 import type { MapDef } from '../game/map.ts';
+import { landExits } from '../game/map.ts';
 import type { MonsterDef } from '../game/monsters.ts';
 import type { ItemDef } from '../game/items.ts';
 import type { SpellDef } from '../game/spells.ts';
@@ -68,8 +69,11 @@ function once<T>(what: string, rows: readonly T[], key: (r: T) => string): reado
 
 once('area', AREAS, (a) => a.id);
 
-/** The maps as written, in road order, Helmstow first. The outdoor ones are zones the atlas places. */
-export const MAP_DEFS: readonly MapDef[] = once('map', AREAS.flatMap((a) => a.maps), (d) => d.id);
+/**
+ * The maps as written, in road order, Helmstow first. The outdoor ones are zones the atlas places.
+ * Each exit lands on an anchor of the map it leads to, which fills its square and facing here (#993).
+ */
+export const MAP_DEFS: readonly MapDef[] = landExits(once('map', AREAS.flatMap((a) => a.maps), (d) => d.id));
 
 /** Read-only: a suite lends a def through `withDefs` (tools/tests/lib.ts), and nothing else writes it (#945). */
 export const MONSTERS: Readonly<Record<string, MonsterDef>> = byId('monster', AREAS.flatMap((a) => a.monsters));

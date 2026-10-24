@@ -4,9 +4,11 @@
 // (index.ts).
 // docs/areas/wrackholm.md is its brief.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
+import { laid } from '../../../game/atlas.ts';
+import { PLAN } from '../../atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
-  { id: 'wrackholm', name: 'Wrackholm', area: 'wrackholm', band: [12, 14], maps: [{ map: 'wrackholm_e6', at: [136, 158] }, { map: 'wrackholm_f6', at: [168, 158] }, { map: 'wrackholm_e5', at: [136, 126] }, { map: 'wrackholm_f5', at: [168, 126] }, { map: 'wrackholm_f7', at: [168, 190] }], seeds: [[168, 176]], road: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'] },
+  { id: 'wrackholm', name: 'Wrackholm', area: 'wrackholm', band: [12, 14], maps: [laid(PLAN, 'wrackholm_e6'), laid(PLAN, 'wrackholm_f6'), laid(PLAN, 'wrackholm_e5'), laid(PLAN, 'wrackholm_f5'), laid(PLAN, 'wrackholm_f7')], seeds: [[168, 176]], road: ['wrackholm_e6:e6_rats', 'wrackholm_e6:e6_gulls_inlet', 'wrackholm_e6:e6_path_east'] },
 ];
 
 export const PLACES: readonly AtlasPlace[] = [

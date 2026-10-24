@@ -7,6 +7,7 @@
 // the dwarves' store, walled up when they left. Band 19-20, a band over Kilnmouth's, out of the Kilns'
 // figures; docs/areas/kilns.md §12.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -38,7 +39,7 @@ export const SEESTOLLEN: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 1, to: 'kilnmouth_k6', tx: 20, ty: 17, tf: SOUTH, label: 'Up the rails and out through the grate onto the slipway, into the wind off the sea.' },
+    anchored({ x: 7, y: 1, to: 'kilnmouth_k6', at: 'from_seestollen', label: 'Up the rails and out through the grate onto the slipway, into the wind off the sea.' }),
   ],
   features: [
     // The loading gallery at the incline's foot, and the pump at the drowned lower gallery's lip.

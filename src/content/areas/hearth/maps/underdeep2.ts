@@ -6,6 +6,7 @@
 // the Catcher on the last landing before the last door (16,1), with the Hand's own door beside it, shut
 // (13,1). Band 30-31; docs/areas/hearth_isle.md §4.7 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from '../../shelf/public.ts';
 import { HELD, TOKEN_COUSIN, TOKEN_HOLD, TOKEN_TALLIS } from './hearthisle_h6.ts';
@@ -20,11 +21,11 @@ export const FIVE = ['q_tide_home', 'q_grove_done', 'q_anvil_closed', 'q_peak_st
  * src/content/locks.ts on `q_ember_lit` at underdeep2 16,1, its reason: "the heart opens for whoever makes
  * it whole." Until the road's five hold, `ud2_shut` says so on the square before it.
  */
-export const LAST_DOOR: Exit = {
-  x: 16, y: 1, to: 'core', tx: 8, ty: 14, tf: NORTH, needFlag: FIVE,
+export const LAST_DOOR: Exit = anchored({
+  x: 16, y: 1, to: 'core', at: 'start', needFlag: FIVE,
   blockedText: 'A door of grey, no handle, the Hand\'s last words cut across it. Something in it listens, and does not open.',
   label: 'The door does not wait for anyone\'s palm. It opens as you come near, the way a door opens for someone it knows.',
-};
+});
 
 const many = (n: number, id: string): string[] => Array.from({ length: n }, () => id);
 
@@ -46,6 +47,7 @@ export const UNDERDEEP2: MapDef = {
   region: 'hearth',
   // At the stair's head under the Ways' last door, facing down the stair.
   start: { x: 16, y: 30, facing: NORTH },
+  anchors: { from_underdeep: { x: 24, y: 18, facing: SOUTH }, from_core: { x: 16, y: 2, facing: SOUTH } },
   // The Ways' grey, darker the further down.
   palette: { wall: '#8a8c90', wallDark: '#5e6064', floor: '#505258', ceiling: '#303236', door: '#5a5c60', wallStyle: 'smooth', ceilingStyle: 'vault', banner: '#3a3c40' },
   bare: true,
@@ -87,7 +89,7 @@ export const UNDERDEEP2: MapDef = {
   ],
   exits: [
     // Back up off the head into the Ways, before its last door, facing away from it (§9.1, 17).
-    { x: 16, y: 31, to: 'underdeep', tx: 16, ty: 2, tf: SOUTH, label: 'Back up off the stair\'s head into the ways.' },
+    anchored({ x: 16, y: 31, to: 'underdeep', at: 'from_underdeep2', label: 'Back up off the stair\'s head into the ways.' }),
     // The last door, into the Heart, on the road's five (§9, call 1; #759).
     LAST_DOOR,
   ],

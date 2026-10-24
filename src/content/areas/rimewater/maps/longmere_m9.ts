@@ -10,7 +10,8 @@
 // 13,10 its way onto the ice (LAKE_DOOR), where on the fourth night the hole gives up its fight.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.2 is its brief.
 import type { Choice, Exit, MapDef } from '../../../../game/map.ts';
-import { EAST, NORTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
@@ -33,7 +34,7 @@ const WENTBACK: Choice = { ask: '"She did not come up. Do I go home, or stay and
  * road is taken, not walked. The square above the landing, the road's foot under the fells' cleft,
  * leads onto N8's road at 1,28, facing east, beside the notch; N8's notch lands on 22,8.
  */
-export const UP: Exit = { x: 23, y: 8, to: 'cairnfield_n8', tx: 1, ty: 28, tf: EAST, label: 'Up through the notch onto the moor.' };
+export const UP: Exit = anchored({ x: 23, y: 8, to: 'cairnfield_n8', at: 'from_longmere_m9', label: 'Up through the notch onto the moor.' });
 
 /**
  * The way into Rime Lodge (#487): the gate in the lodge's east wall at 18,8, onto the town's first
@@ -41,16 +42,16 @@ export const UP: Exit = { x: 23, y: 8, to: 'cairnfield_n8', tx: 1, ty: 28, tf: E
  * §4.3) as the company goes in; the town's way back out lands on 19,8, facing east, the road's end
  * before the gate.
  */
-export const GATE: Exit = { x: 18, y: 8, to: 'rime_lodge', tx: 14, ty: 8, tf: WEST,
-  label: 'Rime Lodge: log walls on the shore, smoke, and a fire kept out on the ice. The keepers carry lanterns.' };
+export const GATE: Exit = anchored({ x: 18, y: 8, to: 'rime_lodge', at: 'start',
+  label: 'Rime Lodge: log walls on the shore, smoke, and a fire kept out on the ice. The keepers carry lanterns.' });
 
 /**
  * The inn yard's door in the lake wall at 13,10 (docs/areas/rimewater.md §9), the second way between
  * town and box: onto the town's yard at 7,14, facing north; the town's way back out lands on 13,11,
  * on the ice.
  */
-export const LAKE_DOOR: Exit = { x: 13, y: 10, to: 'rime_lodge', tx: 7, ty: 14, tf: NORTH,
-  label: 'In off the ice by the lake wall\'s door, into the inn\'s yard and out of the wind.' };
+export const LAKE_DOOR: Exit = anchored({ x: 13, y: 10, to: 'rime_lodge', at: 'from_longmere_m9',
+  label: 'In off the ice by the lake wall\'s door, into the inn\'s yard and out of the wind.' });
 
 export const LONGMERE_M9: MapDef = {
   id: 'longmere_m9',
@@ -60,6 +61,7 @@ export const LONGMERE_M9: MapDef = {
   band: [20, 21],
   region: 'rimewater',
   start: { x: 22, y: 8, facing: WEST },
+  anchors: { from_rime_lodge: { x: 19, y: 8, facing: EAST }, from_rime_lodge_2: { x: 13, y: 11, facing: SOUTH } },
   rows: [
     ',,,^^MMMMMMMMMMMMMMMMMMMMMMMMMMM',
     'pppppMMMMMMMMMMMMMMMMMMMMMMMMMMM',

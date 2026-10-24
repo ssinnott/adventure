@@ -12,7 +12,8 @@
 // the atlas, the void written '%' and the rim's peaks drawn as its mountain, the peaks being the
 // Whitespine's own (its novelty); docs/areas/rimewater.md §12.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const COLDMERE_K12: MapDef = {
@@ -23,6 +24,7 @@ export const COLDMERE_K12: MapDef = {
   band: [20, 22],
   region: 'rimewater',
   start: { x: 8, y: 0, facing: SOUTH },
+  anchors: { from_spittal: { x: 2, y: 14, facing: NORTH } },
   rows: [
     '^^,,,pppppppppMMMMMMMMMppppppppp',
     '^,,,pppppppppppMMMMMMMMppppppppp',
@@ -60,7 +62,7 @@ export const COLDMERE_K12: MapDef = {
   exits: [
     // The door in the rim's face at 2,15, walked into from the vale's pines at 2,14: the Spittal, the
     // Wakerobe's lair (#832, docs/areas/rimewater.md §12.5).
-    { x: 2, y: 15, to: 'spittal', tx: 7, ty: 1, tf: SOUTH, label: 'A door cut square in the rim\'s face, a bell-rope beside it worn smooth by hands. It is not barred.' },
+    anchored({ x: 2, y: 15, to: 'spittal', at: 'start', label: 'A door cut square in the rim\'s face, a bell-rope beside it worn smooth by hands. It is not barred.' }),
   ],
   features: [
     // In from K11 under the pines, the vale's grass coming round from the west.

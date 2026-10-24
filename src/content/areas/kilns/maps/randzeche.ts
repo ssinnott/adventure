@@ -6,7 +6,8 @@
 // Steiger keeps the Erzhemd. Band 30-32, the cap's, out of the Kilns' figures; docs/areas/kilns.md §12.8
 // is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, NORTH } from '../../../../game/types.ts';
 
 export const RANDZECHE: MapDef = {
   id: 'randzeche',
@@ -16,6 +17,7 @@ export const RANDZECHE: MapDef = {
   enclave: true,
   region: 'kilns',
   start: { x: 1, y: 7, facing: EAST },
+  anchors: { from_randzeche2: { x: 10, y: 12, facing: NORTH } },
   palette: { wall: '#4a4a48', wallDark: '#2c2c2a', floor: '#363634', ceiling: '#121211', door: '#4a3c2c', wallStyle: 'stone', ceilingStyle: 'beams', banner: '#4a4f5a' },
   rows: [
     '################',
@@ -36,8 +38,8 @@ export const RANDZECHE: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 7, to: 'kilnsheart_p5', tx: 10, ty: 23, tf: WEST, label: 'Out of the adit into the light under the rim, the cold air at your back.' },
-    { x: 10, y: 13, to: 'randzeche2', tx: 10, ty: 2, tf: SOUTH, label: 'You climb down the ladder in the winze, rung after rung, into the dark.' },
+    anchored({ x: 1, y: 7, to: 'kilnsheart_p5', at: 'from_randzeche', label: 'Out of the adit into the light under the rim, the cold air at your back.' }),
+    anchored({ x: 10, y: 13, to: 'randzeche2', at: 'start', label: 'You climb down the ladder in the winze, rung after rung, into the dark.' }),
   ],
   features: [
     // The adit, the miners' door across it and the lamp room off it.
