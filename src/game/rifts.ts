@@ -13,6 +13,7 @@ import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY } from './types.ts';
 import type { When } from './quests.ts';
 import type { RegionId } from './weather.ts';
+import { RESPAWN } from './keys.ts';
 
 /** The side of every Rift. */
 export const RIFT_SIZE = 12;
@@ -44,7 +45,9 @@ export interface RiftMaterial {
 export interface RiftTable {
   groups: readonly (readonly string[])[];
   warden?: readonly string[];
-  /** Minutes; 1440 if not given. */
+  /** The warden's group is a boss (`EncounterDef.boss`), which the gate judges as one (#968). */
+  boss?: true;
+  /** Minutes; a day (`RESPAWN.day`) if not given. */
   respawn?: number;
 }
 
@@ -144,12 +147,12 @@ export function generateRift(spec: RiftSpec): MapDef {
   ];
 
   const order = shuffle(slots.slice(), rng.int);
-  const respawn = table.respawn ?? 1440;
+  const respawn = table.respawn ?? RESPAWN.day;
   const encounters: EncounterDef[] = table.groups.map((monsters, i) => {
     const p = one(order[i]);
     return { id: `${id}_g${i + 1}`, x: p.x, y: p.y, monsters: [...monsters], aware: 5, respawn, ...(until ? { until } : {}) };
   });
-  if (table.warden) { const p = one('W'); encounters.push({ id: `${id}_warden`, x: p.x, y: p.y, monsters: [...table.warden], aware: 1, roams: false }); }
+  if (table.warden) { const p = one('W'); encounters.push({ id: `${id}_warden`, x: p.x, y: p.y, monsters: [...table.warden], aware: 1, roams: false, ...(table.boss ? { boss: true as const } : {}) }); }
 
   return {
     id, name: spec.name ?? material.name, kind: 'dungeon', band: spec.band,

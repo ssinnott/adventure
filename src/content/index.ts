@@ -110,10 +110,15 @@ function chart<T>(what: string, plan: readonly T[], built: readonly T[], key: (r
   return [...built.filter((r) => !planned.has(key(r))), ...plan.map((r) => mine.get(key(r)) ?? r)];
 }
 
-/** The world map: the plan (./atlas.ts) with each area's own zones, plates and sites. Everything reads this one. */
+/**
+ * The world map: the plan (./atlas.ts) with each area's own zones, plates, sites and links. Everything
+ * reads this one. The links are each area's, in road order, then the plan's between two areas: only the
+ * zone overlay reads their order (game/atlas.ts), and draws the same for it.
+ */
 export const ATLAS: Atlas = {
   ...PLAN,
   zones: chart('zone', PLAN.zones, AREAS.flatMap((a) => a.atlas.zones), (z) => z.id),
   places: chart('place', PLAN.places, AREAS.flatMap((a) => a.atlas.places), (p) => p.id),
   sites: chart('site', PLAN.sites, AREAS.flatMap((a) => a.atlas.sites), (s) => s.name),
+  links: [...AREAS.flatMap((a: Area) => a.atlas.links ?? []), ...PLAN.links],
 };
