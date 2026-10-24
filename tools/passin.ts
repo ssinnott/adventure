@@ -93,6 +93,7 @@ function placed(n: ts.Node, slice: Slice): string | null | 'refused' {
 /** Whether a call's first argument is a table already. */
 function handed(arg: ts.Expression | undefined): boolean {
   if (!arg) return false;
+  if (/^(TABLES|HARNESS|tables|items)(\.items)?$|\.tables(\.items)?$/.test(arg.getText())) return true;
   const t = checker.typeToString(checker.getTypeAtLocation(arg));
   return /^(Tables|Items|Readonly<Record<string, ItemDef>>|Record<string, ItemDef>)$/.test(t);
 }
