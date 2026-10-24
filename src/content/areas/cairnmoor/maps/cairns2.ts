@@ -6,7 +6,8 @@
 // a cell the hill folk walled up, its dead laid the other way about, with the richest grave-gold and
 // the Hill Torc. Band 19-20; docs/areas/cairnmoor.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CAIRNS2: MapDef = {
@@ -40,7 +41,7 @@ export const CAIRNS2: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 14, to: 'cairns', tx: 13, ty: 8, tf: WEST, label: 'You climb the stair a long way, up into the cairn.' },
+    anchored({ x: 7, y: 14, to: 'cairns', at: 'from_cairns2', label: 'You climb the stair a long way, up into the cairn.' }),
   ],
   features: [
     // The stair through the bedrock, and where the tool marks stop.

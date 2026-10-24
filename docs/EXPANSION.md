@@ -1165,11 +1165,14 @@ Decided by the builder for #986, each the owner's to overturn:
    squares a side, its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges, and
    named as the old maps were, by its column's letter and its row's number (the Foreland is G2). A
    map's place is its box, so what is not built is always whole boxes, and no area leaves another a
-   strip no map fits. `tools/scaffold.ts <zone> <x> <y>`, built in Phase 0, cuts the atlas's
+   strip no map fits; its zone's entry says so, `laid(PLAN, 'highmoor_n7')`, the box its id ends in
+   (#993). `tools/scaffold.ts <zone> <x> <y>`, built in Phase 0, cuts the atlas's
    terrain for a box into a draft map, so the land walked matches the land painted. A prototype,
    tried on the Downs west of the Foreland, gave in a second a wood, the hills and the road, and 14
    of its 32 rows nothing but grass: the part to be authored.
-3. **Author**: landmarks, features, groups, the secret, the ways in and out; dress the terrain.
+3. **Author**: landmarks, features, groups, the secret, the ways in and out; dress the terrain. An
+   exit lands on a named anchor of the map it leads to, `at: 'from_cairns'`, never on its squares:
+   that map holds its anchors after its `start`, which is one, each named for the way in (#993).
 4. **Check**: `node tools/shipped.ts` records the box's ids in its area's `shipped.json` and no other
    file, and on a new area's first map makes that file (§5.5); then `npm run check`, then the contact
    sheet.
@@ -1344,6 +1347,31 @@ Decided by the builder for #969, each the owner's to overturn:
    finds it.
 8. **A doc's rule says the field; a record keeps the name**: the decisions of #897 and #968 above
    and the area docs' build history name the tables as they stood when each was written.
+
+Decided by the builder for #993, each the owner's to overturn:
+
+1. **An area writes an exit through `anchored`**, which types an exit written by its anchor as the
+   exit the join makes of it: `Exit` keeps `tx`, `ty` and `tf` as every reader reads them. Made
+   optional, they would have taken a change at 28 places in three files of `src/game` and six of
+   `tools/`, the readers the issue keeps as they are.
+2. **The join fills each exit in place and keeps its `at`**: whatever holds the exit (its map, a
+   `public.ts`, `MAP_DEFS`) reads the same square, so the 33 walkthrough lines read as they did and
+   are not touched, and the structure suite holds every exit to an anchor as the game runs.
+3. **`anchors` is a record by name**, written after the map's `start`; the typecheck refuses a
+   literal that names one twice, as a fixture holds under `@ts-expect-error`, so the join refuses
+   the one name it can see twice, `start`.
+4. **A name is `from_<the map left>`**, with `_2` for a second square entered from the same map
+   (seven, the Foreland's `from_harrow_2` among them), so `from_meridian_camp_2` and
+   `from_meridian_camp2` read apart. One is renamed: the Deep Mines' `rungs`, where the way down
+   from the first level and the way up from the third both land.
+5. **A Rift's way out takes an anchor too** (`out: { to, at }`): each of the five Rifts the areas
+   place builds its one exit from it, so they are five of the issue's 175 exits and its grep found
+   their `tx:`. The Rift samples' `out` keeps its square, as it keeps the party's facing, which an
+   anchor cannot; the Kilns' `TEAR` keeps its own.
+6. **A zone map's place is `laid(PLAN, id)`**, from the plan's grid; the Foreland's and Thornmark's
+   name their boxes (`laid(PLAN, 'shelf', 'G2')`). A box the grid lacks throws as the area loads.
+7. **The fixtures stand in the structure suite**, which holds the grid already, beside its line
+   holding every exit of the areas to an anchor: no suite of their own and no snapshot.
 
 ### 8.3 Pull requests
 

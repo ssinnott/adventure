@@ -7,7 +7,7 @@ import { World } from './world.ts';
 import { signSays } from './inscriptions.ts';
 import type { WorldState } from './world.ts';
 import { groupDrawn } from './world.ts';
-import { defaultParty, allDown } from './party.ts';
+import { defaultParty, allDown, randomParty } from './party.ts';
 import { meet, answer, answerLabel, asked, barred, heard } from './people.ts';
 import type { Person } from './people.ts';
 import type { Party } from './party.ts';
@@ -29,7 +29,6 @@ import { MessageScreen, ChoiceScreen, SheetScreen, serviceScreen, SpellScreen, I
 import { QuestScreen } from '../ui/quests.ts';
 import { questLog, questMarks, questNews } from './quests.ts';
 import { TitleScreen } from '../ui/title.ts';
-import { randomParty } from '../ui/create.ts';
 import { EndingScreen } from '../ui/ending.ts';
 import { endingTaken, endsIn } from './stones.ts';
 import { WorldMapScreen } from '../ui/worldmap.ts';

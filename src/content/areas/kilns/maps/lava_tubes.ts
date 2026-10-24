@@ -6,7 +6,8 @@
 // whose floor drops away steeply down to the deep tubes. Band 16-17; docs/areas/kilns.md §4.11 is its
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LAVA_TUBES: MapDef = {
@@ -16,6 +17,7 @@ export const LAVA_TUBES: MapDef = {
   band: [16, 17],
   region: 'kilns',
   start: { x: 7, y: 14, facing: NORTH },
+  anchors: { from_lava_tubes2: { x: 7, y: 2, facing: SOUTH } },
   // Black rock, glassy where the fire ran, and the fire under the floor in places; nothing hangs on
   // the walls of a tube no dwarf dug past the adit.
   palette: { wall: '#4a4240', wallDark: '#2a2422', floor: '#2e2826', ceiling: '#18120f', door: '#4a3c2c', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#8a2a1a' },
@@ -40,8 +42,8 @@ export const LAVA_TUBES: MapDef = {
   ],
   exits: [
     // The adit's foot, back up to the ridge on O6, out under the words (ADIT, kilnsheart_o6.ts).
-    { x: 7, y: 14, to: 'kilnsheart_o6', tx: 21, ty: 20, tf: WEST, label: 'You climb the adit, the rock going from glass to timber, and come out under the words into the ash.' },
-    { x: 7, y: 1, to: 'lava_tubes2', tx: 7, ty: 2, tf: SOUTH, label: 'You go down the steep floor of the tube, the heat rising round you, into the deep tubes.' },
+    anchored({ x: 7, y: 14, to: 'kilnsheart_o6', at: 'from_lava_tubes', label: 'You climb the adit, the rock going from glass to timber, and come out under the words into the ash.' }),
+    anchored({ x: 7, y: 1, to: 'lava_tubes2', at: 'start', label: 'You go down the steep floor of the tube, the heat rising round you, into the deep tubes.' }),
   ],
   features: [
     { kind: 'event', x: 7, y: 13, id: 'lt1_adit', once: true, text: 'The dwarves\' adit, cut square and timbered, the props charred black. Ahead the rock turns dark and glassy.' },

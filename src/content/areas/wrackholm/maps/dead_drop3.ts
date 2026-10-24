@@ -9,7 +9,8 @@
 // pays outside any area's budget (EXPANSION §5.2; Wrackholm's `outside`). docs/areas/dead_drop.md §4.3 is its
 // brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const DEAD_DROP3: MapDef = {
@@ -58,7 +59,7 @@ export const DEAD_DROP3: MapDef = {
   ],
   exits: [
     // The way back up the steps, onto the people's vault's 16,29 at their head, facing away from them.
-    { x: 16, y: 1, to: 'dead_drop2', tx: 16, ty: 29, tf: NORTH, label: 'Up the steps a long way, and the people\'s vault again.' },
+    anchored({ x: 16, y: 1, to: 'dead_drop2', at: 'from_dead_drop3', label: 'Up the steps a long way, and the people\'s vault again.' }),
   ],
   features: [
     // Over the door at the steps' foot, the vessel's own word for the room, to a reader of Kiln-script (#538).

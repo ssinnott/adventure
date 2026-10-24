@@ -6,7 +6,8 @@
 // not flat.
 // Band 14-16; docs/areas/sunderwood.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -57,7 +58,7 @@ export const THE_SUNDER2: MapDef = {
     '################################',
   ],
   exits: [
-    { x: 7, y: 2, to: 'the_sunder', tx: 5, ty: 29, tf: NORTH, label: 'Up the stair to the ledges.' },
+    anchored({ x: 7, y: 2, to: 'the_sunder', at: 'from_the_sunder2', label: 'Up the stair to the ledges.' }),
   ],
   features: [
     { kind: 'event', x: 8, y: 3, id: 'su2_in', once: true, text: 'The bottom. Dead wood and glass trunks in the dark, each lit through from inside, white. Overhead the faces lean together so high that no sky shows, and no rain comes down.' },

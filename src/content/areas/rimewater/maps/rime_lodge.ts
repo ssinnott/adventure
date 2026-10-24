@@ -5,7 +5,8 @@
 // whose stays count the nights, the trainers' yard to 23 and the inn's yard with its door onto the ice,
 // where the ice-hole is kept open (M9). docs/areas/rimewater.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH, WEST } from '../../../../game/types.ts';
 import { sells, DROVE_COACH } from '../../../crossings.ts';
 import { FURRIER } from '../items.ts';
 import { WENNA_LODGE } from '../public.ts';
@@ -26,6 +27,7 @@ export const RIME_LODGE: MapDef = {
   band: [20, 22],
   region: 'rimewater',
   start: { x: 14, y: 8, facing: WEST },
+  anchors: { from_longmere_m9: { x: 7, y: 14, facing: NORTH } },
   // Logs gone silver with frost, the doors tarred black, and the yard's snow trodden grey.
   palette: { wall: '#6d5a46', wallDark: '#3f3328', floor: '#8e959b', door: '#2b2420' },
   rows: [
@@ -47,8 +49,8 @@ export const RIME_LODGE: MapDef = {
     '#######D########',
   ],
   exits: [
-    { x: 15, y: 8, to: 'longmere_m9', tx: 19, ty: 8, tf: EAST, label: 'Out at the gate onto the drove road. Behind you the dog starts again.' },
-    { x: 7, y: 15, to: 'longmere_m9', tx: 13, ty: 11, tf: SOUTH, label: 'Out by the lake wall\'s door onto the ice. The hole\'s fire burns a stone\'s throw out.' },
+    anchored({ x: 15, y: 8, to: 'longmere_m9', at: 'from_rime_lodge', label: 'Out at the gate onto the drove road. Behind you the dog starts again.' }),
+    anchored({ x: 7, y: 15, to: 'longmere_m9', at: 'from_rime_lodge_2', label: 'Out by the lake wall\'s door onto the ice. The hole\'s fire burns a stone\'s throw out.' }),
   ],
   features: [
     // The head of the yard: the Lanterns' fourth hall, which sells to the seventh tier and teaches

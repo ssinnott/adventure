@@ -176,6 +176,14 @@ export function questLog(world: WorldState, party: Party, quests: readonly LogQu
 }
 
 /**
+ * The quest or chapter whose end (`done`, any of its conditions) names a flag: what a gate on that
+ * flag waits for, as the world map's zone overlay letters it. Undefined where none does.
+ */
+export function finishedBy(quests: readonly LogQuest[], flag: string): QuestDef | undefined {
+  return quests.flatMap((d): readonly QuestDef[] => d.chapters ?? [d]).find((d) => [d.done ?? []].flat().some((c) => [c.flag ?? []].flat().includes(flag)));
+}
+
+/**
  * The map a quest's shown goal is done on, when its goal says: the one quest's from the chapter the
  * goal is from (`focus`), a side or seeking quest's from its own goals, as `sought` reads them.
  * Undefined once the quest is done, or where the goal names no map.

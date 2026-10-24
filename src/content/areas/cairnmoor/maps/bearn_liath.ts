@@ -6,7 +6,8 @@
 // tracks cross the hollow to its north wall, where the troll keeps what it took from the rest who came
 // up. One level, band 30-32; docs/areas/cairnmoor.md §12.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST } from '../../../../game/types.ts';
 
 export const BEARN_LIATH: MapDef = {
   id: 'bearn_liath',
@@ -38,7 +39,7 @@ export const BEARN_LIATH: MapDef = {
     '################',
   ],
   exits: [
-    { x: 1, y: 8, to: 'highmoor_p7', tx: 4, ty: 24, tf: WEST, label: 'Out of the cleft onto the hills under the rim, the moor wide and white below.' },
+    anchored({ x: 1, y: 8, to: 'highmoor_p7', at: 'from_bearn_liath', label: 'Out of the cleft onto the hills under the rim, the moor wide and white below.' }),
   ],
   features: [
     // The cleft from its mouth, the drift in the bend and the bones along it.

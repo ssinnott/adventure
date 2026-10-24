@@ -9,7 +9,8 @@
 // The P column is 24 wide: cut by hand from the atlas, the void written '%'; docs/areas/cairnmoor.md
 // §12.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const HIGHMOOR_P7: MapDef = {
@@ -20,6 +21,7 @@ export const HIGHMOOR_P7: MapDef = {
   band: [18, 19],
   region: 'cairnmoor',
   start: { x: 0, y: 4, facing: EAST },
+  anchors: { from_bearn_liath: { x: 4, y: 24, facing: WEST } },
   rows: [
     'MMMMMMMMMM%%%%%%%%%%%%%%',
     '^MM^^^^^^M%%%%%%%%%%%%%%',
@@ -78,7 +80,7 @@ export const HIGHMOOR_P7: MapDef = {
   secrets: [{ x: 6, y: 8, hint: 'p7_hoot' }],
   // The cleft in the rim's face, the way into Bearn Liath, the artifact's lair (#845, #846).
   exits: [
-    { x: 5, y: 24, to: 'bearn_liath', tx: 1, ty: 8, tf: EAST, label: 'You squeeze into a cleft in the rim\'s face. The snow in it is trodden flat, and the prints are big.' },
+    anchored({ x: 5, y: 24, to: 'bearn_liath', at: 'start', label: 'You squeeze into a cleft in the rim\'s face. The snow in it is trodden flat, and the prints are big.' }),
   ],
   encounters: [
     // Seven ravens on the crag in the north, the gentler, at 18; and three of the old folk walking at

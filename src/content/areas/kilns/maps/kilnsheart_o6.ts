@@ -6,7 +6,8 @@
 // Stone's strays under it. The adit at 22,20 is the way down into Feuerstollen's tubes (ADIT).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.11 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
-import { EAST, NORTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /**
@@ -14,8 +15,8 @@ import { RESPAWN } from '../../../../game/keys.ts';
  * dwarves' words, onto the tubes' first level at 7,14, facing north; the adit's way back up lands on
  * 21,20, facing west, out under the words.
  */
-export const ADIT: Exit = { x: 22, y: 20, to: 'lava_tubes', tx: 7, ty: 14, tf: NORTH,
-  label: 'You go in under the words and down the adit, the daylight going grey behind you and the air hot ahead.' };
+export const ADIT: Exit = anchored({ x: 22, y: 20, to: 'lava_tubes', at: 'start',
+  label: 'You go in under the words and down the adit, the daylight going grey behind you and the air hot ahead.' });
 
 export const KILNSHEART_O6: MapDef = {
   id: 'kilnsheart_o6',
@@ -25,6 +26,7 @@ export const KILNSHEART_O6: MapDef = {
   band: [17, 18],
   region: 'kilns',
   start: { x: 0, y: 18, facing: EAST },
+  anchors: { from_lava_tubes: { x: 21, y: 20, facing: WEST } },
   rows: [
     ',,,,,^^^^^^^^rrrrrrrrrrrrrrrrrrr',
     ',,,,,^^^^^^^^^rrrrrrrrrrrrrrrrrr',

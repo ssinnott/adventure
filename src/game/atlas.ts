@@ -698,8 +698,11 @@ export interface Cut { name: string; at: number; len: number }
 /** A column's letters: A to Z, then AA on. */
 const colName = (k: number): string => (k >= 26 ? colName(Math.floor(k / 26) - 1) : '') + String.fromCharCode(65 + (k % 26));
 
+/** What the grid is cut from: the world's size, a box's side and where A1's corner falls. */
+export type Grid = Pick<Atlas, 'width' | 'height' | 'square' | 'corner'>;
+
 /** The grid's columns and rows as cut to the world, A and 1 first. */
-export function gridCuts(atlas: Atlas): { cols: Cut[]; rows: Cut[] } {
+export function gridCuts(atlas: Grid): { cols: Cut[]; rows: Cut[] } {
   return {
     cols: cuts(atlas.corner[0], atlas.square, atlas.width).map((c, k) => ({ name: colName(k), ...c })),
     rows: cuts(atlas.corner[1], atlas.square, atlas.height).map((c, k) => ({ name: String(k + 1), ...c })),
@@ -714,11 +717,22 @@ export function boxAt(atlas: Atlas, x: number, y: number): string | undefined {
 }
 
 /** A box by its name, as cut to the world; undefined if the grid has no such box. */
-export function box(atlas: Atlas, name: string): Box | undefined {
+export function box(atlas: Grid, name: string): Box | undefined {
   const { cols, rows } = gridCuts(atlas);
   const m = /^([A-Z]+)(\d+)$/.exec(name);
   const c = cols.find((q) => q.name === m?.[1]), r = rows.find((q) => q.name === m?.[2]);
   return c && r ? { name, x: c.at, y: r.at, w: c.len, h: r.len } : undefined;
+}
+
+/**
+ * A zone's map laid in its box (#993): the box its id ends in (`highmoor_n7` lies in N7), or the
+ * one named where the id names none (the Foreland's `shelf` in G2), its place the box's corner.
+ * Throws where the grid has no such box.
+ */
+export function laid(grid: Grid, map: string, name = /_([a-z]+\d+)$/.exec(map)?.[1].toUpperCase()): ZoneMap {
+  const b = name === undefined ? undefined : box(grid, name);
+  if (!b) throw new Error(`map ${map} is laid in ${name ? `${name}, which is no box of the grid` : 'no box: its id names none, and none is named'}`);
+  return { map, at: [b.x, b.y] };
 }
 
 /**

@@ -7,7 +7,8 @@
 // (#862). Nothing hangs on the walls and nothing burns. Band 18-20; docs/areas/cairnmoor.md §4.6 is
 // its brief, §4.8 the cell's.
 import type { MapDef } from '../../../../game/map.ts';
-import { EAST, NORTH, WEST } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const CAIRNS: MapDef = {
@@ -17,6 +18,7 @@ export const CAIRNS: MapDef = {
   band: [18, 20],
   region: 'cairnmoor',
   start: { x: 1, y: 8, facing: EAST },
+  anchors: { from_cairns2: { x: 13, y: 8, facing: WEST } },
   // Laid slabs, grey with lichen at the door and black further in, the floor peat trodden hard.
   palette: { wall: '#76726a', wallDark: '#4c4943', floor: '#3a352d', ceiling: '#1a1815', door: '#76726a', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#5e3f28' },
   bare: true,
@@ -40,9 +42,9 @@ export const CAIRNS: MapDef = {
   ],
   exits: [
     // The door of slabs, back out onto the road on N8 (DOOR).
-    { x: 1, y: 8, to: 'cairnfield_n8', tx: 5, ty: 18, tf: WEST, label: 'You stoop out of the cairn\'s side into the wind.' },
+    anchored({ x: 1, y: 8, to: 'cairnfield_n8', at: 'from_cairns', label: 'You stoop out of the cairn\'s side into the wind.' }),
     // The stair cut down into the rock, to the hall under the cairn.
-    { x: 14, y: 8, to: 'cairns2', tx: 7, ty: 14, tf: NORTH, label: 'You go down the stair cut in the rock, a long way down.' },
+    anchored({ x: 14, y: 8, to: 'cairns2', at: 'start', label: 'You go down the stair cut in the rock, a long way down.' }),
   ],
   features: [
     // The passage: in from the door, the count cut in its wall (no script a reader reads), the chamber.

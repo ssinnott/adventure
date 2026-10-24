@@ -4,6 +4,7 @@
 // chamber of the chained rows behind it, where the Hand's overseers keep them, and the crews'
 // strongbox in the store beyond. Band 12-13; docs/areas/wrackholm.md §4.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
+import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -19,6 +20,7 @@ export const SMUGGLERS_COVE: MapDef = {
   band: [12, 13],
   region: 'wrackholm',
   start: { x: 12, y: 14, facing: NORTH },
+  anchors: { from_smugglers_cove2: { x: 4, y: 3, facing: SOUTH } },
   palette: { wall: '#5e5a52', wallDark: '#3c3934', floor: '#3a3832', ceiling: '#26241f', door: '#4e3a26', wallStyle: 'stone', ceilingStyle: 'beams', banner: '#5a2a24' },
   rows: [
     '################',
@@ -39,8 +41,8 @@ export const SMUGGLERS_COVE: MapDef = {
     '################',
   ],
   exits: [
-    { x: 12, y: 14, to: 'wrackholm_e6', tx: 18, ty: 13, tf: SOUTH, label: 'You come out onto the cliff path above the landing stage.' },
-    { x: 4, y: 2, to: 'smugglers_cove2', tx: 1, ty: 1, tf: SOUTH, label: 'You go down the ledge into the sea cave.' },
+    anchored({ x: 12, y: 14, to: 'wrackholm_e6', at: 'from_smugglers_cove', label: 'You come out onto the cliff path above the landing stage.' }),
+    anchored({ x: 4, y: 2, to: 'smugglers_cove2', at: 'start', label: 'You go down the ledge into the sea cave.' }),
   ],
   features: [
     { kind: 'event', x: 12, y: 13, id: 'kh1_in', once: true, text: 'Smoke hangs under the roof. The floor runs wet to a glow of fires, and beyond them the sea slaps at stone.' },

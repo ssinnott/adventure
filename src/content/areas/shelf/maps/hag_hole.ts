@@ -7,7 +7,8 @@
 // roof, and behind the fall of rock above it the dry ledge where the last one who came for the stone
 // sat out the dark. One level, band 30-32; docs/areas/shelf.md §12.3 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { NORTH } from '../../../../game/types.ts';
 
 export const HAG_HOLE: MapDef = {
   id: 'hag_hole',
@@ -39,7 +40,7 @@ export const HAG_HOLE: MapDef = {
     '################',
   ],
   exits: [
-    { x: 7, y: 14, to: 'downs_e4', tx: 3, ty: 7, tf: SOUTH, label: 'Out at the mouth onto the strand, the grey sand and the sea, and the down above.' },
+    anchored({ x: 7, y: 14, to: 'downs_e4', at: 'from_hag_hole', label: 'Out at the mouth onto the strand, the grey sand and the sea, and the down above.' }),
   ],
   features: [
     // The mouth, the passage the tide floods and the narrows.

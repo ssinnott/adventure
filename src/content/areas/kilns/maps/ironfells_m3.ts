@@ -6,7 +6,8 @@
 // Lanternwood's trees close the west against L3, and the ridge under M2 the north but for the road.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.2 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { NORTH, SOUTH } from '../../../../game/types.ts';
+import { anchored } from '../../../../game/map.ts';
+import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const IRONFELLS_M3: MapDef = {
@@ -52,7 +53,7 @@ export const IRONFELLS_M3: MapDef = {
     'TMMMMMMMMMMMppppppppMMrrMMppppp,',
   ],
   exits: [
-    { x: 1, y: 0, to: 'lanternwood_m2', tx: 1, ty: 31, tf: NORTH },
+    anchored({ x: 1, y: 0, to: 'lanternwood_m2', at: 'from_ironfells_m3' }),
   ],
   features: [
     // The pass: a knoll at the pines' edge, and the way back west over Lanternwood.

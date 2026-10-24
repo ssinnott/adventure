@@ -1,10 +1,12 @@
 // Ashfall's part of the world map: its three zones, the plates of its town and dungeons, and its
 // sites. docs/areas/ashfall.md is its brief (#509). Meridian Camp is #22's, down the vents.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
+import { laid } from '../../../game/atlas.ts';
+import { PLAN } from '../../atlas.ts';
 
 export const ZONES: readonly AtlasZone[] = [
   {
-    id: 'cindercoast', name: 'Cindercoast', area: 'ashfall', band: [24, 25], maps: [{ map: 'cindercoast_h10', at: [232, 286] }, { map: 'cindercoast_g10', at: [200, 286] }, { map: 'cindercoast_f9', at: [168, 254] }, { map: 'cindercoast_g9', at: [200, 254] }, { map: 'cindercoast_h9', at: [232, 254] }], seeds: [[200, 284], [236, 286]], label: [238, 292],
+    id: 'cindercoast', name: 'Cindercoast', area: 'ashfall', band: [24, 25], maps: [laid(PLAN, 'cindercoast_h10'), laid(PLAN, 'cindercoast_g10'), laid(PLAN, 'cindercoast_f9'), laid(PLAN, 'cindercoast_g9'), laid(PLAN, 'cindercoast_h9')], seeds: [[200, 284], [236, 286]], label: [238, 292],
     // The crossing line said coming onto the shore (#166, #511): how the far side feels to a company under its floor,
     // in words as true coming down off the mountain (G11, #513) as down the Stair.
     crossing: { harder: 'The far side, and it is harder than the range over the Sheer.', warning: 'The far side, and nothing on it would spare you. The way back is still open.' },
@@ -14,7 +16,7 @@ export const ZONES: readonly AtlasZone[] = [
     road: ['cindercoast_h10:h10_beetles_foot', 'cindercoast_g10:g10_beetles', 'cindercoast_g10:g10_salamanders'],
   },
   {
-    id: 'firemount', name: 'Fire Mountain', area: 'ashfall', band: [25, 26], maps: [{ map: 'firemount_g11', at: [200, 318] }, { map: 'firemount_h11', at: [232, 318] }, { map: 'firemount_h12', at: [232, 350] }, { map: 'firemount_g12', at: [200, 350] }], seeds: [[214, 330], [240, 340]],
+    id: 'firemount', name: 'Fire Mountain', area: 'ashfall', band: [25, 26], maps: [laid(PLAN, 'firemount_g11'), laid(PLAN, 'firemount_h11'), laid(PLAN, 'firemount_h12'), laid(PLAN, 'firemount_g12')], seeds: [[214, 330], [240, 340]],
     // The crossing line said coming onto the mountain (#166, #522): in words as true down G10's track or
     // off H10's ash as over the border from the High Spine on I11 and I12, where no road runs.
     crossing: { harder: 'The ground is warm through the boots, and what lives on the mountain is harder.', warning: 'Nothing on the mountain would spare you. The way back is still open.' },
@@ -23,7 +25,7 @@ export const ZONES: readonly AtlasZone[] = [
     road: ['firemount_g11:g11_salamanders', 'firemount_g11:g11_stokers'],
   },
   {
-    id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], maps: [{ map: 'emberwaste_f10', at: [168, 286] }, { map: 'emberwaste_e10', at: [136, 286] }, { map: 'emberwaste_f11', at: [168, 318] }, { map: 'emberwaste_e11', at: [136, 318] }, { map: 'emberwaste_f12', at: [168, 350] }], seeds: [[172, 336], [180, 300]],
+    id: 'emberwaste', name: 'The Ember Waste', area: 'ashfall', band: [25, 26], maps: [laid(PLAN, 'emberwaste_f10'), laid(PLAN, 'emberwaste_e10'), laid(PLAN, 'emberwaste_f11'), laid(PLAN, 'emberwaste_e11'), laid(PLAN, 'emberwaste_f12')], seeds: [[172, 336], [180, 300]],
     // The crossing line said coming off the coast onto the ash (#166, #517).
     crossing: { harder: 'Nothing grows out here, and what lives on the ash is harder.', warning: 'Nothing on the ash would spare you. The coast is behind you still.' },
     // West out of G10 onto the Waste's ash past the beetles below the vines and the drake on the rocks

@@ -21,7 +21,7 @@ export const RIFT_S_CLOSED: When = [{ slain: 'b5_rift_s:b5_rift_s_warden' }, STO
 /** The brine Rift on the hummock north of the boards (#165): two tide elders at the tear's heart. */
 export const B5_RIFT_N = rift({
   id: 'b5_rift_n', template: 'cells', material: 'brine', seed: 11, band: [11, 12], region: 'saltreach',
-  out: { to: 'delta_b5', tx: 16, ty: 6, tf: SOUTH },
+  out: { to: 'delta_b5', at: 'from_b5_rift_n' },
   table: { groups: [], warden: ['tide_elder', 'tide_elder'] },
   hoard: { gold: 120, items: ['potion_heal'] },
   until: RIFT_N_CLOSED,
@@ -30,7 +30,7 @@ export const B5_RIFT_N = rift({
 /** The brine Rift on the hummock over the channel, south of the boards: two tide elders at its heart. */
 export const B5_RIFT_S = rift({
   id: 'b5_rift_s', template: 'breach', material: 'brine', seed: 12, band: [11, 12], region: 'saltreach',
-  out: { to: 'delta_b5', tx: 26, ty: 25, tf: NORTH },
+  out: { to: 'delta_b5', at: 'from_b5_rift_s' },
   table: { groups: [], warden: ['tide_elder', 'tide_elder'] },
   hoard: { gold: 150, items: ['potion_heal', 'potion_heal'] },
   until: RIFT_S_CLOSED,
@@ -44,6 +44,7 @@ export const DELTA_B5: MapDef = {
   band: [11, 12],
   region: 'saltreach',
   start: { x: 31, y: 13, facing: WEST },
+  anchors: { from_b5_rift_n: { x: 16, y: 6, facing: SOUTH }, from_b5_rift_s: { x: 26, y: 25, facing: NORTH } },
   rows: [
     'wwwwwwwwwwwwwwwwwwwwwwwwwwwww~~w',
     'wwwwwwwwwwwwwwwwwwwwwwwwwwwww~~~',

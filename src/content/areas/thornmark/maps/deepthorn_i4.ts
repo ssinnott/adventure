@@ -4,7 +4,7 @@
 // first grove; the long glade down the box's east side, the road on to the head; the Wyke's shore
 // on the west. Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.4 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
-import { SOUTH } from '../../../../game/types.ts';
+import { SOUTH, WEST } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -18,6 +18,7 @@ export const DEEPTHORN_I4: MapDef = {
   // Henlys's halls are oaks grown into walls: bark, not stone.
   palette: { floor: '#3f8a34', wall: '#6e5a3e', wallDark: '#4a3c28', banner: '#2a6a3a' },
   start: { x: 12, y: 0, facing: SOUTH },
+  anchors: { from_deepthorn_j4: { x: 30, y: 12, facing: WEST } },
   rows: [
     'TTTTTTTTTTTT:TTTTTTTTTTTTTTTTTTT',
     'TTTTTTTTTTTT:TTTTTTTTTTTTTTTTTTT',
