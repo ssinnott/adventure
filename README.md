@@ -13,17 +13,22 @@ dependencies, and nothing compiled to disk during development.
 - [docs/archive/](docs/archive/) — docs cut and kept whole as history: the slice's doc (#1023),
   `docs/archive/SLICE-history.md`, with its Checks, its tools' usage and its hand-written code map;
   EXPANSION's history (#1024), `docs/archive/EXPANSION-history.md`: where it stood, the decisions
-  v1 waited on, the order of work, what to watch and the risks.
+  v1 waited on, the order of work, what to watch and the risks; MONSTERS' §5 to §13, its rosters,
+  in `docs/archive/MONSTERS-rosters.md` and the harness's runs of its §4.4 in
+  `docs/archive/harness-log.md` (#1024).
 - [docs/STORY.md](docs/STORY.md) — the main quest told as a story, the company's own chronicle of
   it: how the five acts of DESIGN.md §9 should feel.
-- [docs/MONSTERS.md](docs/MONSTERS.md) — what the company fights down the road, area by area: the
-  five kinds of monster, what each area's monsters carry of the story, the numbers they start from,
-  and what the combat resolver has yet to learn.
+- [docs/MONSTERS.md](docs/MONSTERS.md) — what the monsters are for: the five kinds of monster, what
+  a monster can do, what the road asks of it and the numbers they are made from (the line, the
+  roles, the pay and the test monster).
+- [docs/ROSTER.md](docs/ROSTER.md) — the monsters as their defs make them, a row to each by area in
+  road order, then the families: made by `node tools/roster.ts`, which a pull request that adds or
+  changes a monster runs.
 - [docs/EXPANSION.md](docs/EXPANSION.md) — how the rest of Caldera gets built: the principles,
   when an area is done, the checks every map, monster and quest must pass and how the work splits
   so sessions do not collide. The epics hold the order of work.
-- [docs/decisions.md](docs/decisions.md) — the "Decided by" lists that settle EXPANSION's rules,
-  each under its section's number and each the owner's to overturn; a builder adds the next there,
+- [docs/decisions.md](docs/decisions.md) — the "Decided by" lists that settle the docs' rules,
+  each under its doc and section and each the owner's to overturn; a builder adds the next there,
   under the doc and section of the rule it settles, an area's decisions aside (EXPANSION §8.2).
 - [docs/ISSUES.md](docs/ISSUES.md) — how that work is filed: issue types, labels, epics, the
   Dependencies section every issue carries, and the sections of an issue.
