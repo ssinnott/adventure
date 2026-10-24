@@ -713,7 +713,9 @@ Decided by the builder for #946, each the owner's to overturn:
    `tools/tests/lib.ts`), and puts back what it covered, so the rat's and the wolf's looks go
    through it too; `gear` lends its four items with a plus up front, each only where absent, as it
    added them on the way. Main gained two writers since the issue (`curve`'s unmarked artifacts,
-   `items`' stone twin): 17 go through it.
+   `items`' stone twin): 17 go through it. Since #973 an item is lent by a table of the suite's own
+   (`tablesWith`, `tools/kit/headless.ts`), handed to what plays it, and `withDefs` lends the
+   monsters alone, three, until #974.
 4. **`unforge` drops the companies dressed in forged gear from the cache** as well, so a later
    `gearGrows` never meets an id the table no longer holds.
 5. **The runner's check fails the suite by name, listing each entry added, removed or replaced** (by
@@ -1031,8 +1033,7 @@ Decided by the builder for #900, each the owner's to overturn:
 4. **A row is `importer > imported`,** however often the import is written, under the first rule it
    breaks: the walkthroughs' and the suites', the layers, the areas. A cycle is one row, `cycle: `
    and its files sorted, a strongly connected component of `src`'s graph.
-5. **The keys are the plan's:** L2 the items (`items.ts`, `party.ts`, `skills.ts`), L3 the monsters
-   and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
+5. **The keys are the plan's:** L3 the monsters and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
    `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
    imports of `src/input.ts`; H8 a walkthrough taking another's chain (`STEPS`, and Saltreach's
    two orders of play), keyed K8 until #985 moved `tools/walk.ts` into the kit. L8 and L9 hold
