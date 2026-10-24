@@ -1,7 +1,7 @@
 // The curve's steps the suites share (#984): how far each square of a map is walked from its start.
 // The curve suite measures by it; the gate takes it from here.
 import { GameMap } from '../../../src/game/map.ts';
-import type { MapDef } from '../../../src/game/map.ts';
+import type { MapDef } from '../../../src/game/mapdef.ts';
 
 /**
  * Walking steps from a map's way in (its start, or `from`) to every cell, given keys and secrets, swimming and

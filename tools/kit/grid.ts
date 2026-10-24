@@ -4,7 +4,8 @@
 // (a walkthrough's `out`, the outdoors, or one map) and the box (a zone of the outdoors) are given;
 // a square is its key on the map, y * width + x. Nothing here takes a walkthrough or an area's file.
 import { GameMap } from '../../src/game/map.ts';
-import type { Can, MapDef, MapZone } from '../../src/game/map.ts';
+import type { Can } from '../../src/game/map.ts';
+import type { MapDef, MapZone } from '../../src/game/mapdef.ts';
 
 /** A square: x, y. */
 export type Cell = readonly [number, number];

@@ -7,7 +7,7 @@
 // its after holds, and says the night's own words on waking in place of the usual.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { Feature, MapDef } from '../../src/game/map.ts';
+import type { Feature, MapDef } from '../../src/game/mapdef.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, resists, stayNight } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';

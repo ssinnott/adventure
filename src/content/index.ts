@@ -4,7 +4,7 @@
 // holds to the lists here. The unions the game types its content with (MonsterSprite, Interior,
 // RegionId, MapId, Flag) are made from the areas, so nobody edits them by hand. The one quest is joined here
 // from the areas' chapters. The maps as played, with the outdoors laid out, are in ./maps.ts.
-import type { MapDef } from '../game/map.ts';
+import type { MapDef } from '../game/mapdef.ts';
 import { landExits } from '../game/map.ts';
 import type { MonsterDef } from '../game/monsters.ts';
 import type { ItemDef } from '../game/items.ts';

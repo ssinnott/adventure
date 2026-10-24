@@ -1,11 +1,65 @@
 // The people the party talks to: what a person says, what a hand-in takes and pays and the
 // questions they put. It depends on the person, the party and which of their words hold (`heard`),
 // so the tests meet anyone as the game does, without a Game.
-import type { Feature, NpcQuest, Words, Choice, Answer, EncounterDef } from './map.ts';
+import type { Feature, EncounterDef, Presence } from './mapdef.ts';
+import type { Flag } from '../content/index.ts';
 import type { Party } from './party.ts';
 import type { World } from './world.ts';
 import { countItem, takeItem, payXp } from './party.ts';
 import { item } from './items.ts';
+
+/**
+ * A hand-in: the first time the party meets the NPC carrying `item`, the NPC takes it, says `done`
+ * (or `early`, to a company they never hired), pays and sets `setFlag`. See game/people.ts.
+ */
+export interface NpcQuest {
+  item: string;
+  /** Gold paid; 0 pays nothing and says no gold line. */
+  reward: number;
+  /** What the NPC says taking the item from a company they never hired; `done` if not given. */
+  early?: string[];
+  done: string[];
+  setFlag: Flag;
+  /** What the NPC says once the quest is complete; of several hand-ins, the last done that has any. */
+  after?: string[];
+}
+
+/**
+ * What a person says once it holds, in place of their first meeting's lines: `after` and `until`
+ * are the quest log's conditions and `when` the hours, as a group wears them. The first that holds
+ * is said; it sets `sets` and may end in `choice`.
+ */
+export interface Words extends Presence {
+  lines: readonly string[];
+  sets?: Flag | readonly Flag[];
+  choice?: Choice;
+}
+
+/** A question a person puts after their words, answered through the choice screen. Put until one answer's flags are set. */
+export interface Choice {
+  ask: string;
+  answers: readonly Answer[];
+}
+
+/**
+ * An answer: it sets its flags, hands the company `gives` if it has an item, pays `pay` if it has
+ * any (the gold to the company, the xp split among the living, as a fight's is) and the person
+ * `says` it. One with a `price` is sold as a ware is: listed at it, barred to a company with less,
+ * and paid as it is answered (the thane's for the Anvil Stone, #459). One that `takes` an item hands
+ * it over from the pack, barred to a company without it. An answer that gives, pays or costs sets a
+ * flag, so it is answered once.
+ */
+export interface Answer {
+  label: string;
+  sets?: Flag | readonly Flag[];
+  gives?: string;
+  pay?: { gold?: number; xp?: number };
+  price?: number;
+  takes?: string;
+  /** Of a group's question (`EncounterDef.choice`), the refusal: said, then the fight. It sets no flag, so the question is put again. */
+  fight?: boolean;
+  says: readonly string[];
+}
 
 export type Person = Extract<Feature, { kind: 'npc' }>;
 

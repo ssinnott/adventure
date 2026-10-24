@@ -4,7 +4,7 @@
 // behind them a tube that was cut and not run ends at a plate nothing opens; the middle is choked
 // with a flow that set; east, past more salamanders, the tube opens into the deepest chamber, its
 // floor all fire, where the Great Salamander lies. Band 17-18; docs/areas/kilns.md §4.11 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

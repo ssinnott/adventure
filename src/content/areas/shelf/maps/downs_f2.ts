@@ -3,7 +3,7 @@
 // Coldharbour, the retired captain's steading, at the wood's south-west corner, and in its east field
 // his old standard-bearer, who teaches the Knight's second prestige (#19). Cut from the atlas by
 // tools/scaffold.ts; docs/areas/shelf.md §4.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

@@ -5,7 +5,7 @@
 // her palm to it (8,5), on the clock; then the voice, Wenna, the ring and the choice (§5); Vask after, on his
 // knees by the west wall (3,9); and inside the door, once he has fallen, whoever stands with the company
 // there. Band 32, the cap; docs/areas/hearth.md §4.8 is its brief.
-import type { Answer, Choice, MapDef } from '../../../../game/map.ts';
+import type { Answer, Choice, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { ENDINGS, ENDED } from '../../../endings.ts';

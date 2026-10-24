@@ -8,7 +8,7 @@
 // west, square for square; past the east and south edges the rim stands and the world ends.
 // Laid whole in Loch Fada, its larger zone. Cut by hand from the atlas, the void written '%', the pines at
 // 16,0 drawn where the atlas has the rim, to meet L11's; docs/areas/rimewater.md §12.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

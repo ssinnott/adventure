@@ -5,7 +5,7 @@
 // pines and their line of snares to the range's foot, where their cache lies in a cleft of the rock;
 // lynx in the pines by the loch's foot, and bears under the rim.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

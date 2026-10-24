@@ -2,7 +2,7 @@
 // keeps, as the painter stands them; alike windows as one and a door told from a wall; its shards a
 // partition of it; and the plan of every map, its figures printed.
 import { GameMap, VOID_CH } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { NORTH, EAST } from '../../src/game/types.ts';

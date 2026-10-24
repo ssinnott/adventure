@@ -4,7 +4,7 @@
 // And the bounds' artifacts (#847): their mark, their shape, the lair each lies in, their five kinds of
 // power in a fight and out, the shop that will not take one, the sheet that says each and their words.
 import { ITEMS, MAP_DEFS, MONSTERS, AREAS, SPELLS, GUILD_QUESTS } from '../../src/content/index.ts';
-import type { Feature } from '../../src/game/map.ts';
+import type { Feature } from '../../src/game/mapdef.ts';
 import { hits, sellPrice, ELEMENT_DIE, ARTIFACT_RAISE, ARTIFACT_CASTINGS, ARTIFACT_LEVEL, REFUSED, chargesLeft } from '../../src/game/items.ts';
 import { ARTIFACT_PRICE } from '../../src/content/items.ts';
 import { giftOf } from '../../src/game/wilds.ts';

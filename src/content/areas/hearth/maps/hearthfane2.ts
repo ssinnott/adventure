@@ -4,7 +4,7 @@
 // its dead and the rats come up for them; and north through the chamber's door a short passage, a keeper
 // in it, to the grey door down into the Ways (#757) with Wenna's knot on its frame (§5). Band 29;
 // docs/areas/hearth.md §4.5 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

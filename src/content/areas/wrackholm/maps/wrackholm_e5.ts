@@ -7,7 +7,7 @@
 // (#187) over its south edge, square for square; the strand runs on east into F5 (#835). No group.
 // Laid whole in Wrackholm, cut from the atlas with the rocks drawn in; docs/areas/wrackholm.md §12.2
 // is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 

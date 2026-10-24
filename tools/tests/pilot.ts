@@ -11,7 +11,7 @@ import { freshSeed } from '../../src/lib/engine/rng.ts';
 import { TitleScreen, IDLE_TICKS } from '../../src/ui/title.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Feature, MapZone } from '../../src/game/map.ts';
+import type { MapDef, Feature, MapZone } from '../../src/game/mapdef.ts';
 import { NORTH, EAST, SOUTH, WEST, FACING_DX, FACING_DY, turnLeft, turnRight } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import type { Action } from '../../src/input.ts';

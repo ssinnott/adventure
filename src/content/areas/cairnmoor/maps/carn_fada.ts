@@ -6,7 +6,7 @@
 // rest where a cell is still closed; and the end cell, where ice bears off the loch's foot have made a
 // den over the oldest dead's cist and the Sunwise Mace in it. Band 20-21, a band over L8's, out of
 // Cairnmoor's figures; docs/areas/cairnmoor.md §12.5 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

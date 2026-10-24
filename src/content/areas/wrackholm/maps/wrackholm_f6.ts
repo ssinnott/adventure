@@ -7,7 +7,7 @@
 // docs/areas/wrackholm.md §4.6). Merryn, met again while Old Nick lives, speaks of a ship she counted in and never
 // out: Holdfast's rumour, its lair under F5's reef (#835, §12.6). Cut from the atlas by tools/scaffold.ts;
 // docs/areas/wrackholm.md §4.4 is its brief.
-import type { MapDef, Choice, Words } from '../../../../game/map.ts';
+import type { MapDef, Choice, Words } from '../../../../game/mapdef.ts';
 import { NICK_DOWN } from './nicks_locker.ts';
 import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

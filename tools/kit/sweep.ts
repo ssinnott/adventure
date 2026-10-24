@@ -19,7 +19,8 @@
 // to join the next (`own`, viewport.ts: one farther ahead, one farther out), whether one stands. The
 // faces are geometry, so alike windows paint alike bands; the audit (SMOKE_SWEEP_AUDIT) holds the key
 // to the painter, view by view, as the painter changes.
-import type { Cell, GameMap } from '../../src/game/map.ts';
+import type { GameMap } from '../../src/game/map.ts';
+import type { Cell } from '../../src/game/mapdef.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { VIEW_DEPTH, VIEW_LATERAL, isSolidWall, viewCell } from '../../src/game/world.ts';
 import { drawnCell } from '../../src/game/ink.ts';

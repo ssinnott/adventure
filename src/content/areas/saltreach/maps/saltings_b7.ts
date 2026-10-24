@@ -6,7 +6,7 @@
 // the Glasswold's ground above it are the rim's mountain, shut, and so is the west edge against A7, which
 // stays cut, its corner with it, as B6's 0,31 and A6's 31,31 beside it are. Cut from the atlas by
 // tools/scaffold.ts and closed by hand; docs/areas/saltreach.md §12 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

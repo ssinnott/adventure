@@ -5,7 +5,7 @@
 // and a black-glass Rift in the crystal at the box's south end, open whatever the company does, though
 // what comes out of it stops once the crack is sealed far below (#765).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.5 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';

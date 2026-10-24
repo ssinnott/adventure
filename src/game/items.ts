@@ -5,7 +5,7 @@
 // (`statOf`) and a weapon's blows may carry an element (an added die, `ELEMENT_DIE`). An artifact is
 // one marked so (#847): one in the world, never sold, past the ladder's top.
 import { ITEMS } from '../content/index.ts';
-import type { Feature } from './map.ts';
+import type { Feature } from './mapdef.ts';
 import type { Condition, Party, Stat } from './party.ts';
 import type { Element } from './spells.ts';
 import type { SkillId } from './skills.ts';

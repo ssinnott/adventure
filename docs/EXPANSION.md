@@ -311,7 +311,7 @@ its xp or gold, which the curve prints as a figure; and the gate judges it at it
 the area's pools. Meridian Camp's third level and the Dead-Drop's three are planned so.
 
 An enclave is a place of its own beside the road (#845): a dungeon entered from a box (a hollow, a
-cave, a ruin), declared on its map (`enclave` in `game/map.ts`) and held to its own band, over its
+cave, a ruin), declared on its map (`enclave` in `game/mapdef.ts`), held to its own band, over its
 box's: a band or two for an enclave, the cap's, 30–32, for an artifact lair (the owner, 17 October
 2026). The checks hold it as they hold a map outside the budget, wherever its band stands. The curve
 leaves its pay and its finds out of its area: no clear counts its xp or gold, which the curve prints

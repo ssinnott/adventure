@@ -23,7 +23,7 @@
 import type { Atlas, WorldGrid, WorldTerrain } from './atlas.ts';
 import { mapAt, zoneOfMap, TERRAINS } from './atlas.ts';
 import { VOID_CH } from './map.ts';
-import type { MapDef, MapZone, Exit, Feature, EncounterDef, Gate, Cell, Landmark, PlayedDef } from './map.ts';
+import type { MapDef, MapZone, Exit, Feature, EncounterDef, Gate, Cell, Landmark, PlayedDef } from './mapdef.ts';
 import type { MapId } from '../content/index.ts';
 
 /** The outdoors' map id. */

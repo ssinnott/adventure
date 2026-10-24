@@ -5,7 +5,7 @@
 import type { Load, Page } from '../kit/browser.ts';
 import type { View } from '../kit/sweep.ts';
 import { GROUND_SAMPLES } from '../kit/grounds.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import type { Run, Sweep } from './boot.ts';
 
 const FLOOR = ['mill', 'harrow', 'keep'];

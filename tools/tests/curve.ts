@@ -14,7 +14,7 @@ import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
 import { CURVE, MEMBERS, xpBudget, goldBudget } from '../../src/content/progression.ts';
 import type { AreaCurve } from '../../src/content/progression.ts';
-import type { MapDef, Feature, EncounterDef, Choice } from '../../src/game/map.ts';
+import type { MapDef, Feature, EncounterDef, Choice } from '../../src/game/mapdef.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { QuestDef } from '../../src/game/quests.ts';

@@ -6,7 +6,7 @@
 // the door of Nick's Locker, the lair, Old Nick's sea cave (docs/areas/wrackholm.md §12.6). In from F6
 // (#189) over its south edge and from E5 (#835) over its west, square for square. No group. Laid whole
 // in Wrackholm, cut from the atlas with the rocks drawn in; docs/areas/wrackholm.md §12.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 

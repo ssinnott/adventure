@@ -9,7 +9,7 @@
 // Joins E10 to D9 (#527). Cut from the atlas by tools/scaffold.ts; docs/areas/glasswold.md §4.5 is its brief.
 // In the small mesa's rock, behind a door in its east face that the arrows in the foot of it point at, an old
 // Rider hides who drilled the Riders: the Wold's Master of arms (#858, docs/areas/glasswold.md §6).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

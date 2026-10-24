@@ -3,7 +3,7 @@
 // Thornmark tier of gear, the Elder's training yard (to level 11, a level past its band), the Split
 // Oak tavern and Elder Sylvane, who wants proof of who cut the Stone. Three first prestiges are
 // taught here: the Ranger's, the Cleric's and the Druid's (#19).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 

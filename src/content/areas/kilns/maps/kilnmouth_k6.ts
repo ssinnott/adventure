@@ -7,7 +7,7 @@
 // squares and a rock bank across its neck closes it, as the sea closes the north and a mountain the
 // four squares of sand on the west. The Kilns' bounds bring back K6, L7, P4, P5 and P6.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §12 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

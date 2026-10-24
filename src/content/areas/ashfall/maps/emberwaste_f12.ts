@@ -12,7 +12,7 @@
 // west edge is the mountain and the void against E12, where the world ends, and the south edge the void.
 // Cut from the atlas by tools/scaffold.ts's own cut, the world's end written as void; docs/areas/ashfall.md
 // §12.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 

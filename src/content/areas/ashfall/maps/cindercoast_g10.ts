@@ -10,7 +10,7 @@
 // east, south and west edges end the world against H10, G11 and F10, and the north edge, beside the
 // wall, against G9's shore.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.3 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

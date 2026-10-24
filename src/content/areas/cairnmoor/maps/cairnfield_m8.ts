@@ -6,7 +6,7 @@
 // The Rimefells close the south and the corner, but for the grass and the hills onto M9's north-west
 // corner; west, the sea and L8's shore, built since (#834, docs/areas/cairnmoor.md §12.4).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

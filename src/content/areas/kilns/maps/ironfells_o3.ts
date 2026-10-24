@@ -5,7 +5,7 @@
 // and a hunter's cache in a cleft at the end of a path that goes nowhere.
 // Cut from the atlas by tools/scaffold.ts (its void the world's end at the north-east corner);
 // docs/areas/kilns.md §4.15 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

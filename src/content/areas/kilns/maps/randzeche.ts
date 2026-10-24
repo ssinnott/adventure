@@ -5,7 +5,7 @@
 // that found the dark rock to the winze, its ladder down to the Dark Seam (`randzeche2`), where the
 // Steiger keeps the Erzhemd. Band 30-32, the cap's, out of the Kilns' figures; docs/areas/kilns.md §12.8
 // is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
 

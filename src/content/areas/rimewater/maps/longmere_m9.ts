@@ -9,7 +9,7 @@
 // (UP); the gate at 18,8 is the way into Rime Lodge (#487, GATE), and the door in the lake wall at
 // 13,10 its way onto the ice (LAKE_DOOR), where on the fourth night the hole gives up its fight.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.2 is its brief.
-import type { Choice, Exit, MapDef } from '../../../../game/map.ts';
+import type { Choice, Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

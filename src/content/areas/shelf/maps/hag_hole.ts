@@ -6,7 +6,7 @@
 // black wood in the wrack, the Hagstone in it; over the pool in the cave's west end lamp smoke on the
 // roof, and behind the fall of rock above it the dry ledge where the last one who came for the stone
 // sat out the dark. One level, band 30-32; docs/areas/shelf.md §12.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 

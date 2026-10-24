@@ -3,7 +3,7 @@
 // bar out to an islet and on to a spit, with tidal flats either side. The rest is Sylmeer. Laid
 // with C5 (#170) so the road out of D4 has somewhere to go; docs/areas/saltreach.md §4.2 is its
 // brief. Cut from the atlas by tools/scaffold.ts.
-import type { Feature, MapDef } from '../../../../game/map.ts';
+import type { Feature, MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 
 /**

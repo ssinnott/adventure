@@ -5,7 +5,7 @@
 // water runs, a channel of meltwater beside it. The tallymen and their knockers that did not come up
 // through the hole keep both, and at the stair's foot, where the two ways meet, the first keeper
 // waits alone. Band 20-22; docs/areas/rimewater.md §4.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

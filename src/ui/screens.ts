@@ -10,7 +10,7 @@ import { LAYOUT, drawPartyCards, drawLog, drawViewportFrame, SAY_W, SAY_LINES, S
 import { drawPortraitLarge } from './portraits.ts';
 import { drawInterior } from './interior.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, RED } from './palette.ts';
-import type { Feature, Interior } from '../game/map.ts';
+import type { Feature, Interior } from '../game/mapdef.ts';
 import { item, priceIn, buy, sellPrice } from '../game/items.ts';
 import type { ItemDef } from '../game/items.ts';
 import { readText } from '../game/people.ts';

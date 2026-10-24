@@ -11,7 +11,7 @@
 // at the hills and the grass, the south edge J12 (#508) at the hills, and the north edge J10 at the
 // hills and the pines either side of the road. Wenna waits by the gate on her way to the Point (I8, #504).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.2 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { WENNA_LODGE } from '../../rimewater/public.ts';

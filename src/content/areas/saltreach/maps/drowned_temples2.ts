@@ -6,7 +6,7 @@
 // pool and reached only by the wet stair from B6's far roof, the secret: the god's silver is there.
 // When the Choirmaster falls the count stops, and the choir does not come back. Band 11-12;
 // docs/areas/saltreach.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { COUNT_STOPPED } from './drowned_temples.ts';

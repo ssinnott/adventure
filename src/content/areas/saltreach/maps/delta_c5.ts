@@ -3,7 +3,7 @@
 // at the fork for the river and C4, the fen's pools either side, a small brine Rift on an islet and
 // the river's west fen over two fords. The leeches are new here, and the first Rift from a
 // template. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md §4.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import type { When } from '../../../../game/quests.ts';
 import { WEST, SOUTH } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';

@@ -5,7 +5,7 @@
 // its south end; the moor's first heather in the south-west, the crag's foot across the north and the
 // Stone's strays under it. The adit at 22,20 is the way down into Feuerstollen's tubes (ADIT).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.11 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

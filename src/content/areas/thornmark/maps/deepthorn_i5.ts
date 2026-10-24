@@ -6,7 +6,7 @@
 // of the trees, who teaches the Druid's second prestige (#19). The Hearth Isle's rocks in the
 // south-west corner are kept and never walked.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 import { TEAR_CLOSED } from './grove2.ts';

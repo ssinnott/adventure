@@ -4,7 +4,7 @@
 // enough to walk and the spiders on it; the west face's ledges, north to the gleaners' cleft and south
 // to the last landing, where a stair goes down to the floor. Band 14-15; docs/areas/sunderwood.md
 // §4.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';

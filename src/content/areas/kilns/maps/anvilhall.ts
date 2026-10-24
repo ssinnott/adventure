@@ -5,7 +5,7 @@
 // back or loses it; the smiths' forge, the act's first step on the ladder, shut for good to a company
 // that takes the Stone; the old working, which trains to 19; the inn, the mine-surgeon's and the
 // stores. No spell hall and no guild hall (#434's 8 and 9). docs/areas/kilns.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { FORGE, ANVIL_STONE_PRICE } from '../items.ts';

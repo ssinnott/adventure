@@ -6,7 +6,7 @@
 // runs on across the seam in the north, and High Moor's 45 squares in the south are mountain, closed.
 // The P column is 24 wide: cut by hand from the atlas, the void written '%'; docs/areas/kilns.md §12.4
 // is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

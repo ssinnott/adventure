@@ -3,7 +3,7 @@
 // the drovers' camp to the moor's first heather and Cairnmoor's border at the south edge; the coach's
 // old halt by the road, and east the grass running to the hills under O6's smoking ridge.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.12 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

@@ -2,7 +2,7 @@
 // (the visit is screens.ts's InteriorScreen). Each Interior names a Scene in ./interiors/<area>/: a room
 // painted once into an offscreen canvas and multiplied by its light map (see ./interiors/kit.ts),
 // with its flames, glows and drifting motes drawn over it every frame.
-import type { Interior } from '../game/map.ts';
+import type { Interior } from '../game/mapdef.ts';
 import type { ViewRect } from './viewport.ts';
 import type { Light, Scene, Stage } from './interiors/kit.ts';
 import { STAGE_W, STAGE_H, drawLights, lightMap } from './interiors/kit.ts';

@@ -3,7 +3,7 @@
 // corner towards the way down, with a bandit camp by it, a den (#88). The cliff is mountain, since no
 // map character is cliff, and the Upper Water's squares below it are void until Saltreach is built.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/shelf.md §4.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 

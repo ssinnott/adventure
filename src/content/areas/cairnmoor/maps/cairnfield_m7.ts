@@ -5,7 +5,7 @@
 // cairn; and in the south the fold, round, of grey stones, and the dead ewe the ravens are at. West,
 // the sea and L7's coast, the Kilns' box (#831).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

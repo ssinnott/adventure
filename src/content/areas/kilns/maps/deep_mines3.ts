@@ -6,7 +6,7 @@
 // CREW ONLY, which is a wall with a door drawn in it and opens for nobody the company has (#22; it
 // opens from the other side in Act V, #56's 60). East of the hole the service ladder comes down out
 // of the ceiling. Band 17-18; docs/areas/kilns.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { CREW_OPEN } from '../../hearth/public.ts';

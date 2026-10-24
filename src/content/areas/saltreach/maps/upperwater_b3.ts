@@ -5,7 +5,7 @@
 // the carr on the west bank and a bull toad in it, the withy beds north of the diep and the fields of
 // Rietum's west edge running in. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md
 // §4.11 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

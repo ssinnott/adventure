@@ -5,7 +5,7 @@
 // wall closed against O9 and N10 (call 7), with Glacier Foot's sliver in the corner drawn closed in
 // it. The bears keep the ice wall's foot; the hunters' hide is in the fell's face behind a skull.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

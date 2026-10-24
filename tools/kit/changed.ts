@@ -31,7 +31,9 @@ export function changedFiles(base: string): string[] {
  * and tools/kit/browser.ts, the Chromium and the page the smoke's sweep paints in (#986). The
  * narrowing counts every map too: tools/changed.ts, and this file, its library since #984. So do
  * the smoke's runner and every file of its parts in tools/smoke/, the sweep's cracks.ts and the
- * frame's boot.ts among them (#1006).
+ * frame's boot.ts among them (#1006). The maps' schema, game/mapdef.ts, is types, erased before
+ * anything paints, so it counts none; game/map.ts, which runs the legend, the palettes and
+ * `GameMap`, counts (#1009).
  */
 const EVERY_MAP = [
   /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/paint\/(brush|ink)\.ts$/, /^src\/ui\/monsters\/(kit\/)?common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|ink)\.ts$/,

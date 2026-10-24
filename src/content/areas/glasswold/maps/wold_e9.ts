@@ -10,7 +10,7 @@
 // shore, is north; F9, Ashfall's coast, east, is not built, so the world ends past the east edge.
 // Cut from the atlas by tools/scaffold.ts, the south edge laid square for square to E10's north;
 // docs/areas/glasswold.md §4.9 is its brief (#534).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

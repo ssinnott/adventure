@@ -4,7 +4,7 @@
 // stone under it that lifts; the peat-cutter's track east for the ring; the marsh beside the road
 // where the bog bodies come up out of the peat; and the road on south for N8.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/cairnmoor.md §4.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

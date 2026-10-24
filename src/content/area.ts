@@ -1,6 +1,6 @@
 // The shape of an area: one step of the road of levels, with everything that is its own. Each lives
 // in src/content/areas/<area>/ and is listed once, in road order, in src/content/index.ts.
-import type { MapDef, Terrain, Feature, Door, EncounterDef } from '../game/map.ts';
+import type { MapDef, Terrain, Feature, Door, EncounterDef } from '../game/mapdef.ts';
 import type { MonsterDef } from '../game/monsters.ts';
 import type { Condition } from '../game/party.ts';
 import type { ItemDef } from '../game/items.ts';

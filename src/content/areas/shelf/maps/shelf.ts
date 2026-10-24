@@ -2,7 +2,7 @@
 // south gate, the Ellerby farm to the south-east, woods to the west, marsh and the sea at the
 // south, the caves at Brandy Hole in the south-west cliffs and the pass east to Thornmark, open,
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
-import type { MapDef, Answer } from '../../../../game/map.ts';
+import type { MapDef, Answer } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { SAT } from './keep.ts';

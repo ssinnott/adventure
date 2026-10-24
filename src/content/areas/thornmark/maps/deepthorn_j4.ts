@@ -4,7 +4,7 @@
 // closed, its dead wood painted over as forest so that dead wood is still new in Sunderwood; and the
 // bay shore east to the box's edge. Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md
 // §4.5 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';

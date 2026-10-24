@@ -5,7 +5,7 @@
 // beside him (#846). Behind the east wall, where a sheet stirs in the draught, is the cold room where the
 // ones who did not wake were laid out with their packs. Band 30-32; docs/areas/rimewater.md §12.5 is its
 // brief (#832).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 

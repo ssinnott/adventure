@@ -1,6 +1,6 @@
 // The way into Ashfall from another area, and the only one (#992; EXPANSION §8.2): the flags and
 // exits the others take, declared here and imported back by the files they stood in, and every item by name.
-import type { Exit } from '../../../game/map.ts';
+import type { Exit } from '../../../game/mapdef.ts';
 import { anchored } from '../../../game/map.ts';
 
 // From maps/ember_stone.ts.
