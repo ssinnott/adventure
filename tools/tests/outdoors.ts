@@ -1,7 +1,7 @@
 // The outdoors as one map: the zone maps laid in 1:1 where the atlas puts them, the void round them,
 // the seams between them by one rule, and every open square reachable.
 import { buildMaps, PLAYED_DEFS, GRID } from '../../src/content/maps.ts';
-import { MAP_DEFS, CLIMATES, AREAS } from '../../src/content/index.ts';
+import { MAP_DEFS, CLIMATES, AREAS, TABLES } from '../../src/content/index.ts';
 import type { Area, SeamAsBuilt as AsBuilt, OpenOnNothing as OnNothing } from '../../src/content/area.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, MapZone, Can, Cell } from '../../src/game/map.ts';
@@ -324,8 +324,8 @@ export function outdoors(): void {
     const laid = layOutdoors(ATLAS, defs), fx = new GameMap(laid.find((d) => d.id === OUTDOORS)!);
     const g = fx.gates;
     ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && [g[0].needFlag].flat().join() === 'fixture_a,fixture_b' && g[0].blockedText === 'Fixture gate.', `an exit with flags into the zone next door is laid as a gate on its square, with its words (${g.map((q) => `${q.x},${q.y}`).join(', ')})`);
-    const rng = makeRng(3), party = defaultParty(rng);
-    const world = new World(Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
+    const rng = makeRng(3), party = defaultParty(TABLES, rng);
+    const world = new World(TABLES, Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
     world.travel('shelf', 30, 9, EAST);
     const shut = world.move('forward');
     party.flags.fixture_a = 1;
@@ -342,8 +342,8 @@ export function outdoors(): void {
     const g = fx.gates;
     ok(g.length === 1 && g[0].x === sh.x + 31 && g[0].y === sh.y + 9 && g[0].needFlag === undefined && JSON.stringify(g[0].shut) === JSON.stringify({ flag: 'fixture_c', member: { race: 'orcblood' } }) && JSON.stringify(g[0].lifts) === JSON.stringify({ flag: 'fixture_d' }) && g[0].blockedText === 'Fixture shut.',
       `an exit shut on a condition into the zone next door is laid as a gate on its square that carries it and its lifts (${g.map((q) => `${q.x},${q.y}`).join(', ')})`);
-    const rng = makeRng(3), party = defaultParty(rng);
-    const world = new World(Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
+    const rng = makeRng(3), party = defaultParty(TABLES, rng);
+    const world = new World(TABLES, Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
     const go = (): string => { world.travel('shelf', 30, 9, EAST); const r = world.move('forward'); return r.kind === 'blocked' ? r.reason : r.kind; };
     const before = go();
     party.flags.fixture_c = 1;
@@ -363,8 +363,8 @@ export function outdoors(): void {
     // no padlock, since an appearance is no lock.
     const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, after: { flag: 'fixture_e' }, blockedText: 'Fixture after.' }) });
     const laid = layOutdoors(ATLAS, defs);
-    const rng = makeRng(3), party = defaultParty(rng);
-    const world = new World(Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
+    const rng = makeRng(3), party = defaultParty(TABLES, rng);
+    const world = new World(TABLES, Object.fromEntries(laid.map((d) => [d.id, new GameMap(d)])), party, rng);
     const go = (): string => { world.travel('shelf', 30, 9, EAST); const r = world.move('forward'); return r.kind === 'blocked' ? r.reason : r.kind; };
     const before = go();
     party.flags.fixture_e = 1;
@@ -449,9 +449,9 @@ export function outdoors(): void {
     };
     /** What a company of `level` reads walking east from x0 to x1 along the strip. */
     const walk = (level: number, x0: number, x1: number, maps = strip()): string[] => {
-      const party = defaultParty(makeRng(3));
+      const party = defaultParty(TABLES, makeRng(3));
       for (const m of party.members) m.level = level;
-      const w = new World(maps, party, makeRng(3));
+      const w = new World(TABLES, maps, party, makeRng(3));
       w.travel(OUTDOORS, x0, 1, x1 > x0 ? EAST : 3);
       const said: string[] = [];
       for (let i = 0; i < Math.abs(x1 - x0); i++) { const r = w.move('forward'); if (r.kind === 'moved') said.push(...r.messages); }
@@ -468,9 +468,9 @@ export function outdoors(): void {
     ok(down.length === 0, `and back down to a lower floor, still over the company, nothing is said (${down.join(' / ') || 'nothing'})`);
     // Straight back over the line and on again within the hour: nothing more.
     {
-      const party = defaultParty(makeRng(3));
+      const party = defaultParty(TABLES, makeRng(3));
       for (const m of party.members) m.level = 7;
-      const w = new World(strip(), party, makeRng(3));
+      const w = new World(TABLES, strip(), party, makeRng(3));
       w.travel(OUTDOORS, 5, 1, EAST);
       const over = w.move('forward'), back = w.move('back'), again = w.move('forward');
       const lines = [over, back, again].map((r) => (r.kind === 'moved' ? r.messages.length : -1));
@@ -493,9 +493,9 @@ export function outdoors(): void {
     {
       /** What a company of `level` reads at each of `n` steps east from x on the strip with the steps. */
       const jump = (level: number, x: number, n: number): string[][] => {
-        const party = defaultParty(makeRng(3));
+        const party = defaultParty(TABLES, makeRng(3));
         for (const m of party.members) m.level = level;
-        const w = new World(strip(undefined, undefined, true), party, makeRng(3));
+        const w = new World(TABLES, strip(undefined, undefined, true), party, makeRng(3));
         w.travel(OUTDOORS, x, 1, EAST);
         return Array.from({ length: n }, () => w.move('forward')).map((r) => (r.kind === 'moved' ? r.messages : [r.kind]));
       };
@@ -510,7 +510,7 @@ export function outdoors(): void {
   { // The automap tells nothing hidden (#889): in clear weather by day, a company before a secret door of the outdoors has
     // mapped nothing behind it, nor with a Cartographer; the door found, it has mapped what lies behind from the doorway.
     // Every secret door, from every side a company can stand on that has an open square behind the door.
-    const rng = makeRng(5), party = defaultParty(rng), world = new World(buildMaps(), party, rng), map = world.maps[OUTDOORS], seed = world.state.weatherSeed!;
+    const rng = makeRng(5), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng), map = world.maps[OUTDOORS], seed = world.state.weatherSeed!;
     const clear = (_: unknown, m: number): boolean => daylightAt(m) >= 0.6 && Object.values(CLIMATES).every((c) => weatherSight(weatherAt(seed, m, c)) >= 4);
     const when = findWeather(seed, world.state.minutes, CLIMATES.shelf, clear);
     world.state.minutes = when;

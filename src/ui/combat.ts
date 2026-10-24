@@ -85,11 +85,11 @@ export class CombatScreen implements Screen {
 
   private options(g: Game, who: number): { label: string; key: string; disabled: boolean }[] {
     const c = g.party.members[who];
-    const w = weaponOf(c);
+    const w = weaponOf(g.tables.items, c);
     const spells = castable(g.party.members[who]);
     const items = this.usable(g, who);
     return [
-      { label: `Attack (${w.name})`, key: 'attack', disabled: !canAttackFromRow(c, who) },
+      { label: `Attack (${w.name})`, key: 'attack', disabled: !canAttackFromRow(g.tables.items, c, who) },
       { label: 'Cast', key: 'cast', disabled: !spells.length },
       { label: 'Use', key: 'use', disabled: !items.length },
       { label: 'Defend', key: 'defend', disabled: false },
@@ -103,7 +103,7 @@ export class CombatScreen implements Screen {
   }
   private usable(g: Game, who: number): string[] {
     const c = g.party.members[who];
-    return [...new Set([...c.pack, ...g.party.bag].filter((id) => item(id).use && !item(id).use!.food))];
+    return [...new Set([...c.pack, ...g.party.bag].filter((id) => item(g.tables.items, id).use && !item(g.tables.items, id).use!.food))];
   }
 
   /** The frames a delay counts: none while fights are played at once (`instant`, or the pilot's). */
@@ -181,7 +181,7 @@ export class CombatScreen implements Screen {
         else if (is(a, 'down')) this.sub = (this.sub + 1) % list.length;
         else if (is(a, 'interact')) {
           const e = list[this.sub], sp = spell(e.id);
-          if (e.from ? chargesLeft(g.party, e.from) < 1 : c.sp < sp.sp) { g.say(e.from ? 'Nothing left in it until dawn.' : 'Not enough spell points.'); return; }
+          if (e.from ? chargesLeft(g.tables.items, g.party, e.from) < 1 : c.sp < sp.sp) { g.say(e.from ? 'Nothing left in it until dawn.' : 'Not enough spell points.'); return; }
           this.pendingSpell = sp.id;
           this.pendingFrom = e.from ?? '';
           if (sp.glass) { this.mode = 'element'; this.sub = 0; }
@@ -306,7 +306,7 @@ export class CombatScreen implements Screen {
       if (s.loot) {
         const [least, most] = shareRange(s.loot);
         drawText(ctx, `${least === most ? s.loot.xp : `${least}-${most}`} XP  ${s.loot.gold} GOLD`, r.x + 8, r.y + 48, { size: 1, color: TEXT });
-        s.loot.items.slice(0, 6).forEach((id, i) => drawText(ctx, item(id).name, r.x + 8, r.y + 62 + i * 10, { size: 1, color: TEXT }));
+        s.loot.items.slice(0, 6).forEach((id, i) => drawText(ctx, item(g.tables.items, id).name, r.x + 8, r.y + 62 + i * 10, { size: 1, color: TEXT }));
         if (s.loot.ready.length) drawText(ctx, `READY TO TRAIN: ${s.loot.ready.join(', ')}`, r.x + 8, r.y + 130, { size: 1, color: YELLOW });
       }
       hint('SPACE');
@@ -317,7 +317,7 @@ export class CombatScreen implements Screen {
       if (this.mode === 'menu') {
         const opts = this.options(g, t.i);
         menu(ctx, opts.map((o) => o.label), r.x + 8, y, this.sel, { disabled: opts.map((o) => o.disabled) });
-        if (!canAttackFromRow(c, t.i)) drawText(ctx, 'BACK ROW: NEEDS A RANGED WEAPON', r.x + 8, r.y + r.h - 24, { size: 1, color: TEXT_DIM });
+        if (!canAttackFromRow(g.tables.items, c, t.i)) drawText(ctx, 'BACK ROW: NEEDS A RANGED WEAPON', r.x + 8, r.y + r.h - 24, { size: 1, color: TEXT_DIM });
       } else if (this.mode === 'target' || this.mode === 'spellTarget') {
         drawText(ctx, 'TARGET', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, this.targets(g, t.i).map((mi) => `${s.monsters[mi].def.name} ${s.monsters[mi].hp}/${s.monsters[mi].def.hp}`), r.x + 8, y, this.sub);
@@ -331,7 +331,7 @@ export class CombatScreen implements Screen {
       } else if (this.mode === 'item') {
         const items = this.usable(g, t.i);
         drawText(ctx, 'ITEM', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
-        menu(ctx, items.map((x) => item(x).name), r.x + 8, y, this.sub);
+        menu(ctx, items.map((x) => item(g.tables.items, x).name), r.x + 8, y, this.sub);
       } else if (this.mode === 'itemTarget') {
         drawText(ctx, 'ON WHOM', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, g.party.members.map((m) => `${m.name} ${m.hp}/${m.maxHp}`), r.x + 8, y, this.sub);

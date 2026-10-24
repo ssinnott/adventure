@@ -3,7 +3,7 @@
 // made here with the helper and lent to ITEMS only where absent while the suite runs (`withDefs`):
 // every suite shares the one ITEMS.
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { ITEMS } from '../../src/content/index.ts';
+import { ITEMS, TABLES } from '../../src/content/index.ts';
 import { P, PLUS_PRICE, core } from '../../src/content/items.ts';
 import { defaultParty, createCharacter, attackBonus, armorClass } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, toHit } from '../../src/game/combat.ts';
@@ -31,22 +31,22 @@ function check(): void {
   ok(throws(() => P(ITEMS.torch, 1)) && throws(() => P(sword, 1)) && throws(() => P(ITEMS.dagger, 0)), 'no plus on a torch, on a plus or of 0');
 
   // To-hit, exactly one better.
-  const mk = (cls: Parameters<typeof createCharacter>[2]) => createCharacter('T', 'human', cls, {}, makeRng(3));
-  const kn = mk('knight'); kn.equipment.weapon = 'longsword'; const hitBase = attackBonus(kn);
+  const mk = (cls: Parameters<typeof createCharacter>[2]) => createCharacter(TABLES, 'T', 'human', cls, {}, makeRng(3));
+  const kn = mk('knight'); kn.equipment.weapon = 'longsword'; const hitBase = attackBonus(TABLES.items, kn);
   kn.equipment.weapon = sword.id;
-  ok(attackBonus(kn) === hitBase + 1, `a knight's to-hit with a Long Sword +1 (${hitBase} -> ${attackBonus(kn)})`);
+  ok(attackBonus(TABLES.items, kn) === hitBase + 1, `a knight's to-hit with a Long Sword +1 (${hitBase} -> ${attackBonus(TABLES.items, kn)})`);
 
   // Damage, exactly one more: the same blow at a wraith on the same seed, the sword the only change.
   // The chance the fight rolls to hit is the one `attackBonus` gives, so the plus counts once.
   let rolled = true;
   const blow = (weapon: string, seed: number): number | null => {
-    const rng = makeRng(seed), party = defaultParty(rng);
+    const rng = makeRng(seed), party = defaultParty(TABLES, rng);
     party.members = [party.members[0]]; party.members[0].equipment.weapon = weapon;
-    const s = startCombat(party, [{ id: 'a', monsters: ['wraith'] }], rng);
+    const s = startCombat(TABLES, party, [{ id: 'a', monsters: ['wraith'] }], rng);
     for (let i = 0; i < 20; i++) {
       const t = currentTurn(s, party, rng); if (!t) return null;
       if (t.side !== 'party') { monsterAct(s, party, rng); continue; }
-      const c = party.members[0], want = toHit(attackBonus(c), s.monsters[0].def.ac), chance = rng.chance.bind(rng);
+      const c = party.members[0], want = toHit(attackBonus(TABLES.items, c), s.monsters[0].def.ac), chance = rng.chance.bind(rng);
       let p: number | null = null;
       rng.chance = (q) => { p ??= q; return chance(q); };
       partyAct(s, party, rng, { type: 'attack', target: 0 });
@@ -66,15 +66,15 @@ function check(): void {
   ok(rolled, 'the fight rolls to hit at the chance its to-hit gives, with the plus counted once');
 
   // Armour class, one a point, on armour and a shield alike.
-  const k2 = mk('knight'); k2.equipment.armor = 'scale'; k2.equipment.shield = 'buckler'; const ac0 = armorClass(k2);
-  k2.equipment.armor = P(ITEMS.scale, 1).id; const ac1 = armorClass(k2);
-  k2.equipment.shield = P(ITEMS.buckler, 1).id; const ac2 = armorClass(k2);
+  const k2 = mk('knight'); k2.equipment.armor = 'scale'; k2.equipment.shield = 'buckler'; const ac0 = armorClass(TABLES.items, k2);
+  k2.equipment.armor = P(ITEMS.scale, 1).id; const ac1 = armorClass(TABLES.items, k2);
+  k2.equipment.shield = P(ITEMS.buckler, 1).id; const ac2 = armorClass(TABLES.items, k2);
   ok(ac1 === ac0 + 1 && ac2 === ac0 + 2, `Scale Mail +1 and a Buckler +1 add one each (${ac0} -> ${ac1} -> ${ac2})`);
 
   // A robe with a plus is still a robe.
-  const monk = mk('monk'); monk.equipment.armor = 'robe'; const robe = armorClass(monk);
+  const monk = mk('monk'); monk.equipment.armor = 'robe'; const robe = armorClass(TABLES.items, monk);
   monk.equipment.armor = P(ITEMS.robe, 1).id;
-  ok(armorClass(monk) === robe + 1, `a monk in a Robe +1 keeps Unarmoured Defence (${robe} -> ${armorClass(monk)})`);
+  ok(armorClass(TABLES.items, monk) === robe + 1, `a monk in a Robe +1 keeps Unarmoured Defence (${robe} -> ${armorClass(TABLES.items, monk)})`);
   monk.equipment.armor = 'leather';
-  ok(armorClass(monk) === 10 + ITEMS.leather.ac!, 'but not in leather');
+  ok(armorClass(TABLES.items, monk) === 10 + ITEMS.leather.ac!, 'but not in leather');
 }

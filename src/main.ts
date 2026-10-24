@@ -7,6 +7,7 @@ import { Input, is } from './input.ts';
 import { Pilot } from './game/pilot/pilot.ts';
 import type { Tempo } from './game/pilot/pilot.ts';
 import { INK } from './ui/palette.ts';
+import { TABLES } from './content/index.ts';
 
 setTextDefaults({ shadowColor: INK, outline: INK });
 
@@ -16,7 +17,7 @@ canvas.focus();
 canvas.addEventListener('pointerdown', () => { canvas.focus(); if (game.attracting) input.push('cancel'); });
 
 const input = new Input(window);
-const game = new Game();
+const game = new Game(TABLES);
 game.input = input;
 game.pilot = new Pilot();
 

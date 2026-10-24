@@ -24,7 +24,7 @@ import { startCombat, asGroup, aliveMonsters } from '../../src/game/combat.ts';
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
 import { gateFight, gateOpts, gateBot, fightSeed, winRate, gateAnswer, gatePass, rate, SEEDS } from '../kit/fight.ts';
-import { gateCompany } from '../kit/company.ts';
+import { gateCompany, HARNESS } from '../kit/company.ts';
 import { days, fightsPerRest, mendBetween } from '../kit/harness.ts';
 import { mustRest, markOf, ANSWER } from '../../src/game/bot.ts';
 import { companyAt } from '../kit/company.ts';
@@ -339,7 +339,7 @@ function fixed(): void {
     const seeds = 40, fireless = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => spell(id).element !== 'fire'); return p; };
     /** Seeds 1 to `seeds` of a gate fight, `cap` rounds at most, played as gateFight plays it, by the bots' `answer`: each fight's end. */
     const fought = (level: number, monsters: Fighters, cap = ROUND_CAP, dress = (p: Party): Party => p, answer = ANSWER): { s: CombatState; p: Party }[] => Array.from({ length: seeds }, (_, n) => {
-      const k = n + 1, p = dress(gateCompany(level, k)), rng = makeRng(fightSeed(k)), s = startCombat(p, [asGroup('gate', monsters)], rng);
+      const k = n + 1, p = dress(gateCompany(level, k)), rng = makeRng(fightSeed(k)), s = startCombat(HARNESS, p, [asGroup('gate', monsters)], rng);
       return { s: playOut(s, p, rng, gateBot, { answer }, cap), p };
     });
     const won = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.outcome === 'victory').length / fs.length;
@@ -352,7 +352,7 @@ function fixed(): void {
     // It keeps its casters' spell points from the lights (#541): it marks one whose touch takes them
     // after a leader and a caller, so its first blade in a fight of three lights and a hound falls on
     // a light, and it wins.
-    const lights = lightEncounter(19), first = startCombat(gateCompany(19, 1), [asGroup('gate', lights)], makeRng(1)), mark = markOf(first, aliveMonsters(first));
+    const lights = lightEncounter(19), first = startCombat(HARNESS, gateCompany(19, 1), [asGroup('gate', lights)], makeRng(1)), mark = markOf(first, aliveMonsters(first));
     const lit = fought(19, lights), blade = /^(?:Bram|Idris|Wren|Ottilie|Maren|Cassian) (?:hits|misses) (Test \w+)/;
     const atLights = lit.filter(({ s }) => s.log.map((l) => blade.exec(l)?.[1]).find((x) => x) === 'Test Light').length;
     ok(mark !== undefined && first.monsters[mark].def.drain === 'sp' && won(lit) >= 0.9 && atLights >= seeds * 0.9,
@@ -384,7 +384,7 @@ function fixed(): void {
     // takes the back row, so while a drake stands it raises the fallen first. Two drakes at 25 against
     // a company whose knight lies fallen from the start breathe on the back row in fewer fights than
     // with no answer, since the gate's bot mends only the standing.
-    const felledKnight = (p: Party): Party => { p.members[0].hp = -1; addCondition(p.members[0], 'unconscious'); return p; };
+    const felledKnight = (p: Party): Party => { p.members[0].hp = -1; addCondition(HARNESS.items, p.members[0], 'unconscious'); return p; };
     const back = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.log.some((l) => / breathes fire on the back row/.test(l))).length;
     const guarded = back(fought(25, drakeEncounter(25), ROUND_CAP, felledKnight));
     const open = back(fought(25, drakeEncounter(25), ROUND_CAP, felledKnight, { ...ANSWER, breath: false }));
@@ -440,7 +440,7 @@ function fixed(): void {
     const stair: MapDef = { id: 'fx_stair', name: 'Fixture Stair', kind: 'outdoor', region: 'shelf', density: 'country', start: { x: 0, y: 1, facing: EAST }, rows: [',,,,', ',,,,', ',,,,'], encounters: [band] };
     const walk = (gold: number): { p: Party; w: World; at: ReturnType<World['move']> } => {
       const p = gateCompany(2, 1); p.gold = gold;
-      const w = new World({ fx_stair: new GameMap(stair) }, p, makeRng(1));
+      const w = new World(HARNESS, { fx_stair: new GameMap(stair) }, p, makeRng(1));
       return { p, w, at: w.move('forward') };
     };
     const short = walk(299), rich = walk(300);
@@ -449,7 +449,7 @@ function fixed(): void {
     ok(gatePass(rich.p, band) && rich.p.gold === 0 && !rich.w.question('fx_toll') && rich.w.standsAside(band) && !rich.w.adjacentGroups().length,
       'one with the price pays it, once, and the group stands aside: no question and no fight');
     const past = [rich.w.move('forward'), rich.w.move('forward')];
-    const data = JSON.parse(JSON.stringify({ party: rich.p, world: rich.w.state })), loaded = new World({ fx_stair: new GameMap(stair) }, data.party, makeRng(1), data.world);
+    const data = JSON.parse(JSON.stringify({ party: rich.p, world: rich.w.state })), loaded = new World(HARNESS, { fx_stair: new GameMap(stair) }, data.party, makeRng(1), data.world);
     ok(past.every((r) => r.kind === 'moved' && !r.asks && !r.encounter) && rich.w.state.x === 3 && loaded.standsAside(band) && !loaded.question('fx_toll'),
       'the company walks past it, through its square, and the toll is remembered through a save and a load');
   }

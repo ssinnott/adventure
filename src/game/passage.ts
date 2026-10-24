@@ -21,7 +21,7 @@ export type { Passage };
 export function fareOf(p: Passage, world: World): number {
   const by = (w: Passage['free']): boolean => !!w && holds(w, world.state, world.party);
   const fare = by(p.free) ? 0 : by(p.half) ? Math.floor(p.fare / 2) : p.fare;
-  return skilled(world.party, 'navigator') ? Math.floor(fare / 2) : fare;
+  return skilled(world.tables.items, world.party, 'navigator') ? Math.floor(fare / 2) : fare;
 }
 
 /** The minute of the next departure at or after `minutes`: today's, if its hour has not passed. */

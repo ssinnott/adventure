@@ -16,10 +16,11 @@ import { serialize, deserialize } from '../../src/game/save.ts';
 import { item } from '../../src/game/items.ts';
 import { TRAINERS } from '../../src/game/quests.ts';
 import { ok } from './lib.ts';
+import { TABLES } from '../../src/content/index.ts';
 
 /** A member of a class trained to a level, its prestiges taken as far as the level allows, or `took`. */
 function member(cls: ClassId, level: number, took = PRESTIGE_LEVELS.filter((l) => level >= l).length, seed = 19): Character {
-  const rng = makeRng(seed), c = createCharacter(cls, 'human', cls, { might: 14, endurance: 14, personality: 14, intellect: 14 }, rng);
+  const rng = makeRng(seed), c = createCharacter(TABLES, cls, 'human', cls, { might: 14, endurance: 14, personality: 14, intellect: 14 }, rng);
   c.xp = xpForLevel(level); levelUp(c, rng);
   for (let n = 0; n < took; n++) takePrestige(c);
   c.hp = c.maxHp; c.sp = c.maxSp;
@@ -51,7 +52,7 @@ export function prestige(): void {
   ok(grown.maxSp - sp0 >= 1 + 4 && grown.maxHp - hp0 >= 1 + 2, `and each level after adds what both add, 2 hit points and 4 spell points over the roll (${grown.maxHp - hp0}, ${grown.maxSp - sp0})`);
 
   // The trainer: its class only, in order, from its level, for its price, the third for its quest.
-  const rng2 = makeRng(19), party = defaultParty(rng2), world = new World(buildMaps(), party, rng2);
+  const rng2 = makeRng(19), party = defaultParty(TABLES, rng2), world = new World(TABLES, buildMaps(), party, rng2);
   const errantry: Teaching = { cls: 'knight', prestige: 1 }, paramount: Teaching = { cls: 'knight', prestige: 3, done: { flag: 'fx_stair_held' } };
   const bram = party.members[0];
   party.gold = 5000;
@@ -75,7 +76,7 @@ export function prestige(): void {
     // The Sorcerer's third as placed (#807): the scholar at the Glass's edge teaches a Thaumaturge of 27 the
     // Magus once his quest's deed is done, and for no gold.
     const magus = TRAINERS().find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3)?.teaches;
-    const r = makeRng(807), p = defaultParty(r), w = new World(buildMaps(), p, r), cassian = p.members[5];
+    const r = makeRng(807), p = defaultParty(TABLES, r), w = new World(TABLES, buildMaps(), p, r), cassian = p.members[5];
     cassian.xp = xpForLevel(27); levelUp(cassian, r); takePrestige(cassian); takePrestige(cassian);
     const purse = p.gold, waits = !!magus && barOf(magus, cassian, p, w.state) === 'the quest first' && !teach(magus, p, w.state, 5).taught;
     for (const c of [magus?.done ?? []].flat()) for (const f of [c.flag ?? []].flat()) p.flags[f] = 1;
@@ -86,7 +87,7 @@ export function prestige(): void {
 
   // A save with prestiges taken keeps them: the count, the hit points they added and a spent rite.
   {
-    const r = makeRng(29), p = defaultParty(r), w = new World(buildMaps(), p, r), maren = p.members[4];
+    const r = makeRng(29), p = defaultParty(TABLES, r), w = new World(TABLES, buildMaps(), p, r), maren = p.members[4];
     maren.xp = xpForLevel(27); levelUp(maren, r);
     for (let n = 0; n < 3; n++) takePrestige(maren);
     maren.riteSpent = true;
@@ -96,7 +97,7 @@ export function prestige(): void {
   }
 
   // A save from before the prestiges, a member with neither field, loads with none taken.
-  const old = deserialize(serialize(world.state, defaultParty(makeRng(1)), 0));
+  const old = deserialize(serialize(world.state, defaultParty(TABLES, makeRng(1)), 0));
   ok(old.party.members.every((m) => prestigeOf(m) === 0 && className(m) === CLASSES[m.cls].name && !m.riteSpent), 'a save from before them loads with none taken');
 
   // The perks the resolver plays (DESIGN §5).
@@ -106,35 +107,35 @@ export function prestige(): void {
   heavyThief.equipment.weapon = 'axe';
   const bowRanger = member('ranger', 27), bladeRanger = member('ranger', 27);
   bowRanger.equipment.weapon = 'longbow'; bladeRanger.equipment.weapon = 'longsword';
-  ok([member('knight', 10), member('knight', 11), member('knight', 19), member('knight', 27)].map(blowsOf).join() === '1,2,2,3' && blowsOf(member('barbarian', 27)) === 3 && blowsOf(member('paladin', 11)) === 2,
+  ok([member('knight', 10), member('knight', 11), member('knight', 19), member('knight', 27)].map(blowsOf).join() === '1,2,2,3' && blowsOf(TABLES.items, member('barbarian', 27)) === 3 && blowsOf(TABLES.items, member('paladin', 11)) === 2,
     'a knight strikes 1, 2, 2 and 3 times at 10, 11, 19 and 27; a barbarian and a paladin as it does');
-  ok(blowsOf(staffMonk) === 3 && blowsOf(steelMonk) === 1 && blowsOf(lightThief) === 2 && blowsOf(heavyThief) === 1 && blowsOf(bowRanger) === 3 && blowsOf(bladeRanger) === 1 && blowsOf(member('cleric', 27)) === 1 && item('staff').kind === 'staff',
+  ok(blowsOf(TABLES.items, staffMonk) === 3 && blowsOf(TABLES.items, steelMonk) === 1 && blowsOf(TABLES.items, lightThief) === 2 && blowsOf(TABLES.items, heavyThief) === 1 && blowsOf(TABLES.items, bowRanger) === 3 && blowsOf(TABLES.items, bladeRanger) === 1 && blowsOf(TABLES.items, member('cleric', 27)) === 1 && item(TABLES.items, 'staff').kind === 'staff',
     'a monk with a staff or bare hands, a thief with a light weapon and a ranger with a bow; with anything else one blow, and a cleric always one');
   // The knight's banner: +2 to-hit for the front row while a knight of the second stands.
   const banner = company(member('knight', 19), member('paladin', 19), member('thief', 19), member('cleric', 19), member('sorcerer', 19), member('druid', 19));
-  const s = startCombat(banner, [{ id: 'g', monsters: [foe('person')] }], makeRng(3));
+  const s = startCombat(TABLES, banner, [{ id: 'g', monsters: [foe('person')] }], makeRng(3));
   const front = buffHit(s, banner, 1), back = buffHit(s, banner, 4);
   banner.members[0].conditions = ['unconscious'];
   ok(front - back === BANNER_HIT && buffHit(s, banner, 1) === back, `the banner lifts the front row ${front - back} while the knight stands, and not once it is down`);
   // Damage: Marksman risen, Holy Strike risen, Rage at three quarters, the sneak attack growing.
-  const s2 = startCombat(company(bowRanger), [{ id: 'g', monsters: [foe('dead')] }], makeRng(4)), dead = s2.monsters[0];
+  const s2 = startCombat(TABLES, company(bowRanger), [{ id: 'g', monsters: [foe('dead')] }], makeRng(4)), dead = s2.monsters[0];
   const pal = member('paladin', 19), barb = member('barbarian', 19), thief24 = member('thief', 24);
   barb.hp = Math.floor(barb.maxHp * 0.7);
-  ok(traitDamage(s2, bowRanger, item('longbow'), dead) === MARKSMAN_DMG + MARKSMAN_MORE && traitDamage(s2, pal, item('mace'), dead) === HOLY_STRIKE_RISEN && traitDamage(s2, member('paladin', 11), item('mace'), dead) === HOLY_STRIKE_DMG,
+  ok(traitDamage(s2, bowRanger, item(TABLES.items, 'longbow'), dead) === MARKSMAN_DMG + MARKSMAN_MORE && traitDamage(s2, pal, item(TABLES.items, 'mace'), dead) === HOLY_STRIKE_RISEN && traitDamage(s2, member('paladin', 11), item(TABLES.items, 'mace'), dead) === HOLY_STRIKE_DMG,
     `a ranger of the second shoots +${MARKSMAN_DMG + MARKSMAN_MORE}, a paladin of the second strikes the dead +${HOLY_STRIKE_RISEN}, one of the first +${HOLY_STRIKE_DMG}`);
-  ok(rageBelow(barb) === 0.75 && traitDamage(s2, barb, item('axe'), dead) > 0 && rageBelow(member('barbarian', 11)) === 0.5 && sneakDamage(thief24) === SNEAK_ATTACK_DMG + 14 && sneakDamage(member('thief', 10)) === SNEAK_ATTACK_DMG,
+  ok(rageBelow(barb) === 0.75 && traitDamage(s2, barb, item(TABLES.items, 'axe'), dead) > 0 && rageBelow(member('barbarian', 11)) === 0.5 && sneakDamage(thief24) === SNEAK_ATTACK_DMG + 14 && sneakDamage(member('thief', 10)) === SNEAK_ATTACK_DMG,
     `an Ironhide rages below three quarters, and a thief's sneak attack at 24 is ${sneakDamage(thief24)}`);
   // The barbarian of the second dies only at -30.
   const ironhide = member('barbarian', 19);
-  damage(ironhide, ironhide.hp + 25);
+  damage(TABLES.items, ironhide, ironhide.hp + 25);
   ok(deathAt(ironhide) === IRONHIDE_AT && !hasCondition(ironhide, 'dead') && deathAt(member('barbarian', 11)) === DIE_HARD_AT, `an Ironhide at -25 lives (${ironhide.hp}), and dies only at ${IRONHIDE_AT}`);
   // The thief of the second drops from sight in its round: no foe singles it out, and it sneak-attacks.
-  const shadow = member('thief', 19), sx = startCombat(company(shadow), [{ id: 'g', monsters: [foe('person')] }], makeRng(5));
+  const shadow = member('thief', 19), sx = startCombat(TABLES, company(shadow), [{ id: 'g', monsters: [foe('person')] }], makeRng(5));
   sx.round = VANISH_ROUND;
-  ok(vanished(sx, shadow) && traitDamage(sx, shadow, item('dagger'), sx.monsters[0]) === sneakDamage(shadow) && !vanished(sx, member('thief', 11)), 'a Nightjar is out of sight in its round, its blows sneak attacks');
+  ok(vanished(sx, shadow) && traitDamage(sx, shadow, item(TABLES.items, 'dagger'), sx.monsters[0]) === sneakDamage(shadow) && !vanished(sx, member('thief', 11)), 'a Nightjar is out of sight in its round, its blows sneak attacks');
   {
     // Over many rounds, a monster facing a vanished thief and one other strikes only the other in that round.
-    const pair = company(member('knight', 19), member('thief', 19)), sv = startCombat(pair, [{ id: 'g', monsters: [foe('person', { attack: 40, dice: 1, sides: 1, speed: 100 })] }], makeRng(6));
+    const pair = company(member('knight', 19), member('thief', 19)), sv = startCombat(TABLES, pair, [{ id: 'g', monsters: [foe('person', { attack: 40, dice: 1, sides: 1, speed: 100 })] }], makeRng(6));
     let hitThief = 0;
     for (let k = 0; k < 40 && sv.outcome === 'ongoing'; k++) {
       const t = currentTurn(sv, pair, makeRng(6 + k));
@@ -145,18 +146,18 @@ export function prestige(): void {
     ok(hitThief === 0, 'and no foe strikes it then');
   }
   // The monk of the second acts first and strikes from the back row.
-  const fast = member('monk', 19), mx = startCombat(company(member('knight', 19), member('cleric', 19), member('sorcerer', 19), fast), [{ id: 'g', monsters: [foe('person', { speed: 99 })] }], makeRng(9));
-  ok(mx.order[0].side === 'party' && mx.order[0].i === 3 && canAttackFromRow(fast, 3) && !canAttackFromRow(member('monk', 11), 3), 'a Windwalker acts first in a round, and strikes from the back row');
+  const fast = member('monk', 19), mx = startCombat(TABLES, company(member('knight', 19), member('cleric', 19), member('sorcerer', 19), fast), [{ id: 'g', monsters: [foe('person', { speed: 99 })] }], makeRng(9));
+  ok(mx.order[0].side === 'party' && mx.order[0].i === 3 && canAttackFromRow(TABLES.items, fast, 3) && !canAttackFromRow(TABLES.items, member('monk', 11), 3), 'a Windwalker acts first in a round, and strikes from the back row');
   // The bard: +1 damage from its first, wards sleep and paralysis from its second, +2 and +2 from its third.
   const songs = [10, 11, 19, 27].map((l) => company(member('bard', l), member('knight', l)));
-  const sb = startCombat(songs[3], [{ id: 'g', monsters: [foe('person')] }], makeRng(10));
+  const sb = startCombat(TABLES, songs[3], [{ id: 'g', monsters: [foe('person')] }], makeRng(10));
   ok(songs.map(songDamage).join() === '0,1,1,2' && buffHit(sb, songs[3]) === 2 && buffHit(sb, songs[0]) === INSPIRE_HIT && songWards(songs[2], 'asleep') && songWards(songs[2], 'paralysed') && !songWards(songs[2], 'poisoned') && !songWards(songs[1], 'asleep'),
     `the song adds ${songs.map(songDamage).join(', ')} damage at 10, 11, 19 and 27, and from the second keeps sleep and paralysis off`);
   // The cleric of the third: once between rests, the first who would die is left at 1 hit point.
   {
     const exarch = member('cleric', 27), tank = member('knight', 27), pair = company(tank, exarch);
     const brute = foe('person', { attack: 60, dice: 1, sides: 1, bonus: 400, speed: 100 });
-    const sr = startCombat(pair, [{ id: 'g', monsters: [brute] }], makeRng(11));
+    const sr = startCombat(TABLES, pair, [{ id: 'g', monsters: [brute] }], makeRng(11));
     const first = currentTurn(sr, pair, makeRng(11));
     if (first?.side === 'monster') monsterAct(sr, pair, makeRng(12));
     const struck = pair.members.find((m) => m.hp === 1);

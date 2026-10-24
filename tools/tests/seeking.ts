@@ -4,7 +4,7 @@
 // trainer's quest begins; the world map's marks; one trainer a class and prestige; nothing saved.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { MAP_DEFS, QUESTS } from '../../src/content/index.ts';
+import { MAP_DEFS, QUESTS, TABLES } from '../../src/content/index.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, createCharacter, takePrestige, PRESTIGES } from '../../src/game/party.ts';
 import { holds, questLog, questMarks, questNews, TRAINERS } from '../../src/game/quests.ts';
@@ -15,7 +15,7 @@ import { serialize, deserialize } from '../../src/game/save.ts';
 import { ok, fxMap } from './lib.ts';
 
 export function seeking(): void {
-  const rng = makeRng(191), party = defaultParty(rng), world = new World(buildMaps(), party, rng);
+  const rng = makeRng(191), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng);
   const wren = party.members[2];
   // The condition: a member (or the one in a slot) of a class, at a level or over, with prestiges or more.
   ok(holds({ member: { cls: 'ranger' } }, world.state, party) && !holds({ member: { cls: 'monk' } }, world.state, party) && !holds({ member: { who: 2, level: 11 } }, world.state, party), 'a member condition reads the class and the level');
@@ -36,7 +36,7 @@ export function seeking(): void {
   // The Sorcerer's third as placed (#807): a sorcerer of 27 with the second is sent to the scholar at the
   // Glass's edge, the world map marks his box, and once his quest begins, seeking him is done.
   {
-    const r = makeRng(807), p = defaultParty(r), w = new World(buildMaps(), p, r), cassian = p.members[5];
+    const r = makeRng(807), p = defaultParty(TABLES, r), w = new World(TABLES, buildMaps(), p, r), cassian = p.members[5];
     const magus = TRAINERS().find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3);
     const view = (): ReturnType<typeof questLog>[number] | undefined => questLog(w.state, p).find((v) => v.def.id === seekId(5, 3));
     cassian.level = 26; takePrestige(cassian); takePrestige(cassian);
@@ -55,8 +55,8 @@ export function seeking(): void {
   const eyrie: Trainer = { map: fxMap('fx_eyrie'), place: 'the Wold', name: 'the scout', teaches: { cls: 'ranger', prestige: 3, asks: 'fx_fane_map', done: { flag: 'fx_map_home' } } };
   const fane: QuestDef = { id: 'fx_fane_map', title: "Oriel Fane's Map", start: { flag: 'fx_asked' }, entries: [], goals: [] };
   const trainers = [fletcher, eyrie];
-  const r2 = makeRng(192), p2 = defaultParty(r2), w2 = new World(buildMaps(), p2, r2);
-  p2.members[3] = createCharacter('Brin', 'human', 'ranger', {}, r2);
+  const r2 = makeRng(192), p2 = defaultParty(TABLES, r2), w2 = new World(TABLES, buildMaps(), p2, r2);
+  p2.members[3] = createCharacter(TABLES, 'Brin', 'human', 'ranger', {}, r2);
   const made = seekingQuests(p2, trainers, [fane]);
   ok(made.map((q) => q.id).join() === [seekId(2, 1), seekId(2, 3), seekId(3, 1), seekId(3, 3)].join() && made[0].title === 'Wren: Outrider' && made[1].title === 'Wren: Unerring' && made.every((q) => q.mark),
     `two rangers each have a quest for each trainer of their class, by slot (${made.map((q) => q.title).join(', ')})`);

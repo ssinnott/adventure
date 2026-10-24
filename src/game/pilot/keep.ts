@@ -272,7 +272,7 @@ function onMap(g: Game, k: Known, p: Pilot, mem: Keep): Action | null {
   for (const [key, gold] of mem.tried) if (gold !== party.gold || !list.some((n) => key.startsWith(`${n}|`))) mem.tried.delete(key);
   mem.bought = mem.bought.filter((b) => !!party.members[b.who] && party.bag.includes(b.id));
   if (mem.bought.length) {
-    p.why = [`${party.members[mem.bought[0].who].name} takes the ${item(mem.bought[0].id).name}.`];
+    p.why = [`${party.members[mem.bought[0].who].name} takes the ${item(g.tables.items, mem.bought[0].id).name}.`];
     return 'inventory';
   }
   // Between fights, one hurt is mended by a spell before any walk (#723), the cast key and then the
@@ -504,7 +504,7 @@ function wear(g: Game, k: Known, p: Pilot, s: SheetScreen, mem: Keep): Action {
   for (let b = mem.bought[0]; b; b = mem.bought[0]) {
     const c = party.members[b.who], at = party.bag.indexOf(b.id);
     if (!c || at < 0) { mem.bought.shift(); continue; }
-    p.why = [`${c.name} takes the ${item(b.id).name}.`];
+    p.why = [`${c.name} takes the ${item(g.tables.items, b.id).name}.`];
     if (g.selected !== b.who) return (b.who - g.selected + SHEET_ROUND) % SHEET_ROUND <= SHEET_ROUND / 2 ? 'right' : 'left';
     if (s.sel !== c.pack.length + at) return 'down';
     mem.bought.shift();

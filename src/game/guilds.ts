@@ -8,13 +8,14 @@
 import type { GuildId } from '../content/guilds.ts';
 import { GUILDS } from '../content/guilds.ts';
 import { takenFlag, doneFlag, rankFlag } from './keys.ts';
-import { GUILD_QUESTS, ITEMS } from '../content/index.ts';
+import { GUILD_QUESTS } from '../content/index.ts';
 import type { WorldState } from './world.ts';
 import type { Party } from './party.ts';
 import { countItem, takeItem, payXp } from './party.ts';
 import type { QuestDef, When } from './quests.ts';
 import { holds } from './quests.ts';
 import { rankOf, ofGuild, isDone } from './ranks.ts';
+import type { Items, Tables } from './tables.ts';
 
 // The rank is game/ranks.ts's (#857), so that game/skills.ts may ask it apart from the quests' rules.
 export { rankOf };
@@ -75,14 +76,14 @@ function met(q: GuildQuest, world: WorldState, party: Party): boolean {
   return (!q.goal || holds(q.goal, world, party)) && (!q.item || countItem(party, q.item) > 0);
 }
 
-function payOut(q: GuildQuest, party: Party, early: boolean): string {
+function payOut(items: Items, q: GuildQuest, party: Party, early: boolean): string {
   if (q.item) takeItem(party, q.item);
   const { gold = 0, xp = 0, items = [] } = q.pay;
   party.gold += gold;
   const ready = payXp(party, xp);
   party.bag.push(...items);
   party.flags[doneFlag(q.id)] = 1;
-  const what = [gold ? `${gold} gold` : '', xp ? `${xp} experience` : '', ...items.map((id) => ITEMS[id].name)].filter(Boolean);
+  const what = [gold ? `${gold} gold` : '', xp ? `${xp} experience` : '', ...items.map((id) => items[id].name)].filter(Boolean);
   return (early && q.early ? q.early : q.paid).join('\n\n') + (what.length ? `\n\n(${what.join(', ')}.)` : '')
     + (ready.length ? `\n\nReady to train: ${ready.join(', ')}.` : '');
 }
@@ -99,20 +100,20 @@ function rose(guild: GuildId, before: number, party: Party, quests: readonly Gui
  * A report at a hall: pay every quest taken whose deed is done, and every item quest whose item the
  * company carries, taken or not, whatever its rank. Returns what the hall says, empty if nothing.
  */
-export function report(guild: GuildId, world: WorldState, party: Party, quests: readonly GuildQuest[] = GUILD_QUESTS): string[] {
+export function report(tables: Tables, guild: GuildId, world: WorldState, party: Party, quests: readonly GuildQuest[] = GUILD_QUESTS): string[] {
   const before = rankOf(guild, party, quests), out: string[] = [];
   for (const q of ofGuild(guild, quests)) {
     if (isDone(q, party) || !met(q, world, party)) continue;
-    if (isTaken(q, party)) out.push(payOut(q, party, false));
-    else if (q.item) out.push(payOut(q, party, true));
+    if (isTaken(q, party)) out.push(payOut(tables.items, q, party, false));
+    else if (q.item) out.push(payOut(tables.items, q, party, true));
   }
   return out.length ? [...out, ...rose(guild, before, party, quests)] : [];
 }
 
 /** Take a quest. A deed done before it was taken is paid at once, with the words for a company that came early. */
-export function take(q: GuildQuest, world: WorldState, party: Party, quests: readonly GuildQuest[] = GUILD_QUESTS): string[] {
+export function take(tables: Tables, q: GuildQuest, world: WorldState, party: Party, quests: readonly GuildQuest[] = GUILD_QUESTS): string[] {
   const before = rankOf(q.guild, party, quests);
   party.flags[takenFlag(q.id)] = 1;
   if (!met(q, world, party)) return [];
-  return [payOut(q, party, true), ...rose(q.guild, before, party, quests)];
+  return [payOut(tables.items, q, party, true), ...rose(q.guild, before, party, quests)];
 }

@@ -135,22 +135,22 @@ export function unforge(): void {
  */
 export function outfit(c: Character, level: number, rules: Readonly<Rules> = RULES): void {
   const pool = GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids).map(item).filter((d) => !d.classes || d.classes.includes(c.cls));
-  const w = weaponOf(c), shielded = !!c.equipment.shield;
+  const w = weaponOf(HARNESS.items, c), shielded = !!c.equipment.shield;
   const weapon = pool.filter((d) => d.slot === 'weapon' && !!d.ranged === !!w.ranged && !(shielded && d.twoHanded) && hits(d) > hits(w)).sort((a, b) => hits(b) - hits(a))[0];
-  if (weapon) equip(c, weapon.id);
-  const worn = c.equipment.armor ? item(c.equipment.armor).ac ?? 0 : 0;
+  if (weapon) equip(HARNESS.items, c, weapon.id);
+  const worn = c.equipment.armor ? item(HARNESS.items, c.equipment.armor).ac ?? 0 : 0;
   const armour = pool.filter((d) => d.slot === 'armor' && (d.ac ?? 0) > worn).sort((a, b) => (b.ac ?? 0) - (a.ac ?? 0))[0];
-  if (armour) equip(c, armour.id);
+  if (armour) equip(HARNESS.items, c, armour.id);
   if (shielded) {
-    const held = item(c.equipment.shield!).ac ?? 0;
+    const held = item(HARNESS.items, c.equipment.shield!).ac ?? 0;
     const shield = pool.filter((d) => d.slot === 'shield' && (d.ac ?? 0) > held).sort((a, b) => (b.ac ?? 0) - (a.ac ?? 0))[0];
-    if (shield) equip(c, shield.id);
+    if (shield) equip(HARNESS.items, c, shield.id);
   }
   if (rules.gearGrows && level > GEAR_TOP) {
-    const held = weaponOf(c), blow = Math.round(hits(held) * (line(level).hp / line(GEAR_TOP).hp - 1));
-    if (blow > 0) equip(c, forge(held, { bonus: blow }, blow));
-    const worn = c.equipment.armor ? item(c.equipment.armor) : null, ac = Math.floor((level - GEAR_TOP) / 2);
-    if (worn && ac > 0) equip(c, forge(worn, { ac }, ac));
+    const held = weaponOf(HARNESS.items, c), blow = Math.round(hits(held) * (line(level).hp / line(GEAR_TOP).hp - 1));
+    if (blow > 0) equip(HARNESS.items, c, forge(held, { bonus: blow }, blow));
+    const worn = c.equipment.armor ? item(HARNESS.items, c.equipment.armor) : null, ac = Math.floor((level - GEAR_TOP) / 2);
+    if (worn && ac > 0) equip(HARNESS.items, c, forge(worn, { ac }, ac));
   }
 }
 
@@ -172,9 +172,9 @@ function prestige(p: Party): void {
     for (let n = prestigesAt(c.level); prestigeOf(c) < n;) takePrestige(c);
     const want = BLOWS_WANT[c.cls];
     if (want && prestigeOf(c)) {
-      const held = weaponOf(c), best = GEAR.filter(([at]) => at <= c.level).flatMap(([, ids]) => ids).concat(want.kit).map(item)
+      const held = weaponOf(HARNESS.items, c), best = GEAR.filter(([at]) => at <= c.level).flatMap(([, ids]) => ids).concat(want.kit).map(item)
         .filter((d) => d.kind === want.kind && !!d.ranged === !!held.ranged && (!d.classes || d.classes.includes(c.cls))).sort((a, b) => hits(b) - hits(a))[0];
-      if (best && blowsOf({ ...c, equipment: { ...c.equipment, weapon: best.id } }) * hits(best) > blowsOf(c) * hits(held)) equip(c, best.id);
+      if (best && blowsOf(HARNESS.items, { ...c, equipment: { ...c.equipment, weapon: best.id } }) * hits(best) > blowsOf(HARNESS.items, c) * hits(held)) equip(HARNESS.items, c, best.id);
     }
   }
 }
@@ -209,13 +209,13 @@ export const artifactIds = (): string[] => Object.values(ITEMS).filter((d) => d.
  */
 function bear(p: Party, ids: readonly string[]): void {
   for (const id of ids) {
-    const d = item(id), mine = (c: Character): boolean => d.slot !== 'none' && !!c.equipment[d.slot] && !!item(c.equipment[d.slot]!).artifact;
-    const may = (m: Character): boolean => (!d.classes || d.classes.includes(m.cls)) && !mine(m) && (d.slot !== 'shield' || !weaponOf(m).twoHanded)
-      && !(d.twoHanded && m.equipment.shield && item(m.equipment.shield).artifact);
+    const d = item(HARNESS.items, id), mine = (c: Character): boolean => d.slot !== 'none' && !!c.equipment[d.slot] && !!item(HARNESS.items, c.equipment[d.slot]!).artifact;
+    const may = (m: Character): boolean => (!d.classes || d.classes.includes(m.cls)) && !mine(m) && (d.slot !== 'shield' || !weaponOf(HARNESS.items, m).twoHanded)
+      && !(d.twoHanded && m.equipment.shield && item(HARNESS.items, m.equipment.shield).artifact);
     // A weapon of the reach they hold where anyone may bear it so, else of the other: its power is borne from either row.
-    const c = p.members.find((m) => may(m) && (d.slot !== 'weapon' || !!d.ranged === !!weaponOf(m).ranged)) ?? p.members.find(may);
+    const c = p.members.find((m) => may(m) && (d.slot !== 'weapon' || !!d.ranged === !!weaponOf(HARNESS.items, m).ranged)) ?? p.members.find(may);
     if (!c) continue;
-    if (d.slot === 'none') c.pack.push(id); else equip(c, id);
+    if (d.slot === 'none') c.pack.push(id); else equip(HARNESS.items, c, id);
   }
 }
 
@@ -246,7 +246,7 @@ export function companyAt(level: number, seed: number, rules: Readonly<Rules> = 
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
-    p = train(defaultParty(rng), level, rng, rules);
+    p = train(defaultParty(HARNESS, rng), level, rng, rules);
     companies.set(key, p);
   }
   return structuredClone(p);
@@ -278,7 +278,7 @@ export function newerCompany(level: number, seed: number, rules: Readonly<Rules>
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
-    p = train(createParty(NEWER.map(([name, race, cls, raised]) => createCharacter(name, race, cls, raised, rng))), level, rng, rules);
+    p = train(createParty(NEWER.map(([name, race, cls, raised]) => createCharacter(HARNESS, name, race, cls, raised, rng))), level, rng, rules);
     companies.set(key, p);
   }
   return structuredClone(p);

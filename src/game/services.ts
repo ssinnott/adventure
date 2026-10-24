@@ -91,7 +91,7 @@ export function donate(party: Pick<Party, 'gold' | 'flags'>): Served {
  * first as #973 passes every table, is the table the item is read from.
  */
 export function sell(items: Readonly<Record<string, ItemDef>>, party: Party, owner: string[], id: string): Served {
-  const d = items[id], paid = sellPrice(party, d.price);
+  const d = items[id], paid = sellPrice(items, party, d.price);
   if (d.artifact) return refused(REFUSED);
   if (paid === 0) return refused('"I will not buy that."');
   owner.splice(owner.indexOf(id), 1);

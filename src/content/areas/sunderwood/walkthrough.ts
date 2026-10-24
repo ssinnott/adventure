@@ -54,7 +54,7 @@ import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { STEPS as TIDE_STEPS } from '../saltreach/walkthrough.ts';
 import { STEPS as WRACK_STEPS } from '../wrackholm/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
-import { MAP_DEFS, THE_QUEST } from '../../index.ts';
+import { MAP_DEFS, THE_QUEST, TABLES } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, EncounterDef } from '../../../game/map.ts';
@@ -156,7 +156,7 @@ function vaskRefused(): (w: Walk) => void {
     const m = meet(VASK, w.party, heard(w.world, VASK)), labels = m.choice?.answers.map((x) => x.label) ?? [];
     w.ok(JSON.stringify(labels) === JSON.stringify(['No.']), `Vask asks, and no is the one answer: no yes is offered (${labels.join(', ') || 'no question'})`);
     const a = m.choice?.answers[0];
-    const said = a ? answer(a, w.party) : '';
+    const said = a ? answer(TABLES.items, a, w.party) : '';
     listen(w);
     w.ok(/girl/.test(said), `he has the girl (${said})`);
     w.ok(w.party.gold === gold && [...w.party.bag].sort().join() === bag, 'the answer gives nothing and takes nothing');
@@ -372,7 +372,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 20000 - night, `a night in the refectory for ${night} gold, and the company wakes whole in the morning`);
   const stores = ofKind(WATCH, 'shop').find((f) => f.interior === 'watch_stores')!;
   const rung = ACT_II.find((r) => r.level === 14)!;
-  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, stores, id), `${m.name} buys a ${item(id).name} from the stores`);
+  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(TABLES.items, w.party, stores, id), `${m.name} buys a ${item(TABLES.items, id).name} from the stores`);
   ok(stores.stock.includes('lantern_oil'), 'and the stores sell lamp oil');
   const hall = ofKind(WATCH, 'guild')[0];
   ok(ofKind(WATCH, 'guild').length === 1 && hall.hall === 'lanterns' && hall.interior === 'watch_hall' && hall.maxTier === 6, `the Lantern hall is the Lanterns' hall and teaches to the sixth tier (${hall.name})`);
@@ -705,7 +705,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(face && inBoats.every((r) => r.kind === 'moved') && w.world.used('k4_boathouse'), 'searched at the foot of the steps, the rock opens, and the boathouse behind it can be stood in');
   listen(w);
   const roll = K4.features!.find((f) => f.kind === 'chest' && f.id === 'k4_boathouse_chest');
-  ok(roll?.kind === 'chest' && roll.items.includes('flail+2') && roll.items.includes('lanterns_roll') && item('lanterns_roll').text?.some((t) => t.includes('LEOFRUN')) === true, 'in the boathouse, a Flail +2 and the Lanterns\' Roll, one name not struck');
+  ok(roll?.kind === 'chest' && roll.items.includes('flail+2') && roll.items.includes('lanterns_roll') && item(TABLES.items, 'lanterns_roll').text?.some((t) => t.includes('LEOFRUN')) === true, 'in the boathouse, a Flail +2 and the Lanterns\' Roll, one name not struck');
   // And north out of the foot onto K3's east lip.
   walkThrough(w, 'lanternwood_k4', 23, 1, NORTH, 'eaves_k3', 3);
   trainers(ok);
@@ -889,7 +889,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(w.news.at(-1) === `New quest: ${DAM}.` && /Hew/.test(page(w, 'dam')?.goal ?? ''), `the gleaners killed first, ${DAM} begins, its goal Hew (${page(w, 'dam')?.goal})`);
     const before = xps(w);
     answerTo(w, 'eaves_k2', HEW(), { label: 'We\'ll take the tally.' });
-    w.ok(paid(w, before, 110) && w.party.bag.includes('foremans_tally') && (readText('foremans_tally') ?? []).join(' ').includes('SHEER POINT'), 'the tally kept, each member is paid 110, and the letter names Sheer Point');
+    w.ok(paid(w, before, 110) && w.party.bag.includes('foremans_tally') && (readText(TABLES.items, 'foremans_tally') ?? []).join(' ').includes('SHEER POINT'), 'the tally kept, each member is paid 110, and the letter names Sheer Point');
     reads(w, 'dam', ['hew', 'kept'], ['broken'], 'the tally kept, Orm never met');
     w.ok(shows(w, 'eaves_k2', 'k2_fall') && !shows(w, 'eaves_k2', 'k2_fall_running') && shows(w, 'eaves_k3', 'k3_door'), 'the fall stays quiet and K3\'s gleaners still come');
     w.ok(hear(w, 'eaves_k2', ORM()).startsWith('"Still dry.'), 'Orm, met after, says the dam kept');
@@ -927,7 +927,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(hear(w, 'lantern_watch', OSRIC()).includes('it is out'), 'the prior meets the company first');
     const before = xps(w);
     answerTo(w, 'lantern_watch', OSRIC(), { label: 'We\'ll let it be.' });
-    w.ok(paid(w, before, 140) && w.party.bag.includes('watch_map') && (readText('watch_map') ?? []).join(' ').includes('ruled edge to edge') && !w.party.flags.lanterns_split, 'let be, each member is paid 140, the Watch\'s map is in the pack, and nothing splits');
+    w.ok(paid(w, before, 140) && w.party.bag.includes('watch_map') && (readText(TABLES.items, 'watch_map') ?? []).join(' ').includes('ruled edge to edge') && !w.party.flags.lanterns_split, 'let be, each member is paid 140, the Watch\'s map is in the pack, and nothing splits');
     reads(w, 'watch_lamp', ['wick', 'kept'], ['dark', 'exposed'], 'the prior let be');
     w.ok(there(w, 'lantern_watch', OSRIC()) && !there(w, 'lantern_watch', OSRIC_IN()) && hear(w, 'lantern_watch', OSRIC()).startsWith('"It burns.'), 'the prior stays in the yard, and his after-lines are the price');
     w.ok(hear(w, 'lantern_watch', AVERIL_HALL()).includes('It went out the night') && hear(w, 'lantern_watch', AVERIL_HALL()).startsWith('"The oil came.'), 'Averil, met after, speaks of the lamp once, then says the oil came');

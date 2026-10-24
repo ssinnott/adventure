@@ -5,7 +5,7 @@
 // is left alone by.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { MONSTERS, ITEMS, CLIMATES } from '../../src/content/index.ts';
+import { MONSTERS, ITEMS, CLIMATES, TABLES } from '../../src/content/index.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { findWeather, SNOW_DRAG } from '../../src/game/weather.ts';
 import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS, START_MINUTES } from '../../src/game/world.ts';
@@ -23,8 +23,8 @@ import { ok, local, withDefs } from './lib.ts';
 
 export function movement(): void {
   const rng = makeRng(7);
-  const party = defaultParty(rng);
-  const world = new World(buildMaps(), party, rng);
+  const party = defaultParty(TABLES, rng);
+  const world = new World(TABLES, buildMaps(), party, rng);
   ok(world.map.id === 'harrow' && world.state.x === 7 && world.state.y === 14, 'a new world starts in Helmstow at the gate');
   ok(world.hour === 7 && world.day === 1, `the clock starts on day 1 at 07:00 (${world.hour}:${world.minute})`);
   const r1 = world.move('forward');
@@ -279,7 +279,7 @@ export function movement(): void {
  */
 function range(): void {
   const cut: MapDef = { id: 'fx_cut', name: 'Cut', kind: 'outdoor', region: 'shelf', start: { x: 2, y: 2, facing: NORTH }, rows: ['MMMMM', 'MA=|M', 'MA=|M', 'MMMMM'] };
-  const rng = makeRng(13), party = defaultParty(rng), w = new World({ fx_cut: new GameMap(cut) }, party, rng);
+  const rng = makeRng(13), party = defaultParty(TABLES, rng), w = new World(TABLES, { fx_cut: new GameMap(cut) }, party, rng);
   const step = (f: Facing): string => { w.travel('fx_cut', 2, 2, f); const r = w.move('forward'); return r.kind === 'blocked' ? r.reason : `${r.kind} ${w.state.x},${w.state.y}`; };
   const peak = step(WEST), cliff = step(EAST), road = step(NORTH);
   party.flags.skill_mountaineer = 1;
@@ -301,7 +301,7 @@ function underIce(): void {
     encounters: [{ id: 'pike', x: 3, y: 2, monsters: ['fen_eel', 'fen_eel'], roams: false, under: 'ice', ...pike }],
   });
   const rng = makeRng(11);
-  const at = (def: MapDef, x: number, y: number, f: Facing): World => { const w = new World({ fx_lake: new GameMap(def) }, defaultParty(rng), rng); w.travel('fx_lake', x, y, f); return w; };
+  const at = (def: MapDef, x: number, y: number, f: Facing): World => { const w = new World(TABLES, { fx_lake: new GameMap(def) }, defaultParty(TABLES, rng), rng); w.travel('fx_lake', x, y, f); return w; };
   const step = (def: MapDef, x: number, y: number, f: Facing): string[] => { const r = at(def, x, y, f).move('forward'); return r.kind === 'moved' ? r.encounter ?? [] : ['blocked']; };
   const onIce = step(lake({}), 5, 2, WEST), onShore = step(lake({}), 2, 3, EAST), dry = step(lake({ under: undefined }), 2, 3, EAST);
   ok(onIce.join() === 'pike', `a pike under the ice strikes a company that steps onto the ice beside it (${onIce.join() || 'nothing'})`);
@@ -319,7 +319,7 @@ function underIce(): void {
  */
 function farSide(): void {
   const def: MapDef = { id: 'fx_far', name: 'Far', kind: 'outdoor', region: 'shelf', start: { x: 2, y: 2, facing: NORTH }, rows: ['MMMMM', 'MVs@M', 'Mu&uM', 'MMMMM'] };
-  const rng = makeRng(17), party = defaultParty(rng), w = new World({ fx_far: new GameMap(def) }, party, rng);
+  const rng = makeRng(17), party = defaultParty(TABLES, rng), w = new World(TABLES, { fx_far: new GameMap(def) }, party, rng);
   const step = (x: number, y: number, f: Facing): string => { w.travel('fx_far', x, y, f); const r = w.move('forward'); return r.kind === 'blocked' ? r.reason : `${r.kind} ${w.state.x},${w.state.y}`; };
   const walked = [step(2, 2, NORTH), step(2, 2, WEST), step(1, 2, EAST)], refused = [step(2, 1, WEST), step(2, 1, EAST)];
   party.flags.skill_mountaineer = 1;
@@ -340,7 +340,7 @@ function opened(): void {
   const def: MapDef = { id: 'fx_skills', name: 'Skills', kind: 'outdoor', region: 'shelf', start: { x: 2, y: 1, facing: NORTH }, rows: ['WWWWW', 'WM.~W', 'WWWWW'] };
   // The company of six without its one Tidefolk (Maren), raised as `setup` has it; then a step west, east and north from the middle.
   const steps = (setup: (p: Party) => void): string => {
-    const rng = makeRng(19), party = defaultParty(rng), w = new World({ fx_skills: new GameMap(def) }, party, rng);
+    const rng = makeRng(19), party = defaultParty(TABLES, rng), w = new World(TABLES, { fx_skills: new GameMap(def) }, party, rng);
     party.members[4].race = 'human';
     setup(party);
     return [WEST, EAST, NORTH].map((f) => { w.travel('fx_skills', 2, 1, f); return w.move('forward').kind; }).join();
@@ -371,13 +371,13 @@ function opened(): void {
  */
 function paced(): void {
   const def: MapDef = { id: 'fx_pace', name: 'Pace', kind: 'outdoor', region: 'thornmark', start: { x: 1, y: 1, facing: EAST }, rows: ['MMMM', 'M,,M', 'MMMM'] };
-  const rng = makeRng(31), seed = new World({ fx_pace: new GameMap(def) }, defaultParty(rng), rng).state.weatherSeed!;
+  const rng = makeRng(31), seed = new World(TABLES, { fx_pace: new GameMap(def) }, defaultParty(TABLES, rng), rng).state.weatherSeed!;
   const dry = findWeather(seed, START_MINUTES, CLIMATES.thornmark, (w) => w.cover === 0 && w.precip === 0);
   const snow = findWeather(seed, START_MINUTES, CLIMATES.thornmark, (w) => w.cover >= 0.5);
   const GROUND = ['hills', 'ash', 'dunes', 'pine'] as const;
   /** Minutes a step east takes onto each ground, dry and then in deep snow, for the company `setup` makes. */
   const steps = (setup: (p: Party) => void): string => {
-    const r = makeRng(31), p = defaultParty(r), w = new World({ fx_pace: new GameMap(def) }, p, r);
+    const r = makeRng(31), p = defaultParty(TABLES, r), w = new World(TABLES, { fx_pace: new GameMap(def) }, p, r);
     setup(p);
     return [dry, snow].map((at) => GROUND.map((t) => {
       w.travel('fx_pace', 1, 1, EAST); w.state.minutes = at; w.map.at(2, 1).terrain = t;
@@ -412,7 +412,7 @@ function picked(): void {
   const thief = (p: Party): Character => p.members.find((m) => m.cls === 'thief')!;
   /** A step east into the door for the company `setup` makes: what happens, the line said, the keys left and the door after. */
   const tries = (setup: (p: Party) => void): string => {
-    const r = makeRng(37), p = defaultParty(r), w = new World({ fx_lock: new GameMap(def) }, p, r);
+    const r = makeRng(37), p = defaultParty(TABLES, r), w = new World(TABLES, { fx_lock: new GameMap(def) }, p, r);
     setup(p);
     w.travel('fx_lock', 1, 1, EAST);
     const m = w.move('forward'), keys = p.bag.filter((i) => i === 'key_iron').length;
@@ -455,12 +455,12 @@ function archdruid(): void {
   /** A member at 27 with the first `took` of its prestiges taken. */
   const raised = (c: Character, took = 3): Character => { c.xp = xpForLevel(27); levelUp(c, rng); for (let n = 0; n < took; n++) takePrestige(c); return c; };
   /** The premade six, a druid of 27 for its sorcerer: an Archdruid with all three prestiges, a Thornspeaker with two. */
-  const withDruid = (took = 3): Party => { const p = defaultParty(rng); p.members[5] = raised(createCharacter('Kenver', 'human', 'druid', {}, rng), took); return p; };
+  const withDruid = (took = 3): Party => { const p = defaultParty(TABLES, rng); p.members[5] = raised(createCharacter(TABLES, 'Kenver', 'human', 'druid', {}, rng), took); return p; };
   /** The premade six with no druid, its cleric an Exarch of 27: a third prestige, but not the druid's. */
-  const withExarch = (): Party => { const p = defaultParty(rng); raised(p.members[4]); return p; };
+  const withExarch = (): Party => { const p = defaultParty(TABLES, rng); raised(p.members[4]); return p; };
   /** How many squares of three steps the group makes toward the company. */
   const closes = (party: Party, group: Partial<EncounterDef> = {}): number => {
-    const w = new World({ fx_strip: new GameMap(strip(group)) }, party, rng);
+    const w = new World(TABLES, { fx_strip: new GameMap(strip(group)) }, party, rng);
     w.travel('fx_strip', 1, 1, EAST);
     const g = w.liveGroups()[0], from = g.state.x;
     for (let k = 0; k < 3; k++) w.moveMonsters();
@@ -473,7 +473,7 @@ function archdruid(): void {
   ];
   withDefs(MONSTERS, laid, () => {
     // The company walks up to the group that stayed put: nothing beside it for three steps, then the fight.
-    const w = new World({ fx_strip: new GameMap(strip({})) }, withDruid(), rng);
+    const w = new World(TABLES, { fx_strip: new GameMap(strip({})) }, withDruid(), rng);
     w.travel('fx_strip', 1, 1, EAST);
     const walked = [1, 2, 3, 4].map(() => { const r = w.move('forward'); return r.kind === 'moved' ? r.encounter?.join() ?? '' : r.kind; });
     const held = closes(withDruid()), down = withDruid();

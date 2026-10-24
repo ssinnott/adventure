@@ -384,7 +384,7 @@ export class World {
   advance(minutes: number): void {
     const from = this.state.minutes;
     this.state.minutes += minutes;
-    passClock(this.party, from, this.state.minutes);
+    passClock(this.tables.items, this.party, from, this.state.minutes);
   }
 
   /** Sleep through to the next morning: 07:00, or first light where the day breaks later, deep in winter. */
@@ -468,7 +468,7 @@ export class World {
     // Six minutes a step in the open, more onto hills or ash and more through deep snow, the two
     // adding up; two in the streets and underground. A Pathfinder standing walks it all at the road's
     // six: no drag on the clock (#857).
-    const drag = skilled(this.party, 'pathfinder') ? 0 : (DRAG[this.map.at(nx, ny).terrain] ?? 0) + snowDrag(this.weather);
+    const drag = skilled(this.tables.items, this.party, 'pathfinder') ? 0 : (DRAG[this.map.at(nx, ny).terrain] ?? 0) + snowDrag(this.weather);
     const tide = this.tide;
     this.advance(this.map.kind === 'outdoor' ? 6 + drag : 2);
     // The tide turning is said where the party can see the ground it covers.
@@ -551,7 +551,7 @@ export class World {
   }
 
   /** Whether a lock opens to the company without a key: a Lockpick standing, or a set of picks carried (#857). */
-  get picks(): boolean { return !!skilled(this.party, 'lockpick'); }
+  get picks(): boolean { return !!skilled(this.tables.items, this.party, 'lockpick'); }
 
   /**
    * Open an iron lock, a door's or a locked chest's (#857): a Lockpick standing, or a set of picks
@@ -559,7 +559,7 @@ export class World {
    * says, or '' where nothing opens it, and nothing is spent.
    */
   unlock(): string {
-    const pick = skilled(this.party, 'lockpick');
+    const pick = skilled(this.tables.items, this.party, 'lockpick');
     if (pick) return `${pick.name} picks the lock.`;
     return takeItem(this.party, 'key_iron') ? 'The lock turns. The key crumbles.' : '';
   }
@@ -603,7 +603,7 @@ export class World {
     const base = Math.max(radius, this.map.kind === 'outdoor' && !this.isDark && weatherSight(this.weather) >= 4 ? 2 : 1);
     // A Cartographer standing, or a chart carried, maps a square further: 3 in the open by day, 2 in a
     // dungeon, in the dark or in thick weather (#857).
-    const r = base + (skilled(this.party, 'cartographer') ? 1 : 0);
+    const r = base + (skilled(this.tables.items, this.party, 'cartographer') ? 1 : 0);
     // Every square past the first follows sight (#857, #889): it is mapped only where none of the
     // squares between it and the company, taken a step at a time toward the company, blocks the view
     // and no diagonal step on the way slips between two that do, so never past a wall, a door or a
@@ -894,7 +894,7 @@ export class World {
         if (f.once) this.mapState.used[f.id] = 1;
         for (const flag of [f.sets ?? []].flat()) this.party.flags[flag] = 1;
       }
-      if (f.kind === 'sign') out.push(...signSays(this, f));
+      if (f.kind === 'sign') out.push(...signSays(this.tables.items, this, f));
     }
     return out;
   }

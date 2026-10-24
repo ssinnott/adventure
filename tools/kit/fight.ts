@@ -9,7 +9,7 @@ import type { BotOpts } from '../../src/game/bot.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
 import { botTurn, asWritten } from '../../src/game/bot.ts';
-import { RULES, type Rules, gateCompany } from './company.ts';
+import { RULES, type Rules, gateCompany, HARNESS } from './company.ts';
 import type { EncounterDef, Answer } from '../../src/game/map.ts';
 import { answer, barred } from '../../src/game/people.ts';
 
@@ -59,7 +59,7 @@ export function gateOpts(g: Pick<EncounterDef, 'when'>): CombatOpts {
  * fight's weather (see `gateOpts`); `rules` the what-ifs its bot plays by (`gateTurn`).
  */
 export function gateFight(p: Party, monsters: Fighters, seed: number, cap = Infinity, opts: CombatOpts = {}, rules: Readonly<Rules> = RULES): boolean {
-  const rng = makeRng(seed), s = startCombat(p, [asGroup('gate', monsters)], rng, opts);
+  const rng = makeRng(seed), s = startCombat(HARNESS, p, [asGroup('gate', monsters)], rng, opts);
   return playOut(s, p, rng, gateBot, rules, cap).outcome === 'victory';
 }
 
@@ -76,7 +76,7 @@ export const gateAnswer = (g: Pick<EncounterDef, 'choice'>): Answer | undefined 
  */
 export function gatePass(p: Party, g: Pick<EncounterDef, 'choice'>): boolean {
   const a = g.choice?.answers.find((x) => !x.fight && !barred(x, p));
-  if (a) answer(a, p);
+  if (a) answer(HARNESS.items, a, p);
   return !!a;
 }
 

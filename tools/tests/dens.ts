@@ -14,7 +14,7 @@ import { approach, burn, burnt, hoardLine, keepersDead, lookKey } from '../../sr
 import { denBurnt } from '../../src/game/keys.ts';
 import type { Den } from '../../src/game/dens.ts';
 import { giftOf, spentId } from '../../src/game/wilds.ts';
-import { MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
+import { MAP_DEFS, MONSTERS, TABLES } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../kit/shipped.ts';
 import { judge, measure } from '../kit/rules/density.ts';
 import { lineFaults, texts } from '../kit/rules/pillars.ts';
@@ -81,8 +81,8 @@ export function denFaults(def: MapDef): string[] {
 }
 
 const fresh = (def: MapDef = FIXTURE): { world: World; party: Party } => {
-  const rng = makeRng(5), party = defaultParty(rng);
-  return { world: new World({ [def.id]: new GameMap(def) }, party, rng), party };
+  const rng = makeRng(5), party = defaultParty(TABLES, rng);
+  return { world: new World(TABLES, { [def.id]: new GameMap(def) }, party, rng), party };
 };
 const abroad = (w: World): number => w.liveGroups().filter((g) => DEN.brood.includes(g.def.id)).length;
 const later = (w: World, minutes: number): number => { w.advance(minutes); return abroad(w); };
@@ -137,7 +137,7 @@ export function dens(): void {
     world.killGroups([DEN.keepers]);
     ok(keepersDead(world, DEN) && approach(world, DEN).ask, 'its keepers dead, stepping in puts the choice');
     const lines = burn(world, party, DEN);
-    ok(burnt(world, DEN) && lines.join('\n') === `${DEN.burnt}\n${hoardLine(DEN)}` && party.gold === gold + DEN.gold && party.bag.length === bag + 1 && party.bag.includes('key_iron'), `it burns, and its hoard is the company's (${lines.join(' ')})`);
+    ok(burnt(world, DEN) && lines.join('\n') === `${DEN.burnt}\n${hoardLine(TABLES.items, DEN)}` && party.gold === gold + DEN.gold && party.bag.length === bag + 1 && party.bag.includes('key_iron'), `it burns, and its hoard is the company's (${lines.join(' ')})`);
     ok(!burn(world, party, DEN).length && party.gold === gold + DEN.gold && party.bag.length === bag + 1, 'once');
     const ruin = approach(world, DEN);
     ok(!ruin.ask && ruin.lines.join() === DEN.ruin, 'and a ruin puts no choice again, only its line');
@@ -146,7 +146,7 @@ export function dens(): void {
     ok(later(world, 30 * MINUTES_PER_DAY) === 0, 'killed, it never comes back');
     // Through a save: still burnt, the brood still gone, the hoard not given twice.
     const data = deserialize(serialize(world.state, party, 0));
-    const loaded = new World({ rookery: new GameMap(FIXTURE) }, data.party, makeRng(1), data.world), lgold = data.party.gold;
+    const loaded = new World(TABLES, { rookery: new GameMap(FIXTURE) }, data.party, makeRng(1), data.world), lgold = data.party.gold;
     ok(burnt(loaded, DEN) && later(loaded, 30 * MINUTES_PER_DAY) === 0, 'through a save and a load it stays burnt, and breeds no more');
     ok(!burn(loaded, data.party, DEN).length && data.party.gold === lgold, 'and its hoard is not given again');
   }
@@ -160,7 +160,7 @@ export function dens(): void {
     ok(first[0] === DEN.text, `three squares off, facing it, the company hears its look (${first.join(' | ')})`);
     ok(!world.sightings().includes(DEN.text), 'once');
     const data = deserialize(serialize(world.state, party, 0));
-    const loaded = new World({ rookery: new GameMap(FIXTURE) }, data.party, makeRng(1), data.world);
+    const loaded = new World(TABLES, { rookery: new GameMap(FIXTURE) }, data.party, makeRng(1), data.world);
     ok(loaded.used(lookKey(DEN)) && !loaded.sightings().includes(DEN.text), 'nor again after a save and a load');
     const side = fresh().world;
     side.state.x = DEN.x; side.state.y = DEN.y + 3; side.state.facing = SOUTH;

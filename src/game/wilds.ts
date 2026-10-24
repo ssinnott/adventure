@@ -11,6 +11,7 @@ import { manhattan } from './types.ts';
 import { item } from './items.ts';
 import { spell } from './spells.ts';
 import { castOnParty } from './combat.ts';
+import type { Items } from './tables.ts';
 
 /** The features this module plays. */
 export type Wild = Extract<Feature, { kind: 'shrine' | 'fountain' | 'cairn' | 'statue' | 'camp' }>;
@@ -35,10 +36,10 @@ const STAT_NAMES: Record<Stat, string> = { might: 'Might', intellect: 'Intellect
  * element `resist` keeps off to every member, whatever their state, unless it is kept off them for
  * as long already. Returns it in words for the log.
  */
-export function give(party: Party, gift: Gift): string[] {
+export function give(items: Items, party: Party, gift: Gift): string[] {
   const words: string[] = [];
   if (gift.gold) { party.gold += gift.gold; words.push(`${gift.gold} gold`); }
-  for (const id of gift.items ?? []) { party.bag.push(id); words.push(item(id).name); }
+  for (const id of gift.items ?? []) { party.bag.push(id); words.push(item(items, id).name); }
   if (gift.stat) {
     const n = gift.amount ?? 1;
     for (const m of party.members) m.stats[gift.stat] += n;
@@ -75,14 +76,14 @@ export function useShrine(world: World, party: Party, f: Extract<Wild, { kind: '
   if (!world.present(f)) return [];
   if (world.used(f.id)) return [f.done];
   world.markUsed(f.id);
-  return [f.text, give(party, giftOf(f)!).join(', ') + '.'];
+  return [f.text, give(world.tables.items, party, giftOf(f)!).join(', ') + '.'];
 }
 
 /** Lift a cairn's stones: its cache the first time. */
 export function openCairn(world: World, party: Party, f: Extract<Wild, { kind: 'cairn' }>): string[] {
   if (world.used(f.id)) return ['The cairn has been emptied.'];
   world.markUsed(f.id);
-  const got = give(party, giftOf(f)!);
+  const got = give(world.tables.items, party, giftOf(f)!);
   return [...(f.text ? [f.text] : []), got.length ? `Under the stones: ${got.join(', ')}.` : 'Under the stones: nothing.'];
 }
 
@@ -100,7 +101,7 @@ export function answerRiddle(world: World, party: Party, f: Extract<Wild, { kind
   if (world.used(f.id)) return { right: false, lines: [f.done] };
   if (!normalWord(word) || normalWord(word) !== normalWord(f.answer)) return { right: false, lines: ['The statue is silent.'] };
   world.markUsed(f.id);
-  const got = give(party, f.gift);
+  const got = give(world.tables.items, party, f.gift);
   return { right: true, lines: [f.done, ...(got.length ? [`At its feet: ${got.join(', ')}.`] : [])] };
 }
 

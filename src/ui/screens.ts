@@ -251,9 +251,9 @@ export class SheetScreen implements Screen {
     else if (is(a, 'down') && items.length) this.sel = (this.sel + 1) % items.length;
     else if (is(a, 'interact') && items.length) {
       const it = items[this.sel];
-      const d = item(it.id);
+      const d = item(g.tables.items, it.id);
       if (d.slot !== 'none') {
-        if (equip(c, it.id)) { if (it.from === 'bag') g.party.bag.splice(g.party.bag.indexOf(it.id), 1); g.say(`${c.name} equips ${d.name}.`); }
+        if (equip(g.tables.items, c, it.id)) { if (it.from === 'bag') g.party.bag.splice(g.party.bag.indexOf(it.id), 1); g.say(`${c.name} equips ${d.name}.`); }
         else g.say(`${c.name} cannot use ${d.name}.`);
         // A piece's words are read as it is taken up from the pack (#847, DESIGN §9), once it is gone from the list.
         if (d.text) g.push(new MessageScreen(d.text.join('\n\n'), undefined, d.name));
@@ -263,7 +263,7 @@ export class SheetScreen implements Screen {
           // The line says where it lies: one listed from the bag comes from the bag, though the member's pack holds one too.
           for (const l of useItem(ITEMS, g.party, it.from === 'pack' ? c : null, it.id, g.party.members[i]) ?? []) g.say(l);
         });
-      } else if (readText(it.id)) g.push(new MessageScreen(readText(it.id)!.join('\n\n'), undefined, d.name));
+      } else if (readText(g.tables.items, it.id)) g.push(new MessageScreen(readText(g.tables.items, it.id)!.join('\n\n'), undefined, d.name));
       else g.say(`${d.name}: nothing to do with it here.`);
       if (this.sel >= this.items(g).length) this.sel = Math.max(0, this.items(g).length - 1);
     }
@@ -292,7 +292,7 @@ export class SheetScreen implements Screen {
     const items = this.items(g);
     drawText(ctx, 'ITEMS (SPACE: EQUIP OR USE)', 340, 36, { size: 1, color: TEXT_DIM });
     if (!items.length) drawText(ctx, 'nothing carried', 340, 50, { size: 1, color: TEXT_DIM });
-    else menu(ctx, items.slice(0, SHEET_ITEMS).map((it) => `${item(it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, SHEET_ITEMS_Y, this.sel);
+    else menu(ctx, items.slice(0, SHEET_ITEMS).map((it) => `${item(g.tables.items, it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, SHEET_ITEMS_Y, this.sel);
     drawText(ctx, '< > OR 1-6 SWITCH   ESC CLOSE', 620, 264, { size: 1, color: TEXT_DIM, align: 'right' });
     drawPartyCards(ctx, g.party, this.who, frame);
   }
@@ -418,7 +418,7 @@ export class SpellScreen implements Screen {
           const c = g.party.members[caster];
           if (c.sp < sp.sp) { g.say(`${c.name} lacks the spell points.`); return; }
           c.sp -= sp.sp;
-          g.say(castOnAlly(c, sp, g.party.members[i]));
+          g.say(castOnAlly(g.tables.items, c, sp, g.party.members[i]));
         });
       } else if (sp.explore === 'mark' && g.world.state.mark) {
         g.push(new ChoiceScreen('The mark is set. Which?', ['Return to the mark', 'Set it here'], (i) => { if (i >= 0) explore(g, caster, sp.id, i === 0); }, sp.name));
@@ -523,7 +523,7 @@ function standing(g: Game, id: GuildId): string {
 
 /** The guild's work: first the report, which pays what is done, then what the hall offers. */
 function guildWork(g: Game, id: GuildId, hallName: string): Screen {
-  const paid = report(id, g.world.state, g.party);
+  const paid = report(g.tables, id, g.world.state, g.party);
   if (paid.length) return new MessageScreen(paid.join('\n\n'), () => g.push(guildOffers(g, id, hallName)), hallName);
   return guildOffers(g, id, hallName);
 }
@@ -537,7 +537,7 @@ function guildOffers(g: Game, id: GuildId, hallName: string): Screen {
     const q = offers[i];
     g.push(new MessageScreen(q.offer.join('\n\n'), () => g.push(new ChoiceScreen(q.title, ['Take it', 'Not now'], (j) => {
       if (j === 0) {
-        const said = take(q, g.world.state, g.party);
+        const said = take(g.tables, q, g.world.state, g.party);
         g.say(`You take the work: ${q.title}.`);
         if (said.length) { g.push(new MessageScreen(said.join('\n\n'), () => g.push(guildOffers(g, id, hallName)), hallName)); return; }
       }
@@ -650,23 +650,23 @@ function shop(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
 }
 
 function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
-  const names = f.stock.map((id) => `${item(id).name}\t${priceIn(f, id)}g\t${describe(id)}`);
+  const names = f.stock.map((id) => `${item(g.tables.items, id).name}\t${priceIn(g.tables.items, f, id)}g\t${describe(id)}`);
   const s: ChoiceScreen = new ChoiceScreen(`What will it be? (${g.party.gold} gold.)`, [...names, 'Done'], (i) => {
     if (i < 0 || i === names.length) return;
-    const d = buy(g.party, f, f.stock[i]);
+    const d = buy(g.tables.items, g.party, f, f.stock[i]);
     if (!d) { g.say('Not enough gold.'); g.push(buyScreen(g, f)); return; }
     if (d.use?.food) g.say(`Bought ${d.name}: food is now ${g.party.food}.`);
     else g.say(`Bought ${d.name}.`);
     const next = buyScreen(g, f); (next as ChoiceScreen).sel = i; g.push(next);
-  }, f.name, [...f.stock.map((id) => priceIn(f, id) > g.party.gold), false]);
+  }, f.name, [...f.stock.map((id) => priceIn(g.tables.items, f, id) > g.party.gold), false]);
   return s;
 }
 
 function sellScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
   const entries: { id: string; owner: string[]; label: string }[] = [];
-  const pays = (id: string): number => sellPrice(g.party, item(id).price);
+  const pays = (id: string): number => sellPrice(g.tables.items, g.party, item(g.tables.items, id).price);
   // An artifact shows no price, and no shop takes one (#847).
-  const row = (id: string, whose: string): string => `${item(id).name} (${whose})${item(id).artifact ? '' : `\t${pays(id)}g`}`;
+  const row = (id: string, whose: string): string => `${item(g.tables.items, id).name} (${whose})${item(g.tables.items, id).artifact ? '' : `\t${pays(id)}g`}`;
   for (const id of g.party.bag) entries.push({ id, owner: g.party.bag, label: row(id, 'bag') });
   for (const m of g.party.members) for (const id of m.pack) entries.push({ id, owner: m.pack, label: row(id, m.name) });
   if (!entries.length) return new MessageScreen('"You have nothing I want."', undefined, f.name);

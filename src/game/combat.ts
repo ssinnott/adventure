@@ -17,6 +17,7 @@ import type { ItemDef } from './items.ts';
 import type { Party, Character, Condition } from './party.ts';
 import type { World } from './world.ts';
 import { GLOVE_FLAG } from './keys.ts';
+import type { Items } from './tables.ts';
 
 export interface MonsterInst {
   def: MonsterDef;
@@ -182,8 +183,8 @@ export const rageBelow = (c: Character): number => (c.cls === 'barbarian' && pre
  * Blows a turn with the weapon in hand: one, and a prestige's more where its weapon suits it, a
  * ranger's with a bow, a thief's with a light weapon, a monk's with a staff or bare hands.
  */
-export function blowsOf(c: Character): number {
-  const more = PRESTIGE_BLOWS[c.cls], w = weaponOf(c);
+export function blowsOf(items: Items, c: Character): number {
+  const more = PRESTIGE_BLOWS[c.cls], w = weaponOf(items, c);
   if (!more) return 1;
   if ((c.cls === 'ranger' && w.kind !== 'bow') || (c.cls === 'thief' && w.kind !== 'light') || (c.cls === 'monk' && c.equipment.weapon && w.kind !== 'staff')) return 1;
   return 1 + more.slice(0, prestigeOf(c)).reduce((a, b) => a + b, 0);
@@ -272,7 +273,7 @@ function newRound(s: CombatState, party: Party, rng: RngInstance): void {
   s.defending = party.members.map(() => false);
   const refs: { ref: TurnRef; speed: number }[] = [];
   const haste = s.haste > 0 ? HASTE_SPEED : 0;
-  party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: statOf(c, 'speed') + haste + rng.range(0, 4) }); });
+  party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: statOf(s.tables.items, c, 'speed') + haste + rng.range(0, 4) }); });
   s.monsters.forEach((m, i) => { if (standing(m)) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
   // A monk of the second prestige always acts first in a round; in the first, while an Arms Master
   // stands (game/skills.ts; #856), every member acts before any monster. The skill is read off the
@@ -323,7 +324,7 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   beat(s);
   dim(s);
   for (const c of party.members) {
-    if (hasCondition(c, 'poisoned') && !isDown(c)) { damage(c, 1); s.log.push(`${c.name} suffers from poison.`); }
+    if (hasCondition(c, 'poisoned') && !isDown(c)) { damage(s.tables.items, c, 1); s.log.push(`${c.name} suffers from poison.`); }
     if (hasCondition(c, 'paralysed') && rng.chance(0.35)) { removeCondition(c, 'paralysed'); s.log.push(`${c.name} can move again.`); }
   }
   checkOutcome(s, party, rng);
@@ -342,8 +343,8 @@ function roll(rng: RngInstance, dice: number, sides: number, plus: number): numb
 }
 
 /** Whether the character in party slot `index` may strike with their weapon at all. */
-export function canAttackFromRow(c: Character, index: number): boolean {
-  return index < FRONT_ROW || !!weaponOf(c).ranged || (c.cls === 'monk' && prestigeOf(c) >= 2);
+export function canAttackFromRow(items: Items, c: Character, index: number): boolean {
+  return index < FRONT_ROW || !!weaponOf(items, c).ranged || (c.cls === 'monk' && prestigeOf(c) >= 2);
 }
 
 /** Still in the fight: alive, and not fled. */
@@ -355,7 +356,7 @@ export const frontStands = (s: CombatState): boolean => s.monsters.some((m) => s
 /** Whether the character's weapon reaches the monster: a bow or sling any, a blade the back only once the front is down. */
 export function canReach(s: CombatState, c: Character, target: number): boolean {
   const m = s.monsters[target];
-  return !!m && standing(m) && (!m.back || !!weaponOf(c).ranged || !frontStands(s));
+  return !!m && standing(m) && (!m.back || !!weaponOf(s.tables.items, c).ranged || !frontStands(s));
 }
 
 /** A monster of the back rank with no bow, spell, call or breath waits for the front to fall before it steps up. */
@@ -385,16 +386,16 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
   switch (action.type) {
     case 'attack': {
       let m = s.monsters[action.target];
-      if (!m || !canAttackFromRow(c, t.i) || !canReach(s, c, action.target)) return false;
-      const w = weaponOf(c), edge = s.edge?.(c, s);
-      const blows = blowsOf(c) + (edge ? edge.blows - 1 : 0), song = songDamage(party);
+      if (!m || !canAttackFromRow(s.tables.items, c, t.i) || !canReach(s, c, action.target)) return false;
+      const w = weaponOf(s.tables.items, c), edge = s.edge?.(c, s);
+      const blows = blowsOf(s.tables.items, c) + (edge ? edge.blows - 1 : 0), song = songDamage(party);
       for (let blow = 0; blow < blows; blow++) {
         // A later blow falls on the weakest foe still standing, once the first's has fallen.
         if (!standing(m)) { const left = aliveMonsters(s).filter((i) => canReach(s, c, i)); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
-        const hit = rng.chance(toHit(attackBonus(c) + buffHit(s, party, t.i) - (w.ranged && !weatherproof(c) ? s.rangedPenalty : 0), monsterAc(s, m)));
+        const hit = rng.chance(toHit(attackBonus(s.tables.items, c) + buffHit(s, party, t.i) - (w.ranged && !weatherproof(c) ? s.rangedPenalty : 0), monsterAc(s, m)));
         if (hit) {
           // An elemental weapon adds a die of its element to the steel, which lands as ever.
-          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
+          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
             + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
           hurtMonster(s, m, dmg);
           s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
@@ -407,7 +408,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       if (sp.context === 'explore' || (sp.glass && !action.element)) return false;
       // An artifact's spell (#847): its bearer casts it for a charge, not spell points, whatever they know.
       if (action.from) {
-        if (item(action.from).casts?.spell !== sp.id || !borne(c).includes(action.from) || chargesLeft(party, action.from) < 1) return false;
+        if (item(s.tables.items, action.from).casts?.spell !== sp.id || !borne(s.tables.items, c).includes(action.from) || chargesLeft(s.tables.items, party, action.from) < 1) return false;
         (party.spent ??= {})[action.from] = (party.spent[action.from] ?? 0) + 1;
         castSpell(s, party, rng, c, sp, action.target, action.element, true);
         break;
@@ -423,7 +424,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       break;
     case 'use': {
       // The fight carries no item table until #973 hands it one: it reads the item as the rest of it does and lends `useItem` that.
-      const d = item(action.itemId), target = party.members[action.target];
+      const d = item(s.tables.items, action.itemId), target = party.members[action.target];
       const said = target ? useItem({ [d.id]: d }, party, c, d.id, target) : null;
       if (!said) return false;
       s.log.push(...said);
@@ -431,7 +432,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
     }
     case 'flee': {
       const up = party.members.filter((m) => !isDown(m));
-      const ps = up.reduce((a, m) => a + statOf(m, 'speed'), 0) / Math.max(1, up.length);
+      const ps = up.reduce((a, m) => a + statOf(s.tables.items, m, 'speed'), 0) / Math.max(1, up.length);
       const alive = aliveMonsters(s).map((i) => s.monsters[i]);
       const ms = alive.reduce((a, m) => a + m.def.speed, 0) / Math.max(1, alive.length);
       const p = Math.max(0.15, Math.min(0.9, 0.5 + (ps - ms) * 0.03));
@@ -525,7 +526,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
     }
     case 'ally': {
       const a = party.members[target] ?? c;
-      s.log.push(castOnAlly(c, sp, a, s.rankStep));
+      s.log.push(castOnAlly(s.tables.items, c, sp, a, s.rankStep));
       return;
     }
     case 'party':
@@ -533,7 +534,7 @@ function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character,
       else if (sp.buff === 'shield') { s.shield = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. A ward settles over the party.`); }
       else if (sp.buff === 'haste') { s.haste = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. The party quickens.`); }
       else if (sp.glass && element) { s.glass = { element, rounds: sp.turns ?? 5 }; s.log.push(`${c.name} casts ${sp.name}. The glass dims the ${GLASS_WORD[element]}.`); }
-      else if (sp.heal || sp.cure) s.log.push(castOnParty(c, sp, party, s.rankStep));
+      else if (sp.heal || sp.cure) s.log.push(castOnParty(s.tables.items, c, sp, party, s.rankStep));
       return;
     default:
       s.log.push(`${c.name} casts ${sp.name}.`);
@@ -552,10 +553,10 @@ export const ROOTS_CHANCE = 0.5, HOLD_BREAKS = 0.35;
  * A healing or curing spell on the whole party, shared by combat and exploration: each member not dead
  * or stoned is healed (see spellHeal) and cured. Returns the log line.
  */
-export function castOnParty(c: Character, sp: SpellDef, party: Party, step?: number): string {
+export function castOnParty(items: Items, c: Character, sp: SpellDef, party: Party, step?: number): string {
   for (const a of party.members) {
     if (hasCondition(a, 'dead') || hasCondition(a, 'stoned')) continue;
-    if (sp.heal) heal(a, spellHeal(c, sp.heal, step));
+    if (sp.heal) heal(a, spellHeal(items, c, sp.heal, step));
     for (const k of sp.cure ?? []) removeCondition(a, k as Condition);
   }
   return `${c.name} casts ${sp.name}. The party is ${sp.heal && sp.cure ? 'healed and cleansed' : sp.heal ? 'healed' : 'cleansed'}.`;
@@ -566,9 +567,9 @@ export function castOnParty(c: Character, sp: SpellDef, party: Party, step?: num
  * line. Raising brings the dead back at `heal` hp; other healing scales with the caster (see spellHeal).
  * Absolve lifts stone and curse: the stoned come back as they were, out cold if their wounds say so.
  */
-export function castOnAlly(c: Character, sp: SpellDef, a: Character, step?: number): string {
+export function castOnAlly(items: Items, c: Character, sp: SpellDef, a: Character, step?: number): string {
   if (sp.cure?.includes('stoned')) {
-    const curse = hasCondition(a, 'cursed'), stone = lift(a, sp.cure);
+    const curse = hasCondition(a, 'cursed'), stone = lift(items, a, sp.cure);
     return stone && curse ? `${c.name} casts ${sp.name}: ${a.name} is flesh again, and the curse lifts.` : stone ? `${c.name} casts ${sp.name}: ${a.name} is flesh again.`
       : curse ? `${c.name} casts ${sp.name}: the curse lifts from ${a.name}.` : `${c.name} casts ${sp.name}, but ${a.name} needs no absolving.`;
   }
@@ -579,7 +580,7 @@ export function castOnAlly(c: Character, sp: SpellDef, a: Character, step?: numb
     return `${c.name} casts ${sp.name}: ${a.name} draws breath again.`;
   }
   const parts: string[] = [];
-  if (sp.heal) parts.push(`${a.name} recovers ${heal(a, spellHeal(c, sp.heal, step))}`);
+  if (sp.heal) parts.push(`${a.name} recovers ${heal(a, spellHeal(items, c, sp.heal, step))}`);
   if (sp.cure) { for (const k of sp.cure) removeCondition(a, k as Condition); if (!sp.heal) parts.push(`${a.name} is cleansed`); }
   return `${c.name} casts ${sp.name}: ${parts.join(', ')}.`;
 }
@@ -608,10 +609,10 @@ export function sweptRow(party: Party, m: Pick<MonsterInst, 'def' | 'under'>): {
 }
 
 /** A member's armour against a monster's blow or sweep: bracing, the Ward over the party and their own edge. */
-const guard = (s: CombatState, c: Character, i: number): number => armorClass(c) + (s.defending[i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0) + (s.edge?.(c, s).ac ?? 0);
+const guard = (s: CombatState, c: Character, i: number): number => armorClass(s.tables.items, c) + (s.defending[i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0) + (s.edge?.(c, s).ac ?? 0);
 
 /** Whether Lampglass or a member's own resistance halves an element on them: once between them, never to a quarter (#555). */
-const dimmed = (s: CombatState, c: Character, el: Element | undefined): boolean => !!el && (s.glass?.element === el || resists(c).includes(el));
+const dimmed = (s: CombatState, c: Character, el: Element | undefined): boolean => !!el && (s.glass?.element === el || resists(s.tables.items, c).includes(el));
 
 /** The monster's group still in the fight: those that came in with it. */
 const bandOf = (s: CombatState, m: MonsterInst): MonsterInst[] => s.monsters.filter((q) => q.band === m.band && standing(q));
@@ -641,11 +642,11 @@ const names = (cs: readonly Character[]): string => cs.length < 2 ? cs.map((c) =
  * that would kill is held at 1 hit point, once between rests, by a cleric of the third prestige who is
  * not dead (`riteSpent`). Returns what the line adds.
  */
-function struck(party: Party, c: Character, dmg: number): string {
+function struck(items: Items, party: Party, c: Character, dmg: number): string {
   const slept = hasCondition(c, 'asleep');
   const rite = !isDown(c) && c.hp - dmg <= deathAt(c) ? party.members.find((m) => m.cls === 'cleric' && prestigeOf(m) >= 3 && !m.riteSpent && !hasCondition(m, 'dead')) : undefined;
   if (rite) { rite.riteSpent = true; c.hp = 1; removeCondition(c, 'asleep'); return ` ${RITE_LINE(rite.name, c.name)}`; }
-  damage(c, dmg);
+  damage(items, c, dmg);
   if (slept && !isDown(c) && dmg > 0) { removeCondition(c, 'asleep'); return ` ${c.name} wakes.`; }
   return '';
 }
@@ -675,7 +676,7 @@ function monsterCast(s: CombatState, party: Party, rng: RngInstance, m: MonsterI
   }
   if (sp.inflict) {
     const fell: Character[] = [];
-    for (const { c } of rowFor(party, true)) if (!hasCondition(c, sp.inflict) && !songWards(party, sp.inflict) && rng.chance(SLUMBER_CHANCE)) { const before = c.conditions.length; addCondition(c, sp.inflict); if (c.conditions.length > before) fell.push(c); }
+    for (const { c } of rowFor(party, true)) if (!hasCondition(c, sp.inflict) && !songWards(party, sp.inflict) && rng.chance(SLUMBER_CHANCE)) { const before = c.conditions.length; addCondition(s.tables.items, c, sp.inflict); if (c.conditions.length > before) fell.push(c); }
     s.log.push(fell.length ? `${who} casts ${sp.name}: ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'} asleep.` : `${who} casts ${sp.name}, but no one sleeps.`);
     return;
   }
@@ -683,13 +684,13 @@ function monsterCast(s: CombatState, party: Party, rng: RngInstance, m: MonsterI
     const up = party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c)), marks = up.filter(({ c }) => !vanished(s, c));
     const pick = rng.pick(marks.length ? marks : up);
     if (!pick) return;
-    const d = dmgOf(pick.i), woke = struck(party, pick.c, d);
+    const d = dmgOf(pick.i), woke = struck(s.tables.items, party, pick.c, d);
     s.log.push(`${who} casts ${sp.name}: ${pick.c.name} takes ${d}.${woke}` + (isDown(pick.c) ? ` ${pick.c.name} falls!` : ''));
     return;
   }
   const row = sp.target === 'all' ? party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c)) : rowFor(party);
   let total = 0, woke = '';
-  for (const { c, i } of row) { const d = dmgOf(i); total += d; woke += struck(party, c, d); }
+  for (const { c, i } of row) { const d = dmgOf(i); total += d; woke += struck(s.tables.items, party, c, d); }
   const fell = row.map(({ c }) => c).filter(isDown);
   const where = sp.target === 'all' ? 'the party' : row[0] && row[0].i >= FRONT_ROW ? 'the back row' : 'the front row';
   s.log.push(`${who} casts ${sp.name}: ${total} damage to ${where}.${woke}` + (fell.length ? ` ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'}!` : ''));
@@ -732,7 +733,7 @@ function sweep(s: CombatState, party: Party, rng: RngInstance, m: MonsterInst): 
     if (s.defending[i]) d = Math.ceil(d / 2);
     if (dimmed(s, c, el)) d = Math.ceil(d / 2);
     dealt = (dealt ?? 0) + d;
-    woke += struck(party, c, d);
+    woke += struck(s.tables.items, party, c, d);
   }
   const fell = row.map(({ c }) => c).filter(isDown);
   s.log.push(SWEEP_LINE(m.def.name, el, row[0].i >= FRONT_ROW ? 'the back row' : 'the front row', dealt) + woke + (fell.length ? ` ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'}!` : ''));
@@ -861,7 +862,7 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
     const fromSp = m.def.drain === 'sp' ? Math.min(pick.c.sp, dmg) : 0;
     pick.c.sp -= fromSp;
     // A drain on hit points drinks what the member lost, never more than it had to lose.
-    const had = pick.c.hp, woke = struck(party, pick.c, dmg - fromSp);
+    const had = pick.c.hp, woke = struck(s.tables.items, party, pick.c, dmg - fromSp);
     if (m.def.drain === 'hp') m.hp = Math.min(m.def.hp, m.hp + Math.max(0, had - pick.c.hp));
     let line = fromSp === 0 ? `${m.def.name} hits ${pick.c.name} for ${dmg}${m.def.drain === 'hp' ? ' and drinks' : ''}.`
       : fromSp === dmg ? `${m.def.name} hits ${pick.c.name} for ${dmg} spell points.` : `${m.def.name} hits ${pick.c.name} for ${fromSp} spell points and ${dmg - fromSp}.`;
@@ -870,7 +871,7 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
     // one turned to glass is said so, and not as fallen.
     if (m.def.inflict && !isDown(pick.c) && !songWards(party, m.def.inflict.cond) && rng.chance(m.def.inflict.chance)) {
       const k = m.def.inflict.cond, had = hasCondition(pick.c, k);
-      addCondition(pick.c, k);
+      addCondition(s.tables.items, pick.c, k);
       if (!had && hasCondition(pick.c, k)) line += ` ${k === 'stoned' ? STONE_LINE(pick.c.name) : `${pick.c.name} is ${k}!`}`;
     }
     if (isDown(pick.c) && !hasCondition(pick.c, 'stoned')) line += ` ${pick.c.name} falls!`;

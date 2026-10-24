@@ -3,7 +3,7 @@
 // fixture town holds the rest: questions and their answers, words by flag, several hand-ins, letters.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { MAP_DEFS, ITEMS, QUESTS } from '../../src/content/index.ts';
+import { MAP_DEFS, ITEMS, QUESTS, TABLES } from '../../src/content/index.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, countItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
@@ -28,7 +28,7 @@ const THREE = ['survey_wand', 'greywater_ledger', 'ashen_chisel'];
 export function people(): void {
   const all: { map: string; p: Person }[] = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? [{ map: d.id, p: f }] : []));
   const givers = all.filter((x) => handIns(x.p).length);
-  const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(rng); return { party, world: new World(buildMaps(), party, rng) }; };
+  const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(TABLES, rng); return { party, world: new World(TABLES, buildMaps(), party, rng) }; };
   // The log's pages begun, a side quest or a chapter of the one quest each, keyed by their ids.
   const pages = (s: { party: Party; world: World }): { id: string; page: PageView }[] =>
     questLog(s.world.state, s.party).flatMap((v) => v.pages.filter((p) => p.begun).map((page) => ({ id: v.def.chapters ? `${v.def.id}/${page.def.id}` : v.def.id, page })));
@@ -151,7 +151,7 @@ export function refusable(e: Pick<EncounterDef, 'choice' | 'slainText'>): boolea
 export function boxFaults(p: Person, inBusiness = true): string[] {
   const gold = (q: { reward: number }): string[] => (q.reward ? [`(${q.reward} gold.)`] : []);
   const texts = [p.lines, ...handIns(p).flatMap((q) => [[...q.done, ...gold(q)], ...(q.early ? [[...q.early, ...gold(q)]] : []), q.after ?? []]), ...(p.says ?? []).map((w) => w.lines),
-    ...choices(p).flatMap((c) => c.answers.map((a) => [...a.says, ...answerNote(a)]))];
+    ...choices(p).flatMap((c) => c.answers.map((a) => [...a.says, ...answerNote(TABLES.items, a)]))];
   const out = texts.flatMap((t) => { const n = wrap(t.join('\n\n'), SAY_W).length; return n > SAY_LINES ? [`'${t[0].slice(0, 24)}..' takes ${n} lines of ${SAY_LINES}`] : []; });
   for (const c of choices(p)) {
     // The purse as the richest company could hold it.
@@ -186,29 +186,29 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     const s = fresh(), first = meet(captain, s.party, heard(s.world, captain));
     ok(first.text === captain.lines.join('\n\n') && first.choice === captain.choice && !!s.party.flags.fx_met, 'a first meeting ends in its question, and hires');
     ok(meet(captain, s.party, heard(s.world, captain)).choice === captain.choice, 'a question not answered (Esc) is put again');
-    const wrote = answer(captain.choice!.answers[0], s.party);
+    const wrote = answer(TABLES.items, captain.choice!.answers[0], s.party);
     ok(wrote === 'He writes, and seals it.\n\n(A Sealed Letter.)' && !!s.party.flags.fx_write && countItem(s.party, LETTER.id) === 1, 'an answer sets its flag, hands over its item and says so');
     const next = meet(captain, s.party, heard(s.world, captain));
     ok(next.text === '"Hale will have it by now."' && !next.choice, 'after the answer, its words, and the question is not put again');
     const bare = { ...captain, says: undefined }, once = fresh();
     meet(bare, once.party, heard(once.world, bare));
-    answer(captain.choice!.answers[1], once.party);
+    answer(TABLES.items, captain.choice!.answers[1], once.party);
     const again = meet(bare, once.party, heard(once.world, bare));
     ok(again.text === captain.lines.join('\n\n') && !again.choice, 'with no words for it, the first lines again, and the question answered is not put again');
     const kept = fresh();
     meet(captain, kept.party, heard(kept.world, captain));
-    answer(captain.choice!.answers[1], kept.party);
+    answer(TABLES.items, captain.choice!.answers[1], kept.party);
     ok(meet(captain, kept.party, heard(kept.world, captain)).text === '"Not a word to Hale."' && !countItem(kept.party, LETTER.id), 'the other answer, its own words, and no letter');
 
     // An answer that pays: the gold to the company, the xp split among the living, and the line says both.
     const paid = fresh(), purse = paid.party.gold, xp = paid.party.members.map((m) => m.xp);
     paid.party.members[5].conditions.push('dead');
     const fee: Answer = { label: 'Sell it', sets: 'fx_sold', gives: LETTER.id, pay: { gold: 300, xp: 500 }, says: ['He counts it out.'] };
-    const sold = answer(fee, paid.party);
+    const sold = answer(TABLES.items, fee, paid.party);
     ok(sold.startsWith('He counts it out.\n\n(300 gold, 500 experience, A Sealed Letter.)') && paid.party.gold === purse + 300 && !!paid.party.flags.fx_sold && countItem(paid.party, LETTER.id) === 1,
       `an answer that pays: the gold to the company, the item handed over and the line says both (${sold.split('\n\n')[1]})`);
     ok(paid.party.members.every((m, i) => m.xp === xp[i] + (i < 5 ? 100 : 0)), 'its xp is split among the living, as a fight\'s is: 100 each to five, none to the dead');
-    ok(answerNote({ label: 'x', says: [] }).length === 0 && answerNote({ label: 'x', pay: { xp: 60 }, says: [] }).join() === '(60 experience.)', 'an answer that pays nothing says no line, and one of xp alone says only that');
+    ok(answerNote(TABLES.items, { label: 'x', says: [] }).length === 0 && answerNote(TABLES.items, { label: 'x', pay: { xp: 60 }, says: [] }).join() === '(60 experience.)', 'an answer that pays nothing says no line, and one of xp alone says only that');
 
     // An answer with a price, sold as a ware is: listed at it, barred to a company with less, which
     // it changes nothing for; paid as it is answered, and the line says so.
@@ -218,10 +218,10 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     poor.party.gold = 4999;
     ok(answerLabel(deed) === 'Buy it\t5000g' && answerLabel(dear.answers[1]) === 'Take it' && asked(dear, poor.party) === '"Five thousand." (4999 gold.)' && asked(captain.choice!, poor.party) === captain.choice!.ask,
       `an answer with a price is listed at it, and its question puts the purse after it (${asked(dear, poor.party)} | ${answerLabel(deed).replace('\t', ' | ')})`);
-    ok(barred(deed, poor.party) && !barred(dear.answers[1], poor.party) && answer(deed, poor.party) === SHORT && poor.party.gold === 4999 && !poor.party.flags.fx_bought,
+    ok(barred(deed, poor.party) && !barred(dear.answers[1], poor.party) && answer(TABLES.items, deed, poor.party) === SHORT && poor.party.gold === 4999 && !poor.party.flags.fx_bought,
       'a company short of the price is barred from it, and answered anyway, nothing changes');
     poor.party.gold = 5000;
-    const bought = answer(deed, poor.party);
+    const bought = answer(TABLES.items, deed, poor.party);
     ok(!barred(deed, { ...poor.party, gold: 5000 }) && bought === 'He counts it.\n\n(5000 gold paid.)' && poor.party.gold === 0 && !!poor.party.flags.fx_bought,
       `with the price, it is paid, its flag set and the line says so (${bought.split('\n\n')[1]})`);
 
@@ -229,9 +229,9 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
     // changes nothing for; given, it leaves the pack, and the line says so.
     const coin: Answer = { label: 'Give him the letter', sets: 'fx_given', takes: LETTER.id, says: ['He weighs it.'] };
     const empty = fresh();
-    ok(barred(coin, empty.party) && answer(coin, empty.party) === NONE && !empty.party.flags.fx_given, 'an answer that takes an item is barred to a company without it, and answered anyway, nothing changes');
+    ok(barred(coin, empty.party) && answer(TABLES.items, coin, empty.party) === NONE && !empty.party.flags.fx_given, 'an answer that takes an item is barred to a company without it, and answered anyway, nothing changes');
     empty.party.bag.push(LETTER.id);
-    const handed = !barred(coin, empty.party) && answer(coin, empty.party);
+    const handed = !barred(coin, empty.party) && answer(TABLES.items, coin, empty.party);
     ok(handed === 'He weighs it.\n\n(A Sealed Letter given.)' && !countItem(empty.party, LETTER.id) && !!empty.party.flags.fx_given, `with it, it is taken, its flag set and the line says so: ${String(handed).split('\n\n')[1]}`);
 
     // The log reads the answer's flag: a quest done either way, and the entry of the road taken.
@@ -264,7 +264,7 @@ function fixtures(fresh: () => { party: Party; world: World }, all: readonly { m
       && !refusable({ choice: { ask: 'Well?', answers: [refuse, { ...pass, sets: undefined }] } }), 'a refusal alone with no slain text (the walk past lost), no refusal at all and a walk past that sets nothing may not');
 
     // A letter read from the pack.
-    ok(readText(LETTER.id) === LETTER.text && readText('rations') === undefined, 'a letter has words to read, and rations none');
+    ok(readText(TABLES.items, LETTER.id) === LETTER.text && readText(TABLES.items, 'rations') === undefined, 'a letter has words to read, and rations none');
 
     // Words by flag, furthest along first; words that set a flag.
     const hild: Person = {
@@ -354,7 +354,7 @@ export function afterFaults(p: Person): string[] {
     const said = (v: Words): string => v.lines.join('\n\n');
     const one = meet(p, party, holds);
     if (one.text !== said(w)) { out.push(`the words that put '${w.choice!.ask.slice(0, 40)}…' are not said when they hold: earlier words are said in their place`); continue; }
-    answer(a, party);
+    answer(TABLES.items, a, party);
     // The state is only what the question's words wait for, so words a company that got this far has
     // already heard once may come first; each says its piece and moves on. Words said again in their
     // place stand there for good.
@@ -378,7 +378,7 @@ function presence(): void {
       { kind: 'event', x: 3, y: 2, id: 'fx_riders', text: 'Riders.', once: true, when: { hours: 'night' }, sets: 'fx_ridden' },
     ],
   };
-  const rng = makeRng(8), party = defaultParty(rng), world = new World({ fx_town: new GameMap(def) }, party, rng);
+  const rng = makeRng(8), party = defaultParty(TABLES, rng), world = new World(TABLES, { fx_town: new GameMap(def) }, party, rng);
   const at = (x: number, y: number): string | undefined => { world.travel('fx_town', x, y, NORTH); const f = world.featureHere(); return f && f.x === x && f.y === y ? (f as Person).name : undefined; };
   const heardAt = (x: number, y: number): string => { world.travel('fx_town', x, y, NORTH); return world.eventsHere().join(' '); };
   const day = Math.floor(world.state.minutes / 1440) * 1440, noon = day + 12 * 60, midnight = day + 24 * 60;
@@ -425,7 +425,7 @@ function shut(): void {
       { kind: 'inn', x: 2, y: 1, name: 'The Inn, dearer', price: 18, interior: 'hearthlight_inn', after: { flag: 'fx_shut' } },
     ],
   };
-  const rng = makeRng(8), party = defaultParty(rng), world = new World({ fx_gate: new GameMap(def) }, party, rng);
+  const rng = makeRng(8), party = defaultParty(TABLES, rng), world = new World(TABLES, { fx_gate: new GameMap(def) }, party, rng);
   const here = (x: number): string | undefined => { world.travel('fx_gate', x, 1, NORTH); return (world.featureHere() as { name?: string } | undefined)?.name; };
   const east = (): string => { world.travel('fx_gate', 2, 1, EAST); const r = world.move('forward'); return r.kind === 'blocked' ? r.reason : r.kind; };
   const orc = party.members.some((m) => m.race === 'orcblood');
@@ -447,7 +447,7 @@ function shut(): void {
     id: 'fx_door', name: 'Fixture', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['#####', '#...#', '#####'],
     exits: [{ x: 3, y: 1, to: fxMap('fx_gate'), tx: 1, ty: 1, after: [{ flag: 'fx_open' }, { flag: 'fx_closed' }] }],
   };
-  const deep = new World({ fx_door: new GameMap(door), fx_gate: new GameMap(def) }, party, rng);
+  const deep = new World(TABLES, { fx_door: new GameMap(door), fx_gate: new GameMap(def) }, party, rng);
   const step = (): string => { deep.travel('fx_door', 2, 1, EAST); deep.move('forward'); return `${deep.state.mapId} ${deep.state.x},${deep.state.y} ${deep.there(door.exits![0]) ? 'there' : 'not'}`; };
   const shy = step();
   party.flags.fx_closed = 1;

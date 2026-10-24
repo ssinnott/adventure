@@ -2,7 +2,7 @@
 // What it charges and what it changes; short of gold, nothing changed and the screen's own line; the
 // trainer's cap, one level a visit however much xp, and never past the trainer; the artifact a shop
 // will not buy. The checks that drive the menus themselves stay in shops, items and the pilot.
-import { ITEMS } from '../../src/content/index.ts';
+import { ITEMS, TABLES } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/map.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { REFUSED } from '../../src/game/items.ts';
@@ -17,7 +17,7 @@ type Inn = Extract<Feature, { kind: 'inn' }>;
 type Hall = Extract<Feature, { kind: 'guild' }>;
 
 /** The road's six (Bram, Idris, Wren, Ottilie, Maren and Cassian), with this much gold. */
-const company = (gold: number): Party => { const p = defaultParty(makeRng(1)); p.gold = gold; return p; };
+const company = (gold: number): Party => { const p = defaultParty(TABLES, makeRng(1)); p.gold = gold; return p; };
 /** A refusal changes nothing: the company as its JSON was before. */
 const unchanged = (p: Party, before: string): boolean => JSON.stringify(p) === before;
 
@@ -50,19 +50,19 @@ export function services(): void {
   // The temple: the dead raised at 100 a level and on 1 hit point, any other condition lifted for 25, the
   // well turned away; short of the price, nothing.
   const flock = company(500), [bram, idris, wren] = flock.members;
-  addCondition(bram, 'dead'); bram.hp = -10; addCondition(idris, 'poisoned');
+  addCondition(TABLES.items, bram, 'dead'); bram.hp = -10; addCondition(TABLES.items, idris, 'poisoned');
   const raised = cure(flock, bram), mended = cure(flock, idris), well = cure(flock, wren);
   ok(raised.paid === 100 && !bram.conditions.length && bram.hp === 1 && raised.line === 'Bram is restored.' && mended.paid === 25 && !idris.conditions.length
     && flock.gold === 375 && !well.done && well.paid === 0 && well.line === 'Wren is well.',
     `the dead raised for ${raised.paid} on 1 hit point, the poisoned for ${mended.paid} (500 -> ${flock.gold} gold), and "${well.line}"`);
   // A level's worth: the dead 100 a level and the stoned 80.
   const elders = company(1000), [elder, glass] = elders.members;
-  elder.level = 3; addCondition(elder, 'dead'); elder.hp = -10; glass.level = 2; addCondition(glass, 'stoned');
+  elder.level = 3; addCondition(TABLES.items, elder, 'dead'); elder.hp = -10; glass.level = 2; addCondition(TABLES.items, glass, 'stoned');
   const raisedAt3 = cure(elders, elder), unstoned = cure(elders, glass);
   ok(raisedAt3.paid === 300 && unstoned.paid === 160 && elders.gold === 540 && elder.hp === 1 && !glass.conditions.length,
     `the dead of 3 raised for ${raisedAt3.paid} and the stoned of 2 freed for ${unstoned.paid}: 100 and 80 a level`);
   const pauper = company(99);
-  addCondition(pauper.members[0], 'dead'); pauper.members[0].hp = -10;
+  addCondition(TABLES.items, pauper.members[0], 'dead'); pauper.members[0].hp = -10;
   const wasPauper = JSON.stringify(pauper), unpaid = cure(pauper, pauper.members[0]);
   ok(!unpaid.done && unchanged(pauper, wasPauper) && unpaid.line === 'You cannot afford it.', `the dead at 100 with 99 gold stay dead: "${unpaid.line}"`);
 
@@ -110,7 +110,7 @@ export function services(): void {
   const yard = company(1000), [ready, , , , , down] = yard.members;
   ready.xp = xpForLevel(4);
   const visits = [train(yard, ready, makeRng(1), 3), train(yard, ready, makeRng(1), 3), train(yard, ready, makeRng(1), 3)];
-  const one = defaultParty(makeRng(1)).members[0];
+  const one = defaultParty(TABLES, makeRng(1)).members[0];
   one.xp = xpForLevel(2); levelUp(one, makeRng(1));
   ok(visits[0].done && visits[0].paid === 25 && visits[0].line === `Bram trains to level 2. HP ${one.maxHp}, SP ${one.maxSp}.` && visits[1].done && visits[1].paid === 50 && ready.level === 3
     && !visits[2].done && visits[2].line === '' && ready.xp === xpForLevel(4) && yard.gold === 925,
@@ -121,7 +121,7 @@ export function services(): void {
   const at4 = train(drilled, four, makeRng(1), 10), at5 = train(drilled, five, makeRng(1), 10);
   ok(at4.paid === 100 && at5.paid === 200 && drilled.gold === 700 && four.level === 5 && five.level === 6,
     `a member of 4 trains for ${at4.paid} and one of 5 for ${at5.paid}: 25 a level to the fourth, 40 from the fifth`);
-  down.xp = xpForLevel(2); addCondition(down, 'unconscious');
+  down.xp = xpForLevel(2); addCondition(TABLES.items, down, 'unconscious');
   const wasYard = JSON.stringify(yard), fallen = train(yard, down, makeRng(1), 10);
   ok(!mayTrain(down, 10) && !fallen.done && fallen.line === '' && unchanged(yard, wasYard), `${down.name}, ready but down, is not trained and nothing is said, as the screen bars the row`);
   const purse = { gold: 24 }, cheap = structuredClone(yard.members[1]);

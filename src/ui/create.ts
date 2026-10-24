@@ -44,7 +44,7 @@ export class CreateScreen implements Screen {
         if (is(a, 'up', 'down')) this.sel = 1 - this.sel;
         else if (is(a, 'cancel')) g.pop();
         else if (is(a, 'interact')) {
-          if (this.sel === 0) { g.rng.seed(this.seed); g.newGame(this.seed, defaultParty(g.rng)); }
+          if (this.sel === 0) { g.rng.seed(this.seed); g.newGame(this.seed, defaultParty(g.tables, g.rng)); }
           else { this.slot = 0; this.beginSlot(g); }
         }
         break;
@@ -68,7 +68,7 @@ export class CreateScreen implements Screen {
         if (is(a, 'rest')) this.stats = rollStats(this.rng);
         else if (is(a, 'cancel')) { this.step = 'class'; this.sel = CLASS_IDS.indexOf(this.cls); }
         else if (is(a, 'interact')) {
-          this.members.push(createCharacter(this.name.trim(), this.race, this.cls, this.stats, this.rng));
+          this.members.push(createCharacter(g.tables, this.name.trim(), this.race, this.cls, this.stats, this.rng));
           this.slot++;
           if (this.slot >= 6) { this.step = 'review'; this.sel = 0; }
           else this.beginSlot(g);

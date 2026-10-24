@@ -95,8 +95,8 @@ export class Game {
   newGame(seed: number, party?: Party): void {
     this.rng.seed(seed);
     this.maps = buildMaps();
-    this.party = party ?? defaultParty(this.rng);
-    this.world = new World(this.maps, this.party, this.rng);
+    this.party = party ?? defaultParty(this.tables, this.rng);
+    this.world = new World(this.tables, this.maps, this.party, this.rng);
     this.log = [];
     this.pilot?.forget();
     this.screens = [new ExploreScreen()];
@@ -111,7 +111,7 @@ export class Game {
    * seed is picked first and the company built from it, so the seed replays the game (DESIGN §13). P
    * on the title (`Pilot.toggle`) and attract mode start one so.
    */
-  newRandomGame(): void { const seed = freshSeed(); this.newGame(seed, randomParty(seed)); }
+  newRandomGame(): void { const seed = freshSeed(); this.newGame(seed, randomParty(this.tables, seed)); }
 
   /**
    * Attract mode (DESIGN §1; #722): the title sat untouched, so a new game on a fresh seed plays itself
@@ -153,7 +153,7 @@ export class Game {
     const was = this.rng.state;
     this.rng.seed(data.rng);
     let world: World;
-    try { world = new World(buildMaps(), data.party, this.rng, data.world as WorldState); }
+    try { world = new World(this.tables, buildMaps(), data.party, this.rng, data.world as WorldState); }
     catch (e) { this.rng.seed(was); return `The save could not be read: ${e instanceof Error ? e.message : String(e)}.`; }
     this.maps = world.maps;
     this.party = data.party;
@@ -255,7 +255,7 @@ export class Game {
   interact(f: Feature, stepped = false): void {
     const w = this.world;
     switch (f.kind) {
-      case 'sign': if (!stepped) for (const l of signSays(w, f)) this.say(l); return;
+      case 'sign': if (!stepped) for (const l of signSays(this.tables.items, w, f)) this.say(l); return;
       case 'well': for (const l of drinkWell(this.party, f)) this.say(l); return;
       case 'npc': this.talk(f); return;
       case 'chest': {
@@ -264,7 +264,7 @@ export class Game {
         // A locked chest opens to a Lockpick or a key (`World.unlock`, #857), and to nothing else.
         if (f.locked) { const opened = w.unlock(); this.say(opened || 'Locked.'); if (!opened) return; }
         w.markUsed(f.id);
-        this.say(`You open the chest: ${give(this.party, giftOf(f)!).join(', ')}.`);
+        this.say(`You open the chest: ${give(this.tables.items, this.party, giftOf(f)!).join(', ')}.`);
         return;
       }
       case 'inn': case 'temple': case 'shop': case 'guild': case 'trainer':
@@ -340,7 +340,7 @@ export class Game {
   ask(c: Choice, title: string, said?: (text: string) => void): void {
     this.push(new ChoiceScreen(asked(c, this.party), c.answers.map(answerLabel), (i) => {
       if (i < 0) return;
-      const text = answer(c.answers[i], this.party), end = endingTaken(c.answers[i], this.party.flags);
+      const text = answer(this.tables.items, c.answers[i], this.party), end = endingTaken(c.answers[i], this.party.flags);
       const pages = end ? (): void => this.push(new EndingScreen(end)) : undefined;
       if (said) { said(text); pages?.(); } else if (text || !pages) this.push(new MessageScreen(text, pages, title)); else pages();
     }, title, c.answers.map((a) => barred(a, this.party)), { ends: c.answers.some((a) => !!endsIn(a)) }));
@@ -399,7 +399,7 @@ export class Game {
   /** Start a fight with the given groups; the combat screen calls back on resolution. */
   fight(groupIds: string[]): void {
     const groups = this.world.groupDefs(groupIds);
-    const state = startCombat(this.party, groups, this.rng, this.world.combatWeather());
+    const state = startCombat(this.tables, this.party, groups, this.rng, this.world.combatWeather());
     this.world.endWalk();
     // A kind not met before, one unseen beside or behind the party or in the ranks, says what it is as the fight opens.
     state.log.push(...this.world.meet(groups.flatMap((x) => x.monsters)));
@@ -418,7 +418,7 @@ export class Game {
     const def = this.world.groupDefs([id])[0];
     this.push(new ChoiceScreen(asked(c, this.party), c.answers.map(answerLabel), (i) => {
       const a = c.answers[i] ?? c.answers.find((x) => x.fight);
-      if (a) this.say(answer(a, this.party).split('\n\n').join(' '));
+      if (a) this.say(answer(this.tables.items, a, this.party).split('\n\n').join(' '));
       if (a && !a.fight) { this.engage(); return; }
       const ids = this.world.adjacentGroups();
       this.fight(ids.length ? ids : [id]);

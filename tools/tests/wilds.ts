@@ -18,7 +18,7 @@ import { spell } from '../../src/game/spells.ts';
 import { Input } from '../../src/input.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
 import type { Game } from '../../src/game/game.ts';
-import { MAP_DEFS } from '../../src/content/index.ts';
+import { MAP_DEFS, TABLES } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../kit/shipped.ts';
 import { judge, measure } from '../kit/rules/density.ts';
 import { texts, lineFaults } from '../kit/rules/pillars.ts';
@@ -83,9 +83,9 @@ export function hintless(defs: readonly MapDef[]): string[] {
 }
 
 const fresh = (): { world: World; party: Party } => {
-  const rng = makeRng(3), party = defaultParty(rng);
+  const rng = makeRng(3), party = defaultParty(TABLES, rng);
   party.food = 50;
-  return { world: new World({ wilds: new GameMap(FIXTURE) }, party, rng), party };
+  return { world: new World(TABLES, { wilds: new GameMap(FIXTURE) }, party, rng), party };
 };
 const stat = (p: Party, s: 'might' | 'speed' | 'luck'): number[] => p.members.map((m) => m.stats[s]);
 const plus = (a: number[], b: number[], n: number): boolean => a.every((v, i) => b[i] === v + n);
@@ -146,7 +146,7 @@ export function wilds(): void {
 
   // Saved as used: through a save and back, the four are spent and nothing gives again.
   const data = deserialize(serialize(world.state, party, 0));
-  const loaded = new World({ wilds: new GameMap(FIXTURE) }, data.party, makeRng(1), data.world);
+  const loaded = new World(TABLES, { wilds: new GameMap(FIXTURE) }, data.party, makeRng(1), data.world);
   const ids = Object.keys(loaded.mapState.used).sort();
   ok(ids.join() === 'w_cairn,w_fountain,w_shrine,w_statue', `a save keeps the four spent, and no camp (${ids.join(', ')})`);
   const lp = data.party, might = stat(lp, 'might'), lgold = lp.gold;
@@ -197,7 +197,7 @@ export function wilds(): void {
   // not spent; once the flag is set it blesses, once.
   const waits = { ...shrine, id: 'w_tide', x: 1, y: 3, after: { flag: 'w_bell' } };
   const late: MapDef = { ...FIXTURE, features: [...FIXTURE.features!, waits] };
-  const tide = (() => { const rng = makeRng(3), p = defaultParty(rng); return { world: new World({ wilds: new GameMap(late) }, p, rng), party: p }; })();
+  const tide = (() => { const rng = makeRng(3), p = defaultParty(TABLES, rng); return { world: new World(TABLES, { wilds: new GameMap(late) }, p, rng), party: p }; })();
   tide.world.state.x = waits.x; tide.world.state.y = waits.y;
   before = stat(tide.party, 'might');
   ok(!tide.world.present(waits) && tide.world.featureHere() === undefined && stepLine(tide.world, waits) === '', 'a shrine after a flag nobody has set is not there: not found underfoot, and nothing said stepping on it');
@@ -213,17 +213,17 @@ export function wilds(): void {
   {
     const warm = { ...shrine, id: 'w_warm', stat: undefined, resist: { element: 'fire' as const } };
     const brine = { ...fountain, id: 'w_brine', stat: undefined, resist: { element: 'cold' as const, until: 'rest' as const } };
-    const b = (() => { const rng = makeRng(3), p = defaultParty(rng); p.food = 50; return { world: new World({ wilds: new GameMap({ ...FIXTURE, features: [warm, brine] }) }, p, rng), party: p }; })();
+    const b = (() => { const rng = makeRng(3), p = defaultParty(TABLES, rng); p.food = 50; return { world: new World(TABLES, { wilds: new GameMap({ ...FIXTURE, features: [warm, brine] }) }, p, rng), party: p }; })();
     b.party.members[3].hp = -20; b.party.members[3].conditions = ['dead'];
     before = stat(b.party, 'might');
     const said = useShrine(b.world, b.party, warm);
-    ok(said[1] === 'Fire kept off each of the company.' && b.party.members.every((c) => resists(c).join() === 'fire') && plus(before, stat(b.party, 'might'), 0), `a shrine that gives only a resistance gives it to every member, the dead too, and no stat (${said.join(' ')})`);
+    ok(said[1] === 'Fire kept off each of the company.' && b.party.members.every((c) => resists(TABLES.items, c).join() === 'fire') && plus(before, stat(b.party, 'might'), 0), `a shrine that gives only a resistance gives it to every member, the dead too, and no stat (${said.join(' ')})`);
     useShrine(b.world, b.party, brine);
-    ok(b.party.members.every((c) => resists(c).join() === 'fire,cold'), 'a fountain adds its own, kept to the next rest');
+    ok(b.party.members.every((c) => resists(TABLES.items, c).join() === 'fire,cold'), 'a fountain adds its own, kept to the next rest');
     const kept = deserialize(serialize(b.world.state, b.party, 0)).party;
-    ok(kept.members.every((c) => resists(c).join() === 'fire,cold'), 'a save keeps both');
+    ok(kept.members.every((c) => resists(TABLES.items, c).join() === 'fire,cold'), 'a save keeps both');
     b.world.state.x = camp.x; b.world.state.y = camp.y;
-    ok(restParty(b.world, b.party) && b.party.members.every((c) => resists(c).join() === 'fire'), 'a rest ends the one kept to it, and not the lasting one, on the dead as on the living');
+    ok(restParty(b.world, b.party) && b.party.members.every((c) => resists(TABLES.items, c).join() === 'fire'), 'a rest ends the one kept to it, and not the lasting one, on the dead as on the living');
     ok(MAP_DEFS.every((d) => (d.features ?? []).every((f) => (f.kind !== 'shrine' && f.kind !== 'fountain') || !!f.stat || !!f.resist)), 'every shrine and fountain in the game gives a stat or a resistance');
   }
 
@@ -254,7 +254,7 @@ export function wilds(): void {
 
 /** A well and the six exploration spells, rules of src/game the game and the spell screen say (#978). */
 function wellAndSpells(): void {
-  const wp = defaultParty(makeRng(5)), [w0, w1] = wp.members;
+  const wp = defaultParty(TABLES, makeRng(5)), [w0, w1] = wp.members;
   w0.hp = 1; w1.hp = 0; w1.conditions.push('unconscious');
   const well = (heal: boolean): Extract<Feature, { kind: 'well' }> => ({ kind: 'well', x: 0, y: 0, text: 'A well.', ...(heal ? { heal } : {}) });
   const drank = drinkWell(wp, well(true));
@@ -310,9 +310,9 @@ function campNights(): void {
   const [fire, plain, hollow] = CAMPS.features as Extract<Feature, { kind: 'camp' }>[];
   const set = (p: Party): string => ['fx_night1', 'fx_night2', 'fx_quiet'].filter((k) => p.flags[k]).join();
   const camped = (minutes?: number): { world: World; party: Party; at: (f: { x: number; y: number }) => void } => {
-    const rng = makeRng(5), party = defaultParty(rng);
+    const rng = makeRng(5), party = defaultParty(TABLES, rng);
     party.food = 99;
-    const world = new World({ camps: new GameMap(CAMPS) }, party, rng);
+    const world = new World(TABLES, { camps: new GameMap(CAMPS) }, party, rng);
     if (minutes !== undefined) world.state.minutes = minutes;
     return { world, party, at: (f) => { world.state.x = f.x; world.state.y = f.y; } };
   };
@@ -359,7 +359,7 @@ function campNights(): void {
 
   // Through the game: the offer, declined and taken.
   const g = headlessGame(4);
-  g.world = new World({ camps: new GameMap(CAMPS) }, g.party, g.rng);
+  g.world = new World(TABLES, { camps: new GameMap(CAMPS) }, g.party, g.rng);
   g.party.food = 99; g.party.flags.fx_come = 1;
   g.world.state.x = fire.x; g.world.state.y = fire.y;
   const start = g.world.state.minutes;
@@ -383,7 +383,7 @@ function campNights(): void {
   ok(texts([CAMPS]).some((t) => t.text === 'She is gone.' && t.where.includes('fx_night1')), 'and its lines are read with every text, for the font, the spelling and the voice');
 
   // An inn is as it was: its nights a list of flags, each stay setting the next in order.
-  const nights = ['fx_a', 'fx_b'], guests = defaultParty(makeRng(1));
+  const nights = ['fx_a', 'fx_b'], guests = defaultParty(TABLES, makeRng(1));
   ok(stayNight(guests, nights) === 'fx_a' && stayNight(guests, nights) === 'fx_b' && stayNight(guests, nights) === undefined && stayNight(guests) === undefined && guests.flags.fx_a === 1 && guests.flags.fx_b === 1,
     'an inn\'s stays set its flags one at a time, in order, and a spent list sets none');
   const lodge = MAP_DEFS.find((d) => d.id === 'rime_lodge')?.features?.find((f) => f.kind === 'inn');

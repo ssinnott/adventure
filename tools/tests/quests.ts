@@ -4,7 +4,7 @@
 // the quests walk through end to end, each change announced once.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST } from '../../src/content/index.ts';
+import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, TABLES } from '../../src/content/index.ts';
 import { homeMap, zoneOfMap } from '../../src/game/atlas.ts';
 import { existsSync, readFileSync } from 'node:fs';
 import { World } from '../../src/game/world.ts';
@@ -67,7 +67,7 @@ export function quests(): void {
   ok(!condFaults({ flag: 'fx_crossed' }, [crossing]).length && condFaults({ flag: 'fx_crossed' }, []).join() === 'flag fx_crossed',
     'a flag an event sets names something real, as one a person sets does');
   // goalMap (#720): the map the shown goal is done on, read back from the goal, as the chapter moves.
-  const shelf = AREAS.find((a) => a.id === 'shelf')!.chapter!, gp = defaultParty(makeRng(4)), gw = new World(buildMaps(), gp, makeRng(4));
+  const shelf = AREAS.find((a) => a.id === 'shelf')!.chapter!, gp = defaultParty(TABLES, makeRng(4)), gw = new World(TABLES, buildMaps(), gp, makeRng(4));
   // The chapter as the one quest's only chapter, and as a quest of its own, as the log shows a side quest.
   const asOne: LogQuest = { id: 'fx_one', title: 'One', chapters: [shelf] }, views = (): QuestView[] => questLog(gw.state, gp, [asOne, shelf], []);
   gp.flags.q_ashcombe = 1;
@@ -173,7 +173,7 @@ export function quests(): void {
       goals: [{ when: { flag: `fx_c${i}` }, text: `Go on with chapter ${i}.`, at: 'harrow' }],
     });
     const five = { id: 'fx_five', title: THE_QUEST.title, chapters: [chapter(1), chapter(2), chapter(3, 14), chapter(4), chapter(5)] };
-    const rng = makeRng(167), party = defaultParty(rng), world = new World(buildMaps(), party, rng);
+    const rng = makeRng(167), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng);
     for (let i = 1; i <= 5; i++) party.flags[`fx_c${i}`] = 1;
     for (let i = 1; i <= 4; i++) party.flags[`fx_c${i}_done`] = 1;
     const v = questLog(world.state, party, [five])[0];
@@ -186,7 +186,7 @@ export function quests(): void {
   }
   // Each way in starts the quest with a goal; each entry can be written; each goal can be the one
   // shown (not hidden behind an earlier one); and an entry keyed to an item outlasts the hand-in.
-  const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(rng); return { party, world: new World(buildMaps(), party, rng) }; };
+  const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(TABLES, rng); return { party, world: new World(TABLES, buildMaps(), party, rng) }; };
   // A zone map's ids are kept in the outdoors' state, and the party has to have walked into it.
   const stateFor = (w: World, map: string): MapState => {
     const on = w.locate(map, 0, 0).mapId;
@@ -230,7 +230,7 @@ export function quests(): void {
     if (c.done) {
       for (const e of c.entries) if (conds(e.when).some((k) => k.item)) { const s = fresh(); satisfy(s, start); satisfy(s, conds(c.done)[0]); if (!page(s, q, c)?.entries.includes(e)) lost.add(`entry ${e.id}, at the hand-in`); }
     } else {
-      for (const k of [c.start, ...c.entries.map((e) => e.when)].flatMap(conds)) if (k.item && (handedIn.has(k.item) || sellPrice(merchant, ITEMS[k.item].price) > 0)) lost.add(`${k.item}, which can be taken`);
+      for (const k of [c.start, ...c.entries.map((e) => e.when)].flatMap(conds)) if (k.item && (handedIn.has(k.item) || sellPrice(TABLES.items, merchant, ITEMS[k.item].price) > 0)) lost.add(`${k.item}, which can be taken`);
     }
     ok(!lost.size, `${id}: nothing in the log vanishes when an item leaves the party${lost.size ? ' -> ' + [...lost].join(', ') : ''}`);
     const gone = [c.start, ...(c.done ? [c.done] : []), ...c.entries.map((e) => e.when)].flatMap(fleeting);
@@ -275,8 +275,8 @@ export function quests(): void {
   { // The slice's quests end to end, from the real flags and triggers: the log fills in, the goal
     // moves on, and each change is announced once and in story order.
     const rng = makeRng(4);
-    const party = defaultParty(rng);
-    const world = new World(buildMaps(), party, rng);
+    const party = defaultParty(TABLES, rng);
+    const world = new World(TABLES, buildMaps(), party, rng);
     const log = (): QuestView[] => questLog(world.state, party);
     const quest = (id: string): QuestView => log().find((v) => v.def.id === id)!;
     const chapter = (id: string): PageView => quest(THE_QUEST.id).pages.find((p) => p.def.id === id)!;

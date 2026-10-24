@@ -13,7 +13,7 @@ import { spell, spellDice, SPELLS_GROW_TO } from '../../src/game/spells.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { MONSTERS, MAP_DEFS, ITEMS } from '../../src/content/index.ts';
 import { gateTurn, gateBot, fightSeed, winRate } from '../kit/fight.ts';
-import { gateCompany } from '../kit/company.ts';
+import { gateCompany, HARNESS } from '../kit/company.ts';
 import { GATE } from '../kit/rules/gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../kit/line.ts';
 import type { Role } from '../kit/line.ts';
@@ -27,14 +27,14 @@ import { ok } from './lib.ts';
 export async function harness(): Promise<void> {
   // The resolver fights defs that no map places, which is what the combat harness hands it.
   const soldier = testMonster('soldier', 3), rng = makeRng(31);
-  const s = startCombat(defaultParty(rng), [{ id: 'test', monsters: [soldier, soldier] }], rng);
+  const s = startCombat(HARNESS, defaultParty(HARNESS, rng), [{ id: 'test', monsters: [soldier, soldier] }], rng);
   ok(s.monsters.length === 2 && s.monsters.every((m) => m.def === soldier && m.hp === soldier.hp) && describeGroups(s) === '2 Test Soldiers', `a fight takes a def as well as an id, and names it (${describeGroups(s)})`);
   // Spells that grow with their caster stop growing at 10 in play (DESIGN.md §7); a tool may try another ceiling.
   const meteor = spell('meteor'), smite = spell('smite');
   ok(SPELLS_GROW_TO === 10 && spellDice(meteor, 8) === 8 && spellDice(meteor, 10) === 10 && spellDice(meteor, 20) === 10 && spellDice(meteor, 20, 32) === 20 && spellDice(smite, 20) === 3, 'Meteor Swarm rolls 2d10 for every two levels to 10 and no more, unless a tool tries another ceiling');
-  ok(startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35)).spellsGrowTo === undefined && startCombat(defaultParty(makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35), { spellsGrowTo: 32 }).spellsGrowTo === 32, "a fight keeps play's ceiling on spells unless it is given another");
+  ok(startCombat(HARNESS, defaultParty(HARNESS, makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35)).spellsGrowTo === undefined && startCombat(HARNESS, defaultParty(HARNESS, makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35), { spellsGrowTo: 32 }).spellsGrowTo === 32, "a fight keeps play's ceiling on spells unless it is given another");
   // New powers, as a what-if: a member the resolver is told strikes twice does, and play gives none.
-  const twice = defaultParty(makeRng(38)), duel = startCombat(twice, [{ id: 'a', monsters: [testMonster('soldier', 1, 60, 1)] }], makeRng(38), { edge: () => ({ blows: 2, damage: 0, ac: 0 }) });
+  const twice = defaultParty(HARNESS, makeRng(38)), duel = startCombat(HARNESS, twice, [{ id: 'a', monsters: [testMonster('soldier', 1, 60, 1)] }], makeRng(38), { edge: () => ({ blows: 2, damage: 0, ac: 0 }) });
   let turn: string[] = [];
   for (let k = 0; k < 20 && !turn.length; k++) {
     const t = currentTurn(duel, twice, makeRng(38 + k));
@@ -44,7 +44,7 @@ export async function harness(): Promise<void> {
     partyAct(duel, twice, makeRng(38 + k), { type: 'attack', target: 0 });
     turn = duel.log.slice(before);
   }
-  ok(turn.length === 2 && startCombat(defaultParty(makeRng(39)), [{ id: 'a', monsters: ['rat'] }], makeRng(39)).edge === undefined, `a member told to strike twice strikes twice (${turn.join(' ')}), and a fight gives no such power unless told`);
+  ok(turn.length === 2 && startCombat(HARNESS, defaultParty(HARNESS, makeRng(39)), [{ id: 'a', monsters: ['rat'] }], makeRng(39)).edge === undefined, `a member told to strike twice strikes twice (${turn.join(' ')}), and a fight gives no such power unless told`);
   const levelTraits = { levelTraits: true }, levelBonus = { levelBonus: true };
   const blows = [10, 11, 28, 29].map((l) => edgeOf(companyAt(l, 37).members[0], 1, levelTraits).blows), traits = companyAt(24, 37).members.map((m) => edgeOf(m, 1, levelTraits));
   const later = edgeOf(companyAt(24, 37).members[3], 2, levelTraits).damage;
@@ -58,7 +58,7 @@ export async function harness(): Promise<void> {
   ok(taken.map((c) => c.prestige ?? 0).join() === '0,1,2,3' && blowsAt.join() === '1,2,2,3' && className(taken[3]) === 'Knight Paramount' && ranks.join() === '1.150,1.450,1.225,1.000,1.000',
     `the company takes its prestiges at 11, 19 and 27 (the knight a ${className(taken[3])} at 27, striking ${blowsAt.join(', ')} times at 10, 11, 19 and 27), and with them the sorcerer's spells gain 15% at the first and 45% by the third, the paladin's half that and the knight's none (${ranks.join(', ')})`);
   // The curve's gear, as a what-if: past the ladder's top weapons and armour keep growing; play has none of it.
-  const knight = (p: ReturnType<typeof companyAt>): [number, number] => [weaponOf(p.members[0]).bonus ?? 0, armorClass(p.members[0])];
+  const knight = (p: ReturnType<typeof companyAt>): [number, number] => [weaponOf(HARNESS.items, p.members[0]).bonus ?? 0, armorClass(HARNESS.items, p.members[0])];
   const past = GEAR_TOP + 2;
   const flat = [knight(companyAt(GEAR_TOP, 37)), knight(companyAt(past, 37))];
   // The forged gear is taken out again (`unforge`), so none is left in the item table for a later suite.
@@ -73,7 +73,7 @@ export async function harness(): Promise<void> {
   const perRest = Array.from({ length: CAP }, (_, k) => fightsPerRest(k + 1));
   ok(perRest[0] === 6.5 && perRest[9] === 6.5 && perRest[CAP - 1] === 12 && perRest.every((f, k) => f < 15 && (k === 0 || f >= perRest[k - 1])), `fights between rests run from ${perRest[0]} at level 1 and ${perRest[9]} at 10 to ${perRest[CAP - 1]} at ${CAP}`);
   // The harness trains as play does, to the road's cap.
-  const c = defaultParty(makeRng(32)).members[0];
+  const c = defaultParty(HARNESS, makeRng(32)).members[0];
   c.xp = xpForLevel(40); levelUp(c, makeRng(32));
   ok(CAP === MAX_LEVEL && c.level === MAX_LEVEL && companyAt(20, 32).members.every((m) => m.level === 20), `levelUp trains to the cap, ${MAX_LEVEL}, and the harness's company to its level (${c.level})`);
   // The gate's company at Act II's floors: trained to 10, 12, 14 and 16, and dressed past the one two
@@ -95,13 +95,13 @@ export async function harness(): Promise<void> {
   ok([26, 28, 30, 32].every((l) => gateCompany(l, 32).members.every((m) => m.level === l)) && gear(28) !== gear(26) && [28, 30, 32].every(wears),
     `the gate's company trains to 26, 28, 30 and 32, dresses past the one two under it at 28 and wears the Hand's steel from 28 (${gear(28)})`);
   // What a fight costs: all of a fallen member's hit points, and every spell point cast.
-  const p = defaultParty(makeRng(33)), fallen = p.members[5];
+  const p = defaultParty(HARNESS, makeRng(33)), fallen = p.members[5];
   const pool = p.members.reduce((a, m) => a + m.maxHp + m.maxSp, 0);
-  fallen.hp = -1; addCondition(fallen, 'unconscious'); p.members[4].sp -= 3;
+  fallen.hp = -1; addCondition(HARNESS.items, fallen, 'unconscious'); p.members[4].sp -= 3;
   const cost = spent(p).cost;
   ok(Math.abs(cost - (fallen.maxHp + 3) / pool) < 1e-9, `a fallen member costs all of their hit points, a spell its points (${(cost * 100).toFixed(1)}% of the company)`);
   // A company rests once anyone is under a quarter of their hit points, or it is under a quarter of its spell points.
-  const whole = defaultParty(makeRng(34)), hurt = structuredClone(whole), dry = structuredClone(whole);
+  const whole = defaultParty(HARNESS, makeRng(34)), hurt = structuredClone(whole), dry = structuredClone(whole);
   hurt.members[0].hp = Math.ceil(hurt.members[0].maxHp * REST_AT) - 1;
   for (const m of dry.members) m.sp = Math.floor(m.maxSp * (REST_AT - 0.05));
   ok(mustRest(whole) === null && mustRest(hurt) === 'hp' && mustRest(dry) === 'sp', `a whole company fights on, and rests for one member's wounds or for its spell points (${mustRest(whole)}, ${mustRest(hurt)}, ${mustRest(dry)})`);
@@ -178,13 +178,13 @@ function whatIfsOff(): void {
   const ps = [10, 11, 19, 27].map((l) => newerCompany(l, 3)), monk = (p: Party): Party['members'][number] => p.members[1];
   const steel = GEAR.find(([n]) => n === 28)?.[1] ?? [], wears = (p: Party): boolean => p.members.every((m) => [m.equipment.weapon, m.equipment.armor, m.equipment.shield].some((id) => !!id && steel.includes(id)));
   ok(ps.every((p, k) => p.members.map((m) => m.cls).join() === 'barbarian,monk,paladin,bard,druid,sorcerer' && p.members.every((m) => m.level === [10, 11, 19, 27][k] && prestigeOf(m) === k))
-    && ps.slice(1).every((p) => weaponOf(monk(p)).kind === 'staff' && blowsOf(monk(p)) >= 2) && blowsOf(monk(ps[3])) === 3 && wears(newerCompany(28, 3)) && !wears(newerCompany(26, 3)),
-    `the newer company is made as the premade six are: ${ps[3].members.map((m) => `${m.name} ${className(m)}`).join(', ')} at 27; its monk on a staff from 11 (${ps.slice(1).map((p) => `${weaponOf(monk(p)).name} ${blowsOf(monk(p))}`).join(', ')}), and the Hand's steel from 28`);
+    && ps.slice(1).every((p) => weaponOf(HARNESS.items, monk(p)).kind === 'staff' && blowsOf(HARNESS.items, monk(p)) >= 2) && blowsOf(HARNESS.items, monk(ps[3])) === 3 && wears(newerCompany(28, 3)) && !wears(newerCompany(26, 3)),
+    `the newer company is made as the premade six are: ${ps[3].members.map((m) => `${m.name} ${className(m)}`).join(', ')} at 27; its monk on a staff from 11 (${ps.slice(1).map((p) => `${weaponOf(HARNESS.items, monk(p)).name} ${blowsOf(HARNESS.items, monk(p))}`).join(', ')}), and the Hand's steel from 28`);
   // The bots' options reach both bots (#853): under --bot the thrifty bot in `play` and the gate's in its
   // fights bless and sleep against four test soldiers at 13; off, neither does.
   const ALL: BotOpts = { bless: true, sleep: true, drink: true }, soldiers = standardEncounter('soldier', 13);
   const gated = (rules = {}): string[] => {
-    const p = gateCompany(13, 1, rules), rng = makeRng(fightSeed(1)), s = startCombat(p, [{ id: 'g', monsters: soldiers }], rng);
+    const p = gateCompany(13, 1, rules), rng = makeRng(fightSeed(1)), s = startCombat(HARNESS, p, [{ id: 'g', monsters: soldiers }], rng);
     return playOut(s, p, rng, gateBot, rules, ROUND_CAP).log;
   };
   const casts = (log: string[]): number => log.filter((l) => / casts (Bless\.|Slumber:)/.test(l)).length;
@@ -206,7 +206,7 @@ function whatIfsOff(): void {
  */
 function artifactsWhatIf(): void {
   const all = artifactIds(), at = [28, 30, 32];
-  const holds = (p: Party): string => p.members.flatMap((m) => borne(m).filter((id) => ITEMS[id].artifact).map((id) => `${m.name} ${id}`)).join(', ');
+  const holds = (p: Party): string => p.members.flatMap((m) => borne(HARNESS.items, m).filter((id) => ITEMS[id].artifact).map((id) => `${m.name} ${id}`)).join(', ');
   const bears = { artifacts: all }, plain = at.map((l) => companyAt(l, 3)), dressed = at.map((l) => companyAt(l, 3, bears)), newer = newerCompany(30, 3, bears);
   // A member who takes one differs from the plain company in what they hold alone.
   const rest = (m: Party['members'][number]): string => JSON.stringify({ ...m, equipment: null, pack: null });
@@ -350,7 +350,7 @@ function abilities(): void {
   // The wights' curses land and outlast the fight, and end no day.
   const wights = bout(19, wightEncounter(19), 20, 5001), cursed = wights.fights.filter(({ p }) => p.members.some((m) => hasCondition(m, 'cursed'))).length;
   const marked = companyAt(19, 1);
-  addCondition(marked.members[0], 'cursed');
+  addCondition(HARNESS.items, marked.members[0], 'cursed');
   ok(wights.won >= 0.9 && cursed >= 4 && mustRest(marked) === null, `a company of 19 wins ${pc(wights.won)} of four wights' fights and leaves ${cursed} of 20 with someone cursed, and a curse alone sends no company to rest`);
   // The caller's fight grows by its call and never past the cap; the company's day holds.
   const called = bout(20, callerEncounter(20), 40, 5001), grew = called.fights.filter(({ s }) => s.groupIds.length > 1).length;
@@ -397,7 +397,7 @@ function abilities(): void {
   const draughts = (p: Party): number => p.bag.filter((id) => id === 'quickening').length, points = (p: Party): number => p.members.reduce((t, m) => t + m.sp, 0);
   const glass = (knowers: boolean): { p: Party; who: Party['members']; sp: number } => {
     const p = companyAt(27, 1), who = knowers ? p.members.filter((m) => m.spells.includes('absolve')) : [p.members[0]];
-    for (const m of who) addCondition(m, 'stoned');
+    for (const m of who) addCondition(HARNESS.items, m, 'stoned');
     return { p, who, sp: points(p) };
   };
   const byAbsolve = glass(false), byDraught = glass(true), stranded = glass(true);
@@ -415,9 +415,9 @@ function abilities(): void {
   // The bots free the held as they wake a sleeper (#549): one of the front row first, then a caster,
   // by the cheapest cure the member knows; with the answer off a hold is left to break of itself.
   const bells = companyAt(24, 1), cleric = bells.members.find((m) => m.cls === 'cleric')!, back = bells.members.findIndex((m, j) => j >= FRONT_ROW && m.maxSp > 0);
-  addCondition(bells.members[back], 'paralysed');
+  addCondition(HARNESS.items, bells.members[back], 'paralysed');
   const casterFirst = wakeWith(bells, cleric);
-  addCondition(bells.members[1], 'paralysed');
+  addCondition(HARNESS.items, bells.members[1], 'paralysed');
   const frontFirst = wakeWith(bells, cleric);
   const unanswered = wakeWith(bells, cleric, { ...ANSWER, hold: false });
   ok(casterFirst?.target === back && frontFirst?.target === 1 && spell(frontFirst.spellId).cure?.includes('paralysed') === true && !unanswered,
@@ -425,8 +425,8 @@ function abilities(): void {
   // While a foe breathes they raise one of the front row fallen first (`breathGuard`): with it down
   // the breath takes the back row, which has more standing; an arm's sweep asks nothing of it.
   const ring = (enc: MonsterDef[]): { s: CombatState; p: Party } => {
-    const p = companyAt(25, 1), s = startCombat(p, [{ id: 'h', monsters: enc }], makeRng(5));
-    p.members[0].hp = -1; addCondition(p.members[0], 'unconscious');
+    const p = companyAt(25, 1), s = startCombat(HARNESS, p, [{ id: 'h', monsters: enc }], makeRng(5));
+    p.members[0].hp = -1; addCondition(HARNESS.items, p.members[0], 'unconscious');
     return { s, p };
   };
   const breath = ring(drakeEncounter(25)), arm = ring(giantEncounter(25)), drake = breath.s.monsters[0];

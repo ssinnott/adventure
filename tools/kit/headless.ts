@@ -6,13 +6,14 @@ import type { Party } from '../../src/game/party.ts';
 import type { Action } from '../../src/input.ts';
 import { drainTyped } from '../../src/input.ts';
 import { SAVE_KEY } from '../../src/game/save.ts';
+import { TABLES } from '../../src/content/index.ts';
 
 /**
  * A Game under Node, on a new game at `seed` with the premade company, or with `party` (#723: the
  * company P on the title draws, `randomParty(seed)`), with the pilot off.
  */
 export function headlessGame(seed = 4, party?: Party): Game {
-  const g = typing(new Game(null));
+  const g = typing(new Game(TABLES, null));
   g.newGame(seed, party);
   return g;
 }
@@ -22,7 +23,7 @@ export function headlessGame(seed = 4, party?: Party): Game {
  * the pilot off: the full run's save point before a chapter, played again (#723).
  */
 export function headlessLoad(save: string): Game {
-  const g = typing(new Game({ getItem: (key) => (key === SAVE_KEY ? save : null), setItem: () => {}, removeItem: () => {} }));
+  const g = typing(new Game(TABLES, { getItem: (key) => (key === SAVE_KEY ? save : null), setItem: () => {}, removeItem: () => {} }));
   const loaded = g.loadGame();
   if (loaded !== true) throw new Error(`the save would not load: ${loaded}`);
   return g;

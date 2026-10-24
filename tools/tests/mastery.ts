@@ -19,7 +19,7 @@ import type { PartyAction, CombatState } from '../../src/game/combat.ts';
 import { elementMult } from '../../src/game/monsters.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { SPELLS } from '../../src/content/spells.ts';
-import { MAP_DEFS, AREAS } from '../../src/content/index.ts';
+import { MAP_DEFS, AREAS, TABLES } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/map.ts';
 import type { Game } from '../../src/game/game.ts';
 import { ChoiceScreen, InteriorScreen, TRADE, businessEntries, weaponLine, spellsLine } from '../../src/ui/screens.ts';
@@ -47,7 +47,7 @@ type Person = Extract<Feature, { kind: 'npc' }>;
 
 /** A company of the premade six, the first made `cls` at `level` with `tiers`, rich and whole. */
 function company(cls: ClassId, level: number, tiers?: Tiers, seed = 7): Party {
-  const rng = makeRng(seed), p = defaultParty(rng), c = p.members[0];
+  const rng = makeRng(seed), p = defaultParty(TABLES, rng), c = p.members[0];
   c.cls = cls; c.xp = xpForLevel(level); levelUp(c, rng);
   if (tiers) c.tiers = tiers;
   for (const m of p.members) { m.hp = m.maxHp; m.sp = m.maxSp; }
@@ -60,7 +60,7 @@ const DUMMY: MonsterDef = { ...AREAS.flatMap((a) => a.monsters).find((m) => m.le
 
 /** One fight on one seed: the company's turns pass until the first member's comes, which does `act`; the state after. */
 function turn(p: Party, act: PartyAction, seed: number): CombatState {
-  const rng = makeRng(seed), s = startCombat(p, [{ id: 'test', monsters: [DUMMY] }], rng);
+  const rng = makeRng(seed), s = startCombat(TABLES, p, [{ id: 'test', monsters: [DUMMY] }], rng);
   for (let n = 0; n < 40; n++) {
     const t = currentTurn(s, p, rng);
     if (!t) break;
@@ -95,21 +95,21 @@ function effects(): void {
   // A fighter's and a hybrid's to-hit and blow, on ten seeds each: the same rolls, the tier's term on top.
   for (const cls of ['knight', 'paladin'] as const) {
     const at = (t: Tiers): Party => company(cls, 20, t);
-    const hit = [none, expert('arms'), master('arms')].map((t) => attackBonus(at(t).members[0]));
+    const hit = [none, expert('arms'), master('arms')].map((t) => attackBonus(TABLES.items, at(t).members[0]));
     const blows = [none, expert('arms'), master('arms')].map((t) => Array.from({ length: 10 }, (_, k) => firstBlow(at(t), 100 + k)));
     // A seed whose blow misses at the cap misses in all three: the same roll on the same chance.
     const steps = blows[0].every((d, k) => (Number.isNaN(d) ? Number.isNaN(blows[1][k]) && Number.isNaN(blows[2][k]) : d > 0 && blows[1][k] === d + 1 && blows[2][k] === d + 2)) && blows[0].filter((d) => d > 0).length >= 6;
     ok(hit[1] === hit[0] + 1 && hit[2] === hit[0] + 2 && steps && armsBonus(at(none).members[0]) === 0,
       `a ${cls}'s Expert at arms hits at +1 and deals +1 a blow, its Master +2 and +2, not +3 (to-hit ${hit.join(', ')}; first blows ${blows.map((b) => b.slice(0, 4).join('/')).join(' | ')})`);
     const magic = at(master('magic')), blow = firstBlow(magic, 100);
-    ok(attackBonus(magic.members[0]) === hit[0] && armsBonus(magic.members[0]) === 0 && blow === blows[0][0], `a ${cls}'s tier in magic adds nothing at arms (to-hit ${attackBonus(magic.members[0])}, a blow ${blow})`);
+    ok(attackBonus(TABLES.items, magic.members[0]) === hit[0] && armsBonus(magic.members[0]) === 0 && blow === blows[0][0], `a ${cls}'s tier in magic adds nothing at arms (to-hit ${attackBonus(TABLES.items, magic.members[0])}, a blow ${blow})`);
   }
   // A caster's and a hybrid's ranks, and a damage spell cast at the dummy on twenty seeds: each roll lifted by the ranks' multiplier.
   for (const cls of ['druid', 'ranger'] as const) {
     const half = cls === 'ranger' ? 0.5 : 1, at = (t: Tiers): Party => company(cls, 24, t);
     const mult = [none, expert('magic'), master('magic')].map((t) => rankMult(at(t).members[0]));
     const want = [0, 1, 2].map((n) => 1 + RANK_STEP * half * n);
-    const heal = [none, master('magic')].map((t) => spellHeal(at(t).members[0], 20));
+    const heal = [none, master('magic')].map((t) => spellHeal(TABLES.items, at(t).members[0], 20));
     const sp = SPELLS.find((s) => s.list === CLASSES[cls].spells && s.dice && s.context !== 'explore' && !s.glass && elementMult(DUMMY, s.element) === 1)!;
     const cast = (t: Tiers, seed: number): { lost: number; spent: number } => {
       const p = at(t), c = p.members[0];
@@ -123,7 +123,7 @@ function effects(): void {
       `a ${cls}'s Expert in magic casts at ${want[1]} and its Master at ${want[2]}: ${sp.name}'s rolls lifted so at the same cost, mending likewise (${runs.slice(0, 3).map((r) => r.map((x) => x.lost).join('/')).join(' | ')})`);
     if (cls === 'ranger') {
       const arms = at(master('arms')).members[0];
-      ok(attackBonus(arms) === attackBonus(at(none).members[0]) + 2 && rankMult(arms) === mult[0], 'a hybrid takes both lines: its Master at arms is the fighter\'s +2, and lifts no spell');
+      ok(attackBonus(TABLES.items, arms) === attackBonus(TABLES.items, at(none).members[0]) + 2 && rankMult(arms) === mult[0], 'a hybrid takes both lines: its Master at arms is the fighter\'s +2, and lifts no spell');
     }
   }
 }
@@ -191,7 +191,7 @@ function loft(): void {
   const knight = p.members.findIndex((m) => linesOf(m.cls).join() === 'arms'), caster = p.members.findIndex((m) => linesOf(m.cls).join() === 'magic');
   for (const i of [knight, caster]) { p.members[i].xp = xpForLevel(13); levelUp(p.members[i], rng); }
   p.gold = 5000;
-  const k = p.members[knight], d = p.members[caster], hitWas = attackBonus(k), multWas = rankMult(d);
+  const k = p.members[knight], d = p.members[caster], hitWas = attackBonus(TABLES.items, k), multWas = rankMult(d);
   const loftF = trainerAt('saltmouth');
   enter(g, 'saltmouth', loftF);
   const first = options(g), row = first.indexOf(EXPERT_ENTRY);
@@ -218,7 +218,7 @@ function loft(): void {
       && magic[caster] === `${d.name}\t2000g` && gold2 === 1000 && tierOf(d, 'magic') === 'expert' && told2 === `${d.name} is Expert in magic now.`
       && back.join() === first.join() && out === 'ExploreScreen',
     `a knight of 13 buys Expert at arms there for 2000 and a druid of 13 Expert in magic, the menu again after each, the line's question with the purse as it is after (${purse}), and back to the first menu and out ("${told}" / "${told2}"; ${gold2} gold left)`);
-  ok(attackBonus(k) === hitWas + 1 && armsBonus(k) === 1 && rankMult(d) === multWas + RANK_STEP, `and the knight hits at +1 (${attackBonus(k)}) and the druid casts a rank's step higher (${rankMult(d).toFixed(2)})`);
+  ok(attackBonus(TABLES.items, k) === hitWas + 1 && armsBonus(k) === 1 && rankMult(d) === multWas + RANK_STEP, `and the knight hits at +1 (${attackBonus(TABLES.items, k)}) and the druid casts a rank's step higher (${rankMult(d).toFixed(2)})`);
   // Harrow's Drillyard (to 6), the Wardens' hall: its first menu has no such entry.
   enter(g, 'harrow', trainerAt('harrow'));
   const drill = options(g);
@@ -260,7 +260,7 @@ function master(): void {
   // A company with nobody of the line hears so; the person's offers hold to the same bars.
   const casterOnly = company('sorcerer', 25);
   casterOnly.members = casterOnly.members.filter((c) => !linesOf(c.cls).includes('arms'));
-  const w = new World(buildMaps(), casterOnly, makeRng(3));
+  const w = new World(TABLES, buildMaps(), casterOnly, makeRng(3));
   ok(!masterOffers(m, casterOnly, w.state).length && noneHere('arms') === '"I teach arms. Nobody here bears them."', 'a company with nobody of the line is offered nothing, and told so');
   // A Master with no favour written does not teach: a missing `done` reads as not yet, as a prestige's third does.
   const unwritten: Mastery = { line: 'arms', tier: 'master', price: TIER_PRICES.master };
@@ -318,7 +318,7 @@ function untouched(): void {
  * asked no upgrade of their own, nor does any version after it (6 is #941's, the hermit's flag).
  */
 function saves(): void {
-  const rng = makeRng(13), party = defaultParty(rng), world = new World(buildMaps(), party, rng);
+  const rng = makeRng(13), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng);
   party.members[0].tiers = { arms: 'master' };
   party.members[5].tiers = { magic: 'expert' };
   const back = deserialize(serialize(world.state, party, 0)).party;
@@ -353,7 +353,7 @@ function fits(): void {
     values.add(tierBar(line, tier, TIER_PRICES[tier], c, q, favour) || `${TIER_PRICES[tier]}g`);
   }
   const widest = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZ'].sort((a, b) => measureText(b) - measureText(a))[0], name = widest.repeat(NAME_MAX);
-  const p = company('bard', 25), w = new World(buildMaps(), p, makeRng(4)), m: Mastery = { line: 'magic', tier: 'master', done: { flag: 'x' }, price: TIER_PRICES.master };
+  const p = company('bard', 25), w = new World(TABLES, buildMaps(), p, makeRng(4)), m: Mastery = { line: 'magic', tier: 'master', done: { flag: 'x' }, price: TIER_PRICES.master };
   const rows = [...LINES.map((l) => LINE_ROWS[l]), LEAVE_TIERS, ...LINES.flatMap((l) => expertOffers(l, p).map((o) => tierLine(o, p))), ...masterOffers(m, p, w.state).map((o) => tierLine(o, p)), ...[...values].map((v) => `${name}\t${v}`)];
   const cut = rows.filter((r) => { const { label, value } = optionParts(r); return measureText(label) > columnLabelWidth(SIDE_W, value, true); });
   ok(values.size >= 8 && !cut.length, `every row of the tier menus fits the ${SIDE_W} px panel, a name of ${NAME_MAX} ${widest}s beside each of ${[...values].join(', ')}${cut.length ? ' -> cut: ' + cut.map((r) => r.replace('\t', ' ')).join('; ') : ''}`);
@@ -416,7 +416,7 @@ function pilot(): void {
   // And by the keep's own rules: its trade is not the entry, no tier row is a `train Ng` row, and no tier menu says a trainer's top level.
   const q = company('paladin', 25), rows = LINES.flatMap((l) => expertOffers(l, q).map((o) => tierLine(o, q)));
   const fixture: Mastery = { line: 'magic', tier: 'master', price: TIER_PRICES.master };
-  const w = new World(buildMaps(), q, makeRng(2)), all = [...rows, ...masterOffers(fixture, q, w.state).map((o) => tierLine(o, q))];
+  const w = new World(TABLES, buildMaps(), q, makeRng(2)), all = [...rows, ...masterOffers(fixture, q, w.state).map((o) => tierLine(o, q))];
   const menuWords = [askLine(q), askTier('expert', q), askTier('master', q)].map((s) => new ChoiceScreen(s, ['Leave'], () => undefined));
   ok(EXPERT_ENTRY !== TRADE.trainer && all.every((r) => !/^train (\d+)g$/.test(optionParts(r).value)) && menuWords.every((c) => trainsTo(c) === undefined),
     `the keep's own rules pass the tiers by: the entry is not "${TRADE.trainer}", no tier row reads "train Ng" (${all[0].replace('\t', ' ')}), and no tier menu says "I train to level"`);
