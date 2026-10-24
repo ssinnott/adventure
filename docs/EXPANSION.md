@@ -1202,9 +1202,10 @@ An area's dungeons may exit only to its own region's maps, or to the outdoors on
 so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:125` holds it).
 
 **A new area starts in `AREAS`** (`src/content/index.ts`), from its first commit: its folder, its line
-there, its row in the atlas's `areas` charted as the plan charts an area (`src/content/atlas.ts`: made
+there and its `MAPS` in `AreaMaps` beside it (each map declared with its id, `MapDef<'cairns'>`, so
+that `MapId` names it, #994), its row in the atlas's `areas` charted as the plan charts an area (`src/content/atlas.ts`: made
 of zones, reached from the start, its step and its band rising on the road of levels, which the atlas
-suite and the curve read) and its row in `CURVE`, with `maps: []` and `chapter: undefined` until its
+suite and the curve read) and its row in `CURVE`, with `MAPS` empty and `chapter: undefined` until its
 first map (the typecheck reads `chapter` on every area) and what its clear falls short of owed in its
 `checks.ts` (`owes.curve`) until it pays. Its monsters, rooms and items are merged from the start, so nothing
 waits in a list of its own ahead of its area (the `AHEAD` lists and `PLANNED` are gone, #897), and
@@ -1372,6 +1373,27 @@ Decided by the builder for #993, each the owner's to overturn:
    name their boxes (`laid(PLAN, 'shelf', 'G2')`). A box the grid lacks throws as the area loads.
 7. **The fixtures stand in the structure suite**, which holds the grid already, beside its line
    holding every exit of the areas to an anchor: no suite of their own and no snapshot.
+
+Decided by the builder for #994, each the owner's to overturn:
+
+1. **Each map's id is literal where it is declared**, `MapDef<'cairns'>` (191 maps) and
+   `Rift<'c5_rift'>` (5), in place of the keyed record: the smaller diff, as the record changes every
+   reader of `Area.maps`. The id is `MapDef`'s parameter, not `as const` under `satisfies MapDef`: a
+   map's type inferred from its literal would wait on `MapId`, which its exits name.
+2. **`MapId` is made of each area's `MAPS`**, not of `AREAS`: an area's literal names maps
+   (`outside`), so a union made of the areas would wait on itself. `LISTED` fails the typecheck if an
+   area's maps are left out of `AreaMaps`, and `NARROW` if the union widens.
+3. **A map as played is `PlayedDef`**, whose exits name the outdoors too (`MapDef`'s second
+   parameter), and the world's exit as it steps is `Exit<string>`, as it takes a Rift's tear and a
+   crossing sold. `MAP_DEFS` is `MapDef<MapId>[]`.
+4. **A rift's `to` and `Passage.to` stay strings**: each costs more than a line (the Rift samples'
+   tears, the crossings the pilot reads). A Rift's `out.to` takes `MapId`.
+5. **A fixture's map goes through `fxMap` or `fxKey`** (`tools/tests/lib.ts`), a string handed on as a
+   map's id or key: each map no area has is marked where a suite names it, and a real one needs neither.
+6. **The Rift samples' `until` goes through `wardenFallen`** (`src/game/rifts.ts`), the one assertion
+   outside the suites: a sample's id is no map the areas list, and no file of `src/content` takes a cast.
+7. **A built `seen` or `slain` goes through `mapKey(map, id)`** (`src/game/keys.ts`), which `denBurnt`
+   uses; a condition kept in a const takes `satisfies When` (seven).
 
 ### 8.3 Pull requests
 
