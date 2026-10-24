@@ -23,8 +23,8 @@ dependencies, and nothing compiled to disk during development.
   with its decisions and its plan beside it in its folder, `docs/areas/<area>/` (EXPANSION §8.2).
   The Foreland's is the first, and the first in that shape; Thornmark's, Saltreach's, Wrackholm's,
   Sunderwood's, the Kilns', Cairnmoor's, Rimewater's, the Whitespine's, Ashfall's, the Glasswold's,
-  Meridian Camp's, the Dead-Drop's and Hearth Isle's follow, each built and each waiting for D3 to
-  move it to the shape.
+  Meridian Camp's, the Dead-Drop's and Hearth Isle's follow, each built; D3 moves them to the shape
+  in five parts, and `node tools/test.ts areadocs` names those still owed.
 - [docs/NAMES.md](docs/NAMES.md) — how places are named: each people's tongue, the few old names
   the first crew left, and the rules a rename follows.
 - [docs/PILOT.md](docs/PILOT.md) — the pilot that plays the game for watching: P and T, the why

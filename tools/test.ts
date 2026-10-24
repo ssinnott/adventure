@@ -120,7 +120,7 @@ if (at < 0) {
       if (!ids.includes(area)) throw new Error(`src/content/areas/${area}/ has a walkthrough but is no area in AREAS`);
       const fn = ((await import(file.href)) as { walkthrough?: unknown }).walkthrough;
       if (typeof fn !== 'function') throw new Error(`${area}/walkthrough.ts exports no function named walkthrough`);
-      // An `ok` of its own, under which its runs keep the goals they walk (tools/walk.ts), so it passes alone as in the full run (#946).
+      // An `ok` of its own, under which its runs keep the goals they walk (tools/kit/walk.ts), so it passes alone as in the full run (#946).
       return () => (fn as Walkthrough)((cond: boolean, msg: string) => ok(cond, msg));
     });
   }

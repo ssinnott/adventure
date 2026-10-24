@@ -1,8 +1,8 @@
 // The crack sweep's plan (#953): the views of the maps asked for, each an open square and a facing, and
 // of each whether its flat window holds anything to paint, which window it is and whether a wall stands
-// beside the party. The sweep that paints it is tools/smoke.ts's, its command line tools/sweep.ts. Of
-// tools/kit/, so that the page and a suite can both load it: it takes src alone and no Node module (the
-// layers check, tools/tests/layers.ts).
+// beside the party. The sweep that paints it is tools/smoke/cracks.ts's, its command line
+// tools/sweep.ts. Of tools/kit/, so that the page and a suite can both load it: it takes src alone
+// and no Node module (the layers check, tools/tests/layers.ts).
 //
 // The sweep paints a view twice over two flat backdrops and reads the 32 rows about the horizon. It
 // reports a gap between two faces only where the view with its hills laid flat shows it too, or the

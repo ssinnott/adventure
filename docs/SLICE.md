@@ -849,20 +849,27 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   Nothing is owed today, so it reads `ALL OK`; the curve and the gate would fail a miss that grows
   past where it was owed.
 - `smoke`: `node tools/smoke.ts`, headless Chromium playing the game through the dev server: every
-  screen painted with no page error, and a line for each check as well. Every run plays the same
-  world (`SMOKE_SEED`; `SMOKE_SEED=random` tries another and prints it). It holds every monster to
+  screen painted with no page error, and a line for each check as well. The file is the runner and
+  the parts are in `tools/smoke/` (#1006): `flows.ts` plays the game by its keys and screens,
+  `scenes.ts` lays scenes on the Foreland and reads their pixels, `art.ts` holds the
+  drawings to their rules and `cracks.ts` sweeps, each part in the frame `boot.ts` gives
+  it. A part makes its own state, measures and asserts together and, after a key, waits on
+  the page's state and never on the clock; one that throws is `FAIL: <part> threw` with its
+  stack, and the others still report. Every run plays the same world (`SMOKE_SEED`;
+  `SMOKE_SEED=random` tries another and prints it). It holds every monster to
   one silhouette and to its span (within 2 px at any size, and no more than a twentieth of a height
   wider; it prints the span to write), every pair of sprite part kinds to a union with no hole, and
   sweeps for cracks between walls: one way from every square of the cellar, Helmstow, its keep and
   the ground's samples (`tools/kit/grounds.ts`, a small map each of ash, pine, ice, cliffs, peaks, steppe, dunes, vines and the volcano) each run, all four
   ways on the maps changed since `SMOKE_BASE=<ref>` (CI passes the pull request's base;
   `node tools/changed.ts <ref> maps` names them, and `monsters` or `interiors` the sheet's), or on
-  those `SMOKE_SWEEP=all|<id>,<id>` names. `SMOKE_PART=rest` runs everything but the four-way sweep
-  and `SMOKE_PART=sweep` that sweep alone, both when unset; `SMOKE_SHARD=i/n` sweeps the i-th of n
-  shards of its plan (`tools/kit/sweep.ts`: each view skipped where nothing stands in its window,
-  each window painted once); `SMOKE_SWEEP_AUDIT=1` judges every view the old way too and fails a
-  difference (#953). `SMOKE_SHOT=<png>` saves a screenshot of the play, which CI keeps when the
-  smoke test fails.
+  those `SMOKE_SWEEP=all|<id>,<id>` names. `SMOKE_PART=rest` runs every part but the four-way sweep
+  and `SMOKE_PART=sweep` that sweep alone, both when unset; `SMOKE_PART=<part>,<part>` runs those
+  parts alone, in the run's order, and refuses a name that is no part; `SMOKE_SHARD=i/n` sweeps the
+  i-th of n shards of its plan (`tools/kit/sweep.ts`: each view skipped where nothing stands in its
+  window, each window painted once); `SMOKE_SWEEP_AUDIT=1` judges every view the old way too
+  and fails a difference (#953). `SMOKE_SHOT=<png>` saves a screenshot of the play after the
+  winding part, which CI keeps when the smoke test fails.
 
 CI (`.github/workflows/checks.yml`) runs the three as jobs of their own on every pull request, and
 `sheet`, which attaches the contact sheet and gates nothing. The smoke job runs `SMOKE_PART=rest`,
@@ -956,7 +963,7 @@ over content broken on purpose too, and two tools to theirs:
   gone from one place and found in another, one by night and events by night or by flag.
 - The walkthroughs (EXPANSION §5.8): `walkthrough:shelf` plays The Quiet Farm from a new game,
   `walkthrough:thornmark` the chain and then Thornmark taken early, before Vask's hire and after it
-  but before the wand. Each step, by the game's own moves (`tools/walk.ts`): the goal is the
+  but before the wand. Each step, by the game's own moves (`tools/kit/walk.ts`): the goal is the
   chapter's, placed at a built map its words name, at the curve's level for it, which sits in the
   place's band; its fights are won once in ten by the gate's bot at that level; the play moves the
   goal on; a person who takes an item stands at the step's place; and nothing a person says is
