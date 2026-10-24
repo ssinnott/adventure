@@ -36,7 +36,7 @@ Howe in F12's mountain face and its dam.
   in E10, open from the start, onto the steppe, Act IV's third area.
 
 Fire Mountain's three lava flows run south-west through G11 and F11 to their end in F12, south-east
-through H11 to its end in H12, and west across F11. Two edges open on nothing (`openOnNothing`,
+through H11 to its end in H12 and west across F11. Two edges open on nothing (`openOnNothing`,
 `src/content/areas/ashfall/checks.ts`): E11's south, onto E12, the world's end; and E11's west, onto
 D11, the Glass, the reach, shut until Phase 1.6. `node tools/worldmap.ts out.png --zones` paints
 the zones.
@@ -104,7 +104,7 @@ chapter at 24, 25 and 26 four ways and every side quest's answers. Its businesse
 the Whitespine's The Bells: begun on The Bells' end (`q_stair_top`) or at Cinderport by Kilnhaven's
 ship; the far side at the Stair's foot; the eldest's story at the Riders' fire (`q_eldest_heard`);
 the Stone seen; the three parts from Meridian Camp's vents and corridors and Old Cinder's
-undercroft, each keyed on its chest opened; the camp and Fane's map, and the window for a company
+undercroft, each keyed on its chest opened; the camp, Fane's map and the window for a company
 that looks; the Stone lit (`q_ember_lit`) and the Hearth steadier (#548); and the road west. It is
 done on `q_road_west`, set on E10's last shoulder (`e10_west`) or at Akordu's horse-lines for a
 company that rides; the Glasswold's chapter starts on it.
@@ -175,7 +175,7 @@ machines and the volcano with G11 and the springs with H10; the rest is on the r
   11.39 off the aim; the corridors 8.69 at 26, off it; the camp 10.64 and Blackdraw 11.14 at 27. The
   gate lists eighteen figures off their aim, inside their limits.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, G10 97.3% and H10, G11 and
-  F11 100%; within 12 in the country, E11 99.4% and H11 98.1% (their furthest squares 15), and every
+  F11 100%; within 12 in the country, E11 99.4% and H11 98.1% (their furthest squares 15), every
   other box 100%; the town and the dungeons 100% within 7.
 - **The ladder:** rung 25 is Ashfall's (`gear`, in its checks): Cinderport's armourer, every class
   bettered by it.

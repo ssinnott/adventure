@@ -167,7 +167,7 @@ the keepers with the bay; the rest is on the road before it, or no kind the chec
   lists eight figures off their aim, inside their limits: those five, the stair two under (76.1% of
   the floor's 9), the bay's 89.8% and the Infirmarer's 78% at 32.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, M9 98.1%, K9 99.5% and K10
-  99.9%; within 12 in the country, L11 96.5% (its furthest square 18) and M10 99.0% (17), and every
+  99.9%; within 12 in the country, L11 96.5% (its furthest square 18) and M10 99.0% (17), every
   other box 100%; the town and the dungeons 100% within 7.
 - **The ladder:** rungs 21 and 22 are Rimewater's (`gear`, in its checks): by 21 Rime Lodge's
   furrier, by 22 its finds, every class bettered by each.
