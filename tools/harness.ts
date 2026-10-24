@@ -755,7 +755,8 @@ function onCores<T>(jobs: readonly Job[], each?: (j: Job, r: T) => void, limit =
     if (!left) return resolve(out);
     const fail = (e: Error): void => { if (over) return; over = true; for (const w of workers) void w.terminate(); reject(e); };
     const said = (j: Job): string => `${j.kind} ${j.role} at ${j.level}`;
-    for (let w = 0; w < Math.min(jobs.length, os.availableParallelism()); w++) {
+    // The cores the test runner gives it beside its other jobs (TEST_CORES, tools/test.ts --jobs, #954), else every core.
+    for (let w = 0; w < Math.min(jobs.length, Math.max(1, Number(process.env.TEST_CORES) || os.availableParallelism())); w++) {
       const worker = new Worker(new URL(import.meta.url));
       let at = -1, busy = false, timer: ReturnType<typeof setTimeout> | undefined;
       workers.push(worker);
