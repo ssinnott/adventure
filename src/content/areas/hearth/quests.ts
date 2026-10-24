@@ -1,5 +1,5 @@
 // Hearth Isle's quests in the journal's words. #56's 57, The Pilgrims in the Bowl (§6 of
-// docs/areas/hearth_isle.md), as far as the isle goes (H6, #753): the three pilgrims met in the Bowl and
+// docs/areas/hearth.md), as far as the isle goes (H6, #753): the three pilgrims met in the Bowl and
 // a token taken, or none, and its end on the Stair's first landing (#758): a claimant's people there, or the
 // rearguard slain where none hold it. #56's 58, A Letter for Gullwick, from the Stair's dead (#758) to
 // Gullwick's shore (#765). #56's 56, The Sacristan's Lamps, in the

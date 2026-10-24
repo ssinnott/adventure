@@ -941,7 +941,7 @@ Decided by delegate for #186, each the owner's to overturn:
 Decided by delegate for #806, each the owner's to overturn:
 
 1. **The Great Devilfish is set again at 650 hit points and 12d7+15** (600 and 8d7+10 before), by
-   hearth_isle.md §7's method: tries of hit points and blow on the gate's seeds. #188's gate set it
+   hearth.md §7's method: tries of hit points and blow on the gate's seeds. #188's gate set it
    against a company without its first prestige, 66% at 12 and 91% at 14; the gate's company has
    taken the prestige since #541, and won it 96% at 12, past the limit of 80%. The aim is about half
    at the floor (30% to 70%) and nearly always two above (90%). The tries, in percent of the gate's

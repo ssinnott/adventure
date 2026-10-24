@@ -81,7 +81,7 @@ export const CURVE: Record<RegionId, AreaCurve> = {
   },
   // Act V (#745), the road's last row, to the cap: no area comes after it, so its next floor is the
   // cap, and its band is the atlas's with the Underdeep's and the Core's places inside it. Its gear is
-  // found, never sold, the dearest 7,000 (docs/areas/hearth_isle.md §8).
+  // found, never sold, the dearest 7,000 (docs/areas/hearth.md §8).
   hearth: {
     band: [28, 32], next: 32, price: 7000,
   },
@@ -89,7 +89,7 @@ export const CURVE: Record<RegionId, AreaCurve> = {
 
 /**
  * What a town's trainers teach to: its area's band's top plus one (EXPANSION §5.2), and never past the
- * cap, so the road's last row, topping at 32, teaches to 32 (docs/areas/hearth_isle.md §9, call 4).
+ * cap, so the road's last row, topping at 32, teaches to 32 (docs/areas/hearth.md §9, call 4).
  */
 export const trainerCeiling = (c: AreaCurve): number => Math.min(c.band[1] + 1, MAX_LEVEL);
 

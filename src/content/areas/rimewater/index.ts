@@ -1,5 +1,6 @@
-// Rimewater, the lochs under the glacier (band 20-22): Loch Fada, Loch Fuar and, beyond the glacier's
-// edge, Glacier Foot, the reach; the last of Act III. docs/areas/rimewater.md is its brief.
+// Rimewater, the lochs under the glacier (band 20-22): Loch Fada, Loch Fuar and, beyond the
+// glacier's edge, Glacier Foot, the reach; the last of Act III. docs/areas/rimewater.md is its
+// state, and docs/areas/rimewater/ holds its plan and decisions.
 import type { Area } from '../../area.ts';
 import { FLAGS } from './flags.ts';
 import { LONGMERE_M9 } from './maps/longmere_m9.ts';

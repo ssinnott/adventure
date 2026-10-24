@@ -4,7 +4,7 @@
 // the core's sentries come from when the ring calls. Vask at the panel with three of the Grey Hands holding
 // her palm to it (8,5), on the clock; then the voice, Wenna, the ring and the choice (§5); Vask after, on his
 // knees by the west wall (3,9); and inside the door, once he has fallen, whoever stands with the company
-// there. Band 32, the cap; docs/areas/hearth_isle.md §4.8 is its brief.
+// there. Band 32, the cap; docs/areas/hearth.md §4.8 is its brief.
 import type { Answer, Choice, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';

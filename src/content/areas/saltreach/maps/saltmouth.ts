@@ -18,7 +18,7 @@ import { FERRY, sells } from '../../../crossings.ts';
 import { ENDINGS } from '../../../endings.ts';
 import { COMPACT_WARDENS, COMPACT_OVER } from '../public.ts';
 
-// The Heart's three endings (#765; docs/areas/hearth_isle.md §12): the halls' words after each, first of all.
+// The Heart's three endings (#765; docs/areas/hearth.md §12): the halls' words after each, first of all.
 const RELIT = { flag: ENDINGS.reignite.flag }, OPENED = { flag: ENDINGS.arrive.flag }, FINISHED = { flag: ENDINGS.finish.flag };
 
 export const SALTMOUTH: MapDef<'saltmouth'> = {

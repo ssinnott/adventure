@@ -23,7 +23,7 @@ const PORT: Readonly<Record<string, number>> = {
   club: 10, dagger: 24, staff: 16, shortsword: 80, mace: 90, longsword: 240, axe: 180, spear: 120, sling: 30, shortbow: 160, longbow: 400,
   robe: 20, leather: 120, scale: 440, chain: 1000, buckler: 80, shield: 300, potion_heal: 60, antidote: 50, rations: 8, torch: 4,
 };
-// The Heart's three endings (#765; hearth_isle.md §12): the inn at 12 again after the Council's verdict or
+// The Heart's three endings (#765; hearth.md §12): the inn at 12 again after the Council's verdict or
 // any of them, and the Chapel open for the hold's verdict or any of them; each a link on its doorway.
 const RELIT = { flag: ENDINGS.reignite.flag }, OPENED = { flag: ENDINGS.arrive.flag }, FINISHED = { flag: ENDINGS.finish.flag };
 const CHEAP_AGAIN: readonly QuestCond[] = [{ flag: THRONE_REMOVED }, ...ENDED];

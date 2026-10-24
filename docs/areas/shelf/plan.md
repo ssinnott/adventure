@@ -854,7 +854,7 @@ docs/areas/whitespine.md) the city is worse again (#449), on top of Act II's cha
 Nothing shuts and nothing is dearer. The walkthrough walks the changed city before the flag and
 after it, the flags set by hand (docs/areas/ashfall.md §9, #449's 6 and 7).
 
-The Empty Throne ends at the Council of Helmstow (#764; docs/areas/hearth_isle.md §6 and §9.2):
+The Empty Throne ends at the Council of Helmstow (#764; docs/areas/hearth.md §6 and §9.2):
 
 - **Wiglaf, the Council's clerk,** stands at the chapel's door in the keep's ward (`keep` 4,6) once
   the Hand has Wenna, until a case is made, and puts it once: the cousin, the elves of Henlys, Jory
@@ -868,13 +868,13 @@ The Empty Throne ends at the Council of Helmstow (#764; docs/areas/hearth_isle.m
   the gibbets are down; the Council's proclamation is said over the Regent's at 9,8; the Eel talks of
   the verdict, with no Warden at its door; the south gate lifts its shut for orcblood (`lifts`); the
   inn is 12 again. The hold's verdict opens the Chapel, and Tallis's makes Mottram's a port's, twice
-  the old city's but the oil; each is the next link on its doorway (hearth_isle.md §9.2, #764's 7).
+  the old city's but the oil; each is the next link on its doorway (hearth.md §9.2, #764's 7).
 - **A failed case** leaves Vask in the keep and the city as it was, the inn at 18.
 
 The walkthrough plays the six verdicts and the twins, the pieces set by hand, and the inn, the Chapel
 and the stores after each.
 
-After the Heart (#765; docs/areas/hearth_isle.md §12 and §9.2), on top of the Council's:
+After the Heart (#765; docs/areas/hearth.md §12 and §9.2), on top of the Council's:
 
 - **On the isle** (`visited: 'hearthisle_h6'`) Vask is at the panel: gone from the keep with his
   guards, and the throne room empty behind his door until the Council removes him. His steward stands
