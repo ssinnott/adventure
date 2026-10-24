@@ -103,4 +103,11 @@ export const ITEMS: readonly ItemDef[] = [
   tideSymbol,
   brandyCask,
   telstok,
+  // Wytgat's strongbox (#830, the enclave): Saltmouth's Stiletto with a blade of brine glass, its blows
+  // carrying lightning as the brinelings' bites do. Found there alone and sold nowhere, inside the
+  // enclave's window, Wrackholm's 2,500 (EXPANSION §5.2, #845's 3).
+  { ...stiletto, id: 'brine_needle', name: 'Brine Needle, Stiletto', price: 1150, element: 'lightning', text: [
+    'A stiletto whose blade is a sliver of brine glass, ground to a point and bound to its grip with black cord.',
+    'In the dark a green light crawls up the blade and back.',
+  ] },
 ];
