@@ -956,7 +956,7 @@ over content broken on purpose too, and two tools to theirs:
   gone from one place and found in another, one by night and events by night or by flag.
 - The walkthroughs (EXPANSION §5.8): `walkthrough:shelf` plays The Quiet Farm from a new game,
   `walkthrough:thornmark` the chain and then Thornmark taken early, before Vask's hire and after it
-  but before the wand. Each step, by the game's own moves (`tools/walk.ts`): the goal is the
+  but before the wand. Each step, by the game's own moves (`tools/kit/walk.ts`): the goal is the
   chapter's, placed at a built map its words name, at the curve's level for it, which sits in the
   place's band; its fights are won once in ten by the gate's bot at that level; the play moves the
   goal on; a person who takes an item stands at the step's place; and nothing a person says is
