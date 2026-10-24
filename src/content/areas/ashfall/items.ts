@@ -166,8 +166,8 @@ export const townRoll: ItemDef = { id: 'town_roll', name: 'The Town Roll', slot:
 ] };
 
 // Ashfall's of the bounds' eight (DESIGN §9, #847): the Grey Axe's 2d12+7 and a point, for its bearers,
-// and Meteor Swarm cast from it twice a day. Found and never sold; placed nowhere yet, for #836 lays
-// its lair and puts it there.
+// and Meteor Swarm cast from it twice a day. Found and never sold; it lies in Grim's Howe, the lair
+// under F12's dam of rock, on the warlord's bier past the Grave Drake (#836).
 export const grimsAxe = W('grims_axe', 'Grim\'s Axe', ARTIFACT_PRICE, 2, 12, { bonus: 8, twoHanded: true, classes: MARTIAL, casts: { spell: 'meteor', times: 2 }, artifact: true, text: [
   'A broad axe of black iron, its edge as warm as a hearthstone.',
   'Grim is cut in its cheek, and under the name a smoking mountain.',

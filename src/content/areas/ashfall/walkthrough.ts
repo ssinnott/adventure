@@ -58,8 +58,9 @@
 // never told (#859): the hermit's rumour, the hide in Old Cinder, the favour in E11's cold tube and the
 // teaching by a company of 25. Then the bounds (#836): F12, the Waste's south-west where the lava flow
 // ends under the rim, walked onto from G12 and F11; the cairn, the man of stone's riddle and the
-// knapper's store behind the rock where black glass is heaped; the doors of the lair and the enclave
-// left bare.
+// knapper's store behind the rock where black glass is heaped; Blackdraw, the enclave, down the flue's
+// mouth; and last Grim's Howe, the lair, under the dam, where the Grave Drake keeps Grim's Axe, and
+// Petroc's rumour of it.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, gone, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
@@ -96,7 +97,7 @@ import { ROAD_WEST } from './maps/emberwaste_e10.ts';
 import { CHAPTER } from './chapter.ts';
 import { STAIR_TOP } from '../whitespine/maps/highspine_i10.ts';
 import { stonesRestored } from '../../../game/stones.ts';
-import { VENTS, HOLE, SHOVEL_STORY, BROOD_ASKED, BROOD } from './maps/firemount_g11.ts';
+import { VENTS, HOLE, SHOVEL_STORY, BROOD_ASKED, BROOD, AXE_RUMOUR } from './maps/firemount_g11.ts';
 import { SPRINGS_BREAK, SPRINGS_LEFT, SPRINGS_COLD } from './maps/cindercoast_h10.ts';
 import { FOUNDING_UP, FOUNDING_LEFT, SHOVEL_THANE, SHOVEL_WARDENS, SHOVEL_KEPT, CIPHER_TAKEN } from './maps/cinderport.ts';
 import { ORDERS_ASKED } from '../glasswold/maps/wold_c8.ts';
@@ -112,6 +113,9 @@ import { masterOffers, favourDone, teachTier, TIER_PRICES } from '../../../game/
 import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
 import { ENDINGS, ENDED } from '../../endings.ts';
 import { BLACKDRAW } from './maps/blackdraw.ts';
+import { GRIMS_HOWE } from './maps/grims_howe.ts';
+import { wrap } from '../../../ui/draw.ts';
+import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 
 const G10 = MAP_DEFS.find((d) => d.id === 'cindercoast_g10')!, G11 = MAP_DEFS.find((d) => d.id === 'firemount_g11')!;
 const person = (name: string, d = G10): Person => d.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
@@ -1553,10 +1557,10 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   const sent = sought(questLog(w.world.state, w.party));
   ok(([[F11, old, idris], [G11, heir, ragna], [F10, druid, bryn]] as const).every(([d, p, c]) => sent.find((s) => s.at === d.id)?.who.includes(c.name) && p.teaches?.prestige === 3 && p.teaches.seek?.includes(PRESTIGES[c.cls].titles[2])),
     'at 27 with the second, the paladin is sent to the old Lightbearer, the barbarian to the warlord\'s heir and the druid to the Archdruid, each seeking naming the third');
-  /** A trainer's own words, then the ask once, which begins the quest and ends the seeking; the third waits on the deed. */
-  const asked = (d: MapDef, p: Person, who: number, flag: string, quest: string, words: string): void => {
+  /** A trainer's own words, then the ask once, which begins the quest and ends the seeking, then `later`, his words at a meeting after; the third waits on the deed. */
+  const asked = (d: MapDef, p: Person, who: number, flag: string, quest: string, words: string, later: readonly string[] = p.lines): void => {
     const said = [talk(d, p), talk(d, p), talk(d, p)];
-    ok(said[0] === p.lines.join('\n\n') && said[1].includes(words) && said[2] === p.lines.join('\n\n') && !!w.party.flags[flag] && log(seekId(who, 3))?.done === true && log(quest)?.done === false
+    ok(said[0] === p.lines.join('\n\n') && said[1].includes(words) && said[2] === later.join('\n\n') && !!w.party.flags[flag] && log(seekId(who, 3))?.done === true && log(quest)?.done === false
       && barOf(p.teaches!, w.party.members[who], w.party, w.world.state) === 'the quest first' && !teach(p.teaches!, w.party, w.world.state, who).taught,
       `${p.name}: his own words first, then his ask, once: ${said[1].split('\n\n')[1]}, which begins ${log(quest)?.def.title} and ends the seeking; the third waits on it`);
   };
@@ -1587,7 +1591,8 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   taught(F11, old, 1, 'old_lamp', 'Then I sat here for something');
 
   // The Barbarian's: down the vents from Grimsforge, and what nests in the iron corridors.
-  asked(G11, heir, 2, BROOD_ASKED, 'brood', 'Something nests down the vents');
+  // Met again after the ask, the heir says his own words and Grim's Axe's rumour after them (#836).
+  asked(G11, heir, 2, BROOD_ASKED, 'brood', 'Something nests down the vents', [...heir.lines, ...AXE_RUMOUR]);
   walkThrough(w, 'firemount_g11', VENTS.x + 1, VENTS.y, WEST, 'meridian_camp', 1);
   for (const g of MC.encounters!) if (w.world.walks(g, g.x, g.y) && !w.world.ended(g)) fight(w, `meridian_camp:${g.id}`);
   walkThrough(w, 'meridian_camp', STAIR.x, STAIR.y - 1, SOUTH, 'meridian_camp2', 1);
@@ -2403,13 +2408,17 @@ function theWindow(ok: (cond: boolean, msg: string) => void): void {
  * the rim, F12, which holds no group. West off G12's ash onto F12's east edge, walked, the Waste named;
  * south off F11's ash onto its north edge, walked, the land not named again. The cairn under the
  * mountain's wall, the man of stone's riddle, the sulphur, the flow's cut and its end; the flakes of
- * black glass at the rock's foot and the knapper's store behind it, shut but through its door; the
- * dam's rock at 20,14 left bare for the lair's door. Each edge as built. Last, Blackdraw, the enclave
- * (#845): in at the flue's mouth in the mountain's face at F12's 10,3, its door saying its band and
- * how it feels at 24, 25 and 27 and its sign its band; its two groups won at 27 and met in order by a
- * company on foot or any way else, which passes neither; the clerks' room behind the bright plate
- * found from it and shut to the four ways but through the plate; Kindler in the stokers' locker; and
- * out onto F12's 10,2 again.
+ * black glass at the rock's foot and the knapper's store behind it, shut but through its door. Each
+ * edge as built. Then Blackdraw, the enclave (#845): in at the flue's mouth in the mountain's face at
+ * F12's 10,3, its door saying its band and how it feels at 24, 25 and 27 and its sign its band; its two
+ * groups won at 27 and met in order by a company on foot or any way else, which passes neither; the
+ * clerks' room behind the bright plate found from it and shut to the four ways but through the plate;
+ * Kindler in the stokers' locker; and out onto F12's 10,2 again. Last, Grim's Howe, the lair (#845,
+ * #847): in under the dam's crust at F12's 20,14, its door saying its band and how it feels at 25, 28
+ * and 30 and its sign its band; the Grave Drake alone on the grave across the way, nothing past it
+ * reached while it lies there, won at 30; Grim's Axe on the warlord's bier and nowhere else; the
+ * war-band's offerings in the niche behind the marked stone, found from it and shut to the four ways
+ * but through the stone; out onto F12's 20,13; and Petroc's two lines at a meeting after his first.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok);
@@ -2432,18 +2441,11 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     }
     return seen;
   };
-  /** A door left bare: rock or mountain, the same either side along its face, its way walked to, nothing within four squares. */
-  const bare = (d: MapDef, walked: Set<number>, z: MapZone, [x, y]: readonly [number, number], [dx, dy]: readonly [number, number]): string[] => {
-    const solid = (i: number, j: number): boolean => 'rM'.includes(d.rows[j]?.[i] ?? '.');
-    const near = [...(d.features ?? []), ...(d.encounters ?? []), ...(d.secrets ?? [])].filter((f) => Math.abs(f.x - x) + Math.abs(f.y - y) <= 4);
-    return [solid(x, y) && solid(x - dy, y - dx) && solid(x + dy, y + dx) ? '' : 'not solid in a face',
-      walked.has(at(z, x + dx, y + dy)) ? '' : 'its way not walked to', ...near.map((f) => `${f.x},${f.y} within four`)].filter(Boolean);
-  };
   const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
   const row = (z: MapZone, y: number, can: Can = {}): string => open(32, (i) => out.passable(z.x + i, z.y + y, can) === 'ok');
   const col = (z: MapZone, x: number, can: Can = {}): string => open(32, (i) => out.passable(z.x + x, z.y + i, can) === 'ok');
-  ok(!(F12.encounters ?? []).length && (F12.exits ?? []).map((e) => e.to).join() === BLACKDRAW.id && F12.start.x === 20 && F12.start.y === 0 && F12.start.facing === SOUTH,
-    'F12 holds no group and nothing is taken out of it but its one way, the flue\'s mouth into Blackdraw; it starts at its north edge on the ash, facing south');
+  ok(!(F12.encounters ?? []).length && (F12.exits ?? []).map((e) => e.to).join() === `${BLACKDRAW.id},${GRIMS_HOWE.id}` && F12.start.x === 20 && F12.start.y === 0 && F12.start.facing === SOUTH,
+    'F12 holds no group and nothing is taken out of it but its two ways, the flue\'s mouth into Blackdraw and the way under the dam into Grim\'s Howe; it starts at its north edge on the ash, facing south');
 
   // West off G12's ash at 0,5 onto F12's 31,5, walked: out of Fire Mountain into the Waste, named at its floor.
   w.world.travel(g12.id, 0, 5, WEST);
@@ -2481,11 +2483,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const purse = F12.features!.find((f) => f.kind === 'chest' && f.id === 'f12_purse');
   ok(purse?.kind === 'chest' && purse.gold === 100 && purse.items.join() === 'elixir' && purse.x === 29 && purse.y === 14, 'on the ledge, a purse with 100 gold and an Elixir');
 
-  // The lair's door (docs §12.4) is left bare: the dam's rock where the flow stopped, 20,14. The
-  // enclave's (docs §12.3) is the flue's mouth in the mountain's face over the ash under the west
-  // wall, 10,3: walked into last.
-  const lair = bare(F12, ash, f12, [20, 14], [0, -1]);
-  ok(!lair.length, `the dam's rock at F12's 20,14 is left bare for the lair's door, walked to from 20,13, nothing within four squares${lair.length ? ` (not: ${lair.join(', ')})` : ''}`);
+  // The enclave's door (docs §12.3) is the flue's mouth in the mountain's face over the ash under the
+  // west wall, 10,3, and the lair's (docs §12.4) the way in under the dam's crust where the flow
+  // stopped, 20,14: walked into last.
 
   // The edges: F12's north meets F11's south, open at 4 to 31, the mountain at 0 to 3; its east meets
   // G12's west, open at 0 to 10, the mountain and the void below. West against E12, where the world ends,
@@ -2581,5 +2581,96 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     listen(w);
     w.party.members.forEach((m, i) => { m.level = levels[i]; });
     w.level = 25;
+  }
+
+  // Grim's Howe, the lair (#845, #847): in under the dam's crust at F12's 20,14, one stone in the dam's rock with the
+  // rock either side and the rim's mountain under it, walked onto from the flow at 20,13, and nothing within four
+  // squares of it. Its door says its band and how it feels, as a border's line: the warning at F12's floor of 25,
+  // harder at 28 and its band alone at 30; inside, its sign gives its band.
+  {
+    const GH = GRIMS_HOWE, mouth = F12.exits!.find((e) => e.to === GH.id)!, levels = w.party.members.map((m) => m.level);
+    const [nearest] = [...F12.features!, ...(F12.encounters ?? []), ...F12.secrets!].map((f) => ({ f, d: Math.abs(f.x - 20) + Math.abs(f.y - 14) })).sort((a, b) => a.d - b.d);
+    ok(mouth.x === 20 && mouth.y === 14 && mouth.tx === GH.start.x && mouth.ty === GH.start.y && mouth.tf === GH.start.facing && F12.rows[14].slice(19, 22) === 'r"r' && F12.rows[15][20] === 'M'
+      && ash.has(at(f12, 20, 13)) && ash.has(at(f12, 20, 14)) && nearest.d === 6 && 'id' in nearest.f && nearest.f.id === 'f12_end',
+      `the way into Grim's Howe is the one stone in the dam's rock at F12's 20,14, the rock either side and the mountain under it, walked to from the flow at 20,13, and nothing stands within four squares of it: the nearest, the flow's end at ${nearest.f.x},${nearest.f.y}, is ${nearest.d} away`);
+    const door = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(F12.id, 20, 13, SOUTH);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === GH.id && w.world.state.x === GH.start.x && w.world.state.y === GH.start.y && w.world.state.facing === SOUTH ? r.messages.join(' | ') : r.kind;
+    };
+    const band = 'Grim\'s Howe: levels 30-32.', floor = door(25), close = door(28), at30 = door(30);
+    ok(floor === `${mouth.label} | ${band} ${WARNING_IN}` && close === `${mouth.label} | ${band} ${HARDER_IN}` && at30 === `${mouth.label} | ${band}`,
+      `in under the dam from F12's 20,13, the way's own line and then its band, with the warning at F12's floor of 25, harder at 28 and nothing more at 30 (${floor}; ${close}; ${at30})`);
+    ok(!!GH.enclave && w.world.here.name === 'Grim\'s Howe' && w.world.here.band?.join('-') === '30-32', `inside, its sign gives the cap's band, over F12's 25-26 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    w.level = 30;
+    for (const id of ['gh_crust', 'gh_warm', 'gh_mound']) see(w, `${GH.id}:${id}`);
+    // The guardian: the Grave Drake, a boss that never comes back, asleep on the grave heaped across the way, the one
+    // way on, so no company steps round it: with its square and those a step from it shut, nothing past it is reached
+    // on foot or any way else. Won at the lair's floor.
+    const hold = new GameMap(GH);
+    const flood = (can: Can, ...shut: (readonly [number, number])[]): Set<string> => {
+      const seen = new Set<string>(), todo: [number, number][] = [[GH.start.x, GH.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (seen.has(`${x},${y}`) || shut.some(([sx, sy]) => sx === x && sy === y) || hold.passable(x, y, can) !== 'ok') continue;
+        seen.add(`${x},${y}`);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return seen;
+    };
+    const drake = GH.encounters!.find((g) => g.id === 'gh_drake')!;
+    const round: (readonly [number, number])[] = [[drake.x, drake.y], [drake.x - 1, drake.y], [drake.x + 1, drake.y], [drake.x, drake.y - 1], [drake.x, drake.y + 1]];
+    const walked = flood({}, ...round), every = flood(ALL, ...round);
+    ok(GH.encounters!.length === 1 && drake.monsters.join() === 'grave_drake' && !!drake.boss && !drake.respawn && drake.roams === false && !!drake.slainText
+      && walked.size === every.size && walked.has('7,7') && walked.has('5,5') && !['7,10', '7,11', '7,12', '7,14', '6,14', '4,10', '10,12'].some((k) => every.has(k)),
+      `the Grave Drake, the one group of the lair, lies on the grave across the way: with it there a walker reaches ${walked.size} of Grim's Howe's squares, a wader, climber or floater no more, and none of them the chamber, the bier, the marked stone or the niche`);
+    fight(w, `${GH.id}:gh_drake`);
+    see(w, `${GH.id}:gh_chamber`);
+    // Grim's Axe on the warlord's bier, one in the world: no other chest, cairn or statue holds it, no shop sells it
+    // and no monster drops it.
+    const bier = GH.features!.find((f) => f.kind === 'chest' && f.id === 'gh_bier')!;
+    const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('grims_axe')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== bier && !!f.items?.includes('grims_axe')) || (f.kind === 'statue' && !!f.gift?.items?.includes('grims_axe'));
+    ok(bier.kind === 'chest' && bier.gold === 0 && bier.items.join() === 'grims_axe' && !!item('grims_axe').artifact
+      && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'grims_axe')),
+      'on the warlord\'s bier, Grim\'s Axe; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
+    // The secret: one stone of the wall behind the bier cut with a smoking mountain, as under the name on the axe's
+    // cheek, the search there and the war-band's offerings in the niche behind it, never reached but through the stone.
+    const [stone] = GH.secrets!, shutWalked = flood({}, [stone.x, stone.y]), shut = flood(ALL, [stone.x, stone.y]);
+    ok(stone.hint === 'gh_mark' && shutWalked.size === shut.size && shut.has('7,12') && shut.has('10,12') && !['7,14', '6,14'].some((k) => shut.has(k)) && !!item('grims_axe').text?.[1]?.includes('smoking mountain'),
+      `the niche is shut but for its stone: a walker reaches ${shutWalked.size} of Grim's Howe's squares, a wader, climber or floater no more, and none of them the niche`);
+    see(w, `${GH.id}:gh_mark`);
+    w.world.travel(GH.id, stone.x, stone.y - 1, SOUTH);
+    let gave = false;
+    for (let i = 0; i < 20 && !gave; i++) gave = w.world.search();
+    const behind = gave ? [w.world.move('forward'), w.world.move('forward')] : [];
+    listen(w);
+    ok(gave && behind.every((r) => r.kind === 'moved') && w.world.used('gh_niche'), 'searched where the stone is cut with a smoking mountain, it gives, and the niche behind it can be walked into');
+    const gifts = GH.features!.find((f) => f.kind === 'chest' && f.id === 'gh_offerings');
+    ok(gifts?.kind === 'chest' && gifts.gold === 500 && gifts.items.join() === 'elixir,potion_sp_great', 'in the niche, the war-band\'s offerings: 500 gold, an Elixir and a Sapphire Vial');
+    // And out up the tube onto F12's 20,13, facing up the cut, with the way's own line and no other.
+    w.world.travel(GH.id, GH.start.x, GH.start.y + 1, NORTH);
+    const back = w.world.move('forward');
+    ok(back.kind === 'moved' && w.world.zone?.id === F12.id && w.world.state.x === f12.x + 20 && w.world.state.y === f12.y + 13 && w.world.state.facing === NORTH && back.messages.join(' | ') === GH.exits![0].label,
+      `out up the tube onto F12's 20,13, facing up the cut, the way's own line alone (${said(back)})`);
+    listen(w);
+    w.party.members.forEach((m, i) => { m.level = levels[i]; });
+    w.level = 25;
+    // The rumour (#846): Petroc at the anvil says DESIGN §9's two lines after his own words at a meeting after his
+    // first, and nothing of them at the first; once the brood has fallen, after his words over the old axe. Words only,
+    // setting nothing, in no quest, keyed on nothing of the lair, and every meeting with them fits his box.
+    const heir = person('Petroc, the warlord\'s heir', G11), MET = 'g11_heir_met';
+    const kept = [MET, BROOD_ASKED].map((k) => [k, w.party.flags[k]] as const);
+    for (const [k] of kept) delete w.party.flags[k];
+    w.world.travel(G11.id, heir.x, heir.y);
+    const first = meet(heir, w.party, heard(w.world, heir)).text, then = meet(heir, w.party, heard(w.world, heir)).text;
+    const told = heir.says!.filter((s) => s.lines.slice(-2).join('\n') === AXE_RUMOUR.join('\n')), boxes = told.map((s) => wrap(s.lines.join('\n\n'), SAY_W).length);
+    ok(heir.flag === MET && first === heir.lines.join('\n\n') && then.startsWith(`${heir.lines.join('\n\n')}\n\n`) && then === [...heir.lines, ...AXE_RUMOUR].join('\n\n')
+      && told.length === 2 && JSON.stringify(told[0].after) === JSON.stringify({ flag: BROOD_ASKED, slain: BROOD }) && JSON.stringify(told[1].after) === JSON.stringify({ flag: MET }) && heir.says!.at(-1) === told[1]
+      && told.every((s) => !s.sets && !s.until && !s.choice) && !JSON.stringify(heir.says).includes(GH.id) && boxes.every((n) => n <= SAY_LINES) && !JSON.stringify(questLog(w.world.state, w.party)).includes('Grim\'s'),
+      `Petroc says nothing of the axe at his first meeting, and at the next after his own words "${AXE_RUMOUR.join(' ')}", as after his words over the old axe once the brood has fallen: words only, in no quest, ${boxes.join(' and ')} of his box's ${SAY_LINES} lines`);
+    listen(w);
+    for (const [k, v] of kept) { if (v === undefined) delete w.party.flags[k]; else w.party.flags[k] = v; }
   }
 }

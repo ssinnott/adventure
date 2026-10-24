@@ -315,6 +315,25 @@
         "8,13"
       ]
     },
+    "grims_howe": {
+      "size": "16x16",
+      "used": [
+        "gh_bier",
+        "gh_chamber",
+        "gh_crust",
+        "gh_mark",
+        "gh_mound",
+        "gh_niche",
+        "gh_offerings",
+        "gh_warm"
+      ],
+      "groups": [
+        "gh_drake"
+      ],
+      "doors": [
+        "7,13"
+      ]
+    },
     "meridian_camp": {
       "size": "32x32",
       "used": [
