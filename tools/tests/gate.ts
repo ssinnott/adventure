@@ -31,8 +31,6 @@ import { FIXTURE, LAIR, GUARDIAN } from './enclave.ts';
 import { featureFlags } from './quests.ts';
 import { groupFlags } from '../../src/game/people.ts';
 import type { QuestCond } from '../../src/game/quests.ts';
-import type { AtlasZone } from '../../src/game/atlas.ts';
-import { once } from '../checks.ts';
 import { ok, owed, withDefs, asked } from './lib.ts';
 
 /**
@@ -86,29 +84,21 @@ const DAYS = 300;
 const BACK_DAYS = 100;
 
 /**
- * The boss groups, by the zone they are met from (a dungeon's under the zone it opens from), as the
- * game names a group, 'map:id': each is judged at its own map's floor and two levels above it, and
- * left out of its map's day. An area's are all its zones' together. A boss whose floor leaves fewer than
- * two levels to the cap is judged at the cap (at its floor alone where the floor is the cap); and a map that holds nothing but its boss (the Heart:
+ * An area's boss groups, those of its maps that say they are one (`EncounterDef.boss`), as the game
+ * names a group, 'map:id': each is judged at its own map's floor and two levels above it, and left out
+ * of its map's day. A boss whose floor leaves fewer than two levels to the cap is judged at the cap (at
+ * its floor alone where the floor is the cap); and a map that holds nothing but its boss (the Heart:
  * Vask's group, or its twin the Council thins) is judged on the boss's odds, with no floor of fights to
- * pool and no day (#759). A group may say it is one itself (`EncounterDef.boss`), and then is named
- * here no longer (#897): every area's are (#968).
+ * pool and no day (#759).
  */
-export const BOSSES: Record<string, readonly string[]> = {};
-
-/**
- * Each zone's road: the groups met on it, in order, from its way in. Every zone with groups names one,
- * here or on its zone (`AtlasZone.road`) and not both (#897): every zone's is on it (#968).
- */
-export const ROADS: Record<string, readonly string[]> = {};
-
-/** A zone's road, named here or on the zone. */
-const roadOf = (z: AtlasZone): readonly string[] | undefined => ROADS[z.id] ?? z.road;
-/** An area's boss groups: its zones' rows here, then the groups of its maps that say they are one. */
-const bossesOf = (area: Pick<Area, 'maps' | 'atlas'>): string[] =>
-  [...area.atlas.zones.flatMap((z) => BOSSES[z.id] ?? []), ...area.maps.flatMap((d) => (d.encounters ?? []).filter((g) => g.boss).map((g) => `${d.id}:${g.id}`))];
+const bossesOf = (area: Pick<Area, 'maps'>): string[] =>
+  area.maps.flatMap((d) => (d.encounters ?? []).filter((g) => g.boss).map((g) => `${d.id}:${g.id}`));
 /** What an area is called in the check, apart from the map it shares an id with: its name on the atlas, as a zone's is. */
-const nameOf = (id: string): string => zoneName(ATLAS.areas.find((a) => a.id === id)?.name ?? id);
+const nameOf = (id: string): string => {
+  const area = ATLAS.areas.find((a) => a.id === id);
+  if (!area) throw new Error(`the atlas names no area '${id}'`);
+  return zoneName(area.name);
+};
 
 /**
  * The figures past their limits someone owes, by check: who owes each, and the figure it stood at
@@ -312,7 +302,7 @@ function judgeMap(d: Fought, areaFloor: number, bosses: readonly string[], own: 
     if (!boss) continue;
     const at = rate(boss, d.band[0]);
     // The sentries' lever (#752): Vask's own group with the clock let run (the bots take the called first) is
-    // won a quarter to a third of the time, the plan's figure, which holds only on the sentries at 890 (OFF_LINE).
+    // won a quarter to a third of the time, the plan's figure, which holds only on the sentries at 890 (`MonsterDef.offLine`).
     if (b === 'core:core_vask') {
       const run = winRate(d.band[0], boss, SEEDS, ROUND_CAP, gateOpts(boss), { answer: { ...ANSWER, clock: 'called' } });
       ok(run >= 0.2 && run <= 0.45, `${b}: the clock let run at ${d.band[0]}: ${pc(run)} won (the plan's quarter to a third, on the sentries at 890: 20% to 45%)`);
@@ -560,7 +550,7 @@ export function gate(): void {
 
     // The area against the curve: each group at its own map's floor, and two under a floor.
     const name = nameOf(id);
-    const lost = [...bosses, ...zones.flatMap((z) => roadOf(z) ?? [])].filter((ref) => !find(ref));
+    const lost = [...bosses, ...zones.flatMap((z) => z.road ?? [])].filter((ref) => !find(ref));
     ok(!lost.length, `${name}: its bosses and its roads are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
     const pools = areaPools(pooled, band[0], rate, band[0] < GATE.dayFrom);
     if (pools.through === null) console.log(`  n/a:  ${name} has no groups yet`);
@@ -578,8 +568,8 @@ export function gate(): void {
       const maps = z.maps!.map((m) => fought.find((d) => d.id === m.map)).filter((d): d is (typeof fought)[number] => !!d);
       if (!maps.length) continue;
       const zn = zoneName(z.name), floor = Math.min(...maps.map((d) => d.band[0]));
-      const refs = roadOf(z), own = new Set(z.maps!.map((m) => m.map)), astray = (refs ?? []).filter((ref) => !own.has(ref.split(':')[0]));
-      ok(!!refs?.length, `${zn}: its road is named${refs?.length ? '' : ` (ROADS has no '${z.id}')`}`);
+      const refs = z.road, own = new Set(z.maps!.map((m) => m.map)), astray = (refs ?? []).filter((ref) => !own.has(ref.split(':')[0]));
+      ok(!!refs?.length, `${zn}: its road is named${refs?.length ? '' : ` ('${z.id}' names none)`}`);
       ok(!astray.length, `${zn}: its road runs on its own maps${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
       const way = (refs ?? []).map(find);
       if (refs?.length && way.every((g) => g)) {
@@ -620,11 +610,6 @@ export function gate(): void {
     if (lair) judgeMap(lair, floor, [GUARDIAN], now.own(lair));
     for (const line of offAim.splice(listed)) console.log(`  info: the fixture lair, off its aim: ${line}`);
   }
-  const zoneIds = new Set(ATLAS.zones.map((z) => z.id)), astray = [...Object.keys(ROADS), ...Object.keys(BOSSES)].filter((k) => !zoneIds.has(k));
-  ok(!astray.length, `every key of ROADS and BOSSES is a zone${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
-  const twice = [...ATLAS.zones.filter((z) => ROADS[z.id] && z.road).map((z) => `${z.id}'s road`),
-    ...Object.values(BOSSES).flat().filter((ref) => { const [map, id] = ref.split(':'); return MAP_DEFS.find((d) => d.id === map)?.encounters?.find((g) => g.id === id)?.boss; })];
-  ok(...once('every road and boss is named once, in ROADS or BOSSES or on its zone or group', twice));
   // The road behind's groups (BEHIND): each names a group of a built map that waits on an `after`, so no
   // group a company at its floor can meet is left out; and leaving them out drops that group alone.
   const unbehind = BEHIND.filter((ref) => { const [map, id] = ref.split(':'); return !MAP_DEFS.find((d) => d.id === map)?.encounters?.find((e) => e.id === id)?.after; });

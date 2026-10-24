@@ -322,13 +322,6 @@ export function leaves(floor: number, kills: readonly Pick<MonsterDef, 'xp' | 'l
 /** How far over the next floor an area may leave that company: a level (EXPANSION §5.2, #634). */
 const LEAD = 1;
 
-/**
- * The areas that leave it further over, each held at the level it leaves as built, rounded up, as
- * a row's `owed` holds a floor, so that none grows unnoticed; once inside the line, it is dropped. An
- * area may hold its own in its checks.ts (`AreaChecks.overRoad`), and then is named here no longer (#897).
- */
-const OVER_ROAD: Partial<Record<keyof typeof CURVE, { level: number; why: string }>> = {};
-
 const leadSaid = (id: string, left: number, next: number): string =>
   `${id}: entered at its floor and three quarters cleared, paid by level, a company leaves at ${left.toFixed(1)}, ${left < next ? '' : '+'}${(left - next).toFixed(1)} over the next floor ${next}`;
 
@@ -337,9 +330,9 @@ const leadSaid = (id: string, left: number, next: number): string =>
  * figure it is named at: nothing when it holds.
  */
 export function leadFault(id: string, left: number, next: number, named?: { level: number }): string | undefined {
-  if (!named) return left - next > LEAD ? `${leadSaid(id, left, next)}: more than a level, and it is not named in OVER_ROAD` : undefined;
+  if (!named) return left - next > LEAD ? `${leadSaid(id, left, next)}: more than a level, and its area holds no overRoad` : undefined;
   if (left > named.level) return `${leadSaid(id, left, next)}: past its named ${named.level}, so it grew`;
-  return left - next > LEAD ? undefined : `${leadSaid(id, left, next)}: inside the line, so drop it from OVER_ROAD`;
+  return left - next > LEAD ? undefined : `${leadSaid(id, left, next)}: inside the line, so drop its overRoad`;
 }
 
 /**
@@ -453,9 +446,10 @@ export function curve(): void {
   // What a clear falls short of is owed on its row or by its area (`Owes.curve`), not both (#897).
   const owing = (id: string): AreaCurve['owed'] => CURVE[id as RegionId].owed ?? CHECKS.get(id)?.owes?.curve;
   ok(...once('every shortfall is owed once, on its row in CURVE or by its area', AREAS.filter((a) => CURVE[a.id].owed && CHECKS.get(a.id)?.owes?.curve).map((a) => a.id)));
-  // How far over the next floor an area's clear leaves a company is held in OVER_ROAD or by its area, not both (#897).
-  const overRoad = (id: string): { level: number; why: string } | undefined => OVER_ROAD[id as RegionId] ?? CHECKS.get(id)?.overRoad;
-  ok(...once('every area held over the road is held once, in OVER_ROAD or by its area', AREAS.filter((a) => OVER_ROAD[a.id] && CHECKS.get(a.id)?.overRoad).map((a) => a.id)));
+  // An area that leaves a company further over is held by its area (`AreaChecks.overRoad`) at the level
+  // it leaves as built, rounded up, as a row's `owed` holds a floor, so that none grows unnoticed; once
+  // inside the line, it is dropped.
+  const overRoad = (id: string): { level: number; why: string } | undefined => CHECKS.get(id)?.overRoad;
   // The enclave (#845): the fixture lair at the cap beside Saltreach, a band-10 area, leaves Saltreach's
   // curve as it was, its clear (and so its lead and its window) and its band; it is held to its own band
   // and the cap's window, and its pay is a figure. An enclave has a band of its own over its box's, is
@@ -521,7 +515,7 @@ export function curve(): void {
     budget(id, 'xp a member', clear.xp, xpBudget(row), owes, owes?.xp);
     budget(id, 'gold', Math.floor(clear.gold), goldBudget(row), owes, owes?.gold);
     // The lead over the road (#634): the level that clear leaves a company at, paid by level,
-    // against the next floor and, for an area named in OVER_ROAD, its figure.
+    // against the next floor and, for an area held over the road (`overRoad`), its figure.
     if (area) {
       const left = leaves(lo, clear.placed, clear.quest), held = overRoad(id), fault = leadFault(id, left, row.next, held);
       ok(!fault, fault ?? `${leadSaid(id, left, row.next)}${held ? `, a named exception held at ${held.level}: ${held.why}` : ''}`);
