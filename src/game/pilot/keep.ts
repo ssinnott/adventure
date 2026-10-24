@@ -24,7 +24,7 @@ import { routeLengths, routeMaps } from './route.ts';
 import type { Goal } from './route.ts';
 import type { Brain, Pilot } from './pilot.ts';
 import { reserve, spare } from './purse.ts';
-import type { Items } from '../tables.ts';
+import type { Items, Tables } from '../tables.ts';
 
 export { reserve, spare };
 
@@ -86,16 +86,16 @@ export interface Mend { who: number; spell: string; row: number; target: number 
  * points, under MEND_AT, mended by the member standing and awake with the most spell points who has a
  * mending spell off the fight and the points for it, one for a member before one for the company (#723).
  */
-export function mendable(p: Party): Mend | undefined {
+export function mendable(spells: Tables['spells'], p: Party): Mend | undefined {
   const target = p.members.map((c, i) => ({ c, i })).filter(({ c }) => !fallen(c) && c.hp < c.maxHp * MEND_AT).sort((a, b) => a.c.hp / a.c.maxHp - b.c.hp / b.c.maxHp)[0];
   if (!target) return undefined;
   let best: Mend | undefined, most = -1;
   for (const [who, c] of p.members.entries()) {
     if (isDown(c) || hasCondition(c, 'asleep') || c.sp <= most) continue;
-    const list = c.spells.filter((s) => spell(s).context !== 'combat');
-    const heals = list.filter((s) => { const d = spell(s); return !!d.heal && !d.raise && d.sp <= c.sp && (d.target === 'ally' || d.target === 'party'); });
-    const id = heals.find((s) => spell(s).target === 'ally') ?? heals[0];
-    if (id) { best = { who, spell: id, row: list.indexOf(id), target: spell(id).target === 'ally' ? target.i : -1 }; most = c.sp; }
+    const list = c.spells.filter((s) => spell(spells, s).context !== 'combat');
+    const heals = list.filter((s) => { const d = spell(spells, s); return !!d.heal && !d.raise && d.sp <= c.sp && (d.target === 'ally' || d.target === 'party'); });
+    const id = heals.find((s) => spell(spells, s).target === 'ally') ?? heals[0];
+    if (id) { best = { who, spell: id, row: list.indexOf(id), target: spell(spells, id).target === 'ally' ? target.i : -1 }; most = c.sp; }
   }
   return best;
 }
@@ -280,7 +280,7 @@ function onMap(g: Game, k: Known, p: Pilot, mem: Keep): Action | null {
   // menus; but where the harness's rule wants rest and a rest or a room can be had here, it rests first.
   const here = (f: Feature): boolean => f.kind === 'inn' && f.x === g.world.state.x && f.y === g.world.state.y;
   const restNow = !!tired(party) && ((restRefused(g.world) === '' && party.food >= party.members.length) || k.features(g.world.state.mapId).some(here));
-  const mend = restNow ? undefined : mendable(party);
+  const mend = restNow ? undefined : mendable(g.tables.spells, party);
   if (mend) {
     mem.mend = mend;
     p.why = [mend.target < 0 ? 'Mending the company.' : `Mending ${party.members[mend.target].name}.`];

@@ -377,18 +377,18 @@ export const walkthrough: Walkthrough = (ok) => {
   const hall = ofKind(WATCH, 'guild')[0];
   ok(ofKind(WATCH, 'guild').length === 1 && hall.hall === 'lanterns' && hall.interior === 'watch_hall' && hall.maxTier === 6, `the Lantern hall is the Lanterns' hall and teaches to the sixth tier (${hall.name})`);
   const caster = w.party.members.find((m) => CLASSES[m.cls].spells && hall.classes.includes(m.cls))!;
-  const sixth = spellsFor(CLASSES[caster.cls].spells!, hall.maxTier!).find((sp) => sp.level === 6 && !caster.spells.includes(sp.id))!;
+  const sixth = spellsFor(TABLES.spells, CLASSES[caster.cls].spells!, hall.maxTier!).find((sp) => sp.level === 6 && !caster.spells.includes(sp.id))!;
   // The fee to study, once, then the spell as the hall offers it, at its price for the tier (spellPrice).
   const before = w.party.gold;
   payFee(w.party, hall);
-  const { paid: price } = learnSpell(w.party, hallOffers(w.party, hall).find((o) => w.party.members[o.who] === caster && o.id === sixth.id)!);
+  const { paid: price } = learnSpell(TABLES.spells, w.party, hallOffers(TABLES.spells, w.party, hall).find((o) => w.party.members[o.who] === caster && o.id === sixth.id)!);
   ok(!!sixth && w.party.gold === before - hall.fee - price && caster.spells.includes(sixth.id), `${caster.name} pays the hall's fee of ${hall.fee} and learns ${sixth.name} for ${price}`);
   const gallery = ofKind(WATCH, 'trainer')[0];
   // Trained on a copy, so the company walks on as it was; the company pays.
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 16; trainee.xp = xpForLevel(17);
   ok(gallery.maxLevel === 17 && gallery.interior === 'watch_gallery' && canTrainAt(trainee, gallery.maxLevel), 'the Lamp Gallery will train a member of 16');
-  const { paid: fee } = train(w.party, trainee, makeRng(1), gallery.maxLevel);
+  const { paid: fee } = train(TABLES.spells, w.party, trainee, makeRng(1), gallery.maxLevel);
   ok(trainee.level === 17 && !canTrainAt(trainee, gallery.maxLevel), `who trains to 17 for ${fee} gold, and no further`);
 
   // The papers read (#201): the Reader in the prior's room, once she has met the company, reads it

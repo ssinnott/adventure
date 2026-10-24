@@ -30,7 +30,7 @@ export async function harness(): Promise<void> {
   const s = startCombat(HARNESS, defaultParty(HARNESS, rng), [{ id: 'test', monsters: [soldier, soldier] }], rng);
   ok(s.monsters.length === 2 && s.monsters.every((m) => m.def === soldier && m.hp === soldier.hp) && describeGroups(s) === '2 Test Soldiers', `a fight takes a def as well as an id, and names it (${describeGroups(s)})`);
   // Spells that grow with their caster stop growing at 10 in play (DESIGN.md §7); a tool may try another ceiling.
-  const meteor = spell('meteor'), smite = spell('smite');
+  const meteor = spell(HARNESS.spells, 'meteor'), smite = spell(HARNESS.spells, 'smite');
   ok(SPELLS_GROW_TO === 10 && spellDice(meteor, 8) === 8 && spellDice(meteor, 10) === 10 && spellDice(meteor, 20) === 10 && spellDice(meteor, 20, 32) === 20 && spellDice(smite, 20) === 3, 'Meteor Swarm rolls 2d10 for every two levels to 10 and no more, unless a tool tries another ceiling');
   ok(startCombat(HARNESS, defaultParty(HARNESS, makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35)).spellsGrowTo === undefined && startCombat(HARNESS, defaultParty(HARNESS, makeRng(35)), [{ id: 'a', monsters: ['rat'] }], makeRng(35), { spellsGrowTo: 32 }).spellsGrowTo === 32, "a fight keeps play's ceiling on spells unless it is given another");
   // New powers, as a what-if: a member the resolver is told strikes twice does, and play gives none.
@@ -74,7 +74,7 @@ export async function harness(): Promise<void> {
   ok(perRest[0] === 6.5 && perRest[9] === 6.5 && perRest[CAP - 1] === 12 && perRest.every((f, k) => f < 15 && (k === 0 || f >= perRest[k - 1])), `fights between rests run from ${perRest[0]} at level 1 and ${perRest[9]} at 10 to ${perRest[CAP - 1]} at ${CAP}`);
   // The harness trains as play does, to the road's cap.
   const c = defaultParty(HARNESS, makeRng(32)).members[0];
-  c.xp = xpForLevel(40); levelUp(c, makeRng(32));
+  c.xp = xpForLevel(40); levelUp(HARNESS.spells, c, makeRng(32));
   ok(CAP === MAX_LEVEL && c.level === MAX_LEVEL && companyAt(20, 32).members.every((m) => m.level === 20), `levelUp trains to the cap, ${MAX_LEVEL}, and the harness's company to its level (${c.level})`);
   // The gate's company at Act II's floors: trained to 10, 12, 14 and 16, and dressed past the one two
   // under it by the ladder past Thornmark's Armoury (#399), as the gate's two-under check asks.
@@ -313,7 +313,7 @@ function onTheLine(): void {
 }
 
 /** The company with no fire: its members' fire spells forgotten. */
-const fireless = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => spell(id).element !== 'fire'); return p; };
+const fireless = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => spell(HARNESS.spells, id).element !== 'fire'); return p; };
 
 /**
  * One fight a seed from `from`, a company of `level` dressed by `dress`, as `measure` fights them:
@@ -405,7 +405,7 @@ function abilities(): void {
   for (const x of [byAbsolve, byDraught, stranded]) mendBetween(x.p);
   const flesh = (x: { who: Party['members'] }): boolean => x.who.every((m) => !hasCondition(m, 'stoned'));
   ok(draughts(companyAt(24, 1)) === 0 && draughts(companyAt(25, 1)) === 1 && byDraught.who.length >= 1
-    && flesh(byAbsolve) && points(byAbsolve.p) === byAbsolve.sp - spell('absolve').sp && draughts(byAbsolve.p) === 1
+    && flesh(byAbsolve) && points(byAbsolve.p) === byAbsolve.sp - spell(HARNESS.spells, 'absolve').sp && draughts(byAbsolve.p) === 1
     && flesh(byDraught) && draughts(byDraught.p) === 0 && mustRest(byDraught.p) === null
     && stranded.who.every((m) => hasCondition(m, 'stoned')) && mustRest(stranded.p) === 'dead',
     `between fights the company lifts stone by Absolve, keeping its draught; by the draught it carries from 25 when all ${byDraught.who.length} who know Absolve are glassed; and with neither rests for a temple`);
@@ -416,12 +416,12 @@ function abilities(): void {
   // by the cheapest cure the member knows; with the answer off a hold is left to break of itself.
   const bells = companyAt(24, 1), cleric = bells.members.find((m) => m.cls === 'cleric')!, back = bells.members.findIndex((m, j) => j >= FRONT_ROW && m.maxSp > 0);
   addCondition(HARNESS.items, bells.members[back], 'paralysed');
-  const casterFirst = wakeWith(bells, cleric);
+  const casterFirst = wakeWith(HARNESS.spells, bells, cleric);
   addCondition(HARNESS.items, bells.members[1], 'paralysed');
-  const frontFirst = wakeWith(bells, cleric);
-  const unanswered = wakeWith(bells, cleric, { ...ANSWER, hold: false });
-  ok(casterFirst?.target === back && frontFirst?.target === 1 && spell(frontFirst.spellId).cure?.includes('paralysed') === true && !unanswered,
-    `the bots free the held, one of the front row before a caster, by ${frontFirst ? spell(frontFirst.spellId).name : 'nothing'}, and leave a hold with the answer off`);
+  const frontFirst = wakeWith(HARNESS.spells, bells, cleric);
+  const unanswered = wakeWith(HARNESS.spells, bells, cleric, { ...ANSWER, hold: false });
+  ok(casterFirst?.target === back && frontFirst?.target === 1 && spell(HARNESS.spells, frontFirst.spellId).cure?.includes('paralysed') === true && !unanswered,
+    `the bots free the held, one of the front row before a caster, by ${frontFirst ? spell(HARNESS.spells, frontFirst.spellId).name : 'nothing'}, and leave a hold with the answer off`);
   // While a foe breathes they raise one of the front row fallen first (`breathGuard`): with it down
   // the breath takes the back row, which has more standing; an arm's sweep asks nothing of it.
   const ring = (enc: MonsterDef[]): { s: CombatState; p: Party } => {

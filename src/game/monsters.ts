@@ -1,11 +1,11 @@
 // What a monster is. The monsters themselves are content, each area's in
 // src/content/areas/<area>/monsters.ts. `sprite` names the vector drawing, a kind a family of ui/monsters/ registers; the
 // numbers are the combat model's. A group on a map is a list of these ids (see mapdef.ts).
-import { MONSTERS } from '../content/index.ts';
 import type { MonsterSprite } from '../content/index.ts';
 import type { Condition } from './party.ts';
 import { spell } from './spells.ts';
 import type { Element, SpellDef } from './spells.ts';
+import type { Tables } from './tables.ts';
 
 export type { MonsterSprite };
 
@@ -123,8 +123,8 @@ export interface MonsterDef {
   offLine?: string | { role: string; share: number; why: string };
 }
 
-export function monster(id: string): MonsterDef {
-  const d = MONSTERS[id];
+export function monster(monsters: Tables['monsters'], id: string): MonsterDef {
+  const d = monsters[id];
   if (!d) throw new Error(`unknown monster '${id}'`);
   return d;
 }
@@ -175,9 +175,9 @@ export function monsterCanCast(sp: SpellDef): boolean {
 }
 
 /** The spells a monster names, every one of which it can cast; throws on one it cannot. */
-export function monsterSpells(d: MonsterDef): SpellDef[] {
+export function monsterSpells(spells: Tables['spells'], d: MonsterDef): SpellDef[] {
   return (d.cast?.spells ?? []).map((id) => {
-    const sp = spell(id);
+    const sp = spell(spells, id);
     if (!monsterCanCast(sp)) throw new Error(`${d.id} cannot cast '${id}'`);
     return sp;
   });

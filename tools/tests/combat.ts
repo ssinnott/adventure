@@ -99,10 +99,10 @@ export function combat(): void {
     ok(warded, 'Ward sets the party shield for five rounds');
     ok(WARD_AC > 0 && s.log.some((l) => /ward settles/.test(l)), 'the ward is logged');
     const dead = pp.members[0]; addCondition(TABLES.items, dead, 'dead'); dead.hp = -10;
-    const line = castOnAlly(TABLES.items, cler, spell('revive'), dead);
+    const line = castOnAlly(TABLES.items, cler, spell(TABLES.spells, 'revive'), dead);
     ok(!hasCondition(dead, 'dead') && dead.hp === 10 && /draws breath/.test(line), `Revive brings a dead member back at 10 hp (${line})`);
-    ok(/not dead/.test(castOnAlly(TABLES.items, cler, spell('revive'), dead)), 'Revive on the living does nothing');
-    ok(spell('haste').buff === 'haste' && spell('town_portal').explore === 'town_portal', 'Haste and Town Portal exist at tier 4 and 5');
+    ok(/not dead/.test(castOnAlly(TABLES.items, cler, spell(TABLES.spells, 'revive'), dead)), 'Revive on the living does nothing');
+    ok(spell(TABLES.spells, 'haste').buff === 'haste' && spell(TABLES.spells, 'town_portal').explore === 'town_portal', 'Haste and Town Portal exist at tier 4 and 5');
   }
   // Slumber: the dead never sleep, nor what shrugs it off of its own nature (the slime, the crab, the
   // wardens); beasts and people do.
@@ -339,7 +339,7 @@ function elements(): void {
 
 /** Casting (MONSTERS §3.3): a chanter sings a row to sleep, a caster mends and blesses its group, and a caster in the back rank does not wait. */
 function casting(): void {
-  ok(Object.values(MONSTERS).every((d) => { try { monsterSpells(d); return true; } catch { return false; } }), 'every monster that casts names spells it can cast');
+  ok(Object.values(MONSTERS).every((d) => { try { monsterSpells(TABLES.spells, d); return true; } catch { return false; } }), 'every monster that casts names spells it can cast');
   ok(MONSTERS.drowned_chanter.cast?.spells.includes('sleep') === true, 'the drowned chanter sings Slumber');
   const sure: MonsterDef = { ...MONSTERS.drowned_chanter, cast: { spells: ['sleep'], chance: 1 } };
   {
@@ -374,7 +374,7 @@ function casting(): void {
     const maren = p.members[4];
     maren.spells.push('cure'); maren.sp = 20;
     addCondition(TABLES.items, p.members[3], 'asleep'); addCondition(TABLES.items, p.members[1], 'asleep');
-    const pick = wakeWith(p, maren);
+    const pick = wakeWith(TABLES.spells, p, maren);
     ok(pick?.spellId === 'cure' && pick.target === 1, `the bots wake Idris, of the front row, before Ottilie, of the back, with Cleanse (${JSON.stringify(pick)})`);
     s.monsters[0].hp = 0;
     partyAct(s, p, makeRng(53), { type: 'defend' });
@@ -729,14 +729,14 @@ function curse(): void {
   ok(hasCondition(hit, 'cursed'), 'and a rest');
   const maren = p.members[4];
   addCondition(TABLES.items, hit, 'dead');
-  castOnAlly(TABLES.items, maren, spell('revive'), hit);
+  castOnAlly(TABLES.items, maren, spell(TABLES.spells, 'revive'), hit);
   ok(!hasCondition(hit, 'dead') && hasCondition(hit, 'cursed'), 'and a raising');
   // Restore lifts it at tier 4 and Absolve at tier 7, which a cleric learns at 23 (DESIGN §7).
-  const lifted = castOnAlly(TABLES.items, maren, spell('restore'), hit);
-  ok(!hasCondition(hit, 'cursed') && spell('restore').level === 4, `Restore lifts it (${lifted})`);
+  const lifted = castOnAlly(TABLES.items, maren, spell(TABLES.spells, 'restore'), hit);
+  ok(!hasCondition(hit, 'cursed') && spell(TABLES.spells, 'restore').level === 4, `Restore lifts it (${lifted})`);
   addCondition(TABLES.items, hit, 'cursed');
-  const absolved = castOnAlly(TABLES.items, maren, spell('absolve'), hit);
-  ok(!hasCondition(hit, 'cursed') && absolved === `Maren casts Absolve: the curse lifts from ${hit.name}.` && spell('absolve').level === 7 && spellTierAt(22) === 6 && spellTierAt(23) === 7, `and Absolve, of tier 7, which comes at 23 (${absolved})`);
+  const absolved = castOnAlly(TABLES.items, maren, spell(TABLES.spells, 'absolve'), hit);
+  ok(!hasCondition(hit, 'cursed') && absolved === `Maren casts Absolve: the curse lifts from ${hit.name}.` && spell(TABLES.spells, 'absolve').level === 7 && spellTierAt(22) === 6 && spellTierAt(23) === 7, `and Absolve, of tier 7, which comes at 23 (${absolved})`);
   // It takes nothing in a fight: a cursed member strikes, wears its armour and acts as it did.
   const plain = defaultParty(TABLES, makeRng(94)).members[0], cursed = structuredClone(plain);
   addCondition(TABLES.items, cursed, 'cursed');
@@ -1025,7 +1025,7 @@ function bot(): void {
     for (const c of q.members) c.hp = c.maxHp = 200;
     q.members[1].hp = 70;
     const a = turnOf(q, 130, [4]).get(4);
-    ok(a?.type === 'cast' && a.target === 1 && !!spell(a.spellId).heal && q.members[1].hp > 70, `botTurn gives the cleric's mend on Idris at 70 of 200, under 40%, and the resolver took it (${JSON.stringify(a)}; ${q.members[1].hp} hp)`);
+    ok(a?.type === 'cast' && a.target === 1 && !!spell(TABLES.spells, a.spellId).heal && q.members[1].hp > 70, `botTurn gives the cleric's mend on Idris at 70 of 200, under 40%, and the resolver took it (${JSON.stringify(a)}; ${q.members[1].hp} hp)`);
   }
   {
     // Bram the knight to the back row, with his sword and no spell; Ottilie to the front.

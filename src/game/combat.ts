@@ -239,7 +239,7 @@ export function startCombat(tables: Tables, party: Party, groups: readonly Comba
     g.monsters.forEach((m, k) => {
       if (monsters.length >= MAX_MONSTERS) return;
       if (k === 0 || k === front) rank++;
-      const def = typeof m === 'string' ? monster(m) : m;
+      const def = typeof m === 'string' ? monster(tables.monsters, m) : m;
       monsters.push({ def, hp: def.hp, group: rank, band, back: k >= front, fled: false, ...(g.under ? { under: g.under } : {}), conditions: [], flash: 0 });
     });
   });
@@ -406,7 +406,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       break;
     }
     case 'cast': {
-      const sp = spell(action.spellId);
+      const sp = spell(s.tables.spells, action.spellId);
       if (sp.context === 'explore' || (sp.glass && !action.element)) return false;
       // An artifact's spell (#847): its bearer casts it for a charge, not spell points, whatever they know.
       if (action.from) {
@@ -776,7 +776,7 @@ function dim(s: CombatState): void {
 }
 
 /** The group a caller brings (`MonsterDef.calls`), as defs; none for one that calls nobody. */
-const calledBy = (d: MonsterDef): MonsterDef[] => (d.calls?.monsters ?? []).map((q) => (typeof q === 'string' ? monster(q) : q));
+const calledBy = (monsters: Tables['monsters'], d: MonsterDef): MonsterDef[] => (d.calls?.monsters ?? []).map((q) => (typeof q === 'string' ? monster(monsters, q) : q));
 
 /**
  * Whether a monster may call its group now: it stands, it calls someone, and the fight has room for
@@ -804,7 +804,7 @@ function beat(s: CombatState): void {
   const c = s.clock;
   if (!c || s.round % c.every !== 0 || !panelStands(s) || s.monsters.length >= MAX_MONSTERS) return;
   const caller = s.monsters.find((m) => clocked(s, m) && standing(m));
-  if (caller) c.into = call(s, caller, [typeof c.calls === 'string' ? monster(c.calls) : c.calls], c.into);
+  if (caller) c.into = call(s, caller, [typeof c.calls === 'string' ? monster(s.tables.monsters, c.calls) : c.calls], c.into);
 }
 
 /**
@@ -838,10 +838,10 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   const m = s.monsters[t.i];
   // A caller may spend its turn bringing its group in, while the fight has room for the whole of it;
   // the clock's caller never does, calling on the clock's beat instead (`beat`).
-  if (m.def.calls && !clocked(s, m) && canCall(s, m) && rng.chance(m.def.calls.chance)) { call(s, m, calledBy(m.def)); s.turn++; checkOutcome(s, party, rng); return true; }
+  if (m.def.calls && !clocked(s, m) && canCall(s, m) && rng.chance(m.def.calls.chance)) { call(s, m, calledBy(s.tables.monsters, m.def)); s.turn++; checkOutcome(s, party, rng); return true; }
   // A caster may spend its turn on a spell; one in the back rank with nothing to cast or call and no bow holds.
   if (m.def.cast && rng.chance(m.def.cast.chance)) {
-    const sp = monsterSpells(m.def).find((x) => castable(s, party, m, x));
+    const sp = monsterSpells(s.tables.spells, m.def).find((x) => castable(s, party, m, x));
     if (sp) { monsterCast(s, party, rng, m, sp); s.turn++; checkOutcome(s, party, rng); return true; }
   }
   // A sweeper may spend its turn on a row: a breath from either rank, as a spell, an arm only where its blows reach.

@@ -31,13 +31,13 @@ const BOT_DELAY = 22;
 
 /** What a member may cast in a fight: the spells they know, then each artifact's they bear (#847), whatever they know. */
 export function castable(tables: Tables, c: Character): { id: string; from?: string }[] {
-  const { items } = tables, arts = borne(items, c).filter((id) => item(items, id).casts && spell(item(items, id).casts!.spell).context !== 'explore').map((id) => ({ id: item(items, id).casts!.spell, from: id }));
-  return [...c.spells.filter((x) => spell(x).context !== 'explore').map((id) => ({ id })), ...arts];
+  const { items } = tables, arts = borne(items, c).filter((id) => item(items, id).casts && spell(tables.spells, item(items, id).casts!.spell).context !== 'explore').map((id) => ({ id: item(items, id).casts!.spell, from: id }));
+  return [...c.spells.filter((x) => spell(tables.spells, x).context !== 'explore').map((id) => ({ id })), ...arts];
 }
 /** The fight's spell list: each row's words, a spell's cost or an artifact's castings left ("Grasping Roots (3 LEFT)"), and whether it is out of reach. */
 export const castRows = (tables: Tables, party: Party, c: Character): { label: string; disabled: boolean }[] => castable(tables, c).map((e) => {
   const left = e.from ? chargesLeft(tables.items, party, e.from) : 0;
-  return { label: `${spell(e.id).name} (${e.from ? `${left} LEFT` : spell(e.id).sp})`, disabled: e.from ? left < 1 : spell(e.id).sp > c.sp };
+  return { label: `${spell(tables.spells, e.id).name} (${e.from ? `${left} LEFT` : spell(tables.spells, e.id).sp})`, disabled: e.from ? left < 1 : spell(tables.spells, e.id).sp > c.sp };
 });
 
 export class CombatScreen implements Screen {
@@ -181,7 +181,7 @@ export class CombatScreen implements Screen {
         if (is(a, 'up')) this.sub = (this.sub + list.length - 1) % list.length;
         else if (is(a, 'down')) this.sub = (this.sub + 1) % list.length;
         else if (is(a, 'interact')) {
-          const e = list[this.sub], sp = spell(e.id);
+          const e = list[this.sub], sp = spell(g.tables.spells, e.id);
           if (e.from ? chargesLeft(g.tables.items, g.party, e.from) < 1 : c.sp < sp.sp) { g.say(e.from ? 'Nothing left in it until dawn.' : 'Not enough spell points.'); return; }
           this.pendingSpell = sp.id;
           this.pendingFrom = e.from ?? '';

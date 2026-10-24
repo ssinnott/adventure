@@ -456,7 +456,7 @@ function archdruid(): void {
     encounters: [{ id: 'beasts', x: 6, y: 1, monsters: ['fx_beast20', 'fx_beast20'], aware: 8, ...group }],
   });
   /** A member at 27 with the first `took` of its prestiges taken. */
-  const raised = (c: Character, took = 3): Character => { c.xp = xpForLevel(27); levelUp(c, rng); for (let n = 0; n < took; n++) takePrestige(c); return c; };
+  const raised = (c: Character, took = 3): Character => { c.xp = xpForLevel(27); levelUp(TABLES.spells, c, rng); for (let n = 0; n < took; n++) takePrestige(c); return c; };
   /** The premade six, a druid of 27 for its sorcerer: an Archdruid with all three prestiges, a Thornspeaker with two. */
   const withDruid = (took = 3): Party => { const p = defaultParty(TABLES, rng); p.members[5] = raised(createCharacter(TABLES, 'Kenver', 'human', 'druid', {}, rng), took); return p; };
   /** The premade six with no druid, its cleric an Exarch of 27: a third prestige, but not the druid's. */

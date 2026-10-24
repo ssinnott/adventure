@@ -710,7 +710,7 @@ export class World {
     for (const id of ids) {
       if (met.includes(id)) continue;
       met.push(id);
-      const look = monster(id).look;
+      const look = monster(this.tables.monsters, id).look;
       if (look) said.push(look);
     }
     return said;
@@ -759,7 +759,7 @@ export class World {
    * group comes on as it always did.
    */
   private beastsUnder(def: EncounterDef, level: number): boolean {
-    return !def.leader && def.monsters.every((id) => { const m = monster(id); return KINDS[m.kind].breaks === 'rout' && !m.calls && m.level < level; });
+    return !def.leader && def.monsters.every((id) => { const m = monster(this.tables.monsters, id); return KINDS[m.kind].breaks === 'rout' && !m.calls && m.level < level; });
   }
 
   /**

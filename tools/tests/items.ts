@@ -350,7 +350,7 @@ function artifacts(lent: Tables): void {
     // A thing carried has no numbers; any other piece is its Hand's piece and a point.
     const numbers = d.slot === 'none' ? !b?.hand && [d.dice, d.bonus, d.ac].every((n) => n === undefined) : point === 1 && like;
     ok(homed && !bad.length && numbers && (d.classes ?? []).join() === b.classes.join(),
-      `${d.name}: an artifact in ${b?.area}'s items, one power (${power(d)}), ${h ? `the ${h.name}'s numbers and a point` : 'carried, with no numbers'}, for ${b?.classes.length ? `the ${b.classes.join(', ')}` : 'any of the ten'}${bad.length ? ' -> ' + bad.join('; ') : ''}`);
+      `${d.name}: an artifact in ${b?.area}'s items, one power (${power(TABLES.spells, d)}), ${h ? `the ${h.name}'s numbers and a point` : 'carried, with no numbers'}, for ${b?.classes.length ? `the ${b.classes.join(', ')}` : 'any of the ten'}${bad.length ? ' -> ' + bad.join('; ') : ''}`);
     ok(!stocked.has(d.id), `${d.name}: no shop sells it`);
     // Placed, it lies once in the world, in a lair of its own area; waiting, its lair's issue owes it until it lies anywhere.
     const at = placesOf(d.id, b?.area), where = at.length ? ` (${at.map((x) => x.at).join(', ')})` : '';
@@ -554,7 +554,7 @@ function sheet(): void {
     return d.slot === 'weapon' ? weaponLine(TABLES, c) : slotLine(TABLES, c, d.slot === 'armor' ? 'armor' : 'shield');
   };
   const own = ARTS.map(lineOf), widest = own.reduce((a, b) => (measureText(b) > measureText(a) ? b : a));
-  ok(own.every((l) => l.includes(power(ITEMS[ARTS[own.indexOf(l)].id])) && glyphs(l) && measureText(l) <= SHEET_COL_W),
+  ok(own.every((l) => l.includes(power(TABLES.spells, ITEMS[ARTS[own.indexOf(l)].id])) && glyphs(l) && measureText(l) <= SHEET_COL_W),
     `each of the ${own.length} artifacts' sheet lines says its power in the font's glyphs inside the ${SHEET_COL_W} px column (the widest ${measureText(widest)}: ${widest})`);
   // The SPELLS line runs on past the column into the item list's, so it starts under the list's last row,
   // for a member with nothing more above it as for the fullest.

@@ -338,7 +338,7 @@ function fixed(): void {
   // four rounds where a company with no fire grinds on past them; it fights on through curses; and it
   // reads a fight that grows by a call, and wins it.
   {
-    const seeds = 40, fireless = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => spell(id).element !== 'fire'); return p; };
+    const seeds = 40, fireless = (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => spell(HARNESS.spells, id).element !== 'fire'); return p; };
     /** Seeds 1 to `seeds` of a gate fight, `cap` rounds at most, played as gateFight plays it, by the bots' `answer`: each fight's end. */
     const fought = (level: number, monsters: Fighters, cap = ROUND_CAP, dress = (p: Party): Party => p, answer = ANSWER): { s: CombatState; p: Party }[] => Array.from({ length: seeds }, (_, n) => {
       const k = n + 1, p = dress(gateCompany(level, k)), rng = makeRng(fightSeed(k)), s = startCombat(HARNESS, p, [asGroup('gate', monsters)], rng);

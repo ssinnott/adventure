@@ -1,7 +1,7 @@
 // What a spell is: seven tiers per spell list (tiers unlock at levels 1, 2, 4, 6 and 8, then 15 and
 // 23; see party.ts spellTierAt). `list` is who can learn it; `sp` the cost; the effect fields say
 // what it does. The spells themselves are content (src/content/spells.ts).
-import { SPELLS } from '../content/index.ts';
+import type { Tables } from './tables.ts';
 
 export type SpellList = 'cleric' | 'sorcerer' | 'druid';
 export type SpellTarget = 'self' | 'ally' | 'party' | 'enemy' | 'group' | 'all';
@@ -41,14 +41,14 @@ export interface SpellDef {
   text: string;
 }
 
-export function spell(id: string): SpellDef {
-  const d = SPELLS[id];
+export function spell(spells: Tables['spells'], id: string): SpellDef {
+  const d = spells[id];
   if (!d) throw new Error(`unknown spell '${id}'`);
   return d;
 }
 
-export function spellsFor(list: SpellList, maxLevel: number): SpellDef[] {
-  return Object.values(SPELLS).filter((s) => s.list === list && s.level <= maxLevel).sort((a, b) => a.level - b.level);
+export function spellsFor(spells: Tables['spells'], list: SpellList, maxLevel: number): SpellDef[] {
+  return Object.values(spells).filter((s) => s.list === list && s.level <= maxLevel).sort((a, b) => a.level - b.level);
 }
 
 /** The level damage spells stop growing at: past it they grow by rank alone (DESIGN §7). */

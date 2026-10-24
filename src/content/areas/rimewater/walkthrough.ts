@@ -266,18 +266,18 @@ export const walkthrough: Walkthrough = (ok) => {
   const hall = ofKind(TOWN, 'guild')[0];
   ok(hall.hall === 'lanterns' && hall.interior === 'rime_hall' && hall.maxTier === 7, `the Lanterns' fourth hall teaches to the seventh tier (${hall.name})`);
   const caster = w.party.members.find((m) => CLASSES[m.cls].spells && hall.classes.includes(m.cls))!;
-  const seventh = spellsFor(CLASSES[caster.cls].spells!, hall.maxTier!).find((sp) => sp.level === 7 && !caster.spells.includes(sp.id))!;
+  const seventh = spellsFor(TABLES.spells, CLASSES[caster.cls].spells!, hall.maxTier!).find((sp) => sp.level === 7 && !caster.spells.includes(sp.id))!;
   // The fee to study, once, then the spell as the hall offers it, at its price for the tier (spellPrice).
   const before = w.party.gold;
   payFee(w.party, hall);
-  const { paid: price } = learnSpell(w.party, hallOffers(w.party, hall).find((o) => w.party.members[o.who] === caster && o.id === seventh.id)!);
+  const { paid: price } = learnSpell(TABLES.spells, w.party, hallOffers(TABLES.spells, w.party, hall).find((o) => w.party.members[o.who] === caster && o.id === seventh.id)!);
   ok(w.party.gold === before - hall.fee - price && caster.spells.includes(seventh.id), `${caster.name} pays the hall's fee of ${hall.fee} and learns ${seventh.name} for ${price}`);
   const drill = ofKind(TOWN, 'trainer')[0];
   // Trained on a copy, from a copy of the purse, so the company walks on as it was.
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 22; trainee.xp = xpForLevel(23);
   ok(drill.maxLevel === 23 && drill.interior === 'rime_yard' && canTrainAt(trainee, drill.maxLevel), `${drill.name} will train a member of 22`);
-  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), drill.maxLevel);
+  const { paid: fee } = train(TABLES.spells, { gold: w.party.gold }, trainee, makeRng(1), drill.maxLevel);
   ok(trainee.level === 23 && !canTrainAt(trainee, drill.maxLevel), `who trains to 23 for ${fee} gold, and no further`);
 
   // The coach (#539): Rime Lodge's end lands in the coach house, and its coachman there sells the run
