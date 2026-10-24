@@ -2,7 +2,7 @@
 // pixels. Each page function takes up what it laid before it returns, and the frame (boot.ts) takes it up
 // where one throws.
 import type { Load } from '../kit/browser.ts';
-import type { Cell, Landmark, MapPalette, Terrain } from '../../src/game/map.ts';
+import type { Cell, Landmark, MapPalette, Terrain } from '../../src/game/mapdef.ts';
 import type { Flame } from '../../src/ui/viewport.ts';
 import type { Run } from './boot.ts';
 

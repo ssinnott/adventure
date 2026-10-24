@@ -1,6 +1,6 @@
 // The gate's rules the suites share (#984): each figure's aim and limit (`GATE`) and a map's
 // landings. The gate suite holds them; the harness and passage suites take them from here.
-import type { MapDef } from '../../../src/game/map.ts';
+import type { MapDef } from '../../../src/game/mapdef.ts';
 
 /**
  * Each figure's aim, and its limit beyond it (#273): a figure inside its aim passes; one between its

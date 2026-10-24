@@ -12,7 +12,7 @@ import { MAP_DEFS, ITEMS, GUILD_QUESTS, MONSTERS, TABLES } from '../../src/conte
 import { GUILDS, takenFlag, doneFlag, rankFlag, guildQuestDef } from '../../src/content/guilds.ts';
 import type { GuildId } from '../../src/content/guilds.ts';
 import { World } from '../../src/game/world.ts';
-import type { Feature } from '../../src/game/map.ts';
+import type { Feature } from '../../src/game/mapdef.ts';
 import { defaultParty, countItem } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';
 import type { MapState } from '../../src/game/world.ts';

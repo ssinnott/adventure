@@ -77,7 +77,7 @@ import { meet, heard, answer, personFlags, handIns } from '../../../game/people.
 import { masterOffers, teachTier, favourDone, linesOf, TIER_PRICES } from '../../../game/mastery.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
-import type { Feature, MapDef, Answer } from '../../../game/map.ts';
+import type { Feature, MapDef, Answer } from '../../../game/mapdef.ts';
 import { GameMap } from '../../../game/map.ts';
 import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { take as ride } from '../../../game/passage.ts';

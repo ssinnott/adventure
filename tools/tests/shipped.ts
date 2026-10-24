@@ -8,7 +8,7 @@
 // that comes first dulls the cases. And an area's file gone, and an id in the wrong file, which the
 // joined record cannot see.
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Feature } from '../../src/game/map.ts';
+import type { MapDef, Feature } from '../../src/game/mapdef.ts';
 import { layOutdoors, OUTDOORS } from '../../src/game/outdoors.ts';
 import type { ZoneMap } from '../../src/game/atlas.ts';
 import { guildFlag } from '../../src/game/party.ts';

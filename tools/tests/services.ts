@@ -3,7 +3,7 @@
 // trainer's cap, one level a visit however much xp, and never past the trainer; the artifact a shop
 // will not buy. The checks that drive the menus themselves stay in shops, items and the pilot.
 import { ITEMS, TABLES } from '../../src/content/index.ts';
-import type { Feature } from '../../src/game/map.ts';
+import type { Feature } from '../../src/game/mapdef.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { REFUSED } from '../../src/game/items.ts';
 import { defaultParty, addCondition, xpForLevel, levelUp, CLASSES } from '../../src/game/party.ts';

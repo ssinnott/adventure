@@ -13,7 +13,7 @@ import type { StoryLock } from '../../src/content/locks.ts';
 import { CROSSINGS } from '../../src/content/crossings.ts';
 import type { Crossing, CrossingEnd } from '../../src/content/crossings.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Passage, Presence } from '../../src/game/map.ts';
+import type { MapDef, Passage, Presence } from '../../src/game/mapdef.ts';
 import type { Atlas, AtlasZone } from '../../src/game/atlas.ts';
 import { worldGrid, isWater, mapAt, TI, MAP_TERRAIN, TERRAINS, areaBand, roadPlace, zoneOfMap, homeMap } from '../../src/game/atlas.ts';
 import { signLine, enclaveLine } from '../../src/game/world.ts';
@@ -240,7 +240,7 @@ const edgesOwed = gatherLists(areaRows((c) => c.owes?.edges));
  */
 export interface FoundLock { kind: 'exit' | 'hand-in' | 'service' | 'other'; flags: string[]; map: string; x: number; y: number; area: string; to?: string; key: string; way?: string }
 
-/** The kinds of business a flag may shut (game/map.ts), and a person with a room, who is one too. */
+/** The kinds of business a flag may shut (game/mapdef.ts), and a person with a room, who is one too. */
 const SERVICES = ['inn', 'temple', 'shop', 'guild', 'trainer'];
 const isService = (o: Record<string, unknown>): boolean => typeof o.interior === 'string' && (SERVICES.includes(o.kind as string) || o.kind === 'npc');
 
@@ -256,7 +256,7 @@ const isService = (o: Record<string, unknown>): boolean => typeof o.interior ===
  * presence is, and closes nothing. The door marked CREW ONLY is there once the company has answered
  * at it, either way: it waits on nothing from anywhere else, only on that answer where it stands, and
  * the Kilns are reached by their own road whichever way it goes, so it is no lock between the Hearth
- * and the Kilns (docs/areas/hearth_isle.md §6, 60; §9.1, 44). The act's one lock stays the Core's
+ * and the Kilns (docs/areas/hearth.md §6, 60; §9.1, 44). The act's one lock stays the Core's
  * door. An exit not there yet is no way beside a shut one either. A `lifts` only ends a shut, so the
  * shut is found as before.
  */

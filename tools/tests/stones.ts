@@ -7,7 +7,7 @@ import { ATLAS, TABLES } from '../../src/content/index.ts';
 import { STONES, WHOLE } from '../../src/content/stones.ts';
 import { World } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { save } from '../../src/game/save.ts';

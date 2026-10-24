@@ -6,7 +6,7 @@
 // beyond the Sound. The inn, the temple, the armourer's (the act's step), the chandler's (the stone
 // cure), the yard that trains to 27, the Cartographers' second hall, the Compact's house and the
 // potter's. No spell hall: tier 7 is Rime Lodge's. docs/areas/ashfall.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { ARMOURER, CURES } from '../items.ts';

@@ -1,4 +1,4 @@
-// The endings (#750; DESIGN §9, docs/areas/hearth_isle.md §5 and §9, call 6): the table by its three
+// The endings (#750; DESIGN §9, docs/areas/hearth.md §5 and §9, call 6): the table by its three
 // flags, an answer that takes one, its pages turned one at a time back onto the Heart, and the Hearth's
 // state beside the Stones' count: on the title from the save in storage, in the almanac and the sky from
 // the world. A company that has taken no ending sees the count's, as it did before. The machinery's cases
@@ -10,7 +10,7 @@ import type { Ending } from '../../src/content/endings.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { answer, SHORT } from '../../src/game/people.ts';
-import type { Answer } from '../../src/game/map.ts';
+import type { Answer } from '../../src/game/mapdef.ts';
 import { save } from '../../src/game/save.ts';
 import type { Store } from '../../src/game/save.ts';
 import type { Game } from '../../src/game/game.ts';

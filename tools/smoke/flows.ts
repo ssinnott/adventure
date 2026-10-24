@@ -2,7 +2,7 @@
 // page's state after a key or a change (boot.ts, `press` and `settle`), never on the clock.
 import type { Load } from '../kit/browser.ts';
 import type { Flag } from '../../src/content/index.ts';
-import type { Feature } from '../../src/game/map.ts';
+import type { Feature } from '../../src/game/mapdef.ts';
 import type { Facing } from '../../src/game/types.ts';
 import type { CombatScreen } from '../../src/ui/combat.ts';
 import { LAYOUT } from '../../src/ui/frame.ts';

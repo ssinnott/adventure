@@ -1,7 +1,7 @@
 // The enclave's fixture the suites share (#984): the lair beside Saltreach and its guardian, which
 // the enclave suite builds and holds, and the gate, curve, pillars, quests and pilot suites take.
 import { MAP_DEFS } from '../../../src/content/index.ts';
-import type { MapDef } from '../../../src/game/map.ts';
+import type { MapDef } from '../../../src/game/mapdef.ts';
 
 /** Where the fixture lair stands: beside Saltreach, a band-10 area, its door on C3 in the Upper Water (10-11). */
 export const FIXTURE = { area: 'saltreach', zone: 'upperwater', box: 'upperwater_c3' } as const;

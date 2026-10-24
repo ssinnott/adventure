@@ -10,8 +10,8 @@
 // preacher, gone once Vask is gone from Helmstow, and two more at the stair's head. Hereswith, the
 // anchoress, at the cell's window, who teaches the Cleric's third (#763). In the rim's east face, behind a
 // second secret door that a vein of glass in the turf points at, a vigil cell holds two finds (#864, §4.9).
-// Cut from the atlas by tools/scaffold.ts; docs/areas/hearth_isle.md §4.3 is its brief (#754).
-import type { MapDef } from '../../../../game/map.ts';
+// Cut from the atlas by tools/scaffold.ts; docs/areas/hearth.md §4.3 is its brief (#754).
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { THRONE_REMOVED } from '../../shelf/public.ts';
 import { ELEVEN_KEPT, LOG_GIVEN } from './hearthfane2.ts';

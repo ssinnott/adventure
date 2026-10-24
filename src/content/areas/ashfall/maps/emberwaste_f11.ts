@@ -11,7 +11,7 @@
 // Joined to F10 on the north edge, G11 on the east and E11 on the west, at the ash (#522); the south
 // edge meets F12's north (#836) square for square, the ash and the second flow going on into it.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.6 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { LAMP_ASKED, LAMP_LIT } from './old_cinder2.ts';

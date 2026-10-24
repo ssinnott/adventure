@@ -1,5 +1,5 @@
 // The game's colour values. The engine ships colour helpers; the values are the game's.
-import type { Terrain } from '../game/map.ts';
+import type { Terrain } from '../game/mapdef.ts';
 export const INK = '#0e0c10';
 export const PANEL = '#1c1720';
 export const PANEL_LIGHT = '#2a2430';

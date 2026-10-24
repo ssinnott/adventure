@@ -10,7 +10,7 @@
 // housing's foot, and behind the foot the lower gallery where the Meridian Company camped on its way to
 // the vents, the fourth journal left there. Band 25-26, the Sentinel and the sentries the top;
 // docs/areas/ashfall.md §4.8 is its brief.
-import type { Answer, Feature, MapDef } from '../../../../game/map.ts';
+import type { Answer, Feature, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

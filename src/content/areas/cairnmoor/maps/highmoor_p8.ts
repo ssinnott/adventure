@@ -5,7 +5,7 @@
 // the mountain at 0,0 and 0,1, and the ledge run on down the west column to 0,19 beside O8's hills.
 // The P column is 24 wide: cut by hand from the atlas, the void written '%'; docs/areas/cairnmoor.md
 // §12.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

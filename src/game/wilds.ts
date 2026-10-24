@@ -3,7 +3,9 @@
 // one is its id in the map's `used`, as an opened chest is, so nothing new is saved. A well and the
 // exploration spells are here too (#978). Pure, so the tests load it; game.ts and the spell screen
 // call it and say what it returns.
-import type { Feature, Gift, Night } from './map.ts';
+import type { Feature } from './mapdef.ts';
+import type { When } from './quests.ts';
+import type { Flag } from '../content/index.ts';
 import type { World } from './world.ts';
 import type { Party, Stat } from './party.ts';
 import { rest as restMember, stayNight, isDown } from './party.ts';
@@ -12,6 +14,19 @@ import { item } from './items.ts';
 import { spell } from './spells.ts';
 import { castOnParty } from './combat.ts';
 import type { Items } from './tables.ts';
+
+/**
+ * What a statue gives for its riddle's answer: gold, items, a stat point to every member or an
+ * element kept off every member (game/wilds.ts).
+ */
+export interface Gift { gold?: number; items?: string[]; stat?: import('./party.ts').Stat; amount?: number; resist?: import('./party.ts').Blessed }
+
+/**
+ * A night a camp counts (#730), as an inn counts the flags of its `nights`: a rest there sets `sets`,
+ * once `after` holds, and its `says` are said on waking in place of the usual line (game/wilds.ts
+ * `campNight`, `restAndWake`).
+ */
+export interface Night { after?: When; sets: Flag; says?: readonly string[] }
 
 /** The features this module plays. */
 export type Wild = Extract<Feature, { kind: 'shrine' | 'fountain' | 'cairn' | 'statue' | 'camp' }>;

@@ -8,7 +8,7 @@
 // waits on a reading.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Exit } from '../../src/game/map.ts';
+import type { MapDef, Exit } from '../../src/game/mapdef.ts';
 import { World } from '../../src/game/world.ts';
 import { defaultParty, addCondition } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';

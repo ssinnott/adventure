@@ -14,7 +14,7 @@
 // and E12 are not built, so the world ends past the west and south edges.
 // Cut from the atlas by tools/scaffold.ts's own cut, the world's end written as void; docs/areas/ashfall.md
 // §4.10 is its brief (#522).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

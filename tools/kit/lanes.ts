@@ -24,11 +24,11 @@ export type Place = { lane: Lane; area?: string } | { lane: null; why: string };
 
 /**
  * The area docs not named for the folder of the area they belong to: a place's doc, and the folder
- * beside it, in the area it lies in (the Dead-Drop under Wrackholm's Tide Ship, Meridian Camp down
- * Ashfall's vents, Hearth Isle). tools/tests/lanes.ts holds each to an area of AREAS; a doc named for
- * a place and not listed here reads as an area of its own name, which tells nothing wrong of its lane.
+ * beside it, in the area it lies in (the Dead-Drop under Wrackholm's Tide Ship and Meridian Camp
+ * down Ashfall's vents). tools/tests/lanes.ts holds each to an area of AREAS; a doc named for a
+ * place and not listed here reads as an area of its own name, which tells nothing wrong of its lane.
  */
-const DOC_AREA: Readonly<Record<string, string>> = { hearth_isle: 'hearth', dead_drop: 'wrackholm', meridian_camp: 'ashfall' };
+const DOC_AREA: Readonly<Record<string, string>> = { dead_drop: 'wrackholm', meridian_camp: 'ashfall' };
 
 const systems = (): Place => ({ lane: 'systems' });
 const quality = (): Place => ({ lane: 'quality' });

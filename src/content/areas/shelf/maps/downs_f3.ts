@@ -3,7 +3,7 @@
 // went out, and across the mouth the far beach, the wreckers', with their cave at its end. The Salt
 // Road comes down from F2 and leaves west for Crowness. Cut from the atlas by tools/scaffold.ts;
 // docs/areas/shelf.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
 import { WENNA_HOME, SIGNET } from '../../hearth/public.ts';

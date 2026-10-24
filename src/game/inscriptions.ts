@@ -7,7 +7,8 @@
 // which the hint check counts (tools/tests/pillars.ts). It sets no flag and opens no door: it never
 // opens the road (EXPANSION §2.2), only a hint, the shortcut a hint finds and the marks. Pure apart
 // from the world handed in.
-import type { Feature, GameMap } from './map.ts';
+import type { GameMap } from './map.ts';
+import type { Feature } from './mapdef.ts';
 import type { Party, Character } from './party.ts';
 import type { WorldState } from './world.ts';
 import { skilled } from './skills.ts';

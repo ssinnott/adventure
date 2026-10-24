@@ -12,7 +12,7 @@
 // 150 for a night to Wrackholm's 12; the days are the way's length at about his boat's pace, some
 // five squares an hour. One fare, one length and one timetable whichever way, though a seller may
 // halve the fare for his own guild at his end.
-import type { Passage } from '../game/map.ts';
+import type { Passage } from '../game/mapdef.ts';
 import type { When } from '../game/quests.ts';
 import type { Facing } from '../game/types.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../game/types.ts';

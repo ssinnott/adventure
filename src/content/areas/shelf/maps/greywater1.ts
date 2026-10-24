@@ -2,7 +2,7 @@
 // corner. Wet rock and tide pools. The smugglers hold the western caves; their captain keeps the
 // iron key in the south, and the locked door east of it is the only way to the stairs down. Band
 // 2-4.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

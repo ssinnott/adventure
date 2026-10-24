@@ -2,7 +2,7 @@
 // south gate, the Ellerby farm to the south-east, woods to the west, marsh and the sea at the
 // south, the caves at Brandy Hole in the south-west cliffs and the pass east to Thornmark, open,
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
-import type { MapDef, Answer } from '../../../../game/map.ts';
+import type { MapDef, Answer } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { SAT } from './keep.ts';
@@ -10,7 +10,7 @@ import { THRONE_REMOVED } from '../public.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-// The Signet (64, #765; docs/areas/hearth_isle.md §6): after an ending the Council's clerk waits by the
+// The Signet (64, #765; docs/areas/hearth.md §6): after an ending the Council's clerk waits by the
 // gate to ask where the ring goes, until it has gone; once the Council has sat, into the chair's keeping.
 const RING = 'queens_signet';
 const RING_GONE = (['q_signet_cousin', 'q_signet_hold', 'q_signet_tallis', 'q_signet_sea'] as const).map((flag) => ({ flag }));

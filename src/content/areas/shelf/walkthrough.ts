@@ -7,7 +7,7 @@
 import type { Walkthrough } from '../../area.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
-import type { Feature } from '../../../game/map.ts';
+import type { Feature } from '../../../game/mapdef.ts';
 import { DOWNS_E4 } from './maps/downs_e4.ts';
 import { CHAPTER } from './chapter.ts';
 import { newWalk, meetWho, walkThrough, see, fight, playChapter, quest, listen, pilotPlays, said, hear, page, reads, there, open, search, clock, hired, ledgerGiven, mapOf, who, stock, taught } from '../../../../tools/kit/walk.ts';

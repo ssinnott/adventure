@@ -4,7 +4,7 @@
 // where the world ends at the sea, and the stream on from N5 to M6 under the hill. Behind the barn's
 // end wall, a loft nobody goes into.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.15 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

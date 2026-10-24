@@ -3,13 +3,27 @@
 // one at its level who has the prestige before takes it for its price, the third for the trainer's
 // quest done instead. Pure apart from the party and the world handed in, so the tests take a trainer
 // as the game does, without a Game.
-import type { Teaching } from './map.ts';
+import type { When } from './quests.ts';
 import type { Party, Character } from './party.ts';
 import type { WorldState } from './world.ts';
 import { PRESTIGES, PRESTIGE_LEVELS, PRESTIGE_PRICES, prestigeOf, takePrestige } from './party.ts';
 import { holds } from './quests.ts';
 
-export type { Teaching };
+/**
+ * A prestige a person teaches (game/prestige.ts; DESIGN §5): the class's `prestige`th, to a member of
+ * `cls` at its level who has the one before, for its price; the third for the quest `done`, which
+ * must hold. Once their words are said, they offer it to the company's members of the class.
+ */
+export interface Teaching {
+  cls: import('./party.ts').ClassId;
+  prestige: 1 | 2 | 3;
+  /** The third prestige's quest, done: the trainer teaches it once this holds. */
+  done?: When;
+  /** The id of the quest the trainer asks for the third; once it begins, seeking them is done (game/seeking.ts). */
+  asks?: string;
+  /** The journal's line when a member is to seek them, in the voice of the place; the system's own when absent. */
+  seek?: string;
+}
 
 /** One member as the trainer's menu lists it: who, the title it would take, the price, and why not, if not. */
 export interface Offer { who: number; title: string; price: number; bar: string }

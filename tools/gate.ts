@@ -24,7 +24,7 @@ import { pathToFileURL } from 'node:url';
 import { MAX_LEVEL } from '../src/game/party.ts';
 import { MAP_DEFS } from '../src/content/index.ts';
 import { gateCompany } from './kit/company.ts';
-import type { EncounterDef } from '../src/game/map.ts';
+import type { EncounterDef } from '../src/game/mapdef.ts';
 import { gateOpts, gateFight, winRate } from './kit/fight.ts';
 
 

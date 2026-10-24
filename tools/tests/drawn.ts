@@ -5,7 +5,7 @@
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { PLAYED_DEFS } from '../../src/content/maps.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { World, groupDrawn, DRAWN_MAX } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { NORTH } from '../../src/game/types.ts';

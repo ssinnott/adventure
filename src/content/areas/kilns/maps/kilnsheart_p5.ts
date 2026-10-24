@@ -7,7 +7,7 @@
 // Randzeche, the artifact's lair (#845, #846). O5's crag runs on across the seam in the south, and the
 // hills run on north into P4's south pocket. The P column is 24 wide: cut by hand from the atlas, the
 // void written '%'; docs/areas/kilns.md §12.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

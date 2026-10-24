@@ -6,7 +6,7 @@
 // vaults (VAULT_STAIR), a hold keeper come up to fill its pails. By the drop, the top of the vaults' hoist, a
 // cage in a shaft (the vaults' HOIST lands in it). Loaders and clerks at 26, the keeper at 27. It pays outside any area's budget (EXPANSION §5.2; Wrackholm's `outside`).
 // docs/areas/dead_drop.md §4.1 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

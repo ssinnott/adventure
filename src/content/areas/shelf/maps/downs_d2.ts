@@ -3,7 +3,7 @@
 // open, and round it the smaller barrows of the ridge; wolves on the chalk by day, bred in the old
 // chalk pit, and the Black Dog by night. Cut from the atlas by tools/scaffold.ts; docs/areas/shelf.md
 // §4.6 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST, WEST } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';

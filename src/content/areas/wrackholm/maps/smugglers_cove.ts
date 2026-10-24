@@ -3,7 +3,7 @@
 // the crates under the Helmstow customs seal; the ledge down to the sea cave at its north end; the
 // chamber of the chained rows behind it, where the Hand's overseers keep them, and the crews'
 // strongbox in the store beyond. Band 12-13; docs/areas/wrackholm.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

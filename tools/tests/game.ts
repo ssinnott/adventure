@@ -10,7 +10,7 @@ import { ok } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { MONSTERS, TABLES } from '../../src/content/index.ts';
-import type { Feature } from '../../src/game/map.ts';
+import type { Feature } from '../../src/game/mapdef.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { startCombat, currentTurn, monsterAct, partyAct, meetCalled } from '../../src/game/combat.ts';
 

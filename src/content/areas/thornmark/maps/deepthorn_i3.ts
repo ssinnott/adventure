@@ -4,7 +4,7 @@
 // cutters' way over the hills, and its bowman up the game trail above the hide, who teaches the
 // Ranger's second prestige (#19). The elves' road comes in from H3 and goes on south for Henlys (I4).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.3 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { EAST } from '../../../../game/types.ts';

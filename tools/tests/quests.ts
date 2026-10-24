@@ -19,7 +19,7 @@ import { questSheets, chapterHeading, openingSheet, PAGE, LIST } from '../../src
 import { wrap } from '../../src/ui/draw.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { NORTH } from '../../src/game/types.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { FIXTURE, LAIR } from '../kit/rules/enclave.ts';
 import type { MapState } from '../../src/game/world.ts';
 import { once } from '../kit/checks.ts';

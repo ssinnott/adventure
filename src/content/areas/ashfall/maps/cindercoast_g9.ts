@@ -9,7 +9,7 @@
 // 0,0 to 31,0. The harbour parts the box: the road's side is walked from G10's road and F9's grass, the
 // east from G10's grass, where the box starts, and H9's. F9 and H9 are west and east; G8 is the sea.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.10 is its brief (#522).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

@@ -9,8 +9,8 @@
 // hills, reached by no way on foot, are the rim's rock to the shallows, as is the grass in the north
 // rim's corner on row 0. The Hand's pickets up the cleft and at its head, its preacher before the
 // temple's door, its champions on the west shelf, the moths by night and the rats come up from below.
-// Cut from the atlas by tools/scaffold.ts; docs/areas/hearth_isle.md §4.2 is its brief (#753).
-import type { MapDef } from '../../../../game/map.ts';
+// Cut from the atlas by tools/scaffold.ts; docs/areas/hearth.md §4.2 is its brief (#753).
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';

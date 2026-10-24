@@ -71,7 +71,8 @@ import { ATLAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, TABLES } from '../../index.ts'
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Can, Feature, MapDef } from '../../../game/map.ts';
+import type { Can } from '../../../game/map.ts';
+import type { Feature, MapDef } from '../../../game/mapdef.ts';
 import { restRefused, answerRiddle } from '../../../game/wilds.ts';
 import { meet, heard, answer, barred, handIns, personFlags } from '../../../game/people.ts';
 import { questLog, holds } from '../../../game/quests.ts';

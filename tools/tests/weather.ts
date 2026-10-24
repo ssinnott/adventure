@@ -8,12 +8,12 @@ import { defaultParty } from '../../src/game/party.ts';
 import { dateAt, daylightAt, DAYS_PER_YEAR, EPOCH_DAY, MIDSUMMER } from '../../src/game/calendar.ts';
 import type { Season } from '../../src/game/calendar.ts';
 import { weatherAt, findWeather, classify, skyNews, fairStart, weatherSight, rangedPenalty, snowDrag, RANGED_PENALTY, SNOW_DRAG, isRainy, isSnowy } from '../../src/game/weather.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import type { Climate, RegionId, Sky, Weather } from '../../src/game/weather.ts';
 import { START_MINUTES, regionOf } from '../../src/game/world.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { GameMap, HILL_DRAG, DRAG } from '../../src/game/map.ts';
-import type { Terrain } from '../../src/game/map.ts';
+import type { Terrain } from '../../src/game/mapdef.ts';
 import { SOUTH } from '../../src/game/types.ts';
 import { once } from '../kit/checks.ts';
 import { ok } from './lib.ts';
@@ -166,7 +166,7 @@ export function weather(): void {
  * The crossings named, each exit marked as one (`Exit.crosses`, with the two regions it joins, from and
  * to): the one way from a dungeon into another region (#749), the door marked CREW ONLY, from the Ways
  * under the Hearth (`underdeep` 2,10) into the lowest level of the Kilns' deep mines (docs/areas/
- * hearth_isle.md §6, 60). The Ways lie under the Hearth and the mines under the Kilns, and the door is
+ * hearth.md §6, 60). The Ways lie under the Hearth and the mines under the Kilns, and the door is
  * where they meet; each side keeps its own region's weather. No other exit from a town or a dungeon may
  * cross, so there is one, named once.
  */

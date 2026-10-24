@@ -8,7 +8,7 @@
 import type { Game } from '../game.ts';
 import { ExploreScreen } from '../game.ts';
 import type { Action } from '../../input.ts';
-import type { Feature } from '../map.ts';
+import type { Feature } from '../mapdef.ts';
 import type { Character, Party } from '../party.ts';
 import { armorClass, canTrain, canTrainAt, hasCondition, isDown, PRESTIGES, templePrice, trainPrice, weaponOf } from '../party.ts';
 import { hits, item, priceIn } from '../items.ts';

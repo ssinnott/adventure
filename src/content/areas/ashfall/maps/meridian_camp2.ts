@@ -7,7 +7,7 @@
 // Stone's third part, a heap of the walker's parts and the stair down to the camp (STAIR2). Once the Stone is
 // lit a sentry comes up that stair. Band 26, the area's top, its nest and
 // its elite at 27; docs/areas/meridian_camp.md §4.2 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';

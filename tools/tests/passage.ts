@@ -8,7 +8,7 @@
 // both ends land, and never toward a place not built.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef, Passage } from '../../src/game/map.ts';
+import type { MapDef, Passage } from '../../src/game/mapdef.ts';
 import { NORTH, EAST } from '../../src/game/types.ts';
 import { World, MINUTES_PER_DAY } from '../../src/game/world.ts';
 import { defaultParty, isDown } from '../../src/game/party.ts';

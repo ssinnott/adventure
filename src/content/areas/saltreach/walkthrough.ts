@@ -51,7 +51,7 @@ import { STEPS as FORELAND_STEPS } from '../shelf/walkthrough.ts';
 import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef } from '../../../game/map.ts';
+import type { Feature, MapDef } from '../../../game/mapdef.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { restRefused, answerRiddle } from '../../../game/wilds.ts';
 import { buy, item, priceIn } from '../../../game/items.ts';

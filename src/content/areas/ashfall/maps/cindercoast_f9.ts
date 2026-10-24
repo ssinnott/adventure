@@ -8,7 +8,7 @@
 // sea, the sand, the grass at rows 8 to 14, the hills and the ash square for square with E9's 31,0 to
 // 31,31, where the crossing line names Cindercoast. G9 is east of it; F8 is the sea.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.10 is its brief (#522).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

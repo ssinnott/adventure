@@ -2,7 +2,7 @@
 import { MAP_DEFS } from '../../src/content/index.ts';
 import { ATLAS } from '../../src/content/index.ts';
 import { LEGEND } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { worldGrid, worldPoint, progression, reachable, isWater, TI, MAP_TERRAIN, mapAt, zoneOfMap, areaOf, gridCuts, boxAt, box } from '../../src/game/atlas.ts';
 import type { AtlasZone } from '../../src/game/atlas.ts';

@@ -3,7 +3,7 @@
 // reachable. What a clear of them is worth is the curve's (tools/tests/curve.ts).
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { Feature, Landmark, MapDef } from '../../src/game/map.ts';
+import type { Feature, Landmark, MapDef } from '../../src/game/mapdef.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { MAX_LEVEL } from '../../src/game/party.ts';
@@ -321,7 +321,7 @@ export function maps(): void {
     'a checks.ts giving a field AreaChecks has not is refused by its name, \'gaer\' or \'owes.cutoff\' (#897)');
   // The trainer ladder: each town's trainers teach to its area's band's top plus one (EXPANSION
   // §5.2), so the towns built set how far a company can train, and none past the cap: a band topping
-  // at the cap teaches to it (`trainerCeiling`; docs/areas/hearth_isle.md §9, call 4).
+  // at the cap teaches to it (`trainerCeiling`; docs/areas/hearth.md §9, call 4).
   for (const area of AREAS) {
     for (const d of area.maps) {
       for (const f of d.features ?? []) {

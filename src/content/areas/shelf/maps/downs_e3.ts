@@ -3,7 +3,7 @@
 // cottage under it and the rocks below, where the wreckers show their own light. In the stubble of
 // the north-east corner, across the Wend from Gullwick, Ashcombe and its cellar (#87). Cut from the
 // atlas by tools/scaffold.ts; docs/areas/shelf.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

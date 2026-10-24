@@ -1405,7 +1405,7 @@ The Tallymaster's orders, stolen from its out-tray and carried up, open the guil
 Ruan puts the choice in the Keel at Saltmouth, not below (#22). It ends with a choice: take over
 the Compact and redirect it (the last crossing is free for a Partner, both ways, and its runner on
 the strand has word of the isle), or hand it to the Wardens (the sea lanes are theirs, and the
-Hand's boats stop coming over) (#739; docs/areas/hearth_isle.md §6).
+Hand's boats stop coming over) (#739; docs/areas/hearth.md §6).
 
 ### 10.3 The Lost Expedition
 

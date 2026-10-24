@@ -82,7 +82,7 @@ built or given a naming pass of its own.
   Glass, left for the reach's doc to decide (#444, #833; `docs/areas/glasswold.md` §10).
 - **Hearth Isle** (step XII): the Lanterns' English, kept, with Hearthfane for the temple and the
   Bowl, the Strand and the Hand's Steps on the isle; the Ways, the Stair and the Heart are the docs'
-  plain names for the deep, as the Sleepers' Bay is (#739; `docs/areas/hearth_isle.md` §10).
+  plain names for the deep, as the Sleepers' Bay is (#739; `docs/areas/hearth.md` §10).
 - **The rest:** with their areas.
 
 ## 5. The artifacts

@@ -10,7 +10,7 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { RANGED_PENALTY } from '../../src/game/weather.ts';
 import { botTurn, asWritten } from '../../src/game/bot.ts';
 import { RULES, type Rules, gateCompany, HARNESS } from './company.ts';
-import type { EncounterDef, Answer } from '../../src/game/map.ts';
+import type { EncounterDef, Answer } from '../../src/game/mapdef.ts';
 import { answer, barred } from '../../src/game/people.ts';
 import type { Tables } from '../../src/game/tables.ts';
 

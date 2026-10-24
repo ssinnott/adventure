@@ -35,7 +35,7 @@ import { worldGrid } from '../../../game/atlas.ts';
 import { meet, heard } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef, MapZone } from '../../../game/map.ts';
+import type { Feature, MapDef, MapZone } from '../../../game/mapdef.ts';
 import { LOCKS } from '../../locks.ts';
 import { xpForLevel, createCharacter, defaultParty, equip, statOf, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
 import { hits, sellPrice, ELEMENT_DIE } from '../../../game/items.ts';

@@ -11,7 +11,7 @@ import { meet, answer, answerNote, answerLabel, asked, barred, SHORT, NONE, hear
 import type { Person } from '../../src/game/people.ts';
 import { questLog } from '../../src/game/quests.ts';
 import type { PageView, QuestCond, QuestDef } from '../../src/game/quests.ts';
-import type { MapDef, Words, Answer, Choice, EncounterDef } from '../../src/game/map.ts';
+import type { MapDef, Words, Answer, Choice, EncounterDef } from '../../src/game/mapdef.ts';
 import { NORTH, EAST } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { CONTENT, collect } from '../kit/shipped.ts';

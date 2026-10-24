@@ -7,7 +7,7 @@
 // The rim's mountain closes the north, the west above the hills and the east; the fell meets N3.
 // Cut from the atlas by hand, the void under the rim drawn as mountain; docs/areas/kilns.md §4.5 is
 // its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

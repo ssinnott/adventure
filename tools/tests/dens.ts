@@ -4,7 +4,7 @@
 // load. Its look is said once, on first sight. Then the den's rules, held over every map.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { World, MINUTES_PER_DAY } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import type { Party } from '../../src/game/party.ts';

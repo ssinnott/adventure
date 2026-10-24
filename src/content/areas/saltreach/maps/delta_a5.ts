@@ -6,7 +6,7 @@
 // marsh, left bare for the lair's door. Its north edge is the rim's mountain, as A4's south edge is,
 // but at the corner, where the fen's marsh runs on; its south edge is A6's. Cut from the atlas by
 // hand, its void written in; docs/areas/saltreach.md §12 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

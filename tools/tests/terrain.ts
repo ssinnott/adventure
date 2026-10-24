@@ -3,7 +3,7 @@
 // patchwork, the tide, the ice through the year and every terrain's own colour on the automap; and
 // what a hill hides from lower ground (#53) and a wall from the squares round the company (#889).
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/map.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { SNOW_HOLD, cropColor, fieldAt, hedgeColor, heatherBloom, iceColor, standsAt } from '../../src/ui/viewport.ts';

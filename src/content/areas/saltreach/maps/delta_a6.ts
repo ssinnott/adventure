@@ -6,7 +6,7 @@
 // temples through. Its south edge is the rim's mountain, shut against A7, which stays cut, its corner
 // with it, as B6's 0,31 beside it is. Cut from the atlas by hand, its void written in;
 // docs/areas/saltreach.md §12 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { COUNT_STOPPED, STONE_HOME } from './drowned_temples.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

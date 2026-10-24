@@ -7,7 +7,7 @@
 // head is the hollow where the first cutter's tools lie against the Stone. The tear closes when the
 // Warden falls: its groups and O5's slaglings stop coming back, and it never does. Band 17-18;
 // docs/areas/kilns.md §4.10 is its brief.
-import type { Feature, MapDef } from '../../../../game/map.ts';
+import type { Feature, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import type { When } from '../../../../game/quests.ts';
 import { NORTH } from '../../../../game/types.ts';

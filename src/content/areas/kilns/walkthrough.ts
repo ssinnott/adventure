@@ -87,7 +87,7 @@ import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, ATLAS, THE_QUEST, TABLES } fro
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, MapDef, MapZone } from '../../../game/map.ts';
+import type { Feature, MapDef, MapZone } from '../../../game/mapdef.ts';
 import { LOCKS } from '../../locks.ts';
 import { meet, heard, answer, barred, SHORT } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';

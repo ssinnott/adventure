@@ -27,7 +27,7 @@ import { Pilot } from '../../src/game/pilot/pilot.ts';
 import { headlessGame, drive } from './headless.ts';
 import { homeMap } from '../../src/game/atlas.ts';
 import { useShrine } from '../../src/game/wilds.ts';
-import type { EncounterDef, Feature, MapDef } from '../../src/game/map.ts';
+import type { EncounterDef, Feature, MapDef } from '../../src/game/mapdef.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { winRate, gateOpts } from './fight.ts';
 

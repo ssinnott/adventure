@@ -8,7 +8,7 @@
 // under the mesa's east face and a basilisk lies in its shade on the north side, the box's hardest at
 // 27. North, the grazing and the hills.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/glasswold.md §4.4 is its brief (#526).
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
 import { RIDERS_RIDE, sells } from '../../../crossings.ts';
 import { CURES, LIT, ROAD_WEST } from '../../ashfall/public.ts';

@@ -2,7 +2,7 @@
 // stubble towards Gullwick, the track from Coldharbour west over its ford towards the Berth, the
 // drowned mill in the willows and the rookery by it, and the chalk hills rising at the west edge.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/shelf.md §4.5 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 

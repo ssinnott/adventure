@@ -73,7 +73,7 @@ export function party(): void {
   ten.xp = xpForLevel(14);
   ten.level = 13;
   ok(!canTrainAt(ten, saltmouth) && trainerCeiling(CURVE.sunderwood) === 17 && canTrainAt(ten, trainerCeiling(CURVE.sunderwood)), 'and Saltmouth teaches no 14th, where Lantern Watch, to 17, does');
-  // And at the cap (docs/areas/hearth_isle.md §9, call 4): a band topping at 32 gives a ceiling of 32,
+  // And at the cap (docs/areas/hearth.md §9, call 4): a band topping at 32 gives a ceiling of 32,
   // not its top plus one, and a member of 31 with the xp for 32 trains to it there, and no further.
   const capped = trainerCeiling(CURVE.hearth), last = defaultParty(TABLES, makeRng(7)).members[0];
   last.xp = xpForLevel(31); levelUp(last, makeRng(7)); last.xp = xpForLevel(32);

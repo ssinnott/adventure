@@ -13,7 +13,7 @@
 // Wold map is first entered (D10, #527). Joined to F10 on its east edge, D10 on its west (#527), E9
 // on its north (#534) and E11 on its south (#522).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.9 and docs/areas/glasswold.md §4.2 are its briefs.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

@@ -9,7 +9,7 @@
 // (28,0), at 27,0, for I10 (#502); the west edge meets H11's (Ashfall's, #522) square for square, the
 // pines, the grass and the ash; the south edge meets I12's (#508), walked.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.4 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

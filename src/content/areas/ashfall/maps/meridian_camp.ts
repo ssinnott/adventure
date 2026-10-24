@@ -8,7 +8,7 @@
 // lies in the furnace's mouth beside a heap of their parts; behind it the scavenger's hole, up his rope
 // to his ledge on G11 (HOLE). Once the Stone is lit a sentry comes up the stair. Band 25, the area's
 // own; docs/areas/meridian_camp.md §4.1 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';

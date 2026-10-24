@@ -1,7 +1,7 @@
 // Rimewater's part of the world map: its three zones, the plates of its town and dungeons, and its
-// sites. docs/areas/rimewater.md is its brief (#485). Glacier Foot is the reach (DESIGN §9), cut from
-// the plan to Phase 1.6 (#434, call 7); the Ice Caves' band is the cap's, 30-32, and the row changes
-// with the reach's own atlas work.
+// sites. docs/areas/rimewater/plan.md holds its brief (#485). Glacier Foot is the reach
+// (DESIGN §9), cut from the plan to Phase 1.6 (#434, call 7); the Ice Caves' band is the cap's,
+// 30-32, and the row changes with the reach's own atlas work.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 import { laid } from '../../../game/atlas.ts';
 import { PLAN } from '../../atlas.ts';

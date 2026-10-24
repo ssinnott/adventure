@@ -6,7 +6,7 @@ import { GUILDS } from '../../../src/content/guilds.ts';
 import { CROSSINGS } from '../../../src/content/crossings.ts';
 import type { Crossing } from '../../../src/content/crossings.ts';
 import { GameMap } from '../../../src/game/map.ts';
-import type { MapDef, Presence } from '../../../src/game/map.ts';
+import type { MapDef, Presence } from '../../../src/game/mapdef.ts';
 import { CLASSES, RACES, TRAITS, NAME_MAX } from '../../../src/game/party.ts';
 import { enclaveLine } from '../../../src/game/world.ts';
 import { signTexts } from '../../../src/game/inscriptions.ts';

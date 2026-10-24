@@ -57,7 +57,7 @@ import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { MAP_DEFS, THE_QUEST, TABLES } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Feature, EncounterDef } from '../../../game/map.ts';
+import type { Feature, EncounterDef } from '../../../game/mapdef.ts';
 import { buy, item } from '../../../game/items.ts';
 import { canTrainAt, xpForLevel, CLASSES, countItem, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
 import { nightCost, stay, payFee, hallOffers, learnSpell, train } from '../../../game/services.ts';

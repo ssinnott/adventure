@@ -4,7 +4,7 @@
 // across the road; the shore path along the sea wall on tidal ground, under water at high tide;
 // and the pans beginning at the south edge. Cut from the atlas by tools/scaffold.ts;
 // docs/areas/saltreach.md §4.8 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

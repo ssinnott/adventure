@@ -231,7 +231,7 @@ export const basiliskEncounter = (level: number): MonsterDef[] => [...Array.from
 
 // Act V's clock on the test monsters (docs/MONSTERS.md §9.3, #748), as the plan gives it.
 
-/** The Core's clock (docs/areas/hearth_isle.md §4.8): a call every CLOCK.every rounds, the light at a thread in CLOCK.dims. */
+/** The Core's clock (docs/areas/hearth.md §4.8): a call every CLOCK.every rounds, the light at a thread in CLOCK.dims. */
 export const CLOCK = { every: 2, dims: 8 };
 
 /**

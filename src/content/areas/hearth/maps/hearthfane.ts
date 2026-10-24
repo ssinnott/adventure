@@ -3,8 +3,8 @@
 // that the Hand lit and the moths came in to; the vestry off its west, where the sacristan hides under
 // the table (56); the treasury off its east, behind a door his key opens and nothing else; the court at
 // its head, open to the column, where the preachers stand; and the altar, the stair down behind it to
-// the crypt (#756). Band 28-29; docs/areas/hearth_isle.md §4.4 is its brief, §6 56's.
-import type { Exit, Feature, MapDef } from '../../../../game/map.ts';
+// the crypt (#756). Band 28-29; docs/areas/hearth.md §4.4 is its brief, §6 56's.
+import type { Exit, Feature, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { THRONE_REMOVED } from '../../shelf/public.ts';

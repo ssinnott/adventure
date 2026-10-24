@@ -5,7 +5,7 @@
 // grass west of the trail, and the old workings' open cuts in the south-west.
 // The shaft at 16,2 is the way into the Tiefzeche (#462, MOUTH).
 // Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.6 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { Exit, MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';

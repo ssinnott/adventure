@@ -1,5 +1,5 @@
 // The Kilns' part of the world map: its three zones, the plates of its towns and dungeons, and its
-// sites. docs/areas/kilns.md is its brief (#456).
+// sites. docs/areas/kilns/plan.md holds its brief (#456).
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 import { laid } from '../../../game/atlas.ts';
 import { PLAN } from '../../atlas.ts';

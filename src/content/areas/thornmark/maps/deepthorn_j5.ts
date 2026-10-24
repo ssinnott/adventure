@@ -3,7 +3,7 @@
 // hold's youths light for the Wyke's boats, the Eldest at the tip, and under the head the beach
 // where the Hand's boat lands by night and the sea cave it ships from. The Hearth across the water.
 // Cut from the atlas by tools/scaffold.ts; docs/areas/thornmark.md §4.7 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { TEAR_CLOSED } from './grove2.ts';

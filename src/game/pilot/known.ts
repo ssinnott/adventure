@@ -7,7 +7,8 @@
 // the automap marks, and no more. The headless run's omniscient view (#723), which the game never
 // sets, has every square seen, each cell as it is and the secret doors as written (`secrets`).
 import type { Game } from '../game.ts';
-import type { Cell, Exit, Feature, GameMap, MapZone } from '../map.ts';
+import type { GameMap } from '../map.ts';
+import type { Cell, Exit, Feature, MapZone } from '../mapdef.ts';
 import type { Party } from '../party.ts';
 import type { WorldState } from '../world.ts';
 import { seen as lit } from '../world.ts';

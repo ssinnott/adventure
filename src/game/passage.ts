@@ -4,7 +4,8 @@
 // costs, as well as the gold. The fare pays board, so the company lands rested and eats nothing on
 // the way. Pure apart from the world and the party it is handed, so the tests take one as the game
 // does, without a Game.
-import type { Passage } from './map.ts';
+import type { Facing } from './types.ts';
+import type { When } from './quests.ts';
 import type { Party } from './party.ts';
 import type { World } from './world.ts';
 import { MINUTES_PER_DAY, clock } from './calendar.ts';
@@ -12,7 +13,34 @@ import { holds } from './quests.ts';
 import { rest, companyLevel } from './party.ts';
 import { skilled } from './skills.ts';
 
-export type { Passage };
+/**
+ * A crossing a person sells (game/passage.ts; EXPANSION §2.1): a coach or a boat to `to`, a map (a
+ * zone map's cells count), landing on `x`,`y`. It leaves at the hour `departs`, every day, and lands
+ * `days` midnights later at the hour `arrives`: a boat that sails at 20 and lands at 6 is one. The
+ * fare is the company's, not each member's, and pays its board: the company lands rested, as from
+ * an inn. Open to anyone with the fare; `half` halves it once it holds, and `free` waives it.
+ */
+export interface Passage {
+  to: string; x: number; y: number;
+  /** Facing on landing; default: keep. */
+  facing?: Facing;
+  /** What the menu calls the far end. */
+  name: string;
+  /** By road or by sea: a coach, or a Rider's horse (a `coach` way on the atlas), or a boat. */
+  by: 'coach' | 'boat' | 'horse';
+  fare: number;
+  departs: number;
+  days: number;
+  arrives: number;
+  /** Said on landing; the passage's own line when absent. */
+  label?: string;
+  /** The seller's words to a company under the far end's floor, in place of the passage's own. */
+  warning?: string;
+  /** Once this holds the crossing costs nothing (#56's 22 makes the smugglers' boat free). */
+  free?: When;
+  /** Once this holds the fare is halved, rounded down (the Compact's boat for a member, EXPANSION §2.2); `free` beats it. */
+  half?: When;
+}
 
 /**
  * What the crossing costs this company: nothing once its `free` holds, half once its `half` does; and

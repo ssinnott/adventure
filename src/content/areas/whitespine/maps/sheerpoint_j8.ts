@@ -10,7 +10,7 @@
 // is hills at 11 to 14 where the atlas has shallows, and its row 31 ice at 10 to 12 to meet J9's. North
 // and east the sea, and the world ends. Laid whole in Sheer Point, its larger zone; docs/areas/
 // whitespine.md §12.1 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { EAST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

@@ -6,7 +6,7 @@
 // manifests are read, the Lanterns' chapel and the chandlery; and on the street Tallis's man, waiting
 // on a parcel from the smelter (#56's 35). No spell hall and no guild hall (#434's 8 and 9), and no
 // fare halved for any guild. docs/areas/kilns.md §4.14 is its brief.
-import type { MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { FORGE, SMITH_PRICES } from '../items.ts';
