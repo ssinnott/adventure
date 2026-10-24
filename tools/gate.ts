@@ -24,7 +24,8 @@ import { pathToFileURL } from 'node:url';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import { MAX_LEVEL } from '../src/game/party.ts';
 import type { Party } from '../src/game/party.ts';
-import { startCombat, currentTurn, monsterAct, asGroup } from '../src/game/combat.ts';
+import { startCombat, asGroup } from '../src/game/combat.ts';
+import { playOut, type Bot } from './kit/fight.ts';
 import type { CombatOpts, CombatState, Fighters } from '../src/game/combat.ts';
 import { RANGED_PENALTY } from '../src/game/weather.ts';
 import { botTurn, asWritten } from '../src/game/bot.ts';
@@ -43,6 +44,8 @@ export { gateBlast, gateBurn, botTurn } from '../src/game/bot.ts';
  * (#865), and the answers `rules.answer` asks, play's unless passed (#946).
  */
 export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number, rules: Readonly<Rules> = RULES): void { botTurn(s, p, rng, i, asWritten, rules.bot, rules.answer); }
+/** The gate's bot as a fight plays it (`playOut`): `gateTurn`, under the what-ifs the fight is handed. */
+export const gateBot: Bot = (s, p, rng, i, _opts, rules) => gateTurn(s, p, rng, i, rules);
 
 /**
  * The premade company, every member trained to `level`, dressed by the ladder and with the prestiges
@@ -70,12 +73,7 @@ export function gateOpts(g: Pick<EncounterDef, 'when'>): CombatOpts {
  */
 export function gateFight(p: Party, monsters: Fighters, seed: number, cap = Infinity, opts: CombatOpts = {}, rules: Readonly<Rules> = RULES): boolean {
   const rng = makeRng(seed), s = startCombat(p, [asGroup('gate', monsters)], rng, opts);
-  for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) {
-    const t = currentTurn(s, p, rng);
-    if (!t || s.round > cap) break;
-    if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i, rules);
-  }
-  return s.outcome === 'victory';
+  return playOut(s, p, rng, gateBot, rules, cap).outcome === 'victory';
 }
 
 /**

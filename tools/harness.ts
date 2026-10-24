@@ -44,7 +44,7 @@ import os from 'node:os';
 import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 import { makeRng } from '../src/lib/engine/rng.ts';
 import type { RngInstance } from '../src/lib/engine/rng.ts';
-import { CLASSES, defaultParty, createCharacter, createParty, className, xpForLevel, levelUp, isDown, hasCondition, removeCondition, lift, heal, equip, weaponOf, attackBonus, armsBonus, armorClass, bonus, statOf, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige, borne } from '../src/game/party.ts';
+import { CLASSES, defaultParty, createCharacter, createParty, className, xpForLevel, levelUp, isDown, hasCondition, lift, heal, equip, weaponOf, attackBonus, armsBonus, armorClass, bonus, statOf, hasTrait, spellHeal, rankMult, RANK_STEP, SPELLFIRE_DMG, MAX_LEVEL, PRESTIGE_LEVELS, prestigeOf, takePrestige, borne } from '../src/game/party.ts';
 import type { Character, Party, ClassId, RaceId, Stats } from '../src/game/party.ts';
 import { linesOf, LINES, TIER_LEVELS, TIER_NAMES, LINE_NAMES } from '../src/game/mastery.ts';
 import type { Tier, Tiers } from '../src/game/mastery.ts';
@@ -62,6 +62,7 @@ import { areaRows, gather } from './checks.ts';
 import type { Role } from './testmonster.ts';
 import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor, letsLie, asWritten, type BotAnswer } from '../src/game/bot.ts';
 import type { BotOpts } from '../src/game/bot.ts';
+import { ROUND_CAP, playOut, type Bot } from './kit/fight.ts';
 
 // The bots' answers, the rest rule and the pools it reads are the game's (src/game/bot.ts), and found here still.
 export { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest } from '../src/game/bot.ts';
@@ -73,8 +74,6 @@ export type { BotOpts } from '../src/game/bot.ts';
  * fifteen.
  */
 export const fightsPerRest = (level: number): number => Math.min(14, 6.5 + Math.max(0, level - 10) / 4);
-/** No fight goes on for ever: one still running after this many rounds is broken off, and the company must rest. */
-export const ROUND_CAP = 15;
 /** How far the harness will train a company: the road's cap, as play has it. */
 export const CAP = MAX_LEVEL;
 
@@ -375,9 +374,6 @@ function incoming(s: CombatState, p: Party, rules: Readonly<Rules>, only?: reado
   return total;
 }
 
-/** A bot's turn for member `i`; `opts` are the bots' options (#853), `rules.bot` as `play` hands them, and `rules` the what-ifs it plays by. */
-export type Bot = (s: CombatState, p: Party, rng: RngInstance, i: number, opts?: BotOpts, rules?: Readonly<Rules>) => void;
-
 /** What a caster's spell point is worth in hit points: what its best mend gives for one, or one if it has none. */
 function mendRate(c: Character, rules: Readonly<Rules>): number {
   let best = 1;
@@ -507,12 +503,7 @@ export interface Outcome { won: boolean; cost: number; hp: number; sp: number; r
 export function play(p: Party, monsters: Encounter, seed: number, bot: Bot = thrifty, rules: Readonly<Rules> = RULES): CombatState {
   const edge = rules.levelTraits || rules.levelBonus ? (c: Character, cs: CombatState): Edge => edgeOf(c, cs.round, rules) : undefined;
   const rng = makeRng(seed), s = startCombat(p, [asGroup('harness', monsters)], rng, { spellsGrowTo: rules.spellsGrowTo, rankStep: rules.rankStep, edge });
-  for (let guard = 0; s.outcome === 'ongoing' && guard < 5000; guard++) {
-    const t = currentTurn(s, p, rng);
-    if (!t || s.round > ROUND_CAP) break;
-    if (t.side === 'monster') monsterAct(s, p, rng); else bot(s, p, rng, t.i, rules.bot, rules);
-  }
-  return s;
+  return playOut(s, p, rng, bot, rules, ROUND_CAP);
 }
 
 /** How often the bots took each of their options (#853) in fights: the share of the fights in which one blessed, slept a group or drank. */

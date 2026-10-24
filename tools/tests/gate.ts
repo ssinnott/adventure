@@ -23,8 +23,9 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { startCombat, currentTurn, monsterAct, asGroup, aliveMonsters } from '../../src/game/combat.ts';
 import type { CombatState, Fighters } from '../../src/game/combat.ts';
 import { spell } from '../../src/game/spells.ts';
-import { gateCompany, gateFight, gateOpts, gateTurn, fightSeed, winRate, gateAnswer, gatePass } from '../gate.ts';
-import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ROUND_CAP, ANSWER } from '../harness.ts';
+import { gateCompany, gateFight, gateOpts, gateTurn, gateBot, fightSeed, winRate, gateAnswer, gatePass } from '../gate.ts';
+import { days, fightsPerRest, mendBetween, mustRest, companyAt, markOf, ANSWER } from '../harness.ts';
+import { ROUND_CAP, playOut } from '../kit/fight.ts';
 import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, basiliskEncounter } from '../testmonster.ts';
 import { stepsFrom } from './curve.ts';
 import { FIXTURE, LAIR, GUARDIAN } from './enclave.ts';
@@ -397,8 +398,7 @@ function fixed(): void {
     /** Seeds 1 to `seeds` of a gate fight, `cap` rounds at most, played as gateFight plays it, by the bots' `answer`: each fight's end. */
     const fought = (level: number, monsters: Fighters, cap = ROUND_CAP, dress = (p: Party): Party => p, answer = ANSWER): { s: CombatState; p: Party }[] => Array.from({ length: seeds }, (_, n) => {
       const k = n + 1, p = dress(gateCompany(level, k)), rng = makeRng(fightSeed(k)), s = startCombat(p, [asGroup('gate', monsters)], rng);
-      for (let guard = 0; s.outcome === 'ongoing' && guard < 4000; guard++) { const t = currentTurn(s, p, rng); if (!t || s.round > cap) break; if (t.side === 'monster') monsterAct(s, p, rng); else gateTurn(s, p, rng, t.i, { answer }); }
-      return { s, p };
+      return { s: playOut(s, p, rng, gateBot, { answer }, cap), p };
     });
     const won = (fs: { s: CombatState }[]): number => fs.filter(({ s }) => s.outcome === 'victory').length / fs.length;
     const fire = fought(19, trollEncounter(19), 4), none = fought(19, trollEncounter(19), 4, fireless), burnt = fire.filter(({ s }) => s.log.some((l) => / smoulders? and /.test(l))).length;

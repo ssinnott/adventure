@@ -14,7 +14,8 @@ import type { CombatState, CombatGroup, PartyAction } from '../../src/game/comba
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { elementMult, monsterSpells, monsterCanCast, KINDS } from '../../src/game/monsters.ts';
 import { gateBlast, gateBurn, gateTurn } from '../gate.ts';
-import { wakeWith, markOf, mendLines, ANSWER, companyAt, thrifty, REST_AT, ROUND_CAP } from '../harness.ts';
+import { wakeWith, markOf, mendLines, ANSWER, companyAt, thrifty, REST_AT } from '../harness.ts';
+import { ROUND_CAP, playOut } from '../kit/fight.ts';
 import { botTurn, asSeen, asWritten, breathGuard, PLAYED } from '../../src/game/bot.ts';
 import type { BotOpts, Sees } from '../../src/game/bot.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
@@ -1251,11 +1252,7 @@ function botOpts(): void {
       Object.assign(q.members[5], { spells: ['sleep', 'firebolt'], hp: 999, maxHp: 999 });
       q.members[5].equipment.weapon = 'dagger';
       const s = startCombat(q, [{ id: 'a', monsters: [ogre, ogre] }, { id: 'b', monsters: [ogre, ogre, ogre] }], rng);
-      for (let n = 0; n < 4000 && s.outcome === 'ongoing' && s.round <= ROUND_CAP; n++) {
-        const t = currentTurn(s, q, rng);
-        if (!t) break;
-        if (t.side === 'monster') monsterAct(s, q, rng); else turns.push(JSON.stringify(botTurn(s, q, rng, t.i, asWritten, opts)));
-      }
+      playOut(s, q, rng, (s, q, rng, i) => { turns.push(JSON.stringify(botTurn(s, q, rng, i, asWritten, opts))); }, {}, ROUND_CAP);
       return { s, turns: turns.join(' ') };
     };
     const on = alone(ON), off = alone(OFF), beside = alone(ON, true), slept = (x: { s: CombatState }): number => x.s.log.filter((l) => l.startsWith('Cassian casts Slumber')).length;
