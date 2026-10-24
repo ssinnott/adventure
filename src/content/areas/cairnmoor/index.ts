@@ -1,5 +1,5 @@
 // Cairnmoor, the moor with the ring (band 18-20): High Moor and the Cairnfield, the second of Act
-// III. docs/areas/cairnmoor.md is its brief.
+// III. docs/areas/cairnmoor.md is its state, and docs/areas/cairnmoor/ holds its plan and decisions.
 import type { Area } from '../../area.ts';
 import { HIGHMOOR_N7 } from './maps/highmoor_n7.ts';
 import { CAIRNFIELD_N8 } from './maps/cairnfield_n8.ts';

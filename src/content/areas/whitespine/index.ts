@@ -1,5 +1,6 @@
 // The Whitespine, the range the bells ring over (band 22-24): Monks' Vale, the High Spine and Sheer
-// Point, the first of Act IV. docs/areas/whitespine.md is its brief.
+// Point, the first of Act IV. docs/areas/whitespine.md is its state, and docs/areas/whitespine/ holds
+// its plan and decisions.
 import type { Area } from '../../area.ts';
 import { MONKSVALE_J11 } from './maps/monksvale_j11.ts';
 import { MONASTERY } from './maps/monastery.ts';
