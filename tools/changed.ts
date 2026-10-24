@@ -161,10 +161,21 @@ const DRAWINGS = /^src\/ui\/(monsters|interiors)\//;
 /** The files the gate and the walkthroughs are, whose runtime imports are what they load. */
 const READERS = (files: readonly string[]): string[] => ['tools/tests/gate.ts', ...files.filter((f) => /^src\/content\/areas\/[^/]+\/walkthrough\.ts$/.test(f))];
 
-/** What a diff reaches: every area, by the file named and why; or the areas, each with the file or the relation that reached it. */
-export interface Reach { all?: { file: string; why: string }; areas: Map<string, string> }
+/**
+ * A walkthrough that reads every area's maps or quests, as one does that holds a find to be found and
+ * never told, sold or chested anywhere else: found by its text (#955).
+ */
+const SCANS = /\bMAP_DEFS\.flatMap\(|\bQUESTS\.flatMap\(|for \(const \w+ of MAP_DEFS\)/;
 
-/** A line of an area's table no def can feel the change or removal of: an import, a comment or a blank. */
+/**
+ * What a diff reaches: every area, by the file named and why; or the areas, each with the file or the
+ * relation that reached it, and `walks`, the areas whose walkthroughs alone it reaches, each with why.
+ */
+export interface Reach { all?: { file: string; why: string }; areas: Map<string, string>; walks: Map<string, string> }
+/** A file's changed lines, `-` and `+`, as `git diff -U0` gives them; null where the file is gone. */
+export type Lines = (file: string) => { removed: readonly string[]; added: readonly string[] } | null;
+
+/** A line no def can feel the change or removal of: an import, a comment or a blank. */
 const inert = (line: string): boolean => { const t = line.trim(); return !t || t.startsWith('import ') || t.startsWith('//') || t.startsWith('/*') || t.startsWith('*'); };
 
 /**
@@ -176,14 +187,18 @@ const inert = (line: string): boolean => { const t = line.trim(); return !t || t
  *    comment, or deleted, reaches every area: items dress every company of the ladder and monsters
  *    fight in other areas' groups. A def only added reaches its own area alone: nothing reads it yet;
  * 3. that is any other of an area's files reaches also the areas whose files import it, and those
- *    whose files import theirs in turn, as far as the areas' own files go;
+ *    whose files import theirs in turn, as far as the areas' own files go; and, where a line of it
+ *    changed that is no import or comment, the walkthroughs that read every area's maps or quests
+ *    (SCANS), which an import does not show;
  * 4. elsewhere: what decides what runs reaches every area; the docs, the front pages, types/ and the
  *    rest of .github/ none, and so does a drawing; a module of the graph the gate or a walkthrough
  *    loads every area and one neither loads none; any other file, which the graph does not read, every
  *    area.
  */
-export function reachedAreas(files: readonly string[], removed: (file: string) => readonly string[] | null, g: Graph): Reach {
-  const areas = new Map<string, string>(), known = new Set(g.files), by = new Map<string, string[]>();
+export function reachedAreas(files: readonly string[], lines: Lines, g: Graph, read: (file: string) => string): Reach {
+  const areas = new Map<string, string>(), walks = new Map<string, string>(), known = new Set(g.files), by = new Map<string, string[]>();
+  const scans = READERS(g.files).slice(1).filter((f) => SCANS.test(read(f))).map((f) => f.split('/')[3]);
+  const removed = (f: string): readonly string[] | null => lines(f)?.removed ?? null;
   for (const [f, to] of g.edges) for (const t of to) by.set(t, [...(by.get(t) ?? []), f]);
   const loaded = new Set<string>(), stack = READERS(g.files);
   while (stack.length) { const f = stack.pop()!; if (!loaded.has(f)) { loaded.add(f); stack.push(...(g.edges.get(f) ?? [])); } }
@@ -193,10 +208,12 @@ export function reachedAreas(files: readonly string[], removed: (file: string) =
       if (!areas.has(area)) areas.set(area, f);
       if (AREA_TABLE.test(f)) {
         const lines = removed(f), what = f.endsWith('/items.ts') ? 'items dress every company of the ladder' : "monsters fight in other areas' groups";
-        if (lines === null) return { all: { file: f, why: `deleted, and ${what}` }, areas };
-        if (lines.some((l) => !inert(l))) return { all: { file: f, why: `a line changed or removed, and ${what}` }, areas };
+        if (lines === null) return { all: { file: f, why: `deleted, and ${what}` }, areas, walks };
+        if (lines.some((l) => !inert(l))) return { all: { file: f, why: `a line changed or removed, and ${what}` }, areas, walks };
         continue;
       }
+      const changed = lines(f);
+      if (!changed || [...changed.removed, ...changed.added].some((l) => !inert(l))) for (const a of scans) if (!walks.has(a)) walks.set(a, "it reads every area's maps or quests");
       for (const walk = [f], seen = new Set(walk); walk.length;) {
         const at = walk.pop()!;
         for (const file of by.get(at) ?? []) {
@@ -206,26 +223,37 @@ export function reachedAreas(files: readonly string[], removed: (file: string) =
           if (!areas.has(to)) areas.set(to, `imports ${at.slice('src/content/areas/'.length)}`);
         }
       }
-    } else if (DECIDES.includes(f)) return { all: { file: f, why: 'it decides what runs' }, areas };
+    } else if (DECIDES.includes(f)) return { all: { file: f, why: 'it decides what runs' }, areas, walks };
     else if (READ_BY_NONE.some((re) => re.test(f)) || DRAWINGS.test(f)) continue;
-    else if (loaded.has(f)) return { all: { file: f, why: 'the gate or a walkthrough loads it' }, areas };
-    else if (!known.has(f) || !f.endsWith('.ts')) return { all: { file: f, why: 'the graph does not read it' }, areas };
+    else if (loaded.has(f)) return { all: { file: f, why: 'the gate or a walkthrough loads it' }, areas, walks };
+    else if (!known.has(f) || !f.endsWith('.ts')) return { all: { file: f, why: 'the graph does not read it' }, areas, walks };
   }
-  return { areas };
+  for (const a of areas.keys()) walks.delete(a);
+  return { areas, walks };
 }
 
 /** The areas the diff since <base> reaches, read from git and the tree as it stands, uncommitted and new files included. */
 export function changedAreas(base: string): Reach {
-  const from = git('merge-base', base, 'HEAD')[0];
-  const removed = (f: string): string[] | null => (existsSync(path.join(ROOT, f))
-    ? git('diff', '-U0', '--no-renames', from, '--', f).filter((l) => l.startsWith('-') && !/^--- (a\/|\/dev\/null)/.test(l)).map((l) => l.slice(1))
-    : null);
-  return reachedAreas(changedPaths(base), removed, graph(treeFiles(), (f) => readFileSync(path.join(ROOT, f), 'utf8')));
+  const from = git('merge-base', base, 'HEAD')[0], fresh = new Set(git('ls-files', '--others', '--exclude-standard'));
+  const read = (f: string): string => readFileSync(path.join(ROOT, f), 'utf8');
+  const lines: Lines = (f) => {
+    if (!existsSync(path.join(ROOT, f))) return null;
+    if (fresh.has(f)) return { removed: [], added: read(f).split('\n') };
+    const diff = git('diff', '-U0', '--no-renames', from, '--', f).filter((l) => !/^(--- (a\/|\/dev\/null)|\+\+\+ (b\/|\/dev\/null))/.test(l));
+    return { removed: diff.filter((l) => l.startsWith('-')).map((l) => l.slice(1)), added: diff.filter((l) => l.startsWith('+')).map((l) => l.slice(1)) };
+  };
+  return reachedAreas(changedPaths(base), lines, graph(treeFiles(), read), read);
 }
 
-/** A reach in words: `shelf (src/content/areas/shelf/maps/downs_e4.ts), thornmark (imports shelf/walkthrough.ts)`, `every area, by package.json (...)` or `no area`. */
-export const describeReach = (r: Reach): string =>
-  r.all ? `every area, by ${r.all.file} (${r.all.why})` : r.areas.size ? [...r.areas].map(([a, why]) => `${a} (${why})`).join(', ') : 'no area';
+/**
+ * A reach in words: `shelf (src/content/areas/shelf/maps/downs_e4.ts), thornmark (imports
+ * shelf/walkthrough.ts)` and the walkthroughs reached alone, `every area, by package.json (...)` or `no area`.
+ */
+export const describeReach = (r: Reach): string => {
+  if (r.all) return `every area, by ${r.all.file} (${r.all.why})`;
+  const areas = r.areas.size ? [...r.areas].map(([a, why]) => `${a} (${why})`).join(', ') : 'no area';
+  return r.walks.size ? `${areas}; and the walkthroughs of ${[...r.walks.keys()].join(', ')} (each reads every area's maps or quests)` : areas;
+};
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const [base, what] = process.argv.slice(2);
@@ -234,6 +262,9 @@ if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.me
   if (what === 'maps') { const c = await changedMaps(files); console.log(c.all ? 'all' : c.maps.join(',')); }
   else if (what === 'monsters') { const c = await changedMonsters(files, base); console.log(c.all ? 'all' : c.monsters.join(',')); }
   else if (what === 'interiors') { const c = await changedInteriors(files, base); console.log(c.all ? 'all' : c.interiors.join(',')); }
-  else if (what === 'areas') { const r = changedAreas(base); console.log(r.all ? `all: ${r.all.file} (${r.all.why})` : r.areas.size ? [...r.areas].map(([a, why]) => `${a}: ${why}`).join('\n') : 'none'); }
+  else if (what === 'areas') {
+    const r = changedAreas(base);
+    console.log(r.all ? `all: ${r.all.file} (${r.all.why})` : [...[...r.areas].map(([a, why]) => `${a}: ${why}`), ...[...r.walks].map(([a, why]) => `walkthrough:${a}: ${why}`)].join('\n') || 'none');
+  }
   else console.log(files.join('\n'));
 }

@@ -96,7 +96,7 @@ const listed = [...suites].filter(([name]) => (wanted.length ? wanted.includes(n
 // The areas the gate and the walkthroughs run for (#955): those named, else those the diff since the
 // ref reaches; every area where neither is given, the diff reaches them all or cannot be read. Every
 // other suite runs whole. `reached` says which and why.
-let reached = '';
+let reached = '', walks: string[] = [];
 if ((named || since) && listed.some(([name]) => name === 'gate' || name.startsWith('walkthrough:'))) {
   const ids: string[] = AREAS.map((a) => a.id);
   let only: string[] | undefined;
@@ -109,16 +109,17 @@ if ((named || since) && listed.some(([name]) => name === 'gate' || name.startsWi
     try {
       const { changedAreas, describeReach } = await import('./changed.ts');
       const r = changedAreas(since!);
-      if (!r.all) only = [...r.areas.keys()].filter((a) => ids.includes(a));
+      if (!r.all) { only = [...r.areas.keys()].filter((a) => ids.includes(a)); walks = [...r.walks.keys()].filter((a) => ids.includes(a)); }
       reached = `Reached since ${since}: ${describeReach(r)}`;
     } catch (e) {
       reached = `Reached since ${since}: every area, as the diff could not be read (${String(e instanceof Error ? e.message : e).split('\n')[0]})`;
     }
   }
   narrow(only);
-  reached += `: the gate and the walkthroughs ran for ${only ? only.length : ids.length} of ${ids.length} areas`;
+  const n = only ? only.length : ids.length;
+  reached += walks.length ? `: the gate ran for ${n} of ${ids.length} areas and the walkthroughs for ${n + walks.length}` : `: the gate and the walkthroughs ran for ${n} of ${ids.length} areas`;
 }
-const runs = listed.filter(([name]) => !name.startsWith('walkthrough:') || asked(name.slice('walkthrough:'.length)));
+const runs = listed.filter(([name]) => !name.startsWith('walkthrough:') || asked(name.slice('walkthrough:'.length)) || walks.includes(name.slice('walkthrough:'.length)));
 const width = Math.max(0, ...runs.map(([name]) => name.length));
 const log = console.log;
 const owedSoFar = (): number => [...owedCount().values()].reduce((n, k) => n + k, 0);

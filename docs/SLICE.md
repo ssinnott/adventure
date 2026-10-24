@@ -786,7 +786,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `--since <ref>` (or `TEST_SINCE`) runs the gate and the walkthroughs only for the areas the diff
   since the ref reaches and `--areas a,b` (or `TEST_AREAS`) for those; every other suite runs whole
   (#955). `node tools/changed.ts <ref> areas` prints each area reached with why: a file of its own,
-  or a file of another area that imports the one changed, in turn. A changed or removed line of an
+  or a file of another area that imports the one changed, in turn. Where more than a comment
+  changed, the walkthroughs that read every area's maps or quests run as well (found by their
+  text: `MAP_DEFS.flatMap(` and the like), as no import shows them. A changed or removed line of an
   area's items or monsters, a module the gate or a walkthrough loads, what decides what runs and a
   file the graph does not read reach every area; the docs, a module neither loads and the drawings
   none. The run says what ran and why before its table, and in `$GITHUB_STEP_SUMMARY` where it is

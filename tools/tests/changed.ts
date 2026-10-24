@@ -13,7 +13,8 @@ import { ok } from './lib.ts';
 function reaches(): void {
   const text = (f: string): string => readFileSync(new URL(`../../${f}`, import.meta.url), 'utf8');
   const g = graph(treeFiles(), text);
-  const reach = (files: string[], removed: Record<string, readonly string[] | null> = {}): Reach => reachedAreas(files, (f) => (f in removed ? removed[f] : []), g);
+  const reach = (files: string[], removed: Record<string, readonly string[] | null> = {}, added: Record<string, readonly string[]> = {}): Reach =>
+    reachedAreas(files, (f) => (removed[f] === null ? null : { removed: removed[f] ?? [], added: added[f] ?? [] }), g, text);
   const def = (f: string, id: string): string => text(f).split('\n').find((l) => l.includes(`id: '${id}'`)) ?? `no def ${id}`;
   // 2: a table's line changed or removed reaches every area; a def only added, its own area alone.
   const bones = 'src/content/areas/shelf/monsters.ts', axe = 'src/content/areas/sunderwood/items.ts';
@@ -32,6 +33,13 @@ function reaches(): void {
   const walked = reach([walk]);
   ok(by.includes('thornmark') && !walked.all && walked.areas.get('shelf') === walk && by.every((a) => walked.areas.get(a) === 'imports shelf/walkthrough.ts'),
     `the Foreland's walkthrough reaches the Foreland and each area whose files import it (${describeReach(walked)})`);
+  // 3, by a walkthrough's text: a line of a map changed reaches also the walkthroughs that read every area's maps or
+  // quests (a find found and never told, sold or chested elsewhere), which no import shows; a comment changed, none.
+  const anvil = 'src/content/areas/kilns/maps/anvil_stone.ts';
+  const map = reach([anvil], { [anvil]: ["  rows: ['#.#']"] }, { [anvil]: ["  rows: ['#..']"] }), note = reach([anvil], { [anvil]: ['// a word'] }, { [anvil]: ['// two words'] });
+  const scanners = [...map.walks.keys()];
+  ok(scanners.includes('cairnmoor') && !scanners.includes('kilns') && !scanners.includes('thornmark') && [...map.areas.keys()].join() === 'kilns' && !note.walks.size && [...note.areas.keys()].join() === 'kilns',
+    `a line of a Kilns map changed reaches the Kilns, and the walkthroughs of ${scanners.join(', ')}, which read every area's maps or quests; a comment changed, the Kilns alone`);
   const index = reach(['src/content/areas/hearth/index.ts']);
   ok(!index.all && index.areas.size < AREAS.length, `the walk stops at the files outside the areas, as src/content/index.ts imports every area's (${describeReach(index)})`);
   // 4: elsewhere.
