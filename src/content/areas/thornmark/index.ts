@@ -1,5 +1,5 @@
 // Thornmark, over the pass (band 5-10): the forest, Thornhold, the Grove Roots and the Cut Stone.
-// docs/areas/thornmark.md is its brief.
+// docs/areas/thornmark.md is its state, and docs/areas/thornmark/ its decisions and plan.
 import type { Area } from '../../area.ts';
 import { THORNMARK } from './maps/thornmark.ts';
 import { THORNHOLD } from './maps/thornhold.ts';
