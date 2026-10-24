@@ -1172,7 +1172,7 @@ Decided by the builder for #986, each the owner's to overturn:
    of its 32 rows nothing but grass: the part to be authored.
 3. **Author**: landmarks, features, groups, the secret, the ways in and out; dress the terrain. An
    exit lands on a named anchor of the map it leads to, `at: 'from_cairns'`, never on its squares:
-   the anchors stand on the map they name, beside its doors, after its `start`, which is one (#993).
+   that map holds its anchors after its `start`, which is one, each named for the way in (#993).
 4. **Check**: `node tools/shipped.ts` records the box's ids in its area's `shipped.json` and no other
    file, and on a new area's first map makes that file (§5.5); then `npm run check`, then the contact
    sheet.
@@ -1358,11 +1358,12 @@ Decided by the builder for #993, each the owner's to overturn:
    `public.ts`, `MAP_DEFS`) reads the same square, so the 33 walkthrough lines read as they did and
    are not touched, and the structure suite holds every exit to an anchor as the game runs.
 3. **`anchors` is a record by name**, written after the map's `start`; the typecheck refuses a
-   literal that names one twice, so the join refuses the one name it can see twice, `start`.
+   literal that names one twice, as a fixture holds under `@ts-expect-error`, so the join refuses
+   the one name it can see twice, `start`.
 4. **A name is `from_<the map left>`**, with `_2` for a second square entered from the same map
    (seven, the Foreland's `from_harrow_2` among them), so `from_meridian_camp_2` and
-   `from_meridian_camp2` read apart. One is renamed: the Deep Mines' `rungs`, where the way down from
-   the first level and the way up from the third both land.
+   `from_meridian_camp2` read apart. One is renamed: the Deep Mines' `rungs`, where the way down
+   from the first level and the way up from the third both land.
 5. **A Rift's way out takes an anchor too** (`out: { to, at }`): each of the five Rifts the areas
    place builds its one exit from it, so they are five of the issue's 175 exits and its grep found
    their `tx:`. The Rift samples' `out` keeps its square, as it keeps the party's facing, which an

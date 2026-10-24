@@ -81,7 +81,7 @@ export interface Exit {
    * `ty` and `tf` from the anchor (`landExits`, content/index.ts), and the game reads those.
    */
   at?: string;
-  /** Where it lands: filled from `at` where the maps are joined, or written so off the areas' maps (a Rift's way out, a fixture). */
+  /** Where it lands: filled from `at` where the maps are joined, or written so off the areas' maps (the Rift samples' way out, a fixture). */
   tx: number; ty: number;
   /** Facing on arrival; default: keep. */
   tf?: Facing;

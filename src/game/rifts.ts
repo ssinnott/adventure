@@ -64,7 +64,7 @@ export interface RiftSpec {
    * The way out: the square beside the tear on the map it was entered from, an anchor of that map by
    * name (#993), which the maps' join lands as it lands an exit, or the square and the facing.
    */
-  out: { to: string; at: string } | { to: string; tx: number; ty: number; tf?: Facing };
+  out: { to: string; at: string; tx?: never; ty?: never; tf?: never } | { to: string; at?: never; tx: number; ty: number; tf?: Facing };
   table: RiftTable;
   /** The chest at the heart. It holds no shard: the Stone's is grown into the tear, as its words say. */
   hoard: { gold: number; items: readonly string[] };
@@ -140,7 +140,7 @@ export function generateRift(spec: RiftSpec): MapDef {
   const way = one('<');
   const face = ([0, 1, 2, 3] as Facing[]).find((f) => grid[way.y + FACING_DY[f]]?.[way.x + FACING_DX[f]] !== '#' && grid[way.y + FACING_DY[f]]?.[way.x + FACING_DX[f]] !== 'o')!;
   const o = spec.out;
-  const exits: Exit[] = ['at' in o ? anchored({ x: way.x, y: way.y, to: o.to, at: o.at, label: material.leave }) : { x: way.x, y: way.y, to: o.to, tx: o.tx, ty: o.ty, tf: o.tf, label: material.leave }];
+  const exits: Exit[] = [o.at !== undefined ? anchored({ x: way.x, y: way.y, to: o.to, at: o.at, label: material.leave }) : { x: way.x, y: way.y, to: o.to, tx: o.tx, ty: o.ty, tf: o.tf, label: material.leave }];
 
   const tear = one('*'), hoard = one('$');
   const words = shuffle([...material.looks], rng.int);

@@ -232,6 +232,10 @@ export async function structure(): Promise<void> {
     ok(lacks === `exit of fx_cell at 3,1 to fx_hall lands at 'from_yard', and fx_hall has no such anchor`, `an anchor the landing map lacks is refused by name (${lacks})`);
     const twice = join([cell(anchored({ x: 3, y: 1, to: 'fx_hall', at: 'start' })), hall({ start: { x: 2, y: 1, facing: EAST } })]);
     ok(twice === `map fx_hall names the anchor 'start' twice: its start is one`, `an anchor named twice is refused by name (${twice})`);
+    // Another name twice is a literal's, which keeps the last, so only the typecheck can refuse it.
+    // @ts-expect-error: an anchor named twice in one literal
+    const same: MapDef['anchors'] = { from_cell: { x: 2, y: 1, facing: EAST }, from_cell: { x: 3, y: 1, facing: EAST } };
+    ok(Object.keys(same ?? {}).join() === 'from_cell', `any other name twice is the typecheck's to refuse, as the line above holds; the join sees it once (${Object.keys(same ?? {}).join()})`);
     const both = join([cell({ x: 3, y: 1, to: 'fx_hall', at: 'from_cell', tx: 2, ty: 1 }), hall()]);
     ok(both === `exit of fx_cell at 3,1 to fx_hall lands both at 'from_cell' and on a square`, `an exit with both an anchor and a square is refused by name (${both})`);
   }
