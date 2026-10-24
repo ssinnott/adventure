@@ -252,7 +252,7 @@ const TARGETS: Target[] = [
   { name: 'npc', first: 'const npc = (map: string, name: string): Person => mapOf(map).features!.find(', act: 'delete' },
   { name: 'npc', first: 'const npc = (map: string, name: string): Person => MAP_DEFS.find(', act: 'delete' },
   { name: 'npc', first: 'const npc = (map: string, name: string, n = 0): Person =>', act: 'delete' },
-  { in: ['whitespine'], name: 'npc', first: 'const npc = (def: MapDef, name: string): Person =>', act: { rename: 'npcOn' } },
+  { in: ['whitespine'], name: 'npc', first: 'const npc = (def: MapDef, name: string): Person =>', act: { rename: 'personOn' } },
   { name: 'ev', first: 'const ev = (map: string, id: string): Feature => mapOf(map).features!.find(', act: 'delete' },
   { name: 'chest', first: 'const chest = (d: MapDef, id: string): Feature | undefined =>', act: 'delete' },
   { name: 'chest', first: "const chest = (def: MapDef, id: string) => def.features!.find((f) => f.kind === 'chest' && f.id === id);", act: 'delete' },

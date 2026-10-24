@@ -683,7 +683,7 @@ function spineBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const out = buildMaps()[OUTDOORS];
   const [J10, I12, J12] = ['monksvale_j10', 'highspine_i12', 'monksvale_j12'].map(mapOf);
   const [j10, i11, i12, j11, j12] = [J10.id, 'highspine_i11', I12.id, 'monksvale_j11', J12.id].map((id) => out.zones.find((z) => z.id === id)!);
-  const npcOn = (def: MapDef, name: string): Person => def.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
+  const personOn = (def: MapDef, name: string): Person => def.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
   w.level = 22;
   for (const m of w.party.members) m.level = 22;
 
@@ -702,7 +702,7 @@ function spineBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   listen(w);
 
   // The goatherd who grazes their ground, who says they ask nothing off the Stair.
-  const goatherd = npcOn(J10, 'A goatherd');
+  const goatherd = personOn(J10, 'A goatherd');
   w.world.travel(J10.id, goatherd.x, goatherd.y);
   ok(meet(goatherd, w.party, heard(w.world, goatherd)).text.includes('Off the Stair they ask nothing'), 'the goatherd grazes the giants\' ground, and off the Stair they ask nothing of anybody');
   listen(w);
@@ -731,7 +731,7 @@ function spineBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   ok(I12.start.x === 18 && I12.start.y === 0 && I12.start.facing === SOUTH && !(I12.exits ?? []).length, 'the Spine\'s south starts at its north edge under the pines, and nothing is taken out of it');
   for (const id of ['i12_south', 'i12_edge', 'i12_eyrie', 'i12_rim', 'i12_stripped', 'i12_under', 'i12_pack']) see(w, `${I12.id}:${id}`);
-  const burner = npcOn(I12, 'A charcoal-burner');
+  const burner = personOn(I12, 'A charcoal-burner');
   w.world.travel(I12.id, burner.x, burner.y);
   ok(meet(burner, w.party, heard(w.world, burner)).text.includes('where the pines stop'), 'the charcoal-burner at his clamp knows where the trolls lie up');
   listen(w);

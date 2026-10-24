@@ -1150,10 +1150,10 @@ Decided by the builder for #985, each the owner's to overturn:
    hold only by taking three walkthroughs. `HIRE`, `hired` and `ledgerGiven` come in; the row
    `wrackholm > saltreach` stays, and H8 holds eight rows, not seven.
 7. **Counted again on the head, `here` has three bodies and `keys` and `hour` one:** the position
-   and the two move, and so does every other body two walkthroughs wrote alike, or alike but for
-   the map or box it reads (`at` as `here`, `clock`, `hour`, `walkAt` or `square`; `goal`, `xpOf`,
-   `zone`, `who`, `npc`, `mapOf`, `shows`, `alive`, `press`, `ofKind` and the rest): none is left
-   in two walkthroughs.
+   and the two move, and so does every other body two walkthroughs wrote alike, and those alike but
+   for the map, box or chest they read where the kit holds the general one (`at` as `here`, `clock`,
+   `hour`, `walkAt` or `square`; `business` as `ofKind`; `chestOf` as `chest`): no body is written
+   in two walkthroughs. What two still declare is listed in #985's pull request with why.
 8. **The count reads columns 0 and 2, as the issue's did:** the lairs' `flood`s at column 4 stay;
    Hearth's `written` there, a quest's entries by id, is `entered`, as Ashfall's is.
 9. **A script made the edits,** `tools/rehome.ts`, committed first and deleted last; its `--prune`
