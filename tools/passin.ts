@@ -32,6 +32,11 @@ const TAKE: Record<string, Record<string, Slice>> = {
   'src/game/dens.ts': { hoardLine: 'items' },
   'src/game/guilds.ts': { payOut: 'items', report: 'tables', take: 'tables' },
   'src/game/bot.ts': { draughts: 'items' },
+  // The pilot's and the screens' helpers that hold no game: the items, from the caller's `g.tables`.
+  'src/game/pilot/keep.ts': { better: 'items', shops: 'items', spots: 'items', shop: 'items' },
+  'src/ui/screens.ts': { statText: 'items', weaponLine: 'items', slotLine: 'items', artifactLines: 'items', sheetRows: 'items' },
+  'src/ui/combat.ts': { castable: 'items', castRows: 'items' },
+  'src/ui/frame.ts': { drawPartyCards: 'items' },
 };
 /** The carriers, written by hand: only their calls are the script's. */
 const CARRY: Record<string, string[]> = { 'src/game/combat.ts': ['startCombat'], 'src/game/world.ts': ['World'], 'src/game/game.ts': ['Game'] };
@@ -157,9 +162,11 @@ for (const [file, names] of need) {
   const after = imports.length ? imports[imports.length - 1].end : 0;
   const types = [...names].filter((x) => x.startsWith('type ')).map((x) => x.slice(5));
   if (types.length) {
-    const have = imports.find((d) => (d.moduleSpecifier as ts.StringLiteral).text === './tables.ts');
+    let spec = path.relative(path.dirname(file), 'src/game/tables.ts').split(path.sep).join('/');
+    if (!spec.startsWith('.')) spec = './' + spec;
+    const have = imports.find((d) => (d.moduleSpecifier as ts.StringLiteral).text === spec);
     const missing = types.filter((x) => !have?.getText().includes(x));
-    if (missing.length) edit(file, { at: after, text: `\nimport type { ${missing.sort().join(', ')} } from './tables.ts';` });
+    if (missing.length) edit(file, { at: after, text: `\nimport type { ${missing.sort().join(', ')} } from '${spec}';` });
   }
   for (const value of [...names].filter((x) => !x.startsWith('type '))) {
     const target = value === 'TABLES' ? CONTENT : KIT_COMPANY;
