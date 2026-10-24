@@ -1252,9 +1252,8 @@ Decided by the builder for #986, each the owner's to overturn:
 
 ### 8.2 The recipe for a zone map
 
-1. **Brief**, in the area's plan, `docs/areas/<area>/plan.md` (the area's doc, below; its §4 until
-   D3 moves it): purpose, band, landmarks, the secret and its hint, the encounters, what is new;
-   its "As built" once built.
+1. **Brief**, in the area's plan, `docs/areas/<area>/plan.md` (the area's doc, below): purpose,
+   band, landmarks, the secret and its hint, the encounters, what is new; its "As built" once built.
 2. **Scaffold.** Every outdoor map is one box of the grid the Foreland and Thornmark sit on: 32
    squares a side, its corner at x = 8 + 32i and y = −2 + 32j, cut to the world at its edges, and
    named as the old maps were, by its column's letter and its row's number (the Foreland is G2). A
@@ -1351,8 +1350,8 @@ the lines of the state sections the state does not keep; a new box's brief goes 
 its "As built" once it is built. A doc is moved, never rewritten: `node tools/docmove.ts` finds each
 line of the old among the new files as many times as it stood, and each of its paragraphs whole in
 one of them, in their old order there; `tools/tests/areadocs.ts` holds the shape. The Foreland's
-moved first, to `docs/areas/shelf/plan.md` and `docs/areas/shelf/decisions.md`; D3 moves the other
-thirteen in five parts, and the suite names those still owed on every run.
+moved first, to `docs/areas/shelf/plan.md` and `docs/areas/shelf/decisions.md`; D3 moved the other
+thirteen in five parts (#1027), and every doc of `docs/areas/` is in the shape, none owed.
 
 Decided by the builder for #1011, each the owner's to overturn:
 
