@@ -1,5 +1,5 @@
 // Cairnmoor's part of the world map: its two zones, the plate of its one dungeon, and its sites.
-// docs/areas/cairnmoor.md is its brief (#475).
+// docs/areas/cairnmoor/plan.md holds its brief (#475).
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 import { laid } from '../../../game/atlas.ts';
 import { PLAN } from '../../atlas.ts';
