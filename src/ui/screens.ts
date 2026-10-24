@@ -16,9 +16,10 @@ import type { ItemDef } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { ITEMS } from '../content/index.ts';
 import { spell } from '../game/spells.ts';
-import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, heal, lift, templePrice, isDown, hasCondition, xpForLevel, canTrain, trainPrice, MAX_LEVEL, className, resists, statOf, borne } from '../game/party.ts';
+import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, useItem, templePrice, isDown, hasCondition, xpForLevel, canTrain, trainPrice, MAX_LEVEL, className, resists, statOf, borne } from '../game/party.ts';
 import { nightCost, stay, buyRations, RATIONS, RATIONS_PRICE, cure, donate, DONATION, sell, joined, payFee, hallOffers, learnSpell, mayTrain, train } from '../game/services.ts';
 import { castOnAlly } from '../game/combat.ts';
+import { castExplore } from '../game/wilds.ts';
 import type { Character, Stat } from '../game/party.ts';
 import type { GuildId } from '../content/guilds.ts';
 import { rankOf, rankName, offered, inHand, report, take, guildName, guildShortName } from '../game/guilds.ts';
@@ -259,13 +260,8 @@ export class SheetScreen implements Screen {
       } else if (d.use) {
         pickMember(g, `Use ${d.name} on whom?`, (i) => {
           if (i < 0) return;
-          const t = g.party.members[i];
-          const src = it.from === 'bag' ? g.party.bag : c.pack;
-          src.splice(src.indexOf(it.id), 1);
-          if (d.use!.heal) g.say(`${t.name} recovers ${heal(t, d.use!.heal)}.`);
-          if (d.use!.sp) { t.sp = Math.min(t.maxSp, t.sp + d.use!.sp); g.say(`${t.name} feels sharper.`); }
-          if (d.use!.cure) g.say(lift(t, d.use!.cure) ? `${t.name} is flesh again.` : `${t.name} is cleansed.`);
-          if (d.use!.food) { g.party.food += d.use!.food; g.say(`The party's food grows by ${d.use!.food}.`); }
+          // The line says where it lies: one listed from the bag comes from the bag, though the member's pack holds one too.
+          for (const l of useItem(ITEMS, g.party, it.from === 'pack' ? c : null, it.id, g.party.members[i]) ?? []) g.say(l);
         });
       } else if (readText(it.id)) g.push(new MessageScreen(readText(it.id)!.join('\n\n'), undefined, d.name));
       else g.say(`${d.name}: nothing to do with it here.`);
@@ -375,6 +371,13 @@ export function spellsLine(c: Character): string {
   return 'SPELLS ' + (t ? `(${TIER_NAMES[t].toUpperCase()}) ` : '') + c.spells.map((s) => spell(s).name).join(', ');
 }
 
+/** An exploration spell cast (game/wilds.ts): its lines said and, where it moved the party, what stands there met. */
+function explore(g: Game, caster: number, spellId: string, back?: boolean): void {
+  const cast = castExplore(g.world, g.party, caster, spellId, back);
+  for (const l of cast.lines) g.say(l);
+  if (cast.moved) g.enterCell();
+}
+
 /** Pick a caster and a spell for the current context. */
 export class SpellScreen implements Screen {
   readonly overlay = true;
@@ -418,8 +421,8 @@ export class SpellScreen implements Screen {
           g.say(castOnAlly(c, sp, g.party.members[i]));
         });
       } else if (sp.explore === 'mark' && g.world.state.mark) {
-        g.push(new ChoiceScreen('The mark is set. Which?', ['Return to the mark', 'Set it here'], (i) => { if (i >= 0) g.castExplore(caster, sp.id, i === 0); }, sp.name));
-      } else g.castExplore(caster, sp.id);
+        g.push(new ChoiceScreen('The mark is set. Which?', ['Return to the mark', 'Set it here'], (i) => { if (i >= 0) explore(g, caster, sp.id, i === 0); }, sp.name));
+      } else explore(g, caster, sp.id);
       this.onDone?.();
     }
   }
