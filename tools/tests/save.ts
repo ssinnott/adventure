@@ -199,7 +199,8 @@ export function save(): void {
     delete gap[3];
     const unreached = ((): string => { try { upgrade({ ...JSON.parse(good), version: 2 }, gap); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } })();
     ok(load(store(newer)) === `save version ${SAVE_VERSION + 1} is not one this build reads (1 to ${SAVE_VERSION})` && unreached === 'no upgrade brings a save to version 3'
-      && load(store('{"version":')) === 'the text in storage is not a save' && load(store(null)) === null && typeof load(store(good)) === 'object',
+      && load(store('{"version":')) === 'the text in storage is not a save' && load(store(null)) === null && typeof load(store(good)) === 'object'
+      && ['null', '42', '{}', '{"version":"7"}'].every((t) => load(store(t)) === 'the text in storage is not a save'),
       `a save from a newer build, a version no upgrade reaches and text that is not a save each give their reason (${load(store(newer))}; ${unreached}; ${load(store('{"version":'))}); no save is none, and a good one loads`);
     const title = (text: string | null): string => {
       const t = new TitleScreen(true);
@@ -210,5 +211,13 @@ export function save(): void {
     ok(notes[0] === `The save could not be read: save version ${SAVE_VERSION + 1} is not one this build reads (1 to ${SAVE_VERSION}).` && notes[1] === 'The save could not be read: the text in storage is not a save.'
       && notes.every((n) => wrap(n, NOTE_W).length <= NOTE_LINES) && new Game(store(null)).loadGame() === 'No save to load.' && new Game(store(good)).loadGame() === true,
       `Continue on the title shows the reason, in the note's ${NOTE_LINES} lines ("${notes[0]}"), and with no save the load key says "No save to load."`);
+    // A save that reads but names a map the build has not got: its reason, and the game played on as it was.
+    let text = good;
+    const g = new Game({ getItem: (k) => (k === SAVE_KEY ? text : null), setItem: () => {}, removeItem: () => {} });
+    const first = g.loadGame(), was = g.world, party = g.party, seed = g.rng.state;
+    text = JSON.stringify({ ...JSON.parse(good), world: { ...JSON.parse(good).world, mapId: 'gone_map' } });
+    const gone = g.loadGame();
+    ok(first === true && gone === "The save could not be read: unknown map 'gone_map'." && g.world === was && g.party === party && g.rng.state === seed,
+      `a save naming a map this build has not got gives its reason (${gone}) and leaves the game loaded before as it was`);
   }
 }

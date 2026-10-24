@@ -36,6 +36,7 @@ export function deserialize(text: string): SaveData {
   let data: SaveData;
   // The engine's own words for bad text name marks the font has not got, and differ by browser (#945).
   try { data = JSON.parse(text) as SaveData; } catch { throw new Error('the text in storage is not a save'); }
+  if (typeof data !== 'object' || data === null || typeof data.version !== 'number') throw new Error('the text in storage is not a save');
   if (!(data.version >= 1 && data.version <= SAVE_VERSION)) throw new Error(`save version ${data.version} is not one this build reads (1 to ${SAVE_VERSION})`);
   return upgrade(data);
 }

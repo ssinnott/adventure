@@ -150,10 +150,16 @@ export class Game {
     const data = this.store ? loadFrom(this.store) : null;
     if (data === null) return 'No save to load.';
     if (typeof data === 'string') return `The save could not be read: ${data}.`;
-    this.maps = buildMaps();
-    this.party = data.party;
+    // A save that reads but that this build cannot lay out (a map gone, a square under no region)
+    // says why as well, and the game is left as it was (#945).
+    const was = this.rng.state;
     this.rng.seed(data.rng);
-    this.world = new World(this.maps, this.party, this.rng, data.world as WorldState);
+    let world: World;
+    try { world = new World(buildMaps(), data.party, this.rng, data.world as WorldState); }
+    catch (e) { this.rng.seed(was); return `The save could not be read: ${e instanceof Error ? e.message : String(e)}.`; }
+    this.maps = world.maps;
+    this.party = data.party;
+    this.world = world;
     this.log = [];
     this.pilot?.forget();
     this.screens = [new ExploreScreen()];
