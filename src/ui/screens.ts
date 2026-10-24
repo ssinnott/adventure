@@ -1,6 +1,10 @@
-// Modal screens over the exploration frame: messages, choices, the character sheet, the spell
-// picker, and the town services (inn, temple, shop, guild, trainer, a guild's skills) with the visit
-// that frames them.
+// Modal screens over the exploration frame: messages (a person's box, `SAY_W` by `SAY_LINES` from
+// ui/frame.ts), choices, the character sheet (a letter read, the skills a member has, an artifact's
+// power, an item used), the spell picker (an exploration spell cast) and the town services (inn,
+// temple, shop, guild, trainer, a guild's skills at its hall, two levels or from a person) with a
+// business's first menu (`businessEntries`) and the visit that frames them (`InteriorScreen`). Each
+// service draws its menu and says what its rule in game/services.ts returns, with no sum of its
+// own.
 import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';

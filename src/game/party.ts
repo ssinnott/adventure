@@ -1,5 +1,11 @@
-// The party: races, classes, characters, levelling, conditions. Pure data and pure functions; the
-// rng is passed in so tests can pin it.
+// The party: races, classes and their traits, characters (`Character`, the secondary skills learnt
+// among them) and the `Party`, conditions, equipping, an item used in a fight or from the sheet
+// (`useItem`), what a member bears (`borne`) and a stat as they stand (`statOf`), levelling and the
+// trainer's price, the prestiges (`takePrestige`, `spellRank`), what a weapon or magic tier does
+// (`armsBonus`, `tierSteps`), the premade party and the company drawn from a seed (`randomParty`,
+// rolled by `rollStats` and named from `SUGGESTED`), a ward borne (`immuneTo`, `WARDABLE`) and what
+// the clock's passing does to what is borne (`passClock`). Pure data and pure functions; the rng is
+// passed in so tests can pin it, and the item and spell tables are handed in (#973).
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { makeRng } from '../lib/engine/rng.ts';
 import { item, REGEN_PART } from './items.ts';

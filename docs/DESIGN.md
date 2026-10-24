@@ -532,7 +532,7 @@ Decided by the builder for #857, each the owner's to overturn:
    where the square beside it toward the company does not block the view, so the automap is made
    better and never tells what is hidden: a secret door, or a Master's hide behind one. Since #889
    every square past the first follows sight so, one step at a time toward the company and never
-   round a corner (SLICE.md, line of sight).
+   round a corner (SYSTEMS.md, line of sight).
 5. The words: "Ottilie picks the lock." (the member's name) where a Lockpick or a set of picks
    opens one; a key spent at a chest says the door's "The lock turns. The key crumbles."; a locked
    chest stood on says "A locked chest." in place of "A chest. Space opens it."
@@ -1438,7 +1438,7 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
   sky), the automap under it with its compass rose, the purse under that (gold and food), the
   party's portraits with condition faces along the bottom and the message log over the foot of the
   view, a strip of four lines and five in a fight (`LOG_LINES`, `COMBAT_LOG_LINES`).
-- **Monsters:** front-facing paintings: 159 kinds, drawn by 28 family modules in `src/ui/monsters/`
+- **Monsters:** front-facing paintings: 160 kinds, drawn by 28 family modules in `src/ui/monsters/`
   that each register the kinds they draw. A drawing breathes in a slow bob and flashes white when
   it is hit; there is no attack frame and no death frame, and a monster that dies is no longer
   drawn. The bandit, cultist and skeleton families stand on the game's own humanoid frame,

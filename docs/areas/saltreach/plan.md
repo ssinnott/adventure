@@ -913,8 +913,11 @@ on the road's quest. Then the area's enclave and its artifact's lair (§12.10). 
 They come after the boxes, each in its own pull request. **The lair** (#846, #847): the artifact's,
 at the cap's band, a drowned mound of two levels on the fen's west edge under the rim with one
 guardian, its door on A5, as #846's design has it (#908); the artifact, its guardian and the rumour
-that first speaks of it are #846's, and where #846 changes them, this note gives way to it. **The
-enclave** (#845): its door in the Scarp's foot on B7, a place of its own held a band or two over the
+that first speaks of it are #846's, and where #846 changes them, this note gives way to it.
+The guardian is drawn: the Old Chanter (`old_chanter`, the skeleton family's, size 1.35), its
+staff the Telstok's bog oak and its numbers the line's boss at 32 for the lair's pull request
+to set. It is owed in `checks.ts` until a group in the mound holds it. **The enclave** (#845):
+its door in the Scarp's foot on B7, a place of its own held a band or two over the
 Saltings', with its own reward, as #845 sets them. B7 has the room: 614 squares to stand on, its Scarp's foot
 clear of the pans and the smugglers' fire. The owner's delegate moved the two doors so on 18
 October (call 11).

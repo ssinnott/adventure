@@ -1,6 +1,9 @@
 // The people the party talks to: what a person says, what a hand-in takes and pays and the
 // questions they put. It depends on the person, the party and which of their words hold (`heard`),
-// so the tests meet anyone as the game does, without a Game.
+// so the tests meet anyone as the game does, without a Game. `meet` says what a person says and
+// asks, in order, and `answer` prices an answer as the choice screen lists and bars it
+// (`answerLabel`, `asked`, `barred`); `handIns`, `personFlags` and `personGives` are what the
+// checks and the save list read.
 import type { Feature, EncounterDef, Presence } from './mapdef.ts';
 import type { Flag } from '../content/index.ts';
 import type { Party } from './party.ts';

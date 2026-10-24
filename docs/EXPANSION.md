@@ -2,7 +2,7 @@
 
 How the rest of the world gets built: what v1 is, how the work is split so that many sessions can
 build at once without colliding, and the checks that hold every map, monster and quest to the
-standard of the slice. Read DESIGN.md for the why and SLICE.md for what exists. The figures of §1
+standard of the slice. Read DESIGN.md for the why and SYSTEMS.md for what exists. The figures of §1
 are measured on main at `b92a412` (25 September 2026); §10 holds where main stands on 18 October.
 
 ---
@@ -44,12 +44,12 @@ without the smoke test. Nine of the fourteen pull requests were merged within ha
 opened. Every pull request now runs the typecheck, the tests and the smoke test (#27); main has no
 branch protection, by the owner's word of 18 October 2026, and §8.3 says how merges stay safe.
 
-**Where parallel work collides.** The most-edited files are `docs/SLICE.md` (17 commits),
-`tools/test.ts` (14), `README.md` (14), `tools/smoke.ts` (11), `src/game/monsters.ts` (10) and
-`src/ui/sprites.ts` (10). Adding an area edits `MAP_DEFS`, `MONSTERS`, `ITEMS`, the `MonsterSprite`,
-`Interior` and `RegionId` unions, `SCENES`, `CLIMATES`, the atlas, the quest list, the
-tests, SLICE.md and the README. Three of the last six pull requests needed main merged into them
-before they could land.
+**Where parallel work collides.** The most-edited files are the slice's doc (17 commits; since
+#1023 `docs/archive/SLICE-history.md`), `tools/test.ts` (14), `README.md` (14), `tools/smoke.ts`
+(11), `src/game/monsters.ts` (10) and `src/ui/sprites.ts` (10). Adding an area edits `MAP_DEFS`,
+`MONSTERS`, `ITEMS`, the `MonsterSprite`, `Interior` and `RegionId` unions, `SCENES`, `CLIMATES`,
+the atlas, the quest list, the tests, the slice's doc and the README. Three of the last six pull
+requests needed main merged into them before they could land.
 
 **Tests that pin today's content.** Beside checks that hold for any content (every square reachable,
 every reference real), the suite pins facts about this content: "one clear of every map is worth
@@ -377,18 +377,18 @@ under the Hearth's floor. Walked in road order, Act III ends 0.8 over the road a
 cleared and 1.4 at a full clear; Act IV ends 0.6 and 1.3 over, Act II's own areas 0.5 to 0.8 and 1.2
 to 1.6.
 
-Its first rows are the slice's own figures from SLICE.md: level 2 from the Foreland and the cellar,
-level 4 with Brandy Hole, level 9 from one clear of everything, about two fifths of one more sweep
-of the Grove to 10 (a sweep pays 34% less once the Warden of the Cut is dead) and about 8,400 gold
-for six members from 5 to 10. Act I falls short of the budget: three quarters of it should reach 10,
-where a clear of everything reaches 9. The maps have grown since: summed at ×1, one clear of Act I is
-worth 19,957 xp a member, level 12; paid by level in road order (#159), 15,292, level 10 and three
-quarters of the way to 11, and a sweep of the Grove at 10 pays about 1,000, so seven tenths of one
-more reaches Thornhold's 11. Act II's three rows came before their maps, each owed to the issue that
-builds its area (#159), and Act III's three the same way (#535): the Kilns 16–18, Cairnmoor 18–20
-and Rimewater 20–22, their windows rising 500 a band to 3,500, 4,000 and 4,500. Act IV's three are
-in the same way (#542): the Whitespine 22–24, Ashfall 24–26 and the Glasswold 26–28, their windows
-to 5,000, 5,500 and 6,000.
+Its first rows are the slice's own figures from its doc (`docs/archive/SLICE-history.md`): level 2
+from the Foreland and the cellar, level 4 with Brandy Hole, level 9 from one clear of everything,
+about two fifths of one more sweep of the Grove to 10 (a sweep pays 34% less once the Warden of the
+Cut is dead) and about 8,400 gold for six members from 5 to 10. Act I falls short of the budget:
+three quarters of it should reach 10, where a clear of everything reaches 9. The maps have grown
+since: summed at ×1, one clear of Act I is worth 19,957 xp a member, level 12; paid by level in road
+order (#159), 15,292, level 10 and three quarters of the way to 11, and a sweep of the Grove at 10
+pays about 1,000, so seven tenths of one more reaches Thornhold's 11. Act II's three rows came
+before their maps, each owed to the issue that builds its area (#159), and Act III's three the same
+way (#535): the Kilns 16–18, Cairnmoor 18–20 and Rimewater 20–22, their windows rising 500 a band to
+3,500, 4,000 and 4,500. Act IV's three are in the same way (#542): the Whitespine 22–24, Ashfall
+24–26 and the Glasswold 26–28, their windows to 5,000, 5,500 and 6,000.
 
 The gear ladder (`GEAR`, `tools/kit/company.ts`, made from each area's rungs in its `checks.ts`) is
 what a company has in hand by a level, and the harness and the gate dress their companies by it. Act
@@ -953,9 +953,9 @@ docs/areas/<area>/plan.md               its briefs, what was cut and what the st
   so.
 - `tools/test.ts` becomes one file per suite under `tools/tests/`; the content suites iterate over
   the areas, and the runner finds each area's walkthrough.
-- SLICE.md keeps the systems and points to the area docs. Its Checks row, one table cell every pull
-  request rewrites, gives way to the test output, which already reads as the list. The README lists
-  folders, not maps.
+- SYSTEMS.md (#1023) keeps the systems and points to the area docs. Its Checks row, one table
+  cell every pull request rewrites, gives way to the test output, which already reads as the list.
+  The README lists folders, not maps.
 
 ---
 
@@ -984,8 +984,8 @@ Compact's: all twelve. No door needs a pick, and a locked chest is off the quest
 owner's delegate, 16 October 2026 (#805). Along the whole road the systems lane also owed the danger
 made legible (the band said on crossing, and in how a group is described), the log paging the one
 quest by chapter and hand-ins that take their item at the first meeting (§2.3), each built now
-(SLICE.md); and the bot is settled (§5.2, J2): the game's blesses, sleeps and drinks from level 11,
-and the gate's plays plainer than a player.
+(`docs/archive/SLICE-history.md`); and the bot is settled (§5.2, J2): the game's blesses, sleeps and
+drinks from level 11, and the gate's plays plainer than a player.
 
 Rifts are where DESIGN.md itself asks for generated content: eight 12×12 templates, seeded, a pure
 function of state and seed. Build the generator early, in the systems lane, and let generation scale

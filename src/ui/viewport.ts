@@ -1,4 +1,9 @@
-// The first-person viewport: a depth-layered compositor in the Might and Magic III-V tradition.
+// The first-person viewport: a depth-layered compositor in the Might and Magic III-V tradition. It
+// draws the walls and the grounds (hills, and the ground past one seen from below it, `standsAt`;
+// fields, woods, ash, ice, peaks, cliffs, steppe, dunes, vines and the volcano), a landmark tall over
+// its building's square out to `LANDMARK_REACH`, the tents, the wall dressing and its rates
+// (`DRESSING_RATES`, held by tools/tests/art.ts), the sky, the end of the world drawn as its look and
+// the weather over it.
 //
 // Geometry. The eye sits at the centre of the party's cell. A plane k cells ahead of the eye
 // projects with a half-size unit u(k) = (H/2) * NEAR / (k + 0.5): the near face of the cell
