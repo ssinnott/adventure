@@ -33,13 +33,20 @@ function reaches(): void {
   const walked = reach([walk]);
   ok(by.includes('thornmark') && !walked.all && walked.areas.get('shelf') === walk && by.every((a) => walked.areas.get(a) === 'imports shelf/walkthrough.ts'),
     `the Foreland's walkthrough reaches the Foreland and each area whose files import it (${describeReach(walked)})`);
-  // 3, by a walkthrough's text: a line of a map changed reaches also the walkthroughs that read every area's maps or
-  // quests (a find found and never told, sold or chested elsewhere), which no import shows; a comment changed, none.
+  // 3, past the imports: a line of a map changed reaches also every other walkthrough, as they read
+  // other areas' maps by id and by scan, which no import shows; a comment changed, none.
   const anvil = 'src/content/areas/kilns/maps/anvil_stone.ts';
   const map = reach([anvil], { [anvil]: ["  rows: ['#.#']"] }, { [anvil]: ["  rows: ['#..']"] }), note = reach([anvil], { [anvil]: ['// a word'] }, { [anvil]: ['// two words'] });
-  const scanners = [...map.walks.keys()];
-  ok(scanners.includes('cairnmoor') && !scanners.includes('kilns') && !scanners.includes('thornmark') && [...map.areas.keys()].join() === 'kilns' && !note.walks.size && [...note.areas.keys()].join() === 'kilns',
-    `a line of a Kilns map changed reaches the Kilns, and the walkthroughs of ${scanners.join(', ')}, which read every area's maps or quests; a comment changed, the Kilns alone`);
+  const others = [...map.walks.keys()];
+  ok(others.length === AREAS.length - 1 && !others.includes('kilns') && others.includes('thornmark') && [...map.areas.keys()].join() === 'kilns' && !note.walks.size && [...note.areas.keys()].join() === 'kilns',
+    `a line of a Kilns map changed reaches the Kilns and every other walkthrough (${others.length}); a comment changed, the Kilns alone`);
+  // A def only added to a table reaches every walkthrough too, as Rimewater's reads every monster's
+  // drops; a rung of the ladder (the Foreland's checks.ts) reaches every area; another area's rows its own.
+  const bred = reach([bones], {}, { [bones]: ["  { id: 'mut', name: 'Mut', plural: 'Muts', sprite: 'bandit', kind: 'person', level: 2, hp: 10 },"] });
+  const rung = 'src/content/areas/shelf/checks.ts', laddered = reach([rung], { [rung]: ["    3: ['longsword', 'axe'],"] }, { [rung]: ["    3: ['longsword+2', 'axe'],"] });
+  const seams = 'src/content/areas/kilns/checks.ts', own = reach([seams], { [seams]: ['  seamsAsBuilt: [],'] });
+  ok(!bred.all && bred.walks.has('rimewater') && bred.walks.size === AREAS.length - 1 && laddered.all?.file === rung && !own.all && [...own.areas.keys()].join() === 'kilns',
+    `a def only added reaches every walkthrough (${bred.walks.size}); a rung of the ladder changed reaches every area (${describeReach(laddered)}); a row of the Kilns' own, the Kilns`);
   const index = reach(['src/content/areas/hearth/index.ts']);
   ok(!index.all && index.areas.size < AREAS.length, `the walk stops at the files outside the areas, as src/content/index.ts imports every area's (${describeReach(index)})`);
   // 4: elsewhere.

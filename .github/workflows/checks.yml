@@ -49,9 +49,9 @@ jobs:
     runs-on: ubuntu-latest
     # The suites took 6 to 8.5 minutes on the heads measured, the runner's spread about two (#873): the
     # cap is the runner's budget, not a check. The aim stays under three minutes (EXPANSION §10).
-    # A pull request runs the gate and the walkthroughs only for the areas its files reach
-    # (TEST_SINCE, tools/changed.ts, #955) and every other suite whole; any other event runs
-    # everything.
+    # A pull request runs the gate only for the areas its files reach (TEST_SINCE,
+    # tools/changed.ts, #955) and every other suite whole, the walkthroughs for those areas or,
+    # where more than a comment changed, all; any other event runs everything.
     timeout-minutes: 15
     steps:
       # A pull request is checked out as its merge into the base: the commit before is the base.

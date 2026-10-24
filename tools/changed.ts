@@ -146,6 +146,11 @@ export async function changedInteriors(files: readonly string[], base?: string):
 const AREA_FILE = /^src\/content\/areas\/([^/]+)\//;
 /** An area's item or monster table. */
 const AREA_TABLE = /^src\/content\/areas\/[^/]+\/(items|monsters)\.ts$/;
+/**
+ * An area's own rows (checks.ts), which tools/checks.ts loads by its file, an import the graph cannot
+ * see; among them its rungs of the ladder (`gear`), which tools/harness.ts dresses every company from.
+ */
+const AREA_CHECKS = /^src\/content\/areas\/[^/]+\/checks\.ts$/;
 /** What no run reads: the docs, the front pages, the type shims and .github/ but the workflow. */
 const READ_BY_NONE = [/^docs\//, /^(README|CLAUDE)\.md$/, /^types\//, /^\.github\//];
 /** What decides what runs: the workflow, the runner, this file and the kit it reads, the graph's and the lanes' (the diff's files). */
@@ -162,10 +167,13 @@ const DRAWINGS = /^src\/ui\/(monsters|interiors)\//;
 const READERS = (files: readonly string[]): string[] => ['tools/tests/gate.ts', ...files.filter((f) => /^src\/content\/areas\/[^/]+\/walkthrough\.ts$/.test(f))];
 
 /**
- * A walkthrough that reads every area's maps or quests, as one does that holds a find to be found and
- * never told, sold or chested anywhere else: found by its text (#955).
+ * Why a walkthrough runs that no import reaches (#955): the walkthroughs read other areas' maps and
+ * tables through the registry, by scan (a find never told, sold, chested or dropped anywhere else:
+ * `MAP_DEFS.flatMap(`, the Kilns' `MAP_DEFS.filter(`, Rimewater's `MAP_DEFS.some(` and
+ * `Object.values(MONSTERS)`) and by id (Thornmark's Captain Hale on tide_ship3, Saltreach's boat to
+ * wrackholm_e6). They cost seconds where the gate costs minutes, so every one runs.
  */
-const SCANS = /\bMAP_DEFS\.flatMap\(|\bQUESTS\.flatMap\(|for \(const \w+ of MAP_DEFS\)/;
+const READS = "the walkthroughs read other areas' maps and tables";
 
 /**
  * What a diff reaches: every area, by the file named and why; or the areas, each with the file or the
@@ -185,11 +193,14 @@ const inert = (line: string): boolean => { const t = line.trim(); return !t || t
  * 1. under src/content/areas/<area>/ reaches that area;
  * 2. that is an area's items.ts or monsters.ts with a line changed or removed that is no import or
  *    comment, or deleted, reaches every area: items dress every company of the ladder and monsters
- *    fight in other areas' groups. A def only added reaches its own area alone: nothing reads it yet;
+ *    fight in other areas' groups. A def only added reaches its own area's gate alone, and every
+ *    walkthrough (READS) (the `-` lines are all it reads: a line inserted into a def that spans lines
+ *    reads as a def added, and no item of the ladder spans lines); an area's checks.ts that holds
+ *    rungs of the ladder (`gear`), changed or deleted, reaches every area, as every company dresses
+ *    from them;
  * 3. that is any other of an area's files reaches also the areas whose files import it, and those
  *    whose files import theirs in turn, as far as the areas' own files go; and, where a line of it
- *    changed that is no import or comment, the walkthroughs that read every area's maps or quests
- *    (SCANS), which an import does not show;
+ *    changed that is no import or comment, every walkthrough (READS), which an import does not show;
  * 4. elsewhere: what decides what runs reaches every area; the docs, the front pages, types/ and the
  *    rest of .github/ none, and so does a drawing; a module of the graph the gate or a walkthrough
  *    loads every area and one neither loads none; any other file, which the graph does not read, every
@@ -197,7 +208,8 @@ const inert = (line: string): boolean => { const t = line.trim(); return !t || t
  */
 export function reachedAreas(files: readonly string[], lines: Lines, g: Graph, read: (file: string) => string): Reach {
   const areas = new Map<string, string>(), walks = new Map<string, string>(), known = new Set(g.files), by = new Map<string, string[]>();
-  const scans = READERS(g.files).slice(1).filter((f) => SCANS.test(read(f))).map((f) => f.split('/')[3]);
+  const walkers = READERS(g.files).slice(1).map((f) => f.split('/')[3]);
+  const walkAll = (): void => { for (const a of walkers) if (!walks.has(a)) walks.set(a, READS); };
   const removed = (f: string): readonly string[] | null => lines(f)?.removed ?? null;
   for (const [f, to] of g.edges) for (const t of to) by.set(t, [...(by.get(t) ?? []), f]);
   const loaded = new Set<string>(), stack = READERS(g.files);
@@ -207,13 +219,16 @@ export function reachedAreas(files: readonly string[], lines: Lines, g: Graph, r
     if (area) {
       if (!areas.has(area)) areas.set(area, f);
       if (AREA_TABLE.test(f)) {
-        const lines = removed(f), what = f.endsWith('/items.ts') ? 'items dress every company of the ladder' : "monsters fight in other areas' groups";
-        if (lines === null) return { all: { file: f, why: `deleted, and ${what}` }, areas, walks };
-        if (lines.some((l) => !inert(l))) return { all: { file: f, why: `a line changed or removed, and ${what}` }, areas, walks };
+        const gone = removed(f), what = f.endsWith('/items.ts') ? 'items dress every company of the ladder' : "monsters fight in other areas' groups";
+        if (gone === null) return { all: { file: f, why: `deleted, and ${what}` }, areas, walks };
+        if (gone.some((l) => !inert(l))) return { all: { file: f, why: `a line changed or removed, and ${what}` }, areas, walks };
+        if ((lines(f)?.added ?? []).some((l) => !inert(l))) walkAll();
         continue;
       }
-      const changed = lines(f);
-      if (!changed || [...changed.removed, ...changed.added].some((l) => !inert(l))) for (const a of scans) if (!walks.has(a)) walks.set(a, "it reads every area's maps or quests");
+      const changed = lines(f), felt = !changed || [...changed.removed, ...changed.added].some((l) => !inert(l));
+      if (felt && AREA_CHECKS.test(f) && (!changed || /\bgear\b/.test([read(f), ...changed.removed].join('\n'))))
+        return { all: { file: f, why: `${changed ? 'a line changed' : 'deleted'}, and its rungs of the ladder dress every company` }, areas, walks };
+      if (felt) walkAll();
       for (const walk = [f], seen = new Set(walk); walk.length;) {
         const at = walk.pop()!;
         for (const file of by.get(at) ?? []) {
@@ -252,7 +267,7 @@ export function changedAreas(base: string): Reach {
 export const describeReach = (r: Reach): string => {
   if (r.all) return `every area, by ${r.all.file} (${r.all.why})`;
   const areas = r.areas.size ? [...r.areas].map(([a, why]) => `${a} (${why})`).join(', ') : 'no area';
-  return r.walks.size ? `${areas}; and the walkthroughs of ${[...r.walks.keys()].join(', ')} (each reads every area's maps or quests)` : areas;
+  return r.walks.size ? `${areas}; and the walkthroughs of ${[...r.walks.keys()].join(', ')} (${READS})` : areas;
 };
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
