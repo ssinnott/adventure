@@ -67,7 +67,7 @@ export const stack = (page: Page): Promise<string> => page.evaluate(() => window
 export const company = (page: Page, seed: number): Promise<void> => page.evaluate(async (s: number) => {
   const load: Load = (p) => import(p);
   const g = window.__game!.game!, P = await load<typeof import('../../src/game/party.ts')>('/src/game/party.ts');
-  g.rng.seed(s); g.newGame(s, P.defaultParty(g.rng));
+  g.rng.seed(s); g.newGame(s, P.defaultParty(g.tables, g.rng));
 }, seed);
 
 /** What the frame keeps of the page before a part. */
