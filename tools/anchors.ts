@@ -2,7 +2,7 @@
 // areas' maps on a named anchor of the map it leads to, and lays every zone map by its box. It reads the
 // exits and the places from the files as they stand (the TypeScript parser) and the joined content, and:
 // names each square and facing an exit lands on (`start` where it is the map's start, else `from_<the map
-// left>`, numbered where one map is entered from another at two squares); writes those anchors on the maps
+// left>`, numbered `_2` where one map is entered from another at a second square); writes those anchors on the maps
 // they name, after their `start`; puts `at` in place of each exit's `tx`, `ty` and `tf`, through `anchored`;
 // sets each file's imports of the facings and of `anchored` as it then needs them; and puts `laid(PLAN, ..)`
 // in place of each zone map's `{ map, at }`, where the box gives the same place. From the root:
@@ -116,7 +116,7 @@ for (const d of DEFS) for (const e of d.exits ?? []) {
   if (!mine.has(sq)) {
     const base = `from_${d.id}`, taken = new Set([...mine.values()].map((a) => a.name));
     let name = base;
-    for (let n = 2; taken.has(name); n++) name = `${base}${n}`;
+    for (let n = 2; taken.has(name); n++) name = `${base}_${n}`;
     mine.set(sq, { name, x: e.tx, y: e.ty, facing, fresh: true });
   }
   nameOf.set(w, mine.get(sq)!.name);
