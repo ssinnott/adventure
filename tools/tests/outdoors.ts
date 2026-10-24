@@ -17,7 +17,7 @@ import { EAST, FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { findWeather, weatherAt, weatherSight } from '../../src/game/weather.ts';
 import { daylightAt } from '../../src/game/calendar.ts';
 import { areaRows, areaLists, gather, once } from '../kit/checks.ts';
-import { ok, owed, local, stopsWalk, fxMap, fxFlag } from './lib.ts';
+import { ok, owed, local, stopsWalk, fxMap, fxFlag, lazy } from './lib.ts';
 import { logLines } from '../../src/ui/frame.ts';
 
 /**
@@ -195,13 +195,38 @@ function judgeEdges(list: readonly Bare[], rows: readonly OnNothing[], laid: rea
   return { verdicts, faced, stray };
 }
 
-export function outdoors(): void {
+/** The outdoors as it is played, one map the size of the world: built where a part first asks for it and kept for the run. */
+const theOutdoors = lazy(() => new GameMap(PLAYED_DEFS.filter((d) => d.kind === 'outdoor')[0]));
+/** Every pair of built boxes that share an edge and the seam rule's verdicts as built, which the seams and the edges read. */
+const seamsFound = lazy(() => { const all = seams(theOutdoors(), ATLAS, MAP_DEFS); return { all, ...judgeSeams(all, AS_BUILT) }; });
+/** Every edge of a built box that faces none and the verdicts on them as built, which the edges and the seams' fixture read. */
+const edgesFound = lazy(() => { const out = theOutdoors(), bare = edgesOnNothing(out, ATLAS); return { bare, edged: judgeEdges(bare, ON_NOTHING, out.zones) }; });
+
+/**
+ * The suite's parts (#1016), each a run of its own (`node tools/test.ts outdoors:seams`), in the order a
+ * whole run takes them: what two of them read, the outdoors, its seams and its edges, is built once.
+ */
+export const parts = (): string[] => [...PARTS.keys()];
+
+/** The outdoors, or one part of it; whole, its parts one after another. */
+export function outdoors(part?: string): void {
+  if (part === undefined) { for (const p of parts()) outdoors(p); return; }
+  const run = PARTS.get(part);
+  if (!run) throw new Error(`the outdoors has no part named ${part}`);
+  run();
+}
+
+const PARTS = new Map<string, () => void>([['composer', composer], ['seams', seamRule], ['edges', edges], ['exits', exits], ['gates', gates],
+  ['reach', reach], ['refusals', refusals], ['border', border], ['automap', automap]]);
+
+/** The composer: every zone map laid where the atlas puts it, the void's looks and no pink in view. */
+function composer(): void {
   // The outdoors is played as one map the size of the world, every zone map the atlas places laid into it.
   const zoneMaps = MAP_DEFS.filter((d) => d.kind === 'outdoor');
   const played = PLAYED_DEFS.filter((d) => d.kind === 'outdoor');
   ok(played.length === 1 && played[0].id === OUTDOORS, `the outdoors is played as one map (${played.map((d) => d.id).join(', ')})`);
   ok(PLAYED_DEFS[0].id === MAP_DEFS[0].id && PLAYED_DEFS.length === MAP_DEFS.length - zoneMaps.length + 1, 'Helmstow is still the first map, and the towns and dungeons are played as they are written');
-  const out = new GameMap(played[0]);
+  const out = theOutdoors();
   ok(out.width === ATLAS.width && out.height === ATLAS.height, `the outdoors is the world's size, square for square with the painted map (${out.width}x${out.height})`);
   for (const d of zoneMaps) {
     const z = out.zones.find((q) => q.id === d.id), at = mapAt(ATLAS, d.id);
@@ -244,10 +269,14 @@ export function outdoors(): void {
     }
   }
   ok(pink === 0, `no walkable outdoor square has the pink in view, four squares ahead and three to a side (${pink})`);
+}
+
+/** The seams (#898): the rule, the rows on their first box's area and the fixture of broken seams. */
+function seamRule(): void {
   // The seams (#898): every two built boxes that share an edge, found from their places, agree along it
   // square for square, on passable ground, water and road, and open a way between two areas only where
   // the atlas joins them. The areas' seamsAsBuilt hold what disagrees as built, each row with its reason.
-  const all = seams(out, ATLAS, MAP_DEFS), { verdicts, stray } = judgeSeams(all, AS_BUILT);
+  const { all, verdicts, stray } = seamsFound();
   const held = AS_BUILT.reduce((n, r) => n + new Set(SEAM_KINDS.flatMap((k) => squaresOf(r[k]))).size, 0);
   ok(all.length >= 153, `the seam rule takes every pair of built boxes that share an edge: ${all.length} pairs, ${all.filter((s) => s.areas[0] !== s.areas[1]).length} of them between two areas, ${all.reduce((n, s) => n + s.edge[0].length, 0)} squares, ${held} of them as built in ${AS_BUILT.length} rows`);
   for (const { seam: s, wrong } of verdicts) {
@@ -257,17 +286,7 @@ export function outdoors(): void {
     ok(!wrong.length, `seam ${s.name}, ${s.key}: passable ground, water and road agree square for square${between}${as}${wrong.length ? `: ${wrong.join('; ')}` : ''}`);
   }
   ok(!stray.length, `every seamsAsBuilt row names a seam of two built boxes that touch, once, with its squares in order and its reason${stray.length ? ` (not ${stray.join(', ')})` : ''}`);
-  // The edges on nothing: every edge of a built box that faces no built box is open to a walker exactly
-  // where an area's openOnNothing holds it, each row with the box it faces and why that is unbuilt; the border
-  // check of the bounds (#828) in embryo.
-  const bare = edgesOnNothing(out, ATLAS), edged = judgeEdges(bare, ON_NOTHING, out.zones);
-  ok(4 * out.zones.length === 2 * all.length + bare.length, `every side of a built box is a seam's or faces no built box: ${bare.length} edges on nothing, ${bare.reduce((n, e) => n + e.line.length, 0)} squares, ${bare.reduce((n, e) => n + e.open.length, 0)} of them open in ${ON_NOTHING.length} rows`);
-  for (const { edge: e, wrong } of edged.verdicts) {
-    const row = ON_NOTHING.find((r) => r.edge === e.key);
-    ok(!wrong.length, `edge ${e.name}, ${e.key}, facing no built box (${e.faces}): shut to a walker${row ? `, but as built (open ${row.open})` : ''}${wrong.length ? `: ${wrong.join('; ')}` : ''}`);
-  }
-  ok(!edged.faced.length, `no openOnNothing row names an edge that faces a built box, which the seam rule holds: the box's pull request deletes the row${edged.faced.length ? ` (not ${edged.faced.join(', ')})` : ''}`);
-  ok(!edged.stray.length, `every openOnNothing row names an edge of a built box, once, with its squares in order and its reason${edged.stray.length ? ` (not ${edged.stray.join(', ')})` : ''}`);
+  const out = theOutdoors(), { bare, edged } = edgesFound();
   // A seam's row and an edge's stand on the area of the first box they name (#897).
   const astray = notTheirs([...seamsOn.map(([id, r]) => [id, r.seam] as const), ...edgesOn.map(([id, r]) => [id, r.edge] as const)]);
   ok(!astray.length, `and each on an area is the area's of the first box it names${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
@@ -305,6 +324,26 @@ export function outdoors(): void {
     ok(doubled.map((s) => s.join()).join(' / ') === `${AS_BUILT[0].seam} / ${ON_NOTHING[0].edge}`,
       `a seam's or an edge's row given twice, on one area or two, is refused by its own check (${doubled.map((s) => s.join(', ')).join('; ')})`);
   }
+}
+
+/** The edges on nothing, the bounds' border check in embryo. */
+function edges(): void {
+  // The edges on nothing: every edge of a built box that faces no built box is open to a walker exactly
+  // where an area's openOnNothing holds it, each row with the box it faces and why that is unbuilt; the border
+  // check of the bounds (#828) in embryo.
+  const out = theOutdoors(), { all } = seamsFound(), { bare, edged } = edgesFound();
+  ok(4 * out.zones.length === 2 * all.length + bare.length, `every side of a built box is a seam's or faces no built box: ${bare.length} edges on nothing, ${bare.reduce((n, e) => n + e.line.length, 0)} squares, ${bare.reduce((n, e) => n + e.open.length, 0)} of them open in ${ON_NOTHING.length} rows`);
+  for (const { edge: e, wrong } of edged.verdicts) {
+    const row = ON_NOTHING.find((r) => r.edge === e.key);
+    ok(!wrong.length, `edge ${e.name}, ${e.key}, facing no built box (${e.faces}): shut to a walker${row ? `, but as built (open ${row.open})` : ''}${wrong.length ? `: ${wrong.join('; ')}` : ''}`);
+  }
+  ok(!edged.faced.length, `no openOnNothing row names an edge that faces a built box, which the seam rule holds: the box's pull request deletes the row${edged.faced.length ? ` (not ${edged.faced.join(', ')})` : ''}`);
+  ok(!edged.stray.length, `every openOnNothing row names an edge of a built box, once, with its squares in order and its reason${edged.stray.length ? ` (not ${edged.stray.join(', ')})` : ''}`);
+}
+
+/** The ways: every one lands on open ground, the notch, Helmstow's gates and what a crossing says. */
+function exits(): void {
+  const out = theOutdoors();
   const sh = out.zones.find((z) => z.id === 'shelf')!, th = out.zones.find((z) => z.id === 'thornmark')!;
   // The ways: every one lands on open ground; none joins one zone to the next, which is walked, but the
   // drove road's notch, taken down from N8 onto M9 and back up, since the two meet only at a corner
@@ -318,6 +357,20 @@ export function outdoors(): void {
   ok(taken === [`${notchN8.x},${notchN8.y + 28}`, `${notchM9.x + 23},${notchM9.y + 8}`].sort().join(' '),
     `no exit joins one zone to the next but the notch between N8 and M9, taken both ways: the way between them is walked (${taken})`);
   ok(out.gates.length === 0, `no gate closes the road through the outdoors${out.gates.length ? ' -> ' + out.gates.map((g) => `${g.x},${g.y}`).join(', ') : ''}`);
+  { // Helmstow's south gate, its bottom row, opens onto the road, and the harbour postern beside it
+    // onto the Lodestone's track (#157); its north gate into the keep's ward.
+    const harrow = PLAYED_DEFS.find((d) => d.id === 'harrow')!, bottom = harrow.exits!.filter((e) => e.y === harrow.rows.length - 1);
+    const south = bottom.filter((e) => e.x === 7 || e.x === 8), postern = bottom.filter((e) => e.x !== 7 && e.x !== 8);
+    ok(south.length > 0 && south.every((e) => e.to === OUTDOORS && e.tx === sh.x + 16 && e.ty === sh.y + 4), 'Helmstow\'s south gate opens onto the Foreland road, where it always did');
+    ok(postern.length === 1 && postern[0].x === 13 && postern[0].to === OUTDOORS && postern[0].tx === sh.x + 18 && postern[0].ty === sh.y + 4, 'and the harbour postern beside it onto the track to the Lodestone');
+    ok(harrow.exits!.filter((e) => e.y !== harrow.rows.length - 1).every((e) => e.y === 0 && e.to === 'keep'), 'and its only other way out is the north gate, into the keep\'s ward');
+  }
+  ok(sh.enter?.thornmark === 'Back through the pass to the Foreland.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
+}
+
+/** The gates the composer lays for the story's own locks. */
+function gates(): void {
+  const sh = theOutdoors().zones.find((z) => z.id === 'shelf')!;
   { // The machinery stays for the story's own locks (EXPANSION §2.3): an exit into the zone next door
     // that asks for flags is laid as a gate on its square, and refuses the party until they are set.
     const defs = MAP_DEFS.map((d) => d.id !== 'shelf' ? d : { ...d, exits: d.exits!.map((e) => e.to !== 'thornmark' ? e : { ...e, needFlag: [fxFlag('fixture_a'), fxFlag('fixture_b')], blockedText: 'Fixture gate.' }) });
@@ -372,15 +425,11 @@ export function outdoors(): void {
     const road = zoneEdges(ATLAS, defs).find((e) => [e.from, e.to].sort().join() === 'shelf,thornmark');
     ok(before === 'Fixture after.' && after === 'moved' && !!road && !road.gate.length, `an exit there only after a condition is no way across until it holds, and no gate on the overlay (${before}, ${after}, ${road?.gate.join() ?? 'no way'})`);
   }
-  { // Helmstow's south gate, its bottom row, opens onto the road, and the harbour postern beside it
-    // onto the Lodestone's track (#157); its north gate into the keep's ward.
-    const harrow = PLAYED_DEFS.find((d) => d.id === 'harrow')!, bottom = harrow.exits!.filter((e) => e.y === harrow.rows.length - 1);
-    const south = bottom.filter((e) => e.x === 7 || e.x === 8), postern = bottom.filter((e) => e.x !== 7 && e.x !== 8);
-    ok(south.length > 0 && south.every((e) => e.to === OUTDOORS && e.tx === sh.x + 16 && e.ty === sh.y + 4), 'Helmstow\'s south gate opens onto the Foreland road, where it always did');
-    ok(postern.length === 1 && postern[0].x === 13 && postern[0].to === OUTDOORS && postern[0].tx === sh.x + 18 && postern[0].ty === sh.y + 4, 'and the harbour postern beside it onto the track to the Lodestone');
-    ok(harrow.exits!.filter((e) => e.y !== harrow.rows.length - 1).every((e) => e.y === 0 && e.to === 'keep'), 'and its only other way out is the north gate, into the keep\'s ward');
-  }
-  ok(sh.enter?.thornmark === 'Back through the pass to the Foreland.' && th.enter?.shelf === 'The pass opens onto old forest. Thornmark.', 'crossing from one zone to the other says what the exits used to');
+}
+
+/** Every open square of the outdoors walked to from its start. */
+function reach(): void {
+  const out = theOutdoors();
   { // Every open square of the outdoors can be walked to from its start, given keys, secrets, water and climbing, and never through the void or the chasm,
     // but for a zone map laid before the one that joins it (`Owes.cutOff`). A crossing a person sells
     // (game/passage.ts) puts the company down on its landing, so each landing on a zone map is
@@ -417,13 +466,20 @@ export function outdoors(): void {
     for (const [id, t] of cut) owed(t.open > 0 && t.got === t.open, `every open square of ${id} is reachable from the outdoors' start (${t.got} of ${t.open})`, cutOff.all[id]);
     ok(...once('every zone map owed its joining is owed once', cutOff.twice));
   }
+}
+
+/** What the composer refuses. */
+function refusals(): void {
   // The composer refuses what the outdoors cannot hold: two zones keeping state under one id, or two zone maps on one square.
   const refusal = (f: () => unknown): string => { try { f(); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } };
   const clash: MapDef[] = MAP_DEFS.map((d) => (d.id === 'thornmark' ? { ...d, features: [...(d.features ?? []), { kind: 'event', x: 2, y: 2, id: 'coast', text: '' }] } : d));
   ok(/'coast'/.test(refusal(() => layOutdoors(ATLAS, clash))), 'two zones may not share a feature id: the outdoors keeps one record for both');
   const heaped = { ...ATLAS, zones: ATLAS.zones.map((z): AtlasZone => (z.id === 'thornmark' ? { ...z, maps: [{ map: 'thornmark', at: [220, 30] }] } : z)) };
   ok(/laid over/.test(refusal(() => layOutdoors(heaped, MAP_DEFS))), 'nor may two zone maps be laid on the same squares');
+}
 
+/** The line at a border (#166). */
+function border(): void {
   // The line at a border (#166): the company's level against the floor of the land it steps into.
   // Three boxes in a row, the road's (the Downs, 4 to 5) then two of the Delta (10 to 11, 11 to 12),
   // laid on a strip of world of their own with the atlas's own rows for the two zones.
@@ -506,7 +562,10 @@ export function outdoors(): void {
       ok(walked.length === 1 && up.join(' / ') === `Back up the steps. / ${walked[0]}`, `up into the Downs, their line as walked into them (${up.join(' / ')})`);
     }
   }
+}
 
+/** What the automap tells of nothing hidden (#889), and a landmark over a wall (#844). */
+function automap(): void {
   { // The automap tells nothing hidden (#889): in clear weather by day, a company before a secret door of the outdoors has
     // mapped nothing behind it, nor with a Cartographer; the door found, it has mapped what lies behind from the doorway.
     // Every secret door, from every side a company can stand on that has an open square behind the door.

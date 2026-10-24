@@ -55,17 +55,74 @@ export function heldZones(chapters: readonly Chapter[], defs: readonly MapDef[])
   return new Set(chapters.flatMap((c) => c.goals.filter((g) => !inEnclave(defs, g.at)).map((g) => zoneOf(g.at))));
 }
 
-export function quests(): void {
+/** A fixture shore whose once-event sets a flag, and on which an inscription is read. */
+const crossing: MapDef = { id: 'fx_shore', name: 'Fixture', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH }, rows: [',,'],
+  features: [{ kind: 'event', x: 0, y: 0, id: 'fx_crossing', text: 'Riders.', once: true, sets: fxFlag('fx_crossed') }] };
+const conds = (w: When): QuestCond[] => [w].flat();
+// Every quest's steps: its own, or its chapters'. Each check reads these, so none passes the one
+// quest without reading a chapter.
+const steps = (q: LogQuest): readonly QuestDef[] => q.chapters ?? [q];
+const whole = (v: QuestView): boolean => {
+  const sheets = questSheets(v, PAGE.w, PAGE.h);
+  const text = sheets.flatMap((s) => s.rows.map((r) => r.text)).join(' ');
+  return sheets.every((s) => s.rows.every((r) => r.y + 7 <= PAGE.h)) && v.pages.every((p) => p.entries.every((e) => text.includes(wrap(e.text, PAGE.w)[0])));
+};
+/** A company and its world, as the goals, the chapters and the order build theirs: a new one each time. */
+const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(rng); return { party, world: new World(buildMaps(), party, rng) }; };
+// A zone map's ids are kept in the outdoors' state, and the party has to have walked into it.
+const stateFor = (w: World, map: string): MapState => {
+  const on = w.locate(map, 0, 0).mapId;
+  if (on !== map && !w.state.zones!.includes(map)) w.state.zones!.push(map);
+  return w.ensureMapState(on);
+};
+const satisfy = (s: { party: Party; world: World }, c: QuestCond): void => {
+  for (const f of [c.flag ?? []].flat()) s.party.flags[f] = 1;
+  if (c.item) s.party.bag.push(c.item);
+  if (c.seen) { const [m, id] = c.seen.split(':'); stateFor(s.world, m).used[id] = 1; }
+  for (const ref of [c.slain ?? []].flat()) { const [m, id] = ref.split(':'); stateFor(s.world, m).groups[id].dead = s.world.state.minutes; }
+  if (c.visited) stateFor(s.world, c.visited);
+  // A start may ask a member (the Cleric's third begins on the log given only for a cleric of 27 with the
+  // second, #763): raise the first member that fits the class and race to the level and the prestige, so
+  // the way in can hold. Every other condition is satisfied as it was, and a member nobody fits is left.
+  if (c.member) {
+    const m = c.member, who = m.who === undefined ? s.party.members.find((x) => (m.cls === undefined || x.cls === m.cls) && (m.race === undefined || x.race === m.race)) : s.party.members[m.who];
+    if (who) { who.level = Math.max(who.level, m.level ?? 0); while (prestigeOf(who) < (m.prestige ?? 0)) takePrestige(who); }
+  }
+};
+const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
+const page = (s: { party: Party; world: World }, q: LogQuest, c: QuestDef): PageView | undefined => view(s, q.id)?.pages.find((p) => p.def === c);
+
+/**
+ * The suite's parts (#1016), each a run of its own (`node tools/test.ts quests:goals`), in the order a
+ * whole run takes them.
+ */
+export const parts = (): string[] => [...PARTS.keys()];
+
+/** The quests, or one part of them; whole, the parts one after another. */
+export function quests(part?: string): void {
+  if (part === undefined) { for (const p of parts()) quests(p); return; }
+  const run = PARTS.get(part);
+  if (!run) throw new Error(`the quests have no part named ${part}`);
+  run();
+}
+
+const PARTS = new Map<string, () => void>([['owed', flagsOwed], ['goalmap', goalmap], ['conditions', conditions], ['zones', zones], ['pages', pages],
+  ['goals', goals], ['chapters', chapters], ['order', order], ['walk', walk]]);
+
+/** The flags owed their setting. */
+function flagsOwed(): void {
   // A flag owed to an issue counts as real until that issue sets it, and only then.
   const setBy = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap(featureFlags)));
   for (const [f, whose] of Object.entries(unset.all)) owed(setBy.has(f), `flag ${f} is set by someone`, whose);
   ok(...once('every flag owed its setting is owed once', unset.twice));
   ok(!condFaults({ flag: fxFlag(Object.keys(unset.all)[0]) }).length && condFaults({ flag: fxFlag('fx_never_set') }).join() === 'flag fx_never_set',
     'a flag owed to an issue names something real, and one nobody sets or owes does not');
-  const crossing: MapDef = { id: 'fx_shore', name: 'Fixture', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH }, rows: [',,'],
-    features: [{ kind: 'event', x: 0, y: 0, id: 'fx_crossing', text: 'Riders.', once: true, sets: fxFlag('fx_crossed') }] };
   ok(!condFaults({ flag: fxFlag('fx_crossed') }, [crossing]).length && condFaults({ flag: fxFlag('fx_crossed') }, []).join() === 'flag fx_crossed',
     'a flag an event sets names something real, as one a person sets does');
+}
+
+/** goalMap, finishedBy, a reading kept by its id and what can stop holding. */
+function goalmap(): void {
   // goalMap (#720): the map the shown goal is done on, read back from the goal, as the chapter moves.
   const shelf = AREAS.find((a) => a.id === 'shelf')!.chapter!, gp = defaultParty(makeRng(4)), gw = new World(buildMaps(), gp, makeRng(4));
   // The chapter as the one quest's only chapter, and as a quest of its own, as the log shows a side quest.
@@ -90,15 +147,10 @@ export function quests(): void {
   ok(!condFaults({ seen: fxKey('fx_shore:fx_lintel') }, [lintel]).length && condFaults({ seen: fxKey('fx_shore:fx_post') }, [lintel]).join() === 'seen fx_shore:fx_post',
     'an inscription read names something real by its id, as a once-event does');
   ok(fleeting({ member: { race: 'orcblood' } }).length === 1 && !fleeting({ member: { cls: 'paladin', level: 16 } }).length, 'a member\'s race can stop holding, so a journal may not ask it, and the rest of a member may');
-  const conds = (w: When): QuestCond[] => [w].flat();
-  // Every quest's steps: its own, or its chapters'. Each check reads these, so none passes the one
-  // quest without reading a chapter.
-  const steps = (q: LogQuest): readonly QuestDef[] => q.chapters ?? [q];
-  const whole = (v: QuestView): boolean => {
-    const sheets = questSheets(v, PAGE.w, PAGE.h);
-    const text = sheets.flatMap((s) => s.rows.map((r) => r.text)).join(' ');
-    return sheets.every((s) => s.rows.every((r) => r.y + 7 <= PAGE.h)) && v.pages.every((p) => p.entries.every((e) => text.includes(wrap(e.text, PAGE.w)[0])));
-  };
+}
+
+/** Every quest's conditions, entries, goals, glyphs, titles and journal. */
+function conditions(): void {
   // Every condition names something real.
   ok(new Set(QUESTS.map((q) => q.id)).size === QUESTS.length, `the ${QUESTS.length} quests have distinct ids`);
   ok(QUESTS.filter((q) => q.chapters).length === 1 && THE_QUEST.chapters.length === AREAS.filter((a) => a.chapter).length && THE_QUEST.chapters.length >= 2,
@@ -123,6 +175,10 @@ export function quests(): void {
     const most = Math.max(...[...c.goals.map((g) => g.text), null].map((goal) => questSheets(all(goal), PAGE.w, PAGE.h).length));
     console.log(`  info: ${id}: its journal takes ${most} ${most === 1 ? 'page' : 'pages'} at most`);
   }
+}
+
+/** The zones the one quest's steps hold. */
+function zones(): void {
   { // Every zone on the road of the built areas holds a step of the one quest, found from where
     // its steps are done (a dungeon or a town by the outdoor map it opens onto), built or not. No step
     // lies in an enclave (#845), beside the road: a goal there is a fault, and holds no zone, as the
@@ -157,6 +213,10 @@ export function quests(): void {
     const seeds = /fromTheTideShip\(|party\.flags\.q_tide_home = 1/.test(readFileSync(new URL('../../src/content/areas/sunderwood/walkthrough.ts', import.meta.url), 'utf8'));
     ok(!seeds, 'Sunderwood\'s walkthrough puts no papers in the bag and no Stone home by hand, and plays the Wall on from Wrackholm\'s chapter');
   }
+}
+
+/** The journal's pages. */
+function pages(): void {
   { // A chapter too long for one page goes on over the next, and keeps every entry.
     const c = THE_QUEST.chapters[0];
     const long: Chapter = { ...c, entries: Array.from({ length: 14 }, (_, i) => ({ id: `e${i}`, when: c.start, text: `${i}: ${c.entries[0].text}` })) };
@@ -184,31 +244,12 @@ export function quests(): void {
     ok(v.pages.length === 5 && pagesInOrder && headed && whole(v), `five chapters each read on their own pages, in road order, each headed by its numeral, title and own goal (${sheets.map((s) => ['I', 'II', 'III', 'IV', 'V'][s.page]).join(' ')})`);
     ok(sheets[open].page === 4 && open === sheets.length - 1 && sheets.filter((s) => s.page === 2).length > 1, `J opens on the newest chapter, V, the goal's (sheet ${open + 1} of ${sheets.length}); the long third goes on over its own pages, turned back to`);
   }
+}
+
+/** Each way in, entry and goal, and what outlasts an item. */
+function goals(): void {
   // Each way in starts the quest with a goal; each entry can be written; each goal can be the one
   // shown (not hidden behind an earlier one); and an entry keyed to an item outlasts the hand-in.
-  const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(rng); return { party, world: new World(buildMaps(), party, rng) }; };
-  // A zone map's ids are kept in the outdoors' state, and the party has to have walked into it.
-  const stateFor = (w: World, map: string): MapState => {
-    const on = w.locate(map, 0, 0).mapId;
-    if (on !== map && !w.state.zones!.includes(map)) w.state.zones!.push(map);
-    return w.ensureMapState(on);
-  };
-  const satisfy = (s: { party: Party; world: World }, c: QuestCond): void => {
-    for (const f of [c.flag ?? []].flat()) s.party.flags[f] = 1;
-    if (c.item) s.party.bag.push(c.item);
-    if (c.seen) { const [m, id] = c.seen.split(':'); stateFor(s.world, m).used[id] = 1; }
-    for (const ref of [c.slain ?? []].flat()) { const [m, id] = ref.split(':'); stateFor(s.world, m).groups[id].dead = s.world.state.minutes; }
-    if (c.visited) stateFor(s.world, c.visited);
-    // A start may ask a member (the Cleric's third begins on the log given only for a cleric of 27 with the
-    // second, #763): raise the first member that fits the class and race to the level and the prestige, so
-    // the way in can hold. Every other condition is satisfied as it was, and a member nobody fits is left.
-    if (c.member) {
-      const m = c.member, who = m.who === undefined ? s.party.members.find((x) => (m.cls === undefined || x.cls === m.cls) && (m.race === undefined || x.race === m.race)) : s.party.members[m.who];
-      if (who) { who.level = Math.max(who.level, m.level ?? 0); while (prestigeOf(who) < (m.prestige ?? 0)) takePrestige(who); }
-    }
-  };
-  const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
-  const page = (s: { party: Party; world: World }, q: LogQuest, c: QuestDef): PageView | undefined => view(s, q.id)?.pages.find((p) => p.def === c);
   const handedIn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? handIns(f).map((q) => q.item) : [])));
   const company = fresh().party;
   // Whether a shop buys an item, asked of a company with a Merchant standing, whom a shop pays most (#857).
@@ -236,6 +277,10 @@ export function quests(): void {
     const gone = [c.start, ...(c.done ? [c.done] : []), ...c.entries.map((e) => e.when)].flatMap(fleeting);
     ok(!gone.length, `${id}: nothing in the log is keyed to what can stop holding, as a member's race${gone.length ? ' -> ' + gone.join(', ') : ''}`);
   });
+}
+
+/** The one quest in two chapters. */
+function chapters(): void {
   { // The one quest in two chapters, with the side quests beside it as quests of their own.
     const s = fresh();
     for (const f of ['q_ashcombe_done', 'q_wenna', 'q_grove', 'q_greywater']) s.party.flags[f] = 1;
@@ -254,6 +299,10 @@ export function quests(): void {
     ok(['dimming/ashcombe.paid', 'dimming/grove.sylvane', 'dimming/ashcombe!', 'dimming/grove'].every((k) => marks.has(k)) && !marks.has('dimming/grove!') && !marks.has('dimming.paid'),
       'the log\'s marks key each chapter\'s entries under it, so the two chapters\' paid stay apart');
   }
+}
+
+/** The one quest out of order. */
+function order(): void {
   { // Out of order: the goal comes only from a chapter begun, or one before it.
     const s = fresh();
     satisfy(s, { visited: 'thornmark' });
@@ -272,6 +321,10 @@ export function quests(): void {
     ok(!w.done && w.goal === 'The Regent-Warden is hiring in Helmstow.' && w.pages.map((p) => p.def.id).join() === 'ashcombe,grove' && w.focus === 0 && !w.pages[0].begun,
       `the Grove done first, the quest goes on to the Regent-Warden (${w.goal})`);
   }
+}
+
+/** The quests end to end. */
+function walk(): void {
   { // The slice's quests end to end, from the real flags and triggers: the log fills in, the goal
     // moves on, and each change is announced once and in story order.
     const rng = makeRng(4);
