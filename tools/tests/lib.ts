@@ -1,32 +1,12 @@
 // What every suite shares: the check that prints a line and counts a failure, the line for a check
-// that is owed, where the party stands on the maps as written, the monster family modules, a Game
-// to build and drive under Node, and the one way a suite lends the item or monster table a def. The
-// count lives here, as a module's own binding can only be changed by the module.
+// that is owed, where the party stands on the maps as written, the monster family modules and a Game
+// to build and drive under Node. A suite lends a def by a table of its own (`tablesWith`,
+// tools/kit/headless.ts). The count lives here, as a module's own binding can only be changed by the module.
 import { readdirSync } from 'node:fs';
 import type { World } from '../../src/game/world.ts';
 import type { GameMap } from '../../src/game/map.ts';
-import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { MapId, Flag } from '../../src/content/index.ts';
 import type { MapKey } from '../../src/game/keys.ts';
-
-/**
- * `f` with `defs` lent to the monster table (#946): each put in under its id, over any there (a look
- * given the rat), and in a `finally` taken out again, or the one it covered put back, so a suite leaves
- * the table as it found it; the runner checks that after every suite. The suites' one writer of it. An
- * item is lent by a table of the suite's own instead (`tablesWith`, tools/kit/headless.ts, #973).
- */
-export function withDefs<R>(table: Readonly<Record<string, MonsterDef>>, defs: readonly MonsterDef[], f: () => R): R {
-  const t = table as Record<string, MonsterDef>, was = defs.map((d): [string, MonsterDef | undefined] => [d.id, t[d.id]]);
-  for (const d of defs) t[d.id] = d;
-  try {
-    const r = f();
-    // Lent while `f` runs and no longer: an async `f` would lose its defs at its first await.
-    if (r instanceof Promise) throw new Error('withDefs takes no async f: its defs would be taken out at its first await');
-    return r;
-  } finally {
-    for (const [id, d] of was.reverse()) if (d === undefined) delete t[id]; else t[id] = d;
-  }
-}
 
 /** Whether every check prints its line (`--list`, or TEST_LIST=1); by default only one that fails does (#895). */
 export const LIST = process.argv.includes('--list') || process.env.TEST_LIST === '1';

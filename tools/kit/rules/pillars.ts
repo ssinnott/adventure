@@ -1,12 +1,13 @@
 // The pillars' text rules the suites share (#984): a map's lines and hints, the glyphs the font
 // lacks and the American spellings. The pillars suite holds every map to them; the dens, rifts and
 // wilds suites take them from here.
-import { AREAS, MAP_DEFS, ITEMS, MONSTERS, SPELLS, QUESTS, ATLAS, GUILD_QUESTS, TABLES } from '../../../src/content/index.ts';
+import { AREAS, MAP_DEFS, ITEMS, SPELLS, QUESTS, ATLAS, GUILD_QUESTS, TABLES } from '../../../src/content/index.ts';
 import { GUILDS } from '../../../src/content/guilds.ts';
 import { CROSSINGS } from '../../../src/content/crossings.ts';
 import type { Crossing } from '../../../src/content/crossings.ts';
 import { GameMap } from '../../../src/game/map.ts';
 import type { MapDef, Presence } from '../../../src/game/mapdef.ts';
+import type { Tables } from '../../../src/game/tables.ts';
 import { CLASSES, RACES, TRAITS, NAME_MAX } from '../../../src/game/party.ts';
 import { enclaveLine } from '../../../src/game/world.ts';
 import { signTexts } from '../../../src/game/inscriptions.ts';
@@ -134,9 +135,10 @@ export const LOOK_LINES = 2;
  * Every text the company reads, by where it is: names, lines, events, notes. Ids, rows, legends and
  * palettes are not text. A crossing's words are three: where it goes as the menu names it, the line
  * said as it lands and the seller's warning (game/passage.ts), on a person who sells it and on each
- * end of the crossings between towns, which are held whether or not a town sells them yet.
+ * end of the crossings between towns, which are held whether or not a town sells them yet. The monsters
+ * are `tables`', content's unless a suite lends one (#974).
  */
-export function texts(defs: readonly MapDef[] = MAP_DEFS, crossings: readonly Crossing[] = CROSSINGS): { where: string; text: string }[] {
+export function texts(defs: readonly MapDef[] = MAP_DEFS, crossings: readonly Crossing[] = CROSSINGS, tables: Tables = TABLES): { where: string; text: string }[] {
   const out: { where: string; text: string }[] = [];
   const add = (where: string, ...t: (string | readonly string[] | undefined)[]): void => { for (const x of t.flat()) if (x !== undefined) out.push({ where, text: x }); };
   for (const d of defs) {
@@ -163,7 +165,7 @@ export function texts(defs: readonly MapDef[] = MAP_DEFS, crossings: readonly Cr
   for (const c of crossings) for (const e of c.ends) add(`crossing ${c.name} at ${e.at}`, e.name, e.label, e.warning);
   for (const i of Object.values(ITEMS)) add(`item ${i.id}`, i.name);
   for (const i of Object.values(ITEMS)) add(`item ${i.id}`, i.text);
-  for (const m of Object.values(MONSTERS)) add(`monster ${m.id}`, m.name, m.plural, m.look);
+  for (const m of Object.values(tables.monsters)) add(`monster ${m.id}`, m.name, m.plural, m.look);
   for (const sp of Object.values(SPELLS)) add(`spell ${sp.id}`, sp.name, sp.text);
   for (const c of Object.values(CLASSES)) add(`class ${c.id}`, c.name, c.blurb);
   for (const r of Object.values(RACES)) add(`race ${r.id}`, r.name, r.blurb);

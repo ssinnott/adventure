@@ -5,7 +5,7 @@
 // signed in, none stands between areas, and every hand-in takes its item at the first meeting. Each
 // check is a function of the content it reads, so it runs over every area and over fixtures broken
 // on purpose, which it must refuse.
-import { AREAS, MAP_DEFS, MONSTERS, ATLAS } from '../../src/content/index.ts';
+import { AREAS, MAP_DEFS, MONSTERS, ATLAS, TABLES } from '../../src/content/index.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { Area, Novelty } from '../../src/content/area.ts';
 import { LOCKS, MOST_AN_AREA, MOST_ON_THE_ROAD } from '../../src/content/locks.ts';
@@ -26,7 +26,8 @@ import { ENDINGS } from '../../src/content/endings.ts';
 import type { Ending } from '../../src/content/endings.ts';
 import { PAGE, pageLines } from '../../src/ui/ending.ts';
 import { areaRows, gatherLists, once } from '../kit/checks.ts';
-import { ok, owed, familyModules, withDefs, fxMap, fxFlag } from './lib.ts';
+import { ok, owed, familyModules, fxMap, fxFlag } from './lib.ts';
+import { tablesWith } from '../kit/headless.ts';
 import { lineFaults, texts, hintFaults, missingGlyphs, americanisms, MOST_LINES, LOOK_LINES, LONGEST_NAME } from '../kit/rules/pillars.ts';
 
 /**
@@ -453,7 +454,7 @@ export async function pillars(): Promise<void> {
     const shown = logTail(['2 Wreckers appear!', 'The fog spoils every archer\'s aim.', two], COMBAT_LOG_LINES);
     ok(logLines(two).length === 2 && LAYOUT.view.w === LAYOUT.log.w && shown.slice(-2).map((l) => l.text).join(' ') === two && shown.every((l) => measureText(l.text) <= LAYOUT.log.w - 12) && shown.slice(-2).every((l) => l.latest),
       `a fight's log shows a two-line look whole, each line inside the view (${shown.map((l) => measureText(l.text)).join(', ')} of ${LAYOUT.log.w - 12}px)`);
-    const withLook = withDefs(MONSTERS, [{ ...MONSTERS.rat, look: 'A gray rat—big as a dog.' }], () => texts());
+    const withLook = texts(MAP_DEFS, CROSSINGS, tablesWith([], TABLES, [{ ...MONSTERS.rat, look: 'A gray rat—big as a dog.' }]));
     const bad = withLook.filter((t) => t.where === 'monster rat');
     ok(bad.some((t) => missingGlyphs(t.text).length === 1 && americanisms(t.text).length === 1), 'a look is read with every text: a dash and gray in one are caught');
   }

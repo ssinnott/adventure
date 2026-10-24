@@ -7,6 +7,7 @@ import type { Action } from '../../src/input.ts';
 import { drainTyped } from '../../src/input.ts';
 import { SAVE_KEY } from '../../src/game/save.ts';
 import type { ItemDef } from '../../src/game/items.ts';
+import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { Tables } from '../../src/game/tables.ts';
 import { TABLES } from '../../src/content/index.ts';
 
@@ -33,12 +34,13 @@ export function headlessLoad(save: string, tables: Tables = TABLES): Game {
 }
 
 /**
- * Content's tables with `defs` lent among the items (#973): a table of the suite's own to play, each def
- * under its id over any there, and content's never written. On `base` where it is another's: the
- * harness's (`HARNESS`, tools/kit/company.ts) for the gate's company.
+ * Content's tables with `defs` lent among the items (#973), and `monsters` among the monsters (#974): a
+ * table of the suite's own to play, each def under its id over any there, and content's never written.
+ * On `base` where it is another's: the harness's (`HARNESS`, tools/kit/company.ts) for the gate's company.
  */
-export function tablesWith(defs: readonly ItemDef[], base: Tables = TABLES): Tables {
-  return { ...base, items: { ...base.items, ...Object.fromEntries(defs.map((d) => [d.id, d])) } };
+export function tablesWith(defs: readonly ItemDef[], base: Tables = TABLES, monsters: readonly MonsterDef[] = []): Tables {
+  return { ...base, items: { ...base.items, ...Object.fromEntries(defs.map((d) => [d.id, d])) },
+    ...(monsters.length ? { monsters: { ...base.monsters, ...Object.fromEntries(monsters.map((d) => [d.id, d])) } } : {}) };
 }
 
 /** The keyboard's text mode without a keyboard: what is typed (the pilot's riddle words, #721) is drained as Input drains it. */

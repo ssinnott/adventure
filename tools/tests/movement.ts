@@ -19,7 +19,7 @@ import { logLines } from '../../src/ui/frame.ts';
 import { defaultParty, createCharacter, xpForLevel, levelUp, takePrestige, partyCan } from '../../src/game/party.ts';
 import type { Character, Party } from '../../src/game/party.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
-import { ok, local, withDefs } from './lib.ts';
+import { ok, local } from './lib.ts';
 import { tablesWith } from '../kit/headless.ts';
 import type { Tables } from '../../src/game/tables.ts';
 
@@ -461,22 +461,24 @@ function archdruid(): void {
   const withDruid = (took = 3): Party => { const p = defaultParty(TABLES, rng); p.members[5] = raised(createCharacter(TABLES, 'Kenver', 'human', 'druid', {}, rng), took); return p; };
   /** The premade six with no druid, its cleric an Exarch of 27: a third prestige, but not the druid's. */
   const withExarch = (): Party => { const p = defaultParty(TABLES, rng); raised(p.members[4]); return p; };
-  /** How many squares of three steps the group makes toward the company. */
-  const closes = (party: Party, group: Partial<EncounterDef> = {}): number => {
-    const w = new World(TABLES, { fx_strip: new GameMap(strip(group)) }, party, rng);
-    w.travel('fx_strip', 1, 1, EAST);
-    const g = w.liveGroups()[0], from = g.state.x;
-    for (let k = 0; k < 3; k++) w.moveMonsters();
-    return from - g.state.x;
-  };
   const laid: MonsterDef[] = [
     ...[20, 28].map((level) => ({ ...MONSTERS.rat, id: `fx_beast${level}`, level })),
     { ...MONSTERS.rat, id: 'fx_person20', kind: 'person', level: 20 },
     { ...MONSTERS.rat, id: 'fx_caller20', level: 20, calls: { monsters: ['fx_beast20'], chance: 0.5 } },
   ];
-  withDefs(MONSTERS, laid, () => {
+  /** The fixtures' beasts, person and caller, lent to a table of the suite's own. */
+  const lent = tablesWith([], TABLES, laid);
+  /** How many squares of three steps the group makes toward the company. */
+  const closes = (party: Party, group: Partial<EncounterDef> = {}): number => {
+    const w = new World(lent, { fx_strip: new GameMap(strip(group)) }, party, rng);
+    w.travel('fx_strip', 1, 1, EAST);
+    const g = w.liveGroups()[0], from = g.state.x;
+    for (let k = 0; k < 3; k++) w.moveMonsters();
+    return from - g.state.x;
+  };
+  {
     // The company walks up to the group that stayed put: nothing beside it for three steps, then the fight.
-    const w = new World(TABLES, { fx_strip: new GameMap(strip({})) }, withDruid(), rng);
+    const w = new World(lent, { fx_strip: new GameMap(strip({})) }, withDruid(), rng);
     w.travel('fx_strip', 1, 1, EAST);
     const walked = [1, 2, 3, 4].map(() => { const r = w.move('forward'); return r.kind === 'moved' ? r.encounter?.join() ?? '' : r.kind; });
     const held = closes(withDruid()), down = withDruid();
@@ -497,5 +499,5 @@ function archdruid(): void {
     ok(people === 3 && mixed === 3, `a group of people, or of a beast and a person, comes on though the Archdruid stands (${people} and ${mixed} squares of 3)`);
     const called = closes(withDruid(), { monsters: ['fx_caller20'] });
     ok(called === 3, `a beast that calls comes on though the Archdruid stands (${called} squares of 3)`);
-  });
+  }
 }
