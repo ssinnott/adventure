@@ -1346,8 +1346,8 @@ the lines of the state sections the state does not keep; a new box's brief goes 
 its "As built" once it is built. A doc is moved, never rewritten: `node tools/docmove.ts` finds each
 line of the old among the new files as many times as it stood, and each of its paragraphs whole in
 one of them, in their old order there; `tools/tests/areadocs.ts` holds the shape. The Foreland's
-moved first, to `docs/areas/shelf/plan.md` and `docs/areas/shelf/decisions.md`; the other thirteen
-are owed to D3, and the suite lists them on every run.
+moved first, to `docs/areas/shelf/plan.md` and `docs/areas/shelf/decisions.md`; D3 moves the other
+thirteen in five parts, and the suite names those still owed on every run.
 
 Decided by the builder for #1011, each the owner's to overturn:
 

@@ -1,5 +1,5 @@
 // Sunderwood, down the east road (band 14-16): the Eaves, the Sunder and Lanternwood, the last of
-// Act II. docs/areas/sunderwood.md is its brief.
+// Act II. docs/areas/sunderwood.md is its state, and docs/areas/sunderwood/ its decisions and plan.
 import type { Area } from '../../area.ts';
 import { EAVES_I2 } from './maps/eaves_i2.ts';
 import { EAVES_J2 } from './maps/eaves_j2.ts';
