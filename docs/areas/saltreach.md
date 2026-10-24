@@ -1751,7 +1751,7 @@ Decided by the builder for #830, each the owner's to overturn:
     D5's south (6) onto D6, which the next two pull requests close;
     and C7's east (19) onto D7, the Wold's box, where the Glasswold's lair has its way in
     (docs/areas/glasswold.md), which §12 does not build. That edge is shut when D7 is built or C7's
-    edge is closed.
+    edge is closed: D7 is built (#924), its west edge open where C7's east is, at rows 0 to 18.
 18. **A5's pools hold four leeches and an eel,** one leech more than the brief's three, a choice and
     not a need. With three, the plain company two under the floor paced 4.39 fights to a rest, 67.5%
     of the floor's 6.5: over the aim of 66.7% and inside the limit of 100%, which the gate allows.

@@ -275,8 +275,9 @@ Decided by delegate for #537, each the owner's to overturn:
    Measured on #535's ladder, before #541 makes the test monsters past 16 again.
 2. **A troll felled stays down:** mending is the living's, so no company meets a fight it cannot
    finish for want of fire. "Or they get up again" (§7.2) is the mending.
-3. **Fire stops the mending for the round it lands in,** any of the four fire spells that does
-   damage; the log says "Tor Troll mends 36." and, burnt, "Tor Troll smoulders and does not mend."
+3. **Fire stops the mending for the round it lands in,** the damage of one of the four fire spells
+   (since #855 a fire weapon's die as well: the Beacon Hammer and Trollbrand); the log says
+   "Tor Troll mends 36." and, burnt, "Tor Troll smoulders and does not mend."
 4. **A curse is what `party.ts` makes it, as disease is:** it outlasts a rest and a raising; Faith
    keeps it off, and Restore, Absolve (tier 7) or a temple lifts it. It takes nothing in a fight, so
    no bot answers it; a bite there (Bless turned round) is the owner's to ask for.
@@ -1291,7 +1292,7 @@ warden in the hold.
 | Bilge Rat | rat | fodder, 12 | the Tide Ship's lower decks | *The rats aboard have been eating well.* Disease (0.15); eight to a group |
 | Wrack Smuggler | bandit | soldier, 12 | the cove, and the ship's deck | *A Compact knife in a Helmstow coat.* |
 | Wrack Bowman | bandit | archer, 12 | with the smugglers | *A bow, and the high ground.* |
-| Ashen Overseer | cultist | controller, 13 | the hold, among the chained rows | *Grey to the wrist, and a chain in each hand.* The chain holds (paralysis, 0.25) |
+| Ashen Overseer | cultist | controller, 13 | the hold, among the chained rows; the Brokenback | *Grey to the wrist, and a chain in each hand.* The chain holds (paralysis, 0.25) |
 | Devilfish | devilfish, new | controller, 13 | the cove's pools; under the ship | *Arms, coming up over the side.* Reaches the back row; holds (paralysis, 0.2) |
 | Tide Elder | riftling | elite, 13 | the forward hold | *A shard of the sea, stood up.* Paralyses (0.15) |
 | Great Devilfish | devilfish, new | boss, 14 | Kelp Hole, the sea cave | *What the smugglers feed.* Size 1.9 |
@@ -1326,7 +1327,7 @@ sunder hound; the Hand, gleaning shards.
 | Sunderling | riftling | skirmisher, 14 | the Sunder | *Black glass, with a white light inside.* Fire bites, for the dead wood in it |
 | Glass Spider | spider | controller, 15 | the Sunder's edge | *Threads of glass, and something walking them.* Paralyses (0.25) |
 | Sunder Hound | wolf | skirmisher, 15 | the Sunder | *A rift hound, gone to glass.* Paralyses (0.15). Fire bites; cold does not |
-| Ashen Gleaner | cultist | soldier, 15 | the Sunder's ledges | *A sack of glowing shards, and a knife for the next.* The Hand quarries the Rift: every shard is a step |
+| Ashen Gleaner | cultist | soldier, 15 | the Sunder's ledges; Wrackholm's Brokenback | *A sack of glowing shards, and a knife for the next.* The Hand quarries the Rift: every shard is a step |
 | Deathshead | moths, new | elite, 16 | Lanternwood, by night | *A skull on its back, and a scream in its wings.* Flies; its dust puts to sleep (0.35) |
 | Glass Bear | bears, new | armoured, 16 | the Sunder's floor | *Glass through its fur like frost.* Fire does not touch it |
 | Warden of the Sunder | riftling | boss, 16 | the gorge, above the wall | *The Sunder's own knot, and it has held for centuries.* When it falls, the Sunder stays open |
@@ -1366,11 +1367,11 @@ cargo down the Deep Mines.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
-| Knocker | knockers, new | fodder, 16 | the Deep Mines' lowest levels; the Sleepers' Bay's stair, with the tallymen (Rimewater) | *Something small and grey, knocking on the rock as it comes.* A machine (§2); four to eight |
+| Knocker | knockers, new | fodder, 16 | the Deep Mines' lowest levels; the Seestollen; the Sleepers' Bay's stair, with the tallymen (Rimewater) | *Something small and grey, knocking on the rock as it comes.* A machine (§2); four to eight |
 | Salamander | salamanders, new | skirmisher, 16 | the lava tubes | *A lizard with the fire showing through its skin.* Fire does not touch it; cold bites |
 | Fire Beetle | spider | armoured, 16 | the spoil heaps and the forges | *A beetle with a coal in its back.* Fire does not touch it |
 | Slagling | riftling | skirmisher, 16 | the Anvil Stone's Rift | *Slag, walking, with a red iron heart.* Cold bites; fire does half |
-| Mender | knockers, new | healer, 17 | with the knockers | *It stops to mend the others, and they let it.* Mends its group |
+| Mender | knockers, new | healer, 17 | with the knockers; the Seestollen | *It stops to mend the others, and they let it.* Mends its group |
 | Rock Worm | long bodies | brute, 17 | the old workings | *This tunnel was not dug by dwarves.* Size 1.6 |
 | Anvil Guard | bandit, a dwarf on the figure frame | armoured, 17 | the Anvil Stone, if the company takes the Stone rather than buys it | *Short, broad, and in the thane's iron.* There only after the choice (`after`) |
 | Slag Elder | riftling | elite, 18 | the Anvil Stone's Rift | *Iron runs off it like sweat.* Paralyses (0.15). Cold bites; fire does half |
@@ -1421,9 +1422,9 @@ skeleton's as the bog body and the Cairn King; the wolf's as the moor hound; rav
 |---|---|---|---|---|
 | Raven | birds | fodder, 18 | the cairns | *They were here first.* Flies; eight to a group |
 | Bog Light | lights, new | controller, 18 | over the bog by night, circling the ring | *A light over the bog, where nobody is.* Flies; its touch takes spell points, not hit points |
-| Bog Body | skeleton | soldier, 18 | out of the peat | *Leather over bone, and a rope still round its neck.* Disease (0.2) |
+| Bog Body | skeleton | soldier, 18 | out of the peat; Carn Fada | *Leather over bone, and a rope still round its neck.* Disease (0.2) |
 | Moor Hound | wolf | skirmisher, 19 | the moor, by night | *The Downs' black dog, grown old and huge.* Paralyses (0.15) |
-| Cairn Wight | wraith | controller, 19 | the Cairns | *A shroud with grave-gold at its throat.* Curses (0.2) |
+| Cairn Wight | wraith | controller, 19 | the Cairns; Carn Fada | *A shroud with grave-gold at its throat.* Curses (0.2) |
 | Tor Troll | ogre | brute, 19 | the tors, by night; by day they are stone, and have faces | *A tor that stood up.* Size 1.6; mends unless burned |
 | The Cairn King | skeleton | boss, 20 | the oldest cairn | *Crowned, and older than the crown.* Curses |
 
@@ -1466,8 +1467,8 @@ tallyman among them; the long bodies as the ice pike; the bears as the ice bear.
 |---|---|---|---|---|
 | Ice Pike | long bodies | skirmisher, 20 | under the lakes' ice | *The ice under Ottilie's feet has an eye in it.* Strikes a company on the ice, at one square |
 | Snow Lynx | cats, new | skirmisher, 20 | the pinewoods | *Grey, tufted, and it has already jumped.* Leaps at the back row |
-| Tallyman | knockers | caller, 20 | up through the ice-hole at Rime Lodge, by night; leading the knockers on the Sleepers' Bay's stair | *It stops and clicks, once for each of you.* Calls a group of knockers |
-| Ice Bear | bears | brute, 21 | the glacier's edge; L9's ridge (#488); K9's far shore (#489); K10's pass (#491) | *White, and bigger than the last one.* |
+| Tallyman | knockers | caller, 20 | up through the ice-hole at Rime Lodge, by night; leading the knockers on the Sleepers' Bay's stair; the Kilns' Seestollen | *It stops and clicks, once for each of you.* Calls a group of knockers |
+| Ice Bear | bears | brute, 21 | the glacier's edge; L9's ridge (#488); K9's far shore (#489); K10's pass (#491); Cairnmoor's Carn Fada | *White, and bigger than the last one.* |
 | Bay Keeper | keepers, new | controller, 21 | the sleepers' bay under Coldmere | *Tall and grey, with too many fingers, and gentle.* Its touch puts to sleep (0.3); mends its group |
 | The Matron | keepers, new | boss, 22 | the bay's last row | *It has tended them for four hundred years.* |
 
@@ -1512,10 +1513,10 @@ eagles from the birds; the Hand as its masons.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
-| Spine Eagle | birds | skirmisher, 22 | the High Spine | *It takes the light out of the sky as it comes down.* Flies |
+| Spine Eagle | birds | skirmisher, 22 | the High Spine; Rimewater's Creag Fionn | *It takes the light out of the sky as it comes down.* Flies |
 | Brother | keepers | soldier, 22 | the monastery and Monks' Vale | *A monk, walking as if someone had described walking to it.* A machine under the robe |
 | Bell-ringer | keepers | controller, 23 | the monastery's towers | *Eleven strokes, a gap, and eleven more.* Its bell holds (paralysis, 0.2) |
-| Snow Troll | ogre | brute, 23 | the High Spine's snow | *A drift that stood up.* Mends unless burned |
+| Snow Troll | ogre | brute, 23 | the High Spine's snow; Rimewater's Creag Fionn | *A drift that stood up.* Mends unless burned |
 | Stair Giant | giants, new | brute, 23 | the Giants' Stair | *A man as tall as a house, holding out his hand.* Size 2; sweeps the front row; asks a toll before it fights, beside the king |
 | Ashen Mason | cultist | soldier, 23 | Sheer Point, on the causeway | *A hammer from below, and a shard to set.* |
 | The Abbot | keepers | boss, 24 | the monastery's chapter house | *The abbot keeps the hours, and it is time.* Its robe falls open as it falls |
@@ -1651,7 +1652,7 @@ scorpion; the salamanders as the basilisk; vultures from the birds.
 | Vulture | birds | fodder, 26 | the steppe | *They land when something is about to die.* Flies |
 | Wold Lion | cats | skirmisher, 26 | the steppe, in prides of three or four | *Tawny as the grass, and seen only when it moves.* |
 | Glass Scorpion | spider | controller, 26 | the dunes | *Its sting is glass, and so is its shell.* Poisons (0.35) |
-| Basilisk | salamanders | controller, 27 | the mesas | *Don't meet its eyes.* Turns a member to glass: stone (0.15) |
+| Basilisk | salamanders | controller, 27 | the mesas; Karaordu | *Don't meet its eyes.* Turns a member to glass: stone (0.15) |
 | Glass Walker | glass walkers, new | elite, 27 | the Wold's edge, by the Glass | *Something walking out of the Glass, and it has walked a long way.* A machine, and older than the rest |
 | The Grey Lion | cats | boss, 28 | the Wold's heart | *Old, scarred, and king of all of this.* |
 
@@ -1704,10 +1705,10 @@ salamanders and the drakes; the knockers, deep.
 | Stoker | heavy machines | brute, 25 | the vents, the furnace room, the corridors | §8.2's; fire does not touch it |
 | Cinder Drake | drakes | brute, 25 | the corridors | §8.2's; burns a row |
 | Drakeling | drakes, a new def | fodder, 26 | the nest | Flies; six to a group |
-| Flue Walker | heavy machines, a new def | elite, 27 | the corridors | Walks the corridor end to end; fire does not touch it |
+| Flue Walker | heavy machines, a new def | elite, 27 | the corridors; Ashfall's Blackdraw | Walks the corridor end to end; fire does not touch it |
 | The Brood Drake | drakes, a new def | boss, 27 | the nest off the corridors | The drake that nests in the corridors, the Barbarian's quarry (#448). Size 1.8; flies; its breath burns a row |
-| Deep Knocker | knockers | armoured, 28 | below the camp | §9.2's, first met here |
-| Inspector | knockers, a new def | caller, 28 | below the camp | Calls deep knockers |
+| Deep Knocker | knockers | armoured, 28 | below the camp; Ashfall's Blackdraw | §9.2's, first met here |
+| Inspector | knockers, a new def | caller, 28 | below the camp; Ashfall's Blackdraw | Calls deep knockers |
 
 After the Ember Stone is lit, one sentry group joins the vents and one the corridors (`after`), as
 in all of Ashfall. The Brood Drake is judged at 26, the corridors' floor.
@@ -1812,7 +1813,7 @@ family, at work, the deep knockers from Meridian Camp (§8.4); the rats.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
-| Deep Rat | rat | fodder, 30 | everywhere | *Rats. Even here.* Disease (0.2); twelve to a group |
+| Deep Rat | rat | fodder, 30 | everywhere; the Glasswold's Karaordu | *Rats. Even here.* Disease (0.2); twelve to a group |
 | Keeper | keepers | soldier, 30 | the service ways | *A keeper with no bay to keep, and no robe.* |
 | Deep Knocker | knockers | armoured, 28, as built below Meridian Camp | the Ways and the Stair; the crack (#56's 61) | *Still knocking, on a wall that has never cracked.* First met below Meridian Camp, at 28 (§8.4) |
 | Ashen Rearguard | cultist | armoured, 30 | the stair's first landing, where the claimant's people are not | *The last of the Hand still standing, and standing in the way.* Never breaks |
@@ -1938,7 +1939,7 @@ the pilot.
 
 | Family | First met | Then |
 |---|---|---|
-| rat | the Foreland (built) | the bilge rat (Wrackholm), the deep rat (the Underdeep) |
+| rat | the Foreland (built) | the bilge rat (Wrackholm), the deep rat (the Underdeep and the Glasswold's Karaordu) |
 | slime | the cellar (built) | none |
 | boar | the Foreland (built) | none |
 | wolf | the Foreland (built) | the black dog and the barrow wolf (the Downs), the sunder hound (Sunderwood), the moor hound (Cairnmoor) |
@@ -2049,24 +2050,25 @@ Where this and DESIGN.md disagree, the design wins.
 The lairs of DESIGN.md §9's eight artifacts, one in each area the bounds build out (#828), each one
 or two levels at the cap's band, 30–32 (#845). Each holds one guardian, its boss: a new kind in a
 family already drawn, eight families for the eight and none of them new, so each drawing is one
-small creatures pull request in its family's module (EXPANSION.md §8.1), after #846 names it and
-the families register their kinds (#848). Each stands at 32, the band's top, as the road's bosses
-stand at theirs, and is judged at the lair's floor of 30 (#845; EXPANSION.md §5.2). Its numbers come
-from the harness's line at the cap and are set when its lair is built (§4.1, §4.2), so this names
-the role and the shape and no hit points. Where it can, a guardian answers what its lair holds, and
-a company that has fought it knows what it has found. The lair's other groups are its brief's, from
-kinds already drawn.
+small creatures pull request in its family's module (EXPANSION.md §8.1), after #846 names it; the
+families register their kinds since #919. Each stands at 32, the band's top, as the road's bosses
+stand at theirs, and is judged at the lair's floor of 30 (#845; EXPANSION.md §5.2). Its numbers are
+set by its lair's gate, off the harness's line at the cap, with a word on its row that says so
+(`offLine`; §4.1, §4.2): the seven built have theirs, and the Old Chanter waits on Saltreach's lair
+(#830). So this names the role and the shape and no hit points. Where it can, a guardian answers
+what its lair holds, and a company that has fought it knows what it has found. The lair's other
+groups are its brief's, from kinds already drawn.
 
 | Monster | Family | Role, level | Where | Look; what it does |
 |---|---|---|---|---|
-| The Hag | long bodies, new kind | boss, 32 | the Foreland's sea cave, on E4's strand; it keeps the Hagstone | *No eyes, and it found you first.* Holds (paralysis) |
+| The Hag | long bodies, new kind | boss, 32 | Hag Hole, the Foreland's sea cave behind E4's cliff; it keeps the Hagstone | *No eyes, and it found you first.* Holds (paralysis) |
 | The Old Chanter | skeleton, new kind | boss, 32 | Saltreach's drowned mound, A5; the Telstok | *The first of the chanters, and it still sings the old song.* Blesses itself and curses; dead, so sleep and nature do nothing to it and holy half again |
-| Old Nick | devilfish, new kind | boss, 32 | Wrackholm's sea cave under the east rocks, F5; Holdfast | *What the smugglers fed first.* Size 2; reaches the back row; its hits heal it |
-| The Steiger | knockers, new kind | boss, 32 | the Kilns' old working under the rim, P5; the Erzhemd | *It knocks once, and the whole seam answers.* A machine; calls a group of deep knockers |
-| The Rim Troll | ogre, new kind | boss, 32 | Cairnmoor's cleft in the rim, P7; Torhide | *The rim stood up.* Size 2; mends unless burned |
-| The Infirmarer | keepers, new kind | boss, 32 | Rimewater's door under the pass, K12; the Wakerobe | *No robe, too many fingers and a bed made up for you.* A machine; its touch puts to sleep, and it mends itself |
-| The Foal-taker | birds, new kind | boss, 32 | the Glasswold's eyrie on the Scarp's east end, D7; Akkush | *When its shadow crosses the herd, the herd runs.* Size 1.8; flies, and hunts the back row |
-| The Grave Drake | drakes, new kind | boss, 32 | Ashfall's grave where the flow stopped, F12; Grim's Axe | *Asleep on a warlord's grave, and the grave is warm.* Size 2; burns a row |
+| Old Nick | devilfish, new kind | boss, 32 | Nick's Locker, Wrackholm's sea cave under F5's reef; Holdfast | *What the smugglers fed first.* Size 2; reaches the back row; its hits heal it |
+| The Steiger | knockers, new kind | boss, 32 | the Randzeche, the Kilns' old working behind P5's adit; the Erzhemd | *It knocks once, and the whole seam answers.* A machine; calls a group of deep knockers |
+| The Rim Troll | ogre, new kind | boss, 32 | Bearn Liath, Cairnmoor's cleft in P7's rim; Torhide | *The rim stood up.* Size 2; mends unless burned |
+| The Infirmarer | keepers, new kind | boss, 32 | the Spittal, Rimewater's house under the pass, its door on K12; the Wakerobe | *No robe, too many fingers and a bed made up for you.* A machine; its touch puts to sleep, and it mends itself |
+| The Foal-taker | birds, new kind | boss, 32 | Kushdag, the Glasswold's eyrie in the Scarp's east face, its door on D7; Akkush | *When its shadow crosses the herd, the herd runs.* Size 1.8; flies, and hunts the back row |
+| The Grave Drake | drakes, new kind | boss, 32 | Grim's Howe, Ashfall's grave under F12's dam; Grim's Axe | *Asleep on a warlord's grave, and the grave is warm.* Size 2; burns a row |
 
 Each ask is built (§3.3): holding, casting, curse, drain, calls, regeneration, the touch that puts
 to sleep, flight and the sweep, so no guardian waits on the systems lane.

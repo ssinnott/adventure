@@ -1284,8 +1284,9 @@ pull request builds from it and adds its "As built".
   both sides, and no road joins Wrackholm to either. Every corner agrees with the built letters:
   E5's 31,31 is grass with E6's 31,0 and F5's 0,31, and F7's 0,0 is shallows with F6's 0,31, the
   Wold's 31,0 deep water beside it. No square of a box built before them changes and no row of
-  `SEAMS_AS_BUILT` is added. Every edge the strands turn to unbuilt land (E4, F4, G5, G7 and F8) is
-  the sea, so no row of `OPEN_ON_NOTHING` comes, and the three that held E6's north and F6's north
+  `SEAMS_AS_BUILT` is added. Every edge the strands turn to unbuilt land (F4, G5, G7 and F8) is the
+  sea, as E5's north was to E4 until the Foreland built it (#930: both rows water, the sea on both
+  sides), so no row of `OPEN_ON_NOTHING` comes, and the three that held E6's north and F6's north
   and south edges go; no built map of Wrackholm now opens onto unbuilt land (#835's Done when).
 - **No group** stands on a strand (§9, #835's 3): the curve's rise rule asks a box's hardest at its
   top, 13 on E5 and 14 on F5 and F7, and the isle's own at those levels are its devilfish, the

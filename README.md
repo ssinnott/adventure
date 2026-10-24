@@ -78,10 +78,11 @@ reorganisation, its sub-issues filed as they are taken up) go with it. All of th
 word of 18 October 2026 and are being built in the order of docs/EXPANSION.md §9: the eight areas,
 two in flight, Saltreach first and the Foreland last, with the reorganisation beside them, its
 moves that touch every area landing in two short windows between area pull requests. Of the
-touches, #890 is merged (#894) and #891 and #892 are closed, their rulings standing (#901).
-The enclave's rules are built (#845) and do nothing until an area places an enclave.
-The bounds' artifacts are #846's: #847 has built their mark and their five kinds of power, and the
-eight wait in their areas' items for their lairs. The reach stays post-v1.
+touches, #889, #890 and #893 are merged (#903, #894 and #948) and #891 and #892 are closed, their
+rulings standing (#901). The enclave's rules are built (#845), and six areas place an enclave: the
+Kilns, the Glasswold, Cairnmoor, Rimewater, Wrackholm and Ashfall. The bounds' artifacts are
+#846's: #847 has built their mark and their five kinds of power, and seven lie in the lairs their
+areas built; the Telstok waits in Saltreach's items for its lair (#830). The reach stays post-v1.
 
 The owner's own playthrough of M3 is what remains before v1 is called done; the tracker holds no
 issue for it.
@@ -141,7 +142,8 @@ tools/             dev server, bundler, tests (tools/tests/, a file per suite), 
 
 `src/lib/` is [game-engine](https://github.com/ssinnott/game-engine) `src/`, added with
 `git subtree add --prefix=src/lib ... --squash`. Used here: the fixed-step loop, the render canvas,
-the deterministic rng, the pixel font, and the colour and shape helpers. The rig, audio and net
+the deterministic rng, the pixel font and the colour and shape helpers. The rig, audio and net
 modules are vendored but not yet imported. Pull updates with
 `git subtree pull --prefix=src/lib https://github.com/ssinnott/game-engine split --squash`
-once the `split` branch has been re-published from main (it currently predates `src/audio/`).
+once the `split` branch has been re-published from main (it currently predates the engine's audio,
+vendored here as `src/lib/audio/`).
