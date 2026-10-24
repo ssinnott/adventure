@@ -53,7 +53,8 @@ const num = (p: ts.PropertyAssignment | undefined): number | undefined => {
 const visit = (n: ts.Node, f: (n: ts.Node) => void): void => { f(n); ts.forEachChild(n, (c) => visit(c, f)); };
 
 // ---------------------------------------------------------------- the exits as written
-interface Written { file: string; node: ts.ObjectLiteralExpression; x: number; y: number; to: string; tx: number; ty: number; tf?: number; span: [number, number] }
+/** An exit as written, or a Rift's way out (`out`, whose exit the Rift's map builds from it; `rift` is that map). */
+interface Written { file: string; node: ts.ObjectLiteralExpression; x: number; y: number; to: string; tx: number; ty: number; tf?: number; span: [number, number]; names: string[]; rift?: string }
 const written: Written[] = [];
 const sources = new Map<string, ts.SourceFile>();
 for (const file of FILES) {
@@ -64,37 +65,47 @@ for (const file of FILES) {
     const p = props(n);
     if (!p.has('to') || !p.has('tx') || p.has('kind')) return;
     const to = p.get('to')!.initializer, tf = p.get('tf')?.initializer;
-    const x = num(p.get('x')), y = num(p.get('y')), tx = num(p.get('tx')), ty = num(p.get('ty'));
+    const outOf = ts.isPropertyAssignment(n.parent) && ts.isIdentifier(n.parent.name) && n.parent.name.text === 'out' && ts.isObjectLiteralExpression(n.parent.parent) ? props(n.parent.parent).get('id')?.initializer : undefined;
+    const rift = outOf && ts.isStringLiteral(outOf) ? outOf.text : undefined;
+    const x = rift ? -1 : num(p.get('x')), y = rift ? -1 : num(p.get('y')), tx = num(p.get('tx')), ty = num(p.get('ty'));
     const where = `${file}:${sf.getLineAndCharacterOfPosition(n.getStart()).line + 1}`;
-    if (!ts.isStringLiteral(to) || [x, y, tx, ty].some((v) => v === undefined || Number.isNaN(v))) fail(`${where}: an exit not written in numbers and a map id`);
+    // A landing written as an expression (Cinderport's gate, beside G10's) is matched by the rest, and what it names may go.
+    if (!ts.isStringLiteral(to) || [x, y, tx, ty].some((v) => v === undefined) || [x, y].some((v) => Number.isNaN(v))) fail(`${where}: an exit not written in numbers and a map id`);
+    const names: string[] = [];
+    for (const q of ['tx', 'ty']) visit(p.get(q)!.initializer, (m) => { if (ts.isIdentifier(m) && !(ts.isPropertyAccessExpression(m.parent) && m.parent.name === m)) names.push(m.text); });
     if (tf && !(ts.isIdentifier(tf) && FACING.includes(tf.text))) fail(`${where}: a facing not written as a facing's name`);
     // tx, ty and tf stand together, in that order, and go as one.
     const order = n.properties.filter((q) => ts.isPropertyAssignment(q) && ts.isIdentifier(q.name) && ['tx', 'ty', 'tf'].includes(q.name.text));
     const i = n.properties.indexOf(order[0]);
     if (order.some((q, k) => n.properties[i + k] !== q)) fail(`${where}: tx, ty and tf apart`);
-    written.push({ file, node: n, x: x!, y: y!, to: (to as ts.StringLiteral).text, tx: tx!, ty: ty!, tf: tf ? FACING.indexOf((tf as ts.Identifier).text) : undefined, span: [order[0].getStart(), order[order.length - 1].getEnd()] });
+    written.push({ file, node: n, x: x!, y: y!, to: (to as ts.StringLiteral).text, tx: tx!, ty: ty!, tf: tf ? FACING.indexOf((tf as ts.Identifier).text) : undefined, span: [order[0].getStart(), order[order.length - 1].getEnd()], names, rift });
   });
 }
 
 // ---------------------------------------------------------------- the exits as joined, and their names
 const byId = new Map(DEFS.map((d) => [d.id, d]));
-const key = (e: { x: number; y: number; to: string; tx: number; ty: number; tf?: number }): string => `${e.x},${e.y} ${e.to} ${e.tx},${e.ty} ${e.tf}`;
+const key = (e: { x: number; y: number; to: string; tf?: number }): string => `${e.x},${e.y} ${e.to} ${e.tf}`;
+const fits = (w: Written, e: Ex): boolean => key(w) === key(e) && (Number.isNaN(w.tx) || w.tx === e.tx) && (Number.isNaN(w.ty) || w.ty === e.ty);
 const joined = new Map<string, { from: Def; e: Ex }[]>();
 for (const d of DEFS) for (const e of d.exits ?? []) if (e.at === undefined) joined.set(key(e), [...(joined.get(key(e)) ?? []), { from: d, e }]);
 const seen = new Set<string>();
+const match = new Map<Written, Ex>();
 for (const w of written) {
-  const j = joined.get(key(w));
-  if (!j || j.length !== 1) fail(`${w.file}: exit ${key(w)} is joined ${j?.length ?? 0} times`);
-  seen.add(key(w));
+  const way = w.rift ? byId.get(w.rift)?.exits?.[0] : undefined;
+  if (w.rift) { if (!way || way.to !== w.to || !fits({ ...w, x: way.x, y: way.y }, way)) fail(`${w.file}: the way out of ${w.rift} is not its map's exit`); match.set(w, way!); continue; }
+  const j = (joined.get(key(w)) ?? []).filter((c) => fits(w, c.e));
+  if (j.length !== 1) fail(`${w.file}: exit ${key(w)} is joined ${j.length} times`);
+  match.set(w, j[0].e);
 }
-for (const k of joined.keys()) if (!seen.has(k)) fail(`exit ${k} of ${joined.get(k)![0].from.id} is written where this cannot see it`);
+const matched = new Set(match.values());
+for (const [k, j] of joined) for (const c of j) if (!matched.has(c.e)) fail(`exit ${k} of ${c.from.id} is written where this cannot see it`);
 
 /** Each map's anchors, old and new, by square and facing; and the name of each exit's. */
 const anchors = new Map<string, Map<string, { name: string; x: number; y: number; facing: number; fresh: boolean }>>();
 const nameOf = new Map<Written, string>();
 const counts = { start: 0, named: 0 };
 for (const d of DEFS) for (const e of d.exits ?? []) {
-  const w = e.at === undefined ? written.find((q) => key(q) === key(e)) : undefined;
+  const w = e.at === undefined ? written.find((q) => match.get(q) === e) : undefined;
   if (!w) continue;
   const to = byId.get(e.to) ?? fail(`exit ${key(e)} of ${d.id} leads to no map`);
   if (to.start.x === e.tx && to.start.y === e.ty && to.start.facing === e.tf) { nameOf.set(w, 'start'); counts.start++; continue; }
@@ -117,6 +128,7 @@ const edits = new Map<string, Edit[]>();
 const add = (f: string, e: Edit): void => { edits.set(f, [...(edits.get(f) ?? []), e]); };
 for (const w of written) {
   add(w.file, [w.span[0], w.span[1], `at: '${nameOf.get(w)}'`]);
+  if (w.rift) continue;
   add(w.file, [w.node.getStart(), w.node.getStart(), 'anchored(']);
   add(w.file, [w.node.getEnd(), w.node.getEnd(), ')']);
 }
@@ -191,6 +203,13 @@ for (const [file, es] of edits) {
   sf = parse(file, t);
   const facings = FACING.filter((f) => used(sf, f));
   t = setImport(file, t, TYPES, (n) => !FACING.includes(n), facings, [MAP]);
+  for (const name of new Set(written.filter((w) => w.file === file).flatMap((w) => w.names))) {
+    sf = parse(file, t);
+    if (used(sf, name)) continue;
+    const d = sf.statements.find((q): q is ts.ImportDeclaration => ts.isImportDeclaration(q) && names(q).includes(name)) ?? fail(`${file}: ${name} is taken from nowhere`);
+    const spec = (d.moduleSpecifier as ts.StringLiteral).text, to = posix.normalize(posix.join(posix.dirname(file), spec));
+    t = setImport(file, t, to, (n) => n !== name, [], []);
+  }
   if (t.includes('laid(PLAN')) {
     t = setImport(file, t, ATLAS, () => true, ['laid'], [ATLAS]);
     t = setImport(file, t, PLAN_FILE, () => true, ['PLAN'], [ATLAS]);
