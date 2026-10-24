@@ -173,4 +173,13 @@ export const grimsAxe = W('grims_axe', 'Grim\'s Axe', ARTIFACT_PRICE, 2, 12, { b
   'Grim is cut in its cheek, and under the name a smoking mountain.',
 ] });
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling, townRoll, grimsAxe];
+// Blackdraw's find (#836, the enclave, docs/areas/ashfall.md §12.3): the furnace's kindler, on Cinderport's
+// marlinspike's numbers, its blows carrying lightning, which is the answer to the machines (MONSTERS §8.2):
+// hits 21 against the marlinspike's 17.5, the ladder's step at 25 for the thief, the bard and the sorcerer.
+// Found there alone and sold nowhere, inside the enclave's window, the Glasswold's 6,000 (#845's 3).
+export const kindler: ItemDef = { ...marlinspike, id: 'kindler', name: 'Kindler, Marlinspike', price: 2500, element: 'lightning', text: [
+  'A spike of black iron a forearm long, worn bright at the point. The stokers lit the furnace with it.',
+  'Struck on anything it throws blue sparks, and the sparks bite.',
+] };
+
+export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling, townRoll, grimsAxe, kindler];
