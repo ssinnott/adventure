@@ -1,12 +1,11 @@
 // The gate's bot on fixtures (#1016), apart from the figures the gate holds the areas to
 // (tools/tests/gate.ts): the company of tools/kit/company.ts and the fight of tools/kit/fight.ts play a
-// member's resistance, Act III's abilities and the prestiges; a figure is judged inside its aim, off it
-// or past its limit; a fight is broken off at the round cap; a toll is refused; a group's time to walk
-// and the ground; a den's keepers; and an area's maps each at their own floor.
+// member's resistance, Act III's abilities and the prestiges; a fight is broken off at the round cap; a
+// toll is refused and paid; a group's time to walk, and the walk over the ground (tools/kit/rules/curve.ts).
 import { ITEMS, MONSTERS } from '../../src/content/index.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
-import type { EncounterDef, Feature, MapDef, Choice } from '../../src/game/map.ts';
+import type { EncounterDef, MapDef, Choice } from '../../src/game/map.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { World } from '../../src/game/world.ts';
 import { EAST } from '../../src/game/types.ts';
@@ -19,15 +18,15 @@ import { spell } from '../../src/game/spells.ts';
 import { markOf, ANSWER } from '../../src/game/bot.ts';
 import { gateFight, gateBot, fightSeed, gateAnswer, gatePass, rate, ROUND_CAP, playOut } from '../kit/fight.ts';
 import { gateCompany, companyAt } from '../kit/company.ts';
-import { fightsPerRest, mendBetween } from '../kit/harness.ts';
+import { mendBetween } from '../kit/harness.ts';
 import { testMonster, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, basiliskEncounter } from '../kit/line.ts';
 import { stepsFrom } from '../kit/rules/curve.ts';
-import { GATE } from '../kit/rules/gate.ts';
 import { ok, withDefs, fxFlag } from './lib.ts';
-import { judge, atLeast, atMost, within, check, offAim, pc, dayShare, nearestWayIn, denReading, areaPools, pooled } from './gate.ts';
-import type { Judged } from './gate.ts';
 
-/** The gate's bot on fixtures: the checks the gate's fixed part held before #1016. */
+/** A share as the gate prints one. */
+const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
+
+/** The gate's bot on fixtures: the checks of the bot, its company and the walk that the gate's fixed part held before #1016. */
 export function gatebot(): void {
   // The gate's company plays a member's resistance (#555): the bearer of a charm against cold takes
   // less from a frost-caster's spells, and the rest what they took without it.
@@ -109,32 +108,6 @@ export function gatebot(): void {
     const taken = [10, 11, 19, 27].map((l) => gateCompany(l, 3)), same = taken.every((p, k) => JSON.stringify(p) === JSON.stringify(companyAt([10, 11, 19, 27][k], 3)));
     ok(same && taken.every((p, k) => p.members.every((m) => (m.prestige ?? 0) === k)), `the gate's company takes its prestiges as harness's does: ${taken.map((p) => p.members[0].prestige ?? 0).join(', ')} at 10, 11, 19 and 27, its knight a ${className(taken[3].members[0])} at 27`);
   }
-  // A figure inside its aim passes; one between its aim and its limit passes and is listed; one past
-  // its limit fails. Probed either side of whatever the aim and the limit are, so the pilot may move them.
-  {
-    const { aim: a, limit: l } = GATE.through;
-    const at = (v: number): Judged => judge(atLeast(a)(v), atLeast(l)(v));
-    const want = 6.5, [ra, rl] = [GATE.perRest.aim, GATE.perRest.limit].map(([lo, hi]) => [want - lo, want + hi] as [number, number]);
-    const rest = (v: number): Judged => judge(within(ra)(v), within(rl)(v));
-    ok(at((a + 1) / 2) === 'aim' && at((a + l) / 2) === 'off' && at(l / 2) === 'past' && rest(want) === 'aim' && rest((ra[0] + rl[0]) / 2) === 'off' && rest(rl[1] + 1) === 'past',
-      `a figure is judged inside its aim, off it or past its limit (${pc(a)} and ${pc(l)} through; ${ra.join(' to ')} and ${rl.join(' to ')} fights to a rest)`);
-    // A figure off its aim is listed at the end of the suite, one inside it is not.
-    const before = offAim.length, key = 'fixture: floor', off = `the fixture at its floor: ${pc((a + l) / 2)} (off its aim)`;
-    check(key, (a + l) / 2, atLeast(a), atLeast(l), off);
-    check(key, (a + 1) / 2, atLeast(a), atLeast(l), 'the fixture at its floor, inside its aim');
-    ok(offAim.length === before + 1 && offAim[before] === off, 'a figure off its aim is listed, and one inside it is not');
-    offAim.splice(before);
-    // And two under a floor from dayFrom, by the day, probed at a floor past it: a day a tenth of a fight
-    // past two thirds of the floor's is listed and passes, and one a tenth past the floor's own fails.
-    const { aim: da, limit: dl } = GATE.backDay, floor = GATE.dayFrom + 10, perRest = fightsPerRest(floor);
-    const share = (fights: number): Judged => judge(atMost(da)(dayShare(fights, floor)), atMost(dl)(dayShare(fights, floor)));
-    const pastAim = perRest * da + 0.1, pastLimit = perRest * dl + 0.1;
-    const listed = `the fixture ${GATE.under} under its floor, ${floor}: ${pastAim.toFixed(2)} fights to a rest of the floor's ${perRest} (off its aim)`;
-    check('fixture: under day', dayShare(pastAim, floor), atMost(da), atMost(dl), listed);
-    ok(share((perRest * da) / 2) === 'aim' && share(pastAim) === 'off' && offAim.length === before + 1 && offAim[before] === listed && share(pastLimit) === 'past',
-      `a day two under a floor is judged as a share of the floor's fights to a rest: ${pc(dayShare(pastAim, floor))} is off its aim of ${pc(da)}, listed and passed; ${pc(dayShare(pastLimit, floor))} is past its limit of ${pc(dl)}`);
-    offAim.splice(before);
-  }
   // A fight nobody finishes in fifteen rounds is broken off, and counted as not won.
   const slow = [testMonster('soldier', 1, 400, 0.01)];
   ok(gateFight(gateCompany(3, 36), slow, 36) && !gateFight(gateCompany(3, 36), slow, 36, ROUND_CAP), `a fight won only past ${ROUND_CAP} rounds is broken off at ${ROUND_CAP}, and not won`);
@@ -167,7 +140,7 @@ export function gatebot(): void {
       'the company walks past it, through its square, and the toll is remembered through a save and a load');
   }
   // A group's time to walk: fog brings the bows' toll to its fights, and nothing else does; an
-  // `until` changes no fight; a group that waits on an `after` is no warning at the way in.
+  // `until` changes no fight.
   {
     const bows = new Array(6).fill('smuggler_bowman'), dry = rate({ monsters: bows }, 1), fog = rate({ monsters: bows, when: { sky: 'fog' } }, 1);
     ok(fog !== dry && rate({ monsters: bows, when: [{ hours: 'night' }, { season: 'winter' }] }, 1) === dry, `six smuggler bowmen that walk only in fog are fought in it (${pc(fog)} won at 1, against ${pc(dry)} dry), and by night or in winter dry`);
@@ -186,28 +159,5 @@ export function gatebot(): void {
     // in it are the mountain's rock, climbed as it is.
     const far: MapDef = { id: 'fx_far', name: 'Far', kind: 'outdoor', start: { x: 1, y: 1, facing: 0 }, rows: ['MMMMMMMMM', 'M,su&V@=M', 'MMMMMMMMM'] };
     ok(stepsFrom(far)(7, 1) === 6, `the walk from a way in crosses steppe, dunes and vines and climbs the volcano and a vent (${stepsFrom(far)(7, 1)} steps over six squares)`);
-    const at = (x: number): EncounterDef => ({ id: `g${x}`, x, y: 0, monsters: ['rat'] }), line = [at(1), { ...at(2), after: { flag: fxFlag('f') } }, at(3), at(4)];
-    ok(nearestWayIn(line, (x) => x).map((g) => g.id).join() === 'g1,g3', 'the groups nearest the way in skip one that comes only after a step');
-    // A den's keepers are its camp's hardest fight: won no more often than any of its brood.
-    const den: Extract<Feature, { kind: 'den' }> = { kind: 'den', x: 1, y: 1, id: 'd', text: '', breeds: ['rat'], keepers: 'k', brood: ['b'], ask: '', burn: '', burnt: '', gold: 0, items: [] };
-    const camp = (keep: string[], brood: string[]): MapDef => ({ id: 'dens', name: '', kind: 'outdoor', start: { x: 0, y: 0, facing: 0 }, rows: [], features: [den], encounters: [{ id: 'k', x: 2, y: 1, monsters: keep, roams: false }, { id: 'b', x: 5, y: 1, monsters: brood, respawn: 1440 }] });
-    const three = ['smuggler_captain', 'smuggler_captain', 'smuggler_captain'], fair = denReading(camp(three, ['rat']), den, 1), wrong = denReading(camp(['rat'], three), den, 1);
-    ok(!fair.fault && wrong.fault.includes('b'), `a den whose brood is harder than its keepers is caught (${fair.line}; ${wrong.fault})`);
-    // An area whose second zone rises above its first: each map is judged at its own floor, so it
-    // holds its aims where each holds, and misses them where one does not, at its floor or two under it.
-    const box = (id: string, band: [number, number], ...groups: string[][]): MapDef => ({ id, name: '', kind: 'outdoor', band, start: { x: 0, y: 0, facing: 0 }, rows: [], encounters: groups.map((monsters, i) => ({ id: `${id}${i}`, x: i, y: 0, monsters })) });
-    // A dungeon of three rats at 3-4 counts two under the area's floor, where no group has a company:
-    // judged two under its own floor instead, it would be won at 1 and pull the back over its aim.
-    const lower = box('low', [1, 3], ['rat', 'rat', 'rat']), wolves = box('mid', [3, 4], ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf']);
-    const cellar: MapDef = { ...box('cellar', [3, 4], ['rat', 'rat', 'rat']), kind: 'dungeon' };
-    const band = (top: string[]): MapDef[] => [lower, wolves, cellar, box('top', [4, 5], top)];
-    const held = areaPools(band([...new Array(11).fill('brigand'), 'brigand_archer']), 1);
-    const once = pooled(band([...new Array(11).fill('brigand'), 'brigand_archer']).flatMap((d) => d.encounters!), 1);
-    const hard = areaPools(band(['ashen_hand', 'ashen_adept', 'ashen_adept']), 1), soft = areaPools(band(['rat', 'rat', 'rat']), 1);
-    ok(held.through !== null && held.through >= GATE.through.aim && held.back !== null && held.back <= GATE.back.aim && once < GATE.through.aim,
-      `an area whose second zone rises, with a dungeon in it, holds its aims at its maps' own floors (${pc(held.through ?? 0)} won, ${pc(held.back ?? 0)} two under), where one floor for all would miss (${pc(once)} at 1)`);
-    ok(hard.through !== null && hard.through < GATE.through.aim && soft.back !== null && soft.back > GATE.back.aim,
-      `and misses its aim where one map does not hold: too hard at its floor (${pc(hard.through ?? 0)}), or too soft two under it (${pc(soft.back ?? 0)})`);
-    ok(areaPools([], 1).through === null, 'an area with no groups has no figure to judge');
   }
 }
