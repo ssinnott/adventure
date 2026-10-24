@@ -1221,9 +1221,9 @@ function quartermaster(): void {
   fighter.equipment.weapon = 'shortsword';
   const only: Shop = { ...mottram, stock: ['longsword'], prices: {} };
   company.gold = 420;
-  const rich = better(fighter, only.stock, only, spare(company));
+  const rich = better(TABLES.items, fighter, only.stock, only, spare(company));
   company.gold = 400;
-  const poor = better(fighter, only.stock, only, spare(company));
+  const poor = better(TABLES.items, fighter, only.stock, only, spare(company));
   ok(reserve(company) === 300 && item(TABLES.items, 'longsword').price === 120 && rich === 'longsword' && poor === undefined,
     `better: the long sword (120 gold) for the fighter with 420 gold and not with 400, the reserve 300 (${rich}, ${poor})`);
 

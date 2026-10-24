@@ -273,9 +273,9 @@ function master(): void {
 /** The sheet says the tier on the WEAPON line and before SPELLS, and nothing more without one. */
 function sheet(): void {
   const p = company('bard', 25), c = p.members[0];
-  const weapon = c.equipment.weapon ? 'WEAPON ' : '', w0 = weaponLine(c), s0 = spellsLine(c);
+  const weapon = c.equipment.weapon ? 'WEAPON ' : '', w0 = weaponLine(TABLES.items, c), s0 = spellsLine(c);
   c.tiers = { arms: 'expert', magic: 'master' };
-  const w1 = weaponLine(c), s1 = spellsLine(c);
+  const w1 = weaponLine(TABLES.items, c), s1 = spellsLine(c);
   ok(!!weapon && !w0.includes(',') && !s0.includes('(') && w1 === `${w0}, EXPERT` && s1 === s0.replace(/^SPELLS /, 'SPELLS (MASTER) '),
     `the sheet: "${w1}" and "${s1.slice(0, 40)}...", and without a tier "${w0}"`);
 }

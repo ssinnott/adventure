@@ -513,7 +513,7 @@ export class ExploreScreen implements Screen {
     if (hint && !g.pilot?.band()) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: '#ffe08a', align: 'center' });
     drawStatus(ctx, g.world);
     drawAutomap(ctx, g.world, frame);
-    drawPartyCards(ctx, g.party, -1, frame);
+    drawPartyCards(g.tables.items, ctx, g.party, -1, frame);
     drawLog(ctx, g.log);
     drawViewportFrame(ctx);
     drawPurse(ctx, g.party);

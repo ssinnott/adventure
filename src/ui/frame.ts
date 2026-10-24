@@ -181,7 +181,7 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   ctx.fillStyle = '#c6453c'; ctx.beginPath(); ctx.moveTo(rx, ry - 10); ctx.lineTo(rx + 3, ry); ctx.lineTo(rx - 3, ry); ctx.closePath(); ctx.fill();
 }
 
-export function drawPartyCards(ctx: CanvasRenderingContext2D, party: Party, selected: number, frame: number): void {
+export function drawPartyCards(items: Items, ctx: CanvasRenderingContext2D, party: Party, selected: number, frame: number): void {
   party.members.forEach((c, i) => drawCard(ctx, c, i, i === selected, frame));
 }
 
@@ -213,6 +213,7 @@ function drawCard(ctx: CanvasRenderingContext2D, c: Character, i: number, select
 }
 
 import { armorClass as armorClassOf } from '../game/party.ts';
+import type { Items } from '../game/tables.ts';
 
 /** How many lines the log shows. */
 export const LOG_LINES = 4;
