@@ -84,6 +84,10 @@ export async function changed(): Promise<void> {
   ok(!(await changedMaps(['src/ui/sprites.ts'])).all && !(await changedMaps(['src/ui/monsters/wolf.ts', 'src/ui/monsters/index.ts'])).all, 'the dispatcher, a family and the barrel count no map');
   ok((await changedMaps(['src/ui/monsters/common.ts'])).all, 'ui/monsters/common.ts, whose B and stroke the scenery paints with, counts every map');
   ok((await changedMaps(['tools/kit/browser.ts'])).all && !(await changedMaps(['tools/kit/args.ts'])).all, "the browser kit, the Chromium and the page the smoke's sweep paints in, counts every map; the reading of the tools' flags none");
+  // The smoke is its runner and its parts (#1006): a change to any of them sweeps every map, as the sweep is one of them.
+  const unswept: string[] = [];
+  for (const f of ['tools/smoke.ts', ...['boot', 'flows', 'scenes', 'art', 'cracks'].map((p) => `tools/smoke/${p}.ts`)]) if (!(await changedMaps([f])).all) unswept.push(f);
+  ok(!unswept.length, `the smoke's runner and each file of its parts in tools/smoke/ count every map${unswept.length ? ` (not: ${unswept.join(', ')})` : ''}`);
   // The kits count what the files they came from counted (#983), and the old paths that re-export them still do.
   const rig = 'src/ui/monsters/kit/figure.ts', plumbing = 'src/ui/monsters/kit/common.ts';
   ok((await changedMaps([plumbing])).all && (await changedMonsters([plumbing])).all && (await changedMonsters([rig])).all && !(await changedMaps([rig])).all,

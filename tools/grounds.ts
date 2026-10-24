@@ -1,5 +1,5 @@
 // The ground underfoot laid out small, a sample to a ground, for the checks that must see a ground
-// before a built map holds it: the smoke test paints each and sweeps it for cracks, and the contact
+// before a built map holds it: the smoke test paints each and sweeps it for cracks (tools/smoke/cracks.ts), and the contact
 // sheet shows each (`--ground`), as the Rift samples show the templates. Each has a ruin or a hut, so
 // the sweep has wall faces to look between, and is seen from its start. No area places them.
 import type { MapDef } from '../src/game/map.ts';

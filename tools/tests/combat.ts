@@ -1369,7 +1369,7 @@ function autoFight(): void {
 /**
  * A tick leaves its fight settled (#943): the combat screen walks the turn on in `update`, once the act is done, so
  * that drawing the fight reads the turn it kept and moves nothing of it; and the hit flash counts the screen's ticks,
- * not its frames. The smoke draws a fight ten times (tools/smoke.ts); no suite has a canvas.
+ * not its frames. The smoke draws a fight ten times (the drawing part, tools/smoke/flows.ts); no suite has a canvas.
  */
 function fightTicks(): void {
   CombatScreen.instant = true;

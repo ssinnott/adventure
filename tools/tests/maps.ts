@@ -373,7 +373,7 @@ export function maps(): void {
   }
   // The second landmark kind (#736): a monastery inside its block passes, and its map gives it back by
   // its square; one on the block's edge, one whose block is ragged at a corner square, and one given
-  // a lamp's flag are caught. Its drawing is the smoke test's (tools/smoke.ts).
+  // a lamp's flag are caught. Its drawing is the smoke test's (the lighthouse part, tools/smoke/scenes.ts).
   {
     const cloister = new GameMap({ id: 'fx_cloister', name: 'Cloister', kind: 'outdoor', start: { x: 0, y: 0, facing: NORTH },
       rows: [',,,,,', ',BBB,', ',BBB,', ',BDB,', ',,,,,'], landmarks: [{ x: 2, y: 2, kind: 'monastery' }] });
