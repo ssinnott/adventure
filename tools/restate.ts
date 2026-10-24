@@ -2,7 +2,7 @@
 // moves"): for the day `--calibrate --write` makes the line past 10 again, which #865 weighed and
 // did not do. Each is found on the shape it stood on in the line at a base git ref (a role's test
 // monster, the test troll, giant or drake, or a role come down whole by the share it names) and given
-// that shape's hit points and blow on the line as tools/testmonster.ts gives it now, a troll's
+// that shape's hit points and blow on the line as tools/kit/line.ts gives it now, a troll's
 // mending with them. Its armour, to-hit, speed and xp come from the line's formulas and the curve,
 // which the tables do not move, and are checked so; its notes, holds, resistances and spells are its
 // own. Those set off the line (`MonsterDef.offLine`) are their boxes' gates' to set.
@@ -20,8 +20,11 @@ import { offLineOf, wholeOf } from './tests/harness.ts';
 type Table = Record<Role, readonly number[]>;
 export interface Tables { hp: Table; dmg: Table }
 
-/** The HP and DAMAGE tables of tools/testmonster.ts at a git ref. */
+/** The HP and DAMAGE tables at a git ref: tools/kit/line.json's, or tools/testmonster.ts's at a ref before #984 moved them. */
 export function tablesAt(ref: string): Tables {
+  let json: string | undefined;
+  try { json = execFileSync('git', ['show', `${ref}:tools/kit/line.json`], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }); } catch { json = undefined; }
+  if (json !== undefined) { const t = JSON.parse(json) as { HP: Table; DAMAGE: Table }; return { hp: t.HP, dmg: t.DAMAGE }; }
   const src = execFileSync('git', ['show', `${ref}:tools/testmonster.ts`], { encoding: 'utf8' });
   const table = (name: string): Table => {
     const body = new RegExp(`export const ${name}: Record<Role, readonly number\\[\\]> = \\{\\n([\\s\\S]*?)\\n\\};`).exec(src)?.[1];

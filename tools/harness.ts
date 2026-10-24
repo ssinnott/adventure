@@ -12,7 +12,7 @@
 //   node tools/harness.ts --abilities [--levels 19,20] Act III's trolls, wights, caller and lights on the test monsters (#537, #541),
 //                                                      and Act IV's giants and drakes at 23 and 25 (#545), the mesa at 27 (#546),
 //                                                      the vines at 24 and its bosses as they stand (#549), and Act V's Heart on its clock at 32 (#748), and as built (#752)
-//   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/testmonster.ts
+//   node tools/harness.ts --calibrate [--write]        re-derive HP and DAMAGE in tools/kit/line.json
 //   node tools/harness.ts --spell-cap 32 [...]         any of the above as if spells stopped growing elsewhere than 10
 //   node tools/harness.ts --gear-grows [...]           ... or as if the company's gear kept growing past 28
 //   node tools/harness.ts --level-traits [...]         ... or its fighters gained a blow a promotion (--level-bonus: a bonus)
@@ -55,7 +55,7 @@ import type { SpellDef } from '../src/game/spells.ts';
 import { item, hits, chargesLeft, ARTIFACT_LEVEL } from '../src/game/items.ts';
 import type { MonsterDef } from '../src/game/monsters.ts';
 import { MAP_DEFS, MONSTERS } from '../src/content/index.ts';
-import { ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './kit/line.ts';
+import { LINE_FILE, lineJson, ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, standardEncounter, testMonster, TROLL, WIGHT_CURSE, CALL, LIGHT, SWEEP, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, giantEncounter, drakeEncounter, BASILISK_STONE, basiliskEncounter, CLOCK, clockEncounter } from './kit/line.ts';
 import type { Role } from './kit/line.ts';
 import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor, letsLie, asWritten, type BotAnswer } from '../src/game/bot.ts';
 import type { BotOpts } from '../src/game/bot.ts';
@@ -728,16 +728,9 @@ async function main(): Promise<void> {
     for (const r of roles) row(r, levels.map((l) => pct(next.bad[r][at(l)])));
     console.log(`(${jobs.length} points${held.length + bosses.length ? `, ${held.length + bosses.length} held` : ''}, ${seeds} seeds each, ${secs()})`);
     if (args.includes('--write')) {
-      const file = new URL('./testmonster.ts', import.meta.url);
-      let src = fs.readFileSync(file, 'utf8');
-      for (const [name, table] of [['HP', next.hp], ['DAMAGE', next.dmg]] as const) {
-        const body = ROLE_IDS.map((r) => `  ${`${r}:`.padEnd(12)}[${table[r].map(fmt).join(', ')}],`).join('\n');
-        const out = src.replace(new RegExp(`(export const ${name}: Record<Role, readonly number\\[\\]> = \\{\\n)[\\s\\S]*?(\\n\\};)`), `$1${body}$2`);
-        if (out === src && !src.includes(body)) throw new Error(`${name} block not found in tools/testmonster.ts`);
-        src = out;
-      }
-      fs.writeFileSync(file, src);
-      console.log('written to tools/testmonster.ts');
+      const rounded = (t: Record<Role, number[]>): Record<Role, number[]> => Object.fromEntries(ROLE_IDS.map((r) => [r, t[r].map((x) => Number(fmt(x)))])) as Record<Role, number[]>;
+      fs.writeFileSync(LINE_FILE, lineJson({ HP: rounded(next.hp), DAMAGE: rounded(next.dmg) }));
+      console.log('written to tools/kit/line.json');
     }
     return;
   }
