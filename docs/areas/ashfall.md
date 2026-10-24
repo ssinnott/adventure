@@ -2085,7 +2085,7 @@ Decided by delegate for #520 (the four on frames), each the owner's to overturn:
    that walks, its leaves green where the Deepthorn's are dead oak; the beetle low and horned where
    the fire beetle is high and lit, with no fire on it; the salamander lither, coal-red and banded
    where its kin is charcoal and spotted; the husk no skeleton but the cast of a man, his cup held up
-   at his shoulder. The salamander's embers are its declared parts (`tools/smoke.ts`); the husk's
+   at his shoulder. The salamander's embers are its declared parts (`tools/smoke/art.ts`); the husk's
    sifting ash is too faint to be ink.
 7. **Each is owed to the first box that places it:** the vine and the beetle to H10 (#510), the
    salamander to G10 (#511, the proposal in §7; to G11, #513, if the owner does not take it) and the
@@ -2115,7 +2115,7 @@ Decided by delegate for #520 (the drakes), each the owner's to overturn:
    high it hangs, how far its wings open and beat, its colours, sulphur and scars, so the drakeling
    and the Brood Drake (MONSTERS §11) are a Build each. Nothing of the picture book's dragon: no long
    neck, no great wings, no spines, but a hunched thing with a head of basalt turned to the company.
-   The breath's embers are its declared parts (`tools/smoke.ts`), four at most.
+   The breath's embers are its declared parts (`tools/smoke/art.ts`), four at most.
 7. **Each is owed to the box that first places it:** the Cinder Drake to G10 (#511, the proposal in
    §7; to G11, #513, if the owner does not take it) and the Old Drake to Old Cinder (#515).
 
