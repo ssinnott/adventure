@@ -8,7 +8,7 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
 import { rift } from '../../../rifts/index.ts';
-import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /**

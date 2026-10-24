@@ -7,9 +7,7 @@
 // §5 and §9 (#492) are its design.
 import type { Chapter } from '../../../game/quests.ts';
 import { NIGHTS, WENNA_UP } from './maps/rime_lodge.ts';
-
-/** The beds under Loch Fuar seen: `sb2_beds` sets it, the once. The act turns on it. */
-export const SLEEPERS_SEEN = 'q_sleepers_seen';
+import { SLEEPERS_SEEN } from './public.ts';
 
 const [FIRST, SECOND, THIRD, FOURTH] = NIGHTS;
 

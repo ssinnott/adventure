@@ -8,7 +8,8 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
-import { THRONE_COUNCIL, THRONE_COUSIN, THRONE_HOLD, THRONE_REMOVED, THRONE_TALLIS, THRONE_WENNA } from './keep.ts';
+import { THRONE_COUNCIL, THRONE_WENNA } from './keep.ts';
+import { THRONE_COUSIN, THRONE_HOLD, THRONE_REMOVED, THRONE_TALLIS } from '../public.ts';
 import { ENDED, ENDINGS } from '../../../endings.ts';
 
 const STOCK = ['club', 'dagger', 'staff', 'shortsword', 'mace', 'longsword', 'axe', 'spear', 'sling', 'shortbow', 'longbow', 'robe', 'leather', 'scale', 'chain', 'buckler', 'shield', 'potion_heal', 'antidote', 'lantern_oil', 'rations', 'torch'];

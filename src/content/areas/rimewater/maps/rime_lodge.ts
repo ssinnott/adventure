@@ -8,6 +8,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { EAST, SOUTH, WEST } from '../../../../game/types.ts';
 import { sells, DROVE_COACH } from '../../../crossings.ts';
 import { FURRIER } from '../items.ts';
+import { WENNA_LODGE } from '../public.ts';
 
 /**
  * The four nights (call 5): a flag a night, set in order by a stay at the inn. Each night's arrivals
@@ -17,8 +18,6 @@ import { FURRIER } from '../items.ts';
 export const NIGHTS = ['night_1', 'night_2', 'night_3', 'night_4'] as const;
 /** Wenna met at the hole, the last one out on the fourth night: the bay's door reads it (§5, #440). */
 export const WENNA_UP = 'q_wenna_up';
-/** Her words at the door once the company is back up from the beds: she goes to the lodge (§5, #492). */
-export const WENNA_LODGE = 'q_wenna_lodge';
 
 export const RIME_LODGE: MapDef = {
   id: 'rime_lodge',

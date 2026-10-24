@@ -8,15 +8,14 @@
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { FORGE, ANVIL_STONE_PRICE } from '../items.ts';
-import { NOVICE_TOLD, NOVICE_KEPT } from '../../whitespine/maps/monastery.ts';
-import { CREW_OPEN } from '../../hearth/maps/underdeep.ts';
+import { NOVICE_TOLD, NOVICE_KEPT } from '../../whitespine/public.ts';
+import { CREW_OPEN } from '../../hearth/public.ts';
+import { HYMN_SUNG } from '../public.ts';
 
 /** The verse read the old way, by the Lantern reader or after the company's own reader: the chapter's step (#470). */
 export const VERSE_READ = 'anvil_verse_read';
 /** The thane's question answered, one way or the other (#434's 1): the Hearth reads neither (#540). */
 export const BOUGHT = 'anvil_bought', TAKEN = 'anvil_taken';
-/** The miners' hymn heard whole, its last verse sung by the oldest miner: a verse for the Bard's third (#56's 36, #448). */
-export const HYMN_SUNG = 'q_hymn_sung';
 
 /** The reader's greeting, whichever words he greets a company with. */
 const CRANE = 'A man in Lantern grey at a lectern under the verse, chalk to the wrists. "Crane. Reader. The thane lodges me, and I read his walls."';

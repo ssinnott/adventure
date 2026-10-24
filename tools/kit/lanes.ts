@@ -43,7 +43,9 @@ const TABLE: readonly (readonly [RegExp, (m: RegExpExecArray) => Place])[] = [
   // An area's own: its folder (maps, monsters, items, quests, walkthrough and its shipped.json) and its doc.
   [/^src\/content\/areas\/([^/]+)\//, (m) => ({ lane: 'area', area: m[1] })],
   [/^docs\/areas\/([^/]+)\.md$/, (m) => ({ lane: 'area', area: DOC_AREA[m[1]] ?? m[1] })],
-  // The art modules, a lane each.
+  // The art modules, a lane each, but for the kits the families and the rooms paint with, which are systems' (EXPANSION
+  // §8.1, #983), as the paint kit, src/ui/paint/, is with the rest of src/ui/.
+  [/^src\/ui\/(monsters|interiors)\/kit\//, systems],
   [/^src\/ui\/monsters\//, () => ({ lane: 'creatures' })],
   [/^src\/ui\/interiors\//, () => ({ lane: 'interiors' })],
   // What a save may refer to that no area owns is the content contract's, so before the rest of src/content/.

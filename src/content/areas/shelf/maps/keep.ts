@@ -7,12 +7,13 @@ import type { Answer, MapDef, Words } from '../../../../game/map.ts';
 import type { QuestCond } from '../../../../game/quests.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ENDED, ENDINGS } from '../../../endings.ts';
+import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, THRONE_REMOVED } from '../public.ts';
 
 // The Empty Throne's end, the Council of Helmstow (#764; docs/areas/hearth_isle.md §6): the case the
 // company makes to Wiglaf, and the verdicts. Every verdict but a failed case removes Vask.
 export const CASE_COUSIN = 'q_case_cousin', CASE_HOLD = 'q_case_hold', CASE_TALLIS = 'q_case_tallis', CASE_WENNA = 'q_case_wenna', CASE_NOBODY = 'q_case_nobody';
-export const THRONE_COUSIN = 'q_throne_cousin', THRONE_HOLD = 'q_throne_hold', THRONE_TALLIS = 'q_throne_tallis', THRONE_WENNA = 'q_throne_wenna', THRONE_COUNCIL = 'q_throne_council';
-export const CASE_FAILED = 'q_case_failed', THRONE_REMOVED = 'q_throne_removed';
+export const THRONE_WENNA = 'q_throne_wenna', THRONE_COUNCIL = 'q_throne_council';
+export const CASE_FAILED = 'q_case_failed';
 /** A case made: Wiglaf has written it down. */
 export const CASES: readonly QuestCond[] = [CASE_COUSIN, CASE_HOLD, CASE_TALLIS, CASE_WENNA, CASE_NOBODY].map((flag) => ({ flag }));
 /** The Council has sat: any of its six verdicts. */

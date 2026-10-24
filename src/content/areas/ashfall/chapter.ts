@@ -8,10 +8,10 @@
 // the other areas' in road order; how the words are keyed is in src/content/area.ts (`chapter`), and
 // tools/tests/quests.ts checks every key. docs/areas/ashfall.md §5 and §9 (#518) are its design.
 import type { Chapter, When } from '../../../game/quests.ts';
-import { STAIR_TOP } from '../whitespine/maps/highspine_i10.ts';
+import { STAIR_TOP } from '../whitespine/public.ts';
 import { ELDEST_HEARD } from './maps/cindercoast_g10.ts';
-import { LIT, SOCKETS } from './maps/ember_stone.ts';
-import { ROAD_WEST } from './maps/emberwaste_e10.ts';
+import { SOCKETS } from './maps/ember_stone.ts';
+import { LIT, ROAD_WEST } from './public.ts';
 
 /** The sockets' flags, each set as its part goes in: the vents' part, Old Cinder's and the corridors'. */
 const [VENTS_SET, CINDER_SET, CORRIDORS_SET] = SOCKETS;

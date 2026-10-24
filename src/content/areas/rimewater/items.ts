@@ -4,9 +4,7 @@
 // step.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, MARTIAL, NO_CASTER_HEAVY, ARTIFACT_PRICE } from '../../items.ts';
-import { ITEMS as THORNMARK } from '../thornmark/items.ts';
-
-const plate = THORNMARK.find((i) => i.id === 'plate')!;
+import { plate } from '../thornmark/public.ts';
 
 // Sold at Rime Lodge's furrier (#487): a step past the Kilns' and Cairnmoor's finds for every class, at 21.
 export const iceAxe = W('ice_axe', 'Ice Axe', 1800, 2, 12, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
@@ -38,39 +36,49 @@ export const trollbrand: ItemDef = { ...bearSpear, id: 'trollbrand', name: 'Trol
   'Struck on stone it takes light, and it burns until it is wanted out.',
 ] };
 
+// Found, not sold, by 22: the glacier's hollow on M9, the drove's strongbox on L9, the drowned
+// smith's iron on K9, the dark lamp's cache on K10 and the locker behind the bay's last row
+// (docs/areas/rimewater.md §4). The plate is plate's wearers' step past the Kilns' Plate Mail +3.
+export const iceAxePlus1 = P(iceAxe, 1);
+export const skinningKnifePlus1 = P(skinningKnife, 1);
+export const bearSpearPlus1 = P(bearSpear, 1);
+export const guidesStaffPlus1 = P(guidesStaff, 1);
+// The bay's two (#490), in the locker behind its last row: the ladder's Hunter's Bow +1 and Plate
+// Mail +4, each named in the hill folk's tongue (§10), bogha a bow and luireach a coat of mail.
+export const huntersBowPlus1 = P(huntersBow, 1, { name: 'Bogha Fionn +1', text: [
+  'A bow of pale wood, unstrung, its string coiled beside it. It bends as if it were cut last spring.',
+] });
+export const platePlus4 = P(plate, 4, { name: 'Luireach Dubh +4', text: [
+  'Plate gone black with age and never rusted, laid flat in its drawer with a row\'s mark on it.',
+] });
+// K9's (#489), off the ladder: the drowned smith's own blade, beside his Bear Spear +1 in the hole
+// under the old bank. Lann is the hill folk's blade, and Fuar the village the loch came up over.
+export const lannFuar = W('lann_fuar', 'Lann Fuar', 2000, 2, 10, { bonus: 6, classes: MARTIAL, text: [
+  'A long blade of dark iron, wrapped in greased hide and never carried. On the tang, a smith\'s mark: a little bell.',
+] });
+// The Matron's part (#490), a keepsake, as machines carry parts and no gold.
+export const matronCap: ItemDef = { id: 'matron_cap', name: "The Matron's Cap", slot: 'none', price: 0, text: [
+  'A cap of thin grey plate, folded stiff and white as starched linen.',
+  'Inside the band, worn smooth, a loop inside a loop.',
+] };
+// The Coach That Did Not Come (#494, #56's 40): the note the man in the healer's coat writes by the
+// coach on N8, read from the pack and taken by the coachman at the lodge, who sends the sledge.
+export const healersNote: ItemDef = { id: 'healers_note', name: 'The Healer\'s Note', slot: 'none', price: 0, text: [
+  'A leaf torn from a healer\'s book, in a careful hand.',
+  '"To Rime Lodge. The coach is stopped on the moor road, its coachman dead. One patient, asleep. Send a sledge."',
+] };
+
 export const ITEMS: readonly ItemDef[] = [
   ...WARES,
-  // Found, not sold, by 22: the glacier's hollow on M9, the drove's strongbox on L9, the drowned
-  // smith's iron on K9, the dark lamp's cache on K10 and the locker behind the bay's last row
-  // (docs/areas/rimewater.md §4). The plate is plate's wearers' step past the Kilns' Plate Mail +3.
-  P(iceAxe, 1),
-  P(skinningKnife, 1),
-  P(bearSpear, 1),
-  P(guidesStaff, 1),
-  // The bay's two (#490), in the locker behind its last row: the ladder's Hunter's Bow +1 and Plate
-  // Mail +4, each named in the hill folk's tongue (§10), bogha a bow and luireach a coat of mail.
-  P(huntersBow, 1, { name: 'Bogha Fionn +1', text: [
-    'A bow of pale wood, unstrung, its string coiled beside it. It bends as if it were cut last spring.',
-  ] }),
-  P(plate, 4, { name: 'Luireach Dubh +4', text: [
-    'Plate gone black with age and never rusted, laid flat in its drawer with a row\'s mark on it.',
-  ] }),
-  // K9's (#489), off the ladder: the drowned smith's own blade, beside his Bear Spear +1 in the hole
-  // under the old bank. Lann is the hill folk's blade, and Fuar the village the loch came up over.
-  W('lann_fuar', 'Lann Fuar', 2000, 2, 10, { bonus: 6, classes: MARTIAL, text: [
-    'A long blade of dark iron, wrapped in greased hide and never carried. On the tang, a smith\'s mark: a little bell.',
-  ] }),
-  // The Matron's part (#490), a keepsake, as machines carry parts and no gold.
-  { id: 'matron_cap', name: "The Matron's Cap", slot: 'none', price: 0, text: [
-    'A cap of thin grey plate, folded stiff and white as starched linen.',
-    'Inside the band, worn smooth, a loop inside a loop.',
-  ] },
-  // The Coach That Did Not Come (#494, #56's 40): the note the man in the healer's coat writes by the
-  // coach on N8, read from the pack and taken by the coachman at the lodge, who sends the sledge.
-  { id: 'healers_note', name: 'The Healer\'s Note', slot: 'none', price: 0, text: [
-    'A leaf torn from a healer\'s book, in a careful hand.',
-    '"To Rime Lodge. The coach is stopped on the moor road, its coachman dead. One patient, asleep. Send a sledge."',
-  ] },
+  iceAxePlus1,
+  skinningKnifePlus1,
+  bearSpearPlus1,
+  guidesStaffPlus1,
+  huntersBowPlus1,
+  platePlus4,
+  lannFuar,
+  matronCap,
+  healersNote,
   wakerobe,
   trollbrand,
 ];

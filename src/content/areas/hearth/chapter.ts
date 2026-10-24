@@ -10,10 +10,11 @@
 // and tools/tests/quests.ts checks every key. docs/areas/hearth_isle.md §5 and §9 (#760) are its design.
 import type { Chapter } from '../../../game/quests.ts';
 import { ENDED } from '../../endings.ts';
-import { ROAD_EAST } from '../glasswold/maps/wold_d8.ts';
+import { ROAD_EAST } from '../glasswold/public.ts';
 import { STRAND } from './maps/hearthisle_h6.ts';
 import { KNOT_LAST } from './maps/underdeep2.ts';
-import { VASK_FALLEN, VOICE_WHOLE, RING_GIVEN, END_REIGNITE, END_ARRIVE, END_FINISH } from './maps/core.ts';
+import { VASK_FALLEN, RING_GIVEN, END_REIGNITE, END_ARRIVE, END_FINISH } from './maps/core.ts';
+import { VOICE_WHOLE } from './public.ts';
 
 export const CHAPTER: Chapter = {
   id: 'heart',

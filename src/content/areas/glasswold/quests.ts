@@ -13,8 +13,9 @@
 import type { QuestDef } from '../../../game/quests.ts';
 import { SCOUT_ASKED, MAP_GIVEN, LION_ASKED, LION_HUNT, LION_LEFT, LION_BLOW, LION_TOLD, LION_TAKEN, LION_DOWN } from './maps/wold_b8.ts';
 import { SCHOLAR_ASKED, ETCHING_GIVEN, ETCHING_READ } from './maps/wold_b9.ts';
-import { HORSE_ASKED, HORSE_BROKEN, HORSE_CARRIED, HORSE_WHOLE, GARDEN_ASKED, GARDEN_CARRIED, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT } from './maps/wold_d8.ts';
-import { ORDERS_ASKED, ORDERS_CARRIED, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from './maps/wold_c8.ts';
+import { HORSE_CARRIED, GARDEN_ASKED, GARDEN_CARRIED } from './maps/wold_d8.ts';
+import { HORSE_ASKED, HORSE_BROKEN, HORSE_WHOLE, GARDEN_BROUGHT, GARDEN_LIFTED, GARDEN_DRAUGHT, ORDERS_ASKED, ORDERS_SEALED, ORDERS_TOLD, ORDERS_BURNED } from './public.ts';
+import { ORDERS_CARRIED } from './maps/wold_c8.ts';
 
 export const QUESTS: readonly QuestDef[] = [
   {

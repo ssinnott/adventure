@@ -17,7 +17,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 /** The eagles' nest opened, the Lantern's badge in it found: The Eagles' Nest begins on it (#56's 46, #506). */
 export const NEST_FOUND: QuestCond = { seen: 'highspine_i11:i11_nest_bones' };
 /** The badge given to the Reader at Lantern Watch, or to the brother in Highcell's first cell: either ends it. */
-export const NEST_WATCH = 'q_nest_watch', NEST_CELL = 'q_nest_cell';
+export const NEST_CELL = 'q_nest_cell';
 
 export const HIGHSPINE_I11: MapDef = {
   id: 'highspine_i11',

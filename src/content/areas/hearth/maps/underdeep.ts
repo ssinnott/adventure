@@ -8,15 +8,7 @@
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH, WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
-
-/** The CREW ONLY door opened from the inside and left open (60), by its answer. */
-export const CREW_OPEN = 'q_crew_open';
-/** The CREW ONLY door opened, gone through and shut behind (60), by its answer. */
-export const CREW_SHUT = 'q_crew_shut';
-/** The crack the Sunder made, sealed with the knocker's hammer (61). */
-export const CRACK_SEALED = 'q_crack_sealed';
-/** The crack widened onto the Lanterns' hall the Sunder swallowed (61). */
-export const CRACK_WIDE = 'q_crack_wide';
+import { CREW_OPEN, CREW_SHUT, CRACK_SEALED, CRACK_WIDE } from '../public.ts';
 
 /** The Stair's head (#758), through the door at 16,2. */
 export const STAIR_DOOR: Exit = { x: 16, y: 1, to: 'underdeep2', tx: 16, ty: 30, tf: NORTH, label: 'Through the door at the ways\' end, onto a stair that goes down further than your lamp.' };
