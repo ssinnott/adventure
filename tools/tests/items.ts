@@ -183,7 +183,7 @@ function raised(lent: Tables): void {
     'a +3 charm of accuracy, personality or speed in the pack adds a step to to-hit, a heal and AC; in the bag, nothing');
 
   // A save holds no raise: the coat is saved worn, the stats as the member's own.
-  const g = headlessGame(4), m = g.party.members[0];
+  const g = headlessGame(4, undefined, lent), m = g.party.members[0];
   m.equipment.armor = null;
   const mine = { ...m.stats };
   equip(lent.items, m, COAT.id);
@@ -268,7 +268,7 @@ const NAME_CAP = 26;
 
 /** What a shop pays: half the price, rounded down, nothing for what is priced at nothing; and the sell screen pays just that. */
 function sold(lent: Tables): void {
-  const g = headlessGame(4), p = g.party;
+  const g = headlessGame(4, undefined, lent), p = g.party;
   ok(sellPrice(lent.items, p, 40) === 20 && sellPrice(lent.items, p, 25) === 12 && sellPrice(lent.items, p, 1) === 0 && sellPrice(lent.items, p, 0) === 0, 'a shop pays half an item\'s price, rounded down: 20 for 40, 12 for 25, nothing for 1 or 0');
   const shop = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f): f is Extract<Feature, { kind: 'shop' }> => f.kind === 'shop')!;
   const sell = (id: string): number => {
@@ -377,7 +377,7 @@ function artifacts(lent: Tables): void {
   const struck = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map((n) => [strike(lent, n, NEUTRAL, hold(tel)).dmg, strike(lent, n, NEUTRAL, hold(TWINS.telstok)).dmg, strike(lent, n, NEUTRAL, hold(BARE_STAFF)).dmg]).filter(([, , b]) => b > 0);
   ok(struck.length >= 6 && struck.every(([a, t, b]) => a === t && a - b >= 1 && a - b <= ELEMENT_DIE),
     `the Telstok's blow that lands adds a d${ELEMENT_DIE} of holy to the steel, as its twin's does (${struck.map(([a, , b]) => a - b).join(' ')})`);
-  const g0 = headlessGame(4), m0 = g0.party.members[0], mine = { ...m0.stats };
+  const g0 = headlessGame(4, undefined, lent), m0 = g0.party.members[0], mine = { ...m0.stats };
   equip(lent.items, m0, erz.id);
   const back = deserialize(serialize(g0.world.state, g0.party, 0)).party.members[0];
   ok(JSON.stringify(back.stats) === JSON.stringify(mine) && back.equipment.armor === erz.id && statOf(lent.items, back, 'speed') === mine.speed + 5,
@@ -386,7 +386,7 @@ function artifacts(lent: Tables): void {
 
   // No shop takes one: offered at Mottram's, it shows no price and is refused, and the company keeps it;
   // its twin without the mark is bought at half its price.
-  const g = headlessGame(4), shop = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f): f is Extract<Feature, { kind: 'shop' }> => f.kind === 'shop')!;
+  const g = headlessGame(4, undefined, lent), shop = MAP_DEFS.find((d) => d.id === 'harrow')!.features!.find((f): f is Extract<Feature, { kind: 'shop' }> => f.kind === 'shop')!;
   const offer = (id: string): { paid: number; kept: boolean; said: string; row: string } => {
     while (g.screens.length > 1) g.pop();
     g.party.bag = [id];

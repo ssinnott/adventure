@@ -40,9 +40,9 @@ const FIXTURE: MapDef = {
 };
 
 const fresh = (setup?: (p: Party) => void, def: MapDef = FIXTURE, t: Tables = TABLES): { world: World; party: Party } => {
-  const rng = makeRng(7), party = defaultParty(TABLES, rng);
+  const rng = makeRng(7), party = defaultParty(t, rng);
   setup?.(party);
-  return { world: new World(TABLES, { [def.id]: new GameMap(def) }, party, rng), party };
+  return { world: new World(t, { [def.id]: new GameMap(def) }, party, rng), party };
 };
 /** What stepping onto a square of the fixture says. */
 const stand = (world: World, x: number, y: number): string[] => { world.travel(FIXTURE.id, x, y); return world.eventsHere(); };

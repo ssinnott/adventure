@@ -22,7 +22,7 @@ import { SAY_W, SAY_LINES, ASK_LINES, ASK_SIDE_LINES, SIDE_W } from '../../src/u
 import { onAutomap } from '../../src/game/ink.ts';
 import { ok, withDefs, fxKey, fxMap } from './lib.ts';
 import { tablesWith } from '../kit/headless.ts';
-import type { Tables } from '../../src/game/tables.ts';
+import type { Items, Tables } from '../../src/game/tables.ts';
 
 /** The three hand-ins of Act I, by the item each takes. */
 const THREE = ['survey_wand', 'greywater_ledger', 'ashen_chisel'];
@@ -150,10 +150,10 @@ export function refusable(e: Pick<EncounterDef, 'choice' | 'slainText'>): boolea
  * a price), an answer longer than a line of the side panel's column beside its price. A group's parley
  * is asked in the box alone, so its question is held to the box's lines.
  */
-export function boxFaults(p: Person, inBusiness = true): string[] {
+export function boxFaults(p: Person, inBusiness = true, items: Items = TABLES.items): string[] {
   const gold = (q: { reward: number }): string[] => (q.reward ? [`(${q.reward} gold.)`] : []);
   const texts = [p.lines, ...handIns(p).flatMap((q) => [[...q.done, ...gold(q)], ...(q.early ? [[...q.early, ...gold(q)]] : []), q.after ?? []]), ...(p.says ?? []).map((w) => w.lines),
-    ...choices(p).flatMap((c) => c.answers.map((a) => [...a.says, ...answerNote(TABLES.items, a)]))];
+    ...choices(p).flatMap((c) => c.answers.map((a) => [...a.says, ...answerNote(items, a)]))];
   const out = texts.flatMap((t) => { const n = wrap(t.join('\n\n'), SAY_W).length; return n > SAY_LINES ? [`'${t[0].slice(0, 24)}..' takes ${n} lines of ${SAY_LINES}`] : []; });
   for (const c of choices(p)) {
     // The purse as the richest company could hold it.
@@ -249,16 +249,16 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
     ok(!condFaults(quest.done!, [town]).length && !!condFaults(quest.done!, [{ ...town, features: [{ ...captain, choice: undefined, says: undefined }] }]).length, "the answers' flags are flags a person sets (and are not without them)");
     ok(personGives(captain).join() === LETTER.id, "the letter is an item a person hands over");
 
-    ok(!boxFaults(captain).length, 'the captain fits the box');
+    ok(!boxFaults(captain, true, lent.items).length, 'the captain fits the box');
     const wordy = { ...captain, choice: { ask: Array(12).fill('Shall I write to Hale about the riders?').join(' '), answers: [{ label: 'Write to him at once, and seal it with the ford', sets: 'fx_write', says: Array(8).fill(captain.lines[0]) }] } };
-    const wordyBad = boxFaults(wordy);
+    const wordyBad = boxFaults(wordy, true, lent.items);
     ok(wordyBad.length === 3, `a long question, a long answer and long words fail (${wordyBad.length} of 3)`);
     // A group's parley is asked in the box, a person's question may be put in a business's side panel (#759): three lines of the box
     // and eight of the side panel fit a group and fail a person; a question past the box's lines fails both.
     const nine = { ...captain, choice: { ask: Array(6).fill('Shall I write to Hale about the riders?').join(' '), answers: [{ label: 'Write', sets: 'fx_write', says: ['"Done."'] }] } };
     const tall = { ...nine, choice: { ...nine.choice, ask: Array(13).fill('Shall I write to Hale about the riders?').join(' ') } };
-    ok(boxFaults(nine).length === 1 && boxFaults(nine, false).length === 0, 'a question of 3 lines in the box and 8 in the side panel fails a person and fits a group');
-    ok(boxFaults(tall).length === 1 && boxFaults(tall, false).length === 1, 'a question past the box\'s lines fails a group and a person alike');
+    ok(boxFaults(nine, true, lent.items).length === 1 && boxFaults(nine, false, lent.items).length === 0, 'a question of 3 lines in the box and 8 in the side panel fails a person and fits a group');
+    ok(boxFaults(tall, true, lent.items).length === 1 && boxFaults(tall, false, lent.items).length === 1, 'a question past the box\'s lines fails a group and a person alike');
     // Which parleys may be asked (#544, #759): a refusal and a walk past; a refusal alone only in a group with a slain text of its own.
     const refuse: Answer = { label: 'Stop him.', fight: true, says: ['"No."'] }, pass: Answer = { label: 'Pass.', sets: 'fx_passed', says: ['He lets you by.'] };
     ok(refusable({ choice: { ask: 'Well?', answers: [refuse, pass] } }) && refusable({ choice: { ask: 'Well?', answers: [refuse] }, slainText: 'He falls.' }),
