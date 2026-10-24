@@ -184,7 +184,7 @@ any place. Act III spends one, the Sleepers' Bay's door under Coldmere, which op
 and nothing else (#434, call 4; #440); the Deep Mines' door marked CREW ONLY is not one, since
 nothing in the act opens it. Act IV spends none: the Ember Stone is finished by a hand-in of three
 parts, which shuts nothing before it (#443, call 2; #450). Act V spends one, the core's door
-(docs/areas/hearth_isle.md, #739, call 1): the road's second of four.
+(docs/areas/hearth.md, #739, call 1): the road's second of four.
 
 ---
 
@@ -478,7 +478,7 @@ the cap, 4 to 10 fights to a rest and the warning's nearest groups ten points un
   floor of fights to pool and no day. Where the rise from the floor to two above is too short for
   both odds, the floor binds and the second stands inside its limit, short of its aim: the Stair's
   Catcher, 57% at 30 and 80% at 32 on the gate's seeds, against an aim of 90% and a limit of 75%
-  (#752, #796; docs/areas/hearth_isle.md §8).
+  (#752, #796; docs/areas/hearth.md §8).
   A boss set off the line is sized on these odds against the gate's bot, by its box's gate
   (`offLine` on its def in its area's `monsters.ts`, which `tools/tests/harness.ts` reads).
 - **Six or seven fights to a rest.** A company can fight six or seven standard encounters at its own
@@ -1055,10 +1055,10 @@ Decided by the builder for #899, each the owner's to overturn:
 
 1. **The table is ISSUES §2's, a line to a kind of file, the first line a file matches placing it.**
    The area lane is one label, `lane: area`, with the area named beside it in the report:
-   `src/content/areas/<area>/` (its `shipped.json` with it) and `docs/areas/<name>.md`, three of
-   which are named for a place and not their area (`hearth_isle` is Hearth's, `dead_drop`
-   Wrackholm's and `meridian_camp` Ashfall's). Since #1011 the folder beside a doc,
-   `docs/areas/<name>/`, falls where the doc does.
+   `src/content/areas/<area>/` (its `shipped.json` with it) and `docs/areas/<name>.md`, two of
+   which are named for a place and not their area (`dead_drop` is Wrackholm's and `meridian_camp`
+   Ashfall's; Hearth's was a third until #1027 named it for its area). Since #1011 the folder
+   beside a doc, `docs/areas/<name>/`, falls where the doc does.
 2. **The save format needs no line of its own:** `SAVE_VERSION`, the upgrades and the save keys all
    stand in `src/game/`, which is systems already. The central `src/content/shipped.json`, what a
    save may refer to that no area owns, is quality's, as the issue says.
@@ -1631,7 +1631,7 @@ Hearth and the sentries after. Then the Whitespine (#445), Ashfall (#446) and th
 their calls (#443) and names (#444); Meridian Camp and the Dead-Drop (#22) and the eight third
 prestiges whose trainers live in the act's country (#448). 1.4 ends M2.
 
-**1.5, Act V and the subplots** (#742; M3; docs/areas/hearth_isle.md, #739). First its systems
+**1.5, Act V and the subplots** (#742; M3; docs/areas/hearth.md, #739). First its systems
 (#743), eight issues: the curve's last row, ending at the cap, and the trainers' ceiling with it;
 the gear's last rung at 28, found and never sold; a group that is gone once a flag holds, standing
 or not; the Core's clock and `obeys`; `Exit.lifts` and `Exit.after`; the endings, their screen and

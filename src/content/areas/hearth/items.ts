@@ -6,7 +6,7 @@
 // the dead champion's pack. The Ways' (#757): the Grey Shield in the keepers' store, and the Old Lantern's
 // Staff behind the crack (61). The Stair's (#758): the Grey Axe in the rearguard's chest, and Jowan's letter
 // home (58). The Heart's (#759): the Queen's signet, off Vask's finger. The band's rung at 28, found and
-// never sold, is these nine pieces (#746, docs/areas/hearth_isle.md §8). Two finds off that rung close the table (#864,
+// never sold, is these nine pieces (#746, docs/areas/hearth.md §8). Two finds off that rung close the table (#864,
 // §4.9): a lightning mace and a robe that raises personality, in a cell cut in the east rim.
 import type { ItemDef } from '../../../game/items.ts';
 import { W, A, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';

@@ -20,8 +20,8 @@ export function lanes(): void {
     ['src/game/save.ts', 'systems'], ['src/game/pilot/index.ts', 'systems'], ['src/ui/viewport.ts', 'systems'], ['src/ui/interior.ts', 'systems'],
     ['src/content/index.ts', 'systems'], ['src/content/rifts/index.ts', 'systems'], ['src/content/areas/index.ts', 'systems'], ['src/main.ts', 'systems'], ['src/audio/new.ts', 'systems'], ['index.html', 'systems'],
     ['src/content/areas/shelf/maps/shelf.ts', 'area: shelf'], ['src/content/areas/shelf/shipped.json', 'area: shelf'], ['docs/areas/ashfall.md', 'area: ashfall'],
-    ['docs/areas/hearth_isle.md', 'area: hearth'], ['docs/areas/dead_drop.md', 'area: wrackholm'], ['docs/areas/meridian_camp.md', 'area: ashfall'],
-    ['docs/areas/shelf/decisions.md', 'area: shelf'], ['docs/areas/shelf/plan.md', 'area: shelf'], ['docs/areas/hearth_isle/plan.md', 'area: hearth'],
+    ['docs/areas/hearth.md', 'area: hearth'], ['docs/areas/dead_drop.md', 'area: wrackholm'], ['docs/areas/meridian_camp.md', 'area: ashfall'],
+    ['docs/areas/shelf/decisions.md', 'area: shelf'], ['docs/areas/shelf/plan.md', 'area: shelf'], ['docs/areas/dead_drop/plan.md', 'area: wrackholm'],
     ['src/ui/monsters/wolf.ts', 'creatures'], ['src/ui/monsters/common.ts', 'creatures'], ['src/ui/interiors/shelf/index.ts', 'interiors'],
     ['src/ui/paint/brush.ts', 'systems'], ['src/ui/monsters/kit/common.ts', 'systems'], ['src/ui/interiors/kit/trades/temple.ts', 'systems'],
     ['tools/lanes.ts', 'quality'], ['tools/tests/gate.ts', 'quality'], ['.github/workflows/checks.yml', 'quality'], ['.github/labels.json', 'quality'], ['src/content/shipped.json', 'quality'],
@@ -43,7 +43,7 @@ export function lanes(): void {
   // does not stop the pull request that adds it.)
   const ids: string[] = AREAS.map((a) => a.id);
   const folders = readdirSync(new URL('src/content/areas/', root), { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
-  const places = ['hearth_isle', 'dead_drop', 'meridian_camp'].map((d) => at(`docs/areas/${d}.md`).replace('area: ', ''));
+  const places = ['dead_drop', 'meridian_camp'].map((d) => at(`docs/areas/${d}.md`).replace('area: ', ''));
   const stray = folders.filter((f) => !ids.includes(f)).map((f) => `src/content/areas/${f}/`);
   ok(!stray.length && folders.length > 10 && places.every((a) => ids.includes(a)), `each of the ${folders.length} area folders names an area of AREAS, and each doc named for a place the area it lies in (${places.join(', ')})${stray.length ? ': ' + stray.join(', ') : ''}`);
 

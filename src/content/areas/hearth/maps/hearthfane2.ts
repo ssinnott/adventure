@@ -3,7 +3,7 @@
 // where the Cleric's third keeps the eleven (§6, #763); a side vault off its west where the Hand laid
 // its dead and the rats come up for them; and north through the chamber's door a short passage, a keeper
 // in it, to the grey door down into the Ways (#757) with Wenna's knot on its frame (§5). Band 29;
-// docs/areas/hearth_isle.md §4.5 is its brief.
+// docs/areas/hearth.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';

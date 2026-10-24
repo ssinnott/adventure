@@ -10,7 +10,7 @@ import { NORTH } from '../../../../game/types.ts';
 import { ENDED, ENDINGS } from '../../../endings.ts';
 import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, THRONE_REMOVED } from '../public.ts';
 
-// The Empty Throne's end, the Council of Helmstow (#764; docs/areas/hearth_isle.md §6): the case the
+// The Empty Throne's end, the Council of Helmstow (#764; docs/areas/hearth.md §6): the case the
 // company makes to Wiglaf, and the verdicts. Every verdict but a failed case removes Vask.
 export const CASE_COUSIN = 'q_case_cousin', CASE_HOLD = 'q_case_hold', CASE_TALLIS = 'q_case_tallis', CASE_WENNA = 'q_case_wenna', CASE_NOBODY = 'q_case_nobody';
 export const THRONE_WENNA = 'q_throne_wenna', THRONE_COUNCIL = 'q_throne_council';
@@ -22,7 +22,7 @@ export const SAT: readonly QuestCond[] = [THRONE_COUSIN, THRONE_HOLD, THRONE_TAL
 
 // Wenna's three answers at the Heart (#759 sets them): the relit and the finished bring Vask up the stair in irons.
 const IRONS: readonly QuestCond[] = [{ flag: ENDINGS.reignite.flag }, { flag: ENDINGS.finish.flag }];
-// Once the company is on the isle Vask is at the panel (#765; hearth_isle.md §12): gone from the keep
+// Once the company is on the isle Vask is at the panel (#765; hearth.md §12): gone from the keep
 // with his guards, and his door the empty throne room's until the Council has removed him.
 const AWAY: readonly QuestCond[] = [{ flag: THRONE_REMOVED }, { visited: 'hearthisle_h6' }, ...ENDED];
 // Once the company has stepped onto the isle, and after an ending: while Vask's steward stands before the door and takes

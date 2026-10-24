@@ -1,5 +1,5 @@
 // Hearth Isle, the temple over the core (band 28-32), step XII and the road's last, Act V: the isle, the
-// temple, its crypt, the Underdeep's Ways and Stair and the Heart. docs/areas/hearth_isle.md is its brief.
+// temple, its crypt, the Underdeep's Ways and Stair and the Heart. docs/areas/hearth.md is its brief.
 import type { Area } from '../../area.ts';
 import { HEARTHISLE_H6 } from './maps/hearthisle_h6.ts';
 import { HEARTHISLE_I6 } from './maps/hearthisle_i6.ts';

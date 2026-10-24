@@ -166,7 +166,7 @@ export function weather(): void {
  * The crossings named, each exit marked as one (`Exit.crosses`, with the two regions it joins, from and
  * to): the one way from a dungeon into another region (#749), the door marked CREW ONLY, from the Ways
  * under the Hearth (`underdeep` 2,10) into the lowest level of the Kilns' deep mines (docs/areas/
- * hearth_isle.md §6, 60). The Ways lie under the Hearth and the mines under the Kilns, and the door is
+ * hearth.md §6, 60). The Ways lie under the Hearth and the mines under the Kilns, and the door is
  * where they meet; each side keeps its own region's weather. No other exit from a town or a dungeon may
  * cross, so there is one, named once.
  */

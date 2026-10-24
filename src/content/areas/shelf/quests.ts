@@ -263,7 +263,7 @@ export const QUESTS: readonly QuestDef[] = [
     ],
   },
   {
-    // The Empty Throne's end (#764; docs/areas/hearth_isle.md §6): Wiglaf, the Council's clerk, at the
+    // The Empty Throne's end (#764; docs/areas/hearth.md §6): Wiglaf, the Council's clerk, at the
     // keep's chapel once the Hand has Wenna, puts the case once, and the Council sits on it once.
     id: 'council',
     title: 'The Council of Helmstow',

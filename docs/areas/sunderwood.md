@@ -1160,7 +1160,7 @@ Decided by delegate for #205, each the owner's to overturn:
 Decided by delegate for #806, each the owner's to overturn:
 
 1. **The Warden of the Sunder is set again at 1,020 hit points and 13d8+13** (872 and 10d8+10
-   before), by hearth_isle.md §7's method: tries of hit points and blow on the gate's seeds. #199's
+   before), by hearth.md §7's method: tries of hit points and blow on the gate's seeds. #199's
    gate set it against a company without its first prestige, 53% at 14 and 95% at 16; the gate's
    company has taken the prestige since #541, and won it 98% at 14, past the limit of 80%. The aim
    is about half at the floor (30% to 70%) and nearly always two above (90%). The tries, in percent

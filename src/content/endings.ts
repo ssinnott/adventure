@@ -1,4 +1,4 @@
-// The endings (DESIGN §9; docs/areas/hearth_isle.md §5 and §9, call 6): the three answers to Wenna's
+// The endings (DESIGN §9; docs/areas/hearth.md §5 and §9, call 6): the three answers to Wenna's
 // question at the Heart, each by the flag it sets, with its name and its pages. The pages are the
 // long-form exception (DESIGN §11): shown on their own screen as the answer is taken (ui/ending.ts),
 // three to an ending, and held to that screen rather than to the log's three lines (tools/tests/pillars.ts).

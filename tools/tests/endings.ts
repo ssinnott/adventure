@@ -1,4 +1,4 @@
-// The endings (#750; DESIGN §9, docs/areas/hearth_isle.md §5 and §9, call 6): the table by its three
+// The endings (#750; DESIGN §9, docs/areas/hearth.md §5 and §9, call 6): the table by its three
 // flags, an answer that takes one, its pages turned one at a time back onto the Heart, and the Hearth's
 // state beside the Stones' count: on the title from the save in storage, in the almanac and the sky from
 // the world. A company that has taken no ending sees the count's, as it did before. The machinery's cases

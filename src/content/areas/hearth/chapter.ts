@@ -7,7 +7,7 @@
 // which asks the road's five; and the Heart: Vask at the panel, his fall, the voice, the ring in our hands
 // and the choice, which ends the quest. The walk home is a side quest of its own (§6). content/index.ts
 // joins it after the Wold's in road order; how the words are keyed is in src/content/area.ts (`chapter`),
-// and tools/tests/quests.ts checks every key. docs/areas/hearth_isle.md §5 and §9 (#760) are its design.
+// and tools/tests/quests.ts checks every key. docs/areas/hearth.md §5 and §9 (#760) are its design.
 import type { Chapter } from '../../../game/quests.ts';
 import { ENDED } from '../../endings.ts';
 import { ROAD_EAST } from '../glasswold/public.ts';
