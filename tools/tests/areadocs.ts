@@ -10,7 +10,7 @@ const CAP = 250;
 /** The files beside it, in its folder. */
 const BESIDE = ['decisions.md', 'plan.md'];
 /** The docs not moved to the shape yet, owed to D3 (#848's Work group 8), which moves each and empties this. */
-const UNMOVED = ['ashfall', 'cairnmoor', 'dead_drop', 'glasswold', 'hearth_isle', 'kilns', 'meridian_camp', 'rimewater', 'saltreach',
+const UNMOVED = ['ashfall', 'cairnmoor', 'dead_drop', 'glasswold', 'meridian_camp', 'rimewater', 'saltreach',
   'sunderwood', 'thornmark', 'whitespine', 'wrackholm'];
 
 /** A file's lines, as `wc -l` counts them. */
