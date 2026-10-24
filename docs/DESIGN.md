@@ -1438,7 +1438,7 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
   sky), the automap under it with its compass rose, the purse under that (gold and food), the
   party's portraits with condition faces along the bottom and the message log over the foot of the
   view, a strip of four lines and five in a fight (`LOG_LINES`, `COMBAT_LOG_LINES`).
-- **Monsters:** front-facing paintings: 159 kinds, drawn by 28 family modules in `src/ui/monsters/`
+- **Monsters:** front-facing paintings: 160 kinds, drawn by 28 family modules in `src/ui/monsters/`
   that each register the kinds they draw. A drawing breathes in a slow bob and flashes white when
   it is hit; there is no attack frame and no death frame, and a monster that dies is no longer
   drawn. The bandit, cultist and skeleton families stand on the game's own humanoid frame,

@@ -142,9 +142,9 @@ it is drawn and defined, and owed to the lair in `checks.ts` until a group there
 MONSTERS §6.1's roster, in its monsters file: the Fen Eel and the Leech, the Grey Heron, the Fen
 Toad and the Bull Toad, the Bargeman and the Barge Master, the Salt Crab, the Brineling, the Drowned
 Man, the Drowned Chanter and the Choirmaster, with MONSTERS §13's Old Chanter, the lair's guardian,
-drawn before its lair; the Rifts' tide elders are Wrackholm's Tide Elder, and
-C6 and B7 place Wrackholm's smugglers and bowmen. New here (`novel`): the long bodies and the toads,
-two new families, and salt underfoot.
+drawn before its lair; the Rifts' tide elders are Wrackholm's Tide Elder, and C6 and B7 place
+Wrackholm's smugglers and bowmen. New here (`novel`): the long bodies and the toads, two new
+families, and salt underfoot.
 
 ## 8. The numbers
 
@@ -212,8 +212,10 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
   foot on B7 (#845), and the lair, a drowned mound of two levels at 30–32, its door on A5, the
   Telstok's (#846, #847). Each adds its brief to the plan, its decisions to
   `docs/areas/saltreach/decisions.md` and a row to §3 here (EXPANSION §8.2).
-- **Owed to no check:** its checks have no `owes`; the curve, the gate, density and the ladder hold
-  Saltreach with nothing owed.
+- **Owed to a check:** two, both the lair's (#830). The Old Chanter's place is its checks' one
+  `owes` row (`unplaced`), and the Telstok's is `tools/tests/items.ts`'s; each fails once the lair
+  holds it, and its row goes then. The curve, the gate, density and the ladder hold Saltreach with
+  nothing owed.
 - **Watched, not moved:** B5's two Rifts, 4.75 fights to a rest each, and the choir's 82.7% won sit
   between their aims and their limits. What the owner finds by hand goes here; none yet.
 - **Cut:** A2, A7 and C1 (plan, §11).
