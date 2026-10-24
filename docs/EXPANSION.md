@@ -1034,9 +1034,9 @@ Decided by the builder for #900, each the owner's to overturn:
 5. **The keys are the plan's:** L2 the items (`items.ts`, `party.ts`, `skills.ts`), L3 the monsters
    and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
    `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
-   imports of `src/input.ts`; K8 a walkthrough taking another, and the walkthroughs' and three
-   suites' `tools/walk.ts`, keyed K7 until #984 cleared K7's others. L8 and L9 hold none: `src/game`
-   takes a screen only in the pilot and `game.ts`.
+   imports of `src/input.ts`; H8 a walkthrough taking another's chain (`STEPS`, and Saltreach's
+   two orders of play), keyed K8 until #985 moved `tools/walk.ts` into the kit. L8 and L9 hold
+   none: `src/game` takes a screen only in the pilot and `game.ts`.
 6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
    `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
    modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).
@@ -1082,10 +1082,10 @@ Decided by the builder for #899, each the owner's to overturn:
    and the report to the lines it must write.
 8. **The library is the kit's, the command a thin tool:** the layers check (#900) lets a suite take
    `src` and `tools/kit/` and not a tool, so the table, `laneOf`, the report and the reading of the
-   diff and the event are `tools/kit/lanes.ts`, the kit's first file (#984, K7, filled the folder;
-   it imports `node:` modules alone, which the check does not follow), and `tools/lanes.ts` is the
-   command line that takes it. The job and the docs still name `node tools/lanes.ts`, and no `KNOWN`
-   row is added.
+   diff and the event are `tools/kit/lanes.ts`, the kit's first file (#984, K7, filled the folder,
+   and #985 put the walk in it). It imports `node:` modules alone, which the check does not follow,
+   and `tools/lanes.ts` is the command line that takes it. The job and the docs still name
+   `node tools/lanes.ts`, and no `KNOWN` row is added.
 
 The kit holds what the walkthroughs and the suites take, as #984 filled it: the fight once
 (`fight.ts`: `playOut`, `ROUND_CAP`, the gate's bot, its fight, its win rate and their memo), the
@@ -1095,6 +1095,13 @@ premade company and its ladder (`company.ts`), the test monster's line (`line.ts
 suite) and the libraries of `checks`, `grounds`, `ways`, `shipped`, `changed` and `scaffold`.
 `tools/gate.ts` and `tools/harness.ts` are command lines over it and import nothing of each other;
 `roadPlace` is `src/game/atlas.ts`'s, beside `areaBand`.
+
+#985 put the walk in it: `walk.ts`, the walk the walkthroughs and three suites take and, once, the
+helpers the walkthroughs wrote each for itself (meeting, answering, searching, opening a chest,
+reading a quest's page, setting the clock), and `grid.ts` beside it, the floods and tests over a
+map's squares (`reach`, `shut`, `reached`, `spread`, `paces`, `apartFrom`, a box's `row` and `col`)
+and `ALL`. The chain a later chapter replays (`STEPS`, `FARM_FIRST`, Saltreach's `inOrder` and
+`saltmouthFirst`) stays in its walkthrough, H8's: the kit takes no walkthrough.
 
 Decided by the builder for #984, each the owner's to overturn:
 
@@ -1126,6 +1133,46 @@ Decided by the builder for #984, each the owner's to overturn:
    lines, so #985 can move it whole; its 15 rows are keyed `K8`.
 10. **The import lines were rewritten by a script,** `tools/rehome.ts`, committed first and deleted
     last, as #968's sweep was.
+
+Decided by the builder for #985, each the owner's to overturn:
+
+1. **The helpers are `walk.ts`'s, the floods `grid.ts`'s:** each flood takes the map it floods (a
+   walkthrough's `out`) first, and `ALL` is the grid's.
+2. **What a copy took from its scope, the kit's takes as an argument:** the walk (`search`, `here`,
+   `keys`), the outdoors, the chapter (`written`, `goalOf`) or the box; each call passes it.
+3. **Where copies differed, the kit's covers them in the words each check said:** `answerTo` takes
+   what the answer sets (null: nothing) or `{ label }`, and `whole` for the four that named a person
+   in full; `open` takes 'map:id', what a chest found open does (`'check'`, `'skip'`, `'any'`) and
+   whether the log is heard; `reads` goes by the title of the quest's first page (the five handed a
+   title were handed that one); `there` and `shows` place a feature on the map it is written on, as
+   Thornmark's and Sunderwood's `shows` did, where the rest placed it on the map the company stood
+   on: the same at every call.
+4. **A `reach` along a predicate is `spread`, one counting steps `paces`:** Ashfall's two and
+   Whitespine's are the first, Cairnmoor's, Rimewater's and the Kilns' `steps` the second.
+5. **A variant that does another thing stays, under a name of its own** (`afoot`, `loot`, `sight`
+   and the rest, each listed in #985's pull request with what it does).
+6. **`FARM_FIRST`, `inOrder` and `saltmouthFirst` stay:** they replay the chain, which the kit could
+   hold only by taking three walkthroughs. `HIRE`, `hired` and `ledgerGiven` come in; the row
+   `wrackholm > saltreach` stays, and H8 holds eight rows, not seven.
+7. **Counted again on the head, `here` has three bodies and `keys` and `hour` one:** the position
+   and the two move, and so does every other body two walkthroughs wrote alike under one name, and
+   those alike but for the map, box or chest they read where the kit holds the general one (`at` as
+   `here`, `clock`, `hour`, `walkAt` or `square`; `business` as `ofKind`; `chestOf` as `chest`).
+   What two still declare is listed in #985's pull request with why.
+8. **The count reads columns 0 and 2, as the issue's did:** the lairs' `flood`s at column 4 stay;
+   Hearth's `written` there, a quest's entries by id, is `entered`, as Ashfall's is.
+9. **A script made the edits,** `tools/rehome.ts`, committed first and deleted last; its `--prune`
+   dropped the imports they left unused (the base's three stand). Five edits are by hand: Hearth's
+   deeper `written`, Glasswold's two comments and its local `Can`, Cairnmoor's `road` and
+   Whitespine's `keeperLog`.
+10. **Six bodies are still written in two walkthroughs, each one but for a type, a `!` or the walk
+    it reads:** `group` by 'map:id' (Ashfall's and Sunderwood's), `person` on a map given
+    (Cairnmoor's, Rimewater's and Whitespine's `personOn`), `feature` on a map given (Ashfall's and
+    Glasswold's three), `cross` (Ashfall's and Glasswold's), a box's square stood on (Ashfall's
+    `at`, Cairnmoor's `standsIn`) and a meeting's words with the log not heard (Ashfall's `say`, the
+    Kilns' `says`, Sunderwood's and Shelf's `talk`). With the families alike but for the map or box
+    they read (the box tests `on` gives, the events `ev` finds, the squares `square` keys) they go
+    into the kit with the scenes (#1018, #1033), which rewrite every walkthrough.
 
 The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; it, the monsters' kit
 (`src/ui/monsters/kit/`) and the rooms' (`src/ui/interiors/kit/`) are the systems lane's, as

@@ -52,7 +52,7 @@ import type { Sees } from '../../src/game/bot.ts';
 import { weary, caster, FOOD_RESTS } from '../../src/game/pilot/keep.ts';
 import { searches } from '../../src/game/pilot/route.ts';
 import { holds } from '../../src/game/quests.ts';
-import { pilotRun } from '../walk.ts';
+import { pilotRun } from '../kit/walk.ts';
 import { play } from '../kit/rules/fullrun.ts';
 import { startCombat, currentTurn, monsterAct } from '../../src/game/combat.ts';
 import { answers, TRIES, NO_ANSWER } from '../../src/game/pilot/talk.ts';

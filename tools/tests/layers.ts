@@ -29,7 +29,7 @@ const KEYS = {
   L6: 'the pilot moved to src/app',
   L7: 'Game, its screen stack and input moved to src/app, the screens given a Host',
   split: 'the big modules split: party.ts into its tables, conditions and levels, so skills.ts loads no items',
-  K8: "the walkthroughs as scenes: a chain takes an area's steps.ts, not its walkthrough, and the walk (tools/walk.ts) the walkthroughs and three suites take goes into tools/kit/",
+  H8: "the walkthroughs as scenes: a chain takes an area's steps.ts, not its walkthrough",
 } as const;
 type Key = keyof typeof KEYS;
 
@@ -98,30 +98,15 @@ const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
   split: [
     'cycle: src/game/items.ts src/game/party.ts src/game/skills.ts',
   ],
-  K8: [
-    'src/content/areas/ashfall/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/cairnmoor/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/glasswold/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/hearth/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/kilns/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/rimewater/walkthrough.ts > tools/walk.ts',
+  H8: [
     'src/content/areas/saltreach/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
     'src/content/areas/saltreach/walkthrough.ts > src/content/areas/thornmark/walkthrough.ts',
-    'src/content/areas/saltreach/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/shelf/walkthrough.ts > tools/walk.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/saltreach/walkthrough.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/thornmark/walkthrough.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/wrackholm/walkthrough.ts',
-    'src/content/areas/sunderwood/walkthrough.ts > tools/walk.ts',
     'src/content/areas/thornmark/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
-    'src/content/areas/thornmark/walkthrough.ts > tools/walk.ts',
-    'src/content/areas/whitespine/walkthrough.ts > tools/walk.ts',
     'src/content/areas/wrackholm/walkthrough.ts > src/content/areas/saltreach/walkthrough.ts',
-    'src/content/areas/wrackholm/walkthrough.ts > tools/walk.ts',
-    'tools/tests/monsters.ts > tools/walk.ts',
-    'tools/tests/pilot.ts > tools/walk.ts',
-    'tools/tests/survival.ts > tools/walk.ts',
   ],
 };
 
@@ -258,14 +243,14 @@ export function layers(): void {
     'src/content/b.ts': "import { A } from '../game/a.ts';",
     'src/content/areas/x/maps/m.ts': "import { N } from '../../y/maps/n.ts';\nimport { P } from '../../y/public.ts';",
   } as Record<string, string>)[f] ?? '');
-  const held = judge(fixture, { L2: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts'], K8: ['src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
+  const held = judge(fixture, { L2: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts'], H8: ['src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
   ok(held.failures.length === 0, `a graph in memory whose crossings and cycle KNOWN holds passes${held.failures.length ? ': ' + held.failures.join('; ') : ''}`);
   const fresh = judge(fixture, { L2: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts'] });
   ok(fresh.failures.join() === "areas: src/content/areas/x/maps/m.ts imports src/content/areas/y/maps/n.ts, and an area takes another area's files only through its public.ts; no KNOWN row holds it",
     `a crossing no row holds fails, by its pair and its rule: ${fresh.failures.join('; ')}`);
-  const stale = judge(fixture, { L2: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts', 'src/game/a.ts > src/ui/gone.ts'], K8: ['src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
+  const stale = judge(fixture, { L2: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts', 'src/game/a.ts > src/ui/gone.ts'], H8: ['src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
   ok(stale.failures.join() === 'KNOWN: src/game/a.ts > src/ui/gone.ts (L2) no longer crosses: the row goes', `a row that no longer crosses fails: ${stale.failures.join('; ')}`);
-  const loop = judge(fixture, { L2: ['src/game/a.ts > src/content/b.ts'], K8: ['src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
+  const loop = judge(fixture, { L2: ['src/game/a.ts > src/content/b.ts'], H8: ['src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
   ok(loop.failures.join() === 'cycle: src/content/b.ts, src/game/a.ts import each other as they load; no KNOWN row holds it', `a cycle no row holds fails, by its files: ${loop.failures.join('; ')}`);
 
   // The tree.
