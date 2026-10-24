@@ -26,7 +26,7 @@ export const DOOR: Exit = anchored({ x: 24, y: 30, to: 'sleepers_bay', at: 'star
   blockedText: 'A wall of grey under the ice, with a door in it: no handle, no seam, and no frost on it anywhere.',
   label: 'The door opens under her palm, and a voice in the wall says "Captain?" She flinches, and waits at it while you go down.' });
 
-export const COLDMERE_K9: MapDef = {
+export const COLDMERE_K9: MapDef<'coldmere_k9'> = {
   id: 'coldmere_k9',
   name: 'Loch Fuar',
   kind: 'outdoor',

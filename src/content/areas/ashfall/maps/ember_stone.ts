@@ -55,7 +55,7 @@ function socket(i: 0 | 1 | 2, x: number, y: number, name: string, look: string):
   };
 }
 
-export const EMBER_STONE: MapDef = {
+export const EMBER_STONE: MapDef<'ember_stone'> = {
   id: 'ember_stone',
   name: 'The Ember Stone',
   kind: 'dungeon',

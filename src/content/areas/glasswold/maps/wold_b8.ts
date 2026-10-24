@@ -30,7 +30,7 @@ export const SCOUT_ASKED = 'q_scout_asked', MAP_GIVEN = 'q_scout_map';
 export const LION_ASKED = 'q_lion', LION_HUNT = 'q_lion_hunt', LION_LEFT = 'q_lion_left', LION_BLOW = 'q_lion_blow';
 export const LION_TOLD = 'q_lion_told', LION_TAKEN = 'q_lion_taken', LION_DOWN = 'wold_b8:b8_grey_lion';
 
-export const WOLD_B8: MapDef = {
+export const WOLD_B8: MapDef<'wold_b8'> = {
   id: 'wold_b8',
   name: 'The Wold',
   kind: 'outdoor',

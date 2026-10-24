@@ -20,7 +20,7 @@ const many = (n: number, id: string): string[] => Array.from({ length: n }, () =
 const knot = (n: number, x: number, y: number, text: string) => ({ kind: 'event' as const, x, y, id: `ud_knot${n}`, once: true, text });
 const AGAIN = 'Her knot again, at the same height.';
 
-export const UNDERDEEP: MapDef = {
+export const UNDERDEEP: MapDef<'underdeep'> = {
   id: 'underdeep',
   name: 'The Ways',
   kind: 'dungeon',

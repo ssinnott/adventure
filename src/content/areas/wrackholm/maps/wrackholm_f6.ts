@@ -37,7 +37,7 @@ const MERRYN_ASKS: Choice = { ask: '"Will you carry it? To the hall, where it\'s
   ] },
 ] };
 
-export const WRACKHOLM_F6: MapDef = {
+export const WRACKHOLM_F6: MapDef<'wrackholm_f6'> = {
   id: 'wrackholm_f6',
   name: 'Wrackholm',
   kind: 'outdoor',

@@ -34,7 +34,7 @@ const QUIET: When = ['as_quiet_lanes', 'as_quiet_cut', 'as_quiet_back'].map((id)
 const quiet = (x: number, y: number, id: string): Feature =>
   ({ kind: 'event', x, y, id, once: true, after: WARDEN_SLAIN, until: QUIET, text: SLAG.quiet });
 
-export const ANVIL_STONE: MapDef = {
+export const ANVIL_STONE: MapDef<'anvil_stone'> = {
   id: 'anvil_stone',
   name: SLAG.name,
   kind: 'dungeon',

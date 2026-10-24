@@ -11,7 +11,7 @@ import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const CARN_FADA: MapDef = {
+export const CARN_FADA: MapDef<'carn_fada'> = {
   id: 'carn_fada',
   name: 'Carn Fada',
   kind: 'dungeon',

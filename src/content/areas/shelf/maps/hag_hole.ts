@@ -10,7 +10,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 
-export const HAG_HOLE: MapDef = {
+export const HAG_HOLE: MapDef<'hag_hole'> = {
   id: 'hag_hole',
   name: 'Hag Hole',
   kind: 'dungeon',

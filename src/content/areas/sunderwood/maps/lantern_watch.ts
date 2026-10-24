@@ -91,7 +91,7 @@ const LAMP_WORDS = [
 /** Where Vask is: the papers read and the wall touched, by day, until he has his answer. */
 const VASK_HERE = { after: { flag: 'papers_read', seen: 'the_sunder2:su2_wall' }, until: { flag: 'q_salt_done' }, when: { hours: 'day' } } as const;
 
-export const LANTERN_WATCH: MapDef = {
+export const LANTERN_WATCH: MapDef<'lantern_watch'> = {
   id: 'lantern_watch',
   name: 'Lantern Watch',
   kind: 'town',

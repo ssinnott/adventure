@@ -5,7 +5,7 @@ import { anchored } from '../../../../game/map.ts';
 import { EAST, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const MILL: MapDef = {
+export const MILL: MapDef<'mill'> = {
   id: 'mill',
   name: 'Ashcombe Cellar',
   kind: 'dungeon',

@@ -12,7 +12,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const CINDERCOAST_F9: MapDef = {
+export const CINDERCOAST_F9: MapDef<'cindercoast_f9'> = {
   id: 'cindercoast_f9',
   name: 'Cindercoast',
   kind: 'outdoor',

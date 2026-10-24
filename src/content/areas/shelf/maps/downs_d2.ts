@@ -12,7 +12,7 @@ import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 const PULLED = denBurnt('downs_d2', 'd2_den');
 const WOLVES = ['barrow_wolf', 'chalk_wolf', 'chalk_wolf'];
 
-export const DOWNS_D2: MapDef = {
+export const DOWNS_D2: MapDef<'downs_d2'> = {
   id: 'downs_d2',
   name: 'Callow Downs',
   kind: 'outdoor',

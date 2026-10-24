@@ -23,7 +23,7 @@ const CRANE = 'A man in Lantern grey at a lectern under the verse, chalk to the 
 /** The thane's last word, whichever way he was answered (§4.4). */
 const MOUNTAIN = '"The mountain has to eat. Remember that, when you are somewhere it does not."';
 
-export const ANVILHALL: MapDef = {
+export const ANVILHALL: MapDef<'anvilhall'> = {
   id: 'anvilhall',
   name: 'Anvilhall',
   kind: 'town',

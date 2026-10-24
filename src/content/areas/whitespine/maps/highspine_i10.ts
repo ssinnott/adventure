@@ -48,7 +48,7 @@ export const TOLL_DONE = 'q_toll_done';
  */
 export const LEDGE_ASKED = 'q_ledge', LEDGE_HELD = 'q_ledge_held';
 
-export const HIGHSPINE_I10: MapDef = {
+export const HIGHSPINE_I10: MapDef<'highspine_i10'> = {
   id: 'highspine_i10',
   name: 'The High Spine',
   kind: 'outdoor',

@@ -10,7 +10,7 @@ import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const THE_SUNDER: MapDef = {
+export const THE_SUNDER: MapDef<'the_sunder'> = {
   id: 'the_sunder',
   name: 'The Sunder',
   kind: 'dungeon',

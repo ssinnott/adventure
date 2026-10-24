@@ -36,7 +36,7 @@ export const B5_RIFT_S = rift({
   until: RIFT_S_CLOSED,
 });
 
-export const DELTA_B5: MapDef = {
+export const DELTA_B5: MapDef<'delta_b5'> = {
   id: 'delta_b5',
   name: 'The Delta',
   kind: 'outdoor',

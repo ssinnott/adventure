@@ -35,7 +35,7 @@ export const FOUNDING_RAISED = 'q_founding_raised';
  */
 export const ELDEST_HEARD = 'q_eldest_heard';
 
-export const CINDERCOAST_G10: MapDef = {
+export const CINDERCOAST_G10: MapDef<'cindercoast_g10'> = {
   id: 'cindercoast_g10',
   name: 'Cindercoast',
   kind: 'outdoor',

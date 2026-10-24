@@ -11,7 +11,7 @@ import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const SEESTOLLEN: MapDef = {
+export const SEESTOLLEN: MapDef<'seestollen'> = {
   id: 'seestollen',
   name: 'The Seestollen',
   kind: 'dungeon',

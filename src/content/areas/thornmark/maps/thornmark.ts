@@ -24,7 +24,7 @@ const BARGAIN: Choice = {
   ],
 };
 
-export const THORNMARK: MapDef = {
+export const THORNMARK: MapDef<'thornmark'> = {
   id: 'thornmark',
   name: 'Thornmark',
   kind: 'outdoor',

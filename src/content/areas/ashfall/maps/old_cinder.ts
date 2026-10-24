@@ -14,7 +14,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 /** The Master of magic's favour done (#859): the town's roll handed to the scholar, which her Master tests. */
 export const ROLL_GIVEN = 'q_roll_given';
 
-export const OLD_CINDER: MapDef = {
+export const OLD_CINDER: MapDef<'old_cinder'> = {
   id: 'old_cinder',
   name: 'Old Cinder',
   kind: 'dungeon',

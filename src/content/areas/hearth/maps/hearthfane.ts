@@ -53,7 +53,7 @@ function lamp(i: 0 | 1 | 2 | 3, x: number, y: number, name: string, right: reado
   };
 }
 
-export const HEARTHFANE: MapDef = {
+export const HEARTHFANE: MapDef<'hearthfane'> = {
   id: 'hearthfane',
   name: 'Hearthfane',
   kind: 'dungeon',

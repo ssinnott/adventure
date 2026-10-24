@@ -17,7 +17,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 /** Both of Stienwierde's Rifts gone quiet (B5), or the Tide Stone home (#191): their spill stops coming down the channel. */
 export const RIFTS_CLOSED: When = [{ slain: ['b5_rift_n:b5_rift_n_warden', 'b5_rift_s:b5_rift_s_warden'] }, STONE_HOME];
 
-export const DELTA_B6: MapDef = {
+export const DELTA_B6: MapDef<'delta_b6'> = {
   id: 'delta_b6',
   name: 'The Delta',
   kind: 'outdoor',

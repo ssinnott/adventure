@@ -18,7 +18,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 export const MOUTH: Exit = anchored({ x: 16, y: 2, to: 'deep_mines', at: 'start',
   label: 'The cage drops down the shaft, the daylight going small overhead, and bumps to a stop at the bottom.' });
 
-export const KILNSHEART_N4: MapDef = {
+export const KILNSHEART_N4: MapDef<'kilnsheart_n4'> = {
   id: 'kilnsheart_n4',
   name: 'The Kilns',
   kind: 'outdoor',

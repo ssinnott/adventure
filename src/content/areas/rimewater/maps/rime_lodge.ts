@@ -20,7 +20,7 @@ export const NIGHTS = ['night_1', 'night_2', 'night_3', 'night_4'] as const;
 /** Wenna met at the hole, the last one out on the fourth night: the bay's door reads it (§5, #440). */
 export const WENNA_UP = 'q_wenna_up';
 
-export const RIME_LODGE: MapDef = {
+export const RIME_LODGE: MapDef<'rime_lodge'> = {
   id: 'rime_lodge',
   name: 'Rime Lodge',
   kind: 'town',

@@ -44,7 +44,7 @@ const HALE_WORDS = [
   '"Never mind me. The rings pin under the floor; the pins knock out from the bilge. Start at the front, children first, and get them up to the boats before the watch counts heads."',
 ];
 
-export const TIDE_SHIP3: MapDef = {
+export const TIDE_SHIP3: MapDef<'tide_ship3'> = {
   id: 'tide_ship3',
   name: 'The Hold',
   kind: 'dungeon',

@@ -20,7 +20,7 @@ import { NOTCH } from '../public.ts';
 export const DOOR: Exit = anchored({ x: 6, y: 18, to: 'cairns', at: 'start',
   label: 'The slabs of the door grind back, and you stoop in under the cairn.' });
 
-export const CAIRNFIELD_N8: MapDef = {
+export const CAIRNFIELD_N8: MapDef<'cairnfield_n8'> = {
   id: 'cairnfield_n8',
   name: 'The Cairnfield',
   kind: 'outdoor',

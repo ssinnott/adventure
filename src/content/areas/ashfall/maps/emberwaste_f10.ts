@@ -14,7 +14,7 @@ import { LIT } from '../public.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const EMBERWASTE_F10: MapDef = {
+export const EMBERWASTE_F10: MapDef<'emberwaste_f10'> = {
   id: 'emberwaste_f10',
   name: 'The Ember Waste',
   kind: 'outdoor',

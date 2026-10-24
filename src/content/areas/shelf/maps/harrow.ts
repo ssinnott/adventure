@@ -33,7 +33,7 @@ const GATE_WARDENS = 'Wardens on the wall-walk and Wardens inside the gate, new 
 const POSTERN_WARDENS = 'Wardens on the wall above the postern, grey against the grey. None of them looks down; a fish cart is not their business, and nor, it seems, are you.';
 const GIBBET = 'A gibbet in the street, new, its timber still pale. The rope is tarred against the weather, and nothing hangs from it.';
 
-export const HARROW: MapDef = {
+export const HARROW: MapDef<'harrow'> = {
   id: 'harrow',
   name: 'Helmstow',
   kind: 'town',

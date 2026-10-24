@@ -53,7 +53,7 @@ export const GATE: Exit = anchored({ x: 18, y: 8, to: 'rime_lodge', at: 'start',
 export const LAKE_DOOR: Exit = anchored({ x: 13, y: 10, to: 'rime_lodge', at: 'from_longmere_m9',
   label: 'In off the ice by the lake wall\'s door, into the inn\'s yard and out of the wind.' });
 
-export const LONGMERE_M9: MapDef = {
+export const LONGMERE_M9: MapDef<'longmere_m9'> = {
   id: 'longmere_m9',
   name: 'Loch Fada',
   kind: 'outdoor',

@@ -41,7 +41,7 @@ export const MASON_SWAPPED = 'q_mason_swapped';
  */
 export const ORDERS_ASKED = 'q_rook_orders', ORDERS_READ = 'q_rook_read';
 
-export const SHEERPOINT_I8: MapDef = {
+export const SHEERPOINT_I8: MapDef<'sheerpoint_i8'> = {
   id: 'sheerpoint_i8',
   name: 'Sheer Point',
   kind: 'outdoor',

@@ -26,7 +26,7 @@ const TEAR = rift({
 });
 export const K3_RIFT: typeof TEAR = { ...TEAR, map: { ...TEAR.map, encounters: TEAR.map.encounters!.map((g) => ({ ...g, until: { flag: CRACK_SEALED }, leaves: true })) } };
 
-export const EAVES_K3: MapDef = {
+export const EAVES_K3: MapDef<'eaves_k3'> = {
   id: 'eaves_k3',
   name: 'The Sunder\'s Mouth',
   kind: 'outdoor',

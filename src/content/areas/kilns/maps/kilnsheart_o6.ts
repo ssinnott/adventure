@@ -18,7 +18,7 @@ import { RESPAWN } from '../../../../game/keys.ts';
 export const ADIT: Exit = anchored({ x: 22, y: 20, to: 'lava_tubes', at: 'start',
   label: 'You go in under the words and down the adit, the daylight going grey behind you and the air hot ahead.' });
 
-export const KILNSHEART_O6: MapDef = {
+export const KILNSHEART_O6: MapDef<'kilnsheart_o6'> = {
   id: 'kilnsheart_o6',
   name: 'The Kilns',
   kind: 'outdoor',

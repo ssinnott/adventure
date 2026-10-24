@@ -10,7 +10,7 @@ import { denBurnt, RESPAWN } from '../../../../game/keys.ts';
 const BURNT = denBurnt('downs_e2', 'e2_rookery');
 const BROOD = ['carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'carrion_crow', 'chalk_wolf', 'chalk_wolf'];
 
-export const DOWNS_E2: MapDef = {
+export const DOWNS_E2: MapDef<'downs_e2'> = {
   id: 'downs_e2',
   name: 'Callow Downs',
   kind: 'outdoor',

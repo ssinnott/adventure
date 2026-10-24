@@ -16,7 +16,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 
-export const EMBERWASTE_F12: MapDef = {
+export const EMBERWASTE_F12: MapDef<'emberwaste_f12'> = {
   id: 'emberwaste_f12',
   name: 'The Ember Waste',
   kind: 'outdoor',

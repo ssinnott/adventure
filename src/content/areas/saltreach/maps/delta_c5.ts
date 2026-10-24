@@ -22,7 +22,7 @@ export const C5_RIFT = rift({
   until: RIFT_CLOSED,
 });
 
-export const DELTA_C5: MapDef = {
+export const DELTA_C5: MapDef<'delta_c5'> = {
   id: 'delta_c5',
   name: 'The Delta',
   kind: 'outdoor',

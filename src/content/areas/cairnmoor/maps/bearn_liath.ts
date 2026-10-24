@@ -9,7 +9,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { anchored } from '../../../../game/map.ts';
 import { EAST } from '../../../../game/types.ts';
 
-export const BEARN_LIATH: MapDef = {
+export const BEARN_LIATH: MapDef<'bearn_liath'> = {
   id: 'bearn_liath',
   name: 'Bearn Liath',
   kind: 'dungeon',

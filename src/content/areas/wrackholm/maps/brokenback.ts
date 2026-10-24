@@ -10,7 +10,7 @@ import { anchored } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const BROKENBACK: MapDef = {
+export const BROKENBACK: MapDef<'brokenback'> = {
   id: 'brokenback',
   name: 'The Brokenback',
   kind: 'dungeon',

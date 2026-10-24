@@ -9,7 +9,7 @@ import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
-export const HIGHMOOR_O8: MapDef = {
+export const HIGHMOOR_O8: MapDef<'highmoor_o8'> = {
   id: 'highmoor_o8',
   name: 'High Moor',
   kind: 'outdoor',
