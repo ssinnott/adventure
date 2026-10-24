@@ -12,6 +12,8 @@ import { seekingQuests, trainersIn } from './seeking.ts';
 import type { Trainer } from './seeking.ts';
 import { OUTDOORS } from './outdoors.ts';
 import { QUESTS, MAP_DEFS } from '../content/index.ts';
+import type { MapId } from '../content/index.ts';
+import type { MapKey } from './keys.ts';
 
 /** Something the save records. Every part given must hold. */
 export interface QuestCond {
@@ -20,11 +22,11 @@ export interface QuestCond {
   /** An item someone in the party carries. */
   item?: string;
   /** A once-only event triggered, or a chest opened, on a map: 'map:id'. */
-  seen?: string;
+  seen?: MapKey;
   /** Groups killed on a map, 'map:id', all of them. Guardians only; a group that respawns comes back to life. */
-  slain?: string | readonly string[];
+  slain?: MapKey | readonly MapKey[];
   /** A map the party has set foot on, or a zone map of the outdoors it has walked into. */
-  visited?: string;
+  visited?: MapId;
   /**
    * A member (the one in party slot `who`, else any) of the class and the race, at the level or over
    * it, with the prestiges or more (game/seeking.ts). At least, never exactly, so what holds stays
@@ -55,7 +57,7 @@ export interface QuestGoal {
   when: When;
   text: string;
   /** The map the step is done on. A chapter's goals must say; a side quest's may. */
-  at?: string;
+  at?: MapId;
 }
 
 /** A quest with steps of its own: a side quest, or a chapter of the one quest. */

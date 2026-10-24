@@ -11,8 +11,9 @@ import type { MapDef, Choice, Words } from '../../../../game/map.ts';
 import { NICK_DOWN } from './nicks_locker.ts';
 import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
+import type { When } from '../../../../game/quests.ts';
 
-const BURNT = { seen: 'wrackholm_f6:f6_watch' };
+const BURNT = { seen: 'wrackholm_f6:f6_watch' } satisfies When;
 
 /** Holdfast's rumour (#846, DESIGN §9): Merryn's two lines more at every meeting after her first while Old Nick lives. */
 const NICK = [

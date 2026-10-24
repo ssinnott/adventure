@@ -13,7 +13,9 @@ import { anchored } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY } from './types.ts';
 import type { When } from './quests.ts';
+import type { MapKey } from './keys.ts';
 import type { RegionId } from './weather.ts';
+import type { MapId } from '../content/index.ts';
 import { RESPAWN } from './keys.ts';
 
 /** The side of every Rift. */
@@ -52,9 +54,9 @@ export interface RiftTable {
   respawn?: number;
 }
 
-export interface RiftSpec {
-  /** The map's id, and the stem of every id in it. */
-  id: string;
+export interface RiftSpec<Id extends string = string> {
+  /** The map's id, and the stem of every id in it: kept literal, as a map's is (#994). */
+  id: Id;
   template: RiftTemplate;
   material: RiftMaterial;
   seed: number;
@@ -64,7 +66,7 @@ export interface RiftSpec {
    * The way out: the square beside the tear on the map it was entered from, an anchor of that map by
    * name (#993), which the maps' join lands as it lands an exit, or the square and the facing.
    */
-  out: { to: string; at: string; tx?: never; ty?: never; tf?: never } | { to: string; at?: never; tx: number; ty: number; tf?: Facing };
+  out: { to: MapId; at: string; tx?: never; ty?: never; tf?: never } | { to: MapId; at?: never; tx: number; ty: number; tf?: Facing };
   table: RiftTable;
   /** The chest at the heart. It holds no shard: the Stone's is grown into the tear, as its words say. */
   hoard: { gold: number; items: readonly string[] };
@@ -115,7 +117,7 @@ function shuffle<T>(xs: T[], int: (a: number, b: number) => number): T[] {
 }
 
 /** A Rift, generated. Throws on a template with faults, a table with more groups than slots, or too few looks. */
-export function generateRift(spec: RiftSpec): MapDef {
+export function generateRift<Id extends string>(spec: RiftSpec<Id>): MapDef<Id> {
   const { id, template, material, table, until } = spec;
   const faults = templateFaults(template);
   if (faults.length) throw new Error(`rift template ${template.id}: ${faults.join('; ')}`);
@@ -169,6 +171,12 @@ export function generateRift(spec: RiftSpec): MapDef {
     exits, features, encounters,
   };
 }
+
+/**
+ * The `until` of a Rift no area places, its warden fallen: a sample's (content/rifts/). A sample's id is
+ * no map the areas list, as a suite's fixture's is not, so its key is asserted here, alone (#994).
+ */
+export const wardenFallen = (id: string): When => ({ slain: `${id}:${id}_warden` as MapKey });
 
 /** The tear on a zone map that leads into a Rift: stepped on at x,y, it takes the party in, saying `label`. */
 export function riftWay(rift: MapDef, x: number, y: number, label?: string): Extract<Feature, { kind: 'rift' }> {

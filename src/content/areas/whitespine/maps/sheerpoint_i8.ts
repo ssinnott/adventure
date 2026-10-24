@@ -17,12 +17,13 @@ import { NORTH } from '../../../../game/types.ts';
 import { WENNA_LODGE } from '../../rimewater/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import { MASON_PASSAGE } from '../public.ts';
+import type { When } from '../../../../game/quests.ts';
 
 /** Wenna taken from the camp on the night the company rests at her fire (§5, §9's 2; #505 reads it). */
 export const WENNA_TAKEN = 'q_wenna_taken';
 
 /** Wenna at the camp: after the lodge, once the company has reached the Point. The camp's night waits on the same. */
-const WENNA_THERE = { flag: WENNA_LODGE, visited: 'sheerpoint_i8' };
+const WENNA_THERE = { flag: WENNA_LODGE, visited: 'sheerpoint_i8' } satisfies When;
 
 /**
  * The Mason's Tally (#56's 48, #506): the deserter's passage to Cinderport bought, the Compact's fare

@@ -35,7 +35,7 @@ export interface Known {
    */
   features(map: string): Feature[];
   /** The exits on seen squares that are there now, as the automap marks them: where each leads, and no gate's terms. */
-  exits(map: string): Exit[];
+  exits(map: string): Exit<string>[];
   /**
    * The squares of the groups the automap marks now (`markedGroups`): on the party's own map, in view
    * or on a seen square within two steps; none on any other map. Nothing of what a group is.

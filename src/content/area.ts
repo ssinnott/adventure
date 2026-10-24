@@ -8,18 +8,22 @@ import type { QuestDef, Chapter } from '../game/quests.ts';
 import type { GuildQuest } from '../game/guilds.ts';
 import type { Climate } from '../game/weather.ts';
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink, SiteIcon } from '../game/atlas.ts';
+import type { MapId } from './index.ts';
 
 export interface Area {
   /** Also the region its maps name for their weather (`MapDef.region`). */
   id: string;
-  /** Its zone maps, towns and dungeons. A new game starts on the first area's first map. */
+  /**
+   * Its zone maps, towns and dungeons, each declared with its id (`MapDef<'cairns'>`). A new game starts
+   * on the first area's first map. Listed in the area's `MAPS`, which `MapId` is made of (#994).
+   */
   maps: readonly MapDef[];
   /**
    * Its maps that pay outside any area's budget (EXPANSION §5.2): the deepest levels, past its band,
    * which the road never needs. Each is held to its own band, and no area's clear counts its xp or
    * gold (tools/tests/curve.ts).
    */
-  outside?: readonly string[];
+  outside?: readonly MapId[];
   /** Its monsters; any area's maps may place them. */
   monsters: readonly MonsterDef[];
   /** The drawings its monsters are drawn with: the MonsterSprite union is made of these. */
