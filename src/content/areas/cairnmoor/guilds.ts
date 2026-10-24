@@ -1,7 +1,7 @@
 // Cairnmoor's guild quest (DESIGN §8; game/guilds.ts): the Lanterns' fourth rank's second ask, the
 // ring's voice reported at any Lantern hall, waiting for Act III (#439). The Kilns hold the first.
 import type { GuildQuest } from '../../../game/guilds.ts';
-import { FOURTH_RANKS_OPEN } from '../kilns/guilds.ts';
+import { FOURTH_RANKS_OPEN } from '../kilns/public.ts';
 import { RING_SPOKE } from './chapter.ts';
 
 export const GUILDS: readonly GuildQuest[] = [

@@ -10,8 +10,8 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/rimewater.md §4.5 is its brief.
 import type { Exit, MapDef } from '../../../../game/map.ts';
 import { SOUTH, WEST } from '../../../../game/types.ts';
-import { WENNA_UP, WENNA_LODGE } from './rime_lodge.ts';
-import { SLEEPERS_SEEN } from '../chapter.ts';
+import { WENNA_UP } from './rime_lodge.ts';
+import { WENNA_LODGE, SLEEPERS_SEEN } from '../public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /**

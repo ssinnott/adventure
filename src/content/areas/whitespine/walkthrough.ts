@@ -66,11 +66,12 @@ import { restAndWake } from '../../../game/wilds.ts';
 import { readLine } from '../../../game/inscriptions.ts';
 import { MONSTERS } from './monsters.ts';
 import { GATE, VIGIL_ASKED, VIGIL_KEPT } from './maps/monksvale_j11.ts';
-import { WENNA_TAKEN, MASON_PASSAGE, MASON_SWAPPED, ORDERS_ASKED, ORDERS_READ } from './maps/sheerpoint_i8.ts';
-import { WENNA_LODGE } from '../rimewater/maps/rime_lodge.ts';
-import { STAIR_TOP, TOLL_DONE, LEDGE_ASKED, LEDGE_HELD } from './maps/highspine_i10.ts';
-import { NOVICE_TOLD, NOVICE_KEPT, ELEVEN_ASKED, ELEVEN_SUNG } from './maps/monastery.ts';
-import { NEST_WATCH, NEST_CELL } from './maps/highspine_i11.ts';
+import { WENNA_TAKEN, MASON_SWAPPED, ORDERS_ASKED, ORDERS_READ } from './maps/sheerpoint_i8.ts';
+import { MASON_PASSAGE, STAIR_TOP, NOVICE_TOLD, NOVICE_KEPT, NEST_WATCH } from './public.ts';
+import { WENNA_LODGE } from '../rimewater/public.ts';
+import { TOLL_DONE, LEDGE_ASKED, LEDGE_HELD } from './maps/highspine_i10.ts';
+import { ELEVEN_ASKED, ELEVEN_SUNG } from './maps/monastery.ts';
+import { NEST_CELL } from './maps/highspine_i11.ts';
 import { questLog } from '../../../game/quests.ts';
 import { CHAPTER } from './chapter.ts';
 

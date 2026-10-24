@@ -6,7 +6,7 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/sunderwood.md §4.10 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { SOUTH } from '../../../../game/types.ts';
-import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const LANTERNWOOD_L3: MapDef = {

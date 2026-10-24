@@ -4,7 +4,8 @@
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
 import type { MapDef, Answer } from '../../../../game/map.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../../game/types.ts';
-import { SAT, THRONE_REMOVED } from './keep.ts';
+import { SAT } from './keep.ts';
+import { THRONE_REMOVED } from '../public.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

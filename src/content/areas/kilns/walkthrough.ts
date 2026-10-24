@@ -82,7 +82,7 @@ import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, kneel, fight, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
-import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, ATLAS } from '../../index.ts';
+import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, ATLAS, THE_QUEST } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
@@ -102,14 +102,13 @@ import { rankFlag } from '../../guilds.ts';
 import type { GuildId } from '../../guilds.ts';
 import { offered, take, rankOf } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
-import { FOURTH_RANKS_OPEN } from './guilds.ts';
+import { FOURTH_RANKS_OPEN, IRONFELLS_GATE, HYMN_SUNG } from './public.ts';
 import { readLine, markLine, readMarks } from '../../../game/inscriptions.ts';
 import { answerRiddle } from '../../../game/wilds.ts';
 import { ACT_III } from '../../../../tools/tests/ladder.ts';
 import { roadPlace } from '../../../../tools/tests/pillars.ts';
 import { FORGE, ANVIL_STONE_PRICE, SMITH_PRICES, quarterMore } from './items.ts';
-import { GATE } from './maps/ironfells_n3.ts';
-import { VERSE_READ, BOUGHT, TAKEN, HYMN_SUNG } from './maps/anvilhall.ts';
+import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
 import { MOUTH } from './maps/kilnsheart_n4.ts';
 import { TEAR } from './maps/kilnsheart_o5.ts';
 import { ADIT } from './maps/kilnsheart_o6.ts';
@@ -123,9 +122,11 @@ import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { serialize, deserialize } from '../../../game/save.ts';
 import { World, HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { CHAPTER } from './chapter.ts';
-import { CHAPTER as RING } from '../cairnmoor/chapter.ts';
-import { CREW_OPEN, CREW_SHUT } from '../hearth/maps/underdeep.ts';
+import { CREW_OPEN, CREW_SHUT } from '../hearth/public.ts';
 import { RESPAWN } from '../../../game/keys.ts';
+
+// Another area's chapter, taken from the quest by its id and not from its file (#992).
+const RING = THE_QUEST.chapters.find((c) => c.id === 'ring')!;
 
 const M3 = MAP_DEFS.find((d) => d.id === 'ironfells_m3')!, N3 = MAP_DEFS.find((d) => d.id === 'ironfells_n3')!, N4 = MAP_DEFS.find((d) => d.id === 'kilnsheart_n4')!;
 const N2 = MAP_DEFS.find((d) => d.id === 'ironfells_n2')!;
@@ -252,9 +253,9 @@ export const walkthrough: Walkthrough = (ok) => {
     }
     return d;
   };
-  const front = (n3.y + GATE.y + 1) * out.width + n3.x + GATE.x;
+  const front = (n3.y + IRONFELLS_GATE.y + 1) * out.width + n3.x + IRONFELLS_GATE.x;
   const spur = steps(n3.x, n3.y + 27, (x, y) => out.at(x, y).ch === '=' && x >= n3.x && x < n3.x + n3.w && y >= n3.y && y < n3.y + n3.h).get(front);
-  ok(spur === 46 && !!N3.exits?.includes(GATE) && GATE.to === 'anvilhall' && out.at(n3.x + GATE.x, n3.y + GATE.y).door === 'door',
+  ok(spur === 46 && !!N3.exits?.includes(IRONFELLS_GATE) && IRONFELLS_GATE.to === 'anvilhall' && out.at(n3.x + IRONFELLS_GATE.x, n3.y + IRONFELLS_GATE.y).door === 'door',
     `the spur runs ${spur} squares of road from the trail to the forecourt, and the gate before it is a door, the way into Anvilhall`);
   // Counted along the trails, as the stones are: from the road beside the stone, on the road.
   const stone = M3.features!.find((f) => f.kind === 'event' && f.id === 'm3_milestone')!;
@@ -610,7 +611,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // a square past the road's end before it.
   const roadish = (x: number, y: number): boolean => out.at(x, y).ch === '=' || (out.passable(x, y) === 'ok' && [-1, 1].some((d) => out.at(x + d, y).ch === '=') && [-1, 1].some((d) => out.at(x, y + d).ch === '='));
   const byRoad = steps(n6.x + 4, n6.y + 18, roadish);
-  const toHall = byRoad.get((n3.y + GATE.y + 1) * out.width + n3.x + GATE.x) ?? Infinity, toPort = (byRoad.get((l6.y + HAVEN_GATE.y) * out.width + l6.x + HAVEN_GATE.x + 1) ?? Infinity) + 1;
+  const toHall = byRoad.get((n3.y + IRONFELLS_GATE.y + 1) * out.width + n3.x + IRONFELLS_GATE.x) ?? Infinity, toPort = (byRoad.get((l6.y + HAVEN_GATE.y) * out.width + l6.x + HAVEN_GATE.x + 1) ?? Infinity) + 1;
   const mile = N6.features!.find((f) => f.kind === 'event' && f.id === 'n6_milestone')!;
   ok(mile.kind === 'event' && mile.x === 4 && mile.y === 18 && mile.text.includes(`ANVILHALL ${Math.round(toHall / 13)} `) && mile.text.includes(`KILNHAVEN ${Math.round(toPort / 13)} `),
     `the milestone at the fork says ANVILHALL ${Math.round(toHall / 13)} and KILNHAVEN ${Math.round(toPort / 13)}: ${toHall} squares along the roads to Anvilhall's gate and ${toPort} to Kilnhaven's`);
@@ -688,7 +689,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // along the roads as the stones are.
   ok(!!L6.exits?.includes(HAVEN_GATE) && out.at(l6.x + HAVEN_GATE.x, l6.y + HAVEN_GATE.y).door === 'door' && HAVEN_GATE.to === 'kilnhaven' && HAVEN_GATE.x === 28 && HAVEN_GATE.y === 4 && out.at(l6.x + 29, l6.y + 4).ch === '=',
     'the road runs from the east edge to Kilnhaven\'s gate in the wall at 28,4, and the gate is a door, the way into the town');
-  const fromStone = steps(l6.x + 30, l6.y + 4, roadish), toHall6 = fromStone.get((n3.y + GATE.y + 1) * out.width + n3.x + GATE.x) ?? Infinity;
+  const fromStone = steps(l6.x + 30, l6.y + 4, roadish), toHall6 = fromStone.get((n3.y + IRONFELLS_GATE.y + 1) * out.width + n3.x + IRONFELLS_GATE.x) ?? Infinity;
   const stone6 = L6.features!.find((f) => f.kind === 'event' && f.id === 'l6_milestone')!;
   ok(stone6.kind === 'event' && stone6.x === 30 && stone6.y === 4 && stone6.text.includes(`ANVILHALL ${Math.round(toHall6 / 13)} `), `the milestone before Kilnhaven's gate says ANVILHALL ${Math.round(toHall6 / 13)}: ${toHall6} squares along the roads to Anvilhall's gate`);
   see(w, 'kilnmouth_l6:l6_yard');
@@ -987,7 +988,7 @@ function ironhide(ok: (cond: boolean, msg: string) => void): void {
 function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   // In at N3's gate, by the door in the hill, and out by it again onto the forecourt before it,
   // whatever the thane was told: nothing shuts it.
-  w.world.travel('ironfells_n3', GATE.x, GATE.y + 1, NORTH);
+  w.world.travel('ironfells_n3', IRONFELLS_GATE.x, IRONFELLS_GATE.y + 1, NORTH);
   const step = w.world.move('forward'), inside = step.kind === 'moved' ? step.messages : [];
   ok(w.world.state.mapId === 'anvilhall' && w.world.state.x === TOWN.start.x && w.world.state.y === TOWN.start.y && w.world.state.facing === NORTH, 'N3\'s gate lets the company in at the foot of the court, facing up it');
   ok(inside.join() === 'A door in the hill, iron-bound, and the hammering behind it. Over the lintel, words cut deep and painted red.', `going in, the door in the hill and the words cut over it (${inside.join(' / ')})`);
@@ -996,7 +997,7 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   listen(w);
   w.world.travel('anvilhall', TOWN.start.x, TOWN.start.y, SOUTH);
   const back = w.world.move('forward');
-  ok(back.kind === 'moved' && w.world.zone?.id === 'ironfells_n3' && w.world.state.x - w.world.zone.x === GATE.x && w.world.state.y - w.world.zone.y === GATE.y + 1 && w.world.state.facing === SOUTH,
+  ok(back.kind === 'moved' && w.world.zone?.id === 'ironfells_n3' && w.world.state.x - w.world.zone.x === IRONFELLS_GATE.x && w.world.state.y - w.world.zone.y === IRONFELLS_GATE.y + 1 && w.world.state.facing === SOUTH,
     'and out again onto the forecourt before the gate, facing down the spur');
   ok(TOWN.exits!.length === 1 && TOWN.exits!.every((e) => !e.shut && !e.needFlag), 'nothing shuts the gate, either way');
   listen(w);

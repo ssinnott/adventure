@@ -7,7 +7,8 @@
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks
 // every key.
 import type { QuestDef } from '../../../game/quests.ts';
-import { CASES, CASE_COUSIN, CASE_FAILED, CASE_HOLD, CASE_NOBODY, CASE_TALLIS, CASE_WENNA, EARLY, LATE, SAT, THRONE_COUNCIL, THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS, THRONE_WENNA } from './maps/keep.ts';
+import { CASES, CASE_COUSIN, CASE_FAILED, CASE_HOLD, CASE_NOBODY, CASE_TALLIS, CASE_WENNA, EARLY, LATE, SAT, THRONE_COUNCIL, THRONE_WENNA } from './maps/keep.ts';
+import { THRONE_COUSIN, THRONE_HOLD, THRONE_TALLIS } from './public.ts';
 
 /** A verdict's entries: as the Council sat, or as its twin did after the relit or the finished ending. */
 const verdict = (id: string, flag: string, chair: string) => [

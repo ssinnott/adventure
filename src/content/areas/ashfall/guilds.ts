@@ -8,7 +8,7 @@
 // camp's 7): seen, and nothing taken, for Fane's map is the Ranger's. It needs no `after` of its own: the
 // ladder keeps it behind the Surveyor's, which makes a company Mapmakers once it is paid.
 import type { GuildQuest } from '../../../game/guilds.ts';
-import { SLEEPERS_SEEN } from '../rimewater/chapter.ts';
+import { SLEEPERS_SEEN } from '../rimewater/public.ts';
 
 /** Where the journal lies: its chest in the lower gallery, opened. */
 const FOUND = { seen: 'ember_stone:es_journal' };

@@ -7,18 +7,11 @@
 // Stone's third part, a heap of the walker's parts and the stair down to the camp (STAIR2). Once the Stone is
 // lit a sentry comes up that stair. Band 26, the area's top, its nest and
 // its elite at 27; docs/areas/meridian_camp.md §4.2 is its brief.
-import type { Exit, MapDef } from '../../../../game/map.ts';
+import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
-
-/**
- * The way down to the camp (meridian_camp3, #22's third level): the stair at the corridors' end, 4,30,
- * onto the camp's first square at 4,1, facing south; its way back up lands on 4,29, facing north, the
- * stair's head.
- */
-export const STAIR2: Exit = { x: 4, y: 30, to: 'meridian_camp3', tx: 4, ty: 1, tf: SOUTH,
-  label: 'Down the steps out of the heat, into a cold that takes the breath.' };
+import { STAIR2 } from '../public.ts';
 
 export const MERIDIAN_CAMP2: MapDef = {
   id: 'meridian_camp2',

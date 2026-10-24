@@ -12,7 +12,8 @@
 // How the words are keyed is in src/content/area.ts (`quests`); tools/tests/quests.ts checks every
 // key.
 import type { QuestDef } from '../../../game/quests.ts';
-import { BELL_HUNG, COUNT_STOPPED } from './maps/drowned_temples.ts';
+import { COUNT_STOPPED } from './maps/drowned_temples.ts';
+import { BELL_HUNG } from './public.ts';
 
 export const QUESTS: readonly QuestDef[] = [
   {

@@ -1029,9 +1029,8 @@ Decided by the builder for #900, each the owner's to overturn:
 5. **The keys are the plan's:** L2 the items (`items.ts`, `party.ts`, `skills.ts`), L3 the monsters
    and spells, L4 the guilds and ranks, L5 the climates, stones, endings and `quests.ts` (its
    `MAP_DEFS` goes with the atlas, the last table); L6 the pilot's; L7 `game.ts`'s and the screens'
-   imports of `src/input.ts`; A6 each pair of areas; K8 a walkthrough taking another; K7 the
-   walkthroughs' and the suites' others. L8 and L9 hold none: `src/game` takes a screen only in the
-   pilot and `game.ts`.
+   imports of `src/input.ts`; K8 a walkthrough taking another; K7 the walkthroughs' and the suites'
+   others. L8 and L9 hold none: `src/game` takes a screen only in the pilot and `game.ts`.
 6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
    `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
    modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).
@@ -1177,6 +1176,19 @@ Every area's have moved, the Foreland's first (#897) and the rest by one script 
 area pull request open (#968), so a box adds its rows to its own folder only; the emptied tables go
 with #969.
 
+**An area's `public.ts` is the one file of it another area imports** (#992), which the layers suite
+holds (§8.1). It declares the flags and exits the others take, imported back by the files they stood
+in, and re-exports the area's `items.ts`, where every item is a const of its own by the name of its
+id (`export const plate = A('plate', …)`, `halberd+1` as `halberdPlus1`): another area takes an item
+by its name, never by its id from a table. It re-exports nothing else. What it re-exports, everyone
+who takes anything of the area loads, and the areas take one another both ways (Ashfall and the
+Glasswold, Hearth Isle and the Foreland, the Kilns and the Whitespine): with every `items.ts`
+re-exported, a map re-exported for its flags closes a loop of six files, every `chapter.ts` one of
+eleven and every `guilds.ts` one of six, and the layers suite refuses a loop. So a walkthrough takes
+another area's chapter from `THE_QUEST.chapters` by its id. Every area has one; a new area has one
+once another takes something from it, and a flag another area needs that `public.ts` lacks is one
+line there, added by the box that needs it and said in its pull request.
+
 Decided by the builder for #897, each the owner's to overturn:
 
 1. **What an area owes and its rungs are rows of its `checks.ts`, not fields of the `Area` in its
@@ -1243,6 +1255,30 @@ Decided by the builder for #968, each the owner's to overturn:
    (`openOnNothing`, `overRoad`), but #968's table names neither, and it kept `OVER_ROAD` only until
    it had one; #969 moves both by the same script, and its body names them.
 
+Decided by the builder for #992, each the owner's to overturn:
+
+1. **`public.ts` re-exports `items.ts` whole** (`export * from './items.ts'`): every item by name
+   and the rest of the file (`ITEMS`, `CURES` and the shops' lists; the Kilns' `quarterMore`,
+   `SMITH_PRICES` and `ANVIL_STONE_PRICE`), in one line that an item added never touches.
+2. **A statement of several flags is split** where the others take only some: those taken move, and
+   the rest stay in the map under the comment that names them all. Each group in `public.ts` says
+   the file it came from; a flag's own comment moves with it.
+3. **The Kilns' `GATE` of `ironfells_n3` is `IRONFELLS_GATE`**, for the Iron Fells, its map's name
+   without its square, in the map and the two walkthroughs that read it; `kilnmouth_l6`'s stays
+   `GATE`. No other name of a `public.ts` clashes with one of its area's.
+4. **An item named for the first time takes its id's name**, declared above the array it stands in
+   (`ITEMS`, or Ashfall's `PARTS`), in that array's order and with its comment, an object typed
+   `ItemDef`; the array holds the names. The 20 consts that had names keep them and gain `export`.
+5. **A walkthrough takes another area's chapter as the Hearth's takes the warning:** `const TIDE =
+   THE_QUEST.chapters.find((c) => c.id === 'tide')!`, under one comment after its imports, the names
+   the bodies read kept.
+6. **One import from each `public.ts` in a file**, where the first of the imports it replaces stood;
+   an area's own files and the tools that took a moved name take it from `public.ts` too.
+7. **The layers suite's fixtures key their area row `K8`**: `judge` takes a row under any key of the
+   plan, and with `A6` gone no key holds a row of the area rule (`K8`'s eight are a walkthrough
+   taking another, the `tests` rule's), so the fixtures borrow `K8`; what they test is the rule, not
+   the key.
+
 ### 8.3 Pull requests
 
 - A `pull_request` workflow runs the typecheck, the tests, the smoke test and the smoke's crack
@@ -1254,7 +1290,7 @@ Decided by the builder for #968, each the owner's to overturn:
   (#955). Everything runs on main: `pages.yml`'s `npm test` on every push, a CI cycle after the
   merge and before the deploy; the Checks workflow every day at 03:17 UTC (`schedule:`); and a run
   started by hand, a release's. A flag spelt in two areas, or a crossing that lands on another
-  area's map, the gate's narrowing cannot see until `A7` and `A6`: those runs catch it.
+  area's map, the gate's narrowing cannot see until `A7` and `A9`: those runs catch it.
 - Main has no branch protection, by the owner's word of 18 October 2026: "We are not doing branch
   protection." Nothing in the plan needs a GitHub setting. Two green branches that are red together
   are kept from merging by a procedure, now the only safeguard: the orchestrating session merges one

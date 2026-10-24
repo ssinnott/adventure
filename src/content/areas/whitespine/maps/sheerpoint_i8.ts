@@ -14,8 +14,9 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/whitespine.md §4.7 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
-import { WENNA_LODGE } from '../../rimewater/maps/rime_lodge.ts';
+import { WENNA_LODGE } from '../../rimewater/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
+import { MASON_PASSAGE } from '../public.ts';
 
 /** Wenna taken from the camp on the night the company rests at her fire (§5, §9's 2; #505 reads it). */
 export const WENNA_TAKEN = 'q_wenna_taken';
@@ -28,7 +29,7 @@ const WENNA_THERE = { flag: WENNA_LODGE, visited: 'sheerpoint_i8' };
  * (he stands in Cinderport's inn after it); or the tally's page swapped, a count chalked short, and he
  * goes back to the causeway with it, so the Hand sends for the wrong count.
  */
-export const MASON_PASSAGE = 'q_mason_passage', MASON_SWAPPED = 'q_mason_swapped';
+export const MASON_SWAPPED = 'q_mason_swapped';
 
 /**
  * The Thief's third (#448): Hereward has asked a thief of 27 with the second for a set of the Compact's

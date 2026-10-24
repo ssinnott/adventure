@@ -7,7 +7,7 @@
 // Band 14-16; docs/areas/sunderwood.md §4.6 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
-import { CRACK_SEALED } from '../../hearth/maps/underdeep.ts';
+import { CRACK_SEALED } from '../../hearth/public.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 export const THE_SUNDER2: MapDef = {

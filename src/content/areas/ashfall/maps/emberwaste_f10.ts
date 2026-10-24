@@ -9,7 +9,8 @@
 // Cut from the atlas by tools/scaffold.ts; docs/areas/ashfall.md §4.9 is its brief.
 import type { MapDef } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-import { LIT, SEEDLING_ASKED, SEEDLING_PLANTED } from './ember_stone.ts';
+import { SEEDLING_ASKED, SEEDLING_PLANTED } from './ember_stone.ts';
+import { LIT } from '../public.ts';
 import { ENDED } from '../../../endings.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 

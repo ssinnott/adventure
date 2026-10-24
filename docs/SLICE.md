@@ -1006,8 +1006,8 @@ over content broken on purpose too, and two tools to theirs:
   every map (#915).
 - `layers` (§8.1, #900): the runtime imports of `src/` and `tools/`, read from the files in about
   0.2 s, held to the layers: no cycle among `src`'s, nothing in `src/game` taking content, the UI or
-  the app, nothing in the UI the app, no area another's files but its `public.ts`, and the
-  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 241 crossings are the
+  the app, nothing in the UI the app, no area another's files but its `public.ts` (#992), and the
+  walkthroughs and the suites taking `src` and `tools/kit/` alone. Today's 148 crossings are the
   rows of its `KNOWN`, each under the issue that clears it; a new crossing fails, and so does a row
   that no longer crosses, so the table only shrinks.
 - `scaffold` (§8.2): the Downs' draft, the Deepthorn's first and J4, the Sunder's K3, the Saltings'
@@ -1135,7 +1135,7 @@ does.
 | `content/index.ts` | the areas in road order; the tables merged from them (maps, monsters, items, quests and guild quests, climates, rooms; the monsters and items read-only by type, #945), the one quest joined from their chapters and `ATLAS`, their parts of the world map over the plan; `SPELLS` from `spells.ts`; and the `MonsterSprite`, `Interior` and `RegionId` unions made from the areas |
 | `content/guilds.ts` | the four guilds (`GUILDS`: names, a short name where a hall's menu row would cut the whole, and ranks), a guild quest's flags (given on from `game/keys.ts`) and its side of the quest log |
 | `content/area.ts` | `Area`, the shape every area fills in, and `Novelty`, what it claims is new (held by `tools/tests/pillars.ts`); `Walkthrough`, an area's end-to-end test |
-| `content/areas/<area>/` | an area: its maps, monsters, items, chapter of the one quest (`chapter.ts`), side quests (`quests.ts`), climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); each has a doc in [docs/areas/](areas/) |
+| `content/areas/<area>/` | an area: its maps, monsters, items, chapter of the one quest (`chapter.ts`), side quests (`quests.ts`), climate, what it claims is new (`novel`) and part of the world map, and the sprite kinds and rooms it brings (`index.ts`); and the one file another area takes, `public.ts`: the flags and exits the others take, and every item by name (#992). Each has a doc in [docs/areas/](areas/) |
 | `content/items.ts`, `content/spells.ts` | the items no area owns (the class kits, the starting bag, the iron key), the helpers the areas' tables are written with and an artifact's price (`ARTIFACT_PRICE`), and the spells |
 | `content/progression.ts` | the curve: each area's band, next floor and price window, the xp and gold a clear should give, and what is owed; checked by `tools/tests/curve.ts` |
 | `content/rifts/` | the eight Rift templates and the four materials (ember, brine, black glass and slag, MONSTERS §2.1), `rift` for an area to place one by ids, and `RIFT_SAMPLES`, each template dressed once for the tests and the contact sheet (`--rifts`) |

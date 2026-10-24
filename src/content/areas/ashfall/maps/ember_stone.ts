@@ -13,9 +13,7 @@
 import type { Answer, Feature, MapDef } from '../../../../game/map.ts';
 import { NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
-
-/** The flag the Stone lights on (docs/areas/ashfall.md §9, #548's 1): the Hearth counts it, and the sentries wait on it. */
-export const LIT = 'q_ember_lit';
+import { LIT } from '../public.ts';
 
 /**
  * The Druid's third (#448): the Archdruid on F10 has asked for a seedling from the Grove kept living in

@@ -48,16 +48,12 @@ import type { Walkthrough } from '../../area.ts';
 import { newWalk, walkThrough, see, fight, gone, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Step, Walk } from '../../../../tools/walk.ts';
 import { CHAPTER } from './chapter.ts';
-import { CHAPTER as FORELAND } from '../shelf/chapter.ts';
-import { CHAPTER as GROVE } from '../thornmark/chapter.ts';
 import { STEPS as FORELAND_STEPS, hired } from '../shelf/walkthrough.ts';
 import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
-import { CHAPTER as TIDE } from '../saltreach/chapter.ts';
-import { CHAPTER as WRACK } from '../wrackholm/chapter.ts';
 import { STEPS as TIDE_STEPS } from '../saltreach/walkthrough.ts';
 import { STEPS as WRACK_STEPS } from '../wrackholm/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
-import { MAP_DEFS } from '../../index.ts';
+import { MAP_DEFS, THE_QUEST } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, EncounterDef } from '../../../game/map.ts';
@@ -77,8 +73,14 @@ import { approach, burn, burnt } from '../../../game/dens.ts';
 import { answerRiddle, useShrine } from '../../../game/wilds.ts';
 import type { Den } from '../../../game/dens.ts';
 import type { Person } from '../../../game/people.ts';
-import { CRACK_SEALED, CRACK_WIDE } from '../hearth/maps/underdeep.ts';
+import { CRACK_SEALED, CRACK_WIDE } from '../hearth/public.ts';
 import { ENDINGS } from '../../endings.ts';
+
+// Other areas' chapters, taken from the quest by their ids and not from their files (#992).
+const FORELAND = THE_QUEST.chapters.find((c) => c.id === 'ashcombe')!;
+const GROVE = THE_QUEST.chapters.find((c) => c.id === 'grove')!;
+const TIDE = THE_QUEST.chapters.find((c) => c.id === 'tide')!;
+const WRACK = THE_QUEST.chapters.find((c) => c.id === 'wrack')!;
 
 const I2 = MAP_DEFS.find((d) => d.id === 'eaves_i2')!;
 const WOODCUTTER = I2.features!.find((f) => f.kind === 'npc' && f.name === 'A woodcutter') as Person;
