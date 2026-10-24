@@ -522,8 +522,9 @@ Pillar 4 says the world has a clock. It now has a year and a sky as well.
   same function run over the ten days before, so snow builds through a fall, lasts in the cold and
   melts in a thaw or a rain. A new game draws seeds until its first morning is dry and free of fog.
 - **Regions.** A region is an area, with its `climate` in its `index.ts`. Each map names its region
-  (`MapDef.region`, the Foreland when absent); towns and dungeons share their region's weather, and
-  a test holds them to it. The Foreland is mild and wet, foggy off the sea in the autumn, with snow
+  (`MapDef.region`; the laid outdoors names none, its zones do); towns and dungeons share their
+  region's weather, and a test holds them to it, naming any map that differs. No sky is lent: a
+  World asked the sky of a square no zone or map gives a region throws, naming both (`regionOf`, #945). The Foreland is mild and wet, foggy off the sea in the autumn, with snow
   only in a cold snap; Thornmark is colder, and its winter snow lies deep for weeks. Fronts reach
   Thornmark five hours after they cross the Foreland.
 - **What the sky does:** clear, cloudy, overcast, fog, drizzle, rain, downpour, thunderstorm,
