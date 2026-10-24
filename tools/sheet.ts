@@ -158,7 +158,8 @@ function planMap(id: string): MapPlan {
   // A sample is entered from nowhere, so it has no crop; it is put into the game's maps to be shot.
   const sample = SAMPLES.find((d) => d.id === id);
   if (!world && !sample) return fail(`map '${id}' has no zone and no way in from the outdoors`);
-  return { id, name: def.name, kind: def.kind, region: def.region ?? 'shelf', views, world: world ?? null, ...(sample ? { sample, ground: GROUND_SAMPLES.includes(sample) } : {}) };
+  if (!def.region) return fail(`map '${id}' names no region, so no sky to draw it under`);
+  return { id, name: def.name, kind: def.kind, region: def.region, views, world: world ?? null, ...(sample ? { sample, ground: GROUND_SAMPLES.includes(sample) } : {}) };
 }
 
 const mapPlans = maps.map(planMap);

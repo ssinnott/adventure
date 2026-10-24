@@ -1,7 +1,7 @@
 // Procedural front-facing portraits: one per character, deterministic from the name, race and
 // class, cel-shaded with the engine's helpers, drawn once into an offscreen canvas and cached.
 // Expression follows the character's state (well, hurt, down, dead).
-import type { Character } from '../game/party.ts';
+import type { Character, RaceId, ClassId } from '../game/party.ts';
 import { isDown, hasCondition } from '../game/party.ts';
 import { celBall, celPoly, celRect, band, celCapsule, outlinePath, tones } from '../lib/art/shading.ts';
 import { shade, mix } from '../lib/art/palettes.ts';
@@ -12,7 +12,8 @@ export const PORTRAIT_W = 36, PORTRAIT_H = 46;
 
 type Mood = 'well' | 'hurt' | 'down' | 'dead';
 
-const SKIN: Record<string, string[]> = {
+// A row for every race and every class: one left out fails the typecheck, not the paint (#945).
+const SKIN: Record<RaceId, readonly string[]> = {
   human: ['#e8b890', '#d9a377', '#b97d52', '#8d5a3a', '#f0cdb0'],
   dwarf: ['#e0a882', '#c98b62', '#b07048'],
   elf: ['#f0d6c0', '#e2c0a4', '#d4b08e'],
@@ -22,8 +23,8 @@ const SKIN: Record<string, string[]> = {
 };
 const HAIR = ['#2a1a12', '#5a3418', '#8a5a2a', '#c08a40', '#d8c090', '#3a3a44', '#9a9aa4', '#b04a28', '#e8e0d0'];
 const EYES = ['#3a5a8a', '#4a7a3a', '#6a4a2a', '#2a2a30', '#8a6a2a'];
-const CLASS_BG: Record<string, string> = { knight: '#3a4a6a', paladin: '#6a5a2a', ranger: '#2f4a2a', cleric: '#5a5a70', sorcerer: '#3a2a5a', thief: '#2a2a2e', barbarian: '#5a2e24', monk: '#6a4a2a', bard: '#4a2a4a', druid: '#2a4a3a' };
-const CLASS_CLOTH: Record<string, string> = { knight: '#8a8ea0', paladin: '#c9a34a', ranger: '#5a7a42', cleric: '#e8dcc0', sorcerer: '#5a4a9a', thief: '#4a4a52', barbarian: '#7a5a3a', monk: '#c07a2a', bard: '#8a3a6a', druid: '#6a8a4a' };
+const CLASS_BG: Record<ClassId, string> = { knight: '#3a4a6a', paladin: '#6a5a2a', ranger: '#2f4a2a', cleric: '#5a5a70', sorcerer: '#3a2a5a', thief: '#2a2a2e', barbarian: '#5a2e24', monk: '#6a4a2a', bard: '#4a2a4a', druid: '#2a4a3a' };
+const CLASS_CLOTH: Record<ClassId, string> = { knight: '#8a8ea0', paladin: '#c9a34a', ranger: '#5a7a42', cleric: '#e8dcc0', sorcerer: '#5a4a9a', thief: '#4a4a52', barbarian: '#7a5a3a', monk: '#c07a2a', bard: '#8a3a6a', druid: '#6a8a4a' };
 
 const cache = new Map<string, HTMLCanvasElement>();
 

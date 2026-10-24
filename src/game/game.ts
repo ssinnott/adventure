@@ -145,14 +145,21 @@ export class Game {
     if (this.pilot) this.pilot.on = false;
   }
 
-  loadGame(): boolean {
-    if (!this.store) return false;
-    const data = loadFrom(this.store);
-    if (!data) return false;
-    this.maps = buildMaps();
-    this.party = data.party;
+  /** Loads the save in storage: true, or what the title's note and the load key's line say instead, the reason a save will not load among it (#945). */
+  loadGame(): true | string {
+    const data = this.store ? loadFrom(this.store) : null;
+    if (data === null) return 'No save to load.';
+    if (typeof data === 'string') return `The save could not be read: ${data}.`;
+    // A save that reads but that this build cannot lay out (a map gone, a square under no region)
+    // says why as well, and the game is left as it was (#945).
+    const was = this.rng.state;
     this.rng.seed(data.rng);
-    this.world = new World(this.maps, this.party, this.rng, data.world as WorldState);
+    let world: World;
+    try { world = new World(buildMaps(), data.party, this.rng, data.world as WorldState); }
+    catch (e) { this.rng.seed(was); return `The save could not be read: ${e instanceof Error ? e.message : String(e)}.`; }
+    this.maps = world.maps;
+    this.party = data.party;
+    this.world = world;
     this.log = [];
     this.pilot?.forget();
     this.screens = [new ExploreScreen()];
@@ -511,7 +518,7 @@ export class ExploreScreen implements Screen {
     else if (is(a, 'inventory')) g.push(new SheetScreen(g.selected));
     else if (is(a, 'journal')) g.push(new QuestScreen(g));
     else if (is(a, 'save')) g.saveGame();
-    else if (is(a, 'load')) { if (!g.loadGame()) g.say('No save to load.'); }
+    else if (is(a, 'load')) { const loaded = g.loadGame(); if (loaded !== true) g.say(loaded); }
     else if (is(a, 'map')) g.push(new WorldMapScreen());
     else if (/^n[1-6]$/.test(a)) { g.selected = Number(a[1]) - 1; g.push(new SheetScreen(g.selected)); }
     if (!res) return;

@@ -73,6 +73,7 @@ export const KEEP: MapDef = {
   name: 'The Keep',
   kind: 'town',
   band: [1, 4],
+  region: 'shelf',
   start: { x: 7, y: 8, facing: NORTH },
   rows: [
     '################',

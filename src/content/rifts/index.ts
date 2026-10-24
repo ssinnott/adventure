@@ -35,7 +35,7 @@ export function rift(spec: Omit<RiftSpec, 'template' | 'material'> & { template:
 export const RIFT_SAMPLES: readonly MapDef[] = TEMPLATES.map((t, i) => {
   const id = `rift_${t.id}`;
   return rift({
-    id, template: t.id, material: MATERIALS[i % MATERIALS.length].id, seed: i + 1, band: [6, 9],
+    id, template: t.id, material: MATERIALS[i % MATERIALS.length].id, seed: i + 1, band: [6, 9], region: 'shelf',
     out: { to: 'downs_e3', tx: 21, ty: 4 },
     table: { groups: [['riftling', 'riftling', 'rift_crawler'], ['rift_crawler', 'rift_crawler', 'rift_crawler'], ['riftling', 'riftling']], warden: ['riftling_elder', 'riftling', 'riftling'] },
     hoard: { gold: 60, items: ['potion_heal'] },
