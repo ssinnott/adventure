@@ -5,7 +5,7 @@
 // when named (`ASKED`, tools/test.ts): node tools/test.ts survival.
 import { ok } from './lib.ts';
 import { pilotRun } from '../walk.ts';
-import { randomParty } from '../../src/ui/create.ts';
+import { randomParty } from '../../src/game/party.ts';
 import { THE_QUEST } from '../../src/content/index.ts';
 
 /** The seeds swept. */
