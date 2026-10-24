@@ -1170,11 +1170,12 @@ From the owner, 17 October 2026: one artifact to each of the eight areas the bou
 (#828), each with a power of its own, guarded in a lair at the cap and first heard of as a rumour.
 They are their areas' and not the reach's: off the quest as the reach is, and the game is whole
 without them. Designed in #846 to the direction of the owner's delegate (18 October 2026, on #828):
-#847 builds the mark and the powers, in two halves, the first the mark and the three whose kinds were
-built (the Telstok, the Erzhemd and Akkush, defined and placed nowhere), the second the three kinds
-not yet built and the other five. Both halves are built, and the eight lie nowhere yet; each area's
-issue (#830 to #837) builds the lair, its door and the rumour; the creatures lane the guardians
-(docs/MONSTERS.md §13). Each area's doc has its own under §6.
+#847 built the mark and the powers, in two halves, the first the mark and the three whose kinds were
+built (the Telstok, the Erzhemd and Akkush, then defined and placed nowhere), the second the three
+kinds not yet built and the other five (#921). Each area's issue (#830 to #837) builds the lair,
+its door and the rumour, and the creatures lane the guardians (docs/MONSTERS.md §13): seven lie in
+their lairs, named in the table below, and the Telstok waits in Saltreach's items for its lair
+(#830). Each area's doc has its own under §6.
 
 **What an artifact is.** An item marked so (`ItemDef.artifact`, #847): one in the world, found in its
 lair and never sold, with no price in any window: no shop stocks one or takes one, and the windows
@@ -1187,7 +1188,7 @@ and by the map spells, which are shortcuts and never keys (§1, §7). No gate fi
 gate's company is dressed from the ladder (EXPANSION §5.2), and no artifact is on it.
 
 **The five kinds, and no sixth.** One power to an artifact, and each kind on one or two of the
-eight. #847 builds the three not yet built and holds every bound here as a named constant (the
+eight. #847 built the three new kinds (#921) and holds every bound here as a named constant (the
 raise's, `ARTIFACT_RAISE`, with its first half; with its second the castings', `ARTIFACT_CASTINGS`,
 the level a spell from an artifact rolls at, `ARTIFACT_LEVEL`, regeneration's share, `REGEN_PART`,
 and the conditions a ward may keep off, `WARDABLE`).
@@ -1200,38 +1201,41 @@ and the conditions a ward may keep off, `WARDABLE`).
    Talon Knife Akkush's.
 2. **An element its blows carry** (`ItemDef.element`, built, #855): a weapon's alone, an added 1d6
    of the element on each blow that lands (`ELEMENT_DIE`, §6), as the found weapons have it.
-3. **A spell cast from it so many times a day** (new): one spell of the tables (§7) and one to
-   three castings. The bearer casts it as a spell of their own (#847 gives a member with no spells
-   the way to), in a fight or out as the spell's context allows: it takes their turn, costs no
-   spell points and spends a charge; it rolls at the bearer's level held at 10, unranked, with no
-   tier, trait or song added. The charges come back whole when the clock passes dawn, slept or not,
-   and the save keeps those spent. The spell is of a list the bearer's class cannot cast, so the
-   artifact's classes leave out every class that casts from that list; and it is no spell whose
-   `context` is `'explore'`, the spells that make the world bigger: the druid's Foxfire and Hawk's
-   Eye as much as §7's six (Light, Wizard Eye, Town Portal, Walk on Water, Waymark, Levitate).
-4. **Regeneration** (new): while it is borne, the bearer mends a tenth of their most hit points,
-   rounded down and at least 1, each time the clock passes a whole hour, never past the most; a
-   passage of hours (a rest, a crossing) mends a tenth for each hour. That is a tenth for about ten
-   steps outdoors, or thirty in a town or below. The rate is the trolls' tenth (MONSTERS §3.3),
-   paid by the hour and never in a fight, whose rounds pass no clock; and as a felled troll stays
-   down, it never mends the down (unconscious, dead or stoned: `isDown`). Nothing is saved.
-5. **A ward against one condition** (new): while it is borne, the bearer never takes it, as a
-   trait's immunity works (`immune`, `src/game/party.ts`): one of asleep, poisoned, diseased,
-   paralysed, cursed or stoned, never unconscious or dead. It keeps the condition off and lifts none
-   already taken: the cure is still a spell's, a temple's or time's (§6).
+3. **A spell cast from it so many times a day** (`ItemDef.casts`, built, #921): one spell of the
+   tables (§7) and one to three castings. The bearer casts it as a spell of their own (#847 gives a
+   member with no spells the way to), in a fight or out as the spell's context allows: it takes
+   their turn, costs no spell points and spends a charge; it rolls at the bearer's level held at 10,
+   unranked, with no tier, trait or song added. The charges come back whole when the clock passes
+   dawn, slept or not, and the save keeps those spent. The spell is of a list the bearer's class
+   cannot cast, so the artifact's classes leave out every class that casts from that list; and it is
+   no spell whose `context` is `'explore'`, the spells that make the world bigger: the druid's
+   Foxfire and Hawk's Eye as much as §7's six (Light, Wizard Eye, Town Portal, Walk on Water,
+   Waymark, Levitate).
+4. **Regeneration** (`ItemDef.regen`, built, #921): while it is borne, the bearer mends a tenth of
+   their most hit points, rounded down and at least 1, each time the clock passes a whole hour,
+   never past the most; a passage of hours (a rest, a crossing) mends a tenth for each hour. That is
+   a tenth for about ten steps outdoors, or thirty in a town or below. The rate is the trolls' tenth
+   (MONSTERS §3.3), paid by the hour and never in a fight, whose rounds pass no clock; and as a
+   felled troll stays down, it never mends the down (unconscious, dead or stoned: `isDown`). Nothing
+   is saved.
+5. **A ward against one condition** (`ItemDef.ward`, built, #921): while it is borne, the
+   bearer never takes it, as a trait's immunity works (`immune`, `src/game/party.ts`): one of
+   asleep, poisoned, diseased, paralysed, cursed or stoned, never unconscious or dead. It keeps
+   the condition off and lifts none already taken: the cure is still a spell's, a temple's or
+   time's (§6).
 
 **The eight:** two wards, two spells, two stats, one element and one regeneration.
 
-| Artifact | Area | Slot; who may bear it | Numbers | Power | Lair's door; guardian |
+| Artifact | Area | Slot; who may bear it | Numbers | Power | Lair, its door; guardian |
 |---|---|---|---|---|---|
-| the Hagstone | the Foreland | carried; any of the ten | none | a ward: never paralysed | E4, a sea cave on the strand; the Hag |
+| the Hagstone | the Foreland | carried; any of the ten | none | a ward: never paralysed | Hag Hole, the sea cave behind a mouth in the cliff at E4's 3,6; the Hag |
 | the Telstok | Saltreach | a staff; cleric, sorcerer, druid, monk | 1d10+14, two-handed | an element: holy | A5, a drowned mound on the fen's west edge; the Old Chanter |
-| Holdfast | Wrackholm | a light weapon; thief, bard, sorcerer | 1d8+15 | a spell: Grasping Roots, three a day | F5, a sea cave on the strand under the east rocks; Old Nick |
-| the Erzhemd | the Kilns | armour; knight, paladin, ranger, thief, barbarian, bard, druid | armour 15 | a stat: speed +5 | P5, an old working in the crag under the rim; the Steiger |
-| Torhide | Cairnmoor | a shield; knight, paladin, ranger | armour 9 | regeneration | P7, a cleft in the rim's face; the Rim Troll |
-| the Wakerobe | Rimewater, with the Whitespine | a robe; cleric, sorcerer, druid, monk | armour 14 | a ward: never asleep | K12, a door in the mountain under the pass; the Infirmarer |
-| Akkush | the Glasswold | a bow; ranger | 1d12+14, ranged, two-handed | a stat: accuracy +5 | D7, an eyrie on the Scarp's east end; the Foal-taker |
-| Grim's Axe | Ashfall | an axe; knight, paladin, ranger, barbarian | 2d12+8, two-handed | a spell: Meteor Swarm, two a day | F12, a grave where the flow stopped; the Grave Drake |
+| Holdfast | Wrackholm | a light weapon; thief, bard, sorcerer | 1d8+15 | a spell: Grasping Roots, three a day | Nick's Locker, the sea cave under the reef at F5's 16,30; Old Nick |
+| the Erzhemd | the Kilns | armour; knight, paladin, ranger, thief, barbarian, bard, druid | armour 15 | a stat: speed +5 | the Randzeche, the old working behind an adit in the rim's foot at P5's 11,23; the Steiger |
+| Torhide | Cairnmoor | a shield; knight, paladin, ranger | armour 9 | regeneration | Bearn Liath, the cleft in the rim's face at P7's 5,24; the Rim Troll |
+| the Wakerobe | Rimewater, with the Whitespine | a robe; cleric, sorcerer, druid, monk | armour 14 | a ward: never asleep | the Spittal, the brothers' house under the pass, its door in the rim's face at K12's 2,15; the Infirmarer |
+| Akkush | the Glasswold | a bow; ranger | 1d12+14, ranged, two-handed | a stat: accuracy +5 | Kushdag, the eyrie off a shelf in the Scarp's face at D7's 19,24; the Foal-taker |
+| Grim's Axe | Ashfall | an axe; knight, paladin, ranger, barbarian | 2d12+8, two-handed | a spell: Meteor Swarm, two a day | Grim's Howe, the warlord's grave under the flow's dam at F12's 20,14; the Grave Drake |
 
 Each number is the Hand's piece of its kind and a point: the Grey Staff 1d10+13, the Grey Knife
 1d8+14, the Grey Mail 14, the Grey Shield 8, the Grey Robe 13, the Grey Bow 1d12+13 and the Grey
@@ -1422,14 +1426,25 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
 
 ## 11. Presentation
 
-- **Viewport:** the classic 3-deep, 5-wide first-person window with depth-layered walls,
-  terrain and objects. Drawn from vector shapes at runtime, not bitmaps, so it scales and re-skins
-  cheaply (see §13).
-- **Frame:** party portraits with condition faces along the bottom, automap and compass on the
-  right, message log below.
-- **Monsters:** cel-shaded, rigged, animated (idle / attack / hurt / die) using the shared
-  paper-doll rig. A few dozen base rigs, recoloured and re-proportioned per variant.
-- **Audio:** synth music per region and time of day, procedural SFX. No recorded assets.
+- **Viewport:** first person, four squares deep and three to each side, seven across (`VIEW_DEPTH`,
+  `VIEW_LATERAL`, `src/game/world.ts`), with depth-layered walls and doors, buildings under their
+  roofs, tents, hills that hide what lies behind them from lower ground, billboards and the sky with
+  its sun, moon, stars and clouds; the weather over it all; landmarks standing over the land out to
+  40 squares (`LANDMARK_REACH`, `src/ui/viewport.ts`); and where nothing is built, the void drawn as
+  the ground the world map paints there. Drawn from vector shapes at runtime, not bitmaps, so it
+  scales and re-skins cheaply (see §13).
+- **Frame:** the status strip at the top right (the facing, the time and the place; the date and the
+  sky), the automap under it with its compass rose, the purse under that (gold and food), the
+  party's portraits with condition faces along the bottom and the message log over the foot of the
+  view, a strip of four lines and five in a fight (`LOG_LINES`, `COMBAT_LOG_LINES`).
+- **Monsters:** front-facing paintings: 159 kinds, drawn by 28 family modules in `src/ui/monsters/`
+  that each register the kinds they draw. A drawing breathes in a slow bob and flashes white when
+  it is hit; there is no attack frame and no death frame, and a monster that dies is no longer
+  drawn. The bandit, cultist and skeleton families stand on the game's own humanoid frame,
+  `src/ui/monsters/kit/figure.ts`; the engine's paper-doll rig is not used (§13).
+- **Audio:** none built. The game makes no sound, and the engine's synth is vendored and unused
+  (§13). If sound is added, the aim stands: synth music per region and time of day and procedural
+  effects, with no recorded assets.
 - **Text:** terse. Two lines per event is the aim, three the most (docs/EXPANSION.md §5.4).
   Journals, books and the endings' pages are the long-form exception.
 
@@ -1461,23 +1476,29 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 
 - **Stack:** strict TypeScript, canvas, no runtime dependencies, esbuild-on-request dev server,
   same as the sibling games. `game-engine` is vendored into `src/lib/` with `git subtree`, per
-  `game-engine/docs/VENDORING.md`.
+  `game-engine/docs/VENDORING.md`. `src/lib/` is never edited here: a fault in it is fixed upstream
+  and pulled in.
 - **From the engine:** the fixed-timestep loop, deterministic RNG (seeded per save so Rifts and
-  loot are reproducible), text layout, canvas helpers, the rig and cel-shading stack for monsters
-  and portraits, the synth and sequencer for music.
-- **Not from the engine:** netcode. This is single-player; `src/net/` is not vendored.
+  loot are reproducible), text layout with its pixel font and the canvas, from `src/lib/engine/`;
+  the palette, shape and cel-shading helpers, from `src/lib/art/`. Vendored and imported by
+  nothing: the rig the cel helpers were written for (five files of `src/lib/art/`), the audio
+  (`src/lib/audio/`: the synth, the sequencer and the effects) and `src/lib/engine/math.ts` and
+  `src/lib/engine/trig.ts`, which nothing but the rig takes.
+- **Not from the engine:** netcode. This is single-player; `src/lib/net/` is vendored and imported
+  by nothing.
 - **New, game-owned:** the grid viewport compositor, map format, turn-based combat resolver,
-  quest state machine, save format, Rift generator, and the shape of the content: what a map, a
+  quest state machine, save format, Rift generator and the shape of the content: what a map, a
   monster, an item, a spell and a quest are.
 - **Content is TypeScript, in `src/content/`:** maps, monsters, items, quests and dialogue, one
   folder per area (`src/content/areas/<area>/`), merged in road order by `src/content/index.ts`; the
   spells and the items no area owns sit at the root of `src/content/`. Not JSON: the type checker is
   the best content check there is, so a monster with no drawing, a business with no room or a map in
   a region no area has fails it. The monster, item, spell and quest tables and the climates have
-  moved out of `src/game/`; the races and classes, with their traits and starting kits, are still in
-  `src/game/party.ts`.
+  moved out of `src/game/`; the races and classes, with their traits and starting kits, stay in
+  `src/game/party.ts` as rules, which no area adds to.
 - **Determinism:** combat and Rift generation are pure functions of (state, seed). This gives us
-  replayable bug reports and a golden-fingerprint check like the sibling games' `tools/golden.js`.
+  replayable bug reports: the seed replays the game, a random company drawn from it as well
+  (`Game.newRandomGame`, `src/game/game.ts`).
 
 ---
 

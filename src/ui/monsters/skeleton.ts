@@ -22,7 +22,7 @@ import { B, groundShadow, eye } from './common.ts';
 import { blob, glow, patch, softLine, glossPoly, glossTaper, appendCurve, lumpy } from './gloss.ts';
 import type { Crease, Part } from './gloss.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
-import type { Arm, Mats } from './figure.ts';
+import type { Arm, Mats, Pt, Rig } from './figure.ts';
 import { blade, hand as fist, makeRig } from './figure.ts';
 
 /** Bone, and the rusted iron this family carries: nothing here is bright. */
@@ -34,18 +34,23 @@ const BONE = (t: number): Mats => ({
 });
 import { pathEllipse } from '../../lib/art/shapes.ts';
 
+/** One kind's drawing: the call `draw` makes once it has looked the kind up. */
+type Drawer = (ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint) => void;
+
+/**
+ * Each kind's drawing, keyed by the kinds SPRITES names: one registered there with no drawing here
+ * fails the typecheck (the `satisfies`), and a kind with no row draws as the plain skeleton. The
+ * chanter and the Choirmaster are one drawing, each with its row.
+ */
+const DRAWERS: Partial<Record<MonsterSprite, Drawer>> = {
+  skeleton, bone_knight: knight, ghoul, drowned, barrow_guard: guard, barrow_captain: captain, temple_drowned: templeDrowned,
+  drowned_chanter: (ctx, x, y, h, p) => priest(ctx, x, y, h, p, CHANTER),
+  choirmaster: (ctx, x, y, h, p) => priest(ctx, x, y, h, p, CHOIRMASTER),
+  bog_body: bogBody, cairn_king: cairnKing, ash_husk: ashHusk,
+} satisfies Record<keyof typeof SPRITES, Drawer>;
+
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  if (kind === 'bog_body') bogBody(ctx, x, y, h, p);
-  else if (kind === 'ash_husk') ashHusk(ctx, x, y, h, p);
-  else if (kind === 'cairn_king') cairnKing(ctx, x, y, h, p);
-  else if (kind === 'bone_knight') knight(ctx, x, y, h, p);
-  else if (kind === 'ghoul') ghoul(ctx, x, y, h, p);
-  else if (kind === 'drowned') drowned(ctx, x, y, h, p);
-  else if (kind === 'temple_drowned') templeDrowned(ctx, x, y, h, p);
-  else if (kind === 'barrow_guard') guard(ctx, x, y, h, p);
-  else if (kind === 'barrow_captain') captain(ctx, x, y, h, p);
-  else if (kind === 'drowned_chanter' || kind === 'choirmaster') priest(ctx, x, y, h, p, kind === 'choirmaster');
-  else skeleton(ctx, x, y, h, p);
+  (DRAWERS[kind] ?? skeleton)(ctx, x, y, h, p);
 };
 
 /** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
@@ -312,6 +317,20 @@ function skeleton(ctx: CanvasRenderingContext2D, x: number, y: number, h: number
 }
 
 /**
+ * The bone knight's frame, worked out once and handed to each of its layers: its rig; u is a hundredth
+ * of h, X and Y take those units from its foot and BY rides the breath; the sway; the plate's steels,
+ * the bone, the cloth and the eyes' blue with their pulse; the joints solved off the frame; and the
+ * helm's centre.
+ */
+interface KnightFrame {
+  ctx: CanvasRenderingContext2D; R: Rig; h: number; u: number; X: (v: number) => number;
+  Y: (v: number) => number; BY: (v: number) => number; sw: number; steel: string; steelD: string;
+  steelM: string; steelT: string; steelL: string; bn: string; old: string; murk: string; cloth: string;
+  plume: string; leather: string; blue: string; pulse: number; nElb: Pt; nHand: Pt; fElb: Pt; fHand: Pt;
+  hlx: number; hly: number;
+}
+
+/**
  * The bone knight: the same bones inside dull plate, several steps darker and cooler, with raw bone
  * at the neck, both elbows, both knees and the fist. It stands on the measured frame, and every
  * piece of plate is its own mass — cuisse, greave, fauld, cuirass, pauldron, rerebrace, vambrace —
@@ -343,10 +362,29 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   // with the maul and the far one bent up behind the shield.
   const nElb = { x: X(23.1 + sw * 0.8), y: BY(-56.5) }, nHand = { x: X(22.8 + sw * 0.5), y: BY(-40.5) };
   const fElb = { x: X(-29.5 + sw * 0.8), y: BY(-60.3) }, fHand = { x: X(-23.2 + sw * 0.6), y: BY(-44.8) };
+  // The helm's centre, a close dome on the skull.
+  const hlx = R.hx + 0.8 * u, hly = R.hy + 1.4 * u;
+  const K: KnightFrame = { ctx, R, h, u, X, Y, BY, sw, steel, steelD, steelM, steelT, steelL, bn, old, murk, cloth, plume, leather, blue, pulse, nElb, nHand, fElb, fHand, hlx, hly };
+  knightBones(K);
+  knightFar(K);
+  knightShield(K);
+  knightNearLeg(K);
+  knightFauld(K);
+  knightCuirass(K);
+  knightTabard(K);
+  knightNearArm(K);
+  knightHelm(K);
+  knightRim(K);
+  knightMaul(K);
+}
 
-  // The bones the plate leaves bare. Each is a shaft with a knob at both ends — the same primitive
-  // the skeleton is built from — not a bead between two pipes, and each is its own small mass so
-  // bone stays several steps brighter than the steel lapping over its ends.
+/**
+ * The bones the plate leaves bare. Each is a shaft with a knob at both ends — the same primitive
+ * the skeleton is built from — not a bead between two pipes, and each is its own small mass so
+ * bone stays several steps brighter than the steel lapping over its ends.
+ */
+function knightBones(K: KnightFrame): void {
+  const { ctx, h, u, X, Y, BY, sw, steelM, bn, old, murk } = K;
   const bare = (x0: number, y0: number, x1: number, y1: number, r: number, hex: string, seed: number): void =>
     blob(ctx, B, hex, [shaft(x0, y0, x1, y1, r, seed)], { h, formK: 0.55 });
   bare(X(-10), Y(-36.4), X(-11), Y(-20.8), 3.9 * u, old, 51);
@@ -358,10 +396,15 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   for (let i = 0; i < 2; i++) softLine(ctx, B, [X(0.8 + sw), BY(-81.6 + i * 2.6), X(5 + sw), BY(-82 + i * 2.6)], murk, Math.max(1, 0.9 * u), 0.55);
 
   blob(ctx, B, steelM, [{ k: 'ell', x: X(2.2 + sw), y: BY(-75.4), rx: 6.4 * u, ry: 3.4 * u }], { h, formK: 0.5, gloss: 0.2 });
+}
 
-  // The far side, a step darker still: cuisse, greave and sabaton, then the upper arm and vambrace.
-  // Each is its own blob so no gradient runs the 0.6h from a pauldron to a sole, and so the plate
-  // articulates: a hard edge at every lap is what says this is worn rather than moulded.
+/**
+ * The far side, a step darker still: cuisse, greave and sabaton, then the upper arm and vambrace.
+ * Each is its own blob so no gradient runs the 0.6h from a pauldron to a sole, and so the plate
+ * articulates: a hard edge at every lap is what says this is worn rather than moulded.
+ */
+function knightFar(K: KnightFrame): void {
+  const { ctx, R, h, u, X, Y, BY, sw, steelD, steelM, fHand } = K;
   blob(ctx, B, steelD, [{ k: 'cap', x0: R.legL[0].x - 0.8 * u, y0: R.legL[0].y, x1: X(-10.3), y1: Y(-35.4), r0: 4.4 * u, r1: 3.3 * u }], { h, formK: 0.5 });
   blob(ctx, B, steelD, [
     { k: 'cap', x0: X(-10.9), y0: Y(-21.6), x1: X(-11.8), y1: Y(-9.5), r0: 3.3 * u, r1: 3.2 * u },
@@ -374,9 +417,14 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   ], { h, formK: 0.6, creases: [
     { x0: X(-19.6 + sw * 0.9), y0: BY(-65.4), x1: X(-9.8 + sw * 0.9), y1: BY(-64.8), r: 1.3 * u, a: 0.4 },
   ] });
+}
 
-  // The shield on the far forearm: a battered heater with a faded device, its top rim low enough
-  // that the bare elbow knuckle stands over it and the arm behind it still reads as an arm.
+/**
+ * The shield on the far forearm: a battered heater with a faded device, its top rim low enough
+ * that the bare elbow knuckle stands over it and the arm behind it still reads as an arm.
+ */
+function knightShield(K: KnightFrame): void {
+  const { ctx, h, u, X, BY, sw, steelD, steelL } = K;
   const shx = X(-25 + sw * 0.6), shy = BY(-46);
   blob(ctx, B, steelD, [
     { k: 'curve', pts: [
@@ -390,26 +438,39 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   softLine(ctx, B, [shx - 7.5 * u, shy - 8.5 * u, shx + 8 * u, shy - 7.5 * u], steelD, Math.max(1, u), 0.4);
   ctx.strokeStyle = B.col(rgba(mix(steelL, '#ffffff', 0.5), 0.45)); ctx.lineWidth = 1; ctx.lineCap = 'round';
   ctx.beginPath(); ctx.moveTo(shx - 8 * u, shy + 2 * u); ctx.lineTo(shx - 3 * u, shy + 8 * u); ctx.moveTo(shx + 3 * u, shy - 9 * u); ctx.lineTo(shx + 7 * u, shy - 5 * u); ctx.stroke();
+}
 
-  // The near leg.
+/** The near leg. */
+function knightNearLeg(K: KnightFrame): void {
+  const { ctx, R, h, u, X, Y, steelM } = K;
   blob(ctx, B, steelM, [{ k: 'cap', x0: R.legR[0].x + 0.8 * u, y0: R.legR[0].y, x1: X(10.4), y1: Y(-35.7), r0: 4.7 * u, r1: 3.5 * u }], { h, formK: 0.5, gloss: 0.1 });
   blob(ctx, B, steelM, [
     { k: 'cap', x0: X(10.8), y0: Y(-21.3), x1: X(11.5), y1: Y(-9.5), r0: 3.5 * u, r1: 3.3 * u },
     { k: 'curve', pts: [X(6.5), Y(-3.8), X(13), Y(-5.3), X(19), Y(-2.3), X(18), Y(0), X(8), Y(-0.3)], wobble: 0.04, seed: 15, sub: 2 },
   ], { h, formK: 0.5, gloss: 0.1 });
+}
 
-  // The fauld, hung from the cuirass over the hips in two lames. It goes down first so the
-  // cuirass rim laps over its top: that lap is the only thing that says the waist articulates.
+/**
+ * The fauld, hung from the cuirass over the hips in two lames. It goes down first so the
+ * cuirass rim laps over its top: that lap is the only thing that says the waist articulates.
+ */
+function knightFauld(K: KnightFrame): void {
+  const { ctx, h, u, X, BY, steelM } = K;
   blob(ctx, B, steelM, [{ k: 'curve', pts: [
     X(-12), BY(-61.5), X(12.8), BY(-61.5), X(13.4), BY(-54), X(12), BY(-48.4),
     X(4), BY(-46.8), X(-4), BY(-46.4), X(-12.2), BY(-48.2), X(-13.2), BY(-54),
   ], wobble: 0.025, seed: 16, sub: 2 }], { h, formK: 0.45, gloss: 0.12, creases: [
     { x0: X(-12.8), y0: BY(-53.6), x1: X(13), y1: BY(-53.8), r: 1.4 * u, a: 0.5 },
   ] });
+}
 
-  // The cuirass: widest across the chest and drawn in to a real waist at the rim, tilted with the
-  // shoulders. It used to be 1.7 times the frame's waist and widest at the BOTTOM, which is why the
-  // knight read as a tub — the ratio between chest and waist is the whole shape of a man in plate.
+/**
+ * The cuirass: widest across the chest and drawn in to a real waist at the rim, tilted with the
+ * shoulders. It used to be 1.7 times the frame's waist and widest at the BOTTOM, which is why the
+ * knight read as a tub — the ratio between chest and waist is the whole shape of a man in plate.
+ */
+function knightCuirass(K: KnightFrame): void {
+  const { ctx, h, u, X, BY, sw, steel, steelL } = K;
   const cx = X(1 + sw), cy = BY(-66);
   blob(ctx, B, steel, [{ k: 'curve', pts: [
     X(-12.8 + sw), BY(-73.4), X(-6.6 + sw), BY(-75.4), X(1.8 + sw), BY(-75.8), X(9 + sw), BY(-75.4), X(15 + sw), BY(-74.8),
@@ -431,7 +492,11 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   ctx.moveTo(cx - 9 * u, cy + 1.5 * u); ctx.lineTo(cx - 4.5 * u, cy + 4.5 * u);
   ctx.moveTo(cx + 5 * u, cy + 4 * u); ctx.lineTo(cx + 9.5 * u, cy + 1.5 * u);
   ctx.stroke();
+}
 
+/** What is left of the tabard, the belt on the cuirass rim, and the shadow each piece throws on the one below. */
+function knightTabard(K: KnightFrame): void {
+  const { ctx, R, h, u, X, BY, sw, steelD, cloth, leather } = K;
   // What is left of the tabard: a narrow strip hung off the belt and torn to ribbons, not the apron
   // that used to cover both thighs and flatten the whole lower half.
   blob(ctx, B, cloth, [{ k: 'curve', pts: [
@@ -452,7 +517,11 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   softLine(ctx, B, [X(-11 + sw), BY(-45.6), X(11.2 + sw), BY(-45.8)], steelD, Math.max(1, 1.8 * u), 0.5);
   softLine(ctx, B, [X(12.4 + sw), BY(-69.6), X(14.6 + sw), BY(-63.6)], steelD, Math.max(1, 2.2 * u), 0.5);
   softLine(ctx, B, [X(-10.6 + sw), BY(-67.6), X(-12.6 + sw), BY(-62.6)], steelD, Math.max(1, 2 * u), 0.45);
+}
 
+/** The near arm and its pauldron, then the dark gaps where bone leaves plate. */
+function knightNearArm(K: KnightFrame): void {
+  const { ctx, R, h, u, X, Y, BY, sw, steel, steelT, murk, nElb, nHand, fElb } = K;
   // The near arm, its own mass so it has an edge against the chest, then the pauldron capping it.
   blob(ctx, B, steel, [{ k: 'cap', x0: R.sNear.x, y0: R.sNear.y, x1: X(22.4 + sw * 0.8), y1: BY(-60.4), r0: 4.1 * u, r1: 3.1 * u }], { h, formK: 0.5, gloss: 0.1 });
   blob(ctx, B, steelT, [
@@ -467,11 +536,15 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   gap(ctx, fElb.x, fElb.y, R.sFar.x, R.sFar.y, 2.8 * u, murk, 0.5);
   gap(ctx, X(10.5), Y(-28.5), X(9), Y(-50), 3.4 * u, murk, 0.5);
   gap(ctx, X(-10.4), Y(-28.5), X(-8.6), Y(-50), 3.1 * u, murk, 0.5);
+}
 
-  // The broken crest, and the helm: a close dome on the skull with a flared neck guard and a dark
-  // visor slit lit from inside. It used to be a third again too big and sat low enough to swallow
-  // the neck bone it is meant to expose.
-  const hlx = R.hx + 0.8 * u, hly = R.hy + 1.4 * u;
+/**
+ * The broken crest, and the helm: a close dome on the skull with a flared neck guard and a dark
+ * visor slit lit from inside. It used to be a third again too big and sat low enough to swallow
+ * the neck bone it is meant to expose.
+ */
+function knightHelm(K: KnightFrame): void {
+  const { ctx, h, u, X, BY, sw, steel, steelL, plume, blue, pulse, hlx, hly } = K;
   blob(ctx, B, plume, [
     { k: 'curve', pts: [
       X(-1 + sw), BY(-97.4), X(-4.5 + sw), BY(-96.6), X(-8 + sw), BY(-93.4), X(-11 + sw), BY(-88.2), X(-12.6 + sw), BY(-83.4),
@@ -492,15 +565,22 @@ function knight(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   glow(ctx, B, hlx + 3.4 * u, hly - 0.2 * u, 5.4 * u, blue, 0.4 + 0.3 * pulse, '#d8f0ff');
   eye(ctx, hlx - 3.2 * u, hly, 1.1 * u, mix(blue, '#ffffff', 0.4 + 0.3 * pulse), false);
   eye(ctx, hlx + 3.4 * u, hly - 0.2 * u, 1.25 * u, mix(blue, '#ffffff', 0.4 + 0.3 * pulse), false);
+}
 
-  // The lit rim along the top-left of the pieces that face the light.
+/** The lit rim along the top-left of the pieces that face the light. */
+function knightRim(K: KnightFrame): void {
+  const { ctx, u, X, BY, sw, steelL, hlx, hly } = K;
   ctx.strokeStyle = B.col(rgba(mix(steelL, '#ffffff', 0.5), 0.5)); ctx.lineWidth = Math.max(1, 1.2 * u); ctx.lineCap = 'round';
   ctx.beginPath();
   ctx.moveTo(X(-19.2 + sw * 0.9), BY(-67.6)); ctx.quadraticCurveTo(X(-18.4 + sw * 0.9), BY(-70.8), X(-14.6 + sw * 0.9), BY(-71.4));
   ctx.moveTo(X(11.8 + sw * 0.9), BY(-70.8)); ctx.quadraticCurveTo(X(12.8 + sw * 0.9), BY(-74.4), X(17.4 + sw * 0.9), BY(-75.2));
   ctx.moveTo(hlx - 7.8 * u, hly - 2.6 * u); ctx.quadraticCurveTo(hlx - 6.6 * u, hly - 6.6 * u, hlx - 2.6 * u, hly - 7.4 * u);
   ctx.stroke();
+}
 
+/** The maul, hanging head down past the near leg, and the bone fist closed round its haft. */
+function knightMaul(K: KnightFrame): void {
+  const { ctx, R, h, u, X, BY, sw, steel, steelD, steelL, old, leather, nHand } = K;
   // The maul, hanging head DOWN past the leg the way a resting weapon does — it used to stand with
   // its head level with the helm, which put the heaviest mass in the sprite beside the face. The
   // head is a squared block collared on the haft: a flat face one side, a beak the other.
@@ -1143,6 +1223,17 @@ function boneHand(ctx: CanvasRenderingContext2D, wx: number, wy: number, a: numb
   blob(ctx, B, hex, parts, { h: u * 100, formK: 0.5, spread: 0.7 });
 }
 
+/** A priest of the drowned god, as a row: the Choirmaster is a chanter that leads the count. */
+interface Choir {
+  /**
+   * Leads the count: taller, the robe fuller and a mantle over it, a crown of whelks, the bell
+   * before it and the beater raised, keeping a slower time; false, a chanter, both hands up and open.
+   */
+  leads: boolean;
+}
+const CHANTER: Choir = { leads: false };
+const CHOIRMASTER: Choir = { leads: true };
+
 /**
  * The Drowned Chanter and the Choirmaster. A priest of the drowned god: the bones in a hooded robe
  * gone heavy with the water, darker from the knee down where it still soaks, the hem torn and
@@ -1152,7 +1243,7 @@ function boneHand(ctx: CanvasRenderingContext2D, wx: number, wy: number, a: numb
  * shells on the skull; the bell hangs before it on two cords from the collar, the far hand on its
  * shoulder, and the near hand raised high with the beater, keeping time.
  */
-function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, master: boolean): void {
+function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint, { leads }: Choir): void {
   const R = makeRig(x, y, h, p, { tilt: -0.008, hipTilt: 0.008, turn: 0.01, near: [0.08, 0.09, 0.1], far: [-0.08, -0.09, -0.1], toe: [0.6, -0.6] }, BONE);
   const u = h / 100, X = (v: number) => x + v * u, Y = (v: number) => y + v * u;
   const lift = p.breathe * h * 0.007, BY = (v: number) => y + v * u - lift;
@@ -1161,10 +1252,10 @@ function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   const bronze = shade(VERDIGRIS, p.tone), gilt = shade(GILT, p.tone);
   const sw = Math.sin(p.frame / 31) * 0.8;                                     // the wet hem barely stirs
   // The count: the jaw drops and closes, again and again, steady as a beat.
-  const beat = Math.abs(Math.sin(p.frame / (master ? 9 : 7)));
+  const beat = Math.abs(Math.sin(p.frame / (leads ? 9 : 7)));
   const jd = 0.16 + 0.22 * beat;
-  const F = master ? 1.24 : 1;                                                  // how full the robe is below the waist
-  groundShadow(ctx, x, y + 1, h * (master ? 0.7 : 0.6));
+  const F = leads ? 1.24 : 1;                                                  // how full the robe is below the waist
+  groundShadow(ctx, x, y + 1, h * (leads ? 0.7 : 0.6));
 
   // ---- the robe: one mass from the shoulders to the ground, the hem torn, then the soaked part.
   const hem = (k: number): number[] => [
@@ -1195,9 +1286,9 @@ function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
 
   // ---- the arms, in wide sleeves that hang heavy from the elbow; bone from the cuff to the hand.
   const nEl = { x: X(20), y: BY(-58) }, fEl = { x: X(-19), y: BY(-57) };
-  const nWr = master ? { x: X(25), y: BY(-96 + beat * 6) } : { x: X(18.5), y: BY(-69) };
-  const fWr = master ? { x: X(-8), y: BY(-49) } : { x: X(-16), y: BY(-68) };
-  const nElR = master ? { x: X(27), y: BY(-78) } : nEl;
+  const nWr = leads ? { x: X(25), y: BY(-96 + beat * 6) } : { x: X(18.5), y: BY(-69) };
+  const fWr = leads ? { x: X(-8), y: BY(-49) } : { x: X(-16), y: BY(-68) };
+  const nElR = leads ? { x: X(27), y: BY(-78) } : nEl;
   const sleeve = (sh: { x: number; y: number }, el: { x: number; y: number }, s: number, seed: number): Part => ({ k: 'curve', pts: [
     sh.x - s * 4 * u, sh.y - 3 * u, sh.x + s * 4.5 * u, sh.y - 1.5 * u, el.x + s * 5.5 * u, el.y - 2 * u, el.x + s * 6 * u, el.y + 7 * u,
     el.x + s * 2 * u, el.y + 12 * u, el.x - s * 3.5 * u, el.y + 9 * u, el.x - s * 5 * u, el.y + 2 * u, sh.x - s * 5 * u, sh.y + 8 * u,
@@ -1207,15 +1298,15 @@ function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   blob(ctx, B, old, [shaft(fEl.x, fEl.y + 2 * u, fWr.x, fWr.y, 2 * u, 513)], { h, formK: 0.5 });
 
   // ---- the hood up behind the skull, its mouth a dark hollow.
-  const hx = R.hx + 0.4 * u, hy = R.hy + (master ? 0.2 : 1.2) * u, hr = R.hr;
-  blob(ctx, B, master ? shade(robe, 0.86) : robe, [{ k: 'curve', pts: [
+  const hx = R.hx + 0.4 * u, hy = R.hy + (leads ? 0.2 : 1.2) * u, hr = R.hr;
+  blob(ctx, B, leads ? shade(robe, 0.86) : robe, [{ k: 'curve', pts: [
     hx - hr * 1.5, hy + hr * 1.7, hx - hr * 1.62, hy + hr * 0.2, hx - hr * 1.28, hy - hr * 1.12, hx - hr * 0.2, hy - hr * 1.62,
     hx + hr * 0.92, hy - hr * 1.34, hx + hr * 1.56, hy - hr * 0.3, hx + hr * 1.56, hy + hr * 1.7, hx, hy + hr * 2.0,
   ], wobble: 0.03, seed: 515, sub: 2 }], { h, tex: 'folds', seed: 515, amount: 0.5, formK: 0.5, spread: 0.75 });
   hollow(ctx, [hx - hr * 1.12, hy + hr * 1.5, hx - hr * 1.22, hy - hr * 0.2, hx - hr * 0.6, hy - hr * 1.18, hx + hr * 0.4, hy - hr * 1.24, hx + hr * 1.12, hy - hr * 0.4, hx + hr * 1.16, hy + hr * 1.5], murk, 0.03, 517);
 
   // ---- the Choirmaster's mantle, over both shoulders.
-  if (master) blob(ctx, B, shade(mix(robe, '#10181c', 0.35), 1), [
+  if (leads) blob(ctx, B, shade(mix(robe, '#10181c', 0.35), 1), [
     { k: 'curve', pts: [X(-20), BY(-64), X(-21), BY(-76), X(-12), BY(-82.5), X(1), BY(-83.5), X(14), BY(-82), X(22), BY(-75), X(22.5), BY(-63), X(13), BY(-60), X(1), BY(-62), X(-11), BY(-60)], wobble: 0.04, seed: 519, sub: 2 },
   ], { h, tex: 'folds', seed: 519, amount: 0.6, formK: 0.45, spread: 0.8 });
 
@@ -1225,7 +1316,7 @@ function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   eye(ctx, hx - hr * 0.38, hy + 0.1 * u, Math.max(0.8, 0.8 * u), cold, false);
   eye(ctx, hx + hr * 0.36, hy - 0.2 * u, Math.max(0.8, 0.9 * u), cold, false);
   // The Choirmaster's crown: three whelk shells standing on the skull, the middle one tallest.
-  if (master) {
+  if (leads) {
     const shell = shade('#d8c8a8', p.tone);
     const crown: Part[] = [];
     for (const [ox, len, lean] of [[-5, 9, -0.25], [0.6, 13, 0.02], [6, 9, 0.28]] as const) {
@@ -1241,7 +1332,7 @@ function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   }
 
   // ---- the drowned god's collar across the chest, its lower edge in scallops.
-  const cy0 = BY(-77), cy1 = BY(master ? -63 : -65);
+  const cy0 = BY(-77), cy1 = BY(leads ? -63 : -65);
   blob(ctx, B, bronze, [{ k: 'curve', pts: [
     X(-14), cy0, X(-6), BY(-73.5), X(1), BY(-72.5), X(8), BY(-73.5), X(15), cy0,
     X(16), BY(-71), X(10), cy1 + 2 * u, X(1), cy1, X(-8), cy1 + 2 * u, X(-15), BY(-71),
@@ -1253,7 +1344,7 @@ function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   }
 
   // ---- the Choirmaster's bell, hung before it on two cords from the collar.
-  if (master) {
+  if (leads) {
     const bx = X(-1), by = BY(-41), bw = 6.4 * u, bh = 13 * u;
     ctx.strokeStyle = B.col(shade('#3a2a1c', p.tone)); ctx.lineWidth = Math.max(1, 0.8 * u); ctx.lineCap = 'round';
     ctx.beginPath(); ctx.moveTo(X(-8), cy1 + u); ctx.lineTo(bx - 2 * u, by - bh * 0.5); ctx.moveTo(X(5), cy1 + u); ctx.lineTo(bx + 2 * u, by - bh * 0.5); ctx.stroke();
@@ -1267,7 +1358,7 @@ function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
   }
 
   // ---- the near arm, in front: its sleeve, the forearm up, the hand open or on the beater.
-  if (master) {
+  if (leads) {
     blob(ctx, B, robe, [sleeve(R.sNear, nElR, 1, 533)], { h, tex: 'folds', seed: 533, amount: 0.5, formK: 0.45, spread: 0.7 });
     blob(ctx, B, bn, [shaft(nElR.x, nElR.y - 1 * u, nWr.x, nWr.y, 2.1 * u, 535)], { h, formK: 0.5 });
     // The beater: a bone haft and a knob of tarred rope, held out over the bell.
@@ -1283,7 +1374,7 @@ function priest(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
     blob(ctx, B, bn, [shaft(nEl.x, nEl.y + 2 * u, nWr.x, nWr.y, 2.1 * u, 535)], { h, formK: 0.5 });
     boneHand(ctx, nWr.x, nWr.y, -1.4, u, bn, 1);
   }
-  gap(ctx, master ? nElR.x : nEl.x, (master ? nElR.y : nEl.y) + 2 * u, master ? nWr.x : nWr.x, nWr.y, 2 * u, murk, 0.5);
+  gap(ctx, leads ? nElR.x : nEl.x, (leads ? nElR.y : nEl.y) + 2 * u, leads ? nWr.x : nWr.x, nWr.y, 2 * u, murk, 0.5);
 
   // Water still running off the hem and the sleeves.
   if (!B.override) for (let i = 0; i < 4; i++) {
