@@ -59,7 +59,7 @@ function incoming(s: CombatState, p: Party, rules: Readonly<Rules>, only?: reado
 /** What a caster's spell point is worth in hit points: what its best mend gives for one, or one if it has none. */
 function mendRate(c: Character, rules: Readonly<Rules>): number {
   let best = 1;
-  for (const x of c.spells.map(spell)) if (x.heal && x.target === 'ally' && !x.raise) best = Math.max(best, spellHeal(HARNESS.items, c, x.heal, rules.rankStep) / x.sp);
+  for (const x of c.spells.map((id) => spell(HARNESS.spells, id))) if (x.heal && x.target === 'ally' && !x.raise) best = Math.max(best, spellHeal(HARNESS.items, c, x.heal, rules.rankStep) / x.sp);
   return best;
 }
 
@@ -83,9 +83,9 @@ function mendRate(c: Character, rules: Readonly<Rules>): number {
  */
 export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, opts: BotOpts = {}, rules: Readonly<Rules> = RULES): void => {
   const c = p.members[i], o = optsFor(c, opts), answer = rules.answer ?? ANSWER;
-  const known = c.spells.map(spell).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
+  const known = c.spells.map((id) => spell(s.tables.spells, id)).filter((x) => x.context !== 'explore' && x.sp <= c.sp);
   // The artifacts' spells it bears with a charge left (#847): weighed as its own, at no cost in points.
-  const charged = borne(s.tables.items, c).filter((id) => item(s.tables.items, id).casts && chargesLeft(s.tables.items, p, id) > 0).map((from) => ({ from, x: spell(item(s.tables.items, from).casts!.spell) }));
+  const charged = borne(s.tables.items, c).filter((id) => item(s.tables.items, id).casts && chargesLeft(s.tables.items, p, id) > 0).map((from) => ({ from, x: spell(s.tables.spells, item(s.tables.items, from).casts!.spell) }));
   // Mending reaches the fallen as well as the standing; only the dead are past it.
   const living = p.members.map((m, j) => ({ m, j })).filter(({ m }) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned'));
   const everyone = known.filter((x) => x.heal && x.target === 'party').sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
@@ -100,7 +100,7 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
     const pick = mends.filter((x) => spellHeal(s.tables.items, c, x.heal ?? 0, rules.rankStep) >= wound / 2).sort((a, b) => a.sp - b.sp)[0] ?? mends.sort((a, b) => (b.heal ?? 0) - (a.heal ?? 0))[0];
     if (partyAct(s, p, rng, { type: 'cast', spellId: pick.id, target: worst.j })) return;
   }
-  const sleeper = wakeWith(p, c, answer);
+  const sleeper = wakeWith(s.tables.spells, p, c, answer);
   if (sleeper && partyAct(s, p, rng, { type: 'cast', ...sleeper })) return;
   const foes = aliveMonsters(s);
   if (!foes.length) { partyAct(s, p, rng, { type: 'defend' }); return; }
@@ -195,7 +195,7 @@ export interface Casts { bless: number; sleep: number; drink: number }
  * which a member cast Bless, Slumber or Grasping Roots, or drank or gave a draught, read from the log.
  */
 export function casting(level: number, monsters: Encounter, seeds: number, from = 1, rules: Readonly<Rules> = RULES): Casts {
-  const bless = ` casts ${spell('bless').name}. `, sleep = [spell('sleep').name, spell('roots').name].map((n) => [` casts ${n}: `, ` casts ${n}, `]).flat();
+  const bless = ` casts ${spell(HARNESS.spells, 'bless').name}. `, sleep = [spell(HARNESS.spells, 'sleep').name, spell(HARNESS.spells, 'roots').name].map((n) => [` casts ${n}: `, ` casts ${n}, `]).flat();
   const draught = / (recovers \d+|feels sharper|is flesh again|is cleansed)\.$/;
   const out: Casts = { bless: 0, sleep: 0, drink: 0 };
   for (let k = from; k < from + seeds; k++) {
@@ -235,7 +235,7 @@ export function measure(level: number, monsters: Encounter, seeds: number, from 
  * pack's. One with neither waits for a temple, and the company must rest (`mustRest`).
  */
 export function unstone(p: Party, rules: Readonly<Rules> = RULES): void {
-  const absolve = spell('absolve'), cures = (id: string): boolean => !!item(HARNESS.items, id).use?.cure?.includes('stoned');
+  const absolve = spell(HARNESS.spells, 'absolve'), cures = (id: string): boolean => !!item(HARNESS.items, id).use?.cure?.includes('stoned');
   for (const m of p.members.filter((x) => hasCondition(x, 'stoned'))) {
     const caster = p.members.find((c) => !isDown(c) && c.spells.includes(absolve.id) && c.sp >= absolve.sp);
     if (caster) { caster.sp -= absolve.sp; castOnAlly(HARNESS.items, caster, absolve, m, rules.rankStep); continue; }
@@ -250,7 +250,7 @@ export function mendBetween(p: Party, rules: Readonly<Rules> = RULES): void {
   for (let guard = 0; guard < 60; guard++) {
     const hurt = p.members.filter((m) => !hasCondition(m, 'dead') && !hasCondition(m, 'stoned') && m.hp < m.maxHp / 2).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp);
     if (!hurt.length) return;
-    const healers = p.members.filter((c) => !isDown(c)).map((c) => ({ c, known: c.spells.map(spell).filter((x) => x.context === 'any' && x.heal && !x.raise && x.sp <= c.sp) }));
+    const healers = p.members.filter((c) => !isDown(c)).map((c) => ({ c, known: c.spells.map((id) => spell(HARNESS.spells, id)).filter((x) => x.context === 'any' && x.heal && !x.raise && x.sp <= c.sp) }));
     const all = healers.flatMap(({ c, known }) => known.filter((x) => x.target === 'party').map((x) => ({ c, x }))).sort((a, b) => a.x.sp - b.x.sp)[0];
     const one = healers.flatMap(({ c, known }) => known.filter((x) => x.target === 'ally').map((x) => ({ c, x }))).sort((a, b) => a.x.sp - b.x.sp)[0];
     if (all && hurt.length >= 2) { all.c.sp -= all.x.sp; castOnParty(HARNESS.items, all.c, all.x, p, rules.rankStep); }

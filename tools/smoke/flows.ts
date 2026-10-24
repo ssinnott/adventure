@@ -554,7 +554,7 @@ export async function waymark({ page, ok }: Run): Promise<void> {
     cassian.spells.push('waymark'); cassian.sp = cassian.maxSp = 99; cassian.conditions = [];
     g.push(new S.SpellScreen('explore'));
     g.top.update(g, 'n6');
-    (g.top as Shown).sel = cassian.spells.filter((id: string) => P.spell(id).context !== 'combat').indexOf('waymark');
+    (g.top as Shown).sel = cassian.spells.filter((id: string) => P.spell(g.tables.spells, id).context !== 'combat').indexOf('waymark');
     g.top.update(g, 'interact');
     const asked = { screen: g.top.constructor.name, options: (g.top as Shown).options ?? [] };
     g.top.update(g, 'interact');

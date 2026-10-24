@@ -159,7 +159,7 @@ async function main(): Promise<void> {
   if (args.includes('--abilities')) {
     // Act III's abilities on the test monsters (docs/MONSTERS.md §3.3, #537, #541): the figures their sizes were decided on.
     const at = opt('levels') ? levels : [19, 20];
-    const forget = (keep: (sp: SpellDef) => boolean) => (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => keep(spell(id))); return p; };
+    const forget = (keep: (sp: SpellDef) => boolean) => (p: Party): Party => { for (const c of p.members) c.spells = c.spells.filter((id) => keep(spell(HARNESS.spells, id))); return p; };
     const fireless = forget((x) => x.element !== 'fire'), unarmed = forget((x) => !x.dice);
     /** Seeds of one fight from fresh, as `measure` fights them, each fight's end kept to read; `how` the what-ifs, an answer turned among them. */
     const fights = (level: number, enc: Encounter, dress = (p: Party): Party => p, how: Readonly<Rules> = rules): { s: CombatState; p: Party; o: Outcome }[] => Array.from({ length: seeds }, (_, n) => {

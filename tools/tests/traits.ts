@@ -29,7 +29,7 @@ export function traits(): void {
   // Healing Hands: the cleric heals more than a paladin with the same Personality.
   const cl = mk('cleric'), pa = mk('paladin'), hurtA = mk('knight'), hurtB = mk('knight');
   hurtA.maxHp = hurtB.maxHp = 100; hurtA.hp = hurtB.hp = 1;
-  castOnAlly(TABLES.items, cl, spell('heal'), hurtA); castOnAlly(TABLES.items, pa, spell('heal'), hurtB);
+  castOnAlly(TABLES.items, cl, spell(TABLES.spells, 'heal'), hurtA); castOnAlly(TABLES.items, pa, spell(TABLES.spells, 'heal'), hurtB);
   ok(hurtA.hp > hurtB.hp, `a cleric's Mend heals more (${hurtA.hp - 1} vs ${hurtB.hp - 1})`);
   // Damage traits, and the bard's song.
   const party = defaultParty(TABLES, makeRng(4));

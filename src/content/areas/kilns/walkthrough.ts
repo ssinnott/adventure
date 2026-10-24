@@ -1000,7 +1000,7 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 18; trainee.xp = xpForLevel(19);
   ok(ofKind(TOWN, 'trainer').length === 1 && yard.maxLevel === 19 && yard.interior === 'anvilhall_training_hall' && canTrainAt(trainee, yard.maxLevel), `${yard.name} will train a member of 18`);
-  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), yard.maxLevel);
+  const { paid: fee } = train(TABLES.spells, { gold: w.party.gold }, trainee, makeRng(1), yard.maxLevel);
   ok(trainee.level === 19 && !canTrainAt(trainee, yard.maxLevel), `who trains to 19 for ${fee} gold, and no further`);
 
   // The verse. With no reader of its own the company sees it at the great hall's doors, and the
@@ -1145,7 +1145,7 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 18; trainee.xp = xpForLevel(19);
   ok(shed.maxLevel === 19 && shed.interior === 'kilnhaven_training_hall' && canTrainAt(trainee, shed.maxLevel), `${shed.name} will train a member of 18`);
-  const { paid: fee } = train({ gold: w.party.gold }, trainee, makeRng(1), shed.maxLevel);
+  const { paid: fee } = train(TABLES.spells, { gold: w.party.gold }, trainee, makeRng(1), shed.maxLevel);
   ok(trainee.level === 19 && !canTrainAt(trainee, shed.maxLevel), `who trains to 19 for ${fee} gold, and no further`);
 
   // The manifests, read by the harbourmaster in her office: iron to Cinderport, and the Compact's

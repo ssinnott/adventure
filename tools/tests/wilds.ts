@@ -269,12 +269,12 @@ function wellAndSpells(): void {
     const r = castExplore(w, g.party, 0, id, back);
     return { line: r.lines.join(' '), moved: r.moved, paid: 50 - mage.sp };
   };
-  const by = (id: string, then: string): string => `${mage.name} casts ${spell(id).name}${then}`;
+  const by = (id: string, then: string): string => `${mage.name} casts ${spell(TABLES.spells, id).name}${then}`;
   const lit = cast('light');
-  ok(lit.line === by('light', '. The way ahead is lit.') && w.state.light === 200 && !lit.moved && lit.paid === spell('light').sp, `Light lights the way (${lit.line})`);
+  ok(lit.line === by('light', '. The way ahead is lit.') && w.state.light === 200 && !lit.moved && lit.paid === spell(TABLES.spells, 'light').sp, `Light lights the way (${lit.line})`);
   const eye = cast('wizard_eye'), dark: string[] = [];
   for (let dy = -6; dy <= 6; dy++) for (let dx = -6; dx <= 6; dx++) { const x = w.state.x + dx, y = w.state.y + dy; if (w.map.inBounds(x, y) && !w.explored(x, y)) dark.push(`${x},${y}`); }
-  ok(eye.line === by('wizard_eye', '. The map fills in around you.') && !dark.length && eye.paid === spell('wizard_eye').sp, `Wizard Eye fills in the map six squares round (${eye.line})`);
+  ok(eye.line === by('wizard_eye', '. The map fills in around you.') && !dark.length && eye.paid === spell(TABLES.spells, 'wizard_eye').sp, `Wizard Eye fills in the map six squares round (${eye.line})`);
   const refused = cast('waymark');
   ok(refused.line === by('waymark', ', but the mark will not take here.') && !refused.paid && !w.state.mark && !refused.moved, `Waymark will not take in ${w.state.mapId}, a town, and gives its points back (${refused.line})`);
   w.travel('shelf', 16, 4);
@@ -289,11 +289,11 @@ function wellAndSpells(): void {
   ok(walk.line === by('walk_water', '. The shallows will bear you a while.') && float.line === by('levitate', '. Your feet leave the ground.') && !!w.state.walk && !!w.state.float && !walk.moved && !float.moved,
     `Walk on Water and Levitate bear the company (${walk.line} ${float.line})`);
   // The points exactly are enough; a party spell cast out of a fight heals by the fight's rule (`castOnParty`), never the dead.
-  mage.sp = spell('light').sp;
+  mage.sp = spell(TABLES.spells, 'light').sp;
   const exact = castExplore(w, g.party, 0, 'light'), left = mage.sp, [, hurt, gone] = g.party.members;
   hurt.conditions = []; hurt.hp = 1; gone.conditions = ['dead']; gone.hp = -2; mage.sp = 50;
   const mend = castExplore(w, g.party, 0, 'mend_all');
-  ok(exact.lines.join() === by('light', '. The way ahead is lit.') && !left && mend.lines.join() === by('mend_all', '. The party is healed.') && mage.sp === 50 - spell('mend_all').sp && hurt.hp > 1 && gone.hp === -2 && !mend.moved,
+  ok(exact.lines.join() === by('light', '. The way ahead is lit.') && !left && mend.lines.join() === by('mend_all', '. The party is healed.') && mage.sp === 50 - spell(TABLES.spells, 'mend_all').sp && hurt.hp > 1 && gone.hp === -2 && !mend.moved,
     `the points exactly cast, and Mending Light heals the company but the dead (${mend.lines.join()})`);
   mage.sp = 0;
   const short = castExplore(w, g.party, 0, 'light');

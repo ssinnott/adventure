@@ -30,7 +30,7 @@ import { taughtBy, mayLearn, skillOffers, skillLine, skillRow, learn, askSkill, 
 import type { SkillId } from '../game/skills.ts';
 import { teachesExpert, expertOffers, masterOffers, favourDone, tierLine, teachTier, tierOf, askLine, askTier, noneHere, LINES, LINE_ROWS, LEAVE_TIERS, EXPERT_ENTRY, TIER_NAMES } from '../game/mastery.ts';
 import type { Line, Mastery } from '../game/mastery.ts';
-import type { Items } from '../game/tables.ts';
+import type { Items, Tables } from '../game/tables.ts';
 
 const BOX = { x: 40, y: 40, w: SAY_W + 24, h: 220 };
 
@@ -291,7 +291,7 @@ export class SheetScreen implements Screen {
       if (raise) drawText(ctx, raise, 141, y, { size: 1, color: YELLOW });
       y += 10;
     }
-    for (const r of sheetRows(g.tables.items, c)) drawText(ctx, r.text, 20, r.y, { size: 1, color: r.color });
+    for (const r of sheetRows(g.tables, c)) drawText(ctx, r.text, 20, r.y, { size: 1, color: r.color });
     // Items column
     const items = this.items(g);
     drawText(ctx, 'ITEMS (SPACE: EQUIP OR USE)', 340, 36, { size: 1, color: TEXT_DIM });
@@ -313,30 +313,30 @@ export function statText(items: Items, c: Character, s: Stat): [string, string] 
  * The sheet's WEAPON line: what is in hand and the element its blows carry, then the member's tier at
  * arms ("WEAPON Longsword, EXPERT", "WEAPON Grey Blade, LIGHTNING").
  */
-export function weaponLine(items: Items, c: Character): string {
-  const t = tierOf(c, 'arms'), w = c.equipment.weapon ? item(items, c.equipment.weapon) : null;
-  return 'WEAPON ' + (w ? w.name + (w.artifact ? `, ${power(w)}` : w.element ? `, ${w.element.toUpperCase()}` : '') : 'none') + (t ? `, ${TIER_NAMES[t].toUpperCase()}` : '');
+export function weaponLine(tables: Tables, c: Character): string {
+  const t = tierOf(c, 'arms'), w = c.equipment.weapon ? item(tables.items, c.equipment.weapon) : null;
+  return 'WEAPON ' + (w ? w.name + (w.artifact ? `, ${power(tables.spells, w)}` : w.element ? `, ${w.element.toUpperCase()}` : '') : 'none') + (t ? `, ${TIER_NAMES[t].toUpperCase()}` : '');
 }
 /** The sheet's ARMOUR and SHIELD lines: what is worn there, and an artifact's power after it (#847: "ARMOUR The Erzhemd, SPEED +5"). */
-export function slotLine(items: Items, c: Character, slot: 'armor' | 'shield'): string {
-  const id = c.equipment[slot], d = id ? item(items, id) : null;
-  return `${slot === 'armor' ? 'ARMOUR' : 'SHIELD'} ` + (d ? d.name + (d.artifact ? `, ${power(d)}` : '') : 'none');
+export function slotLine(tables: Tables, c: Character, slot: 'armor' | 'shield'): string {
+  const id = c.equipment[slot], d = id ? item(tables.items, id) : null;
+  return `${slot === 'armor' ? 'ARMOUR' : 'SHIELD'} ` + (d ? d.name + (d.artifact ? `, ${power(tables.spells, d)}` : '') : 'none');
 }
 /**
  * An artifact's power in words (#847, DESIGN §9): the stat it raises and by how much, the element its
  * blows carry, its spell and how many a day, its regeneration or its ward ("SPEED +5", "HOLY BLOWS",
  * "METEOR SWARM 2 A DAY", "MENDS A TENTH AN HOUR", "NEVER ASLEEP").
  */
-export function power(d: ItemDef): string {
+export function power(spells: Tables['spells'], d: ItemDef): string {
   const raised = STATS.filter((s) => d.stat?.[s]).map((s) => `${s.toUpperCase()} ${signed(d.stat?.[s] ?? 0)}`);
-  return [...raised, ...(d.element ? [`${d.element.toUpperCase()} BLOWS`] : []), ...(d.casts ? [`${spell(d.casts.spell).name.toUpperCase()} ${d.casts.times} A DAY`] : []),
+  return [...raised, ...(d.element ? [`${d.element.toUpperCase()} BLOWS`] : []), ...(d.casts ? [`${spell(spells, d.casts.spell).name.toUpperCase()} ${d.casts.times} A DAY`] : []),
     ...(d.regen ? ['MENDS A TENTH AN HOUR'] : []), ...(d.ward ? [`NEVER ${d.ward.toUpperCase()}`] : [])].join(', ');
 }
 /**
  * The sheet's ARTIFACT lines: each artifact the member carries in their pack (`borne`) and its power,
  * a line each ("ARTIFACT The Hagstone, NEVER PARALYSED"). One with a slot says its power on its slot's line.
  */
-export const artifactLines = (items: Items, c: Character): string[] => borne(items, c).map((id) => item(items, id)).filter((d) => d.artifact && d.slot === 'none').map((d) => `ARTIFACT ${d.name}, ${power(d)}`);
+export const artifactLines = (tables: Tables, c: Character): string[] => borne(tables.items, c).map((id) => item(tables.items, id)).filter((d) => d.artifact && d.slot === 'none').map((d) => `ARTIFACT ${d.name}, ${power(tables.spells, d)}`);
 /** Where the sheet's panel's border begins at its foot: the column under the portrait ends above it. */
 export const SHEET_FOOT = 274;
 /** The sheet's item list: its first row's y and the most rows it shows, a menu's step apart. */
@@ -351,28 +351,28 @@ export const SPELLS_TOP = 208;
  * points and armour share a line, and an artifact with a slot says its power on its slot's, so the
  * fullest member of any class ends above the panel's foot (`SHEET_FOOT`).
  */
-export function sheetRows(items: Items, c: Character): { text: string; color: string; y: number }[] {
-  const rows: { text: string; color: string; y: number }[] = [];
+export function sheetRows(tables: Tables, c: Character): { text: string; color: string; y: number }[] {
+  const { items } = tables, rows: { text: string; color: string; y: number }[] = [];
   let y = 134;
   const add = (text: string, color = TEXT, gap = 10): void => { rows.push({ text, color, y }); y += gap; };
   const worn = (id: string | null): string => (id && item(items, id).artifact ? YELLOW : TEXT);
   add(`HP ${c.hp}/${c.maxHp}   SP ${c.sp}/${c.maxSp}   AC ${armorClass(items, c)}   TO-HIT +${attackBonus(items, c)}`);
   add(c.conditions.length ? c.conditions.join(', ').toUpperCase() : 'WELL', c.conditions.length ? RED : TEXT_DIM, 14);
-  add(weaponLine(items, c), worn(c.equipment.weapon));
-  add(slotLine(items, c, 'armor'), worn(c.equipment.armor));
-  add(slotLine(items, c, 'shield'), worn(c.equipment.shield));
+  add(weaponLine(tables, c), worn(c.equipment.weapon));
+  add(slotLine(tables, c, 'armor'), worn(c.equipment.armor));
+  add(slotLine(tables, c, 'shield'), worn(c.equipment.shield));
   const res = resists(items, c);
   if (res.length) add('RESISTS ' + res.join(', ').toUpperCase());
-  for (const l of artifactLines(items, c)) add(l, YELLOW);
+  for (const l of artifactLines(tables, c)) add(l, YELLOW);
   add('TRAITS ' + CLASSES[c.cls].traits.map((t) => TRAITS[t].name).join(', '));
   for (const l of skillsLines(c)) add(l);
-  if (c.spells.length) { y = Math.max(y, SPELLS_TOP); add(spellsLine(c)); }
+  if (c.spells.length) { y = Math.max(y, SPELLS_TOP); add(spellsLine(tables.spells, c)); }
   return rows;
 }
 /** The sheet's SPELLS line: the member's tier in magic, then the spells it knows ("SPELLS (MASTER) Spark, Frost"). */
-export function spellsLine(c: Character): string {
+export function spellsLine(spells: Tables['spells'], c: Character): string {
   const t = tierOf(c, 'magic');
-  return 'SPELLS ' + (t ? `(${TIER_NAMES[t].toUpperCase()}) ` : '') + c.spells.map((s) => spell(s).name).join(', ');
+  return 'SPELLS ' + (t ? `(${TIER_NAMES[t].toUpperCase()}) ` : '') + c.spells.map((s) => spell(spells, s).name).join(', ');
 }
 
 /** An exploration spell cast (game/wilds.ts): its lines said and, where it moved the party, what stands there met. */
@@ -394,7 +394,7 @@ export class SpellScreen implements Screen {
     this.onDone = onDone;
   }
   private casters(g: Game): number[] { return g.party.members.map((m, i) => ({ m, i })).filter(({ m }) => m.spells.length && !isDown(m) && !hasCondition(m, 'asleep')).map(({ i }) => i); }
-  private list(g: Game): string[] { return g.party.members[this.who].spells.filter((s) => spell(s).context !== 'combat'); }
+  private list(g: Game): string[] { return g.party.members[this.who].spells.filter((s) => spell(g.tables.spells, s).context !== 'combat'); }
   update(g: Game, a: Action | null): void {
     if (!a) return;
     if (this.who < 0) {
@@ -413,7 +413,7 @@ export class SpellScreen implements Screen {
     if (is(a, 'up')) this.sel = (this.sel + list.length - 1) % list.length;
     else if (is(a, 'down')) this.sel = (this.sel + 1) % list.length;
     else if (is(a, 'interact')) {
-      const sp = spell(list[this.sel]);
+      const sp = spell(g.tables.spells, list[this.sel]);
       const caster = this.who;
       g.pop();
       if (sp.target === 'ally') {
@@ -440,7 +440,7 @@ export class SpellScreen implements Screen {
       const c = g.party.members[this.who];
       drawText(ctx, `${c.name} CASTS  (SP ${c.sp})`, BOX.x + 12, BOX.y + 10, { size: 1, color: BRASS });
       const list = this.list(g);
-      menu(ctx, list.map((s) => `${spell(s).name} (${spell(s).sp})  ${spell(s).text}`), BOX.x + 12, BOX.y + 26, this.sel, { disabled: list.map((s) => spell(s).sp > c.sp) });
+      menu(ctx, list.map((s) => `${spell(g.tables.spells, s).name} (${spell(g.tables.spells, s).sp})  ${spell(g.tables.spells, s).text}`), BOX.x + 12, BOX.y + 26, this.sel, { disabled: list.map((s) => spell(g.tables.spells, s).sp > c.sp) });
     }
   }
 }
@@ -704,11 +704,11 @@ function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
     }, f.name);
   }
   // Spells up to the guild's tier for sale, per caster; the price climbs with the tier.
-  const offers = hallOffers(g.party, f);
+  const offers = hallOffers(g.tables.spells, g.party, f);
   if (!offers.length) return new MessageScreen('"We have taught you all we can for now. Come back when you have grown."', undefined, f.name);
-  return new ChoiceScreen(`"What would you learn?" (${g.party.gold} gold.)`, [...offers.map((o) => `${g.party.members[o.who].name}: ${spell(o.id).name}\t${o.price}g\t${spell(o.id).text}`), 'Leave'], (i) => {
+  return new ChoiceScreen(`"What would you learn?" (${g.party.gold} gold.)`, [...offers.map((o) => `${g.party.members[o.who].name}: ${spell(g.tables.spells, o.id).name}\t${o.price}g\t${spell(g.tables.spells, o.id).text}`), 'Leave'], (i) => {
     if (i < 0 || i === offers.length) return;
-    g.say(learnSpell(g.party, offers[i]).line);
+    g.say(learnSpell(g.tables.spells, g.party, offers[i]).line);
     g.push(guild(g, f));
   }, f.name, [...offers.map((o) => o.price > g.party.gold), false]);
 }
@@ -719,7 +719,7 @@ function trainer(g: Game, f: Extract<Feature, { kind: 'trainer' }>): Screen {
   const names = g.party.members.map((c, i) => `${c.name}  L${c.level}\t${can[i] ? `train ${cost(c)}g` : c.level >= f.maxLevel ? 'beyond me' : `needs ${xpForLevel(c.level + 1) - c.xp} xp`}`);
   return new ChoiceScreen(`"${f.name}. I train to level ${f.maxLevel}. Who is ready?" (${g.party.gold} gold.)`, [...names, 'Leave'], (i) => {
     if (i < 0 || i === names.length) return;
-    const { line } = train(g.party, g.party.members[i], g.rng, f.maxLevel);
+    const { line } = train(g.tables.spells, g.party, g.party.members[i], g.rng, f.maxLevel);
     if (line) g.say(line);
     g.push(trainer(g, f));
   }, f.name, [...can.map((x) => !x), false]);

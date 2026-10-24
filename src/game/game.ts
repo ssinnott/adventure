@@ -426,7 +426,7 @@ export class Game {
       if (a && !a.fight) { this.engage(); return; }
       const ids = this.world.adjacentGroups();
       this.fight(ids.length ? ids : [id]);
-    }, monster(def.leader ?? def.monsters[0]).name, c.answers.map((a) => barred(a, this.party)), { fight: c.answers.findIndex((a) => !!a.fight) }));
+    }, monster(this.tables.monsters, def.leader ?? def.monsters[0]).name, c.answers.map((a) => barred(a, this.party)), { fight: c.answers.findIndex((a) => !!a.fight) }));
   }
 
   /** The groups beside the party: the first that talks puts its question, else they fight. */
@@ -455,7 +455,7 @@ export class Game {
   monstersAt = (x: number, y: number): ViewMonster[] | null => {
     const g = this.world.groupAt(x, y);
     if (!g) return null;
-    return groupDrawn(g.def.monsters).map((id) => { const d = monster(id); return { id, sprite: d.sprite, tint: d.tint, size: d.size, ...(g.def.under ? { under: g.def.under } : {}) }; });
+    return groupDrawn(g.def.monsters).map((id) => { const d = monster(this.tables.monsters, id); return { id, sprite: d.sprite, tint: d.tint, size: d.size, ...(g.def.under ? { under: g.def.under } : {}) }; });
   };
 }
 
@@ -509,7 +509,7 @@ export class ExploreScreen implements Screen {
     const ahead = g.world.map.ahead(g.world.state.x, g.world.state.y, g.world.state.facing);
     const f = g.world.featureHere();
     const grp = g.world.groupAt(ahead.x, ahead.y);
-    const hint = grp ? `${monster(grp.def.monsters[0]).plural}: Space to attack` : f ? `${featureLabel(f)}: Space` : '';
+    const hint = grp ? `${monster(g.tables.monsters, grp.def.monsters[0]).plural}: Space to attack` : f ? `${featureLabel(f)}: Space` : '';
     // The pilot's band takes the top of the view while it is up.
     if (hint && !g.pilot?.band()) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: '#ffe08a', align: 'center' });
     drawStatus(ctx, g.world);

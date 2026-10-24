@@ -17,7 +17,8 @@ import { CLIMATES, MONSTERS, TABLES } from '../../src/content/index.ts';
 import { restRefused } from '../../src/game/wilds.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { newWalk, gone } from '../kit/walk.ts';
-import { ok, withDefs, fxFlag } from './lib.ts';
+import { ok, fxFlag } from './lib.ts';
+import { tablesWith } from '../kit/headless.ts';
 
 export function monsters(): void {
   const rng = makeRng(3);
@@ -163,8 +164,9 @@ export function monsters(): void {
   }
   // A look: said once, the first time a group of the kind comes into sight or into a fight. The
   // content has none yet, so the rat and the wolf are given one for the while.
-  withDefs(MONSTERS, [{ ...MONSTERS.rat, look: 'A rat the size of a dog.' }, { ...MONSTERS.wolf, look: 'A grey wolf, lean with hunger.' }], () => {
-    const fresh = (facing: 0 | 2): World => { const r = makeRng(3), w = new World(TABLES, buildMaps(), defaultParty(TABLES, r), r); w.travel('shelf', 16, 4, facing); return w; };
+  {
+    const lent = tablesWith([], TABLES, [{ ...MONSTERS.rat, look: 'A rat the size of a dog.' }, { ...MONSTERS.wolf, look: 'A grey wolf, lean with hunger.' }]);
+    const fresh = (facing: 0 | 2): World => { const r = makeRng(3), w = new World(lent, buildMaps(), defaultParty(lent, r), r); w.travel('shelf', 16, 4, facing); return w; };
     const behind = fresh(0);
     ok(!behind.sightings().length && !behind.state.met!.includes('rat'), 'the road rats behind the party are not seen, nor met');
     const w = fresh(2);
@@ -178,11 +180,11 @@ export function monsters(): void {
     ok(sees(mill).includes('m_cult1'), 'the mill\'s cultists are seen from the square beside them, lit');
     mill.travel('mill', 6, 1, 1);
     ok(mill.sight === 4 && !sees(mill).includes('m_cult1'), 'and not through the wall between, from 6,1 facing east, lit though it is');
-    const again = new World(TABLES, buildMaps(), w.party, makeRng(1), deserialize(serialize(w.state, w.party, 1)).world);
+    const again = new World(lent, buildMaps(), w.party, makeRng(1), deserialize(serialize(w.state, w.party, 1)).world);
     ok(!again.sightings().length && again.state.met!.includes('rat'), 'nor after a save and a load');
     ok(w.meet(['rat', 'rat', 'wolf']).join() === 'A grey wolf, lean with hunger.' && !w.meet(['wolf']).length, 'a fight says the kinds in it not met before, once');
     const step = fresh(2), moved = step.move('forward');
     const at = moved.kind === 'moved' ? moved.messages.indexOf('A rat the size of a dog.') : -1;
     ok(at >= 0 && moved.kind === 'moved' && !!moved.encounter, 'a step that brings a group into sight and into a fight says its look with the step, before the fight');
-  });
+  }
 }
