@@ -12,9 +12,9 @@ Where each section is (#1024):
 - The harness's runs of §4.4, the tables of a day, each time the line was made again and the lists
   of #541, #549 and #584: [archive/harness-log.md](archive/harness-log.md), under §4.4.
 - §5 to §12, the acts' rosters, the reach, the families down the road (§11) and what they add
-  (§12), and §13, the bounds' lairs, but for the row of the guardian not yet drawn, which stays
-  here: [archive/MONSTERS-rosters.md](archive/MONSTERS-rosters.md), under the numbers they had.
-- Each monster as its def makes it, by area in road order, and the families:
+  (§12): [archive/MONSTERS-rosters.md](archive/MONSTERS-rosters.md), under the numbers they had.
+- §13, the bounds' lairs: there too, but the row of the guardian not yet drawn, which stays here.
+- The monsters as their defs make them, a row to each by area in road order, then the families:
   [ROSTER.md](ROSTER.md), made by `node tools/roster.ts`.
 
 ---

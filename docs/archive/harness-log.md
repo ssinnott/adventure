@@ -2,9 +2,9 @@
 
 > History, not kept up to date: the runs of the harness that `docs/MONSTERS.md` §4.4 held when
 > #1024 cut it, whole and in order under that section's number: the table of the gate's day, what
-> the line showed and each time it was made again, and the lists of #541, #549 and #584, which
-> record those runs and are the owner's to overturn. The rules of §4.4, the test monster, the line
-> and how it is made, stay in [MONSTERS.md](../MONSTERS.md) §4.4.
+> the line showed, each time it was made again and the lists of #541, #549 and #584, which record
+> those runs and are the owner's to overturn. The rules of §4.4, the test monster, the line and how
+> it is made, stay in [MONSTERS.md](../MONSTERS.md) §4.4.
 
 ### 4.4 The test monster, and the fights between rests
 

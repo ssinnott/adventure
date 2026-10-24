@@ -9,7 +9,7 @@
 //
 // A def is its row: a pull request that adds or changes a monster runs `node tools/roster.ts`, and
 // the suite names the rows of a stale roster. A conflict in docs/ROSTER.md is mended by running the
-// tool, never by hand. Where a monster is met is the maps' to say, and its area's doc says it.
+// tool, never by hand. Where a monster is met, its area's doc says: no map decides a row.
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -127,12 +127,12 @@ const INTRO = [
   '# Roster',
   '',
   "Made by `node tools/roster.ts` from the monsters' defs (#1024); never edited by hand. The monsters",
-  "by area in road order, as each area's `monsters.ts` lists them, a row to each def: its family (the",
-  'module of `src/ui/monsters/` that registers its drawing), its kind and level, its numbers, its',
-  'look and what it can do; then the families. It holds nothing a map decides: where a monster is met',
-  "is the maps' to say, and its area's doc says it. A pull request that adds or changes a monster runs",
-  'the tool: the `roster` suite names the rows of a stale roster, and a conflict here is mended by',
-  'running the tool. What the monsters are for, their kinds and how their numbers are made is',
+  'by area in road order, as each area lists them in `src/content/areas/<area>/monsters.ts`, a row to',
+  'each def: its family (the module of `src/ui/monsters/` that registers its drawing), its kind and',
+  'level, its numbers, its look and what it can do; then the families. It holds nothing a map decides:',
+  "where a monster is met, its area's doc says. A pull request that adds or changes a monster runs the",
+  'tool: the `roster` suite names the rows of a stale roster, and a conflict here is mended by running',
+  'the tool. What the monsters are for, their kinds and how their numbers are made is',
   '[MONSTERS.md](MONSTERS.md).',
   '',
   "Blow is a hit's dice; gold is what each drops. What it does is the def's own: its kind's (MONSTERS",
