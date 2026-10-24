@@ -4,7 +4,7 @@ about: "A body of work, filed as sub-issues"
 labels: epic
 ---
 
-<!-- The opening: what the body of work is, and where it sits in the order of work (EXPANSION §9).
+<!-- The opening: what the body of work is, and where it sits in the order of work the epics hold.
 Set the type (Feature or Task) by what most of the work is. docs/ISSUES.md §3. -->
 
 ## Dependencies
