@@ -240,7 +240,7 @@ const edgesOwed = gatherLists(areaRows((c) => c.owes?.edges));
  */
 export interface FoundLock { kind: 'exit' | 'hand-in' | 'service' | 'other'; flags: string[]; map: string; x: number; y: number; area: string; to?: string; key: string; way?: string }
 
-/** The kinds of business a flag may shut (game/map.ts), and a person with a room, who is one too. */
+/** The kinds of business a flag may shut (game/mapdef.ts), and a person with a room, who is one too. */
 const SERVICES = ['inn', 'temple', 'shop', 'guild', 'trainer'];
 const isService = (o: Record<string, unknown>): boolean => typeof o.interior === 'string' && (SERVICES.includes(o.kind as string) || o.kind === 'npc');
 
