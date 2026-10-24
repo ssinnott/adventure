@@ -461,7 +461,10 @@ export interface MapDef {
    * the pilot keeps out of one whose floor is over its company. Content, never saved.
    */
   enclave?: true;
-  /** The region whose climate and weather the map shares; the Foreland when absent. */
+  /**
+   * The region whose climate and weather the map shares. Every map as written names one; the laid
+   * outdoors names none, its zones do. No sky is lent: a World asked the sky of a square with none throws (#945).
+   */
   region?: RegionId;
   /** Cells closed until flags are set. Written by game/outdoors.ts; a map as authored gates an exit instead. */
   gates?: Gate[];

@@ -12,7 +12,7 @@ import { NORTH } from '../../src/game/types.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { save } from '../../src/game/save.ts';
 import type { Store } from '../../src/game/save.ts';
-import { stonesRestored, savedStones, hearthBearing, flickerOf, steadier, MOST } from '../../src/game/stones.ts';
+import { stonesRestored, savedStones, hearthBearing, flickerOf, steadier, MOST, HEARTH, hearthIn } from '../../src/game/stones.ts';
 import { testMonster } from '../testmonster.ts';
 import { condFaults } from './quests.ts';
 import { presenceFaults } from './structure.ts';
@@ -65,7 +65,7 @@ export function stones(): void {
   // Sentry's level: it is not there before the Stone is lit, and stands where it was put, alive and in the way, after.
   const lit = STONES.find((s) => s.name === 'Ember Stone')?.restored, sentry = testMonster('elite', 26).id, at = { x: 2, y: 2 };
   const field: MapDef = {
-    id: 'fx_ashfall', name: 'Fixture', kind: 'outdoor', start: { x: 2, y: 3, facing: NORTH }, rows: Array.from({ length: 5 }, () => ','.repeat(5)),
+    id: 'fx_ashfall', name: 'Fixture', kind: 'outdoor', region: 'shelf', start: { x: 2, y: 3, facing: NORTH }, rows: Array.from({ length: 5 }, () => ','.repeat(5)),
     encounters: [{ id: 'fx_sentries', ...at, monsters: [sentry, sentry], roams: false, after: lit }],
   };
   const camp = defaultParty(makeRng(548)), fx = new World({ [field.id]: new GameMap(field) }, camp, makeRng(548));
@@ -83,6 +83,10 @@ export function stones(): void {
   box.set([...box.keys()][0], '{not a save');
   ok(empty === 0 && kept === 4 && savedStones(store) === 0 && savedStones(null) === 0, `the title reads the saved company's count (${kept}), and none from no save or a broken one`);
 
+  // The Hearth is where the atlas's hearth site is, with no square of its own to fall back on (#945).
+  const site = ATLAS.sites.find((s) => s.icon === 'hearth'), lost = ((): string => { try { hearthIn(ATLAS.sites.filter((s) => s.icon !== 'hearth')); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } })();
+  ok(!!site && HEARTH().join() === site.at.join() && lost === 'the atlas has no hearth site, so nothing says where the Hearth burns',
+    `the Hearth burns at the atlas's hearth site (${HEARTH().join(',')}), and an atlas without one throws (${lost})`);
   // The night sky's Hearth lies where the Hearth does: south of Helmstow, east from the far west shore.
   world.travel('harrow', 7, 14);
   const from = world.worldCell, b = from ? hearthBearing(from.x, from.y) : -1;

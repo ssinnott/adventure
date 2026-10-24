@@ -14,6 +14,7 @@
 // a planned way may open only after a later step, which is what sends the party back through
 // country it has already cleared, or out across the inland sea. Pure: nothing here draws.
 import type { MapDef, MapKind } from './map.ts';
+import type { RegionId } from './weather.ts';
 
 /** A point in world cells: x east, y south. */
 export type Pt = readonly [number, number];
@@ -80,7 +81,8 @@ export interface ZoneMap { map: string; at: Pt }
 export interface AtlasZone {
   id: string;
   name: string;
-  area: string;
+  /** Its area's region: a zone of an area that does not exist fails the typecheck (#945). */
+  area: RegionId;
   /** Where the zone is: the walk that settles borders starts from these, and from all its maps' footprints. */
   seeds?: readonly Pt[];
   /** The outdoor maps built of this zone, each where its top-left cell sits. */

@@ -180,6 +180,16 @@ export function groupDrawn(monsters: readonly string[]): string[] {
 // A sign as the log shows it: game/inscriptions.ts has it, beside an inscription's reading.
 export { signLine };
 
+/**
+ * The region whose sky a square of a played map is under: its zone's on the outdoors, else the
+ * map's own. Throws, naming the map and the square, where neither names one: no sky is lent (#945).
+ */
+export function regionOf(m: GameMap, x: number, y: number): RegionId {
+  const r = m.zoneAt(x, y)?.region ?? m.def.region;
+  if (!r) throw new Error(`map '${m.id}' names no region, nor does a zone at ${x},${y}`);
+  return r;
+}
+
 export class World {
   readonly maps: Record<string, GameMap>;
   state: WorldState;
@@ -202,7 +212,8 @@ export class World {
       this.state = { mapId: first.id, x: first.def.start.x, y: first.def.start.y, facing: first.def.start.facing, minutes: START_MINUTES, maps: {}, light: 0, truce: 0, truceGroups: [], steps: 0, zones: [] };
       // The company sets out on a dry, clear morning: draw seeds until the first hours are fair.
       let seed = 0;
-      for (let i = 0; i < 64; i++) { seed = rng.int(1, 0x7ffffffe); if (fairStart(seed, START_MINUTES, CLIMATES[first.def.region ?? 'shelf'])) break; }
+      const climate = CLIMATES[regionOf(first, first.def.start.x, first.def.start.y)];
+      for (let i = 0; i < 64; i++) { seed = rng.int(1, 0x7ffffffe); if (fairStart(seed, START_MINUTES, climate)) break; }
       this.state.weatherSeed = seed;
     }
     this.state.weatherSeed ??= LEGACY_WEATHER_SEED;
@@ -279,7 +290,7 @@ export class World {
   }
 
   // ---- weather ----
-  get region(): RegionId { return this.zone?.region ?? this.map.def.region ?? 'shelf'; }
+  get region(): RegionId { return regionOf(this.map, this.state.x, this.state.y); }
   get climate(): Climate { return CLIMATES[this.region]; }
   /** The weather in this map's region now; also the weather over a dungeon, though nobody there sees it. */
   get weather(): Weather {
@@ -301,14 +312,16 @@ export class World {
   }
 
   /**
-   * Whether a thing with a time to walk is in the world now, at a square of this map: in its hours
-   * (under the sky of that square's region) and past its `after`. `until` is `ended`'s.
+   * Whether a thing with a time to walk is in the world now, at a square of a map: in its hours
+   * (under the sky of that square's region) and past its `after`. `until` is `ended`'s. The map is
+   * the one the party is on unless named; a zone map's square is read where the outdoors lays it.
    */
-  walks(p: Presence, x: number, y: number): boolean {
+  walks(p: Presence, x: number, y: number, on?: string): boolean {
     if (p.after && !holds(p.after, this.state, this.party)) return false;
     if (!p.when) return true;
-    const m = this.map, region = m.zoneAt(x, y)?.region ?? m.def.region ?? 'shelf';
-    return hoursHold(p.when, this.state.minutes, m.kind === 'dungeon' ? null : this.weatherIn(region));
+    const at = on === undefined ? { mapId: this.state.mapId, x, y } : this.locate(on, x, y), m = this.maps[at.mapId];
+    if (!m) throw new Error(`unknown map '${on}'`);
+    return hoursHold(p.when, this.state.minutes, m.kind === 'dungeon' ? null : this.weatherIn(regionOf(m, at.x, at.y)));
   }
 
   /** Whether a thing's `until` holds: a group stops coming back (one that `leaves` is gone), a person or an event is gone. */
@@ -864,11 +877,11 @@ export class World {
   /**
    * Whether a feature is there now. A person, an event, a business, a shrine or a fountain wears a
    * presence, as a group does: there only in its `when`, once its `after` holds and until its `until` does. Everything
-   * else always is, having none.
+   * else always is, having none. A feature of another map than the party's names it (`walks`).
    */
-  present(f: Feature): boolean {
+  present(f: Feature, on?: string): boolean {
     const p = f as Presence;
-    return this.walks(p, f.x, f.y) && !this.ended(p);
+    return this.walks(p, f.x, f.y, on) && !this.ended(p);
   }
 
   /** Event and sign texts for the party's cell; once-only events are marked used, and inscriptions a reader reads kept read. */

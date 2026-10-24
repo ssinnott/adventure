@@ -567,7 +567,7 @@ export function gate(): void {
     const won = rate(band, 2);
     ok(gateAnswer(band)?.label === 'Refuse' && !gateAnswer({ choice: undefined }) && won === rate({ monsters: band.monsters }, 2),
       `the gate's bot refuses a toll and fights the group, its figure the group's own (${pc(won)} won at 2)`);
-    const stair: MapDef = { id: 'fx_stair', name: 'Fixture Stair', kind: 'outdoor', density: 'country', start: { x: 0, y: 1, facing: EAST }, rows: [',,,,', ',,,,', ',,,,'], encounters: [band] };
+    const stair: MapDef = { id: 'fx_stair', name: 'Fixture Stair', kind: 'outdoor', region: 'shelf', density: 'country', start: { x: 0, y: 1, facing: EAST }, rows: [',,,,', ',,,,', ',,,,'], encounters: [band] };
     const walk = (gold: number): { p: Party; w: World; at: ReturnType<World['move']> } => {
       const p = gateCompany(2, 1); p.gold = gold;
       const w = new World({ fx_stair: new GameMap(stair) }, p, makeRng(1));

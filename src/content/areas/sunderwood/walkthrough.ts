@@ -863,7 +863,7 @@ function shows(w: Walk, map: string, id: string): boolean {
   const d = MAP_DEFS.find((m) => m.id === map)!;
   const f = [...(d.features ?? []), ...(d.encounters ?? [])].find((x) => 'id' in x && x.id === id) as Feature | EncounterDef;
   w.world.travel(map, f.x, f.y);
-  return 'monsters' in f ? w.world.walks(f, f.x, f.y) && !w.world.ended(f) : w.world.present(f);
+  return 'monsters' in f ? w.world.walks(f, f.x, f.y, map) && !w.world.ended(f) : w.world.present(f, map);
 }
 
 /** A quest done with no goal, its entries those `want` names and none of `not`, finished once. */

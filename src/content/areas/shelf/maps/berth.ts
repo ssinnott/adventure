@@ -13,6 +13,7 @@ export const BERTH: MapDef = {
   name: 'The Berth',
   kind: 'dungeon',
   band: [4, 5],
+  region: 'shelf',
   start: { x: 14, y: 7, facing: WEST },
   palette: { wall: '#c8c2b0', wallDark: '#8e887a', floor: '#6e6a60', ceiling: '#4a4640', door: '#5a5448', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#23306e' },
   rows: [

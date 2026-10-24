@@ -1029,10 +1029,10 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
     for (const g of gs) {
       w.world.travel(n.map, p.x, p.y);
       until(w, 12);
-      const byDay = w.world.walks(g, g.x, g.y);
+      const byDay = w.world.walks(g, g.x, g.y, n.map);
       until(w, 1);
-      const later = gs.slice(gs.indexOf(g) + 1).some((x) => w.world.walks(x, x.x, x.y));
-      ok(!byDay && w.world.walks(g, g.x, g.y) && !later && !g.respawn && g.roams === false,
+      const later = gs.slice(gs.indexOf(g) + 1).some((x) => w.world.walks(x, x.x, x.y, n.map));
+      ok(!byDay && w.world.walks(g, g.x, g.y, n.map) && !later && !g.respawn && g.roams === false,
         `${n.how}: ${g.id}, ${g.monsters.length} of them, come by night and not by day, none after them yet, and never again once down`);
       fight(w, `${n.map}:${g.id}`);
     }

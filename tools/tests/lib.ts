@@ -141,7 +141,8 @@ export function headlessGame(seed = 4, party?: Party): Game {
  */
 export function headlessLoad(save: string): Game {
   const g = typing(new Game({ getItem: (key) => (key === SAVE_KEY ? save : null), setItem: () => {}, removeItem: () => {} }));
-  if (!g.loadGame()) throw new Error('the save would not load');
+  const loaded = g.loadGame();
+  if (loaded !== true) throw new Error(`the save would not load: ${loaded}`);
   return g;
 }
 

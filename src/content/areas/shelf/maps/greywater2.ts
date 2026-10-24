@@ -9,6 +9,7 @@ export const GREYWATER2: MapDef = {
   name: 'The Seam',
   kind: 'dungeon',
   band: [3, 5],
+  region: 'shelf',
   start: { x: 1, y: 1, facing: SOUTH },
   palette: { wall: '#5a6a6a', wallDark: '#3a4646', floor: '#2e3a3a', ceiling: '#222a2a', door: '#4a5a5a', wallStyle: 'brick', ceilingStyle: 'vault', banner: '#6a2a2a' },
   rows: [

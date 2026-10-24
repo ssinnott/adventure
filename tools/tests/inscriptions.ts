@@ -27,7 +27,7 @@ const STORE = 'Cut over the wall, the dwarves\' words for plenty.', BREATH = 'Th
 
 /** A hall of two rooms, a secret door between them that the first inscription hints at, a second that marks two places, and a plain sign. */
 const FIXTURE: MapDef = {
-  id: 'fixture_kiln', name: 'Kiln fixture', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH },
+  id: 'fixture_kiln', name: 'Kiln fixture', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: NORTH },
   rows: ['#######', '#.....#', '###S###', '#.....#', '#######'],
   secrets: [{ x: 3, y: 2, hint: 'fx_store' }],
   features: [

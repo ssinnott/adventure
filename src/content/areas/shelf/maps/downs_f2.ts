@@ -12,6 +12,7 @@ export const DOWNS_F2: MapDef = {
   kind: 'outdoor',
   density: 'country',
   band: [2, 3],
+  region: 'shelf',
   start: { x: 31, y: 29, facing: WEST },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',

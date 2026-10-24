@@ -183,10 +183,12 @@ const forged: string[] = [];
 function forge(base: ItemDef, more: { bonus?: number; ac?: number; hit?: number }, plus: number): string {
   const id = `${base.id}+${plus}${more.hit ? `^${more.hit}` : ''}`;
   if (!ITEMS[id]) {
-    ITEMS[id] = { ...base, id, name: `${base.name} +${plus}` };
-    if (more.bonus !== undefined) ITEMS[id].bonus = (base.bonus ?? 0) + more.bonus;
-    if (more.ac !== undefined) ITEMS[id].ac = (base.ac ?? 0) + more.ac;
-    if (more.hit !== undefined) ITEMS[id].plus = (base.plus ?? 0) + more.hit;
+    const copy: ItemDef = { ...base, id, name: `${base.name} +${plus}` };
+    if (more.bonus !== undefined) copy.bonus = (base.bonus ?? 0) + more.bonus;
+    if (more.ac !== undefined) copy.ac = (base.ac ?? 0) + more.ac;
+    if (more.hit !== undefined) copy.plus = (base.plus ?? 0) + more.hit;
+    // The item table is read-only by type (#945): `forge` and `unforge` write it by this cast, as `withDefs` does.
+    (ITEMS as Record<string, ItemDef>)[id] = copy;
     forged.push(id);
   }
   return id;
@@ -197,7 +199,8 @@ function forge(base: ItemDef, more: { bonus?: number; ac?: number; hit?: number 
  * in them (made under `gearGrows`), so a what-if's gear is left behind nowhere (#946).
  */
 export function unforge(): void {
-  for (const id of forged.splice(0)) delete ITEMS[id];
+  // Read-only by type: taken out by the cast `forge` put them in by (#945).
+  for (const id of forged.splice(0)) delete (ITEMS as Record<string, ItemDef>)[id];
   for (const key of [...companies.keys()]) if (/^(newer:)?\d+:\d+:gear/.test(key)) companies.delete(key);
 }
 

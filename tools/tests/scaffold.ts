@@ -80,7 +80,7 @@ export async function scaffold(): Promise<void> {
   const def = await written(d, 'downs', AT[0], AT[1]);
   ok(def.rows.length === SIZE && def.rows.every((r) => r.length === SIZE), `the draft as written is ${SIZE} by ${SIZE}`);
   const band = zone.band ?? atlas.areas.find((a) => a.id === zone.area)?.band;
-  ok(def.id === zone.id && def.name === zone.name && def.kind === 'outdoor' && def.density === 'country' && def.band?.join('-') === band?.join('-') && def.region === undefined, `it takes the zone's id, name and band, the Foreland's sky, and is country (${def.name}, ${def.band?.join('-')}, ${def.density})`);
+  ok(def.id === zone.id && def.name === zone.name && def.kind === 'outdoor' && def.density === 'country' && def.band?.join('-') === band?.join('-') && def.region === 'shelf', `it takes the zone's id, name and band, the Foreland's region, and is country (${def.name}, ${def.band?.join('-')}, ${def.density})`);
   const has = (t: 'hills' | 'farm' | 'forest' | 'road'): boolean => (d.counts[t] ?? 0) > 0;
   ok(has('hills') && has('farm') && has('forest') && has('road'), `its hills, farmland, forest and road come through (${['hills', 'farm', 'forest', 'road'].map((t) => `${t} ${d.counts[t as 'hills'] ?? 0}`).join(', ')})`);
 
@@ -126,8 +126,8 @@ export async function scaffold(): Promise<void> {
   const mod = 'refused' in named ? {} : await exported(named, 'downs', AT[0], AT[1]);
   ok(Object.keys(mod).join() === 'CALLOW_F2' && mod.CALLOW_F2?.id === 'callow_f2', `a draft cut with the id callow_f2 is written as it, exported as CALLOW_F2 (${Object.keys(mod).join()})`);
 
-  // A zone of another area with a region of its own shares that area's sky; one with none yet shares
-  // the Foreland's, and the header says so. The rule, not today's paint: the Downs moved to Thornmark.
+  // A zone of another area with a region of its own shares that area's sky; one with none yet names
+  // none, and the header says so. The rule, not today's paint: the Downs moved to Thornmark.
   const moved: Atlas = { ...atlas, zones: atlas.zones.map((z) => (z.id === 'downs' ? { ...z, area: 'thornmark' } : z)) };
   const sky = async (regions: readonly string[]): Promise<{ region?: string; told: boolean }> => {
     const r = cut(moved, defs, g0, regions, 'downs', AT[0], AT[1]);
