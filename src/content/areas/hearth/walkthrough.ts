@@ -41,7 +41,7 @@ import { apartFrom } from '../../../../tools/kit/grid.ts';
 import type { Walk, Step } from '../../../../tools/kit/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
-import { ATLAS, MAP_DEFS, QUESTS, AREAS, MONSTERS } from '../../index.ts';
+import { ATLAS, MAP_DEFS, QUESTS, AREAS, MONSTERS, TABLES } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
@@ -159,8 +159,8 @@ function vigilLocked(ok: (cond: boolean, msg: string) => void): void {
  * no person, quest or world-map mark names it, and it lies off the road, where the measure is named.
  */
 function vigilFinds(ok: (cond: boolean, msg: string) => void): void {
-  const [mace, robe] = [item('levin_mace'), item('vigil_robe')];
-  const [slag, blade, grey] = [item('slag_mace'), item('grey_blade'), item('grey_robe')];
+  const [mace, robe] = [item(TABLES.items, 'levin_mace'), item(TABLES.items, 'vigil_robe')];
+  const [slag, blade, grey] = [item(TABLES.items, 'slag_mace'), item(TABLES.items, 'grey_blade'), item(TABLES.items, 'grey_robe')];
   ok(mace.slot === 'weapon' && mace.element === 'lightning' && !mace.stat && !mace.plus && mace.dice === slag.dice && mace.sides === slag.sides && mace.bonus === slag.bonus && same(mace.classes, slag.classes) && same(mace.classes, blade.classes) && mace.name.length <= 26,
     `the Levin Mace is the Slag Mace's steel with lightning on it, for the Grey Blade's classes, its name ${mace.name.length} characters of the sheet's 26`);
   ok(hits(mace) - hits(slag) === 3.5 && hits(slag) < hits(blade) && hits(blade) < hits(mace),
@@ -170,10 +170,10 @@ function vigilFinds(ok: (cond: boolean, msg: string) => void): void {
   // Priced, in the window, never sold, off the ladder, sold back at half.
   const stocked = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : []))));
   const ladder = new Set(GEAR.flatMap(([, ids]) => ids)), dropped = new Set(Object.values(MONSTERS).flatMap((m) => (m.drops ?? []).map((x) => x.item)));
-  const limit = CURVE.hearth.price, dearest = item('grey_mail').price, six = defaultParty(makeRng(1));
+  const limit = CURVE.hearth.price, dearest = item(TABLES.items, 'grey_mail').price, six = defaultParty(TABLES, makeRng(1));
   for (const d of [mace, robe]) {
-    ok(d.price > 0 && d.price < dearest && d.price <= limit && !stocked.has(d.id) && !ladder.has(d.id) && !dropped.has(d.id) && sellPrice(six, d.price) === d.price / 2,
-      `${d.name} costs ${d.price} of Hearth Isle's window of ${limit} and under the Grey Mail's ${dearest}, is sold by no shop, worn by no rung of the ladder and dropped by no monster, and sells back at ${sellPrice(six, d.price)}`);
+    ok(d.price > 0 && d.price < dearest && d.price <= limit && !stocked.has(d.id) && !ladder.has(d.id) && !dropped.has(d.id) && sellPrice(TABLES.items, six, d.price) === d.price / 2,
+      `${d.name} costs ${d.price} of Hearth Isle's window of ${limit} and under the Grey Mail's ${dearest}, is sold by no shop, worn by no rung of the ladder and dropped by no monster, and sells back at ${sellPrice(TABLES.items, six, d.price)}`);
   }
   // Where they lie: the cell's two chests, the grey-banded one the area's only locked chest.
   const hearth = AREAS.find((a) => a.id === 'hearth')!;
@@ -183,14 +183,14 @@ function vigilFinds(ok: (cond: boolean, msg: string) => void): void {
     && chest(RIM, 'i6_vigil_locked').gold === 0 && chest(RIM, 'i6_vigil_chest').gold === 0,
     `the Levin Mace lies in the grey-banded chest and the robe in the plain chest beside it, no gold with either, and the grey-banded chest is the only locked one the isle places (${locked.join() || 'none'})`);
   // The raise and the blow, on the real items: worn, the robe adds 3 to personality and not to the bare stat, and to what the cleric heals; carried it adds nothing; and the classes that cannot wield the mace are refused.
-  const crew = defaultParty(makeRng(1)), cleric = crew.members.find((m) => m.cls === 'cleric')!, paladin = crew.members.find((m) => m.cls === 'paladin')!;
-  const bare = statOf(cleric, 'personality'), healed = spellHeal(cleric, 20);
+  const crew = defaultParty(TABLES, makeRng(1)), cleric = crew.members.find((m) => m.cls === 'cleric')!, paladin = crew.members.find((m) => m.cls === 'paladin')!;
+  const bare = statOf(TABLES.items, cleric, 'personality'), healed = spellHeal(TABLES.items, cleric, 20);
   cleric.pack.push(robe.id);
-  const carried = statOf(cleric, 'personality');
+  const carried = statOf(TABLES.items, cleric, 'personality');
   cleric.pack.pop();
-  ok(equip(cleric, robe.id) && carried === bare && statOf(cleric, 'personality') === bare + 3 && cleric.stats.personality === bare && spellHeal(cleric, 20) === healed + 1
-    && equip(paladin, mace.id) && paladin.equipment.weapon === mace.id && !equip(crew.members.find((m) => m.cls === 'sorcerer')!, mace.id) && !equip(crew.members.find((m) => m.cls === 'thief')!, mace.id),
-    `worn, the robe raises the cleric's personality ${bare} to ${statOf(cleric, 'personality')} (carried, nothing) and her heal ${healed} to ${spellHeal(cleric, 20)}, and the paladin wields the mace; the sorcerer and the thief cannot`);
+  ok(equip(TABLES.items, cleric, robe.id) && carried === bare && statOf(TABLES.items, cleric, 'personality') === bare + 3 && cleric.stats.personality === bare && spellHeal(TABLES.items, cleric, 20) === healed + 1
+    && equip(TABLES.items, paladin, mace.id) && paladin.equipment.weapon === mace.id && !equip(TABLES.items, crew.members.find((m) => m.cls === 'sorcerer')!, mace.id) && !equip(TABLES.items, crew.members.find((m) => m.cls === 'thief')!, mace.id),
+    `worn, the robe raises the cleric's personality ${bare} to ${statOf(TABLES.items, cleric, 'personality')} (carried, nothing) and her heal ${healed} to ${spellHeal(TABLES.items, cleric, 20)}, and the paladin wields the mace; the sorcerer and the thief cannot`);
   // Lightning against what the isle places: none of its monsters is immune or resists it; the weak are named.
   const placed = [...new Set(hearth.maps.flatMap((m) => (m.encounters ?? []).flatMap((e) => e.monsters)))].map((id) => MONSTERS[id]).filter((m) => m.level > 10);
   const weak = placed.filter((m) => elementMult(m, 'lightning') > 1), shut = placed.filter((m) => elementMult(m, 'lightning') < 1);
@@ -279,7 +279,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const asks = [aelfric, talwyn, pasco].map((p) => { w.world.travel('hearthisle_h6', p.x, p.y); return meet(p, w.party, heard(w.world, p)).choice?.ask ?? ''; });
   ok(asks.join('|') === 'Take the Wardens\' badge down?|Take the hold\'s seal down?|Take Tallis\'s tally down?' && !!w.party.flags[PILGRIMS] && !!questLog(w.world.state, w.party).find((v) => v.def.id === 'bowl_pilgrims' && !v.done),
     'Aelfric, Talwyn and Pasco each ask their token carried down, and the quest begins');
-  const take = (p: Person, w: Walk): string => answer(p.choice!.answers.find((a) => a.label === 'Take it.')!, w.party);
+  const take = (p: Person, w: Walk): string => answer(TABLES.items, p.choice!.answers.find((a) => a.label === 'Take it.')!, w.party);
   ok(take(aelfric, w).includes('pins it to your sleeve') && !!w.party.flags[TOKEN_COUSIN] && w.party.bag.includes('wardens_badge')
     && !w.world.present(talwyn) && !w.world.present(pasco) && w.world.present(aelfric)
     && !!questLog(w.world.state, w.party).find((v) => v.def.id === 'bowl_pilgrims' && !v.done && v.goal === 'Carry the token down the stair under the temple.'),
@@ -422,7 +422,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'hearthfane:hf_nave');
   fight(w, 'hearthfane:hf_moths');
   w.world.travel('hearthfane', 8, 10);
-  const reader = !!readerOf(w.party), plain = w.world.eventsHere().join(' ');
+  const reader = !!readerOf(TABLES.items, w.party), plain = w.world.eventsHere().join(' ');
   w.party.bag.push('copybook');
   const read = w.world.eventsHere().join(' ');
   w.party.bag.splice(w.party.bag.indexOf('copybook'), 1);
@@ -446,7 +446,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // swarm won at 28. Then the pillar's order, which still works: each lamp out in its turn, and stays out.
   const [sea, shore, house, hearthLamp] = ['The Sea lamp', 'The Shore lamp', 'The House lamp', 'The Hearth lamp'].map(inFane);
   const swarm = (): boolean => w.world.liveGroups().some((g) => g.def.id === 'hf_swarm');
-  const pinch = (p: Person): string => answer(talk(p).choice!.answers[0], w.party);
+  const pinch = (p: Person): string => answer(TABLES.items, talk(p).choice!.answers[0], w.party);
   const calm = !swarm();
   ok(calm && pinch(shore).includes('the rest flare') && !!w.party.flags[LAMPS_WRONG] && !w.party.flags.lamp_shore && w.world.present(shore) && swarm(),
     'the Shore lamp put out first is wrong: the others flare, the swarm comes, and the lamp burns on');
@@ -464,7 +464,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const apart = (n: Walk) => {
     const say = (p: Person) => { n.world.travel('hearthfane', p.x, p.y); return meet(p, n.party, heard(n.world, p)); };
     const log = () => questLog(n.world.state, n.party).find((v) => v.def.id === 'lamps');
-    return { n, say, pinch: (p: Person): string => answer(say(p).choice!.answers[0], n.party), log, asked: () => !!log()?.pages[0].entries.some((e) => e.id === 'asked') };
+    return { n, say, pinch: (p: Person): string => answer(TABLES.items, say(p).choice!.answers[0], n.party), log, asked: () => !!log()?.pages[0].entries.some((e) => e.id === 'asked') };
   };
   const first = apart(newWalk(ok));
   first.pinch(shore);
@@ -477,7 +477,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const quiet = !all.log(), offer2 = all.say(sacristan);
   ok(turns.every((x) => x) && !!all.n.party.flags[LAMPS_OUT] && quiet && offer2.text.includes('Gone. Every one of them') && !!all.n.party.flags[LAMPS] && all.asked()
     && all.log()?.goal === 'Go back to the sacristan under the vestry table.', 'all four lamps out in the pillar\'s order before he is met: his offer begins the quest, with its entry and its goal');
-  answer(offer2.choice!.answers.find((a) => a.label === 'Take the key.')!, all.n.party);
+  answer(TABLES.items, offer2.choice!.answers.find((a) => a.label === 'Take the key.')!, all.n.party);
   ok(all.n.party.bag.includes(FANE_KEY) && all.log()?.done === true, 'and taking the key ends it');
 
   // The treasury's door: shut with no key and shut to an iron key, which it leaves whole; the sacristan's
@@ -490,7 +490,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(keyless === 'blocked' && iron === 'blocked' && whole, 'the treasury\'s door stays shut with no key, and to an iron key, which it leaves whole');
   const xp = w.party.members[0].xp;
   const offer = talk(sacristan);
-  const took = answer(offer.choice!.answers.find((a) => a.label === 'Take the key.')!, w.party);
+  const took = answer(TABLES.items, offer.choice!.answers.find((a) => a.label === 'Take the key.')!, w.party);
   ok(offer.text.includes('Gone. Every one of them') && took.includes('warm from his belt') && w.party.bag.includes(FANE_KEY) && !!w.party.flags[LAMPS_KEY]
     && w.party.members[0].xp - xp === 500 && !!questLog(w.world.state, w.party).find((v) => v.def.id === 'lamps' && v.done), 'the sacristan gives the treasury\'s key, the company 3,000 experience between them, and the quest is done');
   listen(w);
@@ -647,7 +647,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const from = (p: Person): { x: number; y: number; f: Facing } => p === knocker ? { x: 28, y: 6, f: EAST } : { x: 3, y: 10, f: WEST };
   const pay = (v: Walk, p: Person, label: string): number => {
     const xp = v.party.members[0].xp, at = from(p);
-    answer(speak(v, p, at.x, at.y, at.f).choice!.answers.find((a) => a.label === label)!, v.party);
+    answer(TABLES.items, speak(v, p, at.x, at.y, at.f).choice!.answers.find((a) => a.label === label)!, v.party);
     return v.party.members[0].xp - xp;
   };
   ok(!!log(w, 'crack') && !log(w, 'crack')!.done, 'at the crack, The Knocker That Stopped begins');
@@ -670,7 +670,7 @@ export const walkthrough: Walkthrough = (ok) => {
   fight(w, 'underdeep:ud_crew_guard');
   const stepOn = (v: Walk): string => { const r = v.world.move('forward'); return r.kind === 'moved' ? r.messages.join(' ') : r.kind === 'blocked' ? `(${r.reason})` : ''; };
   w.world.travel('underdeep', 5, 10, WEST);
-  const lettered = !!readerOf(w.party), unread = stepOn(w);
+  const lettered = !!readerOf(TABLES.items, w.party), unread = stepOn(w);
   w.party.bag.push('copybook');
   const marks = w.world.eventsHere().join(' ');
   w.party.bag.splice(w.party.bag.indexOf('copybook'), 1);
@@ -825,7 +825,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const asked = speakTo(w, wenna);
   ok(asked.text.includes('"I\'m not anyone\'s key."') && !!w.party.flags[RING_GIVEN] && asked.choice?.answers.map((a) => a.label).join() === 'Light it again.,Open the hull.',
     'the girl takes the ring off his finger and puts it in the company\'s hand: two answers without Fane\'s map');
-  const relit = asked.choice!.answers[0], said = answer(relit, w.party);
+  const relit = asked.choice!.answers[0], said = answer(TABLES.items, relit, w.party);
   ok(!!w.party.flags[END_REIGNITE] && said.includes('like a tide coming in') && endingTaken(relit, w.party.flags) === ENDINGS.reignite && ENDINGS.reignite.pages.length === 3 && w.party.bag.includes(SIGNET),
     'Light it again.: its flag set, its three pages shown as it is taken, and the ring in the pack');
   const after = speakTo(w, wenna);
@@ -840,13 +840,13 @@ export const walkthrough: Walkthrough = (ok) => {
   // Each other answer once, on a walk of its own from the voice: Open the hull.; and with Fane's map the
   // third, Make it finish., which no company without the map is offered.
   const fallen = (...flags: string[]): Walk => { const v = newWalk(ok); for (const f of [VASK_FALLEN, VOICE_WHOLE, ...flags]) v.party.flags[f] = 1; v.world.travel('core', 8, 9); return v; };
-  const hull = fallen(), hulled = speakTo(hull, wenna).choice!.answers.find((a) => a.label === 'Open the hull.')!, hullSaid = answer(hulled, hull.party);
+  const hull = fallen(), hulled = speakTo(hull, wenna).choice!.answers.find((a) => a.label === 'Open the hull.')!, hullSaid = answer(TABLES.items, hulled, hull.party);
   ok(!!hull.party.flags[END_ARRIVE] && hullSaid.includes('you hear wind') && endingTaken(hulled, hull.party.flags) === ENDINGS.arrive && hull.party.bag.includes(SIGNET)
     && speakTo(hull, wenna).text.includes('I want to see what it looks like from outside.'), 'Open the hull.: its flag, its pages and the ring, and her words after it');
   const charted = fallen('meridian_map'), offered = speakTo(charted, wenna), finish = offered.choice?.answers.find((a) => a.label === 'Make it finish.');
   ok(offered.text.includes('the oilcloth roll in your pack') && !!charted.party.flags[RING_GIVEN] && offered.choice?.answers.length === 3 && !!finish,
     'with Fane\'s map she looks at the oilcloth roll in the pack, and the third answer is put; the ring is given all the same');
-  answer(finish!, charted.party);
+  answer(TABLES.items, finish!, charted.party);
   ok(!!charted.party.flags[END_FINISH] && endingTaken(finish!, charted.party.flags) === ENDINGS.finish && charted.party.bag.includes(SIGNET) && speakTo(charted, wenna).text.includes('"It\'s moving," she says.'),
     'Make it finish.: its flag, its pages and the ring, and her words after it');
 
@@ -1120,7 +1120,7 @@ const CHOOSE = (label: string, put: number): Step => ({ name: `the choice, ${lab
   const a = asked.choice?.answers.find((x) => x.label === label);
   w.ok(!!a && asked.choice!.answers.length === put, `she puts the question again, ${put} answers to it (${asked.choice?.answers.map((x) => x.label).join(' ')})`);
   if (!a) return;
-  answer(a, w.party);
+  answer(TABLES.items, a, w.party);
   w.ok(endingTaken(a, w.party.flags)?.pages.length === 3, `${label} taken, its three pages shown`);
   listen(w);
 } });

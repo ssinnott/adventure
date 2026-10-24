@@ -10,6 +10,7 @@ import type { Party } from './party.ts';
 import { giftOf, give } from './wilds.ts';
 import { item } from './items.ts';
 import { lookKey } from './keys.ts';
+import type { Items } from './tables.ts';
 
 export type Den = Extract<Feature, { kind: 'den' }>;
 
@@ -51,8 +52,8 @@ export function pace(world: World): void {
 }
 
 /** The hoard in words, as the burning gives it; '' for none. */
-export function hoardLine(den: Den): string {
-  const got = [...(den.gold ? [`${den.gold} gold`] : []), ...den.items.map((id) => item(id).name)];
+export function hoardLine(items: Items, den: Den): string {
+  const got = [...(den.gold ? [`${den.gold} gold`] : []), ...den.items.map((id) => item(items, id).name)];
   return got.length ? `The hoard: ${got.join(', ')}.` : '';
 }
 
@@ -70,8 +71,8 @@ export function approach(world: World, den: Den): { lines: string[]; ask: boolea
 export function burn(world: World, party: Party, den: Den): string[] {
   if (burnt(world, den) || !keepersDead(world, den)) return [];
   world.markUsed(den.id);
-  give(party, giftOf(den)!);
-  const hoard = hoardLine(den);
+  give(world.tables.items, party, giftOf(den)!);
+  const hoard = hoardLine(world.tables.items, den);
   return [den.burnt, ...(hoard ? [hoard] : [])];
 }
 

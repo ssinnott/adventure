@@ -56,7 +56,7 @@ import { GameMap } from '../../../game/map.ts';
 import type { Can } from '../../../game/map.ts';
 import type { Feature } from '../../../game/mapdef.ts';
 import { LOCKS } from '../../locks.ts';
-import { ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
+import { ATLAS, MAP_DEFS, MONSTERS, TABLES } from '../../index.ts';
 import { DROVE_COACH } from '../../crossings.ts';
 import { buy, item, hits, ELEMENT_DIE } from '../../../game/items.ts';
 import { CLASSES, canTrainAt, xpForLevel } from '../../../game/party.ts';
@@ -102,7 +102,7 @@ function captain(w: Walk): void {
   p.flags[rankFlag('wardens')] = 3; p.flags[FOURTH_RANKS_OPEN] = 1;
   p.flags[takenFlag('wardens_cages')] = p.flags[doneFlag('wardens_cages')] = 1;
   const q = GUILD_QUESTS.find((g) => g.id === 'wardens_hole')!;
-  const said = take(q, w.world.state, p);
+  const said = take(TABLES, q, w.world.state, p);
   w.ok(said.length === 2 && said[0].startsWith(q.early![0]) && said[1] === 'Your rank with the Wardens is now Captain.' && rankOf('wardens', p) === 4,
     `the fourth night fought, the Wardens' ask is paid at the taking, and a company that found the cages is made a Captain (${said.join(' ').replace(/\n+/g, ' ')})`);
 }
@@ -260,7 +260,7 @@ export const walkthrough: Walkthrough = (ok) => {
   w.party.gold = 40000;
   const furrier = ofKind(TOWN, 'shop').find((f) => f.interior === 'rime_furrier')!, rung = ACT_III.find((r) => r.level === 21)!;
   ok(furrier.stock.length === FURRIER.length && FURRIER.every((id) => furrier.stock.includes(id)), `the furrier's sells the act's last step, all ${FURRIER.length} wares and nothing else`);
-  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, furrier, id), `${m.name} buys a ${item(id).name} at the furrier's`);
+  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(TABLES.items, w.party, furrier, id), `${m.name} buys a ${item(TABLES.items, id).name} at the furrier's`);
   const stores = ofKind(TOWN, 'shop').find((f) => f.interior === 'rime_provisioner')!;
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => stores.stock.includes(id)) && !stores.stock.some((id) => FURRIER.includes(id)), 'the provisioner\'s sells provisions and lamp oil, and no gear');
   const hall = ofKind(TOWN, 'guild')[0];
@@ -836,7 +836,7 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const into = gives ? [w.world.move('forward'), w.world.move('forward')] : [];
   ok(gives && into.every((r) => r.kind === 'moved') && w.world.used('sb2_locker'), 'searched where the path stops, the back wall gives on the locker');
   const locker = B2.features!.find((f) => f.kind === 'chest' && f.id === 'sb2_locker_chest');
-  ok(locker?.kind === 'chest' && locker.items.join() === 'hunters_bow+1,plate+4' && locker.gold === 1500 && item('hunters_bow+1').name === 'Bogha Fionn +1' && item('plate+4').name === 'Luireach Dubh +4',
+  ok(locker?.kind === 'chest' && locker.items.join() === 'hunters_bow+1,plate+4' && locker.gold === 1500 && item(TABLES.items, 'hunters_bow+1').name === 'Bogha Fionn +1' && item(TABLES.items, 'plate+4').name === 'Luireach Dubh +4',
     'in the locker, four hundred years of pockets: 1,500 gold, Bogha Fionn and Luireach Dubh');
   listen(w);
 }
@@ -1311,11 +1311,11 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   // blows, which stops a troll mending. No shop sells it, no other chest or cairn holds it and no monster drops it.
   const hoard = CF.features!.find((f) => f.kind === 'chest' && f.id === 'cf_hoard');
   ok(hoard?.kind === 'chest' && hoard.gold === 400 && hoard.items.join() === 'trollbrand' && hoard.x === 11 && hoard.y === 14
-    && item('trollbrand').element === 'fire' && !!MONSTERS.snow_troll.regen
-    && hits(item('trollbrand')) === hits(item('bear_spear')) + (ELEMENT_DIE + 1) / 2 && hits(item('trollbrand')) > hits(item('bear_spear+1'))
+    && item(TABLES.items, 'trollbrand').element === 'fire' && !!MONSTERS.snow_troll.regen
+    && hits(item(TABLES.items, 'trollbrand')) === hits(item(TABLES.items, 'bear_spear')) + (ELEMENT_DIE + 1) / 2 && hits(item(TABLES.items, 'trollbrand')) > hits(item(TABLES.items, 'bear_spear+1'))
     && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('trollbrand')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== hoard && (f.items ?? []).includes('trollbrand'))))
     && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'trollbrand')),
-    `in the hoard at the cave's back, 400 gold and Trollbrand, a Bear Spear whose blows carry fire, which stops a troll mending, ${hits(item('trollbrand'))} a blow to the Bear Spear +1's ${hits(item('bear_spear+1'))}; no shop sells it, no other chest or cairn holds it and no monster drops it`);
+    `in the hoard at the cave's back, 400 gold and Trollbrand, a Bear Spear whose blows carry fire, which stops a troll mending, ${hits(item(TABLES.items, 'trollbrand'))} a blow to the Bear Spear +1's ${hits(item(TABLES.items, 'bear_spear+1'))}; no shop sells it, no other chest or cairn holds it and no monster drops it`);
   // The secret: the stretch of wall the trolls keep bare, the search there and the larder behind it. Walked,
   // waded, climbed or floated, it is never reached but through its wall.
   const larder = [[12, 9], [13, 9], [12, 10], [13, 10]], inside = walked([], ALL);
@@ -1400,7 +1400,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     // The Wakerobe in the locker beside the last bed, one in the world: no other chest, cairn or statue holds
     // it, no shop sells it and no monster drops it.
     const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('wakerobe')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== locker && f.items.includes('wakerobe')) || (f.kind === 'statue' && !!f.gift?.items?.includes('wakerobe'));
-    ok(locker.kind === 'chest' && locker.gold === 0 && locker.items.join() === 'wakerobe' && locker.x === 2 && locker.y === 12 && !!item('wakerobe').artifact && item('wakerobe').ward === 'asleep'
+    ok(locker.kind === 'chest' && locker.gold === 0 && locker.items.join() === 'wakerobe' && locker.x === 2 && locker.y === 12 && !!item(TABLES.items, 'wakerobe').artifact && item(TABLES.items, 'wakerobe').ward === 'asleep'
       && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'wakerobe')),
       'in the locker beside the last bed, the Wakerobe, whose bearer is never put to sleep; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
     // The secret: the sheet that stirs by the east wall, the search there and the cold room behind it.

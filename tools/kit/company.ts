@@ -11,8 +11,9 @@ import type { Tier, Tiers } from '../../src/game/mastery.ts';
 import { blowsOf } from '../../src/game/combat.ts';
 import type { Edge } from '../../src/game/combat.ts';
 import { item, hits } from '../../src/game/items.ts';
-import { ITEMS } from '../../src/content/index.ts';
+import { TABLES } from '../../src/content/index.ts';
 import type { ItemDef } from '../../src/game/items.ts';
+import type { Tables } from '../../src/game/tables.ts';
 import { line } from './line.ts';
 import { areaRows, gather } from './checks.ts';
 import { type BotAnswer } from '../../src/game/bot.ts';
@@ -69,12 +70,25 @@ export function edgeOf(c: Character, round: number, rules: Readonly<Rules> = RUL
   return e;
 }
 
+/**
+ * The harness's own items (#973): content's, and the copies `forge` makes for a what-if, which `unforge`
+ * takes out again. Content's table is never written. Made on no prototype, so that V8 keeps it a
+ * dictionary as it keeps content's: a copy by spread keeps 293 fast properties and looks an item up
+ * two and a half times slower, at every blow of the gate.
+ */
+const OWN: Record<string, ItemDef> = Object.assign(Object.create(null) as Record<string, ItemDef>, TABLES.items);
+/**
+ * The tables the harness and the gate hand to src/game: content's, but for the items, the harness's own.
+ * A worker builds its own as it loads this file, as it builds its rules.
+ */
+export const HARNESS: Tables = { ...TABLES, items: OWN };
+
 /** A ladder's rows: by a level, the items a company has by then. */
 type Rungs = readonly (readonly [number, readonly string[]])[];
 /** The areas' rungs (`AreaChecks.gear`), in road order. */
 const RUNGS = areaRows((c) => c.gear).map(([at, ids]) => [Number(at), ids] as const);
 /** What a company wears (a weapon, armour or a shield), as against what it carries in its bag. */
-const worn = (id: string): boolean => (ITEMS[id]?.slot ?? 'weapon') !== 'none';
+const worn = (id: string): boolean => (OWN[id]?.slot ?? 'weapon') !== 'none';
 /** The areas' rungs of one kind, worn or carried, in the order of their levels. */
 export const ladder = (wear: boolean): Rungs =>
   RUNGS.map(([at, ids]) => [at, ids.filter((id) => worn(id) === wear)] as const).filter(([, ids]) => ids.length).sort((a, b) => a[0] - b[0]);
@@ -100,31 +114,29 @@ export const GEAR: Rungs = ladder(true);
 /** The ladder's top: past it, gear grows only in a what-if (`Rules.gearGrows`). */
 export const GEAR_TOP = GEAR[GEAR.length - 1][0];
 
-/** The ids `forge` has put in the item table, for `unforge` to take out. */
+/** The ids `forge` has put in the harness's items, for `unforge` to take out. */
 const forged: string[] = [];
 
-/** A copy of an item with more to it, for a what-if: kept in the item table under its own id until `unforge`. */
+/** A copy of an item with more to it, for a what-if: kept in the harness's items (`HARNESS`) under its own id until `unforge`. */
 function forge(base: ItemDef, more: { bonus?: number; ac?: number; hit?: number }, plus: number): string {
   const id = `${base.id}+${plus}${more.hit ? `^${more.hit}` : ''}`;
-  if (!ITEMS[id]) {
+  if (!OWN[id]) {
     const copy: ItemDef = { ...base, id, name: `${base.name} +${plus}` };
     if (more.bonus !== undefined) copy.bonus = (base.bonus ?? 0) + more.bonus;
     if (more.ac !== undefined) copy.ac = (base.ac ?? 0) + more.ac;
     if (more.hit !== undefined) copy.plus = (base.plus ?? 0) + more.hit;
-    // The item table is read-only by type (#945): `forge` and `unforge` write it by this cast, as `withDefs` does.
-    (ITEMS as Record<string, ItemDef>)[id] = copy;
+    OWN[id] = copy;
     forged.push(id);
   }
   return id;
 }
 
 /**
- * Takes every copy `forge` made out of the item table again, and the companies kept that were dressed
+ * Takes every copy `forge` made out of the harness's items again, and the companies kept that were dressed
  * in them (made under `gearGrows`), so a what-if's gear is left behind nowhere (#946).
  */
 export function unforge(): void {
-  // Read-only by type: taken out by the cast `forge` put them in by (#945).
-  for (const id of forged.splice(0)) delete (ITEMS as Record<string, ItemDef>)[id];
+  for (const id of forged.splice(0)) delete OWN[id];
   for (const key of [...companies.keys()]) if (/^(newer:)?\d+:\d+:gear/.test(key)) companies.delete(key);
 }
 
@@ -134,23 +146,23 @@ export function unforge(): void {
  * grows as the line's hit points do, and the armour a point every two levels, as the line's to-hit does.
  */
 export function outfit(c: Character, level: number, rules: Readonly<Rules> = RULES): void {
-  const pool = GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids).map(item).filter((d) => !d.classes || d.classes.includes(c.cls));
-  const w = weaponOf(c), shielded = !!c.equipment.shield;
+  const pool = GEAR.filter(([at]) => at <= level).flatMap(([, ids]) => ids).map((id) => item(HARNESS.items, id)).filter((d) => !d.classes || d.classes.includes(c.cls));
+  const w = weaponOf(HARNESS.items, c), shielded = !!c.equipment.shield;
   const weapon = pool.filter((d) => d.slot === 'weapon' && !!d.ranged === !!w.ranged && !(shielded && d.twoHanded) && hits(d) > hits(w)).sort((a, b) => hits(b) - hits(a))[0];
-  if (weapon) equip(c, weapon.id);
-  const worn = c.equipment.armor ? item(c.equipment.armor).ac ?? 0 : 0;
+  if (weapon) equip(HARNESS.items, c, weapon.id);
+  const worn = c.equipment.armor ? item(HARNESS.items, c.equipment.armor).ac ?? 0 : 0;
   const armour = pool.filter((d) => d.slot === 'armor' && (d.ac ?? 0) > worn).sort((a, b) => (b.ac ?? 0) - (a.ac ?? 0))[0];
-  if (armour) equip(c, armour.id);
+  if (armour) equip(HARNESS.items, c, armour.id);
   if (shielded) {
-    const held = item(c.equipment.shield!).ac ?? 0;
+    const held = item(HARNESS.items, c.equipment.shield!).ac ?? 0;
     const shield = pool.filter((d) => d.slot === 'shield' && (d.ac ?? 0) > held).sort((a, b) => (b.ac ?? 0) - (a.ac ?? 0))[0];
-    if (shield) equip(c, shield.id);
+    if (shield) equip(HARNESS.items, c, shield.id);
   }
   if (rules.gearGrows && level > GEAR_TOP) {
-    const held = weaponOf(c), blow = Math.round(hits(held) * (line(level).hp / line(GEAR_TOP).hp - 1));
-    if (blow > 0) equip(c, forge(held, { bonus: blow }, blow));
-    const worn = c.equipment.armor ? item(c.equipment.armor) : null, ac = Math.floor((level - GEAR_TOP) / 2);
-    if (worn && ac > 0) equip(c, forge(worn, { ac }, ac));
+    const held = weaponOf(HARNESS.items, c), blow = Math.round(hits(held) * (line(level).hp / line(GEAR_TOP).hp - 1));
+    if (blow > 0) equip(HARNESS.items, c, forge(held, { bonus: blow }, blow));
+    const worn = c.equipment.armor ? item(HARNESS.items, c.equipment.armor) : null, ac = Math.floor((level - GEAR_TOP) / 2);
+    if (worn && ac > 0) equip(HARNESS.items, c, forge(worn, { ac }, ac));
   }
 }
 
@@ -172,9 +184,9 @@ function prestige(p: Party): void {
     for (let n = prestigesAt(c.level); prestigeOf(c) < n;) takePrestige(c);
     const want = BLOWS_WANT[c.cls];
     if (want && prestigeOf(c)) {
-      const held = weaponOf(c), best = GEAR.filter(([at]) => at <= c.level).flatMap(([, ids]) => ids).concat(want.kit).map(item)
+      const held = weaponOf(HARNESS.items, c), best = GEAR.filter(([at]) => at <= c.level).flatMap(([, ids]) => ids).concat(want.kit).map((id) => item(HARNESS.items, id))
         .filter((d) => d.kind === want.kind && !!d.ranged === !!held.ranged && (!d.classes || d.classes.includes(c.cls))).sort((a, b) => hits(b) - hits(a))[0];
-      if (best && blowsOf({ ...c, equipment: { ...c.equipment, weapon: best.id } }) * hits(best) > blowsOf(c) * hits(held)) equip(c, best.id);
+      if (best && blowsOf(HARNESS.items, { ...c, equipment: { ...c.equipment, weapon: best.id } }) * hits(best) > blowsOf(HARNESS.items, c) * hits(held)) equip(HARNESS.items, c, best.id);
     }
   }
 }
@@ -197,7 +209,7 @@ function tier(p: Party): void {
 }
 
 /** The artifacts in the item tables (`ItemDef.artifact`, #847): one of each in the world, on no rung of the ladder. */
-export const artifactIds = (): string[] => Object.values(ITEMS).filter((d) => d.artifact).map((d) => d.id);
+export const artifactIds = (): string[] => Object.values(OWN).filter((d) => d.artifact).map((d) => d.id);
 
 /**
  * The artifacts a company bears where `rules.artifacts` asks (#847; off unless `--artifacts`): each,
@@ -209,13 +221,13 @@ export const artifactIds = (): string[] => Object.values(ITEMS).filter((d) => d.
  */
 function bear(p: Party, ids: readonly string[]): void {
   for (const id of ids) {
-    const d = item(id), mine = (c: Character): boolean => d.slot !== 'none' && !!c.equipment[d.slot] && !!item(c.equipment[d.slot]!).artifact;
-    const may = (m: Character): boolean => (!d.classes || d.classes.includes(m.cls)) && !mine(m) && (d.slot !== 'shield' || !weaponOf(m).twoHanded)
-      && !(d.twoHanded && m.equipment.shield && item(m.equipment.shield).artifact);
+    const d = item(HARNESS.items, id), mine = (c: Character): boolean => d.slot !== 'none' && !!c.equipment[d.slot] && !!item(HARNESS.items, c.equipment[d.slot]!).artifact;
+    const may = (m: Character): boolean => (!d.classes || d.classes.includes(m.cls)) && !mine(m) && (d.slot !== 'shield' || !weaponOf(HARNESS.items, m).twoHanded)
+      && !(d.twoHanded && m.equipment.shield && item(HARNESS.items, m.equipment.shield).artifact);
     // A weapon of the reach they hold where anyone may bear it so, else of the other: its power is borne from either row.
-    const c = p.members.find((m) => may(m) && (d.slot !== 'weapon' || !!d.ranged === !!weaponOf(m).ranged)) ?? p.members.find(may);
+    const c = p.members.find((m) => may(m) && (d.slot !== 'weapon' || !!d.ranged === !!weaponOf(HARNESS.items, m).ranged)) ?? p.members.find(may);
     if (!c) continue;
-    if (d.slot === 'none') c.pack.push(id); else equip(c, id);
+    if (d.slot === 'none') c.pack.push(id); else equip(HARNESS.items, c, id);
   }
 }
 
@@ -246,7 +258,7 @@ export function companyAt(level: number, seed: number, rules: Readonly<Rules> = 
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
-    p = train(defaultParty(rng), level, rng, rules);
+    p = train(defaultParty(HARNESS, rng), level, rng, rules);
     companies.set(key, p);
   }
   return structuredClone(p);
@@ -278,7 +290,7 @@ export function newerCompany(level: number, seed: number, rules: Readonly<Rules>
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
-    p = train(createParty(NEWER.map(([name, race, cls, raised]) => createCharacter(name, race, cls, raised, rng))), level, rng, rules);
+    p = train(createParty(NEWER.map(([name, race, cls, raised]) => createCharacter(HARNESS, name, race, cls, raised, rng))), level, rng, rules);
     companies.set(key, p);
   }
   return structuredClone(p);

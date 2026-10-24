@@ -1,7 +1,7 @@
 // A shop's own prices: a shop may price an item it stocks, and charges that; anything it does not
 // price sells at its own; and selling back is half the item's own price whatever the shop, or two
 // thirds to a company with a Merchant standing (#857), which no price of a shop's may be under.
-import { MAP_DEFS, ITEMS } from '../../src/content/index.ts';
+import { MAP_DEFS, ITEMS, TABLES } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/mapdef.ts';
 import { priceIn, buy, sellPrice } from '../../src/game/items.ts';
 import { defaultParty } from '../../src/game/party.ts';
@@ -10,15 +10,17 @@ import type { ItemDef } from '../../src/game/items.ts';
 import { skilled } from '../../src/game/skills.ts';
 import { businessEntries } from '../../src/ui/screens.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { ok, withDefs } from './lib.ts';
+import { ok } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
+import { tablesWith } from '../kit/headless.ts';
+import type { Items } from '../../src/game/tables.ts';
 
 type Shop = Extract<Feature, { kind: 'shop' }>;
 /** A company of the road's, with a Merchant standing if asked: Cassian, the sixth, learnt it. */
-const road = (merchant: boolean): Party => { const p = defaultParty(makeRng(1)); if (merchant) p.members[5].skills = ['merchant']; return p; };
+const road = (merchant: boolean): Party => { const p = defaultParty(TABLES, makeRng(1)); if (merchant) p.members[5].skills = ['merchant']; return p; };
 /** Selling back, as the sell screen pays it (`sellPrice`), to a company with a Merchant standing: the most a shop pays. */
 const company = road(true);
-const sellBack = (id: string): number => sellPrice(company, ITEMS[id].price);
+const sellBack = (id: string): number => sellPrice(TABLES.items, company, ITEMS[id].price);
 
 /** What is wrong with a shop's prices: one it does not stock, one not a whole number of gold, one under the sell-back. */
 function faults(shop: Shop): string[] {
@@ -39,14 +41,14 @@ export function shops(): void {
 
   // A shop with a price of its own shows and charges it; what it does not price is the item's own.
   const farm = fixture({ rations: 3 });
-  ok(priceIn(farm, 'rations') === 3 && priceIn(farm, 'torch') === ITEMS.torch.price, `the farm store asks 3 for rations and ${ITEMS.torch.price} for a torch`);
-  const party = defaultParty(makeRng(1)), gold = party.gold, food = party.food;
-  const d = buy(party, farm, 'rations');
+  ok(priceIn(TABLES.items, farm, 'rations') === 3 && priceIn(TABLES.items, farm, 'torch') === ITEMS.torch.price, `the farm store asks 3 for rations and ${ITEMS.torch.price} for a torch`);
+  const party = defaultParty(TABLES, makeRng(1)), gold = party.gold, food = party.food;
+  const d = buy(TABLES.items, party, farm, 'rations');
   ok(d?.id === 'rations' && party.gold === gold - 3 && party.food === food + ITEMS.rations.use!.food!, `buying rations there charges 3 (${gold} -> ${party.gold} gold, ${food} -> ${party.food} food)`);
-  const bag = party.bag.length; buy(party, farm, 'torch');
+  const bag = party.bag.length; buy(TABLES.items, party, farm, 'torch');
   ok(party.gold === gold - 3 - ITEMS.torch.price && party.bag.length === bag + 1 && party.bag.at(-1) === 'torch', 'a torch there costs its own price, into the bag');
   party.gold = 2;
-  ok(buy(party, farm, 'rations') === null && party.gold === 2 && party.bag.length === bag + 1, 'short of gold, nothing is bought');
+  ok(buy(TABLES.items, party, farm, 'rations') === null && party.gold === 2 && party.bag.length === bag + 1, 'short of gold, nothing is bought');
 
   // The checks, each caught on a fixture.
   ok(faults(farm).length === 0, 'the farm store\'s prices are sound');
@@ -67,19 +69,20 @@ export function shops(): void {
   // A Merchant standing is paid two thirds of an item's price, rounded down; nobody with it, or the
   // Merchant down or dead, half; and the sell screen pays just that (#857).
   const fallen = road(true); fallen.members[5].conditions.push('unconscious');
-  const pays = (p: Party): string => [40, 25, 3, 1, 0].map((n) => sellPrice(p, n)).join(' ');
+  const pays = (p: Party, items: Items = TABLES.items): string => [40, 25, 3, 1, 0].map((n) => sellPrice(items, p, n)).join(' ');
   ok(pays(road(true)) === '26 16 2 0 0' && pays(road(false)) === '20 12 1 0 0' && pays(fallen) === '20 12 1 0 0',
     `a shop pays a Merchant standing two thirds, rounded down, and anyone else half, for 40, 25, 3, 1 and 0 (Merchant ${pays(road(true))}; none ${pays(road(false))}; the Merchant down ${pays(fallen)})`);
   // A set of scales carried, a fixture item that does a Merchant's work (`ItemDef.skill`), is paid as a
   // Merchant is: sellPrice asks `skilled`, as the world does.
   const scales: ItemDef = { id: 'fx_scales', name: 'Scales', slot: 'none', price: 100, skill: 'merchant' };
-  withDefs(ITEMS, [scales], () => {
+  {
+    const lent = tablesWith([scales]);
     const carried = road(false);
     carried.members[2].pack.push(scales.id);
-    const held = [road(true), road(false), fallen, carried].every((p) => (sellPrice(p, 30) === 20) === !!skilled(p, 'merchant'));
-    ok(pays(carried) === '26 16 2 0 0' && skilled(carried, 'merchant')?.name === 'Wren' && held,
-      `a set of scales carried is paid two thirds, as a Merchant is (${pays(carried)}), and sellPrice reads the Merchant as skilled() does, standing, down or carried`);
-  });
+    const held = [road(true), road(false), fallen, carried].every((p) => (sellPrice(lent.items, p, 30) === 20) === !!skilled(lent.items, p, 'merchant'));
+    ok(pays(carried, lent.items) === '26 16 2 0 0' && skilled(lent.items, carried, 'merchant')?.name === 'Wren' && held,
+      `a set of scales carried is paid two thirds, as a Merchant is (${pays(carried, lent.items)}), and sellPrice reads the Merchant as skilled() does, standing, down or carried`);
+  }
   const g = headlessGame(4), harrow = MAP_DEFS.find((m) => m.id === 'harrow')!.features!.find((f): f is Shop => f.kind === 'shop')!;
   const sold = (merchantToo: boolean): number => {
     while (g.screens.length > 1) g.pop();
@@ -100,10 +103,10 @@ export function shops(): void {
     if (f.kind !== 'shop') continue; n++;
     const bad = faults(f);
     ok(!bad.length, `${def.id}, ${f.name}: its prices are sound${bad.length ? ' -> ' + bad.join('; ') : ''}`);
-    const off = f.stock.filter((id) => !(id in (f.prices ?? {})) && priceIn(f, id) !== ITEMS[id].price);
+    const off = f.stock.filter((id) => !(id in (f.prices ?? {})) && priceIn(TABLES.items, f, id) !== ITEMS[id].price);
     ok(!off.length, `${def.id}, ${f.name}: it charges each item it does not price as today${off.length ? ' -> ' + off.join(', ') : ''}`);
   }
   ok(n >= 2, `${n} built shops`);
   const mottram = MAP_DEFS.find((m) => m.id === 'harrow')?.features?.find((f): f is Shop => f.kind === 'shop');
-  ok(!!mottram && priceIn(mottram, 'rations') === ITEMS.rations.price && ITEMS.rations.price === 4, "Mottram's still asks 4 for rations");
+  ok(!!mottram && priceIn(TABLES.items, mottram, 'rations') === ITEMS.rations.price && ITEMS.rations.price === 4, "Mottram's still asks 4 for rations");
 }

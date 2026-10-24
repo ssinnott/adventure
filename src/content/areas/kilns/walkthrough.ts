@@ -83,7 +83,7 @@ import { newWalk, walkThrough, see, kneel, fight, listen, meetWho, playChapter, 
 import { square, ALL, reach, shut, reached, paces, inBox } from '../../../../tools/kit/grid.ts';
 import type { Walk, Step } from '../../../../tools/kit/walk.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
-import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, ATLAS, THE_QUEST } from '../../index.ts';
+import { AREAS, MAP_DEFS, MONSTERS, GUILD_QUESTS, ATLAS, THE_QUEST, TABLES } from '../../index.ts';
 import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { GameMap } from '../../../game/map.ts';
@@ -472,7 +472,7 @@ export const walkthrough: Walkthrough = (ok) => {
     t.world.travel('anvilhall', THANE.x, THANE.y);
     const [buyIt, takeIt] = meet(THANE, t.party, heard(t.world, THANE)).choice?.answers ?? [];
     t.party.gold = way === BOUGHT ? ANVIL_STONE_PRICE : 0;
-    answer(way === BOUGHT ? buyIt : takeIt, t.party);
+    answer(TABLES.items, way === BOUGHT ? buyIt : takeIt, t.party);
     ok(!!t.party.flags[way], `${way}: the thane's answer is given`);
     const stands = t.world.walks(guard, guard.x, guard.y) && t.world.present(post), cut = t.world.present(saw), off = t.world.present(sawOff);
     t.world.travel('kilnsheart_o5', FOREMAN.x, FOREMAN.y);
@@ -939,7 +939,7 @@ function ironhide(ok: (cond: boolean, msg: string) => void): void {
   // His words first, then his lesson once to a Berserker of 19, and to a company under it never.
   const at = (level: number): Walk => {
     const w = newWalk(ok);
-    w.party.members[0] = createCharacter('Ragna', 'human', 'barbarian', { might: 15, endurance: 14, speed: 12 }, makeRng(19));
+    w.party.members[0] = createCharacter(TABLES, 'Ragna', 'human', 'barbarian', { might: 15, endurance: 14, speed: 12 }, makeRng(19));
     for (const c of w.party.members) { c.xp = xpForLevel(level); c.level = level; }
     return w;
   };
@@ -992,7 +992,7 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 30000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
   const rung = ACT_III.find((r) => r.level === 17)!;
   ok(FORGE_SHOP.stock.length === FORGE.length && FORGE.every((id) => FORGE_SHOP.stock.includes(id)), `the smiths' forge sells the act's first step, all ${FORGE.length} wares and nothing else`);
-  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, FORGE_SHOP, id), `${m.name} buys a ${item(id).name} at the forge`);
+  for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(TABLES.items, w.party, FORGE_SHOP, id), `${m.name} buys a ${item(TABLES.items, id).name} at the forge`);
   const stores = ofKind(TOWN, 'shop').find((f) => f.interior === 'anvilhall_stores')!;
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => stores.stock.includes(id)) && !stores.stock.some((id) => FORGE.includes(id)), 'the stores sell provisions and lamp oil, and no steel');
   const yard = ofKind(TOWN, 'trainer')[0];
@@ -1062,10 +1062,10 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
     ok(menu.text.includes('we cut it') && buyIt?.price === ANVIL_STONE_PRICE && buyIt.sets === BOUGHT && takeIt?.sets === TAKEN && !takeIt.price, `${way}: the thane puts the Stone at ${ANVIL_STONE_PRICE} gold, or taken`);
     if (way === BOUGHT) {
       t.party.gold = ANVIL_STONE_PRICE - 1;
-      ok(barred(buyIt, t.party) && !barred(takeIt, t.party) && answer(buyIt, t.party) === SHORT && !t.party.flags[BOUGHT] && t.party.gold === ANVIL_STONE_PRICE - 1, 'a gold short of six thousand, the Stone is barred, and nothing changes');
+      ok(barred(buyIt, t.party) && !barred(takeIt, t.party) && answer(TABLES.items, buyIt, t.party) === SHORT && !t.party.flags[BOUGHT] && t.party.gold === ANVIL_STONE_PRICE - 1, 'a gold short of six thousand, the Stone is barred, and nothing changes');
       t.party.gold = ANVIL_STONE_PRICE;
     } else t.party.gold = 0;
-    const said = answer(way === BOUGHT ? buyIt : takeIt, t.party);
+    const said = answer(TABLES.items, way === BOUGHT ? buyIt : takeIt, t.party);
     ok(!!t.party.flags[way] && !t.party.flags[way === BOUGHT ? TAKEN : BOUGHT] && t.party.gold === 0, `${way}: its flag set, and only its own (${said.split('\n\n').at(-1)})`);
     const last = meet(THANE, t.party, heard(t.world, THANE));
     ok(last.text.endsWith('"The mountain has to eat. Remember that, when you are somewhere it does not."') && !last.choice, `${way}: the thane's last word, and the question is not put again`);
@@ -1124,12 +1124,12 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
 
   // The smith sells the act's first step at a quarter more than Anvilhall's forge (#535), each class
   // its rung; the chandler's sells the provisions at list price, and no steel.
-  ok(SMITHY.stock.length === FORGE.length && FORGE.every((id) => SMITHY.stock.includes(id) && SMITHY.prices?.[id] === SMITH_PRICES[id] && SMITH_PRICES[id] === quarterMore(item(id).price)),
-    `the smith sells the forge's ${FORGE.length} wares and nothing else, each at a quarter more (${FORGE.map((id) => `${item(id).name} ${SMITH_PRICES[id]}`).join(', ')})`);
+  ok(SMITHY.stock.length === FORGE.length && FORGE.every((id) => SMITHY.stock.includes(id) && SMITHY.prices?.[id] === SMITH_PRICES[id] && SMITH_PRICES[id] === quarterMore(item(TABLES.items, id).price)),
+    `the smith sells the forge's ${FORGE.length} wares and nothing else, each at a quarter more (${FORGE.map((id) => `${item(TABLES.items, id).name} ${SMITH_PRICES[id]}`).join(', ')})`);
   const rung = ACT_III.find((r) => r.level === 17)!;
   for (const m of w.party.members) for (const id of rung.classes[m.cls]) {
     const before = w.party.gold;
-    ok(!!buy(w.party, SMITHY, id) && before - w.party.gold === SMITH_PRICES[id], `${m.name} buys a ${item(id).name} at the smith for ${SMITH_PRICES[id]} gold`);
+    ok(!!buy(TABLES.items, w.party, SMITHY, id) && before - w.party.gold === SMITH_PRICES[id], `${m.name} buys a ${item(TABLES.items, id).name} at the smith for ${SMITH_PRICES[id]} gold`);
   }
   const chandler = ofKind(HAVEN, 'shop').find((f) => f.interior === 'kilnhaven_chandlery')!;
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => chandler.stock.includes(id)) && !chandler.stock.some((id) => FORGE.includes(id)) && !chandler.prices, 'the chandler\'s sells the provisions and lamp oil at list price, and no steel');
@@ -1176,7 +1176,7 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
   const day = w.world.day, sailed = sail(over, w.world, w.party);
   ok(sailed.taken && w.party.gold === 0 && w.world.state.mapId === 'saltmouth' && w.world.state.x === 13 && w.world.state.y === 10 && w.world.state.facing === WEST, `the ferry lands the company on Saltmouth's quay (${sailed.lines.join(' ')})`);
   ok(w.world.day === day + 3 && w.world.hour === 16, `bought at 09:00, after it sailed, it leaves the next morning and lands two days on at 16:00 (day ${day} to day ${w.world.day})`);
-  const kept = deserialize(serialize(w.world.state, w.party, 0)), loaded = new World(buildMaps(), kept.party, makeRng(1), kept.world);
+  const kept = deserialize(serialize(w.world.state, w.party, 0)), loaded = new World(TABLES, buildMaps(), kept.party, makeRng(1), kept.world);
   ok(loaded.state.mapId === 'saltmouth' && loaded.state.x === 13 && loaded.state.minutes === w.world.state.minutes, 'a save made on Saltmouth\'s quay loads there');
   const master = MAP_DEFS.find((d) => d.id === 'saltmouth')!.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Dunstan'));
   const back = master?.passage?.[0];
@@ -1577,7 +1577,7 @@ function feuerstollen(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   // carried against fire, and never comes back.
   fight(w, 'lava_tubes2:lt2_great_salamander');
   const boss = L2.encounters!.find((e) => e.id === 'lt2_great_salamander')!;
-  ok(w.party.bag.includes('salamander_hide') && !!item('salamander_hide').resist?.includes('fire') && !boss.respawn && !!boss.slainText?.includes('hide'),
+  ok(w.party.bag.includes('salamander_hide') && !!item(TABLES.items, 'salamander_hide').resist?.includes('fire') && !boss.respawn && !!boss.slainText?.includes('hide'),
     'the Great Salamander sinks into its fire and leaves its hide, carried against fire; it never comes back');
 }
 
@@ -1596,7 +1596,7 @@ function fourthRanks(w: Walk): void {
   w.ok(fourth('lanterns') === 'lanterns_niche,lanterns_ring' && fourth('wardens') === 'wardens_cages,wardens_hole', `with Act II done, the halls offer the fourth ranks' asks (${fourth('lanterns')}; ${fourth('wardens')})`);
   for (const id of ['lanterns_niche', 'wardens_cages']) {
     const q = GUILD_QUESTS.find((g) => g.id === id)!, gold = p.gold;
-    const said = take(q, w.world.state, p);
+    const said = take(TABLES, q, w.world.state, p);
     w.ok(said.length === 1 && said[0].startsWith(q.early![0]) && p.gold === gold + 300 && rankOf(q.guild, p) === 3,
       `${q.title}: done in the walk, paid at the taking, and the rank waits for the rest (${said.join(' ').replace(/\n+/g, ' ')})`);
   }
@@ -1625,7 +1625,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.world.travel('ironfells_n3', MOTHER.x, MOTHER.y);
     const first = meet(MOTHER, w.party, heard(w.world, MOTHER));
     const not = first.choice?.answers.find((a) => !a.sets);
-    ok(!!not && answer(not, w.party).includes('Another day') && !w.party.bag.includes('braid_ring'), 'not now, and she keeps her ring');
+    ok(!!not && answer(TABLES.items, not, w.party).includes('Another day') && !w.party.bag.includes('braid_ring'), 'not now, and she keeps her ring');
     listen(w);
     ok(began(w, 'The Crust-Bearer') && /terrace well/.test(goal(w, 'crust')), `she begins it, and the goal is her answer (${goal(w, 'crust')})`);
     const ring = answerTo(w, 'ironfells_n3', MOTHER, 'q_crust_ring', true);
@@ -1753,7 +1753,7 @@ const thane = (way: string): Step => ({ name: `the Stone ${named(way)}`, play: (
   w.world.travel('anvilhall', THANE.x, THANE.y);
   const [buyIt, takeIt] = meet(THANE, w.party, heard(w.world, THANE)).choice?.answers ?? [];
   w.party.gold = way === BOUGHT ? ANVIL_STONE_PRICE : 0;
-  answer(way === BOUGHT ? buyIt : takeIt, w.party);
+  answer(TABLES.items, way === BOUGHT ? buyIt : takeIt, w.party);
   listen(w);
   w.ok(!!w.party.flags[way] && written(w, CHAPTER).includes(named(way)) && !written(w, CHAPTER).includes(named(way === BOUGHT ? TAKEN : BOUGHT)), `the Stone ${named(way)}, and that way alone is written`);
 } });
@@ -2237,7 +2237,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     // it, no shop sells it and no monster drops it.
     const kist = RZ2.features!.find((f) => f.kind === 'chest' && f.id === 'rz2_kist')!;
     const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('erzhemd')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== kist && f.items.includes('erzhemd')) || (f.kind === 'statue' && !!f.gift?.items?.includes('erzhemd'));
-    ok(kist.kind === 'chest' && kist.gold === 0 && kist.items.join() === 'erzhemd' && !!item('erzhemd').artifact
+    ok(kist.kind === 'chest' && kist.gold === 0 && kist.items.join() === 'erzhemd' && !!item(TABLES.items, 'erzhemd').artifact
       && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'erzhemd')),
       'at the face, the smith\'s kist with the Erzhemd in it; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
     // And out: up the winze onto the old level, and out of the adit onto P5's 10,23, each way's line alone.

@@ -11,6 +11,7 @@ import { makeRng } from '../../src/lib/engine/rng.ts';
 import { gateCompany } from '../kit/company.ts';
 import { ok, fxMap } from './lib.ts';
 import { LAIR } from '../kit/rules/enclave.ts';
+import { TABLES } from '../../src/content/index.ts';
 
 export function enclave(): void {
   // Its door, crossing in from a hollow: its band, as its sign gives it, and how it feels by the
@@ -19,7 +20,7 @@ export function enclave(): void {
   const hollow: MapDef = { id: 'fx_hollow', name: 'Fixture Hollow', kind: 'dungeon', region: 'shelf', start: { x: 1, y: 1, facing: EAST }, rows: ['####', '#..#', '####'],
     exits: [{ x: 2, y: 1, to: fxMap(LAIR.id), tx: LAIR.start.x, ty: LAIR.start.y, tf: NORTH, label: DOWN }] };
   const enter = (level: number, into: MapDef = LAIR, from: MapDef = hollow): { said: string[]; w: World } => {
-    const w = new World({ [from.id]: new GameMap(from), [into.id]: new GameMap(into) }, gateCompany(level, 1), makeRng(1));
+    const w = new World(TABLES, { [from.id]: new GameMap(from), [into.id]: new GameMap(into) }, gateCompany(level, 1), makeRng(1));
     const r = w.move('forward');
     return { said: r.kind === 'moved' ? r.messages : [r.kind], w };
   };

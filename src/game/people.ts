@@ -7,6 +7,7 @@ import type { Party } from './party.ts';
 import type { World } from './world.ts';
 import { countItem, takeItem, payXp } from './party.ts';
 import { item } from './items.ts';
+import type { Items } from './tables.ts';
 
 /**
  * A hand-in: the first time the party meets the NPC carrying `item`, the NPC takes it, says `done`
@@ -92,7 +93,7 @@ export const personGives = (p: Person): string[] => choices(p).flatMap((c) => c.
 export const heard = (world: Pick<World, 'walks' | 'ended'>, p: Person) => (w: Words): boolean => world.walks(w, p.x, p.y) && !world.ended(w);
 
 /** An item's words to read, if it has any: a letter. */
-export const readText = (id: string): readonly string[] | undefined => item(id).text;
+export const readText = (items: Items, id: string): readonly string[] | undefined => item(items, id).text;
 
 const set = (party: Party, flags: string | readonly string[] | undefined): void => { for (const f of list(flags)) party.flags[f] = 1; };
 /** Whether an answer has been given: it sets flags, and the company holds them all. */
@@ -130,8 +131,8 @@ export function meet(p: Person, party: Party, holds: (w: Words) => boolean): Mee
  * What an answer costs, hands over and pays, as its line says it: "(6000 gold paid.)", "(300 gold,
  * 660 experience, A Sealed Letter.)"; none if nothing.
  */
-export function answerNote(a: Answer): string[] {
-  const what = [a.price ? `${a.price} gold paid` : '', a.takes ? `${item(a.takes).name} given` : '', a.pay?.gold ? `${a.pay.gold} gold` : '', a.pay?.xp ? `${a.pay.xp} experience` : '', a.gives ? item(a.gives).name : ''].filter(Boolean);
+export function answerNote(items: Items, a: Answer): string[] {
+  const what = [a.price ? `${a.price} gold paid` : '', a.takes ? `${item(items, a.takes).name} given` : '', a.pay?.gold ? `${a.pay.gold} gold` : '', a.pay?.xp ? `${a.pay.xp} experience` : '', a.gives ? item(items, a.gives).name : ''].filter(Boolean);
   return what.length ? [`(${what.join(', ')}.)`] : [];
 }
 
@@ -154,7 +155,7 @@ export const NONE = 'You have none to give.';
  * its item, pay and return what is said. Short of the price or the item, nothing changes, and it
  * says so.
  */
-export function answer(a: Answer, party: Party): string {
+export function answer(items: Items, a: Answer, party: Party): string {
   if (barred(a, party)) return (a.price ?? 0) > party.gold ? SHORT : NONE;
   party.gold -= a.price ?? 0;
   if (a.takes) takeItem(party, a.takes);
@@ -162,5 +163,5 @@ export function answer(a: Answer, party: Party): string {
   if (a.gives) party.bag.push(a.gives);
   party.gold += a.pay?.gold ?? 0;
   const ready = a.pay?.xp ? payXp(party, a.pay.xp) : [];
-  return [...a.says, ...answerNote(a), ...(ready.length ? [`Ready to train: ${ready.join(', ')}.`] : [])].join('\n\n');
+  return [...a.says, ...answerNote(items, a), ...(ready.length ? [`Ready to train: ${ready.join(', ')}.`] : [])].join('\n\n');
 }

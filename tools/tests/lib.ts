@@ -5,25 +5,19 @@
 import { readdirSync } from 'node:fs';
 import type { World } from '../../src/game/world.ts';
 import type { GameMap } from '../../src/game/map.ts';
-import { itemsChanged } from '../../src/game/party.ts';
-import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
-import { ITEMS } from '../../src/content/index.ts';
 import type { MapId, Flag } from '../../src/content/index.ts';
 import type { MapKey } from '../../src/game/keys.ts';
 
 /**
- * `f` with `defs` lent to the item or the monster table (#946): each put in under its id, over any
- * there (a look given the rat), and in a `finally` taken out again, or the one it covered put back,
- * so a suite leaves the tables as it found them; the runner checks that after every suite. Lent to
- * the item table, its raisers are worked out again on the way in and out (`itemsChanged`). The
- * suites' one writer of either table.
+ * `f` with `defs` lent to the monster table (#946): each put in under its id, over any there (a look
+ * given the rat), and in a `finally` taken out again, or the one it covered put back, so a suite leaves
+ * the table as it found it; the runner checks that after every suite. The suites' one writer of it. An
+ * item is lent by a table of the suite's own instead (`tablesWith`, tools/kit/headless.ts, #973).
  */
-export function withDefs<T extends ItemDef | MonsterDef, R>(table: Readonly<Record<string, T>>, defs: readonly NoInfer<T>[], f: () => R): R {
-  const t = table as Record<string, T>, was = defs.map((d): [string, T | undefined] => [d.id, t[d.id]]);
-  const changed = (): void => { if ((table as unknown) === ITEMS) itemsChanged(); };
+export function withDefs<R>(table: Readonly<Record<string, MonsterDef>>, defs: readonly MonsterDef[], f: () => R): R {
+  const t = table as Record<string, MonsterDef>, was = defs.map((d): [string, MonsterDef | undefined] => [d.id, t[d.id]]);
   for (const d of defs) t[d.id] = d;
-  changed();
   try {
     const r = f();
     // Lent while `f` runs and no longer: an async `f` would lose its defs at its first await.
@@ -31,7 +25,6 @@ export function withDefs<T extends ItemDef | MonsterDef, R>(table: Readonly<Reco
     return r;
   } finally {
     for (const [id, d] of was.reverse()) if (d === undefined) delete t[id]; else t[id] = d;
-    changed();
   }
 }
 
