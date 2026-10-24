@@ -58,8 +58,9 @@
 // never told (#859): the hermit's rumour, the hide in Old Cinder, the favour in E11's cold tube and the
 // teaching by a company of 25. Then the bounds (#836): F12, the Waste's south-west where the lava flow
 // ends under the rim, walked onto from G12 and F11; the cairn, the man of stone's riddle and the
-// knapper's store behind the rock where black glass is heaped; the doors of the lair and the enclave
-// left bare.
+// knapper's store behind the rock where black glass is heaped; Blackdraw, the enclave, down the flue's
+// mouth; and last Grim's Howe, the lair, under the dam, where the Grave Drake keeps Grim's Axe, and
+// Petroc's rumour of it.
 import type { Walkthrough } from '../../area.ts';
 import { newWalk, see, fight, gone, listen, walkThrough, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
 import type { Walk, Step } from '../../../../tools/walk.ts';

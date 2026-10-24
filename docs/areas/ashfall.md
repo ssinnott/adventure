@@ -13,7 +13,7 @@ it, the plan for building it, box by box, and the briefs. Its work is filed unde
 country behind (#522), all seven boxes built, which closes #522; this doc is #509.
 Figures are measured on main at `6032251` (2 October 2026) with `worldGrid` (`src/game/atlas.ts`).
 
-Twenty-two maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the
+Twenty-three maps are built: H10, the Stair's foot (#510, §4.2), which joins the area to the
 Whitespine overland; G10, Cinderport's box (#511, §4.3), which lists the area; Cinderport behind its
 gate (#512, §4.4); G11, Fire Mountain's flank (#513, §4.5); the vents, the iron corridors and the
 camp, Meridian Camp's three levels (#22, docs/areas/meridian_camp.md §4.1 to §4.3), with the
@@ -24,17 +24,18 @@ Cartographers' Surveyor's rung (#635, §6); F10 and E10, the Ember Waste's road 
 off the road, the country behind it in seven boxes (#522, §4.10): F9, G9 and H9, the Sound's shore;
 E11, the Waste's west; and H11, H12 and G12, Fire Mountain's east flank, south-east foot and south
 foot, which closes #522; and the bounds' first box, F12, the Waste's south-west where the lava flow
-ends under the rim, and its enclave, Blackdraw, a flue down from F12's mountain face (#836, §12).
-Its three side quests are written (#519, §6), and the third prestiges' quests of the three classes
-taught here are built on them: the Paladin's lamp, the Barbarian's nest and the Druid's seedling
-(#448, §6). Its chapter of the one quest, The Window, is written and walked (#518, §5). Its nine
-monsters and the armourer's step are drawn (§3), and the lair is to build (§12.4). Its content is
-`src/content/areas/ashfall/` (maps, monsters, items, climate, its part of the world map and its
-walkthrough; its chapter of the one quest, The Window, in `chapter.ts` and its side quests and the
-third prestiges' three in `quests.ts`) and its businesses' rooms `src/ui/interiors/ashfall/`. Its
-ids, the plan's: the area `ashfall`, its zones `cindercoast`, `firemount` and `emberwaste`, the town
-`cinderport`, the dungeons `old_cinder` and `old_cinder2` (its undercroft, #515), `ember_stone` and
-`meridian_camp`. The enclave's is `blackdraw` (#836).
+ends under the rim, with its enclave, Blackdraw, a flue down from its mountain face, and its lair,
+Grim's Howe, the warlord's grave under its dam (#836, §12). Its three side quests are written (#519,
+§6), and the third prestiges' quests of the three classes taught here are built on them: the
+Paladin's lamp, the Barbarian's nest and the Druid's seedling (#448, §6). Its chapter of the one
+quest, The Window, is written and walked (#518, §5). Its nine monsters and the armourer's step are
+drawn (§3). Its content is `src/content/areas/ashfall/` (maps, monsters, items, climate, its part of
+the world map and its walkthrough; its chapter of the one quest, The Window, in `chapter.ts` and its
+side quests and the third prestiges' three in `quests.ts`) and its businesses' rooms
+`src/ui/interiors/ashfall/`. Its ids, the plan's: the area `ashfall`, its zones `cindercoast`,
+`firemount` and `emberwaste`, the town `cinderport`, the dungeons `old_cinder` and `old_cinder2`
+(its undercroft, #515), `ember_stone` and `meridian_camp`. The enclave's is `blackdraw` and the
+lair's `grims_howe` (#836).
 
 ---
 
@@ -130,13 +131,13 @@ off the springs; the vines' shore humid.
 
 ## 3. What is built
 
-Twenty-two maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town
+Twenty-three maps: the Stair's foot (#510), Cinderport's box, which lists the area (#511), the town
 behind its gate (#512), Fire Mountain's flank (#513), the vents, the iron corridors and the camp
 (#22), Old Cinder's and the Ember Stone's box (#514), Old Cinder's two levels (#515), the Ember
 Stone (#516) and the Waste's road, F10 and E10 (#517); off the road, the Sound's shore (F9, G9 and
 H9), the Waste's west (E11) and Fire Mountain's east flank, south-east foot and south foot (H11, H12
 and G12, #522); and the bounds' first box, F12, the flow's end under the rim, with its enclave,
-Blackdraw (#836):
+Blackdraw, and its lair, Grim's Howe (#836):
 
 - **The Stair's foot** (H10, `cindercoast_h10`, core, band 24; #510): the Giants' Stair's last
   flights, cut along the Sheer's foot from I10's 0,20 to a landing on the black sand, where the step
@@ -311,9 +312,9 @@ Blackdraw (#836):
   stands across the cut in a dam of black rock, folded like rope. A cairn of the flow's crust under
   the wall, a man of stone calling to the mountain with a riddle cut below and sulphur round the
   vents in the east. At the rim's foot flakes of black glass lie heaped at one rock, and behind it
-  is a knapper's store. No group. The dam's rock is left bare for the lair's door (§12.4), and in
-  the mountain's face under the west wall a flue's mouth goes down into Blackdraw, the enclave
-  (§12.3).
+  is a knapper's store. No group. In the dam's rock the way in under its crust goes down into Grim's
+  Howe, the lair (§12.4), and in the mountain's face under the west wall a flue's mouth goes down
+  into Blackdraw, the enclave (§12.3).
 - **Blackdraw** (`blackdraw`, enclave, band 27–28; #836): the bounds' enclave, a flue of the
   Underdeep's exhaust going down from its mouth in F12's mountain face, lined with iron plates black
   with soot, to a furnace gone cold where the flow came in through its back and set. A flue walker
@@ -321,6 +322,12 @@ Blackdraw (#836):
   and their pay chest; at the flue's foot an inspector with a deep knocker in the furnace's mouth, a
   stoker run down by the furnace door and the stokers' locker, with Kindler, a marlinspike whose
   blows carry lightning (§12.3).
+- **Grim's Howe** (`grims_howe`, lair, band 30–32; #836): the bounds' lair, a warlord's grave under
+  the rock where the south-west flow stopped, entered under the crust of F12's dam. A tube the flow
+  left as it drained goes down to a mound of black stones heaped across the way, the grave, where
+  the Grave Drake lies asleep, the one way on; past it the warlord's chamber, his bones on a bier
+  with Grim's Axe, the area's artifact; behind the bier one stone cut with a smoking mountain, and
+  behind it the war-band's offerings walled into a niche (§12.4).
 
 Its atlas rows are charted in `src/content/areas/ashfall/atlas.ts`, the area's own `atlas` since G10
 lists the area; until then `src/content/atlas.ts` spread them into the plan where its rows were, as
@@ -337,14 +344,15 @@ the sites (Cinderport, its port site at 206,277, in G9's harbour water since #52
 Grimsforge and Meridian Camp, built on G11, and Scaldwell, built on H10, no longer planned; Old
 Cinder and the Ember Stone, F11's marks at 190,318 and 176,342, built now, §9,
 #514's 16, #515's 15, #516's 1; the Sheer and the Cinder Hills, the plan's, §10) and its links: the
-Stair down the Sheer, the ship from Kilnhaven, the town's way in (moved from
-the site to the gate, §9, #512's 13), the three dungeons' ways in (Old Cinder's moved from Fire
-Mountain to the Ember Waste and the crater's lip, 187,322, §9, #515's 15), the road to the Wold and
-the last crossing. H10 is first on Cindercoast's row (§9, #510's 2). The corridors' plate is a
-second row, `meridian_camp2` at 226,346, six squares south of the first (docs/areas/meridian_camp.md
-§8, the corridors' 15); the camp's is a third, `meridian_camp3` at 226,352
-(docs/areas/meridian_camp.md §8, the camp's 15). Blackdraw's plate, the enclave's, is at 178,358,
-five squares south of its door on F12, under the mountain, at its band, 27–28 (#836, §12.3).
+Stair down the Sheer, the ship from Kilnhaven, the town's way in (moved from the site to the gate,
+§9, #512's 13), the three dungeons' ways in (Old Cinder's moved from Fire Mountain to the Ember
+Waste and the crater's lip, 187,322, §9, #515's 15), the road to the Wold and the last crossing. H10
+is first on Cindercoast's row (§9, #510's 2). The corridors' plate is a second row, `meridian_camp2`
+at 226,346, six squares south of the first (docs/areas/meridian_camp.md §8, the corridors' 15); the
+camp's is a third, `meridian_camp3` at 226,352 (docs/areas/meridian_camp.md §8, the camp's 15).
+Blackdraw's plate, the enclave's, is at 178,358, five squares south of its door on F12, under the
+mountain, at its band, 27–28 (#836, §12.3); Grim's Howe's, the lair's, is at 188,366, two squares
+south of its door on F12, under the rim, at the cap's band, 30–32 (#836, §12.4).
 
 Its row on the curve and its step on the gear ladder are in (#542): the row in
 `src/content/progression.ts` (band 24–26, next 26, window 5,500), owed to #446 while the area was
@@ -497,7 +505,7 @@ of those squares, 5,120 walkable; the seven behind them hold 4,454 (§4.10), all
 | H11, H12, G12 | The east flank under the Sheer; the south-east foot where the lava ends; the south foot under the rim | Fire Mountain | country, behind the road | 25–26 | 984 (ash 937, pine 20, rock 15, grass 4, lava 4), 40 stream; 841 (ash 487, mountain 293, hills 22, lava 18, rock 9, grass 9), 2 stream; 674 (ash 374, mountain 288, rock 9) | the stream and its stones, the drake-watcher and the war-chest behind the axe-head (H11); the flow's end, the spring and the tube behind the split crust (H12); the folds, the hum over Meridian Camp and the drakes' hollow behind the claw-marks (G12); six drakelings in each | none | #522, built |
 
 The bounds come after the plan (§12, #836): F12 is built as country at 25–26, the bounds' first box,
-and the enclave, Blackdraw, off it at 27–28; the lair is to come.
+its enclave, Blackdraw, off it at 27–28 and its lair, Grim's Howe, off it at the cap's 30–32.
 
 The core is the four boxes that hold a step of the quest (H10, G10, G11 and F11), built at full
 density; the rest is country, built to the looser floor with the wilderness features (EXPANSION
@@ -1704,24 +1712,29 @@ and its gold, since Expert is bought at a trainer on the road (§9, #859's 9).
 ### The artifact: Grim's Axe (#846)
 
 Ashfall's of the bounds' eight (DESIGN §9). Found and never told: no `seek` quest, no line in the
-journal and no mark on the world map. #836 builds the lair, its door and the rumour once #845, #847
-and the guardian's drawing are in.
+journal and no mark on the world map. #836 built its lair, Grim's Howe, its door on F12 and the
+rumour (§12.4).
 
 - **What it is:** *A broad axe of black iron, its edge as warm as a hearthstone. / Grim is cut in
   its cheek, and under the name a smoking mountain.*
-- **The rumour:** Petroc, the warlord's heir, at the anvil in Grimsforge (G11, §6), two lines more at
-  a meeting after his first, words only: *Grim's axe was made at this anvil. When he lifted it, the
-  mountain threw its stones for him. / They buried him with it, and the mountain closed the grave.*
-  It marks nothing on the world map.
+- **The rumour:** Petroc, the warlord's heir, at the anvil in Grimsforge (G11, §6), two lines more
+  at a meeting after his first, words only: *Grim's axe was made at this anvil. When he lifted it,
+  the mountain threw its stones for him. / They buried him with it, and the mountain closed the
+  grave.* It marks nothing on the world map. He says them after his own words at every meeting after
+  his first but the one where he asks a barbarian for the nest, and after his words over the old axe
+  once he has asked and the Brood Drake is dead (§12.4, #836's 26).
 - **Slot and bearers:** a weapon, two-handed: the knight, the paladin, the ranger and the barbarian,
   as the Grey Axe.
 - **Numbers:** 2d12+8, the Grey Axe's 2d12+7 and a point (EXPANSION §5.2). Found and never sold.
 - **Power:** a spell (DESIGN §9, kind 3): Meteor Swarm, two a day, of the sorcerer's list, which
   none of its four casts.
-- **The lair:** a warlord's grave of one level under the rock where the south-west flow stopped, its
-  door in F12's dam of rock at 20,14, left bare (§12.4), at the cap's band, 30–32 (#845).
+- **The lair:** Grim's Howe, a warlord's grave of one level under the rock where the south-west flow
+  stopped, its door in F12's dam of rock at 20,14 (§12.4), at the cap's band, 30–32 (#845); the axe
+  lies alone on the warlord's bier past the guardian.
 - **The guardian:** the Grave Drake (drakes, a new kind; boss, 32; docs/MONSTERS.md §13): *Asleep on
-  a warlord's grave, and the grave is warm.* Size 2; it burns a row.
+  a warlord's grave, and the grave is warm.* Size 2; it burns a row. Its hit points and its blow are
+  set by its gate, 1,600 and 27d8+28 where it was drawn at 1,785 and 29d8+34: won 59% at 30 and 81%
+  at 32 (§9, #836's 23).
 
 ## 7. Encounters, and what is new
 
@@ -1734,7 +1747,9 @@ the answer; after the Stone, sentries on the road back to Cinderport. Their draw
 nine. §4.2 to §4.9 place every group, box by box, the gentlest at the Stair's foot and the Sentinel
 at the top of the band. Blackdraw, the bounds' enclave, places Meridian Camp's flue walker,
 inspector and deep knocker again, at its own band, 27–28 (#836, §12.3); the novelty check, which
-stands it with the Glasswold by its floor, passes.
+stands it with the Glasswold by its floor, passes. Grim's Howe, the bounds' lair, places the Grave
+Drake alone, the drakes' new kind, at the cap's band, 30–32 (#836, §12.4); the novelty check, which
+places a lair with the Hearth by its floor (`roadPlace`; EXPANSION §5.2, #845's 7), passes.
 
 Four of the nine are drawn (#520): the Strangler Vine, a grey tree it has killed, its ropes hanging
 nearly to the ground; the Cinder Beetle, low and black with one forked horn; the Ember Salamander,
@@ -1927,33 +1942,38 @@ the road before it (§12.2).
   among its 25 (#512); G11 100.0% within 8 steps and the furthest 8, with no sign among its 27
   points (#513); the vents 100.0% within 7 steps (279 of 279) and the furthest 6, with no sign among
   their 25 points (#22); the iron corridors 100.0% within 7 steps (193 of 193) and the furthest 7 of
-  10, with no sign among their 24 points (#22); the camp 100.0% within 7 steps (226 of 226) and the furthest 6
-  of 10, with no sign among its 24 points (#22); F11 100.0% within 8 steps and the furthest 8 of 15,
-  with no sign among its 28 points (#514); Old Cinder's two levels 100.0% within 7 steps (101 of 101
-  and 67 of 67), the furthest 5 and 4 of 10, with no sign among their 19 and 13 points (#515, and #859's room); the
-  Ember Stone 100.0% within 7 steps (108 of 108), the furthest 6 of 10, with no sign among its 15
-  points (#516); F10 and E10 100.0% within 12 steps, the furthest 12 of 20, with no sign among their
-  12 and 15 points
-  (#517); H10 100.0% within 8 steps and the furthest 8, with no sign among its 30 points (#510);
-  F9 100.0% within 12 steps (551 of 551) and the furthest 12 of 20, with no sign among its 13
-  points, G9 (199 of 199) the furthest 11 and 10 points, H9 (467 of 467) the furthest 9 and 12, E11
-  99.4% (683 of 687) and the furthest 15, with no sign among its 16, H11 98.1% (951 of 969) and the
-  furthest 15, with no sign among its 17, H12 (539 of 539) the furthest 10 and 13 points, and G12
-  (377 of 377) the furthest 8 and 11 (#522); F12 100.0% within 12 steps (191 of 191) and the
-  furthest 6 of 20, with no sign among its 10 points, the flue's mouth one of them (#836);
-  Blackdraw, the enclave, 100.0% within 7 steps (62 of 62), the furthest 3 of 10, with no sign among
-  its 13 points (#836).
+  10, with no sign among their 24 points (#22); the camp 100.0% within 7 steps (226 of 226) and the
+  furthest 6 of 10, with no sign among its 24 points (#22); F11 100.0% within 8 steps and the
+  furthest 8 of 15, with no sign among its 28 points (#514); Old Cinder's two levels 100.0% within 7
+  steps (101 of 101 and 67 of 67), the furthest 5 and 4 of 10, with no sign among their 19 and 13
+  points (#515, and #859's room); the Ember Stone 100.0% within 7 steps (108 of 108), the furthest 6
+  of 10, with no sign among its 15 points (#516); F10 and E10 100.0% within 12 steps, the furthest
+  12 of 20, with no sign among their 12 and 15 points (#517); H10 100.0% within 8 steps and the
+  furthest 8, with no sign among its 30 points (#510); F9 100.0% within 12 steps (551 of 551) and
+  the furthest 12 of 20, with no sign among its 13 points, G9 (199 of 199) the furthest 11 and 10
+  points, H9 (467 of 467) the furthest 9 and 12, E11 99.4% (683 of 687) and the furthest 15, with no
+  sign among its 16, H11 98.1% (951 of 969) and the furthest 15, with no sign among its 17, H12 (539
+  of 539) the furthest 10 and 13 points, and G12 (377 of 377) the furthest 8 and 11 (#522); F12
+  100.0% within 12 steps (192 of 192) and the furthest 6 of 20, with no sign among its 11 points,
+  the flue's mouth and the lair's door two of them (#836); Blackdraw, the enclave, 100.0% within 7
+  steps (62 of 62), the furthest 3 of 10, with no sign among its 13 points (#836); and Grim's Howe,
+  the lair, 100.0% within 7 steps (39 of 39), the furthest 4 of 10, with no sign among its 10 points
+  (#836).
 - **The bounds** (#836, §12). F12 holds no group, so the gate has nothing new to judge there and the
   pool is as it was (above). It pays no xp and 200 gold, so a clear gives 35,919 xp a member of the
   19,467 asked and 12,160 gold of the 11,760, and a company entering at 24 and three quarters
   clearing it leaves at 27.3554 by the curve's own count, as before, under the 27.4 that `OVER_ROAD`
-  names Ashfall at (#738). The enclave and the lair are counted in no clear, so it stays there to
-  the end of #836 (`tools/tests/curve.ts`). Blackdraw, the enclave, is judged alone at its own floor
-  and stands out of the pool: a company at 27 wins every fight and manages 11.14 fights to a rest,
+  names Ashfall at (#738). The enclave and the lair are counted in no clear, so it stays there with
+  both built (`tools/tests/curve.ts`). Blackdraw, the enclave, is judged alone at its own floor and
+  stands out of the pool: a company at 27 wins every fight and manages 11.14 fights to a rest,
   inside the aim (9.75 to 11.75), 78.3% of its days ending in a fight broken off, in the range of
   Meridian Camp's three levels (73% to 88%) and under G11's 94.7%; two under, at 25, 4.78, 44.5% of
   the floor's 10.75. It gives 790 xp a member and 700 gold, and its dearest find, Kindler at 2,500,
-  sits in its window, the Glasswold's 6,000 (§12.3).
+  sits in its window, the Glasswold's 6,000 (§12.3). Grim's Howe, the lair, is judged on its one
+  group's odds, a boss's, and stands out of the pool too: the gate's company wins 59% of its fights
+  with the Grave Drake at 30 (the aim 30% to 70%) and 81% at 32 (the aim 90%, the limit 75%), and
+  the harness's thrifty bot 52% and 76% of single fights from fresh, in 12.3 and 11.0 rounds. It
+  gives 3,396 xp a member and 500 gold, and the window holds no find of it (§12.4).
 
 ## 9. Decisions
 
@@ -3227,7 +3247,8 @@ Decided by the builder for #836, each the owner's to overturn:
    at 27 and 28 but its bosses; their sizes and its reward are named in its own pull request, inside
    the Glasswold's window, 6,000 (#845's 3). Built since as Blackdraw (#836's 13 to 19).
 8. **The lair is the grave where the flow stopped, on F12** (§6, DESIGN §9, MONSTERS §13): its door
-   is left bare at 20,14, the middle of the dam's rock across the cut, 20,13 before it.
+   is left bare at 20,14, the middle of the dam's rock across the cut, 20,13 before it. Built since
+   as Grim's Howe (#836's 20 to 31).
 9. **F12 meets F11 and G12 square for square,** its edges worked from the built letters: its 4,0 ash
    with F11's 4,31 where the atlas has mountain; its 31,11 mountain with G12's 0,11 where the atlas
    has ash; and the flow across the north edge at 27 and 28, as on F11's row 31, where the atlas has
@@ -3239,7 +3260,8 @@ Decided by the builder for #836, each the owner's to overturn:
     squares under them mountain: no square of the flow meets the void.
 11. **F12 differs from the atlas at 24 squares:** the seams' two, the flow's three where it crosses
     from F11, the dam's three, the rim's four under it and the store's twelve. With the flue's mouth
-    at 10,3 since, 25 (#836's 14).
+    at 10,3 since, 25 (#836's 14); the lair's door at 20,14, one of the dam's three, leaves it at 25
+    (#836's 22).
 12. **The walkthrough walks the bounds in one function,** `theBounds`, called last; the road's line
     that names the Waste's maps names F12 with them.
 13. **The enclave is Blackdraw,** the coast's English for a flue's black draught: a compound name,
@@ -3249,10 +3271,10 @@ Decided by the builder for #836, each the owner's to overturn:
 14. **Its door is the brief's square, F12's 10,3,** its mountain drawn as stone, the flue's mouth,
     walked into from the ash at 10,2, where the way back sets a company down facing the ash. It is
     the one square of F12 that changes: F12 walks 191 squares, differs from the atlas at 25 and
-    counts 10 points with the way; nothing stands within four squares of the door, and it is no edge
-    square, so no seam or row of `tools/tests/outdoors.ts` moves. Blackdraw's plate is at 178,358,
-    five squares south of the door under the mountain, as Karaordu's and Creag Fionn's stand five
-    south of theirs.
+    counts 10 points with the way (192, 25 and 11 with the lair's door since, #836's 22); nothing
+    stands within four squares of the door, and it is no edge square, so no seam or row of
+    `tools/tests/outdoors.ts` moves. Blackdraw's plate is at 178,358, five squares south of the door
+    under the mountain, as Karaordu's and Creag Fionn's stand five south of theirs.
 15. **Its groups are a flue walker and an inspector with a deep knocker,** Meridian Camp's machines
     at 27 and 28, the brief's kinds: the walker in the flue below its first turn, where the flue is
     a square wide, the nearer at 9 steps; the inspector, which calls three deep knockers at one
@@ -3285,9 +3307,77 @@ Decided by the builder for #836, each the owner's to overturn:
 19. **The walkthrough walks it in `theBounds`,** last: the door's words at 24, 25 and 27 and the
     sign; both groups won at 27 and met in that order on foot or any way else; the clerks' room
     found from the plate and shut but through it; Kindler's numbers and rungs; the way out onto
-    F12's 10,2 facing the ash. F12's line that held nothing taken out of it holds its one way now,
-    the enclave's, and its check that 10,3 was left bare holds the stone, the mountain either side
-    and under it and nothing within four squares.
+    F12's 10,2 facing the ash. F12's line that held nothing taken out of it holds its ways now, the
+    enclave's (and the lair's since, #836's 30), and its check that 10,3 was left bare holds the
+    stone, the mountain either side and under it and nothing within four squares.
+20. **The lair is Grim's Howe,** a howe being the old word for a grave mound, as his forge is
+    Grimsforge: whose grave it is, since a bare description is forbidden (NAMES §3). One level of 16
+    by 16 marked `enclave` at 30–32, as the brief has it (§12.4); its features' and its group's ids
+    begin `gh_`.
+21. **The Grave Drake lies alone on the grave across the way,** at 7,9, where the tube from the
+    door, a square wide, comes down to the warlord's chamber, so the chamber, the bier, the marked
+    stone and the niche all lie past it and nothing in the lair is had without its fight. It never
+    moves and never comes back: a boss with no `respawn`, `roams: false` and a `slainText`.
+22. **The door is the brief's square, F12's 20,14,** the dam's rock drawn as stone, with the rock
+    either side and the rim's mountain under it, walked into from the flow at 20,13 and from no
+    other square, the way back setting a company down there facing up the cut. It is the one square
+    of F12 that changes: F12 walks 192 squares with it, counts it among 11 points and still differs
+    from the atlas at 25, the dam's rock drawn where the atlas has the flow. Nothing stands within
+    four squares of it, the nearest the flow's end at 22,10, six away; it is no edge square, so no
+    seam or row of `tools/tests/outdoors.ts` moves. Its plate is at 188,366, two squares south of
+    the door under the rim, as the Randzeche's stands two south of its adit.
+23. **The Grave Drake's numbers are set by its gate,** as Old Nick's and the Steiger's are
+    (docs/areas/wrackholm.md §9, #835's 25; docs/areas/kilns.md §9, #831's 41). Drawn at the boss
+    line at 32 come down whole to a sweeper's share (1,785 hit points, attack 20, 29d8+34), it was
+    won 22% at 30 and 46% at 32, under the limit at 32. At 1,600 hit points and 27d8+28, its attack,
+    armour, pace, breath and fire kept, it is won 59% at 30 and 81% at 32 at the gate's 100 seeds
+    and 60% and 83% over 400, where the precedents stand (the Stair's Catcher 57% and 80%, the
+    Steiger 56% and 81%, Old Nick 57% and 81%). Its breath is the most of its fight: without it the
+    set row is won 96% at 30 and 100% at 32, in 8 and 7 rounds at the median. Few of its fights run
+    to the cap: of the gate's 100 at 30, 24 are lost and 17 broken off, and let run the company wins
+    61%; at 32, 10 are lost and 9 broken off, and let run it wins 82%. Of the rows searched, those
+    inside both aims at the gate's seeds fall out over 400 or run most of their fights to the cap
+    (2,400 hit points, attack 24 and 18d8+20: 64% and 93% at the gate and 65% and 91% over 400, with
+    61.5% of the harness's single fights at 30 broken off). Off the line, its row carries its own
+    `offLine` word (#897); it keeps the boss line's 20,373 xp at 32.
+24. **Grim's Axe lies alone on the warlord's bier,** past the Grave Drake, with no gold beside it,
+    as Holdfast lies alone on the ship's master: buried with him, as Petroc's rumour says. One in
+    the world and sold nowhere; the walkthrough asserts that no other chest, cairn, statue or shop
+    holds it and no monster drops it.
+25. **The secret is the war-band's offerings in a niche behind the bier,** walled up behind the one
+    stone of the chamber's back wall cut with a smoking mountain, as under the name on the axe's
+    cheek (§6), and searched there facing south: 500 gold, an Elixir and a Sapphire Vial, the
+    dearest healing and spell points Cinderport's chandler's sells, as F12's and Blackdraw's finds
+    are. It lies past the Grave Drake, and no walker, wader, climber or floater reaches it but
+    through the stone, whose door at 7,13 passes the art check.
+26. **The rumour is Petroc's,** DESIGN §9's two lines after his own words at every meeting after his
+    first but the one where he asks a barbarian for the nest, which stays as it was, said once and
+    beginning his quest (§6); once he has asked and the Brood Drake is dead, after his words over
+    the old axe. His first meeting sets `g11_heir_met` already and nothing else in the content sets
+    it, so no flag is added. The lines set nothing and say nothing of the Grave Drake, so they hold
+    whether it stands or has fallen; they fit his box, 9 and 12 of its 14 lines. A later meeting
+    repeats his own words before them; a company from an old save that has met him hears them at its
+    next meeting.
+27. **New here:** the lair itself (#845, #846), the area's one place at the cap, its guardian a
+    drake whose breath burns a row and the area's artifact an axe that casts Meteor Swarm twice a
+    day (#847).
+28. **The owed rows go,** as EXPANSION §8.2 (#897's 12) and #847's 6 say: `grims_axe` leaves
+    `UNPLACED` in `tools/tests/items.ts` and the Grave Drake's row the area's `checks.ts`, which
+    owes nothing now.
+29. **#836 is done with the lair, its last piece:** F12, the enclave and the lair are built and
+    judged, the enclave at 27–28 and the lair at 30–32 with Grim's Axe in it, and no built map of
+    Ashfall is open onto unbuilt land but E11's west edge onto the Glass (the reach) and its south
+    edge onto E12, the world's end, where #828 plans no box (§12.1); no crumb (G3, O2, H4) faces the
+    area.
+30. **The walkthrough walks the lair in `theBounds`,** last: the door's words at 25, 28 and 30 and
+    the sign; the Grave Drake won at 30, nothing past it reached while it lies there; every sight;
+    Grim's Axe one in the world; the niche found from the marked stone and shut but through it; the
+    way out onto F12's 20,13; and Petroc's first meeting without the lines and the next with them.
+    F12's line holds its two ways now, and its check that 20,14 was left bare gives way to the
+    door's: the stone, the rock either side and the mountain under it, its way walked and nothing
+    within four squares. The barbarian's quest hears the lines at the meeting after the ask.
+31. **§12.4 is the brief brought to what is built,** with its rumour bullet, its encounters, finds
+    and pay as they stand and its As built; the §12 table's row for the lair is built.
 
 ## 10. Names
 
@@ -3303,6 +3393,7 @@ of theirs is named here: the trading ground and Scaldwell are the coast's.
 | Warlord's Forge | Grimsforge | Grim's forge: whose it was, as a farm is named, since the bare description is forbidden; the old warlord's name, worn down | Smithstead; Grimsanvil |
 | the cold flue, the enclave (#836) | Blackdraw | the black draw, a flue's draught gone still under its soot, in the coast's English | Sootdraw; Coldreek |
 | the enclave's reward (#836) | Kindler | the iron the stokers lit the furnace with, named for what it did | Firesteel; Sparkiron |
+| the grave where the flow stopped, the lair (#836) | Grim's Howe | Grim's howe, the old word for a grave mound: whose grave it is, as his forge is Grimsforge | Grimsgrave; the Warm Howe |
 
 - **Kept:** Ashfall, Cindercoast, Fire Mountain, the Ember Waste and the Ember Stone, plain names
   for plain things, as the Grove and the Grove Stone are; Cinderport and Old Cinder, the coast's
@@ -3532,22 +3623,22 @@ Owed by the country behind as built (#522, §4.10, §8):
 
 The land the area's maps lie open to, built as country off the quest, level for level (the owner, 17
 October 2026; #828, #836): F12, the south-west lava flow's end under the rim, which §11 cut; then
-the area's enclave, Blackdraw, entered from F12, and its artifact's lair, Grim's Axe's (§6). F12 is
-445 squares of land, 194 of them a company could walk by the atlas, 147 of ash and 47 of the flow,
-which a company walks (lava has no rule underfoot, §11), and 39 edge squares open onto it: F11's
-south edge (28) and G12's west edge (11). The issue's 147 leaves the flow out, and its 38 are the
-squares the atlas's F12 met on foot: F11's 4,31 is ash where the atlas has mountain at F12's 4,0,
-and F12 is drawn as ash there to meet it (§12.1). E12, mountain and void, stays cut, where #828
-plans no box (§11). The box is built to the looser floor (EXPANSION §5.3) at the zone's band, from
-the area's own, paid from its budget (§8), with nothing on the road's quest. This is the brief, in
-§4's form, for F12, the enclave and the lair; each pull request builds from it and adds its "As
-built".
+the area's enclave, Blackdraw, entered from F12, and its artifact's lair, Grim's Howe, where Grim's
+Axe lies (§6). F12 is 445 squares of land, 194 of them a company could walk by the atlas, 147 of ash
+and 47 of the flow, which a company walks (lava has no rule underfoot, §11), and 39 edge squares
+open onto it: F11's south edge (28) and G12's west edge (11). The issue's 147 leaves the flow out,
+and its 38 are the squares the atlas's F12 met on foot: F11's 4,31 is ash where the atlas has
+mountain at F12's 4,0, and F12 is drawn as ash there to meet it (§12.1). E12, mountain and void,
+stays cut, where #828 plans no box (§11). The box is built to the looser floor (EXPANSION §5.3) at
+the zone's band, from the area's own, paid from its budget (§8), with nothing on the road's quest.
+This is the brief, in §4's form, for F12, the enclave and the lair; each pull request builds from it
+and adds its "As built".
 
 | Place | Laid in | Walkable | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|
-| F12 | the Ember Waste, `emberwaste_f12` | 191 with the store and the flue's mouth (the atlas's 194) | F11; G12 (Fire Mountain's) | 25–26 | the first, built (#836) |
+| F12 | the Ember Waste, `emberwaste_f12` | 192 with the store, the flue's mouth and the lair's door (the atlas's 194) | F11; G12 (Fire Mountain's) | 25–26 | the first, built (#836) |
 | Blackdraw, the enclave | its own, `blackdraw`, its door on F12 | 62 (55 outside its clerks' room) | F12 | 27–28 | the second, built (#836) |
-| The lair | its own, its door on F12 | | F12 | 30–32 | the third |
+| Grim's Howe, the lair | its own, `grims_howe`, its door on F12 | 39 (36 outside its niche and its stone) | F12 | 30–32 | the third, built (#836) |
 
 ### 12.1 What every box keeps
 
@@ -3583,16 +3674,17 @@ built".
   12,160 gold, and the company still leaves at 27.3554. Six drakelings would take it to 27.3891,
   inside 27.4 but the four boxes' group again, and two sentries to 27.4004, past it (§9, #836's 3).
   The enclave and the lair are held to their own bands and counted in no clear, so the lead stays at
-  27.3554 to the end of #836 (`tools/tests/curve.ts`); Blackdraw gives 790 xp a member and 700 gold,
-  reported and not counted (§12.3).
-- **The doors.** The lair's is left bare, a square of solid ground with the same either side along
-  its face, its way walked to and nothing within four squares, in the dam's rock (§12.4). The
+  27.3554 with both built (`tools/tests/curve.ts`); Blackdraw gives 790 xp a member and 700 gold and
+  Grim's Howe 3,396 and 500, reported and not counted (§12.3, §12.4).
+- **The doors.** The lair's is the way in under the dam's crust at 20,14, the dam's rock drawn as
+  stone with the rock either side and the rim's mountain under it, walked into from the flow at
+  20,13, nothing within four squares, the nearest the flow's end at 22,10, six away (§12.4). The
   enclave's is the flue's mouth in the mountain's face at 10,3, drawn as stone with the mountain
   either side and under it, walked into from the ash at 10,2, nothing within four squares (§12.3).
 - **The walkthrough** walks it in one function, `theBounds` in `walkthrough.ts`, called last: the
   seams walked and the secret found from its hint, the prize shut to walkers, swimmers, climbers and
-  floaters; the lair's door left bare; last, Blackdraw, in at the flue's mouth and out again
-  (§12.3).
+  floaters; then Blackdraw, in at the flue's mouth and out again (§12.3); last, Grim's Howe, in
+  under the dam and out again, with Petroc's rumour (§12.4).
 
 ### 12.2 F12, the flow's end under the rim (#836): country, band 25–26
 
@@ -3600,7 +3692,7 @@ built".
   south-west flow going down into a cut it made in the rim, its front stopped across the cut. Off
   the road and off the quest.
 - **Landmarks.** The flow and its cut; the dam of black rock where it stopped, where the lair's door
-  will stand (§12.4); the mountain's west wall and the face under it, where the enclave's stands
+  stands (§12.4); the mountain's west wall and the face under it, where the enclave's stands
   (§12.3); a man of stone calling to the mountain.
 - **Points of interest,** nine features and no group: the slope down from F11, the cairn, the man of
   stone, the sulphur, the cut, the flow's end, the flakes at the rock's foot, the store and its
@@ -3608,7 +3700,8 @@ built".
 - **Encounters.** None (§12.1).
 - **The ways in and out.** In over the north edge from F11's ash, columns 4 to 31, and over the east
   edge from G12's, rows 0 to 10. West and south the world ends. Down the flue's mouth at 10,3 into
-  Blackdraw, the enclave (§12.3).
+  Blackdraw, the enclave (§12.3), and in under the dam's crust at 20,14 into Grim's Howe, the lair
+  (§12.4).
 - **The secret and its hint.** A knapper's store in the rock under the rim, the best of the flow
   glass wrapped in hide on a ledge with a purse beside it. The hint: flakes of black glass swept
   into a heap at the rock's foot and none anywhere else on the ash.
@@ -3623,11 +3716,12 @@ built".
   The flow runs down its cut to row 13 and its front is rock at 19 to 21 on row 14, the rim's
   mountain under it (§9, #836's 10). The store is a ring of rock at 28 to 30 on rows 12 to 15, its
   door at 29,12 and the flakes before it (`f12_flakes`, 29,11), the store (`f12_store`, 29,13) with
-  the purse (`f12_purse`, 29,14). The lair's door is 20,14, bare with 20,13 open before it; the
-  enclave's is 10,3, the flue's mouth into Blackdraw, its mountain drawn as stone with 10,2 open
-  before it (#836's 14). F12 differs from the atlas at 25 squares (§9, #836's 11 and 14). Density:
-  191 of 191 squares within 12 steps, the furthest 6, no sign among 10 points, the flue's mouth one
-  of them. No group, so the gate has nothing to judge; the box pays 200 gold.
+  the purse (`f12_purse`, 29,14). The lair's door is 20,14, the dam's rock drawn as stone, the way
+  in under its crust into Grim's Howe, walked into from the flow at 20,13 (#836's 22); the enclave's
+  is 10,3, the flue's mouth into Blackdraw, its mountain drawn as stone with 10,2 open before it
+  (#836's 14). F12 differs from the atlas at 25 squares (§9, #836's 11, 14 and 22). Density: 192 of
+  192 squares within 12 steps, the furthest 6, no sign among 11 points, the flue's mouth and the
+  lair's door two of them. No group, so the gate has nothing to judge; the box pays 200 gold.
 
 ### 12.3 Blackdraw, the flue under the west wall (#836): enclave, band 27–28
 
@@ -3679,22 +3773,54 @@ built".
   hardest at 23 (28.0, at least 28). By the curve's count it gives 790 xp a member and 700 gold,
   counted in no clear, and its dearest find, Kindler at 2,500, sits in its window, 6,000.
 
-### 12.4 The lair: the grave where the flow stopped (#836, its third pull request)
+### 12.4 Grim's Howe, the grave where the flow stopped (#836): lair, band 30–32
 
 - **Purpose.** Grim's Axe's lair (§6, #846): a warlord's grave of one level under the rock where the
   south-west flow stopped, closed over him by the mountain (the heir's rumour, §6), where the Grave
-  Drake sleeps on the grave.
+  Drake sleeps on the grave. Held to the cap's band (#845).
 - **Band.** The cap's, 30–32.
-- **Landmarks.** The door in the dam, a passage under the flow's crust and the grave, warm.
-- **Points of interest.** The way in under the crust, the grave with its goods and the door's own
-  line.
+- **Landmarks.** The door in the dam; a tube under the flow's crust, left as the flow drained; the
+  grave, a mound of black stones heaped across the way, warm; the warlord's chamber behind it, his
+  bones on a bier.
+- **Points of interest.** The way in under the crust, the tube going down, the mound seen below, the
+  chamber, the bier with its goods, the marked stone, the niche and the door's own line, which gives
+  its band (#845).
 - **Encounters.** The Grave Drake (drakes, a new kind; boss, 32; docs/MONSTERS.md §13), the one
-  guardian, asleep on the grave, drawn in the creatures lane before the lair is built.
-- **The ways in and out.** Its door at F12's 20,14 in the dam's rock, left bare with 20,13 open
-  before it; one way out, back up the cut.
-- **The secret and its hint.** The war-band's offerings, walled into a niche behind the grave. The
-  hint: a smoking mountain cut in one stone of the wall, as under the name on the axe's cheek (§6).
-- **New here.** The Grave Drake and the artifact (#846, #847).
+  guardian, asleep on the grave across the way, the one way on (§9, #836's 21).
+- **The ways in and out.** Its door at F12's 20,14 in the dam's rock, walked into from the flow at
+  20,13; one way out, back up the tube onto the flow in the cut.
+- **The secret and its hint.** The war-band's offerings, walled into a niche behind the stone at the
+  bier's back. The hint: a smoking mountain cut in that one stone of the wall, as under the name on
+  the axe's cheek (§6).
+- **New here.** The lair itself (#845, #846), the area's one place at the cap; the Grave Drake,
+  whose breath burns a row; and Grim's Axe, which casts Meteor Swarm twice a day (#847).
 - **Finds.** Grim's Axe, a broad axe of black iron, 2d12+8, Meteor Swarm two a day, found and never
-  sold (§6), where #846 puts it; the rumour is Petroc's at Grimsforge's anvil, built with the lair.
-- **Pay.** Counted in no clear (`tools/tests/curve.ts`).
+  sold (§6), alone on the bier; in the niche, 500 gold, an Elixir and a Sapphire Vial, the dearest
+  healing and spell points Cinderport's chandler's sells.
+- **The rumour.** Petroc, the warlord's heir, at the anvil in Grimsforge (G11, §6): DESIGN §9's two
+  lines after his own words at every meeting after his first but the one where he asks a barbarian
+  for the nest, words only, marking nothing on the world map (§9, #836's 26).
+- **Pay.** Counted in no clear (`tools/tests/curve.ts`): 3,396 xp a member and 500 gold.
+- **As built** (#836, 24 October): `grims_howe`, a dungeon of one level of 16 by 16, `enclave`, band
+  30–32, region `ashfall`, its plate at 188,366, two squares south of its door under the rim. In
+  from F12's 20,13 through the door at 20,14 onto 7,1 facing south; the door says "Grim's Howe:
+  levels 30-32." with the game's harder words one or two levels under its floor and its warning
+  three or more under. The way in under the crust (`gh_crust`, 7,2) and the tube, a square wide,
+  going down past its warmth (`gh_warm`, 7,5) to the turn where the mound is seen below (`gh_mound`,
+  7,7); on the mound the Grave Drake asleep (`gh_drake`, 7,9), 16 steps in, the one way on. Past it
+  the chamber (`gh_chamber`, 7,10), seven squares by three with two pillars, and the bier
+  (`gh_bier`, 7,11) with Grim's Axe alone on it; behind the bier the marked stone, the hint
+  (`gh_mark`, 7,12); behind the stone at 7,13 the niche (`gh_niche`, 7,14) with the offerings
+  (`gh_offerings`, 6,14): 500 gold, an Elixir and a Sapphire Vial. One way out, up the tube from 7,1
+  onto F12's 20,13 facing up the cut. With the drake there a walker reaches 15 of the lair's squares
+  and a wader, climber or floater no more, none of them the chamber, the bier, the stone or the
+  niche; with it fallen a walker reaches 36, and none reaches the niche but through the stone.
+  Grim's Howe walks 39 squares, 36 outside the niche and its stone. The gate's company wins 59% of
+  its fights with the Grave Drake at 30 and 81% at 32, set there (§9, #836's 23). Density: 39 of 39
+  within 7 steps, the furthest 4 of 10, no sign among 10 points. The curve's rise: its one group at
+  16 steps, level 32.0, near the floor 30 and the top 32. By the curve's count it gives 3,396 xp a
+  member and 500 gold, counted in no clear, and the window holds no find of it: the Elixir and the
+  Sapphire Vial are consumables and Grim's Axe an artifact. The rumour: Petroc's first meeting sets
+  `g11_heir_met`, and at every meeting after it but the one where he asks a barbarian for the nest
+  he says the two lines, after his own words or, once he has asked and the Brood Drake is dead,
+  after his words over the old axe (§9, #836's 26).
