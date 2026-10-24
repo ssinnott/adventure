@@ -9,6 +9,7 @@
 // from its tear on a zone map, a `rift` feature, which `riftWay` makes.
 import { makeRng } from '../lib/engine/rng.ts';
 import type { MapDef, MapPalette, Feature, EncounterDef, Exit } from './map.ts';
+import { anchored } from './map.ts';
 import type { Facing } from './types.ts';
 import { FACING_DX, FACING_DY } from './types.ts';
 import type { When } from './quests.ts';
@@ -59,8 +60,11 @@ export interface RiftSpec {
   seed: number;
   band: [number, number];
   region?: RegionId;
-  /** The way out: the square beside the tear on the map it was entered from. */
-  out: { to: string; tx: number; ty: number; tf?: Facing };
+  /**
+   * The way out: the square beside the tear on the map it was entered from, an anchor of that map by
+   * name (#993), which the maps' join lands as it lands an exit, or the square and the facing.
+   */
+  out: { to: string; at: string } | { to: string; tx: number; ty: number; tf?: Facing };
   table: RiftTable;
   /** The chest at the heart. It holds no shard: the Stone's is grown into the tear, as its words say. */
   hoard: { gold: number; items: readonly string[] };
@@ -135,7 +139,8 @@ export function generateRift(spec: RiftSpec): MapDef {
 
   const way = one('<');
   const face = ([0, 1, 2, 3] as Facing[]).find((f) => grid[way.y + FACING_DY[f]]?.[way.x + FACING_DX[f]] !== '#' && grid[way.y + FACING_DY[f]]?.[way.x + FACING_DX[f]] !== 'o')!;
-  const exits: Exit[] = [{ x: way.x, y: way.y, to: spec.out.to, tx: spec.out.tx, ty: spec.out.ty, tf: spec.out.tf, label: material.leave }];
+  const o = spec.out;
+  const exits: Exit[] = ['at' in o ? anchored({ x: way.x, y: way.y, to: o.to, at: o.at, label: material.leave }) : { x: way.x, y: way.y, to: o.to, tx: o.tx, ty: o.ty, tf: o.tf, label: material.leave }];
 
   const tear = one('*'), hoard = one('$');
   const words = shuffle([...material.looks], rng.int);
