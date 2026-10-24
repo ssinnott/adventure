@@ -20,26 +20,21 @@ import type { Arm, Pt, Rig } from './figure.ts';
 import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, legs, makeRig, ring, torsoCreases, torsoPts, trunkW, tube } from './figure.ts';
 import { band } from '../../lib/art/shading.ts';
 
+/** One kind's drawing: the call `draw` makes once it has looked the kind up. */
+type Drawer = (ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint) => void;
+
+/**
+ * Each kind's drawing, keyed by the kinds SPRITES names: one registered there with no drawing here
+ * fails the typecheck (the `satisfies`), and a kind with no row draws as the plain bandit.
+ */
+const DRAWERS: Partial<Record<MonsterSprite, Drawer>> = {
+  bandit, archer, brigand, brigand_archer: brigandArcher, smuggler, smuggler_bow: smugglerBow,
+  smuggler_captain: smugglerCaptain, wrecker, lampman, footpad, poacher, billman, slinger, cutthroat,
+  bargeman, barge_master: bargeMaster, wrack_smuggler: wrackSmuggler, wrack_bowman: wrackBowman, anvil_guard: anvilGuard,
+} satisfies Record<keyof typeof SPRITES, Drawer>;
+
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
-  if (kind === 'archer') archer(ctx, x, y, h, p);
-  else if (kind === 'footpad') footpad(ctx, x, y, h, p);
-  else if (kind === 'poacher') poacher(ctx, x, y, h, p);
-  else if (kind === 'billman') billman(ctx, x, y, h, p);
-  else if (kind === 'slinger') slinger(ctx, x, y, h, p);
-  else if (kind === 'cutthroat') cutthroat(ctx, x, y, h, p);
-  else if (kind === 'bargeman') bargeman(ctx, x, y, h, p);
-  else if (kind === 'barge_master') bargeMaster(ctx, x, y, h, p);
-  else if (kind === 'wrack_smuggler') wrackSmuggler(ctx, x, y, h, p);
-  else if (kind === 'wrack_bowman') wrackBowman(ctx, x, y, h, p);
-  else if (kind === 'anvil_guard') anvilGuard(ctx, x, y, h, p);
-  else if (kind === 'brigand') brigand(ctx, x, y, h, p);
-  else if (kind === 'brigand_archer') brigandArcher(ctx, x, y, h, p);
-  else if (kind === 'smuggler') smuggler(ctx, x, y, h, p);
-  else if (kind === 'smuggler_bow') smugglerBow(ctx, x, y, h, p);
-  else if (kind === 'smuggler_captain') smugglerCaptain(ctx, x, y, h, p);
-  else if (kind === 'wrecker') wrecker(ctx, x, y, h, p);
-  else if (kind === 'lampman') lampman(ctx, x, y, h, p);
-  else bandit(ctx, x, y, h, p);
+  (DRAWERS[kind] ?? bandit)(ctx, x, y, h, p);
 };
 
 /** The kinds this module draws, each with its span and any part drawn apart; ./index.ts merges every family's. */
@@ -736,7 +731,7 @@ function brigand(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
  */
 function brigandArcher(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const R = makeRig(x, y, h, p, { tilt: 0.022, hipTilt: 0.028, turn: -0.024, near: [0.07, 0.105, 0.03], far: [-0.068, -0.165, -0.245], toe: [-0.3, -1], lift: [0.088, 0] });
-  const { sy, hx, hy, hr } = R;
+  const { sy } = R;
   const sway = Math.sin(p.frame / 21) * h * 0.007;
   // Both elbows re-placed on the real segment lengths. The far elbow used to measure 6 deg — the
   // forearm folded flat back along the upper arm — because the fore-end hand sat 0.07h from its own
@@ -762,7 +757,18 @@ function brigandArcher(ctx: CanvasRenderingContext2D, x: number, y: number, h: n
     x + trunkW(R, R.waistY) + h * 0.004, R.waistY, x + trunkW(R, hemY) - h * 0.006, hemY - h * 0.03,
     x - (trunkW(R, hemY) - h * 0.006) * FAR, hemY - h * 0.03, x - (trunkW(R, R.waistY) + h * 0.004) * FAR, R.waistY,
   ], wobble: 0.03, seed: 75, sub: 2 }], { h, formK: 0.55, spread: 0.7, tex: 'stipple', seed: 75, amount: 0.5 });
-  // Belt, the quiver of bolts at the far hip, and a pouch.
+  boltsAtHip(ctx, R, p, hemY);
+  // The single steel pauldron on the near shoulder, two lames, where the arm begins.
+  blob(ctx, B, R.dull, pauldronParts(R, R.sNear, 1), { h, formK: 0.6, spread: 0.55, gloss: 0.4 });
+  pauldronTrim(ctx, R, R.sNear, 1);
+  portCrossbow(ctx, R, p, near, far);
+  stubbleAndCap(ctx, R);
+  void p.light;
+}
+
+/** The brigand archer's belt, the quiver of bolts at the far hip, and a pouch. */
+function boltsAtHip(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, hemY: number): void {
+  const { x, h } = R;
   blob(ctx, B, R.strap, [beltPart(R, hemY - h * 0.055, h * 0.047, 76)], { h, form: false });
   band(ctx, B, x - h * 0.018, hemY - h * 0.056, h * 0.042, h * 0.046, R.brass);
   for (let i = 0; i < 4; i++) {
@@ -771,9 +777,11 @@ function brigandArcher(ctx: CanvasRenderingContext2D, x: number, y: number, h: n
     ctx.fillStyle = B.col(shade(i % 2 ? '#c8c0a0' : '#8a3a30', p.tone)); ctx.beginPath(); ctx.arc(qx - h * 0.02, qy - h * 0.09, Math.max(1, h * 0.012), 0, Math.PI * 2); ctx.fill();
   }
   blob(ctx, B, R.leather, [{ k: 'curve', pts: [x - h * 0.198, hemY - h * 0.02, x - h * 0.086, hemY - h * 0.02, x - h * 0.078, hemY + h * 0.095, x - h * 0.19, hemY + h * 0.095], wobble: 0.04, seed: 77, sub: 2 }], { h, formK: 0.55, spread: 0.6 });
-  // The single steel pauldron on the near shoulder, two lames, where the arm begins.
-  blob(ctx, B, R.dull, pauldronParts(R, R.sNear, 1), { h, formK: 0.6, spread: 0.55, gloss: 0.4 });
-  pauldronTrim(ctx, R, R.sNear, 1);
+}
+
+/** The brigand archer's crossbow at port arms, and both his hands closed on it. */
+function portCrossbow(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, near: Arm, far: Arm): void {
+  const { h } = R;
   // The crossbow at port arms, spanned and loaded. Laid out in stock coordinates — u from the grip
   // hand out to the fore-end hand, n across it — so the whole weapon is one straight description:
   // a stock with a butt and a comb, a steel prod whose limbs TAPER to their tips, the string drawn
@@ -816,13 +824,16 @@ function brigandArcher(ctx: CanvasRenderingContext2D, x: number, y: number, h: n
   const sa = Math.atan2(uy, ux);
   hand(ctx, R, far[2], sa, 78, { far: true, flip: 1, k: 0.92 });
   hand(ctx, R, near[2], sa, 42, { flip: 1 });
-  // Stubble, the scar, the leather cap.
+}
+
+/** The brigand archer's stubble, his face with the scar, and the leather cap. */
+function stubbleAndCap(ctx: CanvasRenderingContext2D, R: Rig): void {
+  const { h, hx, hy, hr } = R;
   blob(ctx, B, R.hair, [{ k: 'curve', pts: [hx - hr * 0.75, hy + hr * 0.4, hx - hr * 0.3, hy + hr * 0.6, hx + hr * 0.3, hy + hr * 0.6, hx + hr * 0.8, hy + hr * 0.38, hx + hr * 0.55, hy + hr * 0.95, hx, hy + hr * 1.08, hx - hr * 0.55, hy + hr * 0.95], wobble: 0.06, spiky: 0.06, seed: 79, sub: 2 }], { h, form: false, outline: false });
   face(ctx, R, false, true);
   blob(ctx, B, R.leather, [
     { k: 'curve', pts: [hx - hr * 1.02, hy - hr * 0.25, hx - hr * 0.9, hy - hr * 0.8, hx - hr * 0.3, hy - hr * 1.1, hx + hr * 0.4, hy - hr * 1.08, hx + hr * 0.95, hy - hr * 0.75, hx + hr * 1.02, hy - hr * 0.25, hx + hr * 1.08, hy + hr * 0.35, hx + hr * 0.85, hy + hr * 0.4, hx + hr * 0.75, hy - hr * 0.35, hx, hy - hr * 0.42, hx - hr * 0.75, hy - hr * 0.35, hx - hr * 0.85, hy + hr * 0.4, hx - hr * 1.08, hy + hr * 0.35], wobble: 0.03, seed: 80, sub: 2 },
   ], { h, formK: 0.55, spread: 0.6, tex: 'stipple', seed: 80, amount: 0.3 });
-  void p.light;
 }
 
 // ------------------------------------------------------------------ the smugglers ----
@@ -1388,7 +1399,15 @@ function bargeMaster(ctx: CanvasRenderingContext2D, x: number, y: number, h: num
   // The wide cuff on the near sleeve, darker than the coat.
   const e = near[1], w = near[2], cu = (t: number): number[] => [e.x + (w.x - e.x) * t, e.y + (w.y - e.y) * t];
   blob(ctx, B, cuff, [tube([...cu(0.62), ...cu(0.9)], h * 0.04, h * 0.048, 0, 440)], { h, formK: 0.5, spread: 0.7 });
-  // Side whiskers, a heavy jaw, and the round hat with its rolled brim.
+  masterHead(ctx, R, p);
+  masterCudgel(ctx, R, p, w);
+  masterLedger(ctx, R, p, book, far);
+  void p.light;
+}
+
+/** The barge master's side whiskers, a heavy jaw, and the round hat with its rolled brim. */
+function masterHead(ctx: CanvasRenderingContext2D, R: Rig, p: Paint): void {
+  const { h, hx, hy, hr } = R;
   blob(ctx, B, R.hair, [
     { k: 'curve', pts: [hx - hr * 1.0, hy + hr * 0.0, hx - hr * 0.72, hy + hr * 0.1, hx - hr * 0.5, hy + hr * 0.62, hx - hr * 0.78, hy + hr * 0.8, hx - hr * 1.0, hy + hr * 0.5], wobble: 0.06, spiky: 0.12, seed: 441, sub: 2 },
     { k: 'curve', pts: [hx + hr * 1.02, hy + hr * 0.0, hx + hr * 0.74, hy + hr * 0.1, hx + hr * 0.52, hy + hr * 0.62, hx + hr * 0.8, hy + hr * 0.8, hx + hr * 1.02, hy + hr * 0.5], wobble: 0.06, spiky: 0.12, seed: 442, sub: 2 },
@@ -1401,14 +1420,22 @@ function bargeMaster(ctx: CanvasRenderingContext2D, x: number, y: number, h: num
     { k: 'curve', pts: ring(hx + hr * 0.02, hy - hr * 0.62, hr * 1.38, hr * 0.26), wobble: 0.03, seed: 444, sub: 3 },
   ], { h, formK: 0.55, spread: 0.7, tex: 'folds', seed: 443, amount: 0.3 });
   stroke(ctx, [hx - hr * 0.92, hy - hr * 0.86, hx + hr * 0.95, hy - hr * 0.86], shade('#4a3c2c', p.tone), Math.max(1, hr * 0.2));
-  // The cudgel: a blackthorn club up from the fist and over the shoulder, its knob behind the head.
+}
+
+/** The barge master's cudgel: a blackthorn club up from the fist and over the shoulder, its knob behind the head. */
+function masterCudgel(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, w: Pt): void {
+  const { h, sy } = R;
   const c0 = { x: w.x - h * 0.035, y: w.y + h * 0.07 }, c1 = { x: R.sNear.x + h * 0.11, y: sy - h * 0.13 };
   blob(ctx, B, shade('#3a2a20', p.tone), [
     tube([c0.x, c0.y, (c0.x + c1.x) / 2 + h * 0.008, (c0.y + c1.y) / 2, c1.x, c1.y], Math.max(h * 0.014, 1.1), Math.max(h * 0.02, 1.3), 0.04, 445),
     { k: 'curve', pts: ring(c1.x, c1.y, h * 0.032, h * 0.03), wobble: 0.12, seed: 446, sub: 2 },
   ], { h, formK: 0.5, spread: 0.6, tex: 'cracks', seed: 445, amount: 0.4 });
   hand(ctx, R, w, Math.atan2(c1.y - c0.y, c1.x - c0.x), 447, { flip: 1 });
-  // The ledger, open: two pages over a leather board, the far hand under its spine.
+}
+
+/** The barge master's ledger, open: two pages over a leather board, the far hand under its spine. */
+function masterLedger(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, book: Pt, far: Arm): void {
+  const { h } = R;
   const bw = h * 0.085, bh = h * 0.1, bt = -0.18;
   const P = (u: number, v: number): number[] => [book.x + u * Math.cos(bt) - v * Math.sin(bt), book.y + u * Math.sin(bt) + v * Math.cos(bt)];
   glossPoly(ctx, B, [...P(-bw - h * 0.008, -bh / 2 - h * 0.006), ...P(bw + h * 0.008, -bh / 2 - h * 0.006), ...P(bw + h * 0.008, bh / 2 + h * 0.008), ...P(-bw - h * 0.008, bh / 2 + h * 0.008)], shade('#5a2a1c', p.tone), { gloss: 0.2, spread: 0.6 });
@@ -1421,7 +1448,6 @@ function bargeMaster(ctx: CanvasRenderingContext2D, x: number, y: number, h: num
     stroke(ctx, [a[0], a[1], b[0], b[1]], shade('#7a6a58', p.tone), 1);
   }
   hand(ctx, R, far[2], null, 448, { far: true, k: 0.94 });
-  void p.light;
 }
 
 // ------------------------------------------------------------------ the Wrack crews ----
@@ -1628,18 +1654,39 @@ function dwarfBoot(R: Rig, ankle: Pt, s: number, lift: number, seed: number): Pa
  */
 function anvilGuard(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const R = dwarfRig(x, y, h, p);
-  const { sy, hx, hy, hr } = R;
   const iron = p.base, ironDark = shade(p.dark, 0.85), mail = shade(mix(p.base, '#6a6e78', 0.4), 0.82);
-  const brass = shade(THANE_BRASS, p.tone), beard = shade(BEARD, p.tone), beardDeep = shade(BEARD_DEEP, p.tone);
-  const sway = Math.sin(p.frame / 23) * h * 0.006;
   groundShadow(ctx, x + h * 0.04, y + 1, h * 0.96);
   // The near arm hangs to the maul's haft; the far one is out at the elbow, its fist on the hip.
   const mx = x + h * 0.36;
   const near: Arm = [R.sNear, { x: x + h * 0.345, y: y - h * 0.5 }, { x: mx - h * 0.004, y: y - h * 0.405 }];
   const far: Arm = [R.sFar, { x: x - h * 0.355, y: y - h * 0.515 }, { x: x - h * 0.222, y: y - h * 0.445 }];
   blob(ctx, B, shade(mail, 0.8), armParts(R, far, 301, 1.5), { h, formK: 0.45, tex: 'mail', seed: 301, amount: 0.6, creases: [elbowCrease(R, far)] });
+  guardLegs(ctx, R, p, iron, ironDark);
+  const hemY = y - h * 0.445;
+  mailAndPlate(ctx, R, mail, iron, hemY);
+  const hb = y - h * 0.135, top = y - h * 0.62;
+  guardMaul(ctx, R, iron, ironDark, mx, hb, top);
+  // The near arm: mail to the elbow, an iron vambrace on the forearm, a gauntlet on the haft.
+  blob(ctx, B, mail, armParts(R, near, 319, 1.5), { h, formK: 0.5, tex: 'mail', seed: 319, amount: 0.6, creases: [elbowCrease(R, near)] });
+  blob(ctx, B, iron, [tube([near[1].x, near[1].y + h * 0.012, near[2].x, near[2].y - h * 0.03], h * 0.05, h * 0.044, 0, 320)], { h, formK: 0.6, gloss: 0.35, spread: 0.6 });
+  const ga = Math.atan2(top - hb, h * 0.008);
+  hand(ctx, R, near[2], ga, 321, { hex: iron, plate: true, gloss: 0.5, k: 1.35, flip: -1 });
+  // The far fist on the hip, a gauntlet in front of the skirt's top.
+  hand(ctx, R, far[2], null, 322, { hex: ironDark, k: 1.3 });
+  guardBelt(ctx, R, p, hemY);
+  // Shoulder plates, two lames each, wider than the shoulders under them.
+  const pauldron = (at: Pt, s: number, sd: number): Part[] => [
+    { k: 'curve', pts: [at.x - s * h * 0.075, at.y - h * 0.01, at.x - s * h * 0.03, at.y - h * 0.058, at.x + s * h * 0.06, at.y - h * 0.056, at.x + s * h * 0.1, at.y - h * 0.008, at.x + s * h * 0.085, at.y + h * 0.032, at.x - s * h * 0.055, at.y + h * 0.022], wobble: 0.02, seed: sd, sub: 2, gloss: 0.4 },
+    { k: 'curve', pts: [at.x - s * h * 0.04, at.y + h * 0.02, at.x + s * h * 0.088, at.y + h * 0.028, at.x + s * h * 0.092, at.y + h * 0.07, at.x + s * h * 0.035, at.y + h * 0.082, at.x - s * h * 0.03, at.y + h * 0.06], wobble: 0.02, seed: sd + 1, sub: 2 },
+  ];
+  blob(ctx, B, iron, [...pauldron(R.sNear, 1, 324), ...pauldron(R.sFar, -1, 326)], { h, formK: 0.6, gloss: 0.35, spread: 0.6 });
+  for (const [at, s] of [[R.sNear, 1], [R.sFar, -1]] as const) softLine(ctx, B, [at.x - s * h * 0.035, at.y + h * 0.024, at.x + s * h * 0.088, at.y + h * 0.032], ironDark, Math.max(1, h * 0.012), 0.6);
+  guardHead(ctx, R, p, iron);
+}
 
-  // Legs: short and thick, dark breeches under iron at the knee and down the shin, then the boots.
+/** The Anvil Guard's legs: short and thick, dark breeches under iron at the knee and down the shin, then the boots. */
+function guardLegs(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, iron: string, ironDark: string): void {
+  const { h } = R;
   const limb = (l: [Pt, Pt, Pt], sd: number): Part[] => [
     tube([l[0].x, l[0].y, l[1].x, l[1].y], h * 0.08, h * 0.066, 0.02, sd),
     tube([l[1].x, l[1].y, l[2].x, l[2].y], h * 0.068, h * 0.054, 0.02, sd + 5),
@@ -1652,9 +1699,11 @@ function anvilGuard(ctx: CanvasRenderingContext2D, x: number, y: number, h: numb
   blob(ctx, B, iron, [...greave(R.legL), ...greave(R.legR)], { h, formK: 0.6, gloss: 0.3, spread: 0.6 });
   for (const l of [R.legL, R.legR]) softLine(ctx, B, [l[1].x, l[1].y + h * 0.04, l[2].x, l[2].y], iron, Math.max(1, h * 0.012), 0.5);
   blob(ctx, B, ironDark, [dwarfBoot(R, R.legL[2], -1, R.lift[1], 313), dwarfBoot(R, R.legR[2], 1, R.lift[0], 314)], { h, formK: 0.5, spread: 0.65, gloss: 0.2 });
+}
 
-  // The mail skirt, belt to knee, and the breastplate over the barrel of him, ridged down the middle.
-  const hemY = y - h * 0.445;
+/** The Anvil Guard's mail skirt, belt to knee, and the breastplate over the barrel of him, ridged down the middle. */
+function mailAndPlate(ctx: CanvasRenderingContext2D, R: Rig, mail: string, iron: string, hemY: number): void {
+  const { x, y, h, sy } = R;
   blob(ctx, B, mail, [{ k: 'curve', pts: [
     x - h * 0.19, hemY - h * 0.02, x + h * 0.2, hemY - h * 0.02, x + h * 0.225, y - h * 0.27, x + h * 0.1, y - h * 0.255,
     x - h * 0.02, y - h * 0.268, x - h * 0.13, y - h * 0.255, x - h * 0.215, y - h * 0.27,
@@ -1669,9 +1718,11 @@ function anvilGuard(ctx: CanvasRenderingContext2D, x: number, y: number, h: numb
     const yy = sy + h * (0.05 + i * 0.033), w = trunkW(R, yy) - h * 0.016;
     for (const s of [-1, 1]) { ctx.fillStyle = rgba(shade(iron, 1.8), 0.8); ctx.beginPath(); ctx.arc(x + s * w * (s < 0 ? FAR : 1), yy, Math.max(0.6, h * 0.006), 0, Math.PI * 2); ctx.fill(); }
   }
+}
 
-  // The maul: its head stood on the ground by the near foot, the haft up beside him to his hand.
-  const hb = y - h * 0.135, top = y - h * 0.62;
+/** The Anvil Guard's maul: its head stood on the ground by the near foot, the haft up beside him to his hand. */
+function guardMaul(ctx: CanvasRenderingContext2D, R: Rig, iron: string, ironDark: string, mx: number, hb: number, top: number): void {
+  const { y, h } = R;
   blob(ctx, B, R.wood, [{ k: 'cap', x0: mx, y0: hb + h * 0.01, x1: mx + h * 0.008, y1: top, r0: h * 0.022, r1: h * 0.02 }], { h, formK: 0.5, spread: 0.65, tex: 'cracks', seed: 317, amount: 0.3 });
   for (const v of [0.2, 0.52]) band(ctx, B, mx - h * 0.026, y - h * v, h * 0.054, h * 0.018, ironDark);
   glossBall(ctx, B, mx + h * 0.008, top - h * 0.006, h * 0.03, iron, { gloss: 0.5 });
@@ -1680,16 +1731,12 @@ function anvilGuard(ctx: CanvasRenderingContext2D, x: number, y: number, h: numb
   // Its striking face catching the light, and the band round its waist.
   glossPoly(ctx, B, [mx - h * 0.095, hb, mx + h * 0.1, hb, mx + h * 0.085, hb + h * 0.022, mx - h * 0.082, hb + h * 0.022], shade(iron, 1.35), { gloss: 0.4, spread: 0.6 });
   band(ctx, B, mx - h * 0.112, y - h * 0.07, h * 0.23, h * 0.02, ironDark);
+}
 
-  // The near arm: mail to the elbow, an iron vambrace on the forearm, a gauntlet on the haft.
-  blob(ctx, B, mail, armParts(R, near, 319, 1.5), { h, formK: 0.5, tex: 'mail', seed: 319, amount: 0.6, creases: [elbowCrease(R, near)] });
-  blob(ctx, B, iron, [tube([near[1].x, near[1].y + h * 0.012, near[2].x, near[2].y - h * 0.03], h * 0.05, h * 0.044, 0, 320)], { h, formK: 0.6, gloss: 0.35, spread: 0.6 });
-  const ga = Math.atan2(top - hb, h * 0.008);
-  hand(ctx, R, near[2], ga, 321, { hex: iron, plate: true, gloss: 0.5, k: 1.35, flip: -1 });
-  // The far fist on the hip, a gauntlet in front of the skirt's top.
-  hand(ctx, R, far[2], null, 322, { hex: ironDark, k: 1.3 });
-
-  // The belt, broad, and its buckle the thane's anvil: a horn, a face and a foot, in brass.
+/** The Anvil Guard's belt, broad, and its buckle the thane's anvil: a horn, a face and a foot, in brass. */
+function guardBelt(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, hemY: number): void {
+  const { x, h } = R;
+  const brass = shade(THANE_BRASS, p.tone);
   const by = hemY - h * 0.045;
   blob(ctx, B, R.strap, [beltPart(R, by, h * 0.052, 323)], { h, formK: 0.4 });
   const ax = x + h * 0.006, ay = by + h * 0.026, u = h * 0.012;
@@ -1697,16 +1744,16 @@ function anvilGuard(ctx: CanvasRenderingContext2D, x: number, y: number, h: numb
     ax - 5.2 * u, ay - 2 * u, ax - 2.2 * u, ay - 2.4 * u, ax + 3.6 * u, ay - 2.4 * u, ax + 3.6 * u, ay - 0.6 * u,
     ax + 1.6 * u, ay, ax + 2.4 * u, ay + 2.2 * u, ax - 2.6 * u, ay + 2.2 * u, ax - 1.8 * u, ay, ax - 2.6 * u, ay - 0.9 * u,
   ], brass, { gloss: 0.5, spread: 0.6 });
+}
 
-  // Shoulder plates, two lames each, wider than the shoulders under them.
-  const pauldron = (at: Pt, s: number, sd: number): Part[] => [
-    { k: 'curve', pts: [at.x - s * h * 0.075, at.y - h * 0.01, at.x - s * h * 0.03, at.y - h * 0.058, at.x + s * h * 0.06, at.y - h * 0.056, at.x + s * h * 0.1, at.y - h * 0.008, at.x + s * h * 0.085, at.y + h * 0.032, at.x - s * h * 0.055, at.y + h * 0.022], wobble: 0.02, seed: sd, sub: 2, gloss: 0.4 },
-    { k: 'curve', pts: [at.x - s * h * 0.04, at.y + h * 0.02, at.x + s * h * 0.088, at.y + h * 0.028, at.x + s * h * 0.092, at.y + h * 0.07, at.x + s * h * 0.035, at.y + h * 0.082, at.x - s * h * 0.03, at.y + h * 0.06], wobble: 0.02, seed: sd + 1, sub: 2 },
-  ];
-  blob(ctx, B, iron, [...pauldron(R.sNear, 1, 324), ...pauldron(R.sFar, -1, 326)], { h, formK: 0.6, gloss: 0.35, spread: 0.6 });
-  for (const [at, s] of [[R.sNear, 1], [R.sFar, -1]] as const) softLine(ctx, B, [at.x - s * h * 0.035, at.y + h * 0.024, at.x + s * h * 0.088, at.y + h * 0.032], ironDark, Math.max(1, h * 0.012), 0.6);
-
-  // The head: skin under an iron cap, then the beard over the breastplate, then the cap's plates.
+/**
+ * The Anvil Guard's head: skin under an iron cap, then the beard over the breastplate, then the
+ * cap's plates. Idle, the beard's braids shift.
+ */
+function guardHead(ctx: CanvasRenderingContext2D, R: Rig, p: Paint, iron: string): void {
+  const { h, hx, hy, hr } = R;
+  const beard = shade(BEARD, p.tone), beardDeep = shade(BEARD_DEEP, p.tone);
+  const sway = Math.sin(p.frame / 23) * h * 0.006;
   headNeck(ctx, R);
   // The beard: out from under the cheek plates, broad over the chest, forked into two braids that
   // reach the belt, each closed with a ring; a moustache over all of it.
