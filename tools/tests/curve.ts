@@ -327,10 +327,7 @@ const LEAD = 1;
  * a row's `owed` holds a floor, so that none grows unnoticed; once inside the line, it is dropped. An
  * area may hold its own in its checks.ts (`AreaChecks.overRoad`), and then is named here no longer (#897).
  */
-const OVER_ROAD: Partial<Record<keyof typeof CURVE, { level: number; why: string }>> = {
-  kilns: { level: 19.5, why: 'the bosses pay the line\'s (MONSTERS §4.3 and §4.4), and the country behind the road (#474) and the bounds (#831) add to it' },
-  ashfall: { level: 27.4, why: 'the Stone, the rungs, the quests and the sentries, and the country behind the road adds to it (#522); accepted as built (#738)' },
-};
+const OVER_ROAD: Partial<Record<keyof typeof CURVE, { level: number; why: string }>> = {};
 
 const leadSaid = (id: string, left: number, next: number): string =>
   `${id}: entered at its floor and three quarters cleared, paid by level, a company leaves at ${left.toFixed(1)}, ${left < next ? '' : '+'}${(left - next).toFixed(1)} over the next floor ${next}`;

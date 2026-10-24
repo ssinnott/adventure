@@ -63,32 +63,7 @@ const SEAMS_AS_BUILT: readonly AsBuilt[] = [];
  * A row may stand on its area instead (`AreaChecks.openOnNothing`), the area whose box the edge is, and
  * then stands here no longer (#897): the Foreland's do.
  */
-const OPEN_ON_NOTHING: readonly OnNothing[] = [
-  // Thornmark.
-  { edge: 'deepthorn_h3 south', open: '14-16', why: 'H4 is a crumb, left unbuilt (#828)' },
-  // The Kilns.
-  { edge: 'kilnmouth_l6 north', open: '29-31', why: 'L5 is the sea along here, where #828 plans no box' },
-  { edge: 'kilnmouth_m5 west', open: '24-31', why: 'L5 is the sea along here, where #828 plans no box' },
-  { edge: 'ironfells_o3 north', open: '2-7', why: 'O2 is a crumb, left unbuilt (#828)' },
-  // Cairnmoor.
-  { edge: 'highmoor_o8 south', open: '0-27', why: 'O9 is Glacier Foot, the reach, shut until Phase 1.6' },
-  { edge: 'cairnfield_l8 west', open: '31', why: 'K8 is the sea, where #828 plans no box' },
-  // Rimewater.
-  { edge: 'coldmere_k9 north', open: '29-31', why: 'K8 is the sea, where #828 plans no box' },
-  { edge: 'longmere_m10 east', open: '0-31', why: 'N10 is Glacier Foot, the reach, shut until Phase 1.6' },
-  { edge: 'longmere_m11 east', open: '0-4 18', why: 'N11 is Glacier Foot, the reach, shut until Phase 1.6' },
-  // Ashfall.
-  { edge: 'emberwaste_e11 south', open: '12-13', why: 'E12 is the world\'s end, the void and a mountain, where #828 plans no box' },
-  { edge: 'emberwaste_e11 west', open: '0-10', why: 'D11 is the Glass, the reach, shut until Phase 1.6' },
-  // The Glasswold.
-  { edge: 'wold_d10 south', open: '0-31', why: 'D11 is the Glass, the reach, shut until Phase 1.6' },
-  { edge: 'wold_d10 west', open: '0-14 23-31', why: 'C10 is the Glass, the reach, shut until Phase 1.6' },
-  { edge: 'wold_d9 west', open: '0-31', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
-  { edge: 'wold_c8 south', open: '0-31', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
-  { edge: 'wold_b9 east', open: '0-13 27', why: 'C9 is the Glass, the reach, shut until Phase 1.6' },
-  // Hearth Isle.
-  { edge: 'hearthisle_h6 south', open: '19-27', why: 'H7 is the sea, where #828 plans no box' },
-];
+const OPEN_ON_NOTHING: readonly OnNothing[] = [];
 
 /** The rows of SEAMS_AS_BUILT and OPEN_ON_NOTHING that stand on their areas, each with its area's id, in road order (#897). */
 const seamsOn = areaLists((c) => c.seamsAsBuilt), edgesOn = areaLists((c) => c.openOnNothing);
