@@ -7,3 +7,6 @@ export const THRONE_REMOVED = 'q_throne_removed';
 
 // Every item by name, with the rest of items.ts.
 export * from './items.ts';
+
+// Every flag it sets, each with what holding it means (#995).
+export { FLAGS } from './flags.ts';

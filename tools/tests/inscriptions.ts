@@ -21,7 +21,7 @@ import { NORTH } from '../../src/game/types.ts';
 import { readerOf, readMarks, signLine, readLine, markLine, isInscription, marksOf, readId } from '../../src/game/inscriptions.ts';
 import { ATLAS, MAP_DEFS, ITEMS } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../kit/shipped.ts';
-import { ok, withDefs, fxMap, fxKey } from './lib.ts';
+import { ok, withDefs, fxMap, fxKey, fxFlag } from './lib.ts';
 
 const STORE = 'Cut over the wall, the dwarves\' words for plenty.', BREATH = 'The dwarves\' words for the mountain\'s breath.';
 
@@ -151,8 +151,8 @@ export function inscriptions(): void {
     const read = { seen: fxKey('fixture_kiln:fx_store') }, way = 'fixture_kiln: the way at 5,3';
     const exit = (e: Partial<Exit>): string[] => broken({ exits: [{ x: 5, y: 3, to: fxMap('fixture_kiln'), tx: 1, ty: 1, ...e }] });
     ok(exit({ shut: read }).join() === `${way} is shut by the reading of fixture_kiln:fx_store`, 'and a way that a reading shuts');
-    ok(exit({ shut: { flag: 'fx_bar' }, lifts: read }).join() === `${way} is opened by the reading of fixture_kiln:fx_store`, 'and one that a reading opens (its `lifts`)');
-    ok(exit({ after: [{ flag: 'fx_bar' }, read] }).join() === `${way} is no way until the reading of fixture_kiln:fx_store`, 'and one that is no way until a reading (its `after`)');
+    ok(exit({ shut: { flag: fxFlag('fx_bar') }, lifts: read }).join() === `${way} is opened by the reading of fixture_kiln:fx_store`, 'and one that a reading opens (its `lifts`)');
+    ok(exit({ after: [{ flag: fxFlag('fx_bar') }, read] }).join() === `${way} is no way until the reading of fixture_kiln:fx_store`, 'and one that is no way until a reading (its `after`)');
     const gate = broken({ gates: [{ x: 5, y: 3, shut: read, lifts: read, after: read }] });
     ok(gate.length === 3 && ['shut by', 'opened by', 'no way until'].every((s, i) => gate[i].includes(s)), `and a gate's three, each in its own words (${gate.length})`);
   }

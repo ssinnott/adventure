@@ -14,13 +14,12 @@ import { readId } from '../../src/game/inscriptions.ts';
 import { SKILLS } from '../../src/game/skills.ts';
 import { TIERS } from '../../src/game/mastery.ts';
 import { personFlags, groupFlags } from '../../src/game/people.ts';
-import { GLOVE_FLAG } from '../../src/game/combat.ts';
+import { FLAGS as CORE_FLAGS } from '../../src/content/flags.ts';
 import { UPGRADES } from '../../src/game/upgrades.ts';
 import type { Upgrade } from '../../src/game/upgrades.ts';
 import { ATLAS, MAP_DEFS, AREAS, GUILD_QUESTS } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
-import { GUILDS, takenFlag, doneFlag, rankFlag } from '../../src/content/guilds.ts';
-import type { GuildId } from '../../src/content/guilds.ts';
+import { takenFlag, doneFlag } from '../../src/content/guilds.ts';
 import { ITEMS } from '../../src/content/items.ts';
 import { SPELLS } from '../../src/content/spells.ts';
 
@@ -28,8 +27,8 @@ import { SPELLS } from '../../src/content/spells.ts';
 export const shippedFile = (area?: string): string => (area ? `src/content/areas/${area}/shipped.json` : 'src/content/shipped.json');
 export const onDisk = (file: string): string => fileURLToPath(new URL(`../../${file}`, import.meta.url));
 
-/** Flags the code sets rather than the content: the temple's count of gifts, and the Hearth's light seen to pass through a machine. */
-const CODE_FLAGS = ['donations', GLOVE_FLAG];
+/** Flags the code sets rather than the content, read from their declaration for the whole (src/content/flags.ts, #995): the temple's count of gifts, the glove's line said and each guild's rank. */
+const CODE_FLAGS = Object.keys(CORE_FLAGS);
 
 /** An area's own maps, items, monsters and guild quests, by id, as its lists hold them: its shipped file records them. */
 export interface AreaIds { id: string; maps: readonly string[]; items: readonly string[]; monsters: readonly string[]; guildQuests: readonly string[] }
@@ -143,7 +142,7 @@ export function collectShares(c: Content): Shares {
     for (const z of m.zones) (share(mapOf.get(z.id)).zones ??= {})[z.id] = { at: `${z.x},${z.y}`, size: `${z.w}x${z.h}` };
   }
   for (const q of c.guildQuests) add(questOf.get(q), 'flags', [takenFlag(q), doneFlag(q)]);
-  add(undefined, 'flags', [...CODE_FLAGS, ...(Object.keys(GUILDS) as GuildId[]).map(rankFlag)]);
+  add(undefined, 'flags', CODE_FLAGS);
   for (const id of c.items) add(itemOf.get(id), 'items', [id]);
   for (const id of c.monsters) add(monsterOf.get(id), 'monsters', [id]);
   for (const k of ['spells', 'classes', 'races', 'conditions', 'skills', 'tiers'] as const) add(undefined, k, c[k]);

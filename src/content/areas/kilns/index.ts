@@ -1,6 +1,7 @@
 // The Kilns, over the east road (band 16-18): the Iron Fells, the Kilns' heart and Kilnmouth, the
 // first of Act III. docs/areas/kilns.md is its brief.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { IRONFELLS_M3 } from './maps/ironfells_m3.ts';
 import { IRONFELLS_N3 } from './maps/ironfells_n3.ts';
 import { ANVILHALL } from './maps/anvilhall.ts';
@@ -40,10 +41,12 @@ import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
 
 export const MAPS = [IRONFELLS_M3, IRONFELLS_N3, ANVILHALL, KILNSHEART_N4, DEEP_MINES, DEEP_MINES2, DEEP_MINES3, IRONFELLS_N2, KILNSHEART_N5, KILNSHEART_N6, KILNMOUTH_M6, KILNSHEART_O5, ANVIL_STONE, KILNMOUTH_L6, KILNHAVEN, KILNSHEART_O6, LAVA_TUBES, LAVA_TUBES2, KILNMOUTH_M4, KILNMOUTH_M5, IRONFELLS_O3, KILNSHEART_O4, KILNMOUTH_K6, KILNSHEART_P5, KILNSHEART_P6, KILNMOUTH_L7, KILNSHEART_P4, SEESTOLLEN, RANDZECHE, RANDZECHE2] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'kilns' as const,
   maps: MAPS,
+  flags: FLAGS,
   monsters: MONSTERS,
   sprites: SPRITES,
   items: ITEMS,

@@ -2,6 +2,7 @@
 // the second area of Act IV, begun by sea (#443, call 6). docs/areas/ashfall.md is its state, and
 // docs/areas/ashfall/ holds its plan and decisions.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { CINDERCOAST_H10 } from './maps/cindercoast_h10.ts';
 import { CINDERCOAST_G10 } from './maps/cindercoast_g10.ts';
 import { CINDERPORT } from './maps/cinderport.ts';
@@ -38,6 +39,7 @@ export const MAPS = [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11
     FIREMOUNT_H11, FIREMOUNT_H12, FIREMOUNT_G12,
     // The bounds (#836): the Waste's south-west, where the lava flow ends under the rim.
     EMBERWASTE_F12, BLACKDRAW, GRIMS_HOWE] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'ashfall' as const,
@@ -46,6 +48,7 @@ export const AREA = {
   // the Waste's road west of the box (#517), Old Cinder's and the Ember Stone's box south of it (#514),
   // Old Cinder's two levels under its crater (#515) and the Ember Stone under its field of cinders (#516).
   maps: MAPS,
+  flags: FLAGS,
   // The camp pays outside any area's budget: its floor, 27, is past Ashfall's band (EXPANSION §5.2, #679).
   outside: ['meridian_camp3'],
   monsters: MONSTERS,

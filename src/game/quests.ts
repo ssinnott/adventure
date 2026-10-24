@@ -12,13 +12,13 @@ import { seekingQuests, trainersIn } from './seeking.ts';
 import type { Trainer } from './seeking.ts';
 import { OUTDOORS } from './outdoors.ts';
 import { QUESTS, MAP_DEFS } from '../content/index.ts';
-import type { MapId } from '../content/index.ts';
+import type { MapId, Flag } from '../content/index.ts';
 import type { MapKey } from './keys.ts';
 
 /** Something the save records. Every part given must hold. */
 export interface QuestCond {
   /** Party flags that must all be set. */
-  flag?: string | readonly string[];
+  flag?: Flag | readonly Flag[];
   /** An item someone in the party carries. */
   item?: string;
   /** A once-only event triggered, or a chest opened, on a map: 'map:id'. */
@@ -182,7 +182,7 @@ export function questLog(world: WorldState, party: Party, quests: readonly LogQu
  * flag waits for, as the world map's zone overlay letters it. Undefined where none does.
  */
 export function finishedBy(quests: readonly LogQuest[], flag: string): QuestDef | undefined {
-  return quests.flatMap((d): readonly QuestDef[] => d.chapters ?? [d]).find((d) => [d.done ?? []].flat().some((c) => [c.flag ?? []].flat().includes(flag)));
+  return quests.flatMap((d): readonly QuestDef[] => d.chapters ?? [d]).find((d) => [d.done ?? []].flat().some((c) => [c.flag ?? []].flat().some((f) => f === flag)));
 }
 
 /**

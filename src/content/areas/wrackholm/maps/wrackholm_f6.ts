@@ -12,6 +12,7 @@ import { NICK_DOWN } from './nicks_locker.ts';
 import { EAST, NORTH, SOUTH } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 import type { When } from '../../../../game/quests.ts';
+import type { Flag } from '../../../index.ts';
 
 const BURNT = { seen: 'wrackholm_f6:f6_watch' } satisfies When;
 
@@ -22,7 +23,7 @@ const NICK = [
 ];
 
 /** Merryn after her first meeting: her own words, and the rumour after them until Old Nick falls (#835). */
-const later = (after: string, lines: readonly string[], choice?: Choice): Words[] => [
+const later = (after: Flag, lines: readonly string[], choice?: Choice): Words[] => [
   { after: { flag: after }, until: { slain: NICK_DOWN }, lines: [...lines, ...NICK], ...(choice && { choice }) },
   { after: { flag: after, slain: NICK_DOWN }, lines, ...(choice && { choice }) },
 ];

@@ -1,6 +1,7 @@
 // Wrackholm, the smugglers' isle (band 12-14): the moor and the landing, Kelp Hole, the east rocks
 // and the Tide Ship. docs/areas/wrackholm.md is its brief.
 import type { Area } from '../../area.ts';
+import { FLAGS } from './flags.ts';
 import { WRACKHOLM_E6 } from './maps/wrackholm_e6.ts';
 import { WRACKHOLM_F6 } from './maps/wrackholm_f6.ts';
 import { SMUGGLERS_COVE } from './maps/smugglers_cove.ts';
@@ -25,10 +26,12 @@ import { MONSTERS, SPRITES } from './monsters.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 
 export const MAPS = [WRACKHOLM_E6, SMUGGLERS_COVE, SMUGGLERS_COVE2, WRACKHOLM_F6, TIDE_SHIP, TIDE_SHIP2, TIDE_SHIP3, TIDE_RIFT.map, DEAD_DROP_STAIR, DEAD_DROP, DEAD_DROP2, DEAD_DROP3, WRACKHOLM_E5, WRACKHOLM_F5, WRACKHOLM_F7, BROKENBACK, NICKS_LOCKER] as const;
+export { FLAGS };
 
 export const AREA = {
   id: 'wrackholm' as const,
   maps: MAPS,
+  flags: FLAGS,
   // The Dead-Drop pays outside any area's budget (EXPANSION §5.2): its three levels, past the band.
   outside: ['dead_drop', 'dead_drop2', 'dead_drop3'],
   monsters: MONSTERS,
