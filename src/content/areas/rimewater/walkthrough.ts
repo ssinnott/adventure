@@ -48,11 +48,12 @@
 // behind it. Then the bounds (#832), Monks' Vale's east under the pass and the rim south of Loch Fuar,
 // in a walk of their own (theBounds).
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, kneel, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, fight, kneel, listen, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, page, goal, written, began, reads, there, here, search, xpOf, hour, walkAt, atLevel } from '../../../../tools/kit/walk.ts';
+import { zone, square, ALL, reach, shut, reached, paces, corner, drove, each } from '../../../../tools/kit/grid.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
-import type { Can, Feature, MapDef, MapZone } from '../../../game/map.ts';
+import type { Can, Feature } from '../../../game/map.ts';
 import { LOCKS } from '../../locks.ts';
 import { ATLAS, MAP_DEFS, MONSTERS } from '../../index.ts';
 import { DROVE_COACH } from '../../crossings.ts';
@@ -71,7 +72,7 @@ import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { worldGrid } from '../../../game/atlas.ts';
-import { meet, heard, answer } from '../../../game/people.ts';
+import { meet, heard } from '../../../game/people.ts';
 import { answerRiddle } from '../../../game/wilds.ts';
 import { questLog } from '../../../game/quests.ts';
 import { wrap } from '../../../ui/draw.ts';
@@ -82,7 +83,7 @@ import type { Person } from '../../../game/people.ts';
 import { NOTCH } from '../cairnmoor/public.ts';
 import { UP, GATE, LAKE_DOOR } from './maps/longmere_m9.ts';
 import { DOOR } from './maps/coldmere_k9.ts';
-import type { Walk, Step } from '../../../../tools/walk.ts';
+import type { Walk, Step } from '../../../../tools/kit/walk.ts';
 import { GUILD_QUESTS } from '../../index.ts';
 import { rankFlag, takenFlag, doneFlag } from '../../guilds.ts';
 import { take, rankOf } from '../../../game/guilds.ts';
@@ -161,17 +162,9 @@ export const walkthrough: Walkthrough = (ok) => {
   // The road square to square from the landing to the gate's front, and from there down beside the
   // lodge, over the loch's head on the causeway and out by the west edge at 0,20 onto L9's road.
   const road = (x: number, y: number): boolean => out.at(x, y).ch === '=';
-  const reach = (fx: number, fy: number, along: (x: number, y: number) => boolean): Map<number, number> => {
-    const d = new Map([[fy * out.width + fx, 0]]), q = [[fx, fy]];
-    for (let i = 0; i < q.length; i++) {
-      const [x, y] = q[i], n = d.get(y * out.width + x)!;
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) { const k = (y + dy) * out.width + x + dx; if (!d.has(k) && along(x + dx, y + dy)) { d.set(k, n + 1); q.push([x + dx, y + dy]); } }
-    }
-    return d;
-  };
   const on = (z: typeof m9) => (x: number, y: number): boolean => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
   const onM9 = on(m9), onL9 = on(l9);
-  const byRoad = reach(m9.x + NOTCH.tx, m9.y + NOTCH.ty, (x, y) => road(x, y) && onM9(x, y));
+  const byRoad = paces(out, m9.x + NOTCH.tx, m9.y + NOTCH.ty, (x, y) => road(x, y) && onM9(x, y));
   ok(byRoad.has((m9.y + GATE.y) * out.width + m9.x + GATE.x + 1) && byRoad.has((m9.y + 20) * out.width + m9.x),
     'the road runs square to square over M9 from the landing to the gate\'s front at 19,8, and on over the causeway to the west edge at 0,20');
   ok(road(m9.x, m9.y + 20) && road(m9.x - 1, m9.y + 20) && l9.x + l9.w === m9.x, 'the road leaves M9 by its west edge at 0,20 onto L9\'s at 31,20');
@@ -186,14 +179,12 @@ export const walkthrough: Walkthrough = (ok) => {
   // under it: to the lodge's gate, and on along the drove road, the atlas's beyond the boxes built, to
   // the high pass out of Loch Fuar, or over it to the road's end in Monks' Vale at the monks' gate.
   const grid = worldGrid(ATLAS, MAP_DEFS);
-  const drove = (x: number, y: number): boolean => road(x, y) || (!out.zoneAt(x, y) && !!grid.road[y * out.width + x]);
-  const corner = (along: (x: number, y: number) => boolean) => (x: number, y: number): boolean => along(x, y) || ((out.passable(x, y) === 'ok' || !out.zoneAt(x, y)) && [-1, 1].some((d) => along(x + d, y)) && [-1, 1].some((d) => along(x, y + d)));
   const [px, py] = ATLAS.links.find((l) => l.from === 'coldmere' && l.to === 'monksvale')!.a!;
   const units = (n: number): number => Math.max(1, Math.round(n / 13));
   const counted = (z: typeof m9, def: typeof M9, id: string, ahead: { name: string; at: readonly [number, number] } = { name: 'THE PASS', at: [px, py] }): { says: boolean; toLodge: number; toPass: number } => {
     const stone = def.features!.find((f) => f.kind === 'event' && f.id === id)!;
     const [sx, sy] = [z.x + stone.x, z.y + stone.y];
-    const fromStone = reach(sx, sy, corner(drove));
+    const fromStone = paces(out, sx, sy, corner(out, drove(out, grid)));
     const toLodge = (fromStone.get((m9.y + GATE.y) * out.width + m9.x + GATE.x + 1) ?? Infinity) + 1;
     const end = [...fromStone].map(([k, n]) => ({ n, left: Math.abs(k % out.width - ahead.at[0]) + Math.abs(Math.floor(k / out.width) - ahead.at[1]) }))
       .reduce((a, b) => (b.left < a.left || (b.left === a.left && b.n < a.n) ? b : a));
@@ -212,9 +203,9 @@ export const walkthrough: Walkthrough = (ok) => {
   // The hole's fire and its keeper, a Lantern, with the lodge-keepers' word of the glacier; the man on
   // the shelf of ice at its foot; and at the glacier's edge nobody yet, the guide not gone up (#494).
   see(w, 'longmere_m9:m9_hole');
-  const said = (def: typeof M9, name: string): string => { const p = person(def, name); w.world.travel(def.id, p.x, p.y); return meet(p, w.party, heard(w.world, p)).text; };
-  ok(said(M9, 'A lodge-keeper').includes('glacier gives nothing back'), 'the lodge-keeper at the hole\'s fire says the glacier gives nothing back');
-  ok(said(M9, 'A man at the hole').includes('went back down'), 'the man on the shelf of ice under the hole\'s lip went back down for her');
+  const spoken = (def: typeof M9, name: string): string => { const p = person(def, name); w.world.travel(def.id, p.x, p.y); return meet(p, w.party, heard(w.world, p)).text; };
+  ok(spoken(M9, 'A lodge-keeper').includes('glacier gives nothing back'), 'the lodge-keeper at the hole\'s fire says the glacier gives nothing back');
+  ok(spoken(M9, 'A man at the hole').includes('went back down'), 'the man on the shelf of ice under the hole\'s lip went back down for her');
   const guide = person(M9, 'A guide');
   w.world.travel(M9.id, guide.x, guide.y);
   ok(!w.world.present(guide), 'the guide is not at the glacier\'s foot until she has gone up from the lodge (#494)');
@@ -227,17 +218,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The secret: the glacier's foot, snow on every face but one, the search there and the hollow behind
   // the bare face. Walked, waded, climbed or floated, it is never reached but through the face.
-  const shut = (z: typeof m9, from: [number, number], door: [number, number], prize: [number, number]): { size: number; reached: boolean } => {
-    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]], inside = on(z);
-    while (todo.length) {
-      const [x, y] = todo.pop()!, k = y * out.width + x;
-      if (seen.has(k) || (x === z.x + door[0] && y === z.y + door[1]) || !inside(x, y) || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
-      seen.add(k);
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
-    }
-    return { size: seen.size, reached: seen.has((z.y + prize[1]) * out.width + z.x + prize[0]) };
-  };
-  const hollow = shut(m9, [28, 24], [29, 24], [30, 24]);
+  const hollow = shut(out, m9, [28, 24], [29, 24], [30, 24]);
   ok(hollow.size > 600 && !hollow.reached, `the hollow is shut but for the bare face: none of M9's ${hollow.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'longmere_m9:m9_glacier');
   w.world.travel('longmere_m9', 28, 24, EAST);
@@ -345,7 +326,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(over.kind === 'moved' && w.world.zone?.id === 'longmere_l9' && w.world.state.x === l9.x + 31 && w.world.state.y === l9.y + 20 && !over.messages.some((m) => m.includes('Loch Fada.')),
     `west from M9's 0,20 onto L9's 31,20, walked, and the land not named again (${over.kind === 'moved' ? over.messages.join(' / ') || 'nothing said' : over.kind})`);
   ok(L9.start.x === 31 && L9.start.y === 20 && (L9.exits ?? []).length === 0, 'the box starts on the road at its east edge, and has no way out but its edges');
-  const l9Road = reach(l9.x + 31, l9.y + 20, (x, y) => road(x, y) && onL9(x, y));
+  const l9Road = paces(out, l9.x + 31, l9.y + 20, (x, y) => road(x, y) && onL9(x, y));
   ok([6, 7].every((x) => l9Road.has((l9.y + 31) * out.width + l9.x + x)) && [6, 7].every((x) => road(l9.x + x, l9.y + 32)),
     'the road runs square to square over L9 from 31,20 over the ridge to the south edge at 6,31 and 7,31, and on onto L10\'s');
   const l9Stone = counted(l9, L9, 'l9_milestone');
@@ -353,7 +334,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The drover wintering in his bothy by the road, and the bell he hears under the cold loch (#56's
   // 42); the drovers' stance; and up the crest from the saddle, the lookout over both lochs.
-  ok(said(L9, 'A drover').includes('a bell from under'), 'the drover by the road hears a bell from under the cold loch\'s ice');
+  ok(spoken(L9, 'A drover').includes('a bell from under'), 'the drover by the road hears a bell from under the cold loch\'s ice');
   see(w, 'longmere_l9:l9_stance');
   see(w, 'longmere_l9:l9_ridge');
   listen(w);
@@ -367,7 +348,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The secret: the posts out into the snow of the high meadow, fencing nothing, and the drift at
   // their end; the search there, and the drovers' summer shieling under it with the drove's
   // strongbox. Walked, waded, climbed or floated, it is never reached but through the door.
-  const shieling = shut(l9, [25, 8], [24, 8], [23, 8]);
+  const shieling = shut(out, l9, [25, 8], [24, 8], [23, 8]);
   ok(shieling.size > 600 && !shieling.reached, `the shieling is shut but for its door under the drift: none of L9's ${shieling.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'longmere_l9:l9_posts');
   w.world.travel('longmere_l9', 25, 8, WEST);
@@ -417,7 +398,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // walked on over the pass onto J10's road and across its corner to J11 (#508: the Whitespine's
   // walkthrough walks it; taken across parked J10, SADDLE, until it was laid); the milestone at the
   // pass's foot, to the lodge's gate and over the pass to the road's end at the monks' gate in Monks' Vale.
-  const onK10 = on(k10), k10Road = reach(k10.x + 30, k10.y + 3, (x, y) => road(x, y) && onK10(x, y));
+  const onK10 = on(k10), k10Road = paces(out, k10.x + 30, k10.y + 3, (x, y) => road(x, y) && onK10(x, y));
   ok(k10Road.has((k10.y + 3) * out.width + k10.x + 31) && k10Road.has((k10.y + 15) * out.width + k10.x + 5) && k10Road.has((k10.y + 19) * out.width + k10.x) && road(k10.x - 1, k10.y + 19) && out.zoneAt(k10.x - 1, k10.y + 19)?.id === 'monksvale_j10',
     'the road runs square to square over K10 from the bridge at 30,3 to the pass\'s mouth at 5,15 and out by the west edge at 0,19, on onto J10\'s road over the pass');
   const vale = ATLAS.links.find((l) => l.from === 'monksvale' && l.to === 'monastery')!.a!;
@@ -439,7 +420,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The secret: the Lantern's wayside lamp by the road, dark, its jar full to the stopper, and the search
   // there; the Lanterns' cache under its jar-shelf, with the lamp's silver and a Guide's Staff +1.
   // Walked, waded, climbed or floated, it is never reached but through the shelf.
-  const lanterns = shut(k10, [16, 10], [16, 11], [16, 12]);
+  const lanterns = shut(out, k10, [16, 10], [16, 11], [16, 12]);
   ok(lanterns.size > 600 && !lanterns.reached, `the cache is shut but for the jar-shelf: none of K10's ${lanterns.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'coldmere_k10:k10_lamp');
   w.world.travel('coldmere_k10', 16, 10, SOUTH);
@@ -511,7 +492,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The secret: the strip of clear ice over the stones laid too square, from the tower to the old
   // bank, and the search where they stop; the smith's hole behind the bank's face, dry, with his iron.
   // Walked, waded, climbed or floated, it is never reached but through the face.
-  const smiths = shut(k9, [14, 18], [13, 18], [12, 18]);
+  const smiths = shut(out, k9, [14, 18], [13, 18], [12, 18]);
   ok(smiths.size > 600 && !smiths.reached, `the hole is shut but for the bank's face: none of K9's ${smiths.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'coldmere_k9:k9_strip');
   w.world.travel('coldmere_k9', 14, 18, WEST);
@@ -534,14 +515,14 @@ export const walkthrough: Walkthrough = (ok) => {
   const toL10 = w.world.move('forward');
   ok(toL10.kind === 'moved' && w.world.zone?.id === 'longmere_l10' && w.world.state.x === l10.x + 7 && w.world.state.y === l10.y && !toL10.messages.some((m) => m.includes('Loch Fada.')),
     `south from L9's 7,31 onto L10's 7,0, walked, and the land not named again (${toL10.kind === 'moved' ? toL10.messages.join(' / ') || 'nothing said' : toL10.kind})`);
-  const l10Road = reach(l10.x + 6, l10.y, (x, y) => road(x, y) && onL10(x, y));
+  const l10Road = paces(out, l10.x + 6, l10.y, (x, y) => road(x, y) && onL10(x, y));
   ok(l9.y + l9.h === l10.y && l10.x === l9.x && (L10.exits ?? []).length === 0 && l10Road.has((l10.y + 3) * out.width + l10.x),
     'the road runs square to square over L10\'s corner from 6,0 and 7,0 to the west edge at 0,3; the box has no way out but its edges');
 
   // The cold loch's east shore, iced, with the dead pines standing in it and the old road going down
   // into it; east of the ridge the scree, the hills, the trapper at his fire and the bears' kill.
   for (const id of ['l10_road', 'l10_head', 'l10_trees', 'l10_drowned', 'l10_scree', 'l10_hills', 'l10_split', 'l10_kill']) see(w, `longmere_l10:${id}`);
-  ok(said(L10, 'A trapper').includes('I set no wire there'), 'the trapper at his fire keeps out of the cats\' pines south under the ridge\'s end');
+  ok(spoken(L10, 'A trapper').includes('I set no wire there'), 'the trapper at his fire keeps out of the cats\' pines south under the ridge\'s end');
   listen(w);
 
   // The box's groups, each won at its floor: the pike under the shore ice, nearest the way in, and the
@@ -552,7 +533,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The secret: the blazes on the pines in a line to the ridge's foot, ending at bare rock; the search
   // there, and the old trappers' store behind it. Walked, waded, climbed or floated, it is never
   // reached but through the rock.
-  const store = shut(l10, [9, 6], [10, 6], [11, 6]);
+  const store = shut(out, l10, [9, 6], [10, 6], [11, 6]);
   ok(store.size > 600 && !store.reached, `the store is shut but for the rock: none of L10's ${store.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'longmere_l10:l10_blazes');
   w.world.travel('longmere_l10', 9, 6, EAST);
@@ -572,7 +553,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(on11.kind === 'moved' && w.world.zone?.id === 'longmere_l11' && w.world.state.x === l11.x + 10 && w.world.state.y === l11.y && !on11.messages.some((m) => m.includes('Loch Fada.')) && (L11.exits ?? []).length === 0,
     `south from L10's 10,31 onto L11's 10,0, walked, and the land not named again; the box has no way out but its edges (${on11.kind === 'moved' ? on11.messages.join(' / ') || 'nothing said' : on11.kind})`);
   for (const id of ['l11_shore', 'l11_lie', 'l11_bog', 'l11_east', 'l11_reeds', 'l11_south']) see(w, `longmere_l11:${id}`);
-  ok(said(L11, 'A tar-burner').includes('The loch was a field lower then'), 'the tar-burner\'s father felled the stumps that stand in the cold loch\'s ice');
+  ok(spoken(L11, 'A tar-burner').includes('The loch was a field lower then'), 'the tar-burner\'s father felled the stumps that stand in the cold loch\'s ice');
   listen(w);
 
   // The box's groups, each won at its floor: the lynxes in the pines below the loch, nearest the way in,
@@ -582,7 +563,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The secret: the long mound under the pines, a stone at its end like a lintel; the search there, and
   // the earth-house under it. Walked, waded, climbed or floated, it is never reached but through the
   // lintel.
-  const house = shut(l11, [6, 20], [5, 20], [4, 20]);
+  const house = shut(out, l11, [6, 20], [5, 20], [4, 20]);
   ok(house.size > 600 && !house.reached, `the earth-house is shut but for the lintel: none of L11's ${house.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'longmere_l11:l11_mound');
   w.world.travel('longmere_l11', 6, 20, WEST);
@@ -619,8 +600,8 @@ export const walkthrough: Walkthrough = (ok) => {
   // The ice fisher at the camp, who says the bears come down the burn off the glacier; the box's groups,
   // each won at its floor: the pike under the ice off the fishers' holes, and the bears in the pines
   // past the burn, which comes down frozen through the ridge and is walked to them.
-  ok(said(M10, 'An ice fisher').includes('down the burn off the glacier'), 'the ice fisher says the bears come down the burn off the glacier');
-  const burn = reach(m10.x + 16, m10.y + 17, (x, y) => on(m10)(x, y) && out.passable(x, y) === 'ok');
+  ok(spoken(M10, 'An ice fisher').includes('down the burn off the glacier'), 'the ice fisher says the bears come down the burn off the glacier');
+  const burn = paces(out, m10.x + 16, m10.y + 17, (x, y) => on(m10)(x, y) && out.passable(x, y) === 'ok');
   ok(out.at(m10.x + 31, m10.y + 18).terrain === 'ice' && out.at(m10.x + 20, m10.y + 17).terrain === 'ice' && burn.has((m10.y + 25) * out.width + m10.x + 27),
     'the burn comes in off the glacier frozen and runs through the ridge, and the pines past it are walked to along its ice');
   see(w, 'longmere_m10:m10_burn');
@@ -630,7 +611,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The secret: sledge runs up from the holes in the ice that stop at the bank; the search there, and
   // the fishers' ice-house behind its turf. Walked, waded, climbed or floated, it is never reached but
   // through the bank.
-  const icehouse = shut(m10, [16, 21], [17, 21], [19, 21]);
+  const icehouse = shut(out, m10, [16, 21], [17, 21], [19, 21]);
   ok(icehouse.size > 600 && !icehouse.reached, `the ice-house is shut but for its turf: none of M10's ${icehouse.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'longmere_m10:m10_runners');
   ok(searched('longmere_m10', 16, 21, EAST, 'm10_icehouse'), 'searched at the bank where the runs stop, the turf gives, and the ice-house behind it can be walked into');
@@ -643,13 +624,13 @@ export const walkthrough: Walkthrough = (ok) => {
   // the loch's foot and the bears under the rim.
   walkedIn('longmere_m10', 10, 31, SOUTH, m11, 10, 0, 'south from M10\'s 10,31 into M11\'s pines at 10,0');
   see(w, 'longmere_m11:m11_pinewood');
-  ok(said(M11, 'A trapper').includes('bears den'), 'the trapper says the bears den under the rim');
+  ok(spoken(M11, 'A trapper').includes('bears den'), 'the trapper says the bears den under the rim');
   for (const g of M11.encounters!) fight(w, `longmere_m11:${g.id}`);
 
   // The secret: snares on the pines in a line to the rock, all sprung and empty; the search where the
   // line ends, and the trappers' cache in its cleft. Walked, waded, climbed or floated, it is never
   // reached but through the rock.
-  const cleft = shut(m11, [13, 21], [13, 22], [13, 24]);
+  const cleft = shut(out, m11, [13, 21], [13, 22], [13, 24]);
   ok(cleft.size > 600 && !cleft.reached, `the trappers' cache is shut but for its rock: none of M11's ${cleft.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'longmere_m11:m11_snares');
   ok(searched('longmere_m11', 13, 21, SOUTH, 'm11_cache'), 'searched where the snares end, the rock gives, and the cleft behind it can be walked into');
@@ -678,7 +659,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The secret: a bear's skull on a stake before the fell's face, the snow trodden round it; the search
   // there, and the hunters' hide in the face. Walked, waded, climbed or floated, it is never reached but
   // through the face.
-  const hide = shut(n9, [24, 10], [24, 9], [24, 7]);
+  const hide = shut(out, n9, [24, 10], [24, 9], [24, 7]);
   ok(hide.size > 600 && !hide.reached, `the hunters' hide is shut but for the fell's face: none of N9's ${hide.size} squares walked, waded, climbed or floated reaches it`);
   see(w, 'longmere_n9:n9_skull');
   ok(searched('longmere_n9', 24, 10, NORTH, 'n9_hide'), 'searched at the skull, the fell\'s face gives, and the hide behind it can be walked into');
@@ -708,26 +689,6 @@ function fuarBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const [J9, K11] = ['coldmere_j9', 'coldmere_k11'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
   const [j9, k9, k10, k11] = [J9.id, K9.id, 'coldmere_k10', K11.id].map((id) => out.zones.find((z) => z.id === id)!);
   const VALE = ATLAS.zones.find((z) => z.id === 'monksvale')!;
-  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
-  const shut = (z: typeof j9, from: [number, number], door: [number, number], prize: [number, number]): { size: number; reached: boolean } => {
-    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
-    while (todo.length) {
-      const [x, y] = todo.pop()!, k = y * out.width + x;
-      if (seen.has(k) || (x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h
-        || out.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
-      seen.add(k);
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
-    }
-    return { size: seen.size, reached: seen.has((z.y + prize[1]) * out.width + z.x + prize[0]) };
-  };
-  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
-    w.world.travel(map, x, y, facing);
-    let found = false;
-    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
-    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
-    listen(w);
-    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
-  };
   w.level = 20;
 
   // The far shore: west from K9's 0,20 onto J9's 31,20 under the pines, walked, in Loch Fuar still.
@@ -753,10 +714,10 @@ function fuarBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
 
   // The secret: the trapper's blazes west through the pines to the mountain's foot, and the search where
   // they stop; his store behind the rock, with his strongbox.
-  const store = shut(j9, [5, 21], [4, 21], [3, 21]);
+  const store = shut(out, j9, [5, 21], [4, 21], [3, 21]);
   ok(store.size > 600 && !store.reached, `the store is shut but for the rock: none of J9's ${store.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${J9.id}:j9_blazes`);
-  ok(search(J9.id, 5, 21, WEST, 'j9_store'), 'searched where the blazes stop, the rock gives, and the trapper\'s store behind it can be walked into');
+  ok(search(w, J9.id, 5, 21, WEST, 'j9_store'), 'searched where the blazes stop, the rock gives, and the trapper\'s store behind it can be walked into');
   const box = J9.features!.find((f) => f.kind === 'chest' && f.id === 'j9_strongbox');
   ok(box?.kind === 'chest' && box.gold === 700 && box.x === 3 && box.y === 21, 'in the store, the trapper\'s strongbox');
 
@@ -788,10 +749,10 @@ function fuarBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
 
   // The secret: the ice-cutters' sledge on the lake's shore, loaded and left, and the search at the bank
   // behind it; their ice-house in the bank, with their strongbox.
-  const icehouse = shut(k11, [23, 10], [23, 11], [23, 12]);
+  const icehouse = shut(out, k11, [23, 10], [23, 11], [23, 12]);
   ok(icehouse.size > 600 && !icehouse.reached, `the ice-house is shut but for its door in the bank: none of K11's ${icehouse.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${K11.id}:k11_sledge`);
-  ok(search(K11.id, 23, 10, SOUTH, 'k11_icehouse'), 'searched at the bank behind the sledge, a door gives, and the ice-house in it can be walked into');
+  ok(search(w, K11.id, 23, 10, SOUTH, 'k11_icehouse'), 'searched at the bank behind the sledge, a door gives, and the ice-house in it can be walked into');
   const strongbox = K11.features!.find((f) => f.kind === 'chest' && f.id === 'k11_strongbox');
   ok(strongbox?.kind === 'chest' && strongbox.gold === 700 && strongbox.x === 23 && strongbox.y === 12, 'in the ice-house, the ice-cutters\' strongbox');
 }
@@ -807,7 +768,6 @@ function fuarBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void {
 function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const [B1, B2] = ['sleepers_bay', 'sleepers_bay2'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
   const k9 = buildMaps()[OUTDOORS].zones.find((z) => z.id === K9.id)!;
-  const at = (): string => `${w.world.state.mapId} ${w.world.state.x},${w.world.state.y}`;
   w.level = 20;
 
   // In at the door: onto the landing in the ice, facing in; stepped back into, the door lets the
@@ -815,23 +775,12 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   w.world.travel(K9.id, DOOR.x, DOOR.y - 1, SOUTH);
   const inside = w.world.move('forward');
   ok(inside.kind === 'moved' && w.world.state.mapId === B1.id && w.world.state.x === B1.start.x && w.world.state.y === B1.start.y && w.world.state.facing === SOUTH && inside.messages.includes(DOOR.label!),
-    `the door opens under her palm and lets the company down onto the landing in the ice (${at()}: ${inside.kind === 'moved' ? inside.messages.join(' / ') : inside.kind})`);
+    `the door opens under her palm and lets the company down onto the landing in the ice (${here(w)}: ${inside.kind === 'moved' ? inside.messages.join(' / ') : inside.kind})`);
   const back = w.world.move('back');
   ok(back.kind === 'moved' && w.world.zone?.id === K9.id && w.world.state.x - k9.x === DOOR.x && w.world.state.y - k9.y === DOOR.y - 1 && w.world.state.facing === NORTH,
-    `and lets it back up onto the crack's foot, facing up the crack (${at()})`);
+    `and lets it back up onto the crack's foot, facing up the crack (${here(w)})`);
   ok([B1, B2].every((d) => (d.exits ?? []).every((e) => !e.shut && !e.needFlag)), 'nothing shuts a way inside the bay: the door under the ice is its one lock');
 
-  /** Whether a map's square is reached from its start without passing its secret doors, or swimming, climbing or floating. */
-  const reached = (d: MapDef, to: readonly [number, number]): boolean => {
-    const m = new GameMap(d), seen = new Set<number>(), todo = [[d.start.x, d.start.y]];
-    while (todo.length) {
-      const [x, y] = todo.pop()!, k = y * m.width + x;
-      if (seen.has(k) || !m.inBounds(x, y) || m.at(x, y).door === 'secret' || m.passable(x, y, { swim: true, climb: true, float: true }) !== 'ok') continue;
-      seen.add(k);
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
-    }
-    return seen.has(to[1] * m.width + to[0]);
-  };
 
   // The stair (20): the door's inside, the ice giving out on walls too smooth to be stone, the light
   // with no lamp and the voice's wall; the way the water runs and the tallies on its wall; the crews on
@@ -848,14 +797,14 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
     'the tallymen\'s crews that did not come up, on both ways down, and the first keeper alone at the stair\'s foot');
   for (const g of B1.encounters!) fight(w, `${B1.id}:${g.id}`);
   see(w, `${B1.id}:sb1_foot`);
-  ok(reached(B1, [6, 14]) && reached(B1, [11, 11]), 'the stair and the way the water runs both come down to the stair\'s foot, with nothing searched for');
+  ok(reached(B1, [B1.start.x, B1.start.y], [6, 14]) && reached(B1, [B1.start.x, B1.start.y], [11, 11]), 'the stair and the way the water runs both come down to the stair\'s foot, with nothing searched for');
 
   // The bay (21): down the last of the stair into the long hall, the beds and a face in the first, the
   // rows of every people, the keepers four to a row won, and the Matron in the last row, won, who never
   // comes back, and leaves her cap.
   walkThrough(w, B1.id, 6, 13, SOUTH, B2.id, 1);
   w.level = 21;
-  ok(w.world.state.x === B2.start.x && w.world.state.y === B2.start.y && w.world.state.facing === NORTH, `the stair comes out at the bay's foot, facing up the hall (${at()})`);
+  ok(w.world.state.x === B2.start.x && w.world.state.y === B2.start.y && w.world.state.facing === NORTH, `the stair comes out at the bay's foot, facing up the hall (${here(w)})`);
   for (const id of ['sb2_stair', 'sb2_beds', 'sb2_row1', 'sb2_row2', 'sb2_row3']) see(w, `${B2.id}:${id}`);
   const beds = B2.features!.find((f) => f.kind === 'event' && f.id === 'sb2_beds');
   ok(beds?.kind === 'event' && beds.text.startsWith('Rows of long glass beds') && bay.cells.filter((c) => c.solid === 'pillar').length === 40,
@@ -881,7 +830,7 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   // The secret: the keepers' path worn up the middle runs on past the last row to the wall and stops;
   // searched there, the wall gives on the locker, where the keepers put what the sleepers came with.
   // Walked, it is never reached but through that wall.
-  ok(!reached(B2, [7, 1]) && reached(B2, [10, 3]), 'the locker is reached only through the back wall, and the path runs from the stair to the last row');
+  ok(!reached(B2, [B2.start.x, B2.start.y], [7, 1]) && reached(B2, [B2.start.x, B2.start.y], [10, 3]), 'the locker is reached only through the back wall, and the path runs from the stair to the last row');
   see(w, `${B2.id}:sb2_path`);
   w.world.travel(B2.id, 7, 3, NORTH);
   let gives = false;
@@ -905,39 +854,12 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
  * to the lodge; and the stonecutter at the lodge once he is sent home from the tors, and not before.
  */
 function sideQuests(ok: (cond: boolean, msg: string) => void): void {
-  const at = (level: number): Walk => {
-    const w = newWalk(ok);
-    w.level = level;
-    for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
-    return w;
-  };
   const npc = (map: string, name: string, n = 0): Person => MAP_DEFS.find((d) => d.id === map)!.features!.filter((f) => f.kind === 'npc' && f.name === name)[n] as Person;
-  const page = (w: Walk, id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
-  const goal = (w: Walk, id: string): string => page(w, id)?.goal ?? '(no goal)';
-  const began = (w: Walk, title: string): boolean => w.news.includes(`New quest: ${title}.`);
-  const there = (w: Walk, map: string, p: Person): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
-  const hear = (w: Walk, map: string, p: Person): string => { w.world.travel(map, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
-  const answerTo = (w: Walk, map: string, p: Person, sets: string): string => {
-    w.world.travel(map, p.x, p.y);
-    const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.sets === sets);
-    ok(!!a, `${p.name} asks, and an answer sets ${sets} (${m.choice?.ask ?? 'no question'})`);
-    const said = a ? answer(a, w.party) : '';
-    listen(w);
-    return said;
-  };
   const shows = (w: Walk, map: string, id: string): boolean => {
     const f = MAP_DEFS.find((d) => d.id === map)!.features!.find((x) => x.kind === 'event' && x.id === id)!;
     w.world.travel(map, f.x, f.y);
     return w.world.present(f);
   };
-  const reads = (w: Walk, id: string, want: readonly string[], not: readonly string[], how: string): void => {
-    const pg = page(w, id), ids = pg?.entries.map((e) => e.id) ?? [], title = pg?.def.title ?? id;
-    const done = w.news.filter((n) => n === `Quest complete: ${title}.`).length;
-    ok(!!pg?.done && pg.goal === null && want.every((e) => ids.includes(e)) && !not.some((e) => ids.includes(e)) && done === 1,
-      `${how}: ${title} is done with no goal, its entries ${ids.join(', ')}, and said complete once (${done})`);
-  };
-  const xpOf = (w: Walk): number => w.party.members.reduce((t, m) => t + m.xp, 0);
-  const hour = (w: Walk, h: number): void => { w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + h * 60; };
 
   // The Coach That Never Came (#56's 40), at 20: the coachman asks; by the coach on the moor the man in
   // the healer's coat writes his note; carried down, it sends the sledge, and the sleeper goes to the
@@ -947,36 +869,36 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
   const IN_YARD = npc('rime_lodge', 'A man in a healer\'s coat'), ON_SLEDGE = npc('rime_lodge', 'A sleeper', 0), IN_HALL = npc('rime_lodge', 'A sleeper', 1);
   const coach = (w: Walk, sets: string): void => {
     hear(w, 'rime_lodge', COACHMAN);
-    answerTo(w, 'cairnfield_n8', BY_COACH, 'q_coach_note');
+    answerTo(w, 'cairnfield_n8', BY_COACH, 'q_coach_note', true);
     hear(w, 'rime_lodge', COACHMAN);
-    answerTo(w, 'rime_lodge', IN_YARD, sets);
+    answerTo(w, 'rime_lodge', IN_YARD, sets, true);
   };
   {
-    const w = at(20);
+    const w = walkAt(ok, 20);
     ok(there(w, 'cairnfield_n8', BY_COACH) && !there(w, 'rime_lodge', IN_YARD) && !there(w, 'rime_lodge', ON_SLEDGE), 'by the coach on the moor a man in a healer\'s coat, and nobody from it in the lodge\'s yard');
     ok(hear(w, 'rime_lodge', COACHMAN).includes('two days late') && began(w, 'The Coach That Never Came') && /Cairnfield/.test(goal(w, 'coach')),
       `the coachman's coach is late, and the quest begins on the drove road (${goal(w, 'coach')})`);
-    const note = answerTo(w, 'cairnfield_n8', BY_COACH, 'q_coach_note');
+    const note = answerTo(w, 'cairnfield_n8', BY_COACH, 'q_coach_note', true);
     ok(note.includes('tears the leaf out') && w.party.bag.includes('healers_note') && /coachman at Rime Lodge/.test(goal(w, 'coach')), `by the coach he writes a note for the lodge (${goal(w, 'coach')})`);
     const gold = w.party.gold, took = hear(w, 'rime_lodge', COACHMAN);
     ok(took.startsWith('He reads the note twice and shouts') && took.endsWith('(200 gold.)') && w.party.gold === gold + 200 && !w.party.bag.includes('healers_note'),
       `the coachman takes the note, pays and sends the sledge (${took.split('\n')[0]})`);
     ok(!there(w, 'cairnfield_n8', BY_COACH) && there(w, 'rime_lodge', IN_YARD) && there(w, 'rime_lodge', ON_SLEDGE) && /Lanterns/.test(goal(w, 'coach')),
       `the two from the coach are down in the lodge's yard, and gone from the moor (${goal(w, 'coach')})`);
-    const xp = xpOf(w);
-    answerTo(w, 'rime_lodge', IN_YARD, 'q_coach_hall');
+    const xp = xpOf(w.party);
+    answerTo(w, 'rime_lodge', IN_YARD, 'q_coach_hall', true);
     reads(w, 'coach', ['late', 'coach', 'sledge', 'hall'], ['temple'], 'the hall');
-    ok(xpOf(w) === xp + 1800 && there(w, 'rime_lodge', IN_HALL) && !there(w, 'rime_lodge', IN_YARD) && !there(w, 'rime_lodge', ON_SLEDGE) && hear(w, 'rime_lodge', COACHMAN).includes('froze him on his box'),
+    ok(xpOf(w.party) === xp + 1800 && there(w, 'rime_lodge', IN_HALL) && !there(w, 'rime_lodge', IN_YARD) && !there(w, 'rime_lodge', ON_SLEDGE) && hear(w, 'rime_lodge', COACHMAN).includes('froze him on his box'),
       'the hall: 1,800 xp, she sleeps at the hall\'s door under the lamps, the yard is empty and the coachman mourns');
   }
   {
-    const w = at(20);
-    answerTo(w, 'cairnfield_n8', BY_COACH, 'q_coach_note');
+    const w = walkAt(ok, 20);
+    answerTo(w, 'cairnfield_n8', BY_COACH, 'q_coach_note', true);
     ok(began(w, 'The Coach That Never Came') && /coachman at Rime Lodge/.test(goal(w, 'coach')), `found first, the coach begins it, and the goal is the coachman (${goal(w, 'coach')})`);
     const first = hear(w, 'rime_lodge', COACHMAN);
     ok(first.includes('The coach for here, stopped on the moor') && !w.party.flags.q_coach && !!w.party.flags.q_coach_sledge,
       'brought before he asks, the coachman takes the note at the first meeting and sends the sledge, and does not hire');
-    answerTo(w, 'rime_lodge', IN_YARD, 'q_coach_temple');
+    answerTo(w, 'rime_lodge', IN_YARD, 'q_coach_temple', true);
     reads(w, 'coach', ['coach', 'sledge', 'temple'], ['late', 'hall'], 'the healer\'s house, the note brought first');
     ok(!there(w, 'rime_lodge', IN_HALL) && !there(w, 'rime_lodge', IN_YARD) && !there(w, 'rime_lodge', ON_SLEDGE), 'the healer\'s house: she is inside, out of sight, and nobody is left in the yard');
   }
@@ -986,7 +908,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
   const MAN = npc('longmere_m9', 'A man at the hole'), WITNESS = npc('rime_lodge', 'A man from the hole');
   const clerk = MAP_DEFS.find((d) => d.id === 'tide_ship2')!.features!.find((f) => f.kind === 'chest' && f.id === 'ts2_clerk')!;
   for (const [how, sets, entry] of [['Hale\'s token', 'q_wentback_home', 'home'], ['the clerk\'s book', 'q_wentback_witness', 'witness']] as const) {
-    const w = at(21);
+    const w = walkAt(ok, 21);
     const first = hear(w, 'longmere_m9', MAN), again = hear(w, 'longmere_m9', MAN);
     ok(first.includes('went back down for her') && again === first && began(w, 'The One Who Went Back Down') && /Hale's token/.test(goal(w, 'wentback')),
       `${how}: the man at the hole went back down for her, and tells a stranger no more (${goal(w, 'wentback')})`);
@@ -994,10 +916,10 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     else { w.world.travel('tide_ship2', clerk.x, clerk.y); w.world.markUsed('ts2_clerk'); w.party.bag.push('clerks_book'); }
     const told = hear(w, 'longmere_m9', MAN);
     ok(told.includes('it opened for her') && /home on the coach/.test(goal(w, 'wentback')), `${how}: he says what he saw, a door that opened for a girl (${told.split('\n')[0]})`);
-    const xp = xpOf(w);
-    answerTo(w, 'longmere_m9', MAN, sets);
+    const xp = xpOf(w.party);
+    answerTo(w, 'longmere_m9', MAN, sets, true);
     reads(w, 'wentback', ['man', 'door', entry], [entry === 'home' ? 'witness' : 'home'], `${how}, ${entry}`);
-    ok(xpOf(w) === xp + 1800 && !there(w, 'longmere_m9', MAN) && there(w, 'rime_lodge', WITNESS) === (entry === 'witness') && w.party.bag.includes('hale_token') === (entry === 'home'),
+    ok(xpOf(w.party) === xp + 1800 && !there(w, 'longmere_m9', MAN) && there(w, 'rime_lodge', WITNESS) === (entry === 'witness') && w.party.bag.includes('hale_token') === (entry === 'home'),
       `${how}: 1,800 xp, he is gone from the hole and ${entry === 'witness' ? 'tells it at the lodge-keeper\'s side' : 'is not at the lodge'}, and nothing is taken from the pack`);
   }
 
@@ -1007,7 +929,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
   const WOMAN = npc('rime_lodge', 'A lodge woman'), AT_HEARTH = npc('coldmere_k9', 'A lodge woman');
   const BELL = K9.features!.find((f) => f.kind === 'sign' && f.id === 'k9_bell')!;
   for (const [bed, sets, entry] of [['q_coach_hall', 'q_icebell_out', 'out'], ['q_coach_temple', 'q_icebell_stay', 'stay']] as const) {
-    const w = at(21);
+    const w = walkAt(ok, 21);
     ok(hear(w, 'rime_lodge', WOMAN).includes('The tower still stands') && !w.party.flags.q_icebell && !page(w, 'icebell'), `${entry}: before the coach's sleeper has a bed the lodge woman speaks of the tower, and asks nothing`);
     coach(w, bed);
     ok(hear(w, 'rime_lodge', WOMAN).includes('Nobody rang the bell') && began(w, 'The Bell Under the Ice') && /tower's cap/.test(goal(w, 'icebell')),
@@ -1027,10 +949,10 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
       `${entry}: the bell's lip ${entry === 'out' ? 'read, KEEP THE COLD' : 'unread, with no reader'} (${words.join(' / ')})`);
     ok(there(w, 'rime_lodge', IN_HALL) === (bed === 'q_coach_hall') && (bed !== 'q_coach_hall' || hear(w, 'rime_lodge', IN_HALL).includes('I heard a bell')),
       `${entry}: ${bed === 'q_coach_hall' ? 'in the hall the woman from the coach sits up, and heard a bell' : 'in the healer\'s house she sleeps on, out of sight'}`);
-    const xp = xpOf(w);
-    answerTo(w, 'rime_lodge', WOMAN, sets);
+    const xp = xpOf(w.party);
+    answerTo(w, 'rime_lodge', WOMAN, sets, true);
     reads(w, 'icebell', entry === 'out' ? ['woman', 'rung', 'read', 'out'] : ['woman', 'rung', 'stay'], entry === 'out' ? ['stay'] : ['read', 'out'], entry);
-    ok(xpOf(w) === xp + 1800 && there(w, 'rime_lodge', WOMAN) === (entry === 'stay') && there(w, 'coldmere_k9', AT_HEARTH) === (entry === 'out')
+    ok(xpOf(w.party) === xp + 1800 && there(w, 'rime_lodge', WOMAN) === (entry === 'stay') && there(w, 'coldmere_k9', AT_HEARTH) === (entry === 'out')
       && (entry === 'out' || hear(w, 'rime_lodge', WOMAN).includes('The ice is quiet again')),
     `${entry}: 1,800 xp, and she is ${entry === 'out' ? 'at her people\'s hearth above the old bank' : 'by the yard\'s fire still, listening'}`);
   }
@@ -1041,7 +963,7 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
   const GOING = npc('rime_lodge', 'A guide', 0), ON_ICE = npc('longmere_m9', 'A guide'), BROUGHT = npc('rime_lodge', 'A guide', 1);
   const MARKS = M9.features!.find((f) => f.kind === 'sign' && f.id === 'm9_marks')!;
   {
-    const w = at(22);
+    const w = walkAt(ok, 22);
     ok(there(w, 'rime_lodge', GOING) && !there(w, 'longmere_m9', ON_ICE) && !there(w, 'rime_lodge', BROUGHT) && !shows(w, 'longmere_m9', 'm9_guide_cairn'),
       'the guide is at the lodge\'s gate before she goes up, and at the glacier\'s foot is neither guide nor cairn');
     ok(hear(w, 'rime_lodge', GOING).includes('the sky comes down to the ice') && began(w, 'Where the Sky Meets Ice') && !there(w, 'rime_lodge', GOING),
@@ -1050,8 +972,8 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     const found = hear(w, 'longmere_m9', ON_ICE);
     ok(found.includes('there are stairs in it') && !there(w, 'longmere_m9', ON_ICE) && there(w, 'rime_lodge', BROUGHT) && /yard fire/.test(goal(w, 'sky')),
       `found frostbitten, she is carried in to the yard's fire (${goal(w, 'sky')})`);
-    const xp = xpOf(w), drawn = answerTo(w, 'rime_lodge', BROUGHT, 'q_sky_marked');
-    ok(xpOf(w) === xp + 2100 && drawn.includes('into nothing') && /glacier's edge/.test(goal(w, 'sky')) && !page(w, 'sky')?.done,
+    const xp = xpOf(w.party), drawn = answerTo(w, 'rime_lodge', BROUGHT, 'q_sky_marked', true);
+    ok(xpOf(w.party) === xp + 2100 && drawn.includes('into nothing') && /glacier's edge/.test(goal(w, 'sky')) && !page(w, 'sky')?.done,
       `she draws the way on the map, east into nothing, for 2,100 xp, and it ends at the glacier's edge (${goal(w, 'sky')})`);
     see(w, 'longmere_m9:m9_sky');
     reads(w, 'sky', ['guide', 'found', 'marked', 'edge'], [], 'the glacier\'s edge');
@@ -1069,41 +991,33 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
   // tends the boy wrongly, and does not bleed; they go up with him, or back to the lodge.
   const PILGRIM = npc('coldmere_k10', 'A pilgrim'), DYING = npc('coldmere_k10', 'A dying pilgrim'), BROTHER = npc('coldmere_k10', 'A brother'), BACK = npc('rime_lodge', 'The pilgrims');
   for (const [sets, entry] of [['q_pilgrims_up', 'up'], ['q_pilgrims_back', 'back']] as const) {
-    const w = at(22);
+    const w = walkAt(ok, 22);
     ok(there(w, 'coldmere_k10', PILGRIM) && there(w, 'coldmere_k10', DYING) && !there(w, 'coldmere_k10', BROTHER), `${entry}: the pilgrims below the pass, the boy dying, and no brother yet`);
     ok(hear(w, 'coldmere_k10', PILGRIM).includes('bells in Monks\' Vale') && began(w, 'The Pilgrims in the Pass') && there(w, 'coldmere_k10', BROTHER), `${entry}: met, the quest begins, and a brother has come down the pass to them`);
     const tends = hear(w, 'coldmere_k10', BROTHER);
     ok(tends.includes('rubbing snow into his chest') && tends.includes('it does not bleed'), `${entry}: he cools a boy who is freezing, and his split hand does not bleed`);
-    const xp = xpOf(w);
-    answerTo(w, 'coldmere_k10', PILGRIM, sets);
+    const xp = xpOf(w.party);
+    answerTo(w, 'coldmere_k10', PILGRIM, sets, true);
     reads(w, 'pilgrims', ['camp', 'brother', entry], [entry === 'up' ? 'back' : 'up'], entry);
-    ok(xpOf(w) === xp + 2100 && ![PILGRIM, DYING, BROTHER].some((p) => there(w, 'coldmere_k10', p)) && shows(w, 'coldmere_k10', 'k10_camp') && !shows(w, 'coldmere_k10', 'k10_pilgrims') && there(w, 'rime_lodge', BACK) === (entry === 'back'),
+    ok(xpOf(w.party) === xp + 2100 && ![PILGRIM, DYING, BROTHER].some((p) => there(w, 'coldmere_k10', p)) && shows(w, 'coldmere_k10', 'k10_camp') && !shows(w, 'coldmere_k10', 'k10_pilgrims') && there(w, 'rime_lodge', BACK) === (entry === 'back'),
       `${entry}: 2,100 xp, below the pass a cold fire-ring, and ${entry === 'back' ? 'the pilgrims by the lodge\'s yard fire, the boy eating' : 'none of them at the lodge: the monastery is #445\'s'}`);
   }
 
   // The Faces on the Tors' end (#56's 39): the stonecutter is at the lodge once sent home from the
   // tors on Cairnmoor's O8, and not before, so he never stands in both places.
   {
-    const w = at(20);
+    const w = walkAt(ok, 20);
     const MASON = npc('rime_lodge', 'A stonecutter'), TORS = npc('highmoor_o8', 'A stonecutter');
     ok(there(w, 'highmoor_o8', TORS) && !there(w, 'rime_lodge', MASON), 'the stonecutter is under the tors, and not at the lodge');
     hear(w, 'highmoor_o8', TORS);
-    answerTo(w, 'highmoor_o8', TORS, 'q_faces_home');
+    answerTo(w, 'highmoor_o8', TORS, 'q_faces_home', true);
     ok(!there(w, 'highmoor_o8', TORS) && there(w, 'rime_lodge', MASON) && hear(w, 'rime_lodge', MASON).includes('one eye'), 'sent home, he is gone from the tors and at the lodge, the last tor with one eye');
   }
 }
 
 // ---- the chapter (#492) ----
 
-/** A step played at a level, the company levelled to it. */
-const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at ${level}`, play: (w) => {
-  for (const m of w.party.members) { m.level = level; m.xp = xpForLevel(level); }
-  w.level = level;
-  s.play(w);
-} });
 
-/** The entries written on the chapter's page. */
-const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
 
 /**
  * The four nights: a stay at the inn each, paid from the purse by the rule its screen serves, and
@@ -1117,7 +1031,7 @@ const NIGHTS_STOOD: Step = { name: 'the four nights', play: (w) => {
     w.world.travel('rime_lodge', inn.x + 1, inn.y);
     w.world.eventsHere();
     listen(w);
-    w.ok(set === flag && purse - w.party.gold === night && written(w).includes(flag) && !written(w).includes(NIGHTS[i + 1] ?? 'up'),
+    w.ok(set === flag && purse - w.party.gold === night && written(w, CHAPTER).includes(flag) && !written(w, CHAPTER).includes(NIGHTS[i + 1] ?? 'up'),
       `a night at ${inn.name} for ${night} gold sets ${flag}, and its entry and no later one is written`);
   }
 } };
@@ -1171,10 +1085,10 @@ function theSleepers(ok: (cond: boolean, msg: string) => void): void {
     w.party.gold = 2000;
     walkThrough(w, 'cairnfield_n8', NOTCH.x + 1, NOTCH.y, WEST, NOTCH.to, 2);
     const lodge = CHAPTER.goals.at(-1)!.text;
-    ok(quest(w)?.goal === lodge && written(w).join() === 'lodge', `${how}, down the notch the chapter begins, its goal the lodge's nights (${quest(w)?.goal})`);
+    ok(quest(w)?.goal === lodge && written(w, CHAPTER).join() === 'lodge', `${how}, down the notch the chapter begins, its goal the lodge's nights (${quest(w)?.goal})`);
     if (passFirst) {
       see(w, 'coldmere_k10:k10_mouth');
-      ok(quest(w)?.goal === lodge && written(w).join() === 'lodge', `${how}, the pass's mouth reached first writes nothing, and the goal stays on the lodge (${written(w).join(', ')})`);
+      ok(quest(w)?.goal === lodge && written(w, CHAPTER).join() === 'lodge', `${how}, the pass's mouth reached first writes nothing, and the goal stays on the lodge (${written(w, CHAPTER).join(', ')})`);
     }
     playChapter(w, CHAPTER, steps, how);
     goalFromBegun(w, how);
@@ -1182,7 +1096,7 @@ function theSleepers(ok: (cond: boolean, msg: string) => void): void {
     ok(!!quest(w)?.pages.find((p) => p.def === CHAPTER)?.done && ends === 1 && w.level === 22,
       `${how}, the beds seen and the pass's mouth reached, the chapter is done at 22, and said so once (${ends})`);
     if (passFirst) backUp(w, how);
-    read.push(written(w).join(', '));
+    read.push(written(w, CHAPTER).join(', '));
   }
   ok(read[0] === 'lodge, night_1, night_2, night_3, night_4, up, door, sleepers, south' && read[1] === read[0],
     `the chapter reads the same in order and with the pass first (${read.join(' / ')})`);
@@ -1218,32 +1132,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   w.level = 20;
   for (const m of w.party.members) m.level = 20;
   const K12 = MAP_DEFS.find((d) => d.id === 'coldmere_k12')!;
-  const out = buildMaps()[OUTDOORS], zone = (id: string): MapZone => out.zones.find((z) => z.id === id)!;
-  const k12 = zone(K12.id), k11 = zone('coldmere_k11'), j12 = zone('monksvale_j12');
-  const ALL: Can = { swim: true, climb: true, float: true };
-  const said = (r: ReturnType<typeof w.world.move>): string => (r.kind === 'moved' ? r.messages.join(' / ') || 'nothing said' : r.kind);
-  const at = (z: MapZone, x: number, y: number): number => (z.y + y) * out.width + z.x + x;
-  /** The squares of a box reached from one of its own, inside the box: on foot, or every way with its secret door shut. */
-  const reach = (z: MapZone, from: readonly [number, number], can: Can, door?: readonly [number, number]): Set<number> => {
-    const seen = new Set<number>(), todo = [[z.x + from[0], z.y + from[1]]];
-    while (todo.length) {
-      const [x, y] = todo.pop()!, k = y * out.width + x;
-      if (seen.has(k) || (door && x === z.x + door[0] && y === z.y + door[1]) || x < z.x || x >= z.x + z.w || y < z.y || y >= z.y + z.h || out.passable(x, y, can) !== 'ok') continue;
-      seen.add(k);
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
-    }
-    return seen;
-  };
-  /** Searched from a square facing the face, the wall gives and the room behind it is walked into. */
-  const search = (map: string, x: number, y: number, facing: Facing, room: string): boolean => {
-    w.world.travel(map, x, y, facing);
-    let found = false;
-    for (let i = 0; i < 20 && !found; i++) found = w.world.search();
-    const into = found ? [w.world.move('forward'), w.world.move('forward')] : [];
-    listen(w);
-    return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
-  };
-  const open = (n: number, f: (i: number) => boolean): string => Array.from({ length: n }, (_, i) => f(i)).join();
+  const out = buildMaps()[OUTDOORS];
+  const k12 = zone(out, K12.id), k11 = zone(out, 'coldmere_k11'), j12 = zone(out, 'monksvale_j12');
 
   // South of the pass, on: south from K11's 8,31 onto K12's 8,0 under the pines, walked, in Loch Fuar still.
   w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 12 * 60;
@@ -1253,8 +1143,8 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     && !south.messages.some((m) => m.includes('Loch Fuar.')), `south from K11's 8,31 onto K12's 8,0, walked, and the land not named again (${said(south)})`);
   listen(w);
   ok(K12.start.x === 8 && K12.start.y === 0 && K12.start.facing === SOUTH && (K12.exits ?? []).map((e) => e.to).join() === 'spittal', 'the box starts at its north edge under the pines, and its one way out is the door into the Spittal');
-  const vale = reach(k12, [K12.start.x, K12.start.y], {});
-  ok(vale.size > 200 && [[0, 0], [1, 5], [2, 9], [13, 5], [16, 10], [6, 12], [10, 12], [2, 14], [0, 15]].every(([x, y]) => vale.has(at(k12, x, y))) && !vale.has(at(k12, 26, 2)),
+  const vale = reach(out, k12, [K12.start.x, K12.start.y], {});
+  ok(vale.size > 200 && [[0, 0], [1, 5], [2, 9], [13, 5], [16, 10], [6, 12], [10, 12], [2, 14], [0, 15]].every(([x, y]) => vale.has(square(out, k12, x, y))) && !vale.has(square(out, k12, 26, 2)),
     `the grass and the pines west of the spur (${vale.size} squares), the fire, the brother of stone, the kill, the spur, the rim, the flat stones and the way to the rim's face at 2,15 are walked to on foot from the way in, and east of the spur is not`);
   see(w, `${K12.id}:k12_in`);
 
@@ -1287,10 +1177,10 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   // The secret: the path of flat stones that stops at the rock face, the search there and the cell behind
   // it, two squares in and a step east. Walked, waded, climbed or floated, it is never reached but through
   // its door.
-  const cell = reach(k12, [K12.start.x, K12.start.y], ALL, [10, 13]);
-  ok(cell.size > 200 && ![[10, 14], [10, 15], [11, 15]].some(([x, y]) => cell.has(at(k12, x, y))), `the cell is shut but for its door in the rock: none of K12's ${cell.size} squares walked, waded, climbed or floated reaches it`);
+  const cell = reach(out, k12, [K12.start.x, K12.start.y], ALL, [10, 13]);
+  ok(cell.size > 200 && ![[10, 14], [10, 15], [11, 15]].some(([x, y]) => cell.has(square(out, k12, x, y))), `the cell is shut but for its door in the rock: none of K12's ${cell.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${K12.id}:k12_stones`);
-  ok(search(K12.id, 10, 12, SOUTH, 'k12_cell'), 'searched where the flat stones stop, the rock gives, and the cell behind it can be walked into');
+  ok(search(w, K12.id, 10, 12, SOUTH, 'k12_cell'), 'searched where the flat stones stop, the rock gives, and the cell behind it can be walked into');
   ok(out.passable(k12.x + 10, k12.y + 15) === 'ok' && out.passable(k12.x + 11, k12.y + 15) === 'ok' && out.passable(k12.x + 11, k12.y + 14) !== 'ok', 'the cell runs two squares in from its door and a step east at its end');
   const strongbox = K12.features!.find((f) => f.kind === 'chest' && f.id === 'k12_strongbox');
   ok(strongbox?.kind === 'chest' && strongbox.gold === 250 && strongbox.items.join() === 'elixir' && strongbox.x === 11 && strongbox.y === 15, 'at the cell\'s end, a strongbox with 250 gold and an Elixir');
@@ -1300,14 +1190,14 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const bare = worldGrid(ATLAS, MAP_DEFS.filter((d) => d.id !== K12.id));
   const land = ATLAS.zones[bare.zone[(k12.y + 15) * bare.width + k12.x + 2]]?.id;
   const near = [...(K12.features ?? []), ...(K12.encounters ?? [])].filter((f) => Math.abs(f.x - 2) + Math.abs(f.y - 15) <= 4);
-  ok(K12.rows[15][2] === '"' && K12.rows[15][1] === 'M' && K12.rows[15][3] === 'M' && K12.rows[16][2] === 'M' && vale.has(at(k12, 2, 14)) && vale.has(at(k12, 2, 15)) && land === 'monksvale' && !near.length,
+  ok(K12.rows[15][2] === '"' && K12.rows[15][1] === 'M' && K12.rows[15][3] === 'M' && K12.rows[16][2] === 'M' && vale.has(square(out, k12, 2, 14)) && vale.has(square(out, k12, 2, 15)) && land === 'monksvale' && !near.length,
     `the rim's face at 2,15, Monks' Vale's land by the atlas (${land}), is the lair's door, drawn as stone and walked to from 2,14 alone, nothing within four squares${near.length ? ` (not ${near.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
 
   // East of the spur: south from K11's 27,31 onto K12's 27,0, walked; the old pines and the cairn, which
   // the vale's side never reaches.
   walkThrough(w, k11.id, 27, 31, SOUTH, K12.id, 2);
-  const pines = reach(k12, [27, 0], {});
-  ok(pines.size > 60 && [[23, 0], [31, 0], [26, 2], [28, 6], [30, 7], [26, 9]].every(([x, y]) => pines.has(at(k12, x, y))) && ![...pines].some((k) => vale.has(k)),
+  const pines = reach(out, k12, [27, 0], {});
+  ok(pines.size > 60 && [[23, 0], [31, 0], [26, 2], [28, 6], [30, 7], [26, 9]].every(([x, y]) => pines.has(square(out, k12, x, y))) && ![...pines].some((k) => vale.has(k)),
     `east of the spur (${pines.size} squares), the old pines and the cairn are walked to from K11's pines, and not from the vale's side`);
   see(w, `${K12.id}:k12_east`);
   const cairn = K12.features!.find((f) => f.kind === 'cairn' && f.id === 'k12_cairn');
@@ -1316,17 +1206,17 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   // K12's edges: its north meets K11's south square for square, open at 0 to 13 and 23 to 31; its west
   // meets J12's east, open at 0 to 15; its east is open at 0 to 7, where L12 meets it (below); past its
   // south the world ends.
-  const north = open(32, (i) => out.passable(k12.x + i, k12.y) === 'ok'), west = open(32, (i) => out.passable(k12.x, k12.y + i) === 'ok');
-  ok(north === open(32, (i) => i <= 13 || i >= 23) && north === open(32, (i) => out.passable(k11.x + i, k11.y + 31) === 'ok')
-    && west === open(32, (i) => i <= 15) && west === open(32, (i) => out.passable(j12.x + 31, j12.y + i) === 'ok')
-    && open(32, (i) => out.passable(k12.x + 31, k12.y + i) === 'ok') === open(32, (i) => i <= 7)
-    && open(32, (i) => out.passable(k12.x + i, k12.y + 31, ALL) === 'ok') === open(32, () => false),
+  const north = each(32, (i) => out.passable(k12.x + i, k12.y) === 'ok'), west = each(32, (i) => out.passable(k12.x, k12.y + i) === 'ok');
+  ok(north === each(32, (i) => i <= 13 || i >= 23) && north === each(32, (i) => out.passable(k11.x + i, k11.y + 31) === 'ok')
+    && west === each(32, (i) => i <= 15) && west === each(32, (i) => out.passable(j12.x + 31, j12.y + i) === 'ok')
+    && each(32, (i) => out.passable(k12.x + 31, k12.y + i) === 'ok') === each(32, (i) => i <= 7)
+    && each(32, (i) => out.passable(k12.x + i, k12.y + 31, ALL) === 'ok') === each(32, () => false),
     'K12 meets K11 at 0 to 13 and 23 to 31 of its north edge and J12 at 0 to 15 of its west, square for square; its east edge is open at 0 to 7, and past its south edge the world ends');
 
   // L12 (#832), the rim south of Loch Fuar: east from K12's 31,1 onto its 0,1, walked, where at 20 Loch
   // Fada is named and no more, and straight back; south from L11's 8,31 onto its 8,0, the land not named
   // again.
-  const L12 = MAP_DEFS.find((d) => d.id === 'longmere_l12')!, l12 = zone(L12.id), l11 = zone('longmere_l11');
+  const L12 = MAP_DEFS.find((d) => d.id === 'longmere_l12')!, l12 = zone(out, L12.id), l11 = zone(out, 'longmere_l11');
   w.world.travel(K12.id, 31, 1, EAST);
   const onto = w.world.move('forward');
   ok(onto.kind === 'moved' && w.world.zone?.id === L12.id && w.world.state.x === l12.x && w.world.state.y === l12.y + 1 && said(onto) === 'Loch Fada.' && k12.x + k12.w === l12.x,
@@ -1346,9 +1236,9 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   // The strip of pines, walked from the way in to every point and to the bears' square; the gatherers'
   // fire, 8 squares or more from the bears; the spring that does not freeze, which gives +1 intellect to
   // each of the company; the cairn, the rim and the bears' den-mouth.
-  const strip = reach(l12, [L12.start.x, L12.start.y], {}, [4, 6]);
+  const strip = reach(out, l12, [L12.start.x, L12.start.y], {}, [4, 6]);
   const bears = L12.encounters!.find((g) => g.id === 'l12_bears')!, camp12 = L12.features!.find((f) => f.kind === 'camp')!;
-  ok(strip.size === 79 && L12.features!.filter((f) => f.kind !== 'chest' && !('id' in f && f.id === 'l12_store')).every((f) => strip.has(at(l12, f.x, f.y))) && strip.has(at(l12, bears.x, bears.y)),
+  ok(strip.size === 79 && L12.features!.filter((f) => f.kind !== 'chest' && !('id' in f && f.id === 'l12_store')).every((f) => strip.has(square(out, l12, f.x, f.y))) && strip.has(square(out, l12, bears.x, bears.y)),
     `the strip of pines (${strip.size} squares, the cave's door among them) is walked from the way in to every point and to the bears' square, and no further`);
   ok(Math.abs(camp12.x - bears.x) + Math.abs(camp12.y - bears.y) >= 8, 'the gatherers\' fire is 8 squares or more from the bears, who do not roam');
   const springBefore = w.party.members.map((m) => m.stats.intellect);
@@ -1362,10 +1252,10 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   // The secret: the pines scored in long cuts and the stack of empty pots under the rim; the search
   // there facing the rock, and the gatherers' store behind it, a room of one by two with its door at the
   // north end. Walked, waded, climbed or floated, it is never reached but through its door.
-  const store = reach(l12, [L12.start.x, L12.start.y], ALL, [4, 6]);
-  ok(store.size > 70 && ![[4, 7], [4, 8]].some(([x, y]) => store.has(at(l12, x, y))), `the store is shut but for its door in the rim: none of L12's ${store.size} squares walked, waded, climbed or floated reaches it`);
+  const store = reach(out, l12, [L12.start.x, L12.start.y], ALL, [4, 6]);
+  ok(store.size > 70 && ![[4, 7], [4, 8]].some(([x, y]) => store.has(square(out, l12, x, y))), `the store is shut but for its door in the rim: none of L12's ${store.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${L12.id}:l12_cuts`);
-  ok(search(L12.id, 4, 5, SOUTH, 'l12_store'), 'searched where the pines are scored, the rock gives, and the store behind it can be walked into');
+  ok(search(w, L12.id, 4, 5, SOUTH, 'l12_store'), 'searched where the pines are scored, the rock gives, and the store behind it can be walked into');
   ok([[4, 7], [4, 8]].every(([x, y]) => out.passable(l12.x + x, l12.y + y) === 'ok') && [[3, 7], [5, 7], [3, 8], [5, 8], [4, 9]].every(([x, y]) => out.passable(l12.x + x, l12.y + y, ALL) !== 'ok'),
     'the store runs two squares along the rim from its door at the north end, one wide');
   const strongbox12 = L12.features!.find((f) => f.kind === 'chest' && f.id === 'l12_strongbox');
@@ -1376,7 +1266,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const bare12 = worldGrid(ATLAS, MAP_DEFS.filter((d) => d.id !== L12.id));
   const land12 = ATLAS.zones[bare12.zone[(l12.y + 4) * bare12.width + l12.x + 11]]?.id;
   const near12 = [...(L12.features ?? []), ...(L12.encounters ?? [])].filter((f) => Math.abs(f.x - 11) + Math.abs(f.y - 4) <= 4);
-  ok(L12.rows[4][11] === '"' && strip.has(at(l12, 11, 3)) && strip.has(at(l12, 11, 4)) && land12 === 'longmere' && !near12.length,
+  ok(L12.rows[4][11] === '"' && strip.has(square(out, l12, 11, 3)) && strip.has(square(out, l12, 11, 4)) && land12 === 'longmere' && !near12.length,
     `the rim's face at 11,4, Loch Fada's land by the atlas (${land12}), is the enclave's door, drawn as stone and walked to from 11,3, nothing within four squares${near12.length ? ` (not ${near12.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
 
   // Creag Fionn (#845, #832), the enclave: the cave at L12's 11,4, walked into from the pines at 11,3. Its
@@ -1440,7 +1330,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(wall.hint === 'cf_path' && CF.features!.some((f) => f.x === wall.x - 1 && f.y === wall.y && 'id' in f && f.id === 'cf_path') && inside.size === 70 && !larder.some(([x, y]) => inside.has(`${x},${y}`)),
     `the larder is shut but for the bare stretch of wall: none of Creag Fionn's ${inside.size} squares walked, waded, climbed or floated reaches it`);
   see(w, `${CF.id}:cf_path`);
-  ok(search(CF.id, wall.x - 1, wall.y, EAST, 'cf_larder'), 'searched where the trolls keep the wall bare, it gives, and the larder can be walked into');
+  ok(search(w, CF.id, wall.x - 1, wall.y, EAST, 'cf_larder'), 'searched where the trolls keep the wall bare, it gives, and the larder can be walked into');
   const larderBox = CF.features!.find((f) => f.kind === 'chest' && f.id === 'cf_larder_chest');
   ok(larderBox?.kind === 'chest' && larderBox.gold === 300 && larderBox.items.join() === 'elixir,potion_sp_great' && larderBox.x === 13 && larderBox.y === 10, 'in the larder, a strongbox with 300 gold, an Elixir and a Sapphire Vial');
   // And out: up the ramp onto L12's 11,3, with the way's own line and no other.
@@ -1454,11 +1344,11 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
 
   // L12's edges: its north meets L11's south square for square, open at 0 to 16; its west meets K12's
   // east, open at 0 to 7; past its east and south the rim stands and the world ends.
-  const north12 = open(32, (i) => out.passable(l12.x + i, l12.y) === 'ok'), west12 = open(32, (i) => out.passable(l12.x, l12.y + i) === 'ok');
-  ok(north12 === open(32, (i) => i <= 16) && north12 === open(32, (i) => out.passable(l11.x + i, l11.y + 31) === 'ok')
-    && west12 === open(32, (i) => i <= 7) && west12 === open(32, (i) => out.passable(k12.x + 31, k12.y + i) === 'ok')
-    && open(32, (i) => out.passable(l12.x + 31, l12.y + i) === 'ok') === open(32, () => false)
-    && open(32, (i) => out.passable(l12.x + i, l12.y + 31) === 'ok') === open(32, () => false),
+  const north12 = each(32, (i) => out.passable(l12.x + i, l12.y) === 'ok'), west12 = each(32, (i) => out.passable(l12.x, l12.y + i) === 'ok');
+  ok(north12 === each(32, (i) => i <= 16) && north12 === each(32, (i) => out.passable(l11.x + i, l11.y + 31) === 'ok')
+    && west12 === each(32, (i) => i <= 7) && west12 === each(32, (i) => out.passable(k12.x + 31, k12.y + i) === 'ok')
+    && each(32, (i) => out.passable(l12.x + 31, l12.y + i) === 'ok') === each(32, () => false)
+    && each(32, (i) => out.passable(l12.x + i, l12.y + 31) === 'ok') === each(32, () => false),
     'L12 meets L11 at 0 to 16 of its north edge and K12 at 0 to 7 of its west, square for square; past its east and south edges the rim stands and the world ends');
 
   // The Spittal (#845, #847), the lair: the door in K12's rim face at 2,15, walked into from the vale's
@@ -1527,7 +1417,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     ok(sheetWall.hint === 'sp2_draught' && sheetWall.x === 10 && sheetWall.y === 9 && gone.has('9,9') && !coldRoom.some(([x, y]) => gone.has(`${x},${y}`)),
       `the cold room is shut but for its wall: none of the Infirmary's ${gone.size} squares walked, waded, climbed or floated reaches it`);
     see(w, `${SP2.id}:sp2_draught`);
-    ok(search(SP2.id, 9, 9, EAST, 'sp2_cold'), 'searched where the sheet stirs, the wall gives, and the cold room behind it can be walked into');
+    ok(search(w, SP2.id, 9, 9, EAST, 'sp2_cold'), 'searched where the sheet stirs, the wall gives, and the cold room behind it can be walked into');
     ok(packs.kind === 'chest' && packs.gold === 500 && packs.items.join() === 'elixir,potion_sp_great' && packs.x === 12 && packs.y === 10, 'in the cold room, among the packs: 500 gold, an Elixir and a Sapphire Vial');
     // And out: up the stair onto the Spittal's 7,11, and out of the door onto K12's 2,14, each way's line alone.
     w.world.travel(SP2.id, SP2.start.x, SP2.start.y + 1, NORTH);

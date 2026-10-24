@@ -19,7 +19,7 @@ import { Pilot } from '../../src/game/pilot/pilot.ts';
 import { serialize } from '../../src/game/save.ts';
 import { play } from '../kit/rules/fullrun.ts';
 
-/** The seed the run plays: the walkthroughs' (tools/walk.ts). */
+/** The seed the run plays: the walkthroughs' (tools/kit/walk.ts). */
 export const SEED = 4;
 /** The ticks the pilot may take to come back to the map before a save point (`settle`). */
 const SETTLE = 10_000;

@@ -16,7 +16,7 @@ import { serialize, deserialize } from '../../src/game/save.ts';
 import { CLIMATES, MONSTERS } from '../../src/content/index.ts';
 import { restRefused } from '../../src/game/wilds.ts';
 import { NORTH } from '../../src/game/types.ts';
-import { newWalk, gone } from '../walk.ts';
+import { newWalk, gone } from '../kit/walk.ts';
 import { ok, withDefs } from './lib.ts';
 
 export function monsters(): void {
@@ -147,7 +147,7 @@ export function monsters(): void {
     const saved = deserialize(serialize(w.state, w.party, 1)), again = new World(w.maps, saved.party, makeRng(1), saved.world);
     ok(!live(again) && JSON.stringify(again.mapState.groups.test_rats) === record, `and after a save and a load it is gone still, with nothing new saved (${live(again)})`);
   }
-  // The leave rule walked as tools/walk.ts walks the road: Helmstow as a fixture, a guard beside the
+  // The leave rule walked as tools/kit/walk.ts walks the road: Helmstow as a fixture, a guard beside the
   // company and, on the company's square, the word that sends it off.
   {
     const w = newWalk(ok), world = w.world, { x, y } = world.state, h = world.maps.harrow.def, rats = world.maps[OUTDOORS].encounters[0];
