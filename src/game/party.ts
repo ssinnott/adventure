@@ -377,16 +377,19 @@ export function resists(items: Items, c: Character): Element[] {
  * stat is read with that table, so that `statOf` looks nothing up where nothing could raise it. Kept
  * by the table (#973): play has one, and a suite that lends an item plays a table of its own, so an
  * entry of its own. A table is fixed once built; the harness's `forge` adds copies of items it holds,
- * which raise what theirs do.
+ * which raise what theirs do. The last table read is kept apart, so the hot path asks no map.
  */
 const raisers = new WeakMap<Items, { slotted: boolean; slotless: boolean }>();
+let last: { items: Items; r: { slotted: boolean; slotless: boolean } } | null = null;
 function raisersOf(items: Items): { slotted: boolean; slotless: boolean } {
+  if (last?.items === items) return last.r;
   let r = raisers.get(items);
   if (!r) {
     const all = Object.values(items);
     r = { slotted: all.some((d) => !!d.stat && d.slot !== 'none'), slotless: all.some((d) => !!d.stat && d.slot === 'none') };
     raisers.set(items, r);
   }
+  last = { items, r };
   return r;
 }
 /**
