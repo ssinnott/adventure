@@ -224,8 +224,10 @@ const TAKER: Build = {
   raise: -0.3, strike: 1, nape: '#4e4236', toes: '#3a322c', brow: 1.3, scale: 0.46, lift: 0.1, heft: 0.7,
 };
 
-/** Each kind's row, keyed by the kind it dresses; a kind with none is drawn as the crow. */
-const BUILDS: Partial<Record<MonsterSprite, Build>> = { crow: CROW, owl: OWL, old_rook: ROOK, grey_heron: HERON, wrack_gull: GULL, raven: RAVEN, spine_eagle: EAGLE, vulture: VULTURE, foal_taker: TAKER };
+/** Each kind's row, keyed by the kind it dresses: one to each kind SPRITES draws and to no other, which the typecheck holds; any other kind is drawn as the crow. */
+const BUILDS: Partial<Record<MonsterSprite, Build>> = {
+  crow: CROW, owl: OWL, old_rook: ROOK, grey_heron: HERON, wrack_gull: GULL, raven: RAVEN, spine_eagle: EAGLE, vulture: VULTURE, foal_taker: TAKER,
+} satisfies Record<keyof typeof SPRITES, Build>;
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   const b = BUILDS[kind] ?? CROW;

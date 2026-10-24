@@ -89,12 +89,14 @@ const GLASS: Build = { ...HOUND, eyes: { hex: SUNDER.hot, lit: true }, lit: SUND
 const DOG: Build = { ...LEAN, neck: 1.4, head: 1.22, jaw: 1.15, ruff: 1.9, leg: 1.18, body: 1.14, fang: 1.25, tail: 1.1, headX: 0.47, headY: 0.74, rough: 0.1, shag: 0.75, heavy: 1, pale: null, eyes: { hex: COAL, lit: true } };
 /** The Downs' chalk wolf: leaner than the Foreland's, thin in the leg, the neck and the ruff. */
 const CHALK: Build = { ...LEAN, neck: 0.82, head: 0.97, jaw: 1.02, ruff: 0.5, leg: 0.78, body: 1, fang: 1, tail: 0.72, headX: 0.52, headY: 0.71, mantle: 0.3, lean: 1, tips: 1, pale: { hex: '#f4f0e6', k: 1 } };
-/** The barrow wolf: the chalk wolf grown old and heavy, the neck and the ruff thick, the fangs long, the muzzle scarred. */
+/** The barrow wolf: the chalk wolf grown old and heavy, the neck and the ruff thick, the fangs long, the muzzle scarred: its scars dark on its pale coat, bare hide where the fur never grew back. */
 const BARROW: Build = { ...LEAN, neck: 1.25, head: 1.14, jaw: 1.15, ruff: 1.45, leg: 1.08, body: 1.1, fang: 1.5, tail: 0.95, mantle: 0.3, tips: 1, pale: { hex: '#f4f0e6', k: 1 }, scars: '#6a6258' };
-/** The moor hound: the black dog grown old and huge, what is the dog's its too: heavier in the neck, the head and the ruff, the jaw long. */
+/** The moor hound: the black dog grown old and huge, what is the dog's is its too: heavier in the neck, the head and the ruff, the jaw long, its scars old and grey, as it is. */
 const MOOR: Build = { ...DOG, neck: 1.5, head: 1.25, jaw: 1.2, ruff: 2.3, leg: 1.12, body: 1.16, fang: 1.45, tail: 1.05, headY: 0.7, rough: 0.13, shag: 0.85, tear: 1, hackles: 1, grey: '#c4c0b8', scars: '#9a948c', breath: 1, nudge: 0.09 };
-/** Each kind's row, keyed by the kind it dresses; a kind with none is drawn as the lean grey wolf. */
-const BUILDS: Partial<Record<MonsterSprite, Build>> = { wolf: LEAN, dire_wolf: DIRE, rift_hound: HOUND, sunder_hound: GLASS, black_dog: DOG, chalk_wolf: CHALK, barrow_wolf: BARROW, moor_hound: MOOR };
+/** Each kind's row, keyed by the kind it dresses: one to each kind SPRITES draws and to no other, which the typecheck holds; any other kind is drawn as the lean grey wolf. */
+const BUILDS: Partial<Record<MonsterSprite, Build>> = {
+  wolf: LEAN, dire_wolf: DIRE, rift_hound: HOUND, sunder_hound: GLASS, black_dog: DOG, chalk_wolf: CHALK, barrow_wolf: BARROW, moor_hound: MOOR,
+} satisfies Record<keyof typeof SPRITES, Build>;
 
 export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
   const b = BUILDS[kind] ?? LEAN;
