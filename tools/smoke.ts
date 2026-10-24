@@ -2,36 +2,41 @@
 // disk: load index.html, start a new game through the title screen, walk a few steps, open a fight,
 // walk into a business and out again, and assert that every frame painted and no page error fired.
 import path from 'node:path';
-import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { createRequire } from 'node:module';
 import { randomInt } from 'node:crypto';
 import { createServer } from './server.ts';
+import { open, type Load } from './kit/browser.ts';
+import type { View } from './kit/sweep.ts';
 import { shardAsked, sweepAsked } from './sweep.ts';
 import { GROUND_SAMPLES } from './grounds.ts';
 import type { MonsterSprite } from '../src/content/index.ts';
 import { SPAN, SPAN_SLACK } from '../src/ui/sprites.ts';
 import { SPRITES } from '../src/ui/monsters/index.ts';
 import { LAYOUT } from '../src/ui/frame.ts';
+import type { Game, Screen } from '../src/game/game.ts';
+import type { CombatState } from '../src/game/combat.ts';
+import type { Cell, Feature, Landmark, MapDef, MapPalette, Terrain } from '../src/game/map.ts';
+import type { MonsterDef } from '../src/game/monsters.ts';
+import type { Facing } from '../src/game/types.ts';
+import type { Input } from '../src/input.ts';
+import type { CombatScreen } from '../src/ui/combat.ts';
+import type { Part } from '../src/ui/monsters/gloss.ts';
+import type { Flame } from '../src/ui/viewport.ts';
+
+// The page is read as the game it is (window.__game.game is a Game, types/globals.d.ts); these name the
+// little more the smoke reaches into, all erased before the page sees it.
+/** A screen on the stack as the smoke reads it: the fields of the screens it looks at, which Screen does not name. */
+type Shown = Screen & { seed?: number; options?: string[]; words?: string; text?: string; title?: string; ready?: boolean; ending?: { title: string };
+  page: number; sel: number; sub: number; mode: string; state: CombatState; labels: { text: string }[]; roomLog(g: Game): string[] };
+/** A person, as a business keeps one. */
+type Npc = Extract<Feature, { kind: 'npc' }>;
+/** What a square of the view holds for the painter: the monsters drawn there. */
+type Who = ReturnType<Parameters<typeof import('../src/ui/viewport.ts').drawViewport>[3]>;
+/** What the page keeps between two of its evaluates. */
+type Kept = { __hob?: Feature; __bram?: { level: number; maxHp: number; hp: number; gold: number }; __purse?: number };
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const require = createRequire(import.meta.url);
 void ROOT;
-
-function loadPlaywright(): any {
-  for (const c of ['/opt/node22/lib/node_modules/playwright', '/usr/lib/node_modules/playwright', 'playwright', 'playwright-core']) {
-    try { return require(c); } catch { /* next */ }
-  }
-  throw new Error('Playwright not found');
-}
-async function launch(chromium: any): Promise<any> {
-  try { return await chromium.launch(); }
-  catch (e) {
-    const exe = process.env.PLAYWRIGHT_CHROMIUM || '/opt/pw-browsers/chromium';
-    if (fs.existsSync(exe)) return chromium.launch({ executablePath: exe });
-    throw e;
-  }
-}
 
 // Every run plays the same world: the page's Math.random is pinned, so the new game's seed is SMOKE_SEED
 // (the first draw floors to it in freshSeed) and every draw after it follows from it. SMOKE_SEED=random
@@ -63,28 +68,10 @@ const server = createServer();
 await new Promise<void>((r) => server.listen(0, () => r()));
 const port = (server.address() as { port: number }).port;
 
-const { chromium } = loadPlaywright();
-const browser = await launch(chromium);
-const page = await browser.newPage();
-await page.addInitScript((seed: number) => {
-  let s = seed >>> 0, first = true;
-  Math.random = () => {
-    if (first) { first = false; return (seed + 0.5) / 0x7fffffff; }
-    s = (s + 0x6d2b79f5) >>> 0;
-    let t = s;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}, SEED);
-const errors: string[] = [];
-page.on('pageerror', (e: Error) => errors.push('pageerror: ' + e.message));
-page.on('console', (m: any) => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
+const { browser, page, errors } = await open(port, { seed: SEED });
 let bad = 0;
 const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) bad++; };
 
-await page.goto(`http://localhost:${port}/`, { waitUntil: 'load' });
-await page.waitForFunction(() => (window as any).__game?.ready === true, null, { timeout: 15000 });
 await page.waitForTimeout(200);
 
 const colours = async (): Promise<number> => page.evaluate(() => {
@@ -99,10 +86,10 @@ const titleColours = await colours();
 // Title -> new game -> premade company -> walk out of the gate and into the Foreland -> force a
 // fight.
 await page.keyboard.press('Space'); await page.waitForTimeout(100);
-const screen0 = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
-const gameSeed = await page.evaluate(() => (window as any).__game.game.top.seed);
+const screen0 = await page.evaluate(() => window.__game!.game!.top.constructor.name);
+const gameSeed = await page.evaluate(() => (window.__game!.game!.top as Shown).seed);
 await page.keyboard.press('Space'); await page.waitForTimeout(150);
-const screen1 = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
+const screen1 = await page.evaluate(() => window.__game!.game!.screens.map((s) => s.constructor.name).join(','));
 
 // The walls meet without a crack. A view is painted twice, over two flat backdrops, and wherever the
 // two differ the backdrop shows through. Along the horizon only walls and hills can be (the floor starts
@@ -128,10 +115,10 @@ const screen1 = await page.evaluate(() => (window as any).__game.game.screens.ma
 // paints over the backdrop and the windows whose views differ in it.
 type Swept = { views: number; maps: number; skipped: number; windows: number; painted: number; short: number; bad: string[]; audit?: { differ: string[]; overSkip: number; split: number } };
 const crackSweep = (maps: { id: string; all: boolean }[]): Promise<Swept> => page.evaluate(async ({ maps, i, n, audit }: { maps: { id: string; all: boolean }[]; i: number; n: number; audit: boolean }) => {
-  const load = (p: string): Promise<any> => import(p);
-  const V = await load('/src/ui/viewport.ts'), S = await load('/tools/kit/sweep.ts'), Wx = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts');
-  const w = (window as any).__game.game.world;
-  const plan = S.plan(w, maps), views: any[] = S.shard(plan, i, n);
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts'), S = await load<typeof import('./kit/sweep.ts')>('/tools/kit/sweep.ts'), Wx = await load<typeof import('../src/game/weather.ts')>('/src/game/weather.ts'), C = await load<typeof import('../src/game/calendar.ts')>('/src/game/calendar.ts');
+  const w = window.__game!.game!.world;
+  const plan = S.plan(w, maps), views = S.shard(plan, i, n);
   const W = 400, H = 268, band = 16, rows = band * 2, bad: string[] = [], differ: string[] = [], split = new Set<number>();
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!;
@@ -161,10 +148,10 @@ const crackSweep = (maps: { id: string; all: boolean }[]): Promise<Swept> => pag
   };
   const hour = w.state.minutes, noons = new Map<string, number>();
   let short = 0;
-  const go = (v: any): void => {
+  const go = (v: View): void => {
     w.travel(v.id, v.x, v.y, v.f); w.state.light = 1;
     let at = noons.get(w.region);
-    if (at === undefined) noons.set(w.region, (at = Wx.findWeather(w.state.weatherSeed, hour, w.climate, (wx: any, min: number) => wx.precip < 0.02 && !V.washes(wx) && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480)));
+    if (at === undefined) noons.set(w.region, (at = Wx.findWeather(w.state.weatherSeed!, hour, w.climate, (wx, min) => wx.precip < 0.02 && !V.washes(wx) && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480)));
     w.state.minutes = at! >= 0 ? at : hour;
     if (w.sight < 4) short++;
   };
@@ -207,46 +194,46 @@ if (PART === 'sweep') {
 }
 for (const k of ['ArrowDown', 'ArrowDown', 'ArrowDown']) { await page.keyboard.press(k); await page.waitForTimeout(40); }
 await page.waitForTimeout(100);
-const state = await page.evaluate(() => { const g = (window as any).__game.game; return { map: g.world.state.mapId, zone: g.world.zone?.id, x: g.world.state.x, y: g.world.state.y, steps: g.world.state.steps }; });
+const state = await page.evaluate(() => { const g = window.__game!.game!; return { map: g.world.state.mapId, zone: g.world.zone?.id, x: g.world.state.x, y: g.world.state.y, steps: g.world.state.steps }; });
 const exploreColours = await colours();
-await page.evaluate(() => { const g = (window as any).__game.game; g.fight(['road_rats']); });
+await page.evaluate(() => { const g = window.__game!.game!; g.fight(['road_rats']); });
 await page.waitForTimeout(150);
-const screen2 = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const screen2 = await page.evaluate(() => window.__game!.game!.top.constructor.name);
 const combatColours = await colours();
 // Thornmark: the second region's sprites (ogre, wraith, the big wolves) and a town paint too.
-await page.evaluate(() => { const g = (window as any).__game.game; g.screens.pop(); g.world.travel('thornmark', 6, 8, 3); g.enterCell(); });
+await page.evaluate(() => { const g = window.__game!.game!; g.screens.pop(); g.world.travel('thornmark', 6, 8, 3); g.enterCell(); });
 await page.waitForTimeout(150);
 const thornColours = await colours();
 // The ogre's band as the view draws it before the fight: each of its kinds, to three (world.ts, groupDrawn).
-const ogreView = await page.evaluate(() => { const g = (window as any).__game.game, band = g.world.liveGroups().find((q: any) => q.def.id === 'tm_ogre'); return band ? (g.monstersAt(band.state.x, band.state.y) ?? []).map((m: any) => m.id).join(',') : 'no tm_ogre'; });
-await page.evaluate(() => { const g = (window as any).__game.game; g.fight(['tm_ogre', 'tm_wraiths']); });
+const ogreView = await page.evaluate(() => { const g = window.__game!.game!, band = g.world.liveGroups().find((q) => q.def.id === 'tm_ogre'); return band ? (g.monstersAt(band.state.x, band.state.y) ?? []).map((m) => m.id).join(',') : 'no tm_ogre'; });
+await page.evaluate(() => { const g = window.__game!.game!; g.fight(['tm_ogre', 'tm_wraiths']); });
 await page.waitForTimeout(150);
-const thornFight = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, monsters: g.top.state.monsters.map((m: any) => m.def.sprite).join(','), labels: g.top.labels.map((l: any) => l.text).join(' | ') }; });
+const thornFight = await page.evaluate(() => { const g = window.__game!.game!; return { screen: g.top.constructor.name, monsters: (g.top as Shown).state.monsters.map((m) => m.def.sprite).join(','), labels: (g.top as Shown).labels.map((l) => l.text).join(' | ') }; });
 const thornFightColours = await colours();
-await page.evaluate(() => { const g = (window as any).__game.game; g.screens.pop(); g.world.travel('thornhold', 7, 14, 0); g.enterCell(); });
+await page.evaluate(() => { const g = window.__game!.game!; g.screens.pop(); g.world.travel('thornhold', 7, 14, 0); g.enterCell(); });
 await page.waitForTimeout(150);
 const townColours = await colours();
 // A business: walking into the Hearthlight's doorway opens its interior under the inn's menu, and
 // leaving puts the party back in the street, facing the door.
 // An event on its doorway, put there at run time, is said by the step in and shows in the room's log.
-await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('harrow', 4, 5, 0); g.world.map.features.push({ kind: 'event', x: 4, y: 4, id: 'fx_chair', text: 'An empty chair by the fire.' }); });
+await page.evaluate(() => { const g = window.__game!.game!; g.world.travel('harrow', 4, 5, 0); (g.world.map.features as Feature[]).push({ kind: 'event', x: 4, y: 4, id: 'fx_chair', text: 'An empty chair by the fire.' }); });
 await page.keyboard.press('ArrowUp'); await page.waitForTimeout(150);
-const inside = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
-const roomLog = await page.evaluate(() => { const g = (window as any).__game.game, v = g.screens.find((s: any) => s.constructor.name === 'InteriorScreen'); return v ? v.roomLog(g) : []; });
+const inside = await page.evaluate(() => window.__game!.game!.screens.map((s) => s.constructor.name).join(','));
+const roomLog = await page.evaluate(() => { const g = window.__game!.game!, v = g.screens.find((s) => s.constructor.name === 'InteriorScreen') as Shown | undefined; return v ? v.roomLog(g) : []; });
 const innColours = await colours();
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
-await page.evaluate(() => { const m = (window as any).__game.game.world.map; m.features.splice(m.features.findIndex((f: any) => f.id === 'fx_chair'), 1); });
-const outside = await page.evaluate(() => { const g = (window as any).__game.game; return { screens: g.screens.map((s: any) => s.constructor.name).join(','), x: g.world.state.x, y: g.world.state.y, facing: g.world.state.facing }; });
+await page.evaluate(() => { const m = window.__game!.game!.world.map; (m.features as Feature[]).splice(m.features.findIndex((f) => 'id' in f && f.id === 'fx_chair'), 1); });
+const outside = await page.evaluate(() => { const g = window.__game!.game!; return { screens: g.screens.map((s) => s.constructor.name).join(','), x: g.world.state.x, y: g.world.state.y, facing: g.world.state.facing }; });
 // A person in a business (game/people.ts, World.peopleAt): a Hob put in the Hearthlight at run time,
 // with the real Hob (#77) taken out for the run, makes its first menu list him; his answer sends him
 // away, and the menu no longer lists him. Then the real Hob is put back, and the menu lists him.
 const inn = await (async () => {
-  const state = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
+  const state = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = window.__game!.game!.top as Shown; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
   await page.evaluate(() => {
-    const g = (window as any).__game.game, m = g.world.map;
-    (window as any).__hob = m.features.splice(m.features.findIndex((f: any) => f.kind === 'npc' && f.name.startsWith('Hob')), 1)[0];
+    const g = window.__game!.game!, m = g.world.map;
+    (window as Window & Kept).__hob = (m.features as Feature[]).splice(m.features.findIndex((f) => f.kind === 'npc' && f.name.startsWith('Hob')), 1)[0];
     g.world.travel('harrow', 4, 5, 0);
-    g.world.map.features.push({ kind: 'npc', x: 4, y: 4, name: 'Hob, once tenant of Ashcombe', lines: ['"A stranger, and armed."'], until: { flag: 'fx_hob_gone' },
+    (g.world.map.features as Feature[]).push({ kind: 'npc', x: 4, y: 4, name: 'Hob, once tenant of Ashcombe', lines: ['"A stranger, and armed."'], until: { flag: 'fx_hob_gone' },
       choice: { ask: '"Should I go to Gullwick?"', answers: [{ label: 'Go', sets: 'fx_hob_gone', says: ['"Then I go."'] }, { label: 'Stay', sets: 'fx_hob_stays', says: ['"Then I stay."'] }] } });
   });
   await page.keyboard.press('ArrowUp'); await page.waitForTimeout(150);
@@ -262,42 +249,42 @@ const inn = await (async () => {
   const backColours = await colours();
   // With him gone the trade is all the menu offers: choosing it opens it once, with nothing under it to come back to.
   await page.keyboard.press('Space'); await page.waitForTimeout(80);
-  const traded = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
+  const traded = await page.evaluate(() => window.__game!.game!.screens.map((s) => s.constructor.name).join(','));
   await page.keyboard.press('Escape'); await page.waitForTimeout(100);
   const left = await page.evaluate(() => {
-    const g = (window as any).__game.game, top = g.top.constructor.name, m = g.world.map;
+    const g = window.__game!.game!, top = g.top.constructor.name, m = g.world.map;
     while (g.screens.length > 1) g.pop();
-    const i = m.features.findIndex((f: any) => f.kind === 'npc' && f.name.startsWith('Hob'));
-    if (i >= 0) m.features.splice(i, 1);
-    m.features.push((window as any).__hob);
+    const i = m.features.findIndex((f) => f.kind === 'npc' && f.name.startsWith('Hob'));
+    if (i >= 0) (m.features as Feature[]).splice(i, 1);
+    (m.features as Feature[]).push((window as Window & Kept).__hob!);
     delete g.party.flags.fx_hob_gone; delete g.party.flags.fx_hob_stays;
     return top;
   });
   const hob = await page.evaluate(() => {
-    const g = (window as any).__game.game;
-    g.interact(g.world.map.features.find((f: any) => f.kind === 'inn'));
-    const menu = g.screens.find((s: any) => s.constructor.name === 'ChoiceScreen')?.options ?? [];
+    const g = window.__game!.game!;
+    g.interact(g.world.map.features.find((f) => f.kind === 'inn')!);
+    const menu = (g.screens.find((s) => s.constructor.name === 'ChoiceScreen') as Shown | undefined)?.options ?? [];
     while (g.screens.length > 1) g.pop();
     return menu;
   });
   // The Gilded Eel is its keeper: with Ebba and Maud in it from a new game (#77), the room says
   // itself over a menu that lists them.
   const eel = await page.evaluate(() => {
-    const g = (window as any).__game.game, m = g.world.map, eel = m.features.find((f: any) => f.kind === 'npc' && f.interior === 'gilded_eel');
-    g.interact(eel);
-    const out = g.screens.map((s: any) => s.constructor.name).join(','), under = g.screens[g.screens.length - 2]?.options ?? [];
+    const g = window.__game!.game!, m = g.world.map, eel = m.features.find((f): f is Npc => f.kind === 'npc' && f.interior === 'gilded_eel');
+    g.interact(eel!);
+    const out = g.screens.map((s) => s.constructor.name).join(','), under = (g.screens[g.screens.length - 2] as Shown | undefined)?.options ?? [];
     while (g.screens.length > 1) g.pop();
     return { screens: out, options: under };
   });
   // A tavern may be a guild's hall (#417): the Gilded Eel made the Wardens' for the run lists their
   // work and their skill (#805) after the talk of the room and before its people.
   const hall = await page.evaluate(() => {
-    const g = (window as any).__game.game, eel = g.world.map.features.find((f: any) => f.kind === 'npc' && f.interior === 'gilded_eel');
-    eel.hall = 'wardens';
-    g.interact(eel);
-    const under = g.screens[g.screens.length - 2]?.options ?? [];
+    const g = window.__game!.game!, eel = g.world.map.features.find((f): f is Npc => f.kind === 'npc' && f.interior === 'gilded_eel');
+    eel!.hall = 'wardens';
+    g.interact(eel!);
+    const under = (g.screens[g.screens.length - 2] as Shown | undefined)?.options ?? [];
     while (g.screens.length > 1) g.pop();
-    delete eel.hall;
+    delete eel!.hall;
     return under;
   });
   return { menu, words, question, said, back, backColours, traded, left, hob, eel, hall };
@@ -306,12 +293,12 @@ const inn = await (async () => {
 // to Thornhold. Faced and asked, his words close onto the menu of crossings, then the terms; paying
 // takes the fare, runs the clock to the landing and leaves the company in Thornhold, exploring.
 const coach = await (async () => {
-  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
+  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = window.__game!.game!.top as Shown; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
   const before = await page.evaluate(() => {
-    const g = (window as any).__game.game;
+    const g = window.__game!.game!;
     while (g.screens.length > 1) g.pop();
     g.world.travel('harrow', 7, 14, 0);
-    g.world.map.features.push({ kind: 'npc', x: 7, y: 13, name: 'A coachman', lines: ['"Thornhold, at dawn."'], passage: [{ to: 'thornhold', x: 7, y: 14, name: 'Thornhold', by: 'coach', fare: 100, departs: 6, days: 1, arrives: 18 }] });
+    (g.world.map.features as Feature[]).push({ kind: 'npc', x: 7, y: 13, name: 'A coachman', lines: ['"Thornhold, at dawn."'], passage: [{ to: 'thornhold', x: 7, y: 14, name: 'Thornhold', by: 'coach', fare: 100, departs: 6, days: 1, arrives: 18 }] });
     g.party.gold = 500;
     return { minutes: g.world.state.minutes, day: g.world.day };
   });
@@ -323,9 +310,9 @@ const coach = await (async () => {
   const terms = await top();
   await page.keyboard.press('Space'); await page.waitForTimeout(150);
   const after = await page.evaluate(() => {
-    const g = (window as any).__game.game, m = g.maps.harrow;
-    m.features.splice(m.features.findIndex((f: any) => f.name === 'A coachman'), 1);
-    return { screens: g.screens.map((s: any) => s.constructor.name).join(','), map: g.world.state.mapId, gold: g.party.gold, day: g.world.day, hour: g.world.hour, minutes: g.world.state.minutes, log: g.log.slice(-3) };
+    const g = window.__game!.game!, m = g.maps.harrow;
+    (m.features as Feature[]).splice(m.features.findIndex((f) => 'name' in f && f.name === 'A coachman'), 1);
+    return { screens: g.screens.map((s) => s.constructor.name).join(','), map: g.world.state.mapId, gold: g.party.gold, day: g.world.day, hour: g.world.hour, minutes: g.world.state.minutes, log: g.log.slice(-3) };
   });
   return { before, words, menu, terms, after };
 })();
@@ -333,13 +320,13 @@ const coach = await (async () => {
 // teaches knights their first. Faced and asked, her words close onto her menu, which lists Bram, the
 // one knight, with the title and the price; taking it pays and makes him a Knight-Errant.
 const trainer = await (async () => {
-  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
+  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = window.__game!.game!.top as Shown; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
   await page.evaluate(() => {
-    const g = (window as any).__game.game, bram = g.party.members[0];
+    const g = window.__game!.game!, bram = g.party.members[0];
     while (g.screens.length > 1) g.pop();
     g.world.travel('harrow', 7, 14, 0);
-    g.world.map.features.push({ kind: 'npc', x: 7, y: 13, name: 'An armourer', lines: ['"Steel, or a title?"'], teaches: { cls: 'knight', prestige: 1 } });
-    (window as any).__bram = { level: bram.level, maxHp: bram.maxHp, hp: bram.hp, gold: g.party.gold };
+    (g.world.map.features as Feature[]).push({ kind: 'npc', x: 7, y: 13, name: 'An armourer', lines: ['"Steel, or a title?"'], teaches: { cls: 'knight', prestige: 1 } });
+    (window as Window & Kept).__bram = { level: bram.level, maxHp: bram.maxHp, hp: bram.hp, gold: g.party.gold };
     bram.level = 11; g.party.gold = 1500;
   });
   await page.keyboard.press('Space'); await page.waitForTimeout(80);
@@ -348,10 +335,10 @@ const trainer = await (async () => {
   const menu = await top();
   await page.keyboard.press('Space'); await page.waitForTimeout(100);
   const after = await page.evaluate(() => {
-    const g = (window as any).__game.game, m = g.maps.harrow, bram = g.party.members[0];
-    m.features.splice(m.features.findIndex((f: any) => f.name === 'An armourer'), 1);
-    const out = { screens: g.screens.map((s: any) => s.constructor.name).join(','), prestige: bram.prestige ?? 0, gold: g.party.gold, log: g.log.slice(-2) };
-    const was = (window as any).__bram;
+    const g = window.__game!.game!, m = g.maps.harrow, bram = g.party.members[0];
+    (m.features as Feature[]).splice(m.features.findIndex((f) => 'name' in f && f.name === 'An armourer'), 1);
+    const out = { screens: g.screens.map((s) => s.constructor.name).join(','), prestige: bram.prestige ?? 0, gold: g.party.gold, log: g.log.slice(-2) };
+    const was = (window as Window & Kept).__bram!;
     bram.level = was.level; bram.maxHp = was.maxHp; bram.hp = was.hp; g.party.gold = was.gold; delete bram.prestige;
     return out;
   });
@@ -365,8 +352,8 @@ const trainer = await (async () => {
 // then lists. Stepped on again, she reads it after its words and marks the world map, which shows the
 // mark, whole, and none once forgotten.
 const script = await (async () => {
-  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
-  const said = (from: number): Promise<string[]> => page.evaluate((s0: number) => { const g = (window as any).__game.game; return g.log.slice(Math.max(0, g.log.length - (g.said - s0))); }, from);
+  const top = (): Promise<{ screen: string; options: string[]; text: string }> => page.evaluate(() => { const t = window.__game!.game!.top as Shown; return { screen: t.constructor.name, options: t.options ?? [], text: t.words ?? t.text ?? '' }; });
+  const said = (from: number): Promise<string[]> => page.evaluate((s0: number) => { const g = window.__game!.game!; return g.log.slice(Math.max(0, g.log.length - (g.said - s0))); }, from);
   // Maren's sheet, under her traits, where a member's skills are listed: its pixels, to compare.
   const sheet = async (): Promise<string> => {
     await page.keyboard.press('Digit5'); await page.waitForTimeout(80);
@@ -383,16 +370,16 @@ const script = await (async () => {
   });
   // Onto the inscription from the west, facing east.
   const onto = async (): Promise<string[]> => {
-    const s0 = await page.evaluate(() => { const g = (window as any).__game.game; while (g.screens.length > 1) g.pop(); g.world.travel('harrow', 9, 11, 1); return g.said; });
+    const s0 = await page.evaluate(() => { const g = window.__game!.game!; while (g.screens.length > 1) g.pop(); g.world.travel('harrow', 9, 11, 1); return g.said; });
     await page.keyboard.press('ArrowUp'); await page.waitForTimeout(100);
     return said(s0);
   };
   await page.evaluate(() => {
-    const g = (window as any).__game.game;
+    const g = window.__game!.game!;
     while (g.screens.length > 1) g.pop();
     g.world.travel('harrow', 9, 11, 1);
-    g.world.map.features.push({ kind: 'sign', x: 10, y: 11, id: 'fx_vent', text: 'The dwarves\' words for the mountain\'s breath.', read: 'VENT. STAND CLEAR.', marks: 'lava_tubes' });
-    (window as any).__purse = g.party.gold;
+    (g.world.map.features as Feature[]).push({ kind: 'sign', x: 10, y: 11, id: 'fx_vent', text: 'The dwarves\' words for the mountain\'s breath.', read: 'VENT. STAND CLEAR.', marks: 'lava_tubes' });
+    (window as Window & Kept).__purse = g.party.gold;
     g.party.gold = 1500;
   });
   const unread = await onto();
@@ -400,16 +387,16 @@ const script = await (async () => {
   // A person who teaches it (`skill`), faced by a company not yet of the Lanterns: their words close
   // onto the stranger's answer, and nothing is taught.
   await page.evaluate(() => {
-    const g = (window as any).__game.game;
+    const g = window.__game!.game!;
     g.world.travel('harrow', 7, 14, 0);
-    g.world.map.features.push({ kind: 'npc', x: 7, y: 13, name: 'A Lantern reader', lines: ['"The old way, word by word."'], skill: 'linguist' });
+    (g.world.map.features as Feature[]).push({ kind: 'npc', x: 7, y: 13, name: 'A Lantern reader', lines: ['"The old way, word by word."'], skill: 'linguist' });
   });
   await page.keyboard.press('Space'); await page.waitForTimeout(80);
   const teacher = await top();
   await page.keyboard.press('Space'); await page.waitForTimeout(80);
   const stranger = await top();
   await page.keyboard.press('Space'); await page.waitForTimeout(80);
-  await page.evaluate(() => { const g = (window as any).__game.game; g.party.flags.rank_lanterns = 1; g.world.travel('harrow', 11, 11, 0); });
+  await page.evaluate(() => { const g = window.__game!.game!; g.party.flags.rank_lanterns = 1; g.world.travel('harrow', 11, 11, 0); });
   await page.keyboard.press('ArrowUp'); await page.waitForTimeout(150);
   const hall = await top();
   for (let i = 0; i < hall.options.indexOf('Learn a skill'); i++) { await page.keyboard.press('ArrowDown'); await page.waitForTimeout(40); }
@@ -420,31 +407,31 @@ const script = await (async () => {
   const menu = await top();
   for (let i = 0; i < 4; i++) { await page.keyboard.press('ArrowDown'); await page.waitForTimeout(40); }
   await page.keyboard.press('Space'); await page.waitForTimeout(100);
-  const learnt = await page.evaluate(() => { const g = (window as any).__game.game; return { skills: (g.party.members[4].skills ?? []).join(), gold: g.party.gold, log: g.log.at(-1), screen: g.top.constructor.name, options: g.top.options ?? [] }; });
+  const learnt = await page.evaluate(() => { const g = window.__game!.game!; return { skills: (g.party.members[4].skills ?? []).join(), gold: g.party.gold, log: g.log.at(-1), screen: g.top.constructor.name, options: (g.top as Shown).options ?? [] }; });
   await page.keyboard.press('Escape'); await page.waitForTimeout(60);
   await page.keyboard.press('Escape'); await page.waitForTimeout(60);
   await page.keyboard.press('Escape'); await page.waitForTimeout(100);
-  const left = await page.evaluate(() => (window as any).__game.game.screens.map((s: any) => s.constructor.name).join(','));
+  const left = await page.evaluate(() => window.__game!.game!.screens.map((s) => s.constructor.name).join(','));
   const sheetAfter = await sheet();
   const read = await onto();
   const again = await onto();
   // The world map, whole: the mark shows once read, and not once the reading is forgotten.
   await page.keyboard.press('KeyM');
-  await page.waitForFunction(() => (window as any).__game.game.top.ready === true, null, { timeout: 60000 });
+  await page.waitForFunction(() => (window.__game!.game!.top as Shown).ready === true, null, { timeout: 60000 });
   await page.keyboard.press('KeyZ'); await page.waitForTimeout(150);
   const pins = await marked();
-  await page.evaluate(() => { delete (window as any).__game.game.world.state.maps.harrow.used.fx_vent; });
+  await page.evaluate(() => { delete window.__game!.game!.world.state.maps.harrow.used.fx_vent; });
   await page.waitForTimeout(150);
   const unpinned = await marked();
   await page.keyboard.press('KeyZ'); await page.waitForTimeout(60);
   await page.keyboard.press('KeyM'); await page.waitForTimeout(100);
   const closed = await page.evaluate(() => {
-    const g = (window as any).__game.game, m = g.maps.harrow, top = g.top.constructor.name;
+    const g = window.__game!.game!, m = g.maps.harrow, top = g.top.constructor.name;
     while (g.screens.length > 1) g.pop();
-    m.features.splice(m.features.findIndex((f: any) => f.id === 'fx_vent'), 1);
-    m.features.splice(m.features.findIndex((f: any) => f.name === 'A Lantern reader'), 1);
+    (m.features as Feature[]).splice(m.features.findIndex((f) => 'id' in f && f.id === 'fx_vent'), 1);
+    (m.features as Feature[]).splice(m.features.findIndex((f) => 'name' in f && f.name === 'A Lantern reader'), 1);
     delete g.party.flags.rank_lanterns; delete g.party.members[4].skills;
-    g.party.gold = (window as any).__purse;
+    g.party.gold = (window as Window & Kept).__purse!;
     return top;
   });
   return { unread, teacher, stranger, hall, skills, menu, learnt, left, sheetChanged: sheetBefore !== sheetAfter, read, again, pins, unpinned, closed };
@@ -453,31 +440,31 @@ const script = await (async () => {
 // Back on the hall's first menu, the rank it reads is the new one: its words are made when drawn, not
 // when the menu was first opened.
 await page.evaluate(() => {
-  const g = (window as any).__game.game;
+  const g = window.__game!.game!;
   g.world.ensureMapState(g.world.locate('shelf', 0, 0).mapId).used.scarth_watch = 1;
   g.world.travel('harrow', 3, 13, 0); g.enterCell();
 });
 await page.waitForTimeout(100);
-const hallBefore = await page.evaluate(() => (window as any).__game.game.top.words);
+const hallBefore = await page.evaluate(() => (window.__game!.game!.top as Shown).words);
 // Down to the guild's work, First Watch, its offer, Take it and the pay; then back from the rank 1 offers to the menu.
 for (const k of ['ArrowDown', 'Space', 'Space', 'Space', 'Space', 'Space', 'Escape']) { await page.keyboard.press(k); await page.waitForTimeout(60); }
-const hallAfter = await page.evaluate(() => { const g = (window as any).__game.game; return { screens: g.screens.map((s: any) => s.constructor.name).join(','), words: g.top.words }; });
+const hallAfter = await page.evaluate(() => { const g = window.__game!.game!; return { screens: g.screens.map((s) => s.constructor.name).join(','), words: (g.top as Shown).words }; });
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
 const hallLeft = await page.evaluate(() => {
-  const g = (window as any).__game.game;
+  const g = window.__game!.game!;
   delete g.world.ensureMapState(g.world.locate('shelf', 0, 0).mapId).used.scarth_watch;
   for (const k of ['q_wardens_watch', 'q_wardens_watch_done', 'rank_wardens']) delete g.party.flags[k];
-  return g.screens.map((s: any) => s.constructor.name).join(',');
+  return g.screens.map((s) => s.constructor.name).join(',');
 });
 // Every interior paints, at noon and at midnight, and each is a picture rather than a flat fill.
 const interiors = await page.evaluate(async () => {
-  const load = (p: string): Promise<any> => import(p);
-  const I = await load('/src/ui/interior.ts');
+  const load: Load = (p) => import(p);
+  const I = await load<typeof import('../src/ui/interior.ts')>('/src/ui/interior.ts');
   const c = document.createElement('canvas'); c.width = 400; c.height = 268;
   const ctx = c.getContext('2d')!;
   const thin: string[] = [];
   let n = 0;
-  for (const kind of Object.keys(I.SCENES)) for (const daylight of [0, 1]) {
+  for (const kind of Object.keys(I.SCENES) as Parameters<typeof I.drawInterior>[1][]) for (const daylight of [0, 1]) {
     I.drawInterior(ctx, kind, { x: 0, y: 0, w: 400, h: 268 }, daylight, 30);
     const d = ctx.getImageData(0, 0, 400, 268).data, seen = new Set<number>();
     for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
@@ -485,7 +472,7 @@ const interiors = await page.evaluate(async () => {
     n++;
   }
   // Held to the content's own list of rooms, so a scene missing from SCENES is caught here too.
-  const C = await load('/src/content/index.ts');
+  const C = await load<typeof import('../src/content/index.ts')>('/src/content/index.ts');
   return { n, thin, kinds: C.INTERIORS.length as number, missing: (C.INTERIORS as string[]).filter((k) => !(k in I.SCENES)) };
 });
 // Hills and farmland: a patch of each laid on the Foreland, painted at noon and at midnight on a day of
@@ -499,9 +486,9 @@ const DEAD_MIN = 1;
 /** The least of the band over the horizon the pinewoods' pines fill: about 43% as drawn, closer than the woods' 27%. */
 const PINE_MIN = 20;
 const terrains = await page.evaluate(async () => {
-  const load = (p: string): Promise<any> => import(p);
-  const V = await load('/src/ui/viewport.ts');
-  const w = (window as any).__game.game.world;
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts');
+  const w = window.__game!.game!.world;
   const W = 400, H = 268, thin: string[] = [], mean: Record<string, number[]> = {}, form: Record<string, { tones: number; edges: number }> = {}, upper: Record<string, Uint8ClampedArray> = {};
   const c = document.createElement('canvas'), sky = document.createElement('canvas');
   c.width = sky.width = W; c.height = sky.height = H;
@@ -512,11 +499,11 @@ const terrains = await page.evaluate(async () => {
   // and the squares in view hold more than one crop.
   w.travel('shelf', 16, 16, 0);
   if ((w.state.y - 1) % 2) w.state.y--;
-  const crops = (x: number, y: number): Set<number> => new Set([[-1, 1], [0, 1], [1, 1], [-2, 2], [-1, 2], [0, 2], [1, 2], [2, 2]].map(([l, d]) => V.cropColor(V.fieldAt(x + l, y - d).crop, 50)));
+  const crops = (x: number, y: number): Set<string> => new Set([[-1, 1], [0, 1], [1, 1], [-2, 2], [-1, 2], [0, 2], [1, 2], [2, 2]].map(([l, d]) => V.cropColor(V.fieldAt(x + l, y - d).crop, 50)));
   // The search is bounded: a view it cannot find fails the check plainly rather than hanging.
   const fits = (): boolean => V.fieldAt(w.state.x, w.state.y - 1).crop <= 1 && crops(w.state.x, w.state.y).size >= 2;
   for (let tries = 0; tries < 200 && !fits(); tries++) w.state.x++;
-  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, trees: 0, path: 0, overWall: 0, dead: { trees: 0, path: 0, overWall: 0 }, pine: { trees: 0, path: 0, overWall: 0 }, vines: { trees: 0, path: 0, overWall: 0 }, wold: null as any, thin: [], form: {}, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[], flats: null as any, ground: null as any };
+  if (!fits()) return { missing: `no square in 200 east of the Foreland's 16,16 faces a field of grain with two crops in view`, trees: 0, path: 0, overWall: 0, dead: { trees: 0, path: 0, overWall: 0 }, pine: { trees: 0, path: 0, overWall: 0 }, vines: { trees: 0, path: 0, overWall: 0 }, wold: null as any, thin: [], form, hedge: { off: 0, apart: 0 }, patchwork: 0, turns: 0, whiten: [] as number[], flats: null as any, ground: null as any };
   const m = w.map, kept = m.cells.slice(), sx = w.state.x, sy = w.state.y;
   let hedge = { off: 999, apart: 0 }, patchwork = 0;
   // The ash's embers glowing by night: the floor's pixels that are a hot orange, by season.
@@ -525,13 +512,13 @@ const terrains = await page.evaluate(async () => {
   const x0 = W / 2 - 40, y0 = 202, sw = 80, sh = 44;
   const days: [string, number][] = [['spring', 20], ['summer', 50], ['autumn', 65], ['winter', 100], ['snow', 100]];
   for (const terrain of ['grass', 'hills', 'farm', 'woods', 'deadwood', 'salt', 'heather', 'tidal', 'ash', 'pine', 'ice',
-    'steppe', 'dunes', 'vines']) {
+    'steppe', 'dunes', 'vines'] as const) {
     for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = { terrain, solid: 'none', door: 'none', ch: '.' };
     for (const [name, doy] of days) for (const hour of [12, 0]) {
       if (terrain === 'grass' && (name !== 'summer' || hour !== 12)) continue;
       w.state.minutes = ((doy - 75 + 120) % 120) * 1440 + hour * 60;
       const snow = name === 'snow';
-      w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
+      w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
       ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
       const d = ctx.getImageData(0, 0, W, H).data, seen = new Set<number>();
       for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
@@ -543,12 +530,12 @@ const terrains = await page.evaluate(async () => {
       mean[`${terrain} ${name}`] = sum.map((v) => v / (g.length / 4));
       // Tidal ground at noon is low water; at five it is high, and the sea is over it.
       if (terrain === 'tidal' && name === 'summer') {
-        w.state.minutes += 5 * 60; w.cached = { ...w.cached, minutes: w.state.minutes };
+        w.state.minutes += 5 * 60; w['cached'] = { ...w['cached']!, minutes: w.state.minutes };
         ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
         const q = ctx.getImageData(x0, y0, sw, sh).data, t = [0, 0, 0];
         for (let i = 0; i < q.length; i += 4) { t[0] += q[i]; t[1] += q[i + 1]; t[2] += q[i + 2]; }
         mean['tidal high'] = t.map((v) => v / (q.length / 4));
-        w.state.minutes -= 5 * 60; w.cached = { ...w.cached, minutes: w.state.minutes };
+        w.state.minutes -= 5 * 60; w['cached'] = { ...w['cached']!, minutes: w.state.minutes };
         ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
       }
       if (name !== 'summer') continue;
@@ -587,9 +574,9 @@ const terrains = await page.evaluate(async () => {
   // Woods beside a wall: the woods run up the party's column and the ones west of it, a wall runs
   // up the column east. What the woods paint otherwise than grass, where the wall's faces stand, is
   // a tree in front of a wall it stands beside.
-  const woodsBy = (t: string) => { for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = x === sx + 1 && y < sy ? { terrain: 'floor', solid: 'wall', door: 'none', ch: '#' } : { terrain: x <= sx ? t : 'grass', solid: 'none', door: 'none', ch: '.' }; };
+  const woodsBy = (t: Terrain) => { for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) m.cells[y * m.width + x] = x === sx + 1 && y < sy ? { terrain: 'floor', solid: 'wall', door: 'none', ch: '#' } : { terrain: x <= sx ? t : 'grass', solid: 'none', door: 'none', ch: '.' }; };
   w.state.minutes = ((50 - 75 + 120) % 120) * 1440 + 12 * 60;
-  w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+  w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
   const shot = (backdrop?: string) => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop); return ctx.getImageData(0, 0, W, H / 2).data; };
   woodsBy('woods'); const withTrees = shot();
   woodsBy('deadwood'); const withDead = shot();
@@ -608,7 +595,7 @@ const terrains = await page.evaluate(async () => {
     if (wall && off(withVines, i)) vinesOverWall++;
   }
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
-  w.state.minutes = minutes; w.cached = undefined;
+  w.state.minutes = minutes; w['cached'] = null;
   const dist = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
   const light = (a: number[]): number => (a[0] + a[1] + a[2]) / 3;
   // The share of the band above the horizon the woods paint otherwise than open grass: their trees.
@@ -642,15 +629,16 @@ const terrains = await page.evaluate(async () => {
 // noon, the ground before it cleared, with a tree or an ogre on the square before it. A flame the
 // tree covers goes out; one the ogre stands before is drawn behind it.
 const torches = await page.evaluate(async () => {
-  const V = await import('/src/ui/viewport.ts' as string);
-  const w = (window as any).__game.game.world;
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts');
+  const w = window.__game!.game!.world;
   const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
   c.width = sky.width = W; c.height = sky.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
   const minutes = w.state.minutes;
   w.travel('shelf', 16, 16, 0);
   w.state.minutes = 50 * 1440 + 12 * 60;
-  w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+  w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
   const m = w.map, kept = m.cells.slice();
   const lay = (sx: number, sy: number, ahead: string): void => {
     for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) {
@@ -662,7 +650,7 @@ const torches = await page.evaluate(async () => {
   const paint = (sx: number, sy: number, ahead: string): { flames: { x: number; y: number }[]; px: Uint8ClampedArray } => {
     lay(sx, sy, ahead);
     ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
-    return { flames: V.paintedFlames().map((f: any) => ({ x: f.x, y: f.y })), px: ctx.getImageData(0, 0, W, H).data };
+    return { flames: V.paintedFlames().map((f) => ({ x: f.x, y: f.y })), px: ctx.getImageData(0, 0, W, H).data };
   };
   const differs = (a: Uint8ClampedArray, b: Uint8ClampedArray, x: number, y: number): boolean => { const i = (Math.floor(y) * W + Math.floor(x)) * 4; return Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 0; };
   // The first square, of a bounded search, whose wall ahead hangs a sconce the tree stands before:
@@ -680,7 +668,7 @@ const torches = await page.evaluate(async () => {
     }
     for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
   }
-  const done = (): void => { for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i]; w.state.minutes = minutes; w.cached = undefined; };
+  const done = (): void => { for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i]; w.state.minutes = minutes; w['cached'] = null; };
   if (!found) { done(); return { missing: 'no square of the Foreland faces a sconced wall a tree before it hides', lit: 0, out: 0, over: 0, behind: false, shown: false, covers: false }; }
   const { at, bare, tree } = found;
   w.state.x = at[0]; w.state.y = at[1];
@@ -689,9 +677,9 @@ const torches = await page.evaluate(async () => {
   const hidden = bare.flames.filter((f) => f.x >= 0 && f.x < W && differs(tree.px, bare.px, f.x, f.y)), out = hidden.length;
   // The ogre, on the square before the wall, drawn a frame with its flames and the same frame without.
   lay(at[0], at[1], 'none');
-  const ogre = [{ id: 'ogre', sprite: 'ogre', tint: '#7a8a5a', size: 1.25 }];
-  const frame = (who: any, lit: boolean): Uint8ClampedArray => {
-    const flames = V.paintedFlames() as any[], was = flames.slice();
+  const ogre: Who = [{ id: 'ogre', sprite: 'ogre', tint: '#7a8a5a', size: 1.25 }];
+  const frame = (who: Who, lit: boolean): Uint8ClampedArray => {
+    const flames = V.paintedFlames() as Flame[], was = flames.slice();
     if (!lit) flames.length = 0;
     ctx.clearRect(0, 0, W, H); V.drawViewport(ctx, w, { x: 0, y: 0, w: W, h: H }, (x: number, y: number) => (x === at![0] && y === at![1] - 2 ? who : null), 40, false);
     if (!lit) flames.push(...was);
@@ -710,15 +698,16 @@ const torches = await page.evaluate(async () => {
 // darker than grass, its far wall under the rim lighter than the drop; the glass trees stand over
 // the horizon, bluer than they are red.
 const sunder = await page.evaluate(async () => {
-  const V = await import('/src/ui/viewport.ts' as string), M = await import('/src/game/map.ts' as string);
-  const w = (window as any).__game.game.world;
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts'), M = await load<typeof import('../src/game/map.ts')>('/src/game/map.ts');
+  const w = window.__game!.game!.world;
   const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
   c.width = sky.width = W; c.height = sky.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
   const minutes = w.state.minutes;
   w.travel('shelf', 16, 16, 0);
   w.state.minutes = 50 * 1440 + 12 * 60;
-  w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+  w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
   const m = w.map, kept = m.cells.slice(), px = w.state.x, py = w.state.y;
   const lay = (sunder: boolean): Uint8ClampedArray => {
     for (let y = py - 7; y <= py + 2; y++) for (let x = px - 7; x <= px + 7; x++) {
@@ -730,7 +719,7 @@ const sunder = await page.evaluate(async () => {
   };
   const grass = lay(false), gorge = lay(true);
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
-  w.state.minutes = minutes; w.cached = undefined;
+  w.state.minutes = minutes; w['cached'] = null;
   const at = (a: Uint8ClampedArray, x: number, y: number): number[] => { const i = (y * W + x) * 4; return [a[i], a[i + 1], a[i + 2]]; };
   const lum = (p: number[]): number => (p[0] + p[1] + p[2]) / 3;
   const differs = (x: number, y: number): boolean => { const a = at(grass, x, y), b = at(gorge, x, y); return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]) + Math.abs(a[2] - b[2]) > 30; };
@@ -752,8 +741,9 @@ const sunder = await page.evaluate(async () => {
 // around the party. Drawn in the dungeon's stone, its end face and a side face show courses; drawn
 // smooth, each is one colour down its height, with no joint in it, and a door in it is its seam.
 const smooth = await page.evaluate(async () => {
-  const V = await import('/src/ui/viewport.ts' as string), M = await import('/src/game/map.ts' as string);
-  const w = (window as any).__game.game.world;
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts'), M = await load<typeof import('../src/game/map.ts')>('/src/game/map.ts');
+  const w = window.__game!.game!.world;
   const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
   c.width = sky.width = W; c.height = sky.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
@@ -777,7 +767,7 @@ const smooth = await page.evaluate(async () => {
     for (let i = 0; i < d.length; i += 4) seen.add((d[i] << 16) | (d[i + 1] << 8) | d[i + 2]);
     return seen.size;
   };
-  const paint = (wallStyle: string): { end: number; side: number; middle: number } => {
+  const paint = (wallStyle: MapPalette['wallStyle']): { end: number; side: number; middle: number } => {
     m.palette.wallStyle = wallStyle;
     ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
     return { end: column(W / 2, H / 2 - 12, H / 2 + 12), side: column(Math.round(W * 0.08), H / 2 - 30, H / 2 + 30), middle: box(W / 2 - 8, H / 2, W / 2 + 8, H / 2 + 12) };
@@ -797,32 +787,33 @@ const smooth = await page.evaluate(async () => {
 // frame drawn after the oil goes in repaints the scene with it. Then a fixture lighthouse on the
 // Foreland with a wall beside its beam: the beam never shows over the wall.
 const lighthouse = await page.evaluate(async () => {
-  const V = await import('/src/ui/viewport.ts' as string);
-  const w = (window as any).__game.game.world;
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts');
+  const w = window.__game!.game!.world;
   const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
   c.width = sky.width = W; c.height = sky.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
   const minutes = w.state.minutes, flags = { ...w.party.flags };
   const clear = (hour: number, sky: Record<string, number> = {}): void => {
     w.state.minutes = Math.floor(minutes / 1440) * 1440 + hour * 60;
-    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0, ...sky } };
+    w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0, ...sky } };
   };
   // Cleared first: the sky shows through what the scene leaves unpainted, and a paint before would show in it.
   const paint = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, 0, W, H / 2).data; };
-  const lamps = (): number => V.paintedFlames().filter((f: any) => f.lamp).length;
+  const lamps = (): number => V.paintedFlames().filter((f) => f.lamp).length;
   const out: Record<string, { tower: number; day: number; dark: number; lit: number; drawn: number }> = {};
   const view = (): void => V.drawViewport(ctx, w, { x: 0, y: 0, w: W, h: H }, () => null, 71, false);
   for (const [name, zone, x, y, f] of [['road', 'downs_e3', 20, 17, 2], ['Gullwick', 'downs_f3', 6, 14, 3]] as const) {
     w.travel(zone, x, y, f);
     clear(12);
     const m = w.map, kept = m.landmarks, withIt = paint(), day = lamps();
-    m.landmarks = []; const without = paint(); m.landmarks = kept;
+    (m as { landmarks: readonly Landmark[] }).landmarks = []; const without = paint(); (m as { landmarks: readonly Landmark[] }).landmarks = kept;
     let tower = 0;
     for (let i = 0; i < withIt.length; i += 4) if (Math.abs(withIt[i] - without[i]) + Math.abs(withIt[i + 1] - without[i + 1]) + Math.abs(withIt[i + 2] - without[i + 2]) > 30) tower++;
     clear(23); delete w.party.flags.q_oil_lit; paint(); const dark = lamps();
-    w.party.flags.q_oil_lit = true; paint(); const lit = lamps();
+    w.party.flags.q_oil_lit = 1; paint(); const lit = lamps();
     // As played: a frame before the oil goes in, then one after, on the same square.
-    delete w.party.flags.q_oil_lit; view(); w.party.flags.q_oil_lit = true; view(); const drawn = lamps();
+    delete w.party.flags.q_oil_lit; view(); w.party.flags.q_oil_lit = 1; view(); const drawn = lamps();
     out[name] = { tower, day, dark, lit, drawn };
   }
   // The weather that takes the fourth square takes the tower too, its lamp with it: from E3's road,
@@ -830,11 +821,11 @@ const lighthouse = await page.evaluate(async () => {
   // by night lit.
   w.travel('downs_e3', 20, 17, 2);
   const towerIn = (sky: Record<string, number>): number => {
-    clear(12, sky); const a = paint(); const m = w.map, kept = m.landmarks; m.landmarks = []; const b = paint(); m.landmarks = kept;
+    clear(12, sky); const a = paint(); const m = w.map, kept = m.landmarks; (m as { landmarks: readonly Landmark[] }).landmarks = []; const b = paint(); (m as { landmarks: readonly Landmark[] }).landmarks = kept;
     let n = 0; for (let i = 0; i < a.length; i += 4) if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 30) n++;
     return n;
   };
-  w.party.flags.q_oil_lit = true;
+  w.party.flags.q_oil_lit = 1;
   const weather = { thin: towerIn({ fog: 0.3 }), fog: towerIn({ fog: 0.35 }), rain: towerIn({ precip: 0.65 }), lamp: 0 };
   clear(23, { fog: 0.35 }); paint(); weather.lamp = lamps();
   (out as any).weather = weather;
@@ -847,13 +838,13 @@ const lighthouse = await page.evaluate(async () => {
   for (let yy = py - 8; yy <= py + 1; yy++) for (let xx = px - 4; xx <= px + 4; xx++) m.cells[yy * m.width + xx] = { terrain: 'grass', solid: 'none', door: 'none', ch: ',' };
   m.cells[(py - 6) * m.width + px] = { terrain: 'floor', solid: 'building', door: 'none', ch: 'B' };
   m.cells[(py - 1) * m.width + px + 1] = { terrain: 'floor', solid: 'wall', door: 'none', ch: '#' };
-  m.landmarks = [{ x: px, y: py - 6, kind: 'lighthouse' }];
+  (m as { landmarks: readonly Landmark[] }).landmarks = [{ x: px, y: py - 6, kind: 'lighthouse' }];
   ctx.clearRect(0, 0, W, H); view();
-  const lamp = V.paintedFlames().find((f: any) => f.lamp), lit = ctx.getImageData(0, 0, W, H).data;
-  const flames = V.paintedFlames() as any[], was = flames.slice(); flames.length = 0;
+  const lamp = V.paintedFlames().find((f) => f.lamp), lit = ctx.getImageData(0, 0, W, H).data;
+  const flames = V.paintedFlames() as Flame[], was = flames.slice(); flames.length = 0;
   ctx.clearRect(0, 0, W, H); view(); const unlit = ctx.getImageData(0, 0, W, H).data; flames.push(...was);
   for (let i = 0; i < cells.length; i++) m.cells[i] = cells[i];
-  m.landmarks = kept;
+  (m as { landmarks: readonly Landmark[] }).landmarks = kept;
   // Over the wall: the columns from 300 right, where the wall's side face and front stand over the
   // lamp's row (its side's top edge crosses that row at about 284); the open sky: the columns
   // between the lamp and 250.
@@ -864,7 +855,7 @@ const lighthouse = await page.evaluate(async () => {
     if (x >= 300) overWall++; else if (x > lamp.x + 10 && x < 250) overSky++;
   }
   (out as any).beam = { lamp: !!lamp, overWall, overSky };
-  w.party.flags = flags; w.state.minutes = minutes; w.cached = undefined;
+  w.party.flags = flags; w.state.minutes = minutes; w['cached'] = null;
   return out;
 });
 // The second landmark kind and the tent (#736). On the Foreland, the land about cleared to grass, a
@@ -876,29 +867,30 @@ const lighthouse = await page.evaluate(async () => {
 // block's top in the middle; a door in it is a flap, the doorway's dark showing under its turned-back
 // corner, where in smooth it is its seam and in stone its planks.
 const drawn736 = await page.evaluate(async () => {
-  const V = await import('/src/ui/viewport.ts' as string);
-  const w = (window as any).__game.game.world;
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts');
+  const w = window.__game!.game!.world;
   const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
   c.width = sky.width = W; c.height = sky.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
   const from = { id: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing }, minutes = w.state.minutes, flags = { ...w.party.flags };
   const clear = (hour: number): void => {
     w.state.minutes = Math.floor(minutes / 1440) * 1440 + hour * 60;
-    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+    w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
   };
   // Painted afresh each time: the view's own cache keys on neither a landmark's kind, the cells nor the palette.
   const view = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, 0, W, H).data; };
-  const lamps = (): number => V.paintedFlames().filter((f: any) => f.lamp).length;
+  const lamps = (): number => V.paintedFlames().filter((f) => f.lamp).length;
   const differ = (a: Uint8ClampedArray, b: Uint8ClampedArray, x: number, y: number): boolean => { const i = (y * W + x) * 4; return Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 30; };
   const count = (a: Uint8ClampedArray, b: Uint8ClampedArray, y1: number): number => { let n = 0; for (let y = 0; y < y1; y++) for (let x = 0; x < W; x++) if (differ(a, b, x, y)) n++; return n; };
   w.travel('shelf', 16, 16, 0);
   const m = w.map, px = w.state.x, py = w.state.y, cells = m.cells.slice(), kept = m.landmarks;
-  const grass = { terrain: 'grass', solid: 'none', door: 'none', ch: ',' }, building = { terrain: 'floor', solid: 'building', door: 'none', ch: 'B' };
+  const grass: Cell = { terrain: 'grass', solid: 'none', door: 'none', ch: ',' }, building: Cell = { terrain: 'floor', solid: 'building', door: 'none', ch: 'B' };
   for (let yy = py - 8; yy <= py + 1; yy++) for (let xx = px - 4; xx <= px + 4; xx++) m.cells[yy * m.width + xx] = grass;
   const out: Record<string, any> = {};
   for (const [name, ahead] of [['far', 6], ['near', 3]] as const) {
     m.cells[(py - ahead) * m.width + px] = building;
-    const as = (kind: string | null): Uint8ClampedArray => { m.landmarks = kind ? [{ x: px, y: py - ahead, kind }] : []; return view(); };
+    const as = (kind: Landmark['kind'] | null): Uint8ClampedArray => { (m as { landmarks: readonly Landmark[] }).landmarks = kind ? [{ x: px, y: py - ahead, kind }] : []; return view(); };
     clear(12);
     const monastery = as('monastery'), lighthouse = as('lighthouse'), none = as(null);
     clear(23);
@@ -906,11 +898,11 @@ const drawn736 = await page.evaluate(async () => {
     out[name] = { stands: count(monastery, none, H / 2), unlike: count(monastery, lighthouse, H), dark, lit };
     m.cells[(py - ahead) * m.width + px] = grass;
   }
-  m.landmarks = [];
+  (m as { landmarks: readonly Landmark[] }).landmarks = [];
   // The tent three ahead, against the smooth wall's block and against open grass.
   clear(12);
   const at = (py - 3) * m.width + px, pal = m.paletteAt(px, py - 3), style = pal.wallStyle;
-  const as = (wallStyle: string): Uint8ClampedArray => { pal.wallStyle = wallStyle; return view(); };
+  const as = (wallStyle: MapPalette['wallStyle']): Uint8ClampedArray => { pal.wallStyle = wallStyle; return view(); };
   const none = view();
   m.cells[at] = building;
   const smooth = as('smooth'), tent = as('tent');
@@ -930,17 +922,18 @@ const drawn736 = await page.evaluate(async () => {
   out.tent = { block: right - left, top, corners, crown, door };
   pal.wallStyle = style;
   for (let i = 0; i < cells.length; i++) m.cells[i] = cells[i];
-  m.landmarks = kept;
+  (m as { landmarks: readonly Landmark[] }).landmarks = kept;
   w.travel(from.id, from.x, from.y, from.f);
-  w.party.flags = flags; w.state.minutes = minutes; w.cached = undefined;
+  w.party.flags = flags; w.state.minutes = minutes; w['cached'] = null;
   return out;
 });
 // A group placed on ice (#536): on the Foreland at noon, ice laid all about, two fen eels two squares
 // ahead drawn as the view draws a group. Under the ice they paint its floor and nothing over the
 // horizon; the same pair not under it stands up over it.
 const iced = await page.evaluate(async () => {
-  const V = await import('/src/ui/viewport.ts' as string), M = await import('/src/game/map.ts' as string);
-  const w = (window as any).__game.game.world;
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts'), M = await load<typeof import('../src/game/map.ts')>('/src/game/map.ts');
+  const w = window.__game!.game!.world;
   const W = 400, H = 268, c = document.createElement('canvas');
   c.width = W; c.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!;
@@ -948,17 +941,17 @@ const iced = await page.evaluate(async () => {
   w.travel('shelf', 16, 16, 0);
   // A minute no other check paints at, so the view's cached scene is painted afresh over the ice.
   w.state.minutes = 50 * 1440 + 12 * 60 + 7;
-  w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+  w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
   const m = w.map, kept = m.cells.slice(), px = w.state.x, py = w.state.y;
   for (let y = py - 7; y <= py + 2; y++) for (let x = px - 7; x <= px + 7; x++) m.cells[y * m.width + x] = { ...M.LEGEND.i, ch: 'i' };
-  const pair = (under: boolean): any[] => [0, 1].map(() => ({ id: 'fen_eel', sprite: 'fen_eel', tint: '#3c4228', size: 0.75, ...(under ? { under: 'ice' } : {}) }));
-  const frame = (who: any[] | null): Uint8ClampedArray => {
+  const pair = (under: boolean): NonNullable<Who> => [0, 1].map(() => ({ id: 'fen_eel', sprite: 'fen_eel', tint: '#3c4228', size: 0.75, ...(under ? { under: 'ice' } : {}) }));
+  const frame = (who: Who): Uint8ClampedArray => {
     ctx.clearRect(0, 0, W, H); V.drawViewport(ctx, w, { x: 0, y: 0, w: W, h: H }, (x: number, y: number) => (x === px && y === py - 2 ? who : null), 40, false);
     return ctx.getImageData(0, 0, W, H).data;
   };
   const none = frame(null), under = frame(pair(true)), over = frame(pair(false));
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
-  w.state.minutes = minutes; w.cached = undefined;
+  w.state.minutes = minutes; w['cached'] = null;
   const differs = (a: Uint8ClampedArray, i: number): boolean => Math.abs(a[i] - none[i]) + Math.abs(a[i + 1] - none[i + 1]) + Math.abs(a[i + 2] - none[i + 2]) > 24;
   let below = 0, above = 0, standing = 0;
   for (let i = 0; i < none.length; i += 4) {
@@ -976,8 +969,9 @@ const iced = await page.evaluate(async () => {
 // at its foot where the mountain and the peak narrow, the three are each their own colours, and a
 // deep snow whitens the peak and the cliff.
 const range = await page.evaluate(async () => {
-  const V = await import('/src/ui/viewport.ts' as string), M = await import('/src/game/map.ts' as string);
-  const w = (window as any).__game.game.world;
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts'), M = await load<typeof import('../src/game/map.ts')>('/src/game/map.ts');
+  const w = window.__game!.game!.world;
   const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
   c.width = sky.width = W; c.height = sky.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
@@ -988,7 +982,7 @@ const range = await page.evaluate(async () => {
   const paint = (ch: string | null, doy: number, hour: number, snow: boolean): Uint8ClampedArray => {
     m.cells[ahead] = { ...M.LEGEND[ch ?? ','], ch: ch ?? ',' };
     w.state.minutes = ((doy - 75 + 120) % 120) * 1440 + hour * 60;
-    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
+    w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
     ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
     return ctx.getImageData(0, 0, W, H).data;
   };
@@ -1026,22 +1020,22 @@ const range = await page.evaluate(async () => {
     }
   }
   for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
-  w.state.minutes = minutes; w.cached = undefined;
+  w.state.minutes = minutes; w['cached'] = null;
   const day = (kind: string) => { const r = at[`${kind} summer`]; return { top: r.top, light: Math.round(r.light), sheer: Math.round(r.sheer * 100) / 100, mean: r.mean.map(Math.round), winter: Math.round(at[`${kind} winter`].light), snowed: Math.round(at[`${kind} snow`].light) }; };
   return { thin, mountain: day('mountain'), peak: day('peak'), cliff: day('cliff'),
     volcano: { ...day('volcano'), fire: at['volcano summer'].hot, night: glow['volcano summer'] }, vent: { ...day('vent'), fire: at['vent summer'].hot, night: glow['vent summer'], snowedNight: glow['vent snow'] } };
 });
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
 // holds court on the keep's door, in the throne room.
-await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('keep', 7, 4, 0); g.interact(g.world.featureHere()); });
+await page.evaluate(() => { const g = window.__game!.game!; g.world.travel('keep', 7, 4, 0); g.interact(g.world.featureHere()!); });
 await page.waitForTimeout(100);
 await page.keyboard.press('Space'); await page.waitForTimeout(100);
-const questLine = await page.evaluate(() => (window as any).__game.game.log.at(-1));
+const questLine = await page.evaluate(() => window.__game!.game!.log.at(-1));
 await page.keyboard.press('KeyJ'); await page.waitForTimeout(150);
-const questScreen = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const questScreen = await page.evaluate(() => window.__game!.game!.top.constructor.name);
 const questColours = await colours();
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
-const questClosed = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const questClosed = await page.evaluate(() => window.__game!.game!.top.constructor.name);
 // A person's question (game/people.ts): a fixture captain, put in the street at run time, asks; the
 // first answer hands over a letter, which is read from the pack. Nothing of it stays.
 const asked = await (async () => {
@@ -1049,14 +1043,15 @@ const asked = await (async () => {
   // once the queue is empty and a frame is drawn, not after a fixed wait a loaded machine outruns.
   const press = async (key: string): Promise<void> => {
     await page.keyboard.press(key);
-    await page.waitForFunction(() => (window as any).__game.game.input.queue.length === 0, null, { timeout: 5000 });
+    await page.waitForFunction(() => (window.__game!.game!.input as Input)['queue'].length === 0, null, { timeout: 5000 });
     await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => r(null))));
   };
-  const top = (): Promise<{ screen: string; text: string; title: string }> => page.evaluate(() => { const t = (window as any).__game.game.top; return { screen: t.constructor.name, text: t.text ?? '', title: t.title ?? '' }; });
+  const top = (): Promise<{ screen: string; text: string; title: string }> => page.evaluate(() => { const t = window.__game!.game!.top as Shown; return { screen: t.constructor.name, text: t.text ?? '', title: t.title ?? '' }; });
   await page.evaluate(async () => {
-    const C = await import('/src/content/index.ts' as string);
-    C.ITEMS.fx_letter = { id: 'fx_letter', name: 'A Sealed Letter', slot: 'none', price: 0, text: ['To Captain Hale, at the pass.', '"The riders cross the ford by night."'] };
-    const g = (window as any).__game.game;
+    const load: Load = (p) => import(p);
+    const C = await load<typeof import('../src/content/index.ts')>('/src/content/index.ts');
+    (C.ITEMS as Record<string, (typeof C.ITEMS)[string]>).fx_letter = { id: 'fx_letter', name: 'A Sealed Letter', slot: 'none', price: 0, text: ['To Captain Hale, at the pass.', '"The riders cross the ford by night."'] };
+    const g = window.__game!.game!;
     g.world.travel('harrow', 9, 6, 0);
     // Words after a flag nobody has set are not said: the first lines are.
     g.talk({ kind: 'npc', x: 9, y: 5, name: 'Captain Fixture', lines: ['"Riders, by night."'], says: [{ after: { flag: 'fx_never' }, lines: ['"Not yet."'] }],
@@ -1070,20 +1065,21 @@ const asked = await (async () => {
   await press('Space');
   const said = await top();
   await press('Space');
-  const after = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, flag: !!g.party.flags.fx_write, bag: g.party.bag.includes('fx_letter') }; });
+  const after = await page.evaluate(() => { const g = window.__game!.game!; return { screen: g.top.constructor.name, flag: !!g.party.flags.fx_write, bag: g.party.bag.includes('fx_letter') }; });
   await press('KeyI');
-  const has = await page.evaluate(() => { const g = (window as any).__game.game, t = g.top, c = g.party.members[g.selected], i = g.party.bag.indexOf('fx_letter'); if (i >= 0 && t.constructor.name === 'SheetScreen') t.sel = c.pack.length + i; return i >= 0; });
+  const has = await page.evaluate(() => { const g = window.__game!.game!, t = g.top as Shown, c = g.party.members[g.selected], i = g.party.bag.indexOf('fx_letter'); if (i >= 0 && t.constructor.name === 'SheetScreen') t.sel = c.pack.length + i; return i >= 0; });
   if (has) await press('Space');
   const letter = has ? await top() : { screen: 'no letter', text: '', title: '' };
   await press('Escape');
   await press('Escape');
   const closed = await page.evaluate(async () => {
-    const g = (window as any).__game.game, C = await import('/src/content/index.ts' as string);
+    const load: Load = (p) => import(p);
+    const g = window.__game!.game!, C = await load<typeof import('../src/content/index.ts')>('/src/content/index.ts');
     const top = g.top.constructor.name;
     // Whatever went wrong above, the rest of the run starts in the street.
     while (g.screens.length > 1) g.pop();
     if (g.party.bag.includes('fx_letter')) g.party.bag.splice(g.party.bag.indexOf('fx_letter'), 1);
-    delete g.party.flags.fx_write; delete C.ITEMS.fx_letter;
+    delete g.party.flags.fx_write; delete (C.ITEMS as Record<string, (typeof C.ITEMS)[string]>).fx_letter;
     return top;
   });
   return { words, question, choiceColours, said, after, letter, closed };
@@ -1092,55 +1088,55 @@ const asked = await (async () => {
 // snow lying deep. Each moves the clock to the first such hour of daylight for this game's seed.
 const weatherAt = async (map: string, x: number, y: number, f: number, want: string): Promise<{ found: boolean; sky: string; log: string }> => {
   const r = await page.evaluate(async ([m, xx, yy, ff, kind]: [string, number, number, number, string]) => {
-    const load = (p: string): Promise<any> => import(p);
-    const W = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts');
-    const g = (window as any).__game.game, w = g.world;
-    g.screens = [g.screens[0]]; w.travel(m, xx, yy, ff); w.sky = null;
-    const at = W.findWeather(w.state.weatherSeed, w.state.minutes, w.climate, (wx: any, min: number) => (kind === 'downpour' ? wx.precip >= 0.7 && wx.snow === 0 : wx.snow >= 0.7 && wx.precip >= 0.3 && wx.cover >= 0.5) && C.daylightAt(min) >= 0.8, 24 * 480);
+    const load: Load = (p) => import(p);
+    const W = await load<typeof import('../src/game/weather.ts')>('/src/game/weather.ts'), C = await load<typeof import('../src/game/calendar.ts')>('/src/game/calendar.ts');
+    const g = window.__game!.game!, w = g.world;
+    g.screens = [g.screens[0]]; w.travel(m, xx, yy, ff as Facing); w.sky = null;
+    const at = W.findWeather(w.state.weatherSeed!, w.state.minutes, w.climate, (wx, min) => (kind === 'downpour' ? wx.precip >= 0.7 && wx.snow === 0 : wx.snow >= 0.7 && wx.precip >= 0.3 && wx.cover >= 0.5) && C.daylightAt(min) >= 0.8, 24 * 480);
     if (at >= 0) w.state.minutes = at;
     return at >= 0;
   }, [map, x, y, f, want] as [string, number, number, number, string]);
   await page.waitForTimeout(150);
-  return page.evaluate((found: boolean) => { const g = (window as any).__game.game; return { found, sky: g.world.sky?.sky ?? '', log: g.log[g.log.length - 1] ?? '' }; }, r);
+  return page.evaluate((found: boolean) => { const g = window.__game!.game!; return { found, sky: g.world.sky?.sky ?? '', log: g.log[g.log.length - 1] ?? '' }; }, r);
 };
 const rain = await weatherAt('shelf', 16, 8, 2, 'downpour');
 const rainColours = await colours();
-await page.evaluate(() => { const g = (window as any).__game.game; g.fight(['road_rats']); });
+await page.evaluate(() => { const g = window.__game!.game!; g.fight(['road_rats']); });
 await page.waitForTimeout(150);
-const rainFight = await page.evaluate(() => { const g = (window as any).__game.game; return { screen: g.top.constructor.name, rangedPenalty: g.top.state.rangedPenalty }; });
+const rainFight = await page.evaluate(() => { const g = window.__game!.game!; return { screen: g.top.constructor.name, rangedPenalty: (g.top as Shown).state.rangedPenalty }; });
 const rainFightColours = await colours();
 const snow = await weatherAt('thornmark', 7, 26, 2, 'snow');
 const snowColours = await colours();
 // The world map: M paints the cloth behind a progress bar, Tab lays the zones over it, Z shows it
 // whole, Space opens the almanac over it, M closes it again.
-await page.evaluate(() => { const g = (window as any).__game.game; g.world.travel('shelf', 16, 9, 2); g.enterCell(); });
+await page.evaluate(() => { const g = window.__game!.game!; g.world.travel('shelf', 16, 9, 2); g.enterCell(); });
 await page.waitForTimeout(100);
 await page.keyboard.press('KeyM');
-await page.waitForFunction(() => (window as any).__game.game.top.ready === true, null, { timeout: 60000 });
+await page.waitForFunction(() => (window.__game!.game!.top as Shown).ready === true, null, { timeout: 60000 });
 await page.waitForTimeout(150);
-const mapScreen = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const mapScreen = await page.evaluate(() => window.__game!.game!.top.constructor.name);
 const mapColours = await colours();
 await page.keyboard.press('Tab'); await page.waitForTimeout(150);
 const zonesColours = await colours();
 await page.keyboard.press('KeyZ'); await page.waitForTimeout(150);
 const wholeColours = await colours();
 await page.keyboard.press('Space'); await page.waitForTimeout(150);
-const almanacScreen = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const almanacScreen = await page.evaluate(() => window.__game!.game!.top.constructor.name);
 await page.keyboard.press('Escape'); await page.waitForTimeout(100);
-const almanacClosed = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
+const almanacClosed = await page.evaluate(() => window.__game!.game!.top.constructor.name);
 await page.keyboard.press('KeyM'); await page.waitForTimeout(150);
-const afterMap = await page.evaluate(() => (window as any).__game.game.top.constructor.name);
-const weatherSeed = await page.evaluate(() => (window as any).__game.game.world.state.weatherSeed);
+const afterMap = await page.evaluate(() => window.__game!.game!.top.constructor.name);
+const weatherSeed = await page.evaluate(() => window.__game!.game!.world.state.weatherSeed);
 // The end of the world: nothing is built north of the Foreland, the rim cut for good. On a clear noon, with nothing the
 // view would wash over it, facing it from the last square before it, the view draws the ring's mountain
 // and nothing pink, and the automap inks it as a mountain faded into the parchment (#829); a step into
 // it is refused and the log says why. No such noon fails the check.
 const edgeAt: number = await page.evaluate(async () => {
-  const load = (p: string): Promise<any> => import(p);
-  const W = await load('/src/game/weather.ts'), C = await load('/src/game/calendar.ts'), V = await load('/src/ui/viewport.ts');
-  const g = (window as any).__game.game, w = g.world;
+  const load: Load = (p) => import(p);
+  const W = await load<typeof import('../src/game/weather.ts')>('/src/game/weather.ts'), C = await load<typeof import('../src/game/calendar.ts')>('/src/game/calendar.ts'), V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts');
+  const g = window.__game!.game!, w = g.world;
   g.screens = [g.screens[0]]; w.travel('shelf', 8, 1, 0); w.sky = null;
-  const at = W.findWeather(w.state.weatherSeed, w.state.minutes, w.climate, (wx: any, min: number) => wx.precip < 0.02 && !V.washes(wx) && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480);
+  const at = W.findWeather(w.state.weatherSeed!, w.state.minutes, w.climate, (wx, min) => wx.precip < 0.02 && !V.washes(wx) && wx.cover === 0 && C.daylightAt(min) === 1, 24 * 480);
   if (at >= 0) w.state.minutes = at;
   return at;
 });
@@ -1155,8 +1151,8 @@ const pinkIn = async (r: { x: number; y: number; w: number; h: number }): Promis
 const edgeView = edgeAt >= 0 ? await pinkIn({ x: 8, y: 8, w: 400, h: 200 }) : -1, edgeMap = edgeAt >= 0 ? await pinkIn({ x: 416, y: 42, w: 216, h: 214 }) : -1;
 // The ring's mountain on the automap, inked as a mountain is and faded into the parchment.
 const edgeFaded: number = edgeAt >= 0 ? await page.evaluate(async (b: { x: number; y: number; w: number; h: number }) => {
-  const load = (p: string): Promise<any> => import(p);
-  const A = await load('/src/lib/art/palettes.ts'), P = await load('/src/ui/palette.ts');
+  const load: Load = (p) => import(p);
+  const A = await load<typeof import('../src/lib/art/palettes.ts')>('/src/lib/art/palettes.ts'), P = await load<typeof import('../src/ui/palette.ts')>('/src/ui/palette.ts');
   const [r, g, bl] = A.hexToRgb(A.mix('#6a6058', P.PARCHMENT, P.AUTOMAP_FADE));
   const d = (document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!.getImageData(b.x, b.y, b.w, b.h).data;
   let n = 0;
@@ -1164,27 +1160,27 @@ const edgeFaded: number = edgeAt >= 0 ? await page.evaluate(async (b: { x: numbe
   return n;
 }, { x: 416, y: 42, w: 216, h: 214 }) : 0;
 await page.keyboard.press('ArrowUp'); await page.waitForTimeout(100);
-const edgeBump = await page.evaluate(() => { const g = (window as any).__game.game, z = g.world.zone; return { log: g.log.at(-1), y: g.world.state.y - z.y, zone: z.id }; });
+const edgeBump = await page.evaluate(() => { const g = window.__game!.game!, z = g.world.zone!; return { log: g.log.at(-1), y: g.world.state.y - z.y, zone: z.id }; });
 // The pass is open, a road walked straight through into Thornmark past the checkpoint's warning,
 // no transition between.
 await page.evaluate(() => {
-  const g = (window as any).__game.game;
+  const g = window.__game!.game!;
   g.world.travel('shelf', 29, 9, 1); g.world.killGroups(['tm_wolves1']);
 });
 // Everything said on the walk, however the sky changes on the way.
-const said0: number = await page.evaluate(() => (window as any).__game.game.said);
+const said0: number = await page.evaluate(() => window.__game!.game!.said);
 for (let i = 0; i < 4; i++) { await page.keyboard.press('ArrowUp'); await page.waitForTimeout(60); }
-const pass = await page.evaluate((s0: number) => { const g = (window as any).__game.game, z = g.world.zone; return { map: g.world.state.mapId, zone: z?.id, x: g.world.state.x - z?.x, y: g.world.state.y - z?.y, screen: g.top.constructor.name, said: g.log.slice(Math.max(0, g.log.length - (g.said - s0))).join(' / ') }; }, said0);
+const pass = await page.evaluate((s0: number) => { const g = window.__game!.game!, z = g.world.zone; return { map: g.world.state.mapId, zone: z?.id, x: g.world.state.x - (z?.x ?? NaN), y: g.world.state.y - (z?.y ?? NaN), screen: g.top.constructor.name, said: g.log.slice(Math.max(0, g.log.length - (g.said - s0))).join(' / ') }; }, said0);
 const passColours = await colours();
 // The monster art unions many parts into one painted mass with the nonzero fill rule, so every
 // part kind has to wind the same way. One that winds the other way punches a hole wherever it
 // overlaps another, which is how the tube ends once cut a wedge out of every limb. Overlap each
 // pair of part kinds and look for background left showing in the middle.
 const windingHoles = await page.evaluate(async () => {
-  const load = (p: string): Promise<any> => import(p);
-  const G = await load('/src/ui/monsters/gloss.ts');
-  const C = await load('/src/ui/monsters/common.ts');
-  const mk = (kind: string, cx: number): any => {
+  const load: Load = (p) => import(p);
+  const G = await load<typeof import('../src/ui/monsters/gloss.ts')>('/src/ui/monsters/gloss.ts');
+  const C = await load<typeof import('../src/ui/monsters/common.ts')>('/src/ui/monsters/common.ts');
+  const mk = (kind: string, cx: number): Part => {
     if (kind === 'ball') return { k: 'ball', x: cx, y: 60, r: 34 };
     if (kind === 'ell') return { k: 'ell', x: cx, y: 60, rx: 34, ry: 28, rot: 0.3 };
     if (kind === 'cap') return { k: 'cap', x0: cx - 22, y0: 48, x1: cx + 22, y1: 72, r0: 24, r1: 18 };
@@ -1215,19 +1211,20 @@ if (process.env.SMOKE_SHOT) {
 // every run, first, put into the game's maps for it and taken out after, so a ground no built map holds
 // yet is swept too and the party ends where it did; then the cellar, Helmstow and its keep one way, and
 // all four ways the maps asked for, unless the sweep job sweeps them (SMOKE_PART=rest).
-await page.evaluate(async (defs: any[]) => {
-  const M = await import('/src/game/map.ts' as string), w = (window as any).__game.game.world;
+await page.evaluate(async (defs: readonly MapDef[]) => {
+  const load: Load = (p) => import(p);
+  const M = await load<typeof import('../src/game/map.ts')>('/src/game/map.ts'), w = window.__game!.game!.world;
   for (const d of defs) w.maps[d.id] = new M.GameMap(d);
-}, GROUND_SAMPLES as any[]);
+}, GROUND_SAMPLES);
 const four = PART === 'rest' ? [] : SWEEP;
 const cracks = await crackSweep([...GROUND_SAMPLES.map((d) => ({ id: d.id, all: false })), ...FLOOR.filter((id) => !four.includes(id)).map((id) => ({ id, all: false })), ...four.map((id) => ({ id, all: true }))]);
-await page.evaluate((ids: string[]) => { const w = (window as any).__game.game.world; for (const id of ids) { delete w.maps[id]; delete w.state.maps[id]; } }, GROUND_SAMPLES.map((d) => d.id));
+await page.evaluate((ids: string[]) => { const w = window.__game!.game!.world; for (const id of ids) { delete w.maps[id]; delete w.state.maps[id]; } }, GROUND_SAMPLES.map((d) => d.id));
 // A hill's body stays inside its outline. The sweep lays hills flat, so it cannot see a crest
 // light drawn off its hill, floating clear of it with sky beneath; this can. Each hill is painted alone, near and far, left, ahead and right, and every inked
 // pixel lies within a pixel of its outline.
 const hillSpill: string[] = await page.evaluate(async () => {
-  const load = (p: string): Promise<any> => import(p);
-  const V = await load('/src/ui/viewport.ts');
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts');
   const W = 400, H = 268, out: string[] = [];
   const c = document.createElement('canvas'); c.width = W; c.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!;
@@ -1262,16 +1259,16 @@ interface Silhouette {
 }
 const SPAN_LOOSE = 0.05;
 const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: Silhouette[]; seat: number; tall: { size: number; reach: number } } = await page.evaluate(async () => {
-  const load = (p: string): Promise<any> => import(p);
-  const S = await load('/src/ui/sprites.ts'), C = await load('/src/content/index.ts');
-  const F = await load('/src/ui/frame.ts'), G = await load('/src/ui/grouplabels.ts');
-  const seat = Math.round(G.seatFoot(0, F.LAYOUT.view.h)), seatOf = (def: any): number => Math.round(G.seatFoot(0, F.LAYOUT.view.h, def.size));
+  const load: Load = (p) => import(p);
+  const S = await load<typeof import('../src/ui/sprites.ts')>('/src/ui/sprites.ts'), C = await load<typeof import('../src/content/index.ts')>('/src/content/index.ts');
+  const F = await load<typeof import('../src/ui/frame.ts')>('/src/ui/frame.ts'), G = await load<typeof import('../src/ui/grouplabels.ts')>('/src/ui/grouplabels.ts');
+  const seat = Math.round(G.seatFoot(0, F.LAYOUT.view.h)), seatOf = (def: MonsterDef): number => Math.round(G.seatFoot(0, F.LAYOUT.view.h, def.size));
   const padOf = (h: number, foot = seat): number => Math.max(Math.ceil(h), foot);
   const c = document.createElement('canvas');
   const ctx = c.getContext('2d', { willReadFrequently: true })!;
   type Draw = (ctx: CanvasRenderingContext2D, x: number, y: number, h: number, frame: number) => void;
-  const scan = (def: any, draw: Draw): Silhouette => {
-    const foot = seatOf(def), span: [number, number] = S.SPAN[def.sprite];
+  const scan = (def: MonsterDef, draw: Draw): Silhouette => {
+    const foot = seatOf(def), span: readonly [number, number] = S.SPAN[def.sprite];
     const worst: Silhouette = { id: def.id, sprite: def.sprite, pieces: 0, share: 0, at: '', clipped: '', room: foot, reach: 0, size: def.size, wide: [0, 0], need: [0, 0], past: 0 };
     // Twelve abreast is for the span alone: so small a drawing is not held to one piece.
     for (const n of [1, 3, 6, 12]) {
@@ -1324,13 +1321,13 @@ const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: 
     }
     return worst;
   };
-  const defs = Object.values(C.MONSTERS) as any[];
+  const defs = Object.values(C.MONSTERS);
   const silhouettes = defs.map((def) => scan(def, (g, x, y, h, frame) => S.drawMonsterSprite(g, def.sprite, x, y, h, def.tint, 1, frame)));
   // The fixtures: a def with the top fifth of its ink moved up, as a crest or a raised wing might
   // be. Each has to fail for reaching above the view: the tallest def's moved a third of its height,
   // and the smallest's moved clear of the view by more than its own height.
   const o = document.createElement('canvas');
-  const lifted = (def: any, id: string, lift: (h: number, top: number) => number): Silhouette => scan({ ...def, id }, (g, x, y, h, frame) => {
+  const lifted = (def: MonsterDef, id: string, lift: (h: number, top: number) => number): Silhouette => scan({ ...def, id }, (g, x, y, h, frame) => {
     o.width = g.canvas.width; o.height = g.canvas.height;
     const oc = o.getContext('2d', { willReadFrequently: true })!;
     S.drawMonsterSprite(oc, def.sprite, x, y, h, def.tint, 1, frame);
@@ -1361,16 +1358,17 @@ const misspanned = silhouettes.filter((s) => s.past > SPAN_SLACK || [0, 1].some(
 // looking north there is none. The title, over a save with the Tide Stone home, draws its column
 // brighter and flickering less than over one without.
 const hearth = await page.evaluate(async () => {
-  const V = await import('/src/ui/viewport.ts' as string), T = await import('/src/ui/title.ts' as string);
-  const g = (window as any).__game.game, w = g.world;
+  const load: Load = (p) => import(p);
+  const V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts'), T = await load<typeof import('../src/ui/title.ts')>('/src/ui/title.ts');
+  const g = window.__game!.game!, w = g.world;
   const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
   c.width = sky.width = W; c.height = sky.height = H;
   const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d', { willReadFrequently: true })!;
   const minutes = w.state.minutes, flags = { ...w.party.flags }, place = { map: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing };
   const glow = (f: number): number => {
-    w.travel('shelf', 16, 6, f);
+    w.travel('shelf', 16, 6, f as Facing);
     w.state.minutes = Math.floor(minutes / 1440) * 1440 + 1440;
-    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+    w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
     skyCtx.clearRect(0, 0, W, H); ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
     const d = ctx.getImageData(0, H / 2 - 100, W, 90).data;
     let warm = 0;
@@ -1399,15 +1397,15 @@ const hearth = await page.evaluate(async () => {
   const steadier = title();
   delete w.party.flags.q_tide_home;
   const plain = title();
-  g.store.removeItem('hearth-of-caldera.save');
-  w.party.flags = flags; w.state.minutes = minutes; w.cached = null; w.travel(place.map, place.x, place.y, place.f);
+  g.store!.removeItem('hearth-of-caldera.save');
+  w.party.flags = flags; w.state.minutes = minutes; w['cached'] = null; w.travel(place.map, place.x, place.y, place.f);
   return { south, north, home, steadier, plain };
 });
 
 // The ending's pages (#750): a fixture question whose answer takes the Hull Opened shows its words, then its three pages
 // over the title's dusk, a Space to a page, and after the last the company stands where it stood and the game goes on.
 const endingStart = await page.evaluate(() => {
-  const g = (window as any).__game.game, w = g.world;
+  const g = window.__game!.game!, w = g.world;
   while (g.screens.length > 1) g.pop();
   w.travel('shelf', 16, 6, 2);
   g.ask({ ask: 'Fixture question.', answers: [{ label: 'Open it', says: ['Fixture words.'], sets: 'q_end_arrive' }] }, 'FIXTURE');
@@ -1415,16 +1413,17 @@ const endingStart = await page.evaluate(() => {
 });
 const endingTops: string[] = [];
 for (let i = 0; i <= 5; i++) {
-  endingTops.push(await page.evaluate(() => { const t = (window as any).__game.game.top; return t.constructor.name + (t.ending ? ` ${t.ending.title} ${t.page + 1}` : ''); }));
+  endingTops.push(await page.evaluate(() => { const t = window.__game!.game!.top as Shown; return t.constructor.name + (t.ending ? ` ${t.ending.title} ${t.page + 1}` : ''); }));
   if (i === 2 && process.env.ENDING_SHOT) await page.screenshot({ path: process.env.ENDING_SHOT });
   if (i < 5) { await page.keyboard.press('Space'); await page.waitForTimeout(100); }
 }
-const endingAfter = await page.evaluate(() => { const g = (window as any).__game.game, w = g.world; return { held: w.party.flags.q_end_arrive === 1, at: `${w.state.mapId} ${w.state.x},${w.state.y}` }; });
+const endingAfter = await page.evaluate(() => { const g = window.__game!.game!, w = g.world; return { held: w.party.flags.q_end_arrive === 1, at: `${w.state.mapId} ${w.state.x},${w.state.y}` }; });
 // The Hearth after each ending: on the title over the saved company (its column's light and swing, a patch of its sky), and
 // from the shelf looking south at it, the night's warm light over the hills and the noon sky's colour.
 const hearthAfter = await page.evaluate(async () => {
-  const T = await import('/src/ui/title.ts' as string), V = await import('/src/ui/viewport.ts' as string);
-  const g = (window as any).__game.game, w = g.world, flags = { ...w.party.flags }, minutes = w.state.minutes;
+  const load: Load = (p) => import(p);
+  const T = await load<typeof import('../src/ui/title.ts')>('/src/ui/title.ts'), V = await load<typeof import('../src/ui/viewport.ts')>('/src/ui/viewport.ts');
+  const g = window.__game!.game!, w = g.world, flags = { ...w.party.flags }, minutes = w.state.minutes;
   const avg = (d: Uint8ClampedArray): number[] => { const t = [0, 0, 0]; for (let i = 0; i < d.length; i += 4) for (let k = 0; k < 3; k++) t[k] += d[i + k]; return t.map((x) => Math.round(x / (d.length / 4))); };
   const title = (): { light: number; swing: number; sky: number[] } => {
     g.saveGame();
@@ -1445,7 +1444,7 @@ const hearthAfter = await page.evaluate(async () => {
   const view = (minute: number): void => {
     w.travel('shelf', 16, 6, 2);
     w.state.minutes = Math.floor(minutes / 1440) * 1440 + 1440 + minute;
-    w.cached = { seed: w.state.weatherSeed, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+    w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
     skyCtx.clearRect(0, 0, W, H); ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
   };
   const out: Record<string, { title: { light: number; swing: number; sky: number[] }; warm: number; noon: number[] }> = {};
@@ -1458,21 +1457,21 @@ const hearthAfter = await page.evaluate(async () => {
     view(720);
     out[k] = { title: title(), warm, noon: avg(skyCtx.getImageData(0, 0, W, 40).data) };
   }
-  g.store.removeItem('hearth-of-caldera.save');
-  w.party.flags = flags; w.state.minutes = minutes; w.cached = null; w.travel('shelf', 16, 6, 2);
+  g.store!.removeItem('hearth-of-caldera.save');
+  w.party.flags = flags; w.state.minutes = minutes; w['cached'] = null; w.travel('shelf', 16, 6, 2);
   return out;
 });
 
 // Lampglass in a fight: Cast, the spell, then the menu asks against what, and the pick is cast (#20).
 const glass = await page.evaluate(() => {
-  const g = (window as any).__game.game;
+  const g = window.__game!.game!;
   while (g.screens.length > 1) g.pop();
   const maren = g.party.members[4];
   g.world.travel('shelf', 16, 4, 2);
   maren.spells.push('lampglass'); maren.sp = maren.maxSp = 99;
   for (const c of g.party.members) { c.hp = c.maxHp = 999; c.conditions = []; }
   g.fight(['road_rats']);
-  const scr = g.top, s = scr.state;
+  const scr = g.top as Shown, s = scr.state;
   let asked = '';
   for (let guard = 0; guard < 300 && s.outcome === 'ongoing' && !s.glass; guard++) {
     scr.update(g, null);
@@ -1492,8 +1491,9 @@ const glass = await page.evaluate(() => {
 
 // Waymark with a mark set: the spell asks "Return to the mark" or "Set it here", and the first goes back (#20).
 const mark = await page.evaluate(async () => {
-  const S = await import('/src/ui/screens.ts' as string), P = await import('/src/game/spells.ts' as string);
-  const g = (window as any).__game.game, w = g.world, cassian = g.party.members[5];
+  const load: Load = (p) => import(p);
+  const S = await load<typeof import('../src/ui/screens.ts')>('/src/ui/screens.ts'), P = await load<typeof import('../src/game/spells.ts')>('/src/game/spells.ts');
+  const g = window.__game!.game!, w = g.world, cassian = g.party.members[5];
   while (g.screens.length > 1) g.pop();
   w.travel('shelf', 16, 6, 0);
   const set = w.setMark(), at = { ...w.state.mark };
@@ -1501,9 +1501,9 @@ const mark = await page.evaluate(async () => {
   cassian.spells.push('waymark'); cassian.sp = cassian.maxSp = 99; cassian.conditions = [];
   g.push(new S.SpellScreen('explore'));
   g.top.update(g, 'n6');
-  g.top.sel = cassian.spells.filter((id: string) => P.spell(id).context !== 'combat').indexOf('waymark');
+  (g.top as Shown).sel = cassian.spells.filter((id: string) => P.spell(id).context !== 'combat').indexOf('waymark');
   g.top.update(g, 'interact');
-  const asked = { screen: g.top.constructor.name, options: g.top.options ?? [] };
+  const asked = { screen: g.top.constructor.name, options: (g.top as Shown).options ?? [] };
   g.top.update(g, 'interact');
   const back = w.state.x === at.x && w.state.y === at.y;
   delete w.state.mark;
@@ -1517,11 +1517,11 @@ const mark = await page.evaluate(async () => {
 const pilotAt = { x: LAYOUT.view.x + 2, y: LAYOUT.view.y + 2 };
 const pilotPixel = (): Promise<number[]> => page.evaluate((p: { x: number; y: number }) => [...(document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!.getImageData(p.x, p.y, 1, 1).data].slice(0, 3), pilotAt);
 const pilotBefore = await pilotPixel();
-const pilotFrom: number = await page.evaluate(() => (window as any).__game.game.frame);
+const pilotFrom: number = await page.evaluate(() => window.__game!.game!.frame);
 await page.keyboard.press('KeyP');
-await page.waitForFunction((f: number) => (window as any).__game.game.frame >= f + 60, pilotFrom, { timeout: 15000 });
-const pilotBand = { on: await page.evaluate(() => (window as any).__game.game.pilot.on === true), at: await pilotPixel() };
-const pilotState = (): Promise<{ on: boolean; tempo: number }> => page.evaluate(() => { const p = (window as any).__game.game.pilot; return { on: p.on, tempo: p.tempo }; });
+await page.waitForFunction((f: number) => window.__game!.game!.frame >= f + 60, pilotFrom, { timeout: 15000 });
+const pilotBand = { on: await page.evaluate(() => window.__game!.game!.pilot!.on === true), at: await pilotPixel() };
+const pilotState = (): Promise<{ on: boolean; tempo: number }> => page.evaluate(() => { const p = window.__game!.game!.pilot!; return { on: p.on, tempo: p.tempo }; });
 await page.keyboard.press('KeyT'); await page.waitForTimeout(100);
 const pilotTempo = await pilotState();
 await page.keyboard.press('KeyP'); await page.waitForTimeout(100);
@@ -1532,24 +1532,24 @@ await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(100);
 const pilotArrow = (await pilotState()).on === false;
 // Then thirty seconds of its own play (#723): T twice back to 1x, P, and 1,800 frames, as many as 60 Hz
 // draws in thirty seconds; the company walks and no page error comes. P takes it back. The show, not the finish.
-const showStart = await page.evaluate(() => ({ steps: (window as any).__game.game.world.state.steps as number }));
+const showStart = await page.evaluate(() => ({ steps: window.__game!.game!.world.state.steps as number }));
 const showErrors = errors.length;
 await page.keyboard.press('KeyT'); await page.keyboard.press('KeyT'); await page.keyboard.press('KeyP');
-const showFrom = await (await page.waitForFunction(() => { const g = (window as any).__game.game; return g.pilot.on && g.frame; }, undefined, { timeout: 15000 })).jsonValue() as number;
-await page.waitForFunction((f: number) => (window as any).__game.game.frame >= f + 1800, showFrom, { timeout: 90000 });
-const show = await page.evaluate(() => { const g = (window as any).__game.game; return { on: g.pilot.on as boolean, tempo: g.pilot.tempo as number, steps: g.world.state.steps as number, why: g.pilot.why[0] as string }; });
+const showFrom = await (await page.waitForFunction(() => { const g = window.__game!.game!; return g.pilot!.on && g.frame; }, undefined, { timeout: 15000 })).jsonValue() as number;
+await page.waitForFunction((f: number) => window.__game!.game!.frame >= f + 1800, showFrom, { timeout: 90000 });
+const show = await page.evaluate(() => { const g = window.__game!.game!; return { on: g.pilot!.on as boolean, tempo: g.pilot!.tempo as number, steps: g.world.state.steps as number, why: g.pilot!.why[0] as string }; });
 await page.keyboard.press('KeyP'); await page.waitForTimeout(100);
 const showOff = (await pilotState()).on === false, showNewErrors = errors.slice(showErrors);
 
 // Attract mode (#722), after the pilot. The title's forty-five seconds are the Node suite's (too long here), so
 // `attract()` starts it: a click on the canvas (the page's only touch: a tap is a pointerdown) brings the title back,
 // and so does a key, through the real Input.
-const attractNow = (): Promise<{ top: string; attracting: boolean; on: boolean }> => page.evaluate(() => { const g = (window as any).__game.game; return { top: g.top.constructor.name, attracting: g.attracting, on: g.pilot.on }; });
-await page.evaluate(() => (window as any).__game.game.attract()); await page.waitForTimeout(150);
+const attractNow = (): Promise<{ top: string; attracting: boolean; on: boolean }> => page.evaluate(() => { const g = window.__game!.game!; return { top: g.top.constructor.name, attracting: g.attracting, on: g.pilot!.on }; });
+await page.evaluate(() => window.__game!.game!.attract()); await page.waitForTimeout(150);
 const attractStarted = await attractNow();
 await page.click('#stage'); await page.waitForTimeout(150);
 const attractTapped = await attractNow();
-await page.evaluate(() => (window as any).__game.game.attract()); await page.waitForTimeout(150);
+await page.evaluate(() => window.__game!.game!.attract()); await page.waitForTimeout(150);
 await page.keyboard.press('ArrowLeft'); await page.waitForTimeout(150);
 const attractKeyed = await attractNow();
 
@@ -1558,12 +1558,12 @@ const attractKeyed = await attractNow();
 // the game's generator as they were: after a round's last act, with a sleeper next in the order, and with a
 // monster just struck. A draw that walked the turn on or counted a flash down would move one or both.
 const drawing = await page.evaluate((seed: number) => {
-  const g = (window as any).__game.game, ctx = (document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!;
+  const g = window.__game!.game!, ctx = (document.getElementById('stage') as HTMLCanvasElement).getContext('2d')!;
   g.newGame(seed);
   g.world.travel('shelf', 16, 4);
   g.fight(['road_rats']);
-  const screen = g.top, s = screen.state;
-  screen.constructor.instant = true;
+  const screen = g.top as Shown, s = screen.state;
+  (screen.constructor as typeof CombatScreen).instant = true;
   const mark = (): string => `${JSON.stringify(s)} ${g.rng.state}`;
   const still = (): boolean => { const was = mark(); for (let i = 0; i < 10; i++) g.render(ctx); return mark() === was; };
   // The company braces ('n4') and the rats bite, round on round, to the tick of a round's last act: the next round
@@ -1579,7 +1579,7 @@ const drawing = await page.evaluate((seed: number) => {
   const hit = s.monsters.find((m: { hp: number }) => m.hp > 0);
   if (hit) hit.flash = 1;
   const struck = { flash: s.monsters.map((m: { flash: number }) => m.flash).join(), still: still() };
-  screen.constructor.instant = false;
+  (screen.constructor as typeof CombatScreen).instant = false;
   while (g.screens.length > 1) g.pop();
   return { spent, slept, struck };
 }, SEED);
