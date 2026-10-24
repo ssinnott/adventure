@@ -1286,15 +1286,15 @@ most, which a session reads first: its ids, where it is (§1), what it is for (�
 row to each map with its id, kind and band, what is there and its secret with its hint (§3), the
 chapter and the side quests a line each (§5, §6), the numbers that hold (§8), the names (§10) and
 what is open and owed. It keeps the old numbers and headings of what it holds, and its first lines
-say which file holds each old section it does not. Beside it, in `docs/areas/<area>/`, the
-decisions, `decisions.md`, hold the old §9 and every "Decided by" list, in order: a builder adds a
-list at the end, and a later decision that changes an earlier one says which; an earlier one is not
-edited, bar a plain slip the pull request that finds it says it mended. The plan, `plan.md`, holds
-the old §4, §11 and §12 whole, then under "Moved from the state" the lines of the state sections
-the state does not keep; a new box's brief goes there first, with its "As built" once it is built.
-A doc is moved, never rewritten: `node tools/docmove.ts <base> <old> <new>...` finds each line of
-the old among the new files as many times as it stood, and each of its paragraphs whole in one of
-them; `tools/tests/areadocs.ts` holds the shape. The Foreland's moved first, to
+say which file holds each old section it does not. Beside it are its decisions and its plan. The
+decisions, `docs/areas/<area>/decisions.md`, hold the old §9 and every "Decided by" list, in order:
+a builder adds a list at the end, and a later decision that changes an earlier one says which; an
+earlier one is not edited, bar a plain slip the pull request that finds it says it mended. The plan,
+`docs/areas/<area>/plan.md`, holds the old §4, §11 and §12 whole, then under "Moved from the state"
+the lines of the state sections the state does not keep; a new box's brief goes there first, with
+its "As built" once it is built. A doc is moved, never rewritten: `node tools/docmove.ts` finds each
+line of the old among the new files as many times as it stood, and each of its paragraphs whole in
+one of them; `tools/tests/areadocs.ts` holds the shape. The Foreland's moved first, to
 `docs/areas/shelf/plan.md` and `docs/areas/shelf/decisions.md`; the other thirteen are owed to D3,
 and the suite lists them on every run.
 

@@ -68,19 +68,20 @@ the hint on its near side that finds it (the map's `secrets`). Thirteen maps hav
 | `downs_e4`, E4 | outdoor, 32×32, 4–5 | the Downs' last shore, the bounds': the strand under a low cliff, a shrine and a cairn, Hag Hole's mouth at 3,6; no group | 10,2, the crabber's store: crab shells heaped at 9,2 (`e4_shells`) |
 | `hag_hole`, Hag Hole | dungeon, 16×16, 30–32 | the Hagstone's lair: the sea cave the tide floods, the Hag in its narrows, the one group; the box of black wood | 3,3, the dry ledge: lamp smoke over the pool at 3,4 (`hh_smoke`) |
 
-Its content is `src/content/areas/shelf/`: the maps, `monsters.ts`, `items.ts`, `chapter.ts`,
-`quests.ts` and `guilds.ts`; `atlas.ts`, its part of the world; `checks.ts`, its rows of the suites;
-`public.ts`, what other areas take; and `walkthrough.ts`, which plays its chapter from a new game a
-step at a time and walks both cities, the trainers and the city's changes. Its businesses' rooms are
-`src/ui/interiors/shelf/`.
+Its content is `src/content/areas/shelf/`: the maps, then a file each for its monsters, items,
+chapter, side quests and guild quests, its part of the world (the atlas), its rows of the suites
+(the checks) and what other areas take of it (public). Its walkthrough plays the chapter from a new
+game a step at a time and walks both cities, the trainers and the city's changes. Its businesses'
+rooms are `src/ui/interiors/shelf/`.
 
 ## 5. The one quest here
 
-**The Quiet Farm** (`chapter.ts`, `ashcombe`), Vask's contract: he hires the company
-(`q_ashcombe`); Hild asks at Gullwick after Wenna (`q_wenna`); the dead Lantern, the survey wand and
-the Rift in Ashcombe Cellar; the keeper's log at Crowness (`downs_e3:e3_log`); the wand to Vask
-(`q_ashcombe_done`), 300 gold and the lead to the Grove Stone. It is done on both flags and the log.
-The Berth's bier is an entry, found and never told. The Salt Road west, into Act II, starts here.
+**The Quiet Farm** (`ashcombe`, `src/content/areas/shelf/chapter.ts`), Vask's contract: he hires
+the company (`q_ashcombe`); Hild asks at Gullwick after Wenna (`q_wenna`); the dead Lantern, the
+survey wand and the Rift in Ashcombe Cellar; the keeper's log at Crowness (`downs_e3:e3_log`); the
+wand to Vask (`q_ashcombe_done`), 300 gold and the lead to the Grove Stone. It is done on both
+flags and the log. The Berth's bier is an entry, found and never told. The Salt Road west, into Act
+II, starts here.
 
 **Helmstow between acts** (plan, §5.1): after Act II (`q_salt_done`) the changed city, the gate shut
 to an orcblood member and the harbour postern open, the curfew, the Chapel shut, the prices up and
@@ -90,7 +91,8 @@ gate open and the ending's words. Nothing is a lock: each door shut has a way ro
 
 ## 6. Side quests
 
-Ten in `quests.ts`, a line each (the plan's §6 has #56's table and the changes to its drafts):
+Ten in `src/content/areas/shelf/quests.ts`, a line each (the plan's §6 has #56's table and the
+changes to its drafts):
 
 - **The Cargo Ledger** (`greywater`): Hale at the Scarth, for the ledger the Seam's Deacon guards.
 - **The Bell That Rang Twice** (`bell`): Osmund in the Chapel; the bell's two witnesses.
@@ -103,10 +105,11 @@ Ten in `quests.ts`, a line each (the plan's §6 has #56's table and the changes 
 - **The Rest of the Survey** (`survey`): Ebba and Ailith; the fire-ring behind the west wood.
 - **The Council of Helmstow** (`council`): Wiglaf, the Council's clerk; the case put once (§5).
 
-The guilds' (`guilds.ts`): the Wardens' First Watch (the Scarth; 20 gold, 60 xp) and The Cellar's
-Cult (both cultist bands in the cellar; 60 gold, 240 xp), from the Drillyard; the Lanterns' First
-Light (the Hearth from the shore; 20 gold, 60 xp) and The Drowned Stair (Brandy Hole's dead; 80
-gold, 300 xp), from the Guildhall. Their next two are Thornmark's (plan, §6).
+The guilds' (`src/content/areas/shelf/guilds.ts`): the Wardens' First Watch (the Scarth; 20 gold,
+60 xp) and The Cellar's Cult (both cultist bands in the cellar; 60 gold, 240 xp), from the
+Drillyard; the Lanterns' First Light (the Hearth from the shore; 20 gold, 60 xp) and The Drowned
+Stair (Brandy Hole's dead; 80 gold, 300 xp), from the Guildhall. Their next two are Thornmark's
+(plan, §6).
 
 **The Hagstone** (#846), the bounds' artifact: in Hag Hole's box of black wood, behind the Hag
 (boss, 32: 2,000 hit points, attack 26, 24d8+26 a blow, off the line), found and never told. The
@@ -115,10 +118,10 @@ its bearer is never paralysed (a ward).
 
 ## 7. Encounters, and what is new
 
-The Foreland's monsters are MONSTERS §5.1's and the Downs' §5.2's (`monsters.ts`): the birds; the
-wreckers and their lampman in fog; the barrow guard, the Black Dog and the Barrow Captain; and the
-Downs' own wolves, boars, rats and bandits on MONSTERS §4.4's line. The Downs have groups that walk
-only by night or in fog (`when`) and three dens: the rookery in E2, the chalk pit in D2 and the
+The Foreland's monsters are MONSTERS §5.1's and the Downs' §5.2's, in its monsters file: the birds;
+the wreckers and their lampman in fog; the barrow guard, the Black Dog and the Barrow Captain; and
+the Downs' own wolves, boars, rats and bandits on MONSTERS §4.4's line. The Downs have groups that
+walk only by night or in fog (`when`) and three dens: the rookery in E2, the chalk pit in D2 and the
 bandit camp in D3. Hag Hole holds the Hag alone, a kind of the long bodies (MONSTERS §13). The first
 area on the road, it claims nothing new (`novel`), and the novelty check asks nothing of the first
 (`noveltyFaults`, `tools/tests/pillars.ts`).
@@ -138,8 +141,8 @@ area on the road, it claims nothing new (`novel`), and the novelty check asks no
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, the Foreland map 97.4%, F3
   100%, E3 96.9% and D2 92.6%; within 12 in the country, F2 99.5%, E2 96.4% (its furthest square 20,
   on the limit), D3 99.7%, D4 96.7% and E4 100%.
-- **The ladder:** rungs 3 and 5 are the Foreland's (`gear`, `checks.ts`): by 3 Mottram's gear and
-  the kits' weapons with a plus, by 5 the kits' armour with a plus and the Downs' last finds.
+- **The ladder:** rungs 3 and 5 are the Foreland's (`gear`, in its checks): by 3 Mottram's gear
+  and the kits' weapons with a plus, by 5 the kits' armour with a plus and the Downs' last finds.
 
 ## 10. Names
 
@@ -187,10 +190,10 @@ named in the atlas.
 
 ## Open and owed
 
-- **Owed to no check:** `checks.ts` has no `owes`, and the curve, the gate, density and the ladder
+- **Owed to no check:** its checks have no `owes`, and the curve, the gate, density and the ladder
   hold the Foreland with nothing owed.
 - **Watched, not moved:** Brandy Hole's 4.09 fights to a rest and E2's furthest square at 20 sit on
   their limits' edge (plan, §8). What the owner finds by hand goes there; the doc holds none yet.
-- **The Keep's armoury,** its door and Wulfric's armour, waits on an interior (`keep.ts`).
+- **The Keep's armoury,** its door and Wulfric's armour, waits on an interior (the Keep's map).
 - **Cut:** the rim's foothills and G3's and G4's scraps (plan, §11); the Mewstone is off the road.
 - **What is next:** nothing. The plan's briefs are all built, and a new box starts its brief there.
