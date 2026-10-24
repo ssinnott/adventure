@@ -67,11 +67,17 @@ function reaches(): void {
     ['src/content/shipped.json', 'the graph does not read it'], ['tools/a_table_no_file_imports.json', 'the graph does not read it']];
   const missed = all.filter(([f, why]) => reach(['docs/DESIGN.md', f]).all?.why !== why).map(([f]) => f);
   ok(!missed.length, `a systems file, a tool the gate loads, what decides what runs and a file the graph does not read reach every area${missed.length ? ` (not: ${missed.join(', ')})` : ''}`);
+  // The maps' schema is types, which nothing loads as it runs (#1009); map.ts, which runs, is loaded by the gate.
+  const schema = reach(['src/game/mapdef.ts']), runs = reach(['src/game/map.ts']);
+  ok(!schema.all && !schema.areas.size && !schema.walks.size && runs.all?.why === 'the gate or a walkthrough loads it',
+    `the maps' schema, game/mapdef.ts, reaches no area (${describeReach(schema)}); game/map.ts, which runs, every area (${describeReach(runs)})`);
 }
 
 export async function changed(): Promise<void> {
   reaches();
   ok((await changedMaps(['src/game/atlas.ts'])).all, 'a change to game/atlas.ts re-lays the zones, so it counts every map');
+  ok(!(await changedMaps(['src/game/mapdef.ts'])).all && (await changedMaps(['src/game/map.ts'])).all,
+    "a change to the maps' schema, game/mapdef.ts, types erased before anything paints, counts no map; to game/map.ts, the legend, the palettes and GameMap, every map");
   ok(!(await changedMaps(['docs/DESIGN.md'])).all, 'a change to the docs counts no map');
   const wolf = await changedMonsters(['src/ui/monsters/wolf.ts']);
   ok(!wolf.all && wolf.monsters.includes('dire_wolf') && !wolf.monsters.includes('brigand'), `a family module counts the monsters it draws, no others (${wolf.monsters.join(',')})`);
