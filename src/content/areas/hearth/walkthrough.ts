@@ -36,8 +36,9 @@
 // she takes from them begins no journal. Then the chapter, The Heart (#760), played to each of its three
 // ends from the road behind done, and once by a company over early on four of the road's five.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, kneel, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending } from '../../../../tools/walk.ts';
-import type { Walk, Step } from '../../../../tools/walk.ts';
+import { newWalk, see, kneel, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending, goalOf, written, holding, keys, thiefDown, same, hour, log, key, press, chest } from '../../../../tools/kit/walk.ts';
+import { apartFrom } from '../../../../tools/kit/grid.ts';
+import type { Walk, Step } from '../../../../tools/kit/walk.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../../game/types.ts';
 import type { Facing } from '../../../game/types.ts';
 import { ATLAS, MAP_DEFS, QUESTS, AREAS, MONSTERS } from '../../index.ts';
@@ -46,12 +47,10 @@ import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { meet, heard, answer, handIns } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
-import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/map.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
 import { elementMult } from '../../../game/monsters.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
-import { headlessGame } from '../../../../tools/kit/headless.ts';
 import { xpForLevel, takePrestige, className, PRESTIGES, defaultParty, equip, statOf, spellHeal } from '../../../game/party.ts';
 import type { Party } from '../../../game/party.ts';
 import { teach, barOf } from '../../../game/prestige.ts';
@@ -65,7 +64,6 @@ import { GEAR } from '../../../../tools/kit/company.ts';
 import { restRefused } from '../../../game/wilds.ts';
 import { questLog, holds } from '../../../game/quests.ts';
 import { readerOf } from '../../../game/inscriptions.ts';
-import { MINUTES_PER_DAY } from '../../../game/calendar.ts';
 import { LAST_CROSSING } from '../../crossings.ts';
 import { COMPACT_OVER, COMPACT_WARDENS } from '../saltreach/public.ts';
 import { THRONE_REMOVED, THRONE_HOLD, THRONE_TALLIS } from '../shelf/public.ts';
@@ -87,43 +85,16 @@ import { CHAPTER } from './chapter.ts';
 const H6 = MAP_DEFS.find((d) => d.id === 'hearthisle_h6')!;
 const person = (name: string): Person => H6.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
 const ISLE = ATLAS.zones.find((z) => z.id === 'hearthisle')!;
-const at = (w: Walk, hour: number): void => { w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + hour * 60; };
 
 // ---- the vigil cell in the east rim (#864) ----
 
 const RIM = MAP_DEFS.find((d) => d.id === 'hearthisle_i6')!;
 type Chest = Extract<Feature, { kind: 'chest' }>;
 type Happening = Extract<Feature, { kind: 'event' }>;
-/** I6's chest, or its event, by id. */
-const chestOf = (id: string): Chest => RIM.features!.find((f): f is Chest => f.kind === 'chest' && f.id === id)!;
 const eventOf = (id: string): Happening => RIM.features!.find((f): f is Happening => f.kind === 'event' && f.id === id)!;
 
-/**
- * How far `q` lies from the squares on a shortest walk from `a` to `b` (every way a company can take between them,
- * not one), by the way a company walks (a secret door as the floor it is) and as the crow flies (the larger of the two
- * differences). The two boxes of the isle are laid side by side as the world lays them, I6 32 squares on from H6, so
- * that a walk may cross the seam between them.
- */
-function apartFrom(a: readonly [number, number], b: readonly [number, number], q: readonly [number, number]): { steps: number; walking: number; crow: number } {
-  const isle: MapDef = { ...H6, id: 'hearthisle', features: [], exits: [], secrets: [], encounters: [], rows: H6.rows.map((r, y) => r + RIM.rows[y]) };
-  const map = new GameMap(isle), { width, height } = map;
-  const floor = (x: number, y: number): boolean => x >= 0 && y >= 0 && x < width && y < height && map.passable(x, y) === 'ok';
-  const flood = (from: readonly (readonly [number, number])[]): Int32Array => {
-    const d = new Int32Array(width * height).fill(-1), todo: number[] = [];
-    for (const [x, y] of from) { d[y * width + x] = 0; todo.push(y * width + x); }
-    for (let i = 0; i < todo.length; i++) {
-      const x = todo[i] % width, y = Math.floor(todo[i] / width);
-      for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
-        const nx = x + dx, ny = y + dy;
-        if (floor(nx, ny) && d[ny * width + nx] < 0) { d[ny * width + nx] = d[y * width + x] + 1; todo.push(ny * width + nx); }
-      }
-    }
-    return d;
-  };
-  const fromA = flood([a]), fromB = flood([b]), steps = fromA[b[1] * width + b[0]], road: [number, number][] = [];
-  for (let y = 0; y < height; y++) for (let x = 0; x < width; x++) if (fromA[y * width + x] >= 0 && fromA[y * width + x] + fromB[y * width + x] === steps) road.push([x, y]);
-  return { steps, walking: flood(road)[q[1] * width + q[0]], crow: Math.min(...road.map(([x, y]) => Math.max(Math.abs(x - q[0]), Math.abs(y - q[1])))) };
-}
+/** The isle's two boxes laid side by side as the world lays them, I6 32 squares on from H6, so that a walk may cross the seam between them. */
+const WHOLE_ISLE: MapDef = { ...H6, id: 'hearthisle', features: [], exits: [], secrets: [], encounters: [], rows: H6.rows.map((r, y) => r + RIM.rows[y]) };
 
 /**
  * The detour (#864), on from the Hand's takings in the same rim: the vein of glass in the turf that ends at the rim's
@@ -133,7 +104,7 @@ function apartFrom(a: readonly [number, number], b: readonly [number, number], q
  */
 function theVigil(w: Walk): void {
   const door = RIM.secrets![1], glass = eventOf('i6_scorch'), inside = eventOf('i6_vigil');
-  const plain = chestOf('i6_vigil_chest'), banded = chestOf('i6_vigil_locked');
+  const plain = chest(RIM, 'i6_vigil_chest'), banded = chest(RIM, 'i6_vigil_locked');
   const standsOn = (c: { x: number; y: number }): boolean => { const o = w.world.locate(RIM.id, c.x, c.y); return !!o && w.world.state.x === o.x && w.world.state.y === o.y; };
   w.ok(door.hint === glass.id && glass.x === door.x + 1 && glass.y === door.y && RIM.rows[door.y][door.x] === 'S' && RIM.rows[door.y - 1][door.x] === 'r' && RIM.rows[door.y + 1][door.x] === 'r',
     'the vigil cell\'s door is the box\'s second secret, in the rim\'s east face between rock above and below, and the vein of glass ends on its near side');
@@ -149,9 +120,9 @@ function theVigil(w: Walk): void {
   const robe = w.party.bag.includes('vigil_robe');
   w.world.move('forward');
   w.ok(robe && standsOn(banded), 'the plain chest gives the Vigil Robe, and the grey-banded chest stands at the back');
-  const gold = w.party.gold, keys = (): number => w.party.bag.filter((i) => i === 'key_iron').length, before = keys();
+  const gold = w.party.gold, before = keys(w);
   const said = w.world.unlock();
-  w.ok(banded.locked === true && said === 'Ottilie picks the lock.' && keys() === before, `the company's thief picks the grey-banded lock, born to Lockpick (${said || 'nothing'}), and no key is spent`);
+  w.ok(banded.locked === true && said === 'Ottilie picks the lock.' && keys(w) === before, `the company's thief picks the grey-banded lock, born to Lockpick (${said || 'nothing'}), and no key is spent`);
   w.world.markUsed(banded.id); w.party.gold += banded.gold; w.party.bag.push(...banded.items);
   w.ok(w.party.bag.includes('levin_mace') && w.party.gold === gold && !banded.items.includes('key_iron'), 'and in it the Levin Mace, no gold and no key');
   listen(w);
@@ -164,19 +135,7 @@ function theVigil(w: Walk): void {
  * has no lock and opens to the company that cannot open the other.
  */
 function vigilLocked(ok: (cond: boolean, msg: string) => void): void {
-  const banded = chestOf('i6_vigil_locked'), plain = chestOf('i6_vigil_chest');
-  /** A new game, the company dressed by `dress`, stood on the chest and Space pressed twice: what the log said, and what became of the chest, the prize and the keys. */
-  const press = (c: Chest, dress: (p: Party) => void): string => {
-    const g = headlessGame(4), p = g.party;
-    dress(p);
-    g.world.travel(RIM.id, c.x, c.y, WEST);
-    const there = g.world.featureHere(), from = g.log.length;
-    g.enterCell();
-    if (there) { g.interact(there); g.interact(there); }
-    return `${g.log.slice(from).join(' ')} | ${g.world.used(c.id) ? 'spent' : 'shut'} | ${c.items.every((i) => p.bag.includes(i)) ? 'taken' : 'left'} | ${p.bag.filter((i) => i === 'key_iron').length} keys`;
-  };
-  const thiefDown = (p: Party): void => { p.members.find((m) => m.cls === 'thief')!.conditions.push('dead'); };
-  const key = (p: Party): void => { p.bag.push('key_iron'); };
+  const banded = chest(RIM, 'i6_vigil_locked'), plain = chest(RIM, 'i6_vigil_chest');
   const prize = 'You open the chest: Levin Mace. The chest is empty.';
   const cases: [string, Chest, (p: Party) => void, string][] = [
     ['no Lockpick standing and no key', banded, thiefDown, 'A locked chest. Locked. Locked. | shut | left | 0 keys'],
@@ -185,7 +144,7 @@ function vigilLocked(ok: (cond: boolean, msg: string) => void): void {
     ['no Lockpick standing and an iron key, which is spent', banded, (p) => { thiefDown(p); key(p); }, `A locked chest. The lock turns. The key crumbles. ${prize} | spent | taken | 0 keys`],
     ['no Lockpick and no key, at the plain chest beside it', plain, thiefDown, 'A chest. Space opens it. You open the chest: Vigil Robe. The chest is empty. | spent | taken | 0 keys'],
   ];
-  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press(c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
+  const wrong = cases.flatMap(([who, c, dress, want]) => { const said = press(RIM.id, WEST, c, dress); return said === want ? [] : [`${who}: "${said}", wanted "${want}"`]; });
   ok(banded.locked === true && !plain.locked && !wrong.length,
     `the grey-banded chest refuses a company with neither a Lockpick nor an iron key and opens to either, the plain chest beside it opening to any (${cases.map(([who]) => who).join('; ')})${wrong.length ? ' -> ' + wrong.join('; ') : ''}`);
 }
@@ -202,7 +161,6 @@ function vigilLocked(ok: (cond: boolean, msg: string) => void): void {
 function vigilFinds(ok: (cond: boolean, msg: string) => void): void {
   const [mace, robe] = [item('levin_mace'), item('vigil_robe')];
   const [slag, blade, grey] = [item('slag_mace'), item('grey_blade'), item('grey_robe')];
-  const same = (a: unknown, b: unknown): boolean => JSON.stringify(a) === JSON.stringify(b);
   ok(mace.slot === 'weapon' && mace.element === 'lightning' && !mace.stat && !mace.plus && mace.dice === slag.dice && mace.sides === slag.sides && mace.bonus === slag.bonus && same(mace.classes, slag.classes) && same(mace.classes, blade.classes) && mace.name.length <= 26,
     `the Levin Mace is the Slag Mace's steel with lightning on it, for the Grey Blade's classes, its name ${mace.name.length} characters of the sheet's 26`);
   ok(hits(mace) - hits(slag) === 3.5 && hits(slag) < hits(blade) && hits(blade) < hits(mace),
@@ -220,10 +178,9 @@ function vigilFinds(ok: (cond: boolean, msg: string) => void): void {
   // Where they lie: the cell's two chests, the grey-banded one the area's only locked chest.
   const hearth = AREAS.find((a) => a.id === 'hearth')!;
   const chests = MAP_DEFS.flatMap((d) => (d.features ?? []).filter((f): f is Chest => f.kind === 'chest').map((f) => ({ map: d.id, f })));
-  const holding = (id: string): string => chests.filter(({ f }) => f.items.includes(id)).map(({ map, f }) => `${map}:${f.id}`).join();
   const locked = chests.filter(({ map, f }) => f.locked && hearth.maps.some((m) => m.id === map)).map(({ map, f }) => `${map}:${f.id}`);
   ok(holding('levin_mace') === 'hearthisle_i6:i6_vigil_locked' && holding('vigil_robe') === 'hearthisle_i6:i6_vigil_chest' && locked.join() === 'hearthisle_i6:i6_vigil_locked'
-    && chestOf('i6_vigil_locked').gold === 0 && chestOf('i6_vigil_chest').gold === 0,
+    && chest(RIM, 'i6_vigil_locked').gold === 0 && chest(RIM, 'i6_vigil_chest').gold === 0,
     `the Levin Mace lies in the grey-banded chest and the robe in the plain chest beside it, no gold with either, and the grey-banded chest is the only locked one the isle places (${locked.join() || 'none'})`);
   // The raise and the blow, on the real items: worn, the robe adds 3 to personality and not to the bare stat, and to what the cleric heals; carried it adds nothing; and the classes that cannot wield the mace are refused.
   const crew = defaultParty(makeRng(1)), cleric = crew.members.find((m) => m.cls === 'cleric')!, paladin = crew.members.find((m) => m.cls === 'paladin')!;
@@ -250,7 +207,7 @@ function vigilFinds(ok: (cond: boolean, msg: string) => void): void {
   ok(!told.length && !JSON.stringify(CHAPTER).includes(RIM.id), `found and never told: no person, quest, chapter or atlas place or site names the cell, the mace or the robe, and the chapter's road never enters the east rim (${told.length} do)`);
   // Off the road: the squares on a shortest walk from the strand (20,30) to the temple's door (18,14), across the isle's two boxes laid side by side.
   const strand: [number, number] = [H6.start.x, H6.start.y], doorway: [number, number] = [H6.exits![0].x, H6.exits![0].y], hint: [number, number] = [32 + glass.x, glass.y];
-  const far = apartFrom(strand, doorway, hint), on = apartFrom(strand, doorway, [strand[0], strand[1] - 6]);
+  const far = apartFrom(WHOLE_ISLE, strand, doorway, hint), on = apartFrom(WHOLE_ISLE, strand, doorway, [strand[0], strand[1] - 6]);
   ok(far.steps > 0 && far.walking > 10 && on.walking === 0 && on.crow === 0,
     `the cell is off the road: where the glass stops is ${far.walking} squares from the nearest square on a shortest walk from the strand to the temple's door (${far.steps} steps) by the way a company walks, and ${far.crow} as the crow flies; a square of the cleft itself is ${on.walking}`);
 }
@@ -274,7 +231,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(!!over && !landing.owed && over.x === 20 && over.y === 30 && over.facing === NORTH && over.fare === LAST_CROSSING.fare && H6.start.x === 20 && H6.start.y === 30,
     `Cinderport's harbourmaster sells the last crossing to the strand at 20,30, ${over?.fare} gold, its isle end landed`);
   w.world.travel('cinderport', port.x, port.y);
-  at(w, 12);
+  hour(w, 12);
   w.party.gold = LAST_CROSSING.fare;
   const day = w.world.day, gone = ride(over, w.world, w.party);
   ok(gone.taken && w.party.gold === 0 && w.world.zone?.id === 'hearthisle_h6' && w.world.state.x === h6.x + 20 && w.world.state.y === h6.y + 30 && w.world.day === day + 1 && w.world.hour === LAST_CROSSING.arrives,
@@ -372,7 +329,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The moths by night: over the Bowl, and on the strand and the Bowl's north, gone by day.
   const moths = H6.encounters!.filter((g) => g.monsters.includes('hearth_moth'));
   ok(moths.length === 2 && moths.every((g) => JSON.stringify(g.when) === JSON.stringify({ hours: 'night' })), 'the moths come by night, on the strand and over the Bowl\'s north');
-  at(w, 23);
+  hour(w, 23);
   see(w, 'hearthisle_h6:h6_moths');
   ok(w.world.used('h6_moths'), 'by night the sky over the Bowl is moving');
 
@@ -395,7 +352,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // the rim's path begins, and the path carved through the rim's rock into Anchorhold's yard under the
   // cell and on out to the east foot, north under the rim to the Wyke.
   delete w.party.flags[COMPACT_WARDENS];
-  at(w, 12);
+  hour(w, 12);
   const I6 = MAP_DEFS.find((d) => d.id === 'hearthisle_i6')!, i6 = out.zones.find((z) => z.id === 'hearthisle_i6')!;
   const rim = (x: number, y: number): string => out.at(i6.x + x, i6.y + y).ch;
   ok(I6.density === 'core' && I6.band?.join() === '28,29' && i6.x === 264 && i6.y === 158 && ISLE.maps![1].at.join() === '264,158', 'I6 is laid at 264,158, core, band 28-29');
@@ -446,7 +403,7 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The moths over Anchorhold's yard by night.
   ok(JSON.stringify(I6.encounters!.find((g) => g.id === 'i6_moths')?.when) === JSON.stringify({ hours: 'night' }), 'the moths come over the yard by night');
-  at(w, 23);
+  hour(w, 23);
   fight(w, 'hearthisle_i6:i6_moths');
 
   // Hearthfane (#755): in at the door in the mound, 18,14, onto the nave's foot facing up it, and out
@@ -625,11 +582,10 @@ export const walkthrough: Walkthrough = (ok) => {
   // ways' groups won as they come; behind the first west frame the keepers' store.
   w.level = 30;
   for (const m of w.party.members) m.level = 30;
-  const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
   see(w, 'underdeep:ud_in');
   fight(w, 'underdeep:ud_rats1');
   see(w, 'underdeep:ud_knot1');
-  ok(!!log('frames') && !log('frames')!.done && log('frames')!.goal === 'Follow her knots through the ways, frame by frame.', 'her knot on the first frame begins Every Frame She Marked');
+  ok(!!log(w, 'frames') && !log(w, 'frames')!.done && log(w, 'frames')!.goal === 'Follow her knots through the ways, frame by frame.', 'her knot on the first frame begins Every Frame She Marked');
   fight(w, 'underdeep:ud_knockers1');
   const ways = (id: string) => WAYS.features!.find((f) => f.kind === 'chest' && f.id === id);
   const store = ways('ud_store'), crawl = ways('ud_crawl_chest'), crew = ways('ud_crew_store'), store2 = ways('ud_store2');
@@ -649,7 +605,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'underdeep:ud_knot7');
   fight(w, 'underdeep:ud_rats2');
   see(w, 'underdeep:ud_knot8');
-  ok([1, 2, 3, 4, 5, 6, 7, 8].every((n) => w.world.used(`ud_knot${n}`)) && log('frames')!.pages[0].entries.length === 2 && !log('frames')!.done,
+  ok([1, 2, 3, 4, 5, 6, 7, 8].every((n) => w.world.used(`ud_knot${n}`)) && log(w, 'frames')!.pages[0].entries.length === 2 && !log(w, 'frames')!.done,
     'every frame read, the eighth cut deeper over a thin wall, and the quest goes on down to the Stair\'s last frame (#758)');
 
   // The hatch behind the eighth frame, found from it: searched at the wall in the room behind it, it
@@ -659,7 +615,7 @@ export const walkthrough: Walkthrough = (ok) => {
   let hatchFound = false;
   for (let i = 0; i < 20 && !hatchFound; i++) hatchFound = w.world.search();
   const crawled = hatchFound ? [w.world.move('forward'), w.world.move('forward')] : [];
-  ok(hatch.hint === 'ud_knot8' && hatchFound && crawled.every((r) => r.kind === 'moved') && w.world.used('ud_hatch') && log('frames')!.pages[0].entries.length === 3,
+  ok(hatch.hint === 'ud_knot8' && hatchFound && crawled.every((r) => r.kind === 'moved') && w.world.used('ud_hatch') && log(w, 'frames')!.pages[0].entries.length === 3,
     'searched at the wall behind the eighth frame, the hatch opens on the crawl way, and the log keeps it');
   listen(w);
   ok(crawl?.kind === 'chest' && crawl.gold === 2200 && crawl.items.join() === 'potion_sp_great,potion_sp_great,potion_sp_great' && crawl.x === 24 && crawl.y === 4,
@@ -694,9 +650,9 @@ export const walkthrough: Walkthrough = (ok) => {
     answer(speak(v, p, at.x, at.y, at.f).choice!.answers.find((a) => a.label === label)!, v.party);
     return v.party.members[0].xp - xp;
   };
-  ok(!!log('crack') && !log('crack')!.done, 'at the crack, The Knocker That Stopped begins');
+  ok(!!log(w, 'crack') && !log(w, 'crack')!.done, 'at the crack, The Knocker That Stopped begins');
   const sealed = pay(w, knocker, 'Seal it.');
-  ok(Math.abs(sealed - 4000 / 6) < 1 && !!w.party.flags[CRACK_SEALED] && !w.world.present(knocker) && log('crack')!.done, 'sealed with its hammer: 4,000 experience among the company, the knocker finished and the quest done');
+  ok(Math.abs(sealed - 4000 / 6) < 1 && !!w.party.flags[CRACK_SEALED] && !w.world.present(knocker) && log(w, 'crack')!.done, 'sealed with its hammer: 4,000 experience among the company, the knocker finished and the quest done');
   left(w, 'underdeep:ud_knockers3');
   const b = newWalk(ok);
   see(b, 'underdeep:ud_crack');
@@ -721,12 +677,12 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(w.world.state.x === 4 && w.world.state.y === 10 && (lettered || !unread.includes('CREW ONLY.')) && marks.includes('CREW ONLY. THE MINES BEYOND.') && w.world.used('ud_crew_sign'),
     `the marks over the door, on the way to it, read with a reader and kept read (${marks})`);
   const feet = stepOn(w);
-  ok(w.world.state.x === 3 && w.world.state.y === 10 && feet.includes('footprints') && w.world.used('ud_feet') && !!log('crew_only') && !log('crew_only')!.done,
+  ok(w.world.state.x === 3 && w.world.state.y === 10 && feet.includes('footprints') && w.world.used('ud_feet') && !!log(w, 'crew_only') && !log(w, 'crew_only')!.done,
     'the feet on the square before the door, and Crew Only, From the Inside begun');
   w.world.move('forward');
   ok(w.world.state.mapId === 'underdeep' && w.world.state.x === 2, 'the door stays shut on the mines until it is answered');
   const opened = pay(w, crewDoor, 'Open it, and leave it open.');
-  ok(Math.abs(opened - 2000 / 6) < 1 && !!w.party.flags[CREW_OPEN] && !w.world.present(crewDoor) && log('crew_only')!.done, 'opened and left open: 2,000 experience among the company, and the quest done');
+  ok(Math.abs(opened - 2000 / 6) < 1 && !!w.party.flags[CREW_OPEN] && !w.world.present(crewDoor) && log(w, 'crew_only')!.done, 'opened and left open: 2,000 experience among the company, and the quest done');
   const through = w.world.move('forward');
   ok(through.kind === 'moved' && !!through.arrived && w.world.state.mapId === 'deep_mines3' && w.world.state.x === 13 && w.world.state.y === 3 && w.world.state.facing === WEST,
     'a step forward from the feet\'s square goes through onto the Clean Corridor\'s floor before its other side, 13,3, facing west');
@@ -757,7 +713,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'underdeep2:ud2_held');
   left(w, 'underdeep2:ud2_rearguard');
   w.world.travel('underdeep2', captain.x, captain.y);
-  ok(meet(captain, w.party, heard(w.world, captain)).text.includes('Sergeant Aelfric\'s badge') && log('bowl_pilgrims')!.done,
+  ok(meet(captain, w.party, heard(w.world, captain)).text.includes('Sergeant Aelfric\'s badge') && log(w, 'bowl_pilgrims')!.done,
     'the cousin\'s people hold the first landing for the badge, their captain says so, and The Pilgrims in the Bowl is done');
   const ud2 = (id: string) => UD2.features!.find((f) => f.kind === 'chest' && f.id === id);
   const [rearguardChest, letter, packs, packs2, takings] = ['ud2_rearguard_chest', 'ud2_letter_chest', 'ud2_packs', 'ud2_packs2', 'ud2_takings'].map(ud2);
@@ -789,7 +745,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'underdeep2:ud2_letter');
   ok(letter?.kind === 'chest' && letter.x === 15 && letter.y === 21 && letter.gold === 0 && letter.items.join() === 'gullwick_letter', 'under the champion\'s hands, the letter for Gullwick');
   w.party.bag.push('gullwick_letter');
-  ok(log('letter')?.goal === 'Take Jowan\'s letter to his mother at Gullwick, the third house from the slip.' && !log('letter')!.done,
+  ok(log(w, 'letter')?.goal === 'Take Jowan\'s letter to his mother at Gullwick, the third house from the slip.' && !log(w, 'letter')!.done,
     'the letter taken begins A Letter for Gullwick, its end at his mother\'s door (#765)');
   fight(w, 'underdeep2:ud2_crawlers1');
   see(w, 'underdeep2:ud2_marks');
@@ -799,9 +755,9 @@ export const walkthrough: Walkthrough = (ok) => {
   w.world.travel('underdeep2', 16, 10);
   ok(w.world.eventsHere().join(' ').includes('THE DOOR IS CLOSE. KEEP GOING.'), 'chalked on the shaft\'s wall by a shaking hand: THE DOOR IS CLOSE. KEEP GOING.');
   fight(w, 'underdeep2:ud2_knockers');
-  ok(log('frames')!.goal === 'Follow her knots down to the last frame before the foot of the stair.', 'the knots followed down the stair to the last frame');
+  ok(log(w, 'frames')!.goal === 'Follow her knots down to the last frame before the foot of the stair.', 'the knots followed down the stair to the last frame');
   see(w, 'underdeep2:ud2_word');
-  ok(log('frames')!.done && log('frames')!.pages[0].entries.some((e) => e.id === 'name'), 'on the last frame her name, not her knot: Every Frame She Marked is done');
+  ok(log(w, 'frames')!.done && log(w, 'frames')!.pages[0].entries.some((e) => e.id === 'name'), 'on the last frame her name, not her knot: Every Frame She Marked is done');
 
   // The foot at 31, where the Catcher is sized on its odds, and the last door (#759): on four of the road's
   // five it stays shut, listening for five voices, and the way back up to the camp is open; the Hand's own
@@ -877,7 +833,7 @@ export const walkthrough: Walkthrough = (ok) => {
     'after it she waits to be walked home, the question not put again, and Vask gone from the room');
   w.party.flags[THRONE_REMOVED] = 1;
   left(w, 'core:core_vask_thinned');
-  const ring = log('signet');
+  const ring = log(w, 'signet');
   ok(!!ring && !ring.done && ring.goal === 'Where the ring goes: the Council\'s clerk waits at Helmstow\'s gate, and the sea off Gullwick is where the boat went out.',
     'the ring in the pack begins The Signet, its end at Helmstow\'s gate or the sea off Gullwick (#765)');
 
@@ -949,7 +905,7 @@ function elevenKept(ok: (cond: boolean, msg: string) => void): void {
     cleric.xp = xpForLevel(27); cleric.level = 27; takePrestige(cleric); takePrestige(cleric);
     w.level = 29;
     const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
-    const written = (id: string): string => (log(id)?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? []).join();
+    const entered = (id: string): string => (log(id)?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? []).join();
     const talk = (): string => { w.world.travel('hearthisle_i6', anchoress.x, anchoress.y); const said = meet(anchoress, w.party, heard(w.world, anchoress)).text; listen(w); return said; };
     const bar = (): string => barOf(teaching, cleric, w.party, w.world.state);
     const sent = sought(questLog(w.world.state, w.party));
@@ -959,7 +915,7 @@ function elevenKept(ok: (cond: boolean, msg: string) => void): void {
     if (!early) {
       const [first, ask, again] = [talk(), talk(), talk()];
       ok(first === anchoress.lines.join('\n\n') && !!w.party.flags['i6_anchoress_met'] && ask.includes('Bring me his log') && again === ask && !!w.party.flags[KEPT_ASKED]
-        && log(seekId(who, 3))?.done === true && written('eleven_kept') === 'asked' && log('eleven_kept')?.goal === 'Bring the Crowness keeper\'s log to Hereswith at Anchorhold.' && !!bar() && !teach(teaching, w.party, w.world.state, who).taught,
+        && log(seekId(who, 3))?.done === true && entered('eleven_kept') === 'asked' && log('eleven_kept')?.goal === 'Bring the Crowness keeper\'s log to Hereswith at Anchorhold.' && !!bar() && !teach(teaching, w.party, w.world.state, who).taught,
         `${how}: her own words, then her ask, said again until the log is in (${ask.split('\n\n')[1]}), which begins the quest and ends the seeking; the third waits`);
       w.world.travel('hearthfane2', lamps.x, lamps.y);
       w.world.eventsHere();
@@ -975,7 +931,7 @@ function elevenKept(ok: (cond: boolean, msg: string) => void): void {
     const gold = w.party.gold, said = talk();
     ok(said === (early ? hand.early! : hand.done).join('\n\n') && !w.party.bag.includes('keepers_log') && !!w.party.flags[LOG_GIVEN] && w.party.gold === gold && !!w.party.flags['i6_anchoress_met'] === !early
       && holds({ seen: 'downs_e3:e3_log' }, w.world.state, w.party), `${how}: the log taken at the window for no gold, ${early ? 'heard early: ' + hand.early!.at(-1) : 'her word to go down into the crypt'}, and the chest still seen for the Bard's gathering`);
-    ok(written('eleven_kept') === (early ? 'given' : 'asked,given') && log('eleven_kept')?.goal === 'Down into the crypt under Hearthfane, and light the eleven lamps as the log has them.' && log(seekId(who, 3))?.done === true
+    ok(entered('eleven_kept') === (early ? 'given' : 'asked,given') && log('eleven_kept')?.goal === 'Down into the crypt under Hearthfane, and light the eleven lamps as the log has them.' && log(seekId(who, 3))?.done === true
       && log('eleven_kept')?.done === false && !!bar() && !teach(teaching, w.party, w.world.state, who).taught && (talk().includes('Go on down; I have the top.')) && !!w.party.flags[KEPT_ASKED] === !early,
       `${how}: the log reads true ${early ? 'on the log alone' : 'in two entries'}, sends the company down, ${early ? 'the ask never said, ' : ''}and the third waits on the lamps`);
 
@@ -984,7 +940,7 @@ function elevenKept(ok: (cond: boolean, msg: string) => void): void {
     w.world.travel('hearthfane2', lamps.x, lamps.y);
     const lit = w.world.eventsHere();
     listen(w);
-    ok(lit.join(' ') === lamps.text && !!w.party.flags[ELEVEN_KEPT] && written('eleven_kept').endsWith('kept') && log('eleven_kept')?.goal === 'Back up to the anchoress\'s window at Anchorhold.' && log('eleven_kept')?.done === false,
+    ok(lit.join(' ') === lamps.text && !!w.party.flags[ELEVEN_KEPT] && entered('eleven_kept').endsWith('kept') && log('eleven_kept')?.goal === 'Back up to the anchoress\'s window at Anchorhold.' && log('eleven_kept')?.done === false,
       `${how}: the eleven lit as the log has them (${lit.join(' ')}), and the log sends the company back up`);
 
     // Back at the window: her last words, and the third for the deed and no gold.
@@ -1031,10 +987,7 @@ const WAYS_DEF = MAP_DEFS.find((d) => d.id === 'underdeep')!;
 const STAIR_DEF = MAP_DEFS.find((d) => d.id === 'underdeep2')!;
 const CORE_DEF = MAP_DEFS.find((d) => d.id === 'core')!;
 const inCore = (name: string): Person => CORE_DEF.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
-const goalOf = (start: string): string => CHAPTER.goals.find((g) => g.text.startsWith(start))!.text;
 
-/** The entries written on the chapter's page. */
-const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
 
 /** Meet a person in the Heart and go through the meeting as the game does. */
 function talk(w: Walk, p: Person): ReturnType<typeof meet> {
@@ -1067,7 +1020,7 @@ function roadDone(w: Walk, upTo: Chapter): void {
 const CROSSING: Step = { name: 'the last crossing', play: (w) => {
   const port = MAP_DEFS.find((d) => d.id === 'cinderport')!.features!.find((f): f is Person => f.kind === 'npc' && (f.passage ?? []).some((p) => p.to === 'hearthisle_h6'))!;
   w.world.travel('cinderport', port.x, port.y);
-  at(w, 12);
+  hour(w, 12);
   w.party.gold = LAST_CROSSING.fare;
   const boat = ride(port.passage!.find((p) => p.to === 'hearthisle_h6')!, w.world, w.party);
   listen(w);
@@ -1207,14 +1160,14 @@ function theHeart(ok: (cond: boolean, msg: string) => void): void {
     for (const f of [...FIVE, ...p.flags]) w.party.flags[f] = 1;
     w.party.bag.push(...p.items);
     listen(w);
-    ok(!!w.party.flags[ROAD_EAST] && quest(w)?.goal === CHAPTER.goals.at(-1)!.text && !written(w).length,
+    ok(!!w.party.flags[ROAD_EAST] && quest(w)?.goal === CHAPTER.goals.at(-1)!.text && !written(w, CHAPTER).length,
       `${p.how}: the road behind done and turned east at Akordu, the chapter begins, its goal the last crossing (${quest(w)?.goal})`);
     playChapter(w, CHAPTER, p.steps, p.how);
     goalFromBegun(w, p.how);
     const ids = ending(w, p.how);
     const ends = ['relit', 'opened', 'finished'].filter((e) => ids.includes(`heart.${e}`));
-    ok(ends.join() === p.end && ids.includes('heart.ring'), `${p.how}: the journal ends on ${p.end}, and on no other end (${written(w).join(', ')})`);
-    for (const e of written(w)) read.add(e);
+    ok(ends.join() === p.end && ids.includes('heart.ring'), `${p.how}: the journal ends on ${p.end}, and on no other end (${written(w, CHAPTER).join(', ')})`);
+    for (const e of written(w, CHAPTER)) read.add(e);
   }
   ok(CHAPTER.entries.every((e) => read.has(e.id)), `every entry of the chapter is written in some run (${CHAPTER.entries.filter((e) => !read.has(e.id)).map((e) => e.id).join(', ') || 'all'})`);
   const shore = JSON.stringify(MAP_DEFS.find((d) => d.id === 'downs_f3')?.features ?? []);
@@ -1228,14 +1181,14 @@ function theHeart(ok: (cond: boolean, msg: string) => void): void {
   early.level = 27;
   for (const m of early.party.members) { m.level = 27; m.xp = xpForLevel(27); }
   CROSSING.play(early);
-  ok(!early.party.flags[ROAD_EAST] && FIVE.filter((f) => early.party.flags[f]).length === 4 && quest(early)?.goal === goalOf('Up the cleft') && written(early).join(', ') === 'isle, shard',
+  ok(!early.party.flags[ROAD_EAST] && FIVE.filter((f) => early.party.flags[f]).length === 4 && quest(early)?.goal === goalOf(CHAPTER, 'Up the cleft') && written(early, CHAPTER).join(', ') === 'isle, shard',
     `${how}: the boat grounds and the chapter begins on the isle, its goal up the cleft (${quest(early)?.goal})`);
   playChapter(early, CHAPTER, [CLEFT, NAVE, THROUGH_GREY, WAYS(false), DOWN], how);
   see(early, 'underdeep2:ud2_foot');
   early.world.travel('underdeep2', 16, 2, NORTH);
   const shut = early.world.eventsHere().join(' '), tried = early.world.move('forward');
   listen(early);
-  ok(shut.includes('hears fewer') && tried.kind === 'blocked' && tried.reason === LAST_DOOR.blockedText && quest(early)?.goal === goalOf('Through the last door'),
+  ok(shut.includes('hears fewer') && tried.kind === 'blocked' && tried.reason === LAST_DOOR.blockedText && quest(early)?.goal === goalOf(CHAPTER, 'Through the last door'),
     `${how}: the last door listens for five voices and stays shut, and the goal is the door still (${quest(early)?.goal})`);
   walkThrough(early, 'underdeep2', 16, 30, SOUTH, 'underdeep', 2);
   walkThrough(early, 'underdeep', 16, 30, SOUTH, 'hearthfane2', 1);
@@ -1245,8 +1198,8 @@ function theHeart(ok: (cond: boolean, msg: string) => void): void {
   early.world.travel('hearthisle_h6', camp.x, camp.y);
   ok(restRefused(early.world) === '', `${how}: back up by the stair's head, the ways' grey door, the crypt and the temple to the pilgrims' camp, and a rest there`);
   goalFromBegun(early, how);
-  ok(written(early).join(', ') === 'isle, shard, temple, knot, ways, dead, word, catcher, creed' && quest(early)?.goal === goalOf('Through the last door') && !quest(early)?.done
+  ok(written(early, CHAPTER).join(', ') === 'isle, shard, temple, knot, ways, dead, word, catcher, creed' && quest(early)?.goal === goalOf(CHAPTER, 'Through the last door') && !quest(early)?.done
     && !early.news.some((n) => n === `Chapter complete: ${CHAPTER.title}.` || n === `Quest complete: ${THE_QUEST.title}.`),
-    `${how}: the journal reads true to the Catcher and the creed, and the end is unreached (${written(early).join(', ')})`);
+    `${how}: the journal reads true to the Catcher and the creed, and the end is unreached (${written(early, CHAPTER).join(', ')})`);
   everyGoalWalked(ok, [CHAPTER]);
 }

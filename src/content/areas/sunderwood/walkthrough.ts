@@ -1,5 +1,5 @@
 // Sunderwood's walkthrough. First its chapter, The Wall (#204), the last of Act II, played three
-// ways, each a step at a time (tools/walk.ts). In order, at 15: the Foreland, the Grove, the Tide
+// ways, each a step at a time (tools/kit/walk.ts). In order, at 15: the Foreland, the Grove, the Tide
 // Stone and the Stone Carried Home played from a new game, the papers carried from the Tide Ship
 // and the Stone home beginning the Wall (#191), then over the bridge, down the Sunder to the wall,
 // the papers read at the Watch and Vask at its gate the next morning, answered no. The Watch first,
@@ -45,10 +45,11 @@
 // clearing (#19): heard after his hint, and taught at 19; and the Cleric's second, taught by the sister
 // at L3's moth shrine (#203): her lesson after her own words, and taught at 19.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, gone, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest } from '../../../../tools/walk.ts';
-import type { Step, Walk } from '../../../../tools/walk.ts';
+import { newWalk, walkThrough, see, fight, gone, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest, hear, answerTo, page, written, reads, there, clock, hired, who, shows, live, ofKind } from '../../../../tools/kit/walk.ts';
+import { inBox } from '../../../../tools/kit/grid.ts';
+import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { CHAPTER } from './chapter.ts';
-import { STEPS as FORELAND_STEPS, hired } from '../shelf/walkthrough.ts';
+import { STEPS as FORELAND_STEPS } from '../shelf/walkthrough.ts';
 import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
 import { STEPS as TIDE_STEPS } from '../saltreach/walkthrough.ts';
 import { STEPS as WRACK_STEPS } from '../wrackholm/walkthrough.ts';
@@ -63,7 +64,6 @@ import { nightCost, stay, payFee, hallOffers, learnSpell, train } from '../../..
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
 import { questLog } from '../../../game/quests.ts';
-import type { PageView } from '../../../game/quests.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { spellsFor } from '../../../game/spells.ts';
 import { ACT_II } from '../../../../tools/kit/rules/ladder.ts';
@@ -109,8 +109,6 @@ const VASK = WATCH.features!.find((f) => f.kind === 'npc' && f.name.startsWith('
 
 // ---- the chapter (#204) ----
 
-/** The clock on to the next day's hour given. */
-const clock = (w: Walk, hour: number): void => { const m = w.world.state.minutes; w.world.state.minutes = m - (m % 1440) + 1440 + hour * 60; };
 
 /** East out of Thornmark, through the Eaves to the rim, and over the rope bridge, plank by plank. */
 function eastToTheBridge(w: Walk): void {
@@ -187,8 +185,6 @@ function act(w: Walk, how: string): void {
   playChapter(w, WRACK, WRACK_STEPS, how);
 }
 
-/** The entries written on the Wall's page. */
-const written = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === CHAPTER)?.entries ?? []).map((e) => e.id);
 
 function theWall(ok: (cond: boolean, msg: string) => void): void {
   // In order, at 15: the Foreland and the Grove played, then the Tide Stone and Wrackholm's chapter,
@@ -200,7 +196,7 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   act(chain, 'in order');
   ok(chain.news.at(-1) === 'New chapter: The Wall.' && chain.party.bag.includes('ships_papers') && chain.party.bag.includes('ships_log'), `in order, the Stone home begins the Wall, the papers carried from the ship (${chain.news.at(-1)})`);
   playChapter(chain, CHAPTER, [BRIDGE, DOWN, READ, { name: 'Vask, no', play: vaskRefused() }], 'in order');
-  ok(written(chain).includes('seal') && written(chain).includes('name') && !!chain.party.flags.q_vask_no && !chain.party.flags.q_vask_yes, 'in order, the seal and the name are read, and the answer is no');
+  ok(written(chain, CHAPTER).includes('seal') && written(chain, CHAPTER).includes('name') && !!chain.party.flags.q_vask_no && !chain.party.flags.q_vask_yes, 'in order, the seal and the name are read, and the answer is no');
   ok(chain.news.at(-1) === 'Chapter complete: The Wall.' && !chain.news.includes('Quest complete: The Dimming.'), `in order, the answer ends the Wall, and the quest goes on into Act III (${chain.news.slice(-2).join(' ')})`);
   const pages = quest(chain)?.pages.map((p) => p.def.title) ?? [];
   ok(JSON.stringify(pages.slice(-3)) === JSON.stringify([TIDE.title, WRACK.title, CHAPTER.title]), `in order, the log shows Act II in three chapters (${pages.join(', ')})`);
@@ -219,7 +215,7 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   } }), at16({ name: 'Vask, no', play: vaskRefused() })], 'the Watch first');
   ok(!!watch.party.flags.q_vask_no && !watch.party.flags.q_vask_yes, 'the Watch first, the answer is no');
   const wall = want.filter((e) => e.startsWith('wall.')).sort();
-  ok(JSON.stringify(written(watch).map((e) => `wall.${e}`).sort()) === JSON.stringify(wall), `the Watch first, the Wall reads as in order (${written(watch).join(', ')})`);
+  ok(JSON.stringify(written(watch, CHAPTER).map((e) => `wall.${e}`).sort()) === JSON.stringify(wall), `the Watch first, the Wall reads as in order (${written(watch, CHAPTER).join(', ')})`);
 
   // The Sunder first, at 14, before the Tide Ship: the wall is found, and nothing of the Wall's is
   // begun while Wrackholm's goal stands. The Stone home begins it, with the rim, the crossing and
@@ -234,9 +230,9 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
   ok(!quest(sunder)?.pages.some((p) => p.def === CHAPTER) && !sunder.news.includes('New chapter: The Wall.') && quest(sunder)?.goal === before, `the Sunder first, the wall begins nothing and the goal stands (${before})`);
   goalFromBegun(sunder, 'the Sunder first');
   playChapter(sunder, WRACK, WRACK_STEPS, 'the Sunder first');
-  ok(sunder.news.at(-1) === 'New chapter: The Wall.' && ['rim', 'crossing', 'wall'].every((e) => written(sunder).includes(e)), `the Stone home begins the Wall, with the rim, the crossing and the wall written at once (${written(sunder).join(', ')})`);
+  ok(sunder.news.at(-1) === 'New chapter: The Wall.' && ['rim', 'crossing', 'wall'].every((e) => written(sunder, CHAPTER).includes(e)), `the Stone home begins the Wall, with the rim, the crossing and the wall written at once (${written(sunder, CHAPTER).join(', ')})`);
   playChapter(sunder, CHAPTER, [READ, { name: 'Vask, no', play: vaskRefused() }], 'the Sunder first');
-  ok(JSON.stringify(ending(sunder, 'the Sunder first', CHAPTER).filter((e) => e.startsWith('wall.'))) === JSON.stringify(wall), `the Sunder first, the Wall reads as in order (${written(sunder).join(', ')})`);
+  ok(JSON.stringify(ending(sunder, 'the Sunder first', CHAPTER).filter((e) => e.startsWith('wall.'))) === JSON.stringify(wall), `the Sunder first, the Wall reads as in order (${written(sunder, CHAPTER).join(', ')})`);
 
   // The Reader's single readings, seeded: the table gives both papers, so no run carries one alone,
   // but she reads either alone, and the Wall begins on it with only that one written.
@@ -245,8 +241,8 @@ function theWall(ok: (cond: boolean, msg: string) => void): void {
     alone.level = 16;
     alone.party.bag.push(one);
     toTheReader(alone);
-    ok(!!alone.party.flags[flag] && !alone.party.flags[other] && written(alone).includes(read) && !written(alone).includes(not),
-      `${one} alone, the Reader reads the ${read} and not the ${not}, and the Wall begins on it (${written(alone).join(', ')})`);
+    ok(!!alone.party.flags[flag] && !alone.party.flags[other] && written(alone, CHAPTER).includes(read) && !written(alone, CHAPTER).includes(not),
+      `${one} alone, the Reader reads the ${read} and not the ${not}, and the Wall begins on it (${written(alone, CHAPTER).join(', ')})`);
   }
 
   // Its runs walk the Wall whole, and each walkthrough checks the chapters its own runs walk (#946):
@@ -283,14 +279,13 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // The crest: from the road, walking or wading, the Deepthorn's I3 below it is never reached.
   const out = buildMaps()[OUTDOORS], i2 = out.zones.find((z) => z.id === 'eaves_i2')!, i3 = out.zones.find((z) => z.id === 'deepthorn_i3')!;
-  const inside = (x: number, y: number, z: typeof i2): boolean => x >= z.x && x < z.x + z.w && y >= z.y && y < z.y + z.h;
   const seen = new Set<number>(), stack = [[i2.x + 12, i2.y + 9]];
   let crossed = false;
   while (stack.length) {
     const [x, y] = stack.pop()!, k = y * out.width + x;
-    if (seen.has(k) || !(inside(x, y, i2) || inside(x, y, i3)) || out.passable(x, y, { swim: true }) !== 'ok') continue;
+    if (seen.has(k) || !(inBox(i2, x, y) || inBox(i3, x, y)) || out.passable(x, y, { swim: true }) !== 'ok') continue;
     seen.add(k);
-    if (inside(x, y, i3)) crossed = true;
+    if (inBox(i3, x, y)) crossed = true;
     for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) stack.push([x + dx, y + dy]);
   }
   ok(seen.size > 400 && !crossed, `the crest shuts I2 from the Deepthorn's I3: none of its ${seen.size} squares walked leads down into it`);
@@ -369,19 +364,18 @@ export const walkthrough: Walkthrough = (ok) => {
 
   // A company of 14 rests, buys the band's gear, studies to the sixth tier and trains to 17, each by
   // the rule its business's screen serves (src/game/services.ts). No temple: Sunderfall's shrine cures.
-  const business = <K extends Feature['kind']>(kind: K): Extract<Feature, { kind: K }>[] => WATCH.features!.filter((f): f is Extract<Feature, { kind: K }> => f.kind === kind);
-  ok(business('inn').length === 1 && !business('temple').length, 'the Watch has a refectory to rest in, and no temple');
+  ok(ofKind(WATCH, 'inn').length === 1 && !ofKind(WATCH, 'temple').length, 'the Watch has a refectory to rest in, and no temple');
   w.party.gold = 20000;
-  const refectory = business('inn')[0], night = nightCost(refectory, w.party);
+  const refectory = ofKind(WATCH, 'inn')[0], night = nightCost(refectory, w.party);
   for (const m of w.party.members) { m.hp = 1; m.sp = 0; }
   stay(w.party, w.world, refectory);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 20000 - night, `a night in the refectory for ${night} gold, and the company wakes whole in the morning`);
-  const stores = business('shop').find((f) => f.interior === 'watch_stores')!;
+  const stores = ofKind(WATCH, 'shop').find((f) => f.interior === 'watch_stores')!;
   const rung = ACT_II.find((r) => r.level === 14)!;
   for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(w.party, stores, id), `${m.name} buys a ${item(id).name} from the stores`);
   ok(stores.stock.includes('lantern_oil'), 'and the stores sell lamp oil');
-  const hall = business('guild')[0];
-  ok(business('guild').length === 1 && hall.hall === 'lanterns' && hall.interior === 'watch_hall' && hall.maxTier === 6, `the Lantern hall is the Lanterns' hall and teaches to the sixth tier (${hall.name})`);
+  const hall = ofKind(WATCH, 'guild')[0];
+  ok(ofKind(WATCH, 'guild').length === 1 && hall.hall === 'lanterns' && hall.interior === 'watch_hall' && hall.maxTier === 6, `the Lantern hall is the Lanterns' hall and teaches to the sixth tier (${hall.name})`);
   const caster = w.party.members.find((m) => CLASSES[m.cls].spells && hall.classes.includes(m.cls))!;
   const sixth = spellsFor(CLASSES[caster.cls].spells!, hall.maxTier!).find((sp) => sp.level === 6 && !caster.spells.includes(sp.id))!;
   // The fee to study, once, then the spell as the hall offers it, at its price for the tier (spellPrice).
@@ -389,7 +383,7 @@ export const walkthrough: Walkthrough = (ok) => {
   payFee(w.party, hall);
   const { paid: price } = learnSpell(w.party, hallOffers(w.party, hall).find((o) => w.party.members[o.who] === caster && o.id === sixth.id)!);
   ok(!!sixth && w.party.gold === before - hall.fee - price && caster.spells.includes(sixth.id), `${caster.name} pays the hall's fee of ${hall.fee} and learns ${sixth.name} for ${price}`);
-  const gallery = business('trainer')[0];
+  const gallery = ofKind(WATCH, 'trainer')[0];
   // Trained on a copy, so the company walks on as it was; the company pays.
   const trainee = structuredClone(w.party.members[0]);
   trainee.level = 16; trainee.xp = xpForLevel(17);
@@ -526,7 +520,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'the_sunder2:su2_river');
   for (const g of FLOOR.encounters!.filter((e) => e.id !== 'su2_warden')) fight(w, `the_sunder2:${g.id}`);
   // The narrows are the only way to the wall: walked, waded, climbed or floated, nothing past the Warden's square is reached but through it.
-  const floor = new GameMap(FLOOR), shut = (x: number, y: number, from: [number, number], past: [number, number]): boolean => {
+  const floor = new GameMap(FLOOR), walledOff = (x: number, y: number, from: [number, number], past: [number, number]): boolean => {
     const seen = new Set<number>(), stack = [from];
     while (stack.length) {
       const [cx, cy] = stack.pop()!, k = cy * floor.width + cx;
@@ -536,7 +530,7 @@ export const walkthrough: Walkthrough = (ok) => {
     }
     return seen.size > 50 && !seen.has(past[1] * floor.width + past[0]);
   };
-  ok(shut(15, 16, [8, 2], [15, 25]), 'the wall is reached only through the narrows, where the Warden stands');
+  ok(walledOff(15, 16, [8, 2], [15, 25]), 'the wall is reached only through the narrows, where the Warden stands');
   see(w, 'the_sunder2:su2_narrows');
   fight(w, 'the_sunder2:su2_warden');
   ok(w.party.bag.includes('sunder_heart'), 'the Warden of the Sunder falls, and its heart is taken');
@@ -557,7 +551,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The secret: the surveyor's chalk runs out at the rock fall that closes the strip; searched there,
   // a gap in the fall opens on a hollow beside the wall, the seam on the wall's face at its back. The
   // hollow is reached only so, and nothing passes into the wall.
-  ok(shut(2, 24, [8, 2], [1, 25]), 'the hollow is shut but through the fall by the chalk\'s last mark');
+  ok(walledOff(2, 24, [8, 2], [1, 25]), 'the hollow is shut but through the fall by the chalk\'s last mark');
   see(w, 'the_sunder2:su2_fall');
   see(w, 'the_sunder2:su2_chalk');
   w.world.travel('the_sunder2', 3, 24, WEST);
@@ -729,8 +723,7 @@ function keeper(ok: (cond: boolean, msg: string) => void): void {
   const taught = (L3.features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
   ok(taught.length === 1 && taught[0].cls === 'cleric' && taught[0].prestige === 2, 'the Moth Wood teaches the Cleric\'s second');
   ok(L3.rows[KEEPER.y][KEEPER.x] === 't' && L3.features!.every((f) => f === KEEPER || f.x !== KEEPER.x || f.y !== KEEPER.y), 'the sister stands in her clearing, with nothing else on her square');
-  const there = (w: Walk): boolean => { w.world.travel('lanternwood_l3', KEEPER.x, KEEPER.y); return w.world.present(KEEPER); };
-  ok(there(newWalk(ok)), 'she is there from a new game');
+  ok(there(newWalk(ok), 'lanternwood_l3', KEEPER), 'she is there from a new game');
   ok(!!KEEPER.teaches?.seek?.includes('Leofrun') && KEEPER.teaches.seek.includes(PRESTIGES.cleric.titles[1]), 'her seeking names her and the title she gives');
   const road = L3.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '=' ? [{ x, y }] : [])));
   ok(road.every((r) => Math.abs(r.x - KEEPER.x) + Math.abs(r.y - KEEPER.y) > 10), 'she is more than ten squares off any road');
@@ -778,8 +771,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   const taught = (J3.features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
   ok(taught.length === 1 && taught[0].cls === 'paladin' && taught[0].prestige === 2, 'the Bears\' Wood teaches the Paladin\'s second');
   ok(J3.rows[HERMIT.y][HERMIT.x] === 't' && J3.features!.every((f) => f === HERMIT || f.x !== HERMIT.x || f.y !== HERMIT.y), 'the hermit stands in his clearing, with nothing else on his square');
-  const there = (w: Walk): boolean => { w.world.travel('eaves_j3', HERMIT.x, HERMIT.y); return w.world.present(HERMIT); };
-  ok(there(newWalk(ok)), 'he is there from a new game, before the den is fought');
+  ok(there(newWalk(ok), 'eaves_j3', HERMIT), 'he is there from a new game, before the den is fought');
   ok(!!HERMIT.teaches?.seek?.includes(HERMIT.name.split(',')[0]) && HERMIT.teaches.seek.includes(PRESTIGES.paladin.titles[1]), 'his seeking names him and the title he gives');
   // The box has no road; the rule is kept as Rietum's is, for when one is drawn.
   const road = J3.rows.flatMap((r, y) => [...r].flatMap((ch, x) => (ch === '=' ? [{ x, y }] : [])));
@@ -822,15 +814,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
 
 // ---- the side quests (#205) ----
 
-/** A side quest's page as the log shows it now. */
-const page = (w: Walk, id: string): PageView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
 
-/** The person on `map` whose name starts so and who stands on `x,y`: one of a person's places. */
-function who(map: string, x: number, y: number, name: string): Person {
-  const p = MAP_DEFS.find((d) => d.id === map)?.features?.find((f): f is Person => f.kind === 'npc' && f.x === x && f.y === y && f.name.startsWith(name));
-  if (!p) throw new Error(`no ${name} at ${map} ${x},${y}`);
-  return p;
-}
 const GARRET = (): Person => who('eaves_j2', 22, 8, 'Garret'), NELL = (): Person => who('eaves_j2', 23, 8, 'Nell');
 const GARRET_IN = (): Person => who('lantern_watch', 10, 7, 'Garret'), NELL_IN = (): Person => who('lantern_watch', 10, 7, 'Nell');
 const AVERIL_ROAD = (): Person => who('lanternwood_l2', 17, 22, 'Averil'), AVERIL_HALL = (): Person => who('lantern_watch', 7, 8, 'Averil');
@@ -839,42 +823,10 @@ const OSRIC = (): Person => who('lantern_watch', 8, 9, 'Prior Osric'), OSRIC_IN 
 const ROOM = (): Person => who('lantern_watch', 5, 5, "The Prior's Room"), CUTHWIN = (): Person => who('lantern_watch', 10, 5, 'Brother Cuthwin');
 const BRINK = (): Person => who('lantern_watch', 2, 4, 'Wouter Brink');
 
-/** Whether a person stands where they are listed now. */
-const there = (w: Walk, p: Person, map: string): boolean => { w.world.travel(map, p.x, p.y); return w.world.present(p); };
 
-/** What a person says at the next meeting, as the game would have it. */
-function hear(w: Walk, map: string, p: Person): string {
-  w.world.travel(map, p.x, p.y);
-  const said = meet(p, w.party, heard(w.world, p)).text;
-  listen(w);
-  return said;
-}
 
-/** Meet a person and answer the question they put with `label`; what the answer says. */
-function answerTo(w: Walk, map: string, p: Person, label: string): string {
-  w.world.travel(map, p.x, p.y);
-  const m = meet(p, w.party, heard(w.world, p)), a = m.choice?.answers.find((x) => x.label === label);
-  w.ok(!!a, `${p.name.split(',')[0]} asks, and '${label}' is an answer (${m.choice?.ask ?? 'no question'})`);
-  const said = a ? answer(a, w.party) : '';
-  listen(w);
-  return said;
-}
 
-/** A feature or group of `map` by its id, and whether it is there now. */
-function shows(w: Walk, map: string, id: string): boolean {
-  const d = MAP_DEFS.find((m) => m.id === map)!;
-  const f = [...(d.features ?? []), ...(d.encounters ?? [])].find((x) => 'id' in x && x.id === id) as Feature | EncounterDef;
-  w.world.travel(map, f.x, f.y);
-  return 'monsters' in f ? w.world.walks(f, f.x, f.y, map) && !w.world.ended(f) : w.world.present(f, map);
-}
 
-/** A quest done with no goal, its entries those `want` names and none of `not`, finished once. */
-function reads(w: Walk, id: string, title: string, want: readonly string[], not: readonly string[], how: string): void {
-  const pg = page(w, id), ids = pg?.entries.map((e) => e.id) ?? [];
-  const done = w.news.filter((n) => n === `Quest complete: ${title}.`).length;
-  w.ok(!!pg?.done && pg.goal === null && want.every((e) => ids.includes(e)) && !not.some((e) => ids.includes(e)) && done === 1,
-    `${how}: ${title} is done with no goal, its entries ${ids.join(', ')}, and said complete once (${done})`);
-}
 
 /** Each member's xp now, to see what an answer paid. */
 const xps = (w: Walk): number[] => w.party.members.map((m) => m.xp);
@@ -890,27 +842,27 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     see(w, 'eaves_j2:j2_graves');
     w.ok(hear(w, 'lanternwood_l2', AVERIL_ROAD()).includes('I burnt it on the knoll'), 'Averil met first on the road says her own lines, the knoll\'s hint');
     const before = xps(w);
-    answerTo(w, 'lanternwood_l2', AVERIL_ROAD(), 'Give us the lamp.');
+    answerTo(w, 'lanternwood_l2', AVERIL_ROAD(), { label: 'Give us the lamp.' });
     w.ok(w.party.bag.includes('warding_lamp') && paid(w, before, 110) && /warding lamp to Garret/.test(page(w, 'family')?.goal ?? ''), `the lamp given, it is in the pack, each member is paid 110 and the goal is Garret (${page(w, 'family')?.goal})`);
     w.ok(hear(w, 'eaves_j2', GARRET()).startsWith('Garret turns the lamp') && !w.party.bag.includes('warding_lamp'), 'Garret takes the lamp at the meeting');
-    reads(w, 'family', FAMILY, ['garret', 'graves', 'lamp', 'lit'], ['promise', 'gone'], 'the lamp lit');
-    w.ok(hear(w, 'eaves_j2', GARRET()).includes('Dog still won\'t go up the north path') && there(w, GARRET(), 'eaves_j2') && !there(w, GARRET_IN(), 'lantern_watch'), "Garret's after-lines end on the dog, and he stays at his cabin");
+    reads(w, 'family', ['garret', 'graves', 'lamp', 'lit'], ['promise', 'gone'], 'the lamp lit');
+    w.ok(hear(w, 'eaves_j2', GARRET()).includes('Dog still won\'t go up the north path') && there(w, 'eaves_j2', GARRET()) && !there(w, 'lantern_watch', GARRET_IN()), "Garret's after-lines end on the dog, and he stays at his cabin");
     w.ok(hear(w, 'lanternwood_l2', AVERIL_ROAD()).includes('I burnt it on the knoll'), 'on the road Averil comes back to her own lines');
   }
   { // The family brought over: the papers read, Averil in the hall, Nell met first.
     const w = newWalk(ok);
     w.party.flags.papers_read = 1;
-    w.ok(!there(w, AVERIL_ROAD(), 'lanternwood_l2') && there(w, AVERIL_HALL(), 'lantern_watch'), 'the papers read, Averil has gone from the road to the hall');
+    w.ok(!there(w, 'lanternwood_l2', AVERIL_ROAD()) && there(w, 'lantern_watch', AVERIL_HALL()), 'the papers read, Averil has gone from the road to the hall');
     hear(w, 'eaves_j2', NELL());
     w.ok(w.news.at(-1) === `New quest: ${FAMILY}.`, `Nell's first meeting begins ${FAMILY}`);
     w.ok(hear(w, 'lantern_watch', AVERIL_HALL()).includes('It went out the night the papers were read') && page(w, 'watch_lamp')?.begun === true, 'met first in the hall, Averil speaks of the lamp, and The Watch\'s Lamp begins');
     const before = xps(w);
-    answerTo(w, 'lantern_watch', AVERIL_HALL(), 'We\'ll bring them to you.');
+    answerTo(w, 'lantern_watch', AVERIL_HALL(), { label: 'We\'ll bring them to you.' });
     w.ok(paid(w, before, 110) && /promise/.test(page(w, 'family')?.goal ?? '') && !w.party.bag.includes('warding_lamp'), `the promise carried, each member is paid 110, no lamp, and the goal is Garret (${page(w, 'family')?.goal})`);
     w.ok(hear(w, 'eaves_j2', GARRET()).startsWith('Garret listens'), 'Garret hears the promise');
-    reads(w, 'family', FAMILY, ['garret', 'promise', 'gone'], ['lamp', 'lit'], 'the family brought over');
-    w.ok(!there(w, GARRET(), 'eaves_j2') && !there(w, NELL(), 'eaves_j2') && !shows(w, 'eaves_j2', 'j2_steading') && shows(w, 'eaves_j2', 'j2_cabin_shut'), 'Garret and Nell are gone from the cabin, which stands shut');
-    w.ok(there(w, GARRET_IN(), 'lantern_watch') && there(w, NELL_IN(), 'lantern_watch') && hear(w, 'lantern_watch', NELL_IN()).includes('Mam\'s not in the trees'), 'they are in the refectory');
+    reads(w, 'family', ['garret', 'promise', 'gone'], ['lamp', 'lit'], 'the family brought over');
+    w.ok(!there(w, 'eaves_j2', GARRET()) && !there(w, 'eaves_j2', NELL()) && !shows(w, 'eaves_j2', 'j2_steading') && shows(w, 'eaves_j2', 'j2_cabin_shut'), 'Garret and Nell are gone from the cabin, which stands shut');
+    w.ok(there(w, 'lantern_watch', GARRET_IN()) && there(w, 'lantern_watch', NELL_IN()) && hear(w, 'lantern_watch', NELL_IN()).includes('Mam\'s not in the trees'), 'they are in the refectory');
     w.ok(hear(w, 'lantern_watch', AVERIL_HALL()).startsWith('"They\'re in the refectory'), 'Averil\'s after-lines are the family\'s');
   }
   { // The Dammed Fall: Orm's ask, the dam's gleaners won, the dam broken.
@@ -918,13 +870,13 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.level = 15;
     w.ok(hear(w, 'eaves_k2', ORM()).includes('The shrine\'s owed a fall') && w.news.at(-1) === `New quest: ${DAM}.` && /dam/.test(page(w, 'dam')?.goal ?? ''), `Orm's first meeting begins ${DAM}, its goal the dam (${page(w, 'dam')?.goal})`);
     see(w, 'eaves_k2:k2_dam');
-    w.ok(!there(w, HEW(), 'eaves_k2'), 'before the gleaners are dead, Hew is not on the dam');
+    w.ok(!there(w, 'eaves_k2', HEW()), 'before the gleaners are dead, Hew is not on the dam');
     fight(w, 'eaves_k2:k2_dam');
-    w.ok(there(w, HEW(), 'eaves_k2') && /Hew/.test(page(w, 'dam')?.goal ?? ''), `the gleaners dead, Hew sits on the dam's end, and the goal is his question (${page(w, 'dam')?.goal})`);
+    w.ok(there(w, 'eaves_k2', HEW()) && /Hew/.test(page(w, 'dam')?.goal ?? ''), `the gleaners dead, Hew sits on the dam's end, and the goal is his question (${page(w, 'dam')?.goal})`);
     const before = xps(w);
-    answerTo(w, 'eaves_k2', HEW(), 'Break it.');
-    w.ok(paid(w, before, 110) && !there(w, HEW(), 'eaves_k2'), 'the dam broken, each member is paid 110 and Hew is gone');
-    reads(w, 'dam', DAM, ['orm', 'dam', 'hew', 'broken'], ['kept'], 'the dam broken');
+    answerTo(w, 'eaves_k2', HEW(), { label: 'Break it.' });
+    w.ok(paid(w, before, 110) && !there(w, 'eaves_k2', HEW()), 'the dam broken, each member is paid 110 and Hew is gone');
+    reads(w, 'dam', ['orm', 'dam', 'hew', 'broken'], ['kept'], 'the dam broken');
     w.ok(shows(w, 'eaves_k2', 'k2_fall_running') && !shows(w, 'eaves_k2', 'k2_fall') && shows(w, 'lanternwood_l2', 'l2_lookout_fall') && !shows(w, 'lanternwood_l2', 'l2_lookout'), 'Sunderfall runs, and L2\'s lookout hears it');
     w.ok(!shows(w, 'eaves_k3', 'k3_door') && !shows(w, 'eaves_k2', 'k2_dam'), 'the gleaners on K3\'s first landing come no more, and the dam is gone');
     walkThrough(w, 'eaves_k3', 10, 7, SOUTH, 'the_sunder', 2);
@@ -936,9 +888,9 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     fight(w, 'eaves_k2:k2_dam');
     w.ok(w.news.at(-1) === `New quest: ${DAM}.` && /Hew/.test(page(w, 'dam')?.goal ?? ''), `the gleaners killed first, ${DAM} begins, its goal Hew (${page(w, 'dam')?.goal})`);
     const before = xps(w);
-    answerTo(w, 'eaves_k2', HEW(), 'We\'ll take the tally.');
+    answerTo(w, 'eaves_k2', HEW(), { label: 'We\'ll take the tally.' });
     w.ok(paid(w, before, 110) && w.party.bag.includes('foremans_tally') && (readText('foremans_tally') ?? []).join(' ').includes('SHEER POINT'), 'the tally kept, each member is paid 110, and the letter names Sheer Point');
-    reads(w, 'dam', DAM, ['hew', 'kept'], ['broken'], 'the tally kept, Orm never met');
+    reads(w, 'dam', ['hew', 'kept'], ['broken'], 'the tally kept, Orm never met');
     w.ok(shows(w, 'eaves_k2', 'k2_fall') && !shows(w, 'eaves_k2', 'k2_fall_running') && shows(w, 'eaves_k3', 'k3_door'), 'the fall stays quiet and K3\'s gleaners still come');
     w.ok(hear(w, 'eaves_k2', ORM()).startsWith('"Still dry.'), 'Orm, met after, says the dam kept');
   }
@@ -954,14 +906,14 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(w.news.at(-1) === `New quest: ${LAMP}.` && /casks/.test(page(w, 'watch_lamp')?.goal ?? ''), `Averil begins ${LAMP}, its goal the casks and the lamp (${page(w, 'watch_lamp')?.goal})`);
     w.ok(hear(w, 'lantern_watch', OSRIC()).includes('it is out'), 'the prior, met after the papers, says his lamp is out');
     w.ok(hear(w, 'lantern_watch', OSRIC()).includes('The oil was sold'), 'then that the oil was sold');
-    w.ok(there(w, CUTHWIN(), 'lantern_watch') && hear(w, 'lantern_watch', CUTHWIN()).includes('Eleven') && page(w, 'watch_lamp')?.entries.some((e) => e.id === 'casks') === true, 'Cuthwin in the stores counts eleven casks');
+    w.ok(there(w, 'lantern_watch', CUTHWIN()) && hear(w, 'lantern_watch', CUTHWIN()).includes('Eleven') && page(w, 'watch_lamp')?.entries.some((e) => e.id === 'casks') === true, 'Cuthwin in the stores counts eleven casks');
     see(w, 'lantern_watch:lw_wick');
     w.ok(w.world.used('lw_wick') && /wick/.test(page(w, 'watch_lamp')?.goal ?? ''), `up at the Lamp Gallery the wick is seen cut, and the goal is the prior (${page(w, 'watch_lamp')?.goal})`);
     const before = xps(w);
-    answerTo(w, 'lantern_watch', OSRIC(), 'We\'ll tell her.');
+    answerTo(w, 'lantern_watch', OSRIC(), { label: 'We\'ll tell her.' });
     w.ok(paid(w, before, 140) && !!w.party.flags.lanterns_split, 'the prior told on, each member is paid 140, and the split at the Watch opens');
-    reads(w, 'watch_lamp', LAMP, ['dark', 'casks', 'wick', 'exposed'], ['kept'], 'the prior told on');
-    w.ok(!there(w, OSRIC(), 'lantern_watch') && there(w, OSRIC_IN(), 'lantern_watch') && hear(w, 'lantern_watch', ROOM()).includes('the prior at the desk'), 'the prior has left the yard for his room, and the room says so');
+    reads(w, 'watch_lamp', ['dark', 'casks', 'wick', 'exposed'], ['kept'], 'the prior told on');
+    w.ok(!there(w, 'lantern_watch', OSRIC()) && there(w, 'lantern_watch', OSRIC_IN()) && hear(w, 'lantern_watch', ROOM()).includes('the prior at the desk'), 'the prior has left the yard for his room, and the room says so');
     w.ok(hear(w, 'lantern_watch', AVERIL_HALL()).startsWith('The great lamp turns overhead'), 'Averil\'s after-lines are the lamp lit');
     w.ok(shows(w, 'lantern_watch', 'lw_lamp_lit') && !shows(w, 'lantern_watch', 'lw_wick') && shows(w, 'lantern_watch', 'lw_lamp_night_lit'), 'the gallery and the yard have the lamp lit again');
     clock(w, 12);
@@ -974,10 +926,10 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     w.ok(w.news.at(-1) === `New quest: ${LAMP}.` && /wick/.test(page(w, 'watch_lamp')?.goal ?? ''), `the wick found first begins ${LAMP}, its goal the prior (${page(w, 'watch_lamp')?.goal})`);
     w.ok(hear(w, 'lantern_watch', OSRIC()).includes('it is out'), 'the prior meets the company first');
     const before = xps(w);
-    answerTo(w, 'lantern_watch', OSRIC(), 'We\'ll let it be.');
+    answerTo(w, 'lantern_watch', OSRIC(), { label: 'We\'ll let it be.' });
     w.ok(paid(w, before, 140) && w.party.bag.includes('watch_map') && (readText('watch_map') ?? []).join(' ').includes('ruled edge to edge') && !w.party.flags.lanterns_split, 'let be, each member is paid 140, the Watch\'s map is in the pack, and nothing splits');
-    reads(w, 'watch_lamp', LAMP, ['wick', 'kept'], ['dark', 'exposed'], 'the prior let be');
-    w.ok(there(w, OSRIC(), 'lantern_watch') && !there(w, OSRIC_IN(), 'lantern_watch') && hear(w, 'lantern_watch', OSRIC()).startsWith('"It burns.'), 'the prior stays in the yard, and his after-lines are the price');
+    reads(w, 'watch_lamp', ['wick', 'kept'], ['dark', 'exposed'], 'the prior let be');
+    w.ok(there(w, 'lantern_watch', OSRIC()) && !there(w, 'lantern_watch', OSRIC_IN()) && hear(w, 'lantern_watch', OSRIC()).startsWith('"It burns.'), 'the prior stays in the yard, and his after-lines are the price');
     w.ok(hear(w, 'lantern_watch', AVERIL_HALL()).includes('It went out the night') && hear(w, 'lantern_watch', AVERIL_HALL()).startsWith('"The oil came.'), 'Averil, met after, speaks of the lamp once, then says the oil came');
   }
   { // The Length of the Wall: asked once the wall is touched, both ends walked, the measure sold.
@@ -991,9 +943,9 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     see(w, 'the_sunder2:su2_fall');
     w.ok(/Answer Brink/.test(page(w, 'length')?.goal ?? ''), `both ends walked, the goal is Brink (${page(w, 'length')?.goal})`);
     const before = xps(w), gold = w.party.gold;
-    answerTo(w, 'lantern_watch', BRINK(), 'Sell the measure.');
+    answerTo(w, 'lantern_watch', BRINK(), { label: 'Sell the measure.' });
     w.ok(paid(w, before, 140) && w.party.gold === gold + 500, 'the measure sold, each member is paid 140 and the company 500 gold');
-    reads(w, 'length', LENGTH, ['brink', 'east', 'both', 'sold'], ['told'], 'the measure sold');
+    reads(w, 'length', ['brink', 'east', 'both', 'sold'], ['told'], 'the measure sold');
     w.ok(hear(w, 'lantern_watch', BRINK()).startsWith('"It\'s in the post'), 'Brink\'s after-lines are the sale\'s');
   }
   { // The Length of the Wall: the ends walked before he asks, and the Watch told; Averil and the Reader say so once.
@@ -1004,9 +956,9 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
     hear(w, 'lantern_watch', BRINK());
     w.ok(!page(w, 'length') && hear(w, 'lantern_watch', BRINK()).startsWith('"You\'ve been down') && /Answer Brink/.test(page(w, 'length')?.goal ?? ''), 'the ends walked first, Brink introduces himself, then asks, and his question is next');
     const before = xps(w), gold = w.party.gold;
-    answerTo(w, 'lantern_watch', BRINK(), 'We\'ll tell the Watch too.');
+    answerTo(w, 'lantern_watch', BRINK(), { label: 'We\'ll tell the Watch too.' });
     w.ok(paid(w, before, 140) && w.party.gold === gold, 'the Watch told, each member is paid 140 and no gold');
-    reads(w, 'length', LENGTH, ['brink', 'east', 'both', 'told'], ['sold'], 'the Watch told');
+    reads(w, 'length', ['brink', 'east', 'both', 'told'], ['sold'], 'the Watch told');
     const road = [hear(w, 'lanternwood_l2', AVERIL_ROAD()), hear(w, 'lanternwood_l2', AVERIL_ROAD()), hear(w, 'lanternwood_l2', AVERIL_ROAD())];
     w.ok(road[0].includes('I burnt it on the knoll') && road[1].startsWith('"The surveyor\'s wall.') && road[2].includes('I burnt it on the knoll'), 'Averil on the road says the wall once, after her own lines, and goes back to them');
     w.party.flags.watch_reader_met = 1;
@@ -1029,7 +981,6 @@ const STILLED = ['eaves_j2:j2_hounds', 'eaves_k2:k2_hounds', 'eaves_k2:k2_bears'
  */
 function stilled(ok: (cond: boolean, msg: string) => void): void {
   const group = (at: string): EncounterDef => { const [map, id] = at.split(':'); return MAP_DEFS.find((d) => d.id === map)!.encounters!.find((g) => g.id === id)!; };
-  const live = (v: Walk, at: string): boolean => { const g = group(at); v.world.travel(at.split(':')[0], g.x, g.y); return v.world.liveGroups().some((x) => x.def.id === g.id); };
   const HESTER = MAP_DEFS.find((d) => d.id === 'lantern_watch')!.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Hester Dunmore'))!;
   const ready = (...flags: string[]): Walk => { const v = newWalk(ok); for (const f of ['watch_reader_met', 'papers_read', ...flags]) v.party.flags[f] = 1; return v; };
   const says = (v: Walk): string => { v.world.travel('lantern_watch', HESTER.x, HESTER.y); const t = meet(HESTER, v.party, heard(v.world, HESTER)).text; listen(v); return t; };
