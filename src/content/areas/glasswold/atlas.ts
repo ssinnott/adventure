@@ -1,9 +1,9 @@
 // The Glasswold's part of the world map: the Wold, on the road, and the Glass, the reach (DESIGN
-// §9), with the plate of the Buried Tower and the Riders' sites. docs/areas/glasswold.md is its brief
-// (#523). Listed with the area by its first box, the steppe (#525). The seeds put the steppe in
-// the Wold and the fused desert in the Glass; the lava flow in the plan's ridges seals the Glass from
-// the Ember Waste, so the Riders' gap at the dunes is its one way in (#443, call 5). The Buried Tower's
-// band is the cap's, 30-32, and the row changes with the reach's own atlas work.
+// §9), with the plate of the Buried Tower and the Riders' sites. docs/areas/glasswold/plan.md holds
+// its brief (#523). Listed with the area by its first box, the steppe (#525). The seeds put the
+// steppe in the Wold and the fused desert in the Glass; the lava flow in the plan's ridges seals
+// the Glass from the Ember Waste, so the Riders' gap at the dunes is its one way in (#443, call 5).
+// The Buried Tower's band is the cap's, 30-32, and the row changes with the reach's own atlas work.
 import type { AtlasZone, AtlasPlace, AtlasSite, AtlasLink } from '../../../game/atlas.ts';
 import { laid } from '../../../game/atlas.ts';
 import { PLAN } from '../../atlas.ts';
