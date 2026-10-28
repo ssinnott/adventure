@@ -10,6 +10,7 @@ import { mixHash } from '../../game/weather.ts';
 import { unit } from './common.ts';
 import type { ViewRect } from './common.ts';
 import { murkOf, washes } from './model.ts';
+import { GROUND } from './ground/index.ts';
 
 /**
  * The weather between the eye and the scene, every frame: fog drifting, rain streaking down with
@@ -109,7 +110,7 @@ function drawRain(ctx: CanvasRenderingContext2D, r: ViewRect, amount: number, sl
 /** How many frames a splash lasts. */
 const SPLASH_LIFE = 8;
 
-/** Where the rain lands: little crowns thrown up from the ground, only on floor the party can see. */
+/** Where the rain lands: little crowns thrown up from the ground, only on floor the party can see and that its look splashes. */
 function drawSplashes(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, amount: number, frame: number, light: number): void {
   const map = world.map, { x: px, y: py, facing: f } = world.state;
   const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
@@ -122,7 +123,7 @@ function drawSplashes(ctx: CanvasRenderingContext2D, world: World, r: ViewRect, 
     const d = Math.round(k), l = Math.round(lat);
     if (d > world.sight) continue;
     const c = cellAt(px, py, f, d, l), cell = map.at(c.x, c.y);
-    if (isSolidWall(cell) || cell.solid !== 'none' || cell.terrain === 'water' || cell.terrain === 'deep' || cell.terrain === 'chasm' || !lineOfSight(map, px, py, f, d, l)) continue;
+    if (isSolidWall(cell) || cell.solid !== 'none' || !GROUND[cell.terrain].splashes || !lineOfSight(map, px, py, f, d, l)) continue;
     const u = unit(k, r.h), x = cx + lat * 2 * u, y = horizon + u, s = Math.max(1, u * 0.045) * (0.6 + age / SPLASH_LIFE);
     ctx.moveTo(x - s * 1.6, y); ctx.quadraticCurveTo(x - s * 1.2, y - s * 1.6, x - s * 0.3, y - s * 0.4);
     ctx.moveTo(x + s * 1.6, y); ctx.quadraticCurveTo(x + s * 1.2, y - s * 1.6, x + s * 0.3, y - s * 0.4);

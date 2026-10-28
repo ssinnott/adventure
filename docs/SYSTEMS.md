@@ -136,6 +136,12 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   frame's state as one `Paint`, made once at the top of each paint (#1029); its static scene is
   cached in two canvases (the sky, and everything in front of it) and the weather and the year
   reach into it.
+- **The grounds' looks**, `src/ui/view/ground/`: a module to each terrain exports its look (#1030),
+  its colour through the year, how white snow makes it, whether rain darkens it or splashes on it,
+  its tiles, what lies on it and what stands about it. `GROUND` in its `index.ts` holds them, a
+  record over the terrains; the floors, the scene and the rain ask it and name no ground. In the
+  view a new ground is a module there, its line in `index.ts` and its colour in `TERRAIN_COLORS`
+  (the automap's): the typecheck names a terrain without either.
 
 ## Stubbed or absent
 

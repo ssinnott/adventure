@@ -2,37 +2,26 @@
 // stands on a square ahead (`standsAt`), the houses, their buildings and the tents (`isHouse`, `building`,
 // `isTent`, `tentOf`), a wall's dressing and its rates (`wallDressing`, `DRESSING_RATES`, held by
 // tools/tests/art.ts), the fields and the colours of the ground through the year (`fieldAt`, `cropColor`,
-// `hedgeColor`, `heatherBloom`, `iceColor`, `SNOW_HOLD`) and how far the weather closes the view
-// (`murkOf`, `washes`). It takes src/game and nothing of the painters: no canvas.
+// `hedgeColor`, `heatherBloom`, `iceColor`), how cold the year is on the heights (`cold`) and how far the
+// weather closes the view (`murkOf`, `washes`). It takes src/game and nothing of the painters: no canvas.
+// The grounds' looks read it (view/ground/, #1030), so it reads none of them: `SNOW_HOLD` is theirs.
 
 import { viewCell as cellAt, isSolidWall, hillOver } from '../../game/world.ts';
 import { drawnCell } from '../../game/ink.ts';
 import type { GameMap } from '../../game/map.ts';
-import type { Cell, Terrain } from '../../game/mapdef.ts';
+import type { Cell } from '../../game/mapdef.ts';
 import type { Facing } from '../../game/types.ts';
 import { mix } from '../../lib/art/palettes.ts';
 import type { Weather } from '../../game/weather.ts';
+import { DAYS_PER_YEAR } from '../../game/calendar.ts';
 import { hash } from '../paint/brush.ts';
 
 /** How much the weather closes the view: fog, or rain and (more so) snow coming down hard. */
 export function murkOf(w: Weather): number { return Math.min(1, Math.max(w.fog, w.precip * (0.45 + 0.45 * w.snow) - 0.1)); }
 /** Whether the view draws a murk wash over everything, the void included. The smoke test asks for none. */
 export function washes(w: Weather): boolean { return w.fog > 0.05 || murkOf(w) > 0.05; }
-/**
- * How white each terrain goes under lying snow: cobbles and sand show through, water never takes it.
- * Every terrain has its entry, so one left out fails the typecheck rather than never taking snow.
- */
-export const SNOW_HOLD: Record<Terrain, number> = {
-  grass: 0.92, hills: 0.92, farm: 0.9, woods: 0.75, deadwood: 0.85, crystal: 0.5, dirt: 0.9, stone: 0.85, floor: 0.8, road: 0.72, sand: 0.6, swamp: 0.5, snow: 1,
-  salt: 0.6, heather: 0.85, water: 0, deep: 0, lava: 0, chasm: 0, tidal: 0,
-  // The ash is warm and greys what falls on it; the pines keep some off; a frozen lake takes it all.
-  ash: 0.65, pine: 0.72, ice: 0.8,
-  // The scree under a peak takes it as the hills do; the foot of a cliff, sheltered by its face, less.
-  peak: 0.9, cliff: 0.6,
-  // The steppe takes it as the grass does and the dunes as sand; the creepers keep some off; the
-  // cone's warmth thins it and a vent's fire takes it all.
-  steppe: 0.9, dunes: 0.6, vines: 0.7, volcano: 0.4, vent: 0,
-};
+/** How cold the year is on the heights: 1 in deep Frost, about 0 at Harvest. */
+export function cold(day: number): number { return (1 + Math.cos((2 * Math.PI * (day - 100)) / DAYS_PER_YEAR)) / 2; }
 export type Ramp = readonly [number, string][];
 /** A colour through the year: the ramp's stops by day of the year, mixed between. */
 export function rampColor(ramp: Ramp, day: number): string {
