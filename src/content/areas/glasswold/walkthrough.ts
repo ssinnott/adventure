@@ -940,7 +940,7 @@ function fanesMap(ok: (cond: boolean, msg: string) => void): void {
   const [B8, MC3] = ['wold_b8', 'meridian_camp3'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
   const aysu = B8.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Aysu, the scout')!;
   const fane = MC3.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'Oriel Fane')!;
-  const log = (id: string, bag = w.party.bag) => questLog(w.world.state, { ...w.party, bag }).find((v) => v.def.id === id);
+  const log = (id: string, bag = w.party.bag) => questLog(TABLES, w.world.state, { ...w.party, bag }).find((v) => v.def.id === id);
   const talk = (): ReturnType<typeof meet> => { w.world.travel('wold_b8', aysu.x, aysu.y); const m = meet(aysu, w.party, heard(w.world, aysu)); listen(w); return m; };
   const won = (id: string): void => { for (const g of MAP_DEFS.find((d) => d.id === id)!.encounters ?? []) if (w.world.walks(g, g.x, g.y) && !w.world.ended(g)) fight(w, `${id}:${g.id}`); };
   const sent = log(seekId(2, 3))?.goal;
@@ -1010,7 +1010,7 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
     for (const m of w.party.members) { m.level = LEVEL; m.xp = xpForLevel(LEVEL); }
     if (!none) { takePrestige(w.party.members[5]); takePrestige(w.party.members[5]); }
     listen(w);
-    return { w, log: (id) => questLog(w.world.state, w.party).find((v) => v.def.id === id) };
+    return { w, log: (id) => questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === id) };
   };
   const talk = (w: Walk): ReturnType<typeof meet> => { w.world.travel('wold_b9', scholar.x, scholar.y); const m = meet(scholar, w.party, heard(w.world, scholar)); listen(w); return m; };
   /** A walker's chest opened where it lies, as the box's walk reaches it. */
@@ -1029,7 +1029,7 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
 
   { // The glasses first.
     const { w, log } = company(), cassian = w.party.members[5];
-    const sent = log(seekId(5, 3)), marked = sought(questLog(w.world.state, w.party)).find((s) => s.at === 'wold_b9');
+    const sent = log(seekId(5, 3)), marked = sought(questLog(TABLES, w.world.state, w.party)).find((s) => s.at === 'wold_b9');
     ok(cassian.cls === 'sorcerer' && className(cassian) === 'Thaumaturge' && sent?.goal === 'Find Eadmer, the scholar in The Wold.' && sent.pages[0].entries[0]?.text === teaching.seek
       && marked?.who.includes(cassian.name) === true && !log('walkers_carried'),
       `the glasses first: at 27 with the second, Cassian is sent to Eadmer (${sent?.goal}), the world map marks the gap's box for him, and the quest is not in the log`);
@@ -1081,7 +1081,7 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
     loot(w, 'wold_b9', cache);
     const took = talk(w), { give, said } = giveLight(w);
     ok(took.text === hand.done.join('\n\n') && !!give && said.startsWith(give.says.join('\n\n')) && !w.party.bag.includes('etched_glass') && !w.party.bag.includes('glass_light') && !!w.party.flags[ETCHING_READ]
-      && !log('walkers_carried') && !questLog(w.world.state, w.party).some((v) => v.def.id.startsWith('seek:') && v.def.id.endsWith(':3')),
+      && !log('walkers_carried') && !questLog(TABLES, w.world.state, w.party).some((v) => v.def.id.startsWith('seek:') && v.def.id.endsWith(':3')),
       'no sorcerer: the glasses taken and the etching read all the same, and no quest begun for it');
   }
 
@@ -1095,7 +1095,7 @@ function walkersCarried(ok: (cond: boolean, msg: string) => void): void {
       && !log('walkers_carried') && !log(seekId(5, 3)) && !!barOf(teaching, cassian, w.party, w.world.state),
       'the glasses at 26: he takes the etching, "Not yet" keeps the question, and given the light he reads; no quest opens, no seeking, and the third waits on the level');
     cassian.level = 27; cassian.xp = xpForLevel(27);
-    const news = listen(w), marked = sought(questLog(w.world.state, w.party)).some((s) => s.at === 'wold_b9');
+    const news = listen(w), marked = sought(questLog(TABLES, w.world.state, w.party)).some((s) => s.at === 'wold_b9');
     ok(news.includes('New quest: What the Walkers Carried.') && log('walkers_carried')?.done === false && log('walkers_carried')?.goal === 'Go back to Eadmer at the Glass\'s edge, and learn how a Magus reads.'
       && log(seekId(5, 3))?.done === true && !marked,
       `the glasses at 26: at 27 the quest opens on the way back to him (${log('walkers_carried')?.goal}), the seeking done and the map marking nothing, as for the other thirds`);
@@ -1251,7 +1251,7 @@ function woldQuests(ok: (cond: boolean, msg: string) => void): void {
  */
 function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   const g = headlessGame(4), p = g.party, LEVEL = 26;
-  const w: Walk = { world: g.world, party: p, news: [], level: LEVEL, ok, marks: questMarks(questLog(g.world.state, p)) };
+  const w: Walk = { world: g.world, party: p, news: [], level: LEVEL, ok, marks: questMarks(questLog(TABLES, g.world.state, p)) };
   for (const m of p.members) { m.level = LEVEL; m.xp = xpForLevel(LEVEL); }
   const out = buildMaps()[OUTDOORS];
   const [D8, D10, E9] = ['wold_d8', 'wold_d10', 'wold_e9'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
@@ -1277,7 +1277,7 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   const quests = AREAS.flatMap((a) => [...(a.quests ?? []), ...(a.chapter ? [a.chapter] : [])]);
   const told = quests.flatMap((q) => [q.title, ...q.entries.map((e) => e.text), ...q.goals.map((x) => x.text)]).filter((t) => /Mergen|drillmaster|Drill Bow|small mesa/i.test(t));
   const marked = quests.filter((q) => q.mark && q.goals.some((x) => x.at === D10.id));
-  ok(!told.length && !marked.length && !TRAINERS().some((t) => t.name === mergen.name) && !sought(questLog(g.world.state, p)).some((s) => s.at === D10.id)
+  ok(!told.length && !marked.length && !TRAINERS().some((t) => t.name === mergen.name) && !sought(questLog(TABLES, g.world.state, p)).some((s) => s.at === D10.id)
     && !ATLAS.sites.some((s) => /Mergen|drillmaster/i.test(s.name)) && !ATLAS.places.some((s) => /Mergen|drillmaster/i.test(s.name ?? '')),
     'found and never told: no quest, seeking, goal or world-map mark names Mergen or his door, and he is no site of the atlas');
 
@@ -1801,7 +1801,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     bird.dead = fell;
     const gone = meet(eldest, w.party, heard(w.world, eldest)).text;
     ok(!first.includes('grandmother') && lines.every((l) => after.includes(l) && rest.includes(l)) && fell >= 0 && gone.includes('Keep it as we keep it.') && !gone.includes('grandmother') && bowWords.length === 2 && bowWords.every((s) => !s.sets && !s.choice && s.lines.slice(-2).join() === lines.join())
-      && !/Akkush|grandmother|white horn/.test(JSON.stringify(questLog(w.world.state, w.party))) && bowWords.every((s) => wrap(s.lines.join('\n\n'), SAY_W).length <= SAY_LINES),
+      && !/Akkush|grandmother|white horn/.test(JSON.stringify(questLog(TABLES, w.world.state, w.party))) && bowWords.every((s) => wrap(s.lines.join('\n\n'), SAY_W).length <= SAY_LINES),
       'the eldest says nothing of the bow at the meeting that tells the story, and at every meeting after it while the bird lives, the lion\'s rest told or not, speaks of her grandmother\'s brother and the bird: words only, in no quest, and in the box\'s lines; once it has fallen, nothing of it');
     listen(w);
     delete w.party.flags[STORY]; delete w.party.flags[LION_TOLD];

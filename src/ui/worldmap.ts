@@ -1490,7 +1490,7 @@ function mapOnCloth(mapId: string): [number, number] | undefined {
 /** The places a seeking quest sends a member to (game/seeking.ts), on the cloth, with who is sought there. */
 function soughtOnCloth(world: World | null): { at: [number, number]; who: string[] }[] {
   if (!world) return [];
-  return sought(questLog(world.state, world.party)).flatMap((p) => { const at = mapOnCloth(p.at); return at ? [{ at, who: p.who }] : []; });
+  return sought(questLog(world.tables, world.state, world.party)).flatMap((p) => { const at = mapOnCloth(p.at); return at ? [{ at, who: p.who }] : []; });
 }
 
 /** The colour of a place a member is to seek: a green no padlock, way or the party's arrow wears. */

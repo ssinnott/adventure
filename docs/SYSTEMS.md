@@ -10,8 +10,8 @@ in `docs/areas/`. Cut from the slice's doc by #1023, which keeps that doc whole 
 
 - **`src/lib/`** is the engine, vendored: never edited here. Its synth stack is unused.
 - **`src/game/`** is the model: the world, the party, combat, the people, the quests, the save and
-  the rest, pure where it can be, so the tests play it as the game does; the item, monster and
-  spell tables are content's, handed in (#973, #974).
+  the rest, pure where it can be, so the tests play it as the game does; the item, monster, spell,
+  quest and guild tables are content's, handed in (#973 to #975).
 - **`src/content/`** is what the game is made of: an area to a folder, `src/content/areas/<area>/`,
   listed once in road order in `src/content/index.ts`, which merges their tables; the tables no
   area owns; and the world map's plan, `src/content/atlas.ts`.

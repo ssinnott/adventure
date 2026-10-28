@@ -477,7 +477,7 @@ export function businessEntries(g: Game, f: Business): BusinessEntry[] {
   const out: BusinessEntry[] = [f.kind === 'npc' ? { label: 'The talk of the room', open: () => g.talkScreen(f) } : { label: TRADE[f.kind], open: () => trade(g, f) }];
   // A town's trainer from Saltmouth's on teaches Expert at arms and in magic (game/mastery.ts), by its ceiling.
   if (f.kind === 'trainer' && teachesExpert(f.maxLevel)) out.push({ label: EXPERT_ENTRY, open: () => tierMenu(g, f.name) });
-  if (f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildShortName(hall)}`, open: () => guildWork(g, hall, f.name) }); }
+  if (f.hall) { const hall = f.hall; out.push({ label: `Work for ${guildShortName(g.tables.guilds, hall)}`, open: () => guildWork(g, hall, f.name) }); }
   // A hall teaches its guild's skills (game/skills.ts), once a skill of theirs is built.
   const taught = f.hall ? taughtBy(f.hall) : [];
   if (taught.length) out.push({ label: LEARN, open: () => skillMenu(g, taught, f.name) });
@@ -521,7 +521,7 @@ function trade(g: Game, f: Exclude<Business, { kind: 'npc' }>): Screen {
 
 /** The company's place in a guild, as its hall's first menu says it. */
 function standing(g: Game, id: GuildId): string {
-  const r = rankName(id, rankOf(id, g.party)), name = guildName(id);
+  const r = rankName(g.tables.guilds, id, rankOf(g.tables, id, g.party)), name = guildName(g.tables.guilds, id);
   return r ? `Your rank with ${name}: ${r}.` : `You have no rank with ${name} yet.`;
 }
 
@@ -533,7 +533,7 @@ function guildWork(g: Game, id: GuildId, hallName: string): Screen {
 }
 
 function guildOffers(g: Game, id: GuildId, hallName: string): Screen {
-  const offers = offered(id, g.party), held = inHand(id, g.party);
+  const offers = offered(g.tables, id, g.party), held = inHand(g.tables, id, g.party);
   const doing = held.length ? ` In hand: ${held.map((q) => q.title).join('; ')}.` : '';
   if (!offers.length) return new MessageScreen(`"We have no more work for you now."${doing}`, undefined, hallName);
   return new ChoiceScreen(`${standing(g, id)}${doing}`, [...offers.map((q) => q.title), 'Back'], (i) => {
@@ -556,7 +556,7 @@ function guildOffers(g: Game, id: GuildId, hallName: string): Screen {
  * back a level: to the skills, then to the hall's first menu. A company not of the guild is told so.
  */
 export function skillMenu(g: Game, ids: readonly SkillId[], title: string): Screen {
-  if (!ids.every((id) => mayLearn(id, g.party))) return new MessageScreen(STRANGER, undefined, title);
+  if (!ids.every((id) => mayLearn(g.tables, id, g.party))) return new MessageScreen(STRANGER, undefined, title);
   // The words are made when drawn: the menu waits under the members' while the gold is spent.
   return new ChoiceScreen(() => askWhich(g.party), [...ids.map(skillRow), LEAVE_SKILLS], (i) => {
     const id = ids[i];
@@ -571,12 +571,12 @@ export function skillMenu(g: Game, ids: readonly SkillId[], title: string): Scre
  * comes again. A person who teaches one opens here, as a hall's second level does.
  */
 export function learnerMenu(g: Game, id: SkillId, title: string): Screen {
-  if (!mayLearn(id, g.party)) return new MessageScreen(STRANGER, undefined, title);
+  if (!mayLearn(g.tables, id, g.party)) return new MessageScreen(STRANGER, undefined, title);
   const list = skillOffers(id, g.party);
   return new ChoiceScreen(askSkill(g.party), [...list.map((o) => skillLine(o, g.party)), LEAVE_SKILLS], (i) => {
     const o = list[i];
     if (!o) return;
-    const { line } = learn(o.skill, g.party, o.who);
+    const { line } = learn(g.tables, o.skill, g.party, o.who);
     if (line) g.say(line);
     g.push(learnerMenu(g, id, title));
   }, title, [...list.map((o) => !!o.bar), false]);

@@ -103,7 +103,7 @@ function captain(w: Walk): void {
   p.flags[takenFlag('wardens_cages')] = p.flags[doneFlag('wardens_cages')] = 1;
   const q = GUILD_QUESTS.find((g) => g.id === 'wardens_hole')!;
   const said = take(TABLES, q, w.world.state, p);
-  w.ok(said.length === 2 && said[0].startsWith(q.early![0]) && said[1] === 'Your rank with the Wardens is now Captain.' && rankOf('wardens', p) === 4,
+  w.ok(said.length === 2 && said[0].startsWith(q.early![0]) && said[1] === 'Your rank with the Wardens is now Captain.' && rankOf(TABLES, 'wardens', p) === 4,
     `the fourth night fought, the Wardens' ask is paid at the taking, and a company that found the cages is made a Captain (${said.join(' ').replace(/\n+/g, ' ')})`);
 }
 
@@ -1431,7 +1431,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     const firstMeeting = meet(keeper, w.party, heard(w.world, keeper)).text, nextMeeting = meet(keeper, w.party, heard(w.world, keeper)).text;
     ok(firstMeeting === keeper.lines.join('\n\n') && nextMeeting.startsWith(`${keeper.lines.join('\n\n')}\n\n`) && nextMeeting.includes('"One came up through the ice in a grey robe too long in the arm. He would not take a blanket, nor sleep, nor say where he had been."')
       && nextMeeting.includes('"The third night he walked out into the snow. It was not his robe, I think."') && !words.sets && !words.choice
-      && wrap(nextMeeting, SAY_W).length <= SAY_LINES && !JSON.stringify(questLog(w.world.state, w.party)).includes('grey robe'),
+      && wrap(nextMeeting, SAY_W).length <= SAY_LINES && !JSON.stringify(questLog(TABLES, w.world.state, w.party)).includes('grey robe'),
       `the lodge-keeper says her own two lines and nothing of the grey robe at her first meeting, and at the next her two lines and then of the one who came up in it: words only, in no quest, ${wrap(nextMeeting, SAY_W).length} of the say box's ${SAY_LINES} lines`);
     listen(w);
     delete w.party.flags.rl_keeper_met;

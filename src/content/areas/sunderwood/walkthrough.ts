@@ -756,10 +756,10 @@ function keeper(ok: (cond: boolean, msg: string) => void): void {
   ok(![talk(young), talk(young)].some((t) => t.includes('Kneel at the shard')), 'to a company of 15 she says no lesson');
 
   // At 19 the cleric is sent to the Moth Wood, and taught.
-  ok(sought(questLog(w.world.state, w.party)).find((p) => p.at === 'lanternwood_l3')?.who.includes(w.party.members[cleric].name) === true, 'at 19 the cleric is sent to the Moth Wood');
+  ok(sought(questLog(TABLES, w.world.state, w.party)).find((p) => p.at === 'lanternwood_l3')?.who.includes(w.party.members[cleric].name) === true, 'at 19 the cleric is sent to the Moth Wood');
   w.party.gold = 4000;
   ok(teach(KEEPER.teaches!, w.party, w.world.state, cleric).taught && prestigeOf(w.party.members[cleric]) === 2 && w.party.gold === 0
-    && questLog(w.world.state, w.party).find((v) => v.def.id === seekId(cleric, 2))?.done === true, `she makes a ${PRESTIGES.cleric.titles[1]} for 4,000 gold, and the seeking is done`);
+    && questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === seekId(cleric, 2))?.done === true, `she makes a ${PRESTIGES.cleric.titles[1]} for 4,000 gold, and the seeking is done`);
 }
 
 /**
@@ -806,10 +806,10 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   ok(![talk(young), talk(young)].some((t) => t.includes('Kneel')), 'to a company of 15 he says no lesson');
 
   // At 19 the paladin is sent to the clearing, and taught.
-  ok(sought(questLog(w.world.state, w.party)).find((p) => p.at === 'eaves_j3')?.who.includes(w.party.members[paladin].name) === true, 'at 19 the paladin is sent to the Bears\' Wood');
+  ok(sought(questLog(TABLES, w.world.state, w.party)).find((p) => p.at === 'eaves_j3')?.who.includes(w.party.members[paladin].name) === true, 'at 19 the paladin is sent to the Bears\' Wood');
   w.party.gold = 4000;
   ok(teach(HERMIT.teaches!, w.party, w.world.state, paladin).taught && prestigeOf(w.party.members[paladin]) === 2 && w.party.gold === 0
-    && questLog(w.world.state, w.party).find((v) => v.def.id === seekId(paladin, 2))?.done === true, `he makes a ${PRESTIGES.paladin.titles[1]} for 4,000 gold, and the seeking is done`);
+    && questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === seekId(paladin, 2))?.done === true, `he makes a ${PRESTIGES.paladin.titles[1]} for 4,000 gold, and the seeking is done`);
 }
 
 // ---- the side quests (#205) ----

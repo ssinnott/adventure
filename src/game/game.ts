@@ -238,13 +238,13 @@ export class Game {
   // ---- quests ----
   /** Announce each quest begun, advanced or finished since the last look. */
   private checkQuests(): void {
-    const log = questLog(this.world.state, this.party);
+    const log = questLog(this.tables, this.world.state, this.party);
     for (const n of questNews(this.questMarked, log)) { this.say(n.text); this.questFocus = n.quest; }
     this.questMarked = questMarks(log);
   }
 
   private markQuests(): void {
-    this.questMarked = questMarks(questLog(this.world.state, this.party));
+    this.questMarked = questMarks(questLog(this.tables, this.world.state, this.party));
     this.questFocus = '';
   }
 

@@ -156,7 +156,7 @@ function strategist(): void {
   // Known gives a goal's map only once the journal shows the goal: none before the hire, and then the shown goal's alone.
   const fresh = piloted(), before = knownOf(fresh).goals(), first = chooseAim(fresh, knownOf(fresh), fresh.pilot!);
   const g = hiredGame(), k = knownOf(g), p = g.pilot!, shelf = THE_QUEST.chapters[0];
-  const view = questLog(g.world.state, g.party).find((v) => v.def === THE_QUEST)!, goals = k.goals();
+  const view = questLog(TABLES, g.world.state, g.party).find((v) => v.def === THE_QUEST)!, goals = k.goals();
   const told = goals.flatMap((q) => q.map ?? []), unsaid = shelf.goals.map((q) => q.at).filter((m) => m !== goalMap(view));
   ok(before.length === 0 && first?.kind === 'explore' && first.map === 'harrow' && !!g.party.flags.q_ashcombe && goals.length === 1 && told[0] === goalMap(view) && unsaid.length > 0 && unsaid.every((m) => !told.includes(m)),
     `Known gives the journal's goal and its map once shown, and no map of a goal not shown (before the hire ${before.length} goals, the aim ${first?.kind} ${first?.kind === 'explore' ? first.map : ''}; then ${told.join()}, not ${[...new Set(unsaid)].join()})`);
