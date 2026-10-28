@@ -24,7 +24,7 @@ import type { ItemDef } from '../../src/game/items.ts';
 import type { Person } from '../../src/game/people.ts';
 import { startCombat, currentTurn } from '../../src/game/combat.ts';
 import type { TurnRef } from '../../src/game/combat.ts';
-import type { Screen } from '../../src/app/game.ts';
+import type { Screen } from '../../src/ui/screen.ts';
 import { ChoiceScreen, skillMenu, skillsLines, SHEET_COL_W } from '../../src/ui/screens.ts';
 import { talk } from '../../src/app/pilot/talk.ts';
 import { Pilot } from '../../src/app/pilot/pilot.ts';

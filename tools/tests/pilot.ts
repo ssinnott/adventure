@@ -4,7 +4,8 @@
 // with the memory of what a menu has shown. Every game here is headless, with an instant pilot unless
 // the pace is the point.
 import { readdirSync, readFileSync } from 'node:fs';
-import { Game, ExploreScreen, ATTRACT_HOLD } from '../../src/app/game.ts';
+import { Game, ATTRACT_HOLD } from '../../src/app/game.ts';
+import { ExploreScreen } from '../../src/ui/explore.ts';
 import { hasSave } from '../../src/game/save.ts';
 import type { Store } from '../../src/game/save.ts';
 import { freshSeed } from '../../src/lib/engine/rng.ts';

@@ -1,10 +1,11 @@
 // The layers (#900, part of #848): the runtime import graph of src/ and tools/, read from the files as
 // they stand, and the rules it keeps (EXPANSION §8.1). src/lib under src/game under src/content under
-// src/ui under src/app (and its entry, src/main.ts); the tools take
-// anything and tools/kit/ only src; the walkthroughs and the suites take src and tools/kit/, not each
-// other or the tools; no area takes another area's files but its public.ts; and no cycle among src's
-// runtime imports. What crosses today is a row of KNOWN, under the issue that clears it: a crossing no
-// row holds fails, and so does a row that no longer crosses, so the table only shrinks, and by name.
+// src/ui under src/app (and its entry, src/main.ts); the tools take anything and tools/kit/ only src;
+// the walkthroughs and the suites take src and tools/kit/, not each other or the tools; no area takes
+// another area's files but its public.ts; no cycle among src's runtime imports; and no file of src/ui
+// names a file of src/app, in its types either (#1022). What crosses today is a row of KNOWN, under
+// the issue that clears it: a crossing no row holds fails, and so does a row that no longer crosses,
+// so the table only shrinks, and by name.
 //
 // A runtime import is one Node loads as the file loads or runs: an `import` or an `export ... from`
 // with a literal path, `import './x.ts'` for its side effects and `import('./x.ts')`. `import type`,
@@ -14,6 +15,7 @@
 // A }` is not left out: Node strips the name and still loads the file. The files are read by
 // the lexer of tools/kit/graph.ts, not the compiler, which takes three seconds to parse them.
 import { readFileSync } from 'node:fs';
+import { posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { imports, graph, treeFiles, type Graph } from '../kit/graph.ts';
 import { ok, fail } from './lib.ts';
@@ -22,23 +24,12 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
 /** The issues of #848's plan that clear today's crossings, each with what it does. */
 const KEYS = {
-  L7: 'Game and its screen stack moved to src/app, the screens given a Host',
   H8: "the walkthroughs as scenes: a chain takes an area's steps.ts, not its walkthrough",
 } as const;
 type Key = keyof typeof KEYS;
 
 /** Today's crossings, each `importer > imported` under the issue that clears it; a cycle is `cycle: ` and its files. */
 const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
-  L7: [
-    'src/ui/combat.ts > src/app/input.ts',
-    'src/ui/create.ts > src/app/input.ts',
-    'src/ui/ending.ts > src/app/input.ts',
-    'src/ui/quests.ts > src/app/input.ts',
-    'src/ui/riddle.ts > src/app/input.ts',
-    'src/ui/screens.ts > src/app/input.ts',
-    'src/ui/title.ts > src/app/input.ts',
-    'src/ui/worldmap.ts > src/app/input.ts',
-  ],
   H8: [
     'src/content/areas/saltreach/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
     'src/content/areas/saltreach/walkthrough.ts > src/content/areas/thornmark/walkthrough.ts',
@@ -178,6 +169,8 @@ export function layers(): void {
     const got = imports(text).runtime.map((s) => s.path);
     ok(got.join() === want.join(), `the lexer reads ${JSON.stringify(text.split('\n')[0])}${text.includes('\n') ? ' and on' : ''}: ${want.join(', ') || 'nothing'} at run time${got.join() === want.join() ? '' : `, not ${got.join(', ') || 'nothing'}`}`);
   }
+  const typed = forms.flatMap(([text]) => imports(text).typed), named = ['./c.ts', './x.ts', './t.ts', './u.ts', './t.ts', './u.ts'];
+  ok(typed.join() === named.join(), `the lexer names what the forms import in types alone, which the UI's line reads: ${named.join(', ')}${typed.join() === named.join() ? '' : `, not ${typed.join(', ') || 'nothing'}`}`);
 
   // The rules on a graph in memory: a new crossing fails, and so does a row that no longer crosses.
   const fixture = graph(['src/game/a.ts', 'src/content/b.ts', 'src/content/areas/x/maps/m.ts', 'src/content/areas/y/public.ts', 'src/content/areas/y/maps/n.ts'], (f) => ({
@@ -185,14 +178,14 @@ export function layers(): void {
     'src/content/b.ts': "import { A } from '../game/a.ts';",
     'src/content/areas/x/maps/m.ts': "import { N } from '../../y/maps/n.ts';\nimport { P } from '../../y/public.ts';",
   } as Record<string, string>)[f] ?? '');
-  const held = judge(fixture, { L7: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts'], H8: ['src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
+  const held = judge(fixture, { H8: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
   ok(held.failures.length === 0, `a graph in memory whose crossings and cycle KNOWN holds passes${held.failures.length ? ': ' + held.failures.join('; ') : ''}`);
-  const fresh = judge(fixture, { L7: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts'] });
+  const fresh = judge(fixture, { H8: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts'] });
   ok(fresh.failures.join() === "areas: src/content/areas/x/maps/m.ts imports src/content/areas/y/maps/n.ts, and an area takes another area's files only through its public.ts; no KNOWN row holds it",
     `a crossing no row holds fails, by its pair and its rule: ${fresh.failures.join('; ')}`);
-  const stale = judge(fixture, { L7: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts', 'src/game/a.ts > src/ui/gone.ts'], H8: ['src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
-  ok(stale.failures.join() === 'KNOWN: src/game/a.ts > src/ui/gone.ts (L7) no longer crosses: the row goes', `a row that no longer crosses fails: ${stale.failures.join('; ')}`);
-  const loop = judge(fixture, { L7: ['src/game/a.ts > src/content/b.ts'], H8: ['src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
+  const stale = judge(fixture, { H8: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts', 'src/game/a.ts > src/ui/gone.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
+  ok(stale.failures.join() === 'KNOWN: src/game/a.ts > src/ui/gone.ts (H8) no longer crosses: the row goes', `a row that no longer crosses fails: ${stale.failures.join('; ')}`);
+  const loop = judge(fixture, { H8: ['src/game/a.ts > src/content/b.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
   ok(loop.failures.join() === 'cycle: src/content/b.ts, src/game/a.ts import each other as they load; no KNOWN row holds it', `a cycle no row holds fails, by its files: ${loop.failures.join('; ')}`);
 
   // The tree.
@@ -207,4 +200,19 @@ export function layers(): void {
   const crossing = [...byRule.values()].reduce((s, k) => s + k, 0);
   ok(failures.length === 0, `the runtime graph of src/ and tools/: ${g.edges.size} files that import, ${g.imports} runtime imports (${g.dynamic} of them import()), ${g.types} in types alone left out, read in ${ms.toFixed(0)} ms; ` +
     `KNOWN's ${rows} rows, ${crossing} of them crossing today, by rule ${counted(byRule)}; by issue ${counted(byKey)}`);
+
+  // The UI never names the app (#1022): the screens are written against the Host (ui/screen.ts), so
+  // no file of src/ui names a file of src/app, in its types either, which the graph leaves out.
+  let read = 0;
+  const names: string[] = [];
+  for (const f of files.filter((f) => place(f) === 'src/ui' && f.endsWith('.ts'))) {
+    for (const p of imports(readFileSync(ROOT + f, 'utf8')).typed) {
+      if (!p.startsWith('./') && !p.startsWith('../')) continue;
+      read++;
+      const to = posix.normalize(posix.join(posix.dirname(f), p));
+      if (place(to) === 'src/app') names.push(`types: ${f} names ${to} in its types, and src/ui is under src/app; the screens take the Host (src/ui/screen.ts)`);
+    }
+  }
+  for (const n of names) fail(n);
+  ok(names.length === 0, `no file of src/ui names a file of src/app, in its types either: the UI's ${read} imports in types alone read`);
 }

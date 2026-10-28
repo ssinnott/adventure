@@ -2,9 +2,9 @@
 // company (ui/create.ts). Enter answers, Esc leaves, and either way out turns the text mode off, or
 // the keys that move the party would go on being typed. What the answer does is the Game's, handed
 // in, so this screen loads in Node for its test (tools/tests/wilds.ts).
-import type { Game, Screen } from '../app/game.ts';
-import type { Action } from '../app/input.ts';
-import { is } from '../app/input.ts';
+import type { Host, Screen } from './screen.ts';
+import type { Action } from './actions.ts';
+import { is } from './actions.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, paragraph } from './draw.ts';
 import { BRASS, TEXT, TEXT_DIM } from './palette.ts';
@@ -20,12 +20,12 @@ export class RiddleScreen implements Screen {
   readonly riddle: string;
   private readonly answer: (word: string) => void;
   /** Opens with the text mode on; `answer` is called with the word on Enter, after the screen has closed. */
-  constructor(g: Game, title: string, riddle: string, answer: (word: string) => void) {
+  constructor(g: Host, title: string, riddle: string, answer: (word: string) => void) {
     this.title = title; this.riddle = riddle; this.answer = answer;
     if (g.input) { g.input.drainText(''); g.input.textMode = true; }
   }
 
-  update(g: Game, a: Action | null): void {
+  update(g: Host, a: Action | null): void {
     // Text entry runs every step, action or not; only letters and spaces are kept.
     if (g.input) this.word = g.input.drainText(this.word, ANSWER_MAX).replace(/[^A-Za-z ]/g, '');
     if (!a) return;
@@ -33,12 +33,12 @@ export class RiddleScreen implements Screen {
     else if (is(a, 'interact') && this.word.trim()) { this.close(g); this.answer(this.word); }
   }
 
-  private close(g: Game): void {
+  private close(g: Host): void {
     if (g.input) g.input.textMode = false;
     g.pop();
   }
 
-  render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
+  render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     panel(ctx, BOX.x, BOX.y, BOX.w, BOX.h);
     const x = BOX.x + 12;
     let y = BOX.y + 10;

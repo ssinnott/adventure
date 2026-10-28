@@ -5,9 +5,9 @@
 // business's first menu (`businessEntries`) and the visit that frames them (`InteriorScreen`). Each
 // service draws its menu and says what its rule in game/services.ts returns, with no sum of its
 // own.
-import type { Game, Screen } from '../app/game.ts';
-import type { Action } from '../app/input.ts';
-import { is } from '../app/input.ts';
+import type { Host, Screen } from './screen.ts';
+import type { Action } from './actions.ts';
+import { is } from './actions.ts';
 import { drawText, lineHeight, measureText } from '../lib/engine/text.ts';
 import { panel, paragraph, menu, wrap, columnMenu, optionParts, fit, columnLabelWidth } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawLog, drawViewportFrame, SAY_W, SAY_LINES, SIDE_W, ASK_LINES, ASK_SIDE_LINES } from './frame.ts';
@@ -52,7 +52,7 @@ export class InteriorScreen implements Screen {
   private readonly from: number;
   readonly at: { x: number; y: number };
   readonly interior: Interior;
-  constructor(g: Game, at: { x: number; y: number }, interior: Interior) {
+  constructor(g: Host, at: { x: number; y: number }, interior: Interior) {
     this.at = at;
     this.interior = interior;
     this.from = Math.min(g.actionFrom, g.said);
@@ -60,16 +60,16 @@ export class InteriorScreen implements Screen {
   /** Never reached with a menu open, and closed before the next step without one. */
   update(): void {}
   /** The visit is over: out of the business, and out of its doorway into the street. */
-  close(g: Game): void {
+  close(g: Host): void {
     g.pop();
     g.leave(this.at);
   }
   /** The room's log: what was said since the step in began. */
-  roomLog(g: Game): string[] {
+  roomLog(g: Host): string[] {
     const n = Math.min(g.said - this.from, g.log.length);
     return n > 0 ? g.log.slice(-n) : [];
   }
-  render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
+  render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     drawInterior(ctx, this.interior, LAYOUT.view, g.world.daylight, frame);
     drawLog(ctx, this.roomLog(g));
     drawViewportFrame(ctx);
@@ -77,7 +77,7 @@ export class InteriorScreen implements Screen {
 }
 
 /** Whether the party is inside a business, where messages and menus take the side panel. */
-function visiting(g: Game): boolean { return g.screens.some((s) => s instanceof InteriorScreen); }
+function visiting(g: Host): boolean { return g.screens.some((s) => s instanceof InteriorScreen); }
 
 const SIDE = LAYOUT.map, PAD = 8, TEXT_W = SIDE_W, HINT_Y = SIDE.y + SIDE.h - PAD - 7;
 
@@ -104,11 +104,11 @@ export class MessageScreen implements Screen {
     this.then = then;
     this.title = title;
   }
-  update(g: Game, a: Action | null): void {
+  update(g: Host, a: Action | null): void {
     if (is(a, 'interact') && visiting(g) && this.page < this.pages().length - 1) { this.page++; return; }
     if (is(a, 'interact', 'cancel')) { g.pop(); this.then?.(); }
   }
-  render(g: Game, ctx: CanvasRenderingContext2D): void {
+  render(g: Host, ctx: CanvasRenderingContext2D): void {
     if (visiting(g)) { this.renderSide(ctx); return; }
     panel(ctx, BOX.x, BOX.y, BOX.w, BOX.h);
     let y = BOX.y + 10;
@@ -175,7 +175,7 @@ export class ChoiceScreen implements Screen {
   get words(): string { return typeof this.text === 'function' ? this.text() : this.text; }
   /** The options as they read now. */
   get options(): string[] { return typeof this.choices === 'function' ? this.choices() : this.choices; }
-  update(g: Game, a: Action | null): void {
+  update(g: Host, a: Action | null): void {
     if (!a) return;
     this.sel = Math.min(this.sel, this.options.length - 1);
     if (is(a, 'up')) this.sel = (this.sel + this.options.length - 1) % this.options.length;
@@ -184,7 +184,7 @@ export class ChoiceScreen implements Screen {
     else if (is(a, 'interact')) { if (this.disabled[this.sel]) return; g.pop(); this.then(this.sel); }
     else if (/^n[1-9]$/.test(a)) { const i = Number(a[1]) - 1; if (i < this.options.length && !this.disabled[i]) { g.pop(); this.then(i); } }
   }
-  render(g: Game, ctx: CanvasRenderingContext2D): void {
+  render(g: Host, ctx: CanvasRenderingContext2D): void {
     if (visiting(g)) { this.renderSide(ctx); return; }
     // One line of question was always allowed for; each more takes its height.
     const asked = Math.min(wrap(this.words, SAY_W).length, ASK_LINES);
@@ -232,7 +232,7 @@ export class ChoiceScreen implements Screen {
 }
 
 /** Ask which party member; -1 on cancel. */
-export function pickMember(g: Game, text: string, then: (i: number) => void, filter: (c: Character) => boolean = () => true): void {
+export function pickMember(g: Host, text: string, then: (i: number) => void, filter: (c: Character) => boolean = () => true): void {
   const names = g.party.members.map((m, i) => `${i + 1}. ${m.name}  ${m.hp}/${m.maxHp}`);
   g.push(new ChoiceScreen(text, names, then, '', g.party.members.map((m) => !filter(m))));
 }
@@ -243,7 +243,7 @@ export class SheetScreen implements Screen {
   sel = 0;
   private who: number;
   constructor(who: number) { this.who = who; }
-  update(g: Game, a: Action | null): void {
+  update(g: Host, a: Action | null): void {
     if (!a) return;
     const c = g.party.members[this.who];
     const items = this.items(g);
@@ -272,11 +272,11 @@ export class SheetScreen implements Screen {
       if (this.sel >= this.items(g).length) this.sel = Math.max(0, this.items(g).length - 1);
     }
   }
-  private items(g: Game): { id: string; from: 'pack' | 'bag' }[] {
+  private items(g: Host): { id: string; from: 'pack' | 'bag' }[] {
     const c = g.party.members[this.who];
     return [...c.pack.map((id) => ({ id, from: 'pack' as const })), ...g.party.bag.map((id) => ({ id, from: 'bag' as const }))];
   }
-  render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
+  render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     const c = g.party.members[this.who];
     panel(ctx, 8, 8, 624, 268);
     drawText(ctx, `${c.name}  ${RACES[c.race].name} ${className(c)}  LEVEL ${c.level}`, 20, 18, { size: 1, color: BRASS });
@@ -376,7 +376,7 @@ export function spellsLine(spells: Tables['spells'], c: Character): string {
 }
 
 /** An exploration spell cast (game/wilds.ts): its lines said and, where it moved the party, what stands there met. */
-function explore(g: Game, caster: number, spellId: string, back?: boolean): void {
+function explore(g: Host, caster: number, spellId: string, back?: boolean): void {
   const cast = castExplore(g.world, g.party, caster, spellId, back);
   for (const l of cast.lines) g.say(l);
   if (cast.moved) g.enterCell();
@@ -393,9 +393,9 @@ export class SpellScreen implements Screen {
     this.context = context;
     this.onDone = onDone;
   }
-  private casters(g: Game): number[] { return g.party.members.map((m, i) => ({ m, i })).filter(({ m }) => m.spells.length && !isDown(m) && !hasCondition(m, 'asleep')).map(({ i }) => i); }
-  private list(g: Game): string[] { return g.party.members[this.who].spells.filter((s) => spell(g.tables.spells, s).context !== 'combat'); }
-  update(g: Game, a: Action | null): void {
+  private casters(g: Host): number[] { return g.party.members.map((m, i) => ({ m, i })).filter(({ m }) => m.spells.length && !isDown(m) && !hasCondition(m, 'asleep')).map(({ i }) => i); }
+  private list(g: Host): string[] { return g.party.members[this.who].spells.filter((s) => spell(g.tables.spells, s).context !== 'combat'); }
+  update(g: Host, a: Action | null): void {
     if (!a) return;
     if (this.who < 0) {
       const cs = this.casters(g);
@@ -430,7 +430,7 @@ export class SpellScreen implements Screen {
       this.onDone?.();
     }
   }
-  render(g: Game, ctx: CanvasRenderingContext2D): void {
+  render(g: Host, ctx: CanvasRenderingContext2D): void {
     panel(ctx, BOX.x, BOX.y, BOX.w, BOX.h);
     if (this.who < 0) {
       drawText(ctx, 'WHO CASTS?', BOX.x + 12, BOX.y + 10, { size: 1, color: BRASS });
@@ -473,7 +473,7 @@ export const shortName = (name: string): string => name.split(',')[0];
  * now (`World.peopleAt`); Leave is always last. This is the one place the list is made, and it is made
  * afresh each time it is read, so the people are those there now.
  */
-export function businessEntries(g: Game, f: Business): BusinessEntry[] {
+export function businessEntries(g: Host, f: Business): BusinessEntry[] {
   const out: BusinessEntry[] = [f.kind === 'npc' ? { label: 'The talk of the room', open: () => g.talkScreen(f) } : { label: TRADE[f.kind], open: () => trade(g, f) }];
   // A town's trainer from Saltmouth's on teaches Expert at arms and in magic (game/mastery.ts), by its ceiling.
   if (f.kind === 'trainer' && teachesExpert(f.maxLevel)) out.push({ label: EXPERT_ENTRY, open: () => tierMenu(g, f.name) });
@@ -489,7 +489,7 @@ export function businessEntries(g: Game, f: Business): BusinessEntry[] {
  * The screen a business opens on: its trade alone, as ever, or where it offers more, a first menu
  * that each choice returns to (it is pushed again under the screen the choice opens), until Leave.
  */
-export function serviceScreen(g: Game, f: Feature): Screen {
+export function serviceScreen(g: Host, f: Feature): Screen {
   if (f.kind !== 'inn' && f.kind !== 'temple' && f.kind !== 'shop' && f.kind !== 'guild' && f.kind !== 'trainer' && !(f.kind === 'npc' && f.interior)) return new MessageScreen('...');
   const b = f as Business;
   const entries = businessEntries(g, b);
@@ -507,7 +507,7 @@ export function serviceScreen(g: Game, f: Feature): Screen {
   }, b.name);
 }
 
-function trade(g: Game, f: Exclude<Business, { kind: 'npc' }>): Screen {
+function trade(g: Host, f: Exclude<Business, { kind: 'npc' }>): Screen {
   switch (f.kind) {
     case 'inn': return inn(g, f);
     case 'temple': return temple(g, f);
@@ -520,19 +520,19 @@ function trade(g: Game, f: Exclude<Business, { kind: 'npc' }>): Screen {
 // ---- a guild's work, at any of its halls (game/guilds.ts) ----
 
 /** The company's place in a guild, as its hall's first menu says it. */
-function standing(g: Game, id: GuildId): string {
+function standing(g: Host, id: GuildId): string {
   const r = rankName(g.tables.guilds, id, rankOf(g.tables, id, g.party)), name = guildName(g.tables.guilds, id);
   return r ? `Your rank with ${name}: ${r}.` : `You have no rank with ${name} yet.`;
 }
 
 /** The guild's work: first the report, which pays what is done, then what the hall offers. */
-function guildWork(g: Game, id: GuildId, hallName: string): Screen {
+function guildWork(g: Host, id: GuildId, hallName: string): Screen {
   const paid = report(g.tables, id, g.world.state, g.party);
   if (paid.length) return new MessageScreen(paid.join('\n\n'), () => g.push(guildOffers(g, id, hallName)), hallName);
   return guildOffers(g, id, hallName);
 }
 
-function guildOffers(g: Game, id: GuildId, hallName: string): Screen {
+function guildOffers(g: Host, id: GuildId, hallName: string): Screen {
   const offers = offered(g.tables, id, g.party), held = inHand(g.tables, id, g.party);
   const doing = held.length ? ` In hand: ${held.map((q) => q.title).join('; ')}.` : '';
   if (!offers.length) return new MessageScreen(`"We have no more work for you now."${doing}`, undefined, hallName);
@@ -555,7 +555,7 @@ function guildOffers(g: Game, id: GuildId, hallName: string): Screen {
  * with its price and what it does in the note; chosen, who would learn it (`learnerMenu`). Leave goes
  * back a level: to the skills, then to the hall's first menu. A company not of the guild is told so.
  */
-export function skillMenu(g: Game, ids: readonly SkillId[], title: string): Screen {
+export function skillMenu(g: Host, ids: readonly SkillId[], title: string): Screen {
   if (!ids.every((id) => mayLearn(g.tables, id, g.party))) return new MessageScreen(STRANGER, undefined, title);
   // The words are made when drawn: the menu waits under the members' while the gold is spent.
   return new ChoiceScreen(() => askWhich(g.party), [...ids.map(skillRow), LEAVE_SKILLS], (i) => {
@@ -570,7 +570,7 @@ export function skillMenu(g: Game, ids: readonly SkillId[], title: string): Scre
  * Who would learn a skill: each member with its price or why not; chosen, it is taught and the menu
  * comes again. A person who teaches one opens here, as a hall's second level does.
  */
-export function learnerMenu(g: Game, id: SkillId, title: string): Screen {
+export function learnerMenu(g: Host, id: SkillId, title: string): Screen {
   if (!mayLearn(g.tables, id, g.party)) return new MessageScreen(STRANGER, undefined, title);
   const list = skillOffers(id, g.party);
   return new ChoiceScreen(askSkill(g.party), [...list.map((o) => skillLine(o, g.party)), LEAVE_SKILLS], (i) => {
@@ -587,7 +587,7 @@ export function learnerMenu(g: Game, id: SkillId, title: string): Screen {
  * each member with the price or why not; chosen, it is taught and the members' menu comes again. Leave
  * goes back a level: to the line, then to the trainer's first menu.
  */
-export function tierMenu(g: Game, title: string): Screen {
+export function tierMenu(g: Host, title: string): Screen {
   // The words are made when drawn: the menu waits under the members' while the gold is spent.
   return new ChoiceScreen(() => askLine(g.party), [...LINES.map((l) => LINE_ROWS[l]), LEAVE_TIERS], (i) => {
     const line = LINES[i];
@@ -597,7 +597,7 @@ export function tierMenu(g: Game, title: string): Screen {
   }, title);
 }
 
-function expertMenu(g: Game, line: Line, title: string): Screen {
+function expertMenu(g: Host, line: Line, title: string): Screen {
   const list = expertOffers(line, g.party);
   return new ChoiceScreen(askTier('expert', g.party), [...list.map((o) => tierLine(o, g.party)), LEAVE_TIERS], (i) => {
     const o = list[i];
@@ -613,7 +613,7 @@ function expertMenu(g: Game, line: Line, title: string): Screen {
  * of their line, each with the price or why not; chosen, it is taught and the menu comes again. A
  * company with nobody of the line hears so.
  */
-export function masterMenu(g: Game, m: Mastery, title: string): Screen {
+export function masterMenu(g: Host, m: Mastery, title: string): Screen {
   const list = masterOffers(m, g.party, g.world.state);
   if (!list.length) return new MessageScreen(noneHere(m.line), undefined, title);
   return new ChoiceScreen(askTier(m.tier, g.party), [...list.map((o) => tierLine(o, g.party)), LEAVE_TIERS], (i) => {
@@ -626,7 +626,7 @@ export function masterMenu(g: Game, m: Mastery, title: string): Screen {
 }
 
 // The town's services: each screen draws its menu and says what the rule of game/services.ts returns.
-function inn(g: Game, f: Extract<Feature, { kind: 'inn' }>): Screen {
+function inn(g: Host, f: Extract<Feature, { kind: 'inn' }>): Screen {
   const cost = nightCost(f, g.party);
   return new ChoiceScreen(`"Welcome to ${f.name}. A night for the six of you is ${cost} gold, supper included." (You have ${g.party.gold}.)`,
     [`Stay the night (${cost} gold)`, `Buy ${RATIONS} rations (${RATIONS_PRICE} gold)`, 'Leave'], (i) => {
@@ -635,7 +635,7 @@ function inn(g: Game, f: Extract<Feature, { kind: 'inn' }>): Screen {
     }, f.name);
 }
 
-function temple(g: Game, f: Extract<Feature, { kind: 'temple' }>): Screen {
+function temple(g: Host, f: Extract<Feature, { kind: 'temple' }>): Screen {
   const priceOf = templePrice;
   const names = g.party.members.map((m) => `${m.name}: ${m.conditions.length ? m.conditions.join(', ') : 'well'}\t${priceOf(m) ? `${priceOf(m)}g` : ''}`);
   return new ChoiceScreen(`The Lanterns keep the chapel lit day and night. "Who needs the light?" (${g.party.gold} gold.)`,
@@ -646,14 +646,14 @@ function temple(g: Game, f: Extract<Feature, { kind: 'temple' }>): Screen {
     }, f.name, [...g.party.members.map((m) => priceOf(m) === 0), false, false]);
 }
 
-function shop(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
+function shop(g: Host, f: Extract<Feature, { kind: 'shop' }>): Screen {
   return new ChoiceScreen(`"${f.name}. Buying or selling?" (${g.party.gold} gold.)`, ['Buy', 'Sell', 'Leave'], (i) => {
     if (i === 0) g.push(buyScreen(g, f));
     else if (i === 1) g.push(sellScreen(g, f));
   }, f.name);
 }
 
-function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
+function buyScreen(g: Host, f: Extract<Feature, { kind: 'shop' }>): Screen {
   const names = f.stock.map((id) => `${item(g.tables.items, id).name}\t${priceIn(g.tables.items, f, id)}g\t${describe(g.tables.items, id)}`);
   const s: ChoiceScreen = new ChoiceScreen(`What will it be? (${g.party.gold} gold.)`, [...names, 'Done'], (i) => {
     if (i < 0 || i === names.length) return;
@@ -666,7 +666,7 @@ function buyScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
   return s;
 }
 
-function sellScreen(g: Game, f: Extract<Feature, { kind: 'shop' }>): Screen {
+function sellScreen(g: Host, f: Extract<Feature, { kind: 'shop' }>): Screen {
   const entries: { id: string; owner: string[]; label: string }[] = [];
   const pays = (id: string): number => sellPrice(g.tables.items, g.party, item(g.tables.items, id).price);
   // An artifact shows no price, and no shop takes one (#847).
@@ -694,7 +694,7 @@ export function describe(items: Items, id: string): string {
   return raises.trim();
 }
 
-function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
+function guild(g: Host, f: Extract<Feature, { kind: 'guild' }>): Screen {
   if (!joined(g.party, f)) {
     return new ChoiceScreen(`"${f.name}. The fee to study here is ${f.fee} gold, paid once." (${g.party.gold} gold.)`, [`Pay the fee (${f.fee} gold)`, 'Leave'], (i) => {
       if (i !== 0) return;
@@ -713,7 +713,7 @@ function guild(g: Game, f: Extract<Feature, { kind: 'guild' }>): Screen {
   }, f.name, [...offers.map((o) => o.price > g.party.gold), false]);
 }
 
-function trainer(g: Game, f: Extract<Feature, { kind: 'trainer' }>): Screen {
+function trainer(g: Host, f: Extract<Feature, { kind: 'trainer' }>): Screen {
   const cost = trainPrice;
   const can = g.party.members.map((c) => mayTrain(c, f.maxLevel));
   const names = g.party.members.map((c, i) => `${c.name}  L${c.level}\t${can[i] ? `train ${cost(c)}g` : c.level >= f.maxLevel ? 'beyond me' : `needs ${xpForLevel(c.level + 1) - c.xp} xp`}`);

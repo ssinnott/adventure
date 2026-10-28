@@ -4,7 +4,7 @@
 // goes. It reads the world through Known alone: a secret door is a wall to it until a search finds
 // it, and a gate is learnt by trying it, never by its terms.
 import type { Game } from '../game.ts';
-import { ExploreScreen } from '../game.ts';
+import { ExploreScreen } from '../../ui/explore.ts';
 import type { Action } from '../input.ts';
 import type { Exit } from '../../game/mapdef.ts';
 import { passableCell } from '../../game/map.ts';

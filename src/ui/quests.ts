@@ -2,9 +2,9 @@
 // what to do next and what the journal says so far, the one quest paged by chapter. It only reads
 // game/quests.ts. The page layout is a pure function so the Node tests can check that every
 // quest's journal is shown whole.
-import type { Game, Screen } from '../app/game.ts';
-import type { Action } from '../app/input.ts';
-import { is } from '../app/input.ts';
+import type { Host, Screen } from './screen.ts';
+import type { Action } from './actions.ts';
+import { is } from './actions.ts';
 import { drawText, lineHeight } from '../lib/engine/text.ts';
 import { panel, wrap } from './draw.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, GREEN } from './palette.ts';
@@ -75,15 +75,15 @@ export class QuestScreen implements Screen {
   readonly overlay = true;
   private sel = 0;
   private sheet = 0;
-  constructor(g: Game) {
+  constructor(g: Host) {
     // Open on the quest that last changed, or the one last looked at, at its goal's chapter.
     this.sel = Math.max(0, this.list(g).findIndex((v) => v.def.id === g.questFocus));
     this.sheet = this.opening(g);
   }
-  private list(g: Game): QuestView[] { return questOrder(questLog(g.tables, g.world.state, g.party)); }
-  private sheets(g: Game): Sheet[] { const v = this.list(g)[this.sel]; return v ? questSheets(v, PAGE.w, PAGE.h) : []; }
-  private opening(g: Game): number { const v = this.list(g)[this.sel]; return v ? openingSheet(v, this.sheets(g)) : 0; }
-  update(g: Game, a: Action | null): void {
+  private list(g: Host): QuestView[] { return questOrder(questLog(g.tables, g.world.state, g.party)); }
+  private sheets(g: Host): Sheet[] { const v = this.list(g)[this.sel]; return v ? questSheets(v, PAGE.w, PAGE.h) : []; }
+  private opening(g: Host): number { const v = this.list(g)[this.sel]; return v ? openingSheet(v, this.sheets(g)) : 0; }
+  update(g: Host, a: Action | null): void {
     if (!a) return;
     if (is(a, 'cancel', 'journal')) { g.pop(); return; }
     const list = this.list(g);
@@ -97,7 +97,7 @@ export class QuestScreen implements Screen {
     g.questFocus = list[this.sel].def.id;
     this.sheet = this.opening(g);
   }
-  render(g: Game, ctx: CanvasRenderingContext2D): void {
+  render(g: Host, ctx: CanvasRenderingContext2D): void {
     const list = this.list(g);
     panel(ctx, BOX.x, BOX.y, BOX.w, BOX.h);
     drawText(ctx, 'QUEST LOG', 20, 18, { size: 1, color: BRASS });

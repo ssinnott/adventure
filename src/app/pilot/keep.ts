@@ -6,7 +6,7 @@
 // (`ChoiceScreen.options`), and presses the keys a player would: a goal is the navigator's to walk
 // (route.ts), a row is reached by `down` and taken by Space, and nothing is bought off screen.
 import type { Game } from '../game.ts';
-import { ExploreScreen } from '../game.ts';
+import { ExploreScreen } from '../../ui/explore.ts';
 import type { Action } from '../input.ts';
 import type { Feature } from '../../game/mapdef.ts';
 import type { Character, Party } from '../../game/party.ts';

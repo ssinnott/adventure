@@ -2,9 +2,9 @@
 // the resolver in game/combat.ts. Monster turns play out on a short timer so the log can be read. With
 // `auto` on, the game's bot (game/bot.ts) plays the company's turns on a timer of its own, by what the
 // fight has shown it, and presses Space at the end; any key takes the fight back.
-import type { Game, Screen } from '../app/game.ts';
-import type { Action } from '../app/input.ts';
-import { is } from '../app/input.ts';
+import type { Host, Screen } from './screen.ts';
+import type { Action } from './actions.ts';
+import { is } from './actions.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, menu } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect, logTail, COMBAT_LOG_LINES } from './frame.ts';
@@ -84,7 +84,7 @@ export class CombatScreen implements Screen {
     for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = 1 + Math.random() * 2.5; this.sparks.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 1, life: 10 + Math.random() * 8, col }); }
   }
 
-  private options(g: Game, who: number): { label: string; key: string; disabled: boolean }[] {
+  private options(g: Host, who: number): { label: string; key: string; disabled: boolean }[] {
     const c = g.party.members[who];
     const w = weaponOf(g.tables.items, c);
     const spells = castable(g.tables, g.party.members[who]);
@@ -98,19 +98,19 @@ export class CombatScreen implements Screen {
     ];
   }
   /** What the member may aim at: a weapon what it reaches, a spell anyone still in the fight. */
-  private targets(g: Game, who: number): number[] {
+  private targets(g: Host, who: number): number[] {
     const alive = aliveMonsters(this.state);
     return this.mode === 'target' ? alive.filter((i) => canReach(this.state, g.party.members[who], i)) : alive;
   }
-  private usable(g: Game, who: number): string[] {
+  private usable(g: Host, who: number): string[] {
     const c = g.party.members[who];
     return [...new Set([...c.pack, ...g.party.bag].filter((id) => item(g.tables.items, id).use && !item(g.tables.items, id).use!.food))];
   }
 
   /** The frames a delay counts: none while fights are played at once (`instant`, or the pilot's). */
-  private wait(g: Game, n: number): number { return CombatScreen.instant || g.pilot?.instant ? 0 : n; }
+  private wait(g: Host, n: number): number { return CombatScreen.instant || g.instant ? 0 : n; }
 
-  update(g: Game, a: Action | null): void {
+  update(g: Host, a: Action | null): void {
     this.step(g, a);
     // Once the tick's act is done the turn walks on, past anyone who cannot act and at a round's end into the next
     // round, here and not in the next frame drawn: a frame after it shows the turn that is to be played. Where the
@@ -120,7 +120,7 @@ export class CombatScreen implements Screen {
     for (const m of this.state.monsters) if (m.flash > 0) m.flash--;
   }
 
-  private step(g: Game, a: Action | null): void {
+  private step(g: Host, a: Action | null): void {
     const s = this.state;
     // A key while the bot fights takes the fight back, and is then handled as usual. Else the bot
     // presses Space on the finished fight itself, so it never waits there.
@@ -231,7 +231,7 @@ export class CombatScreen implements Screen {
     }
   }
 
-  render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
+  render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     const s = this.state;
     const v = LAYOUT.view;
     // Detect damage since the last frame for the flashes and sparks.

@@ -13,7 +13,7 @@
 //   FULLRUN=all node tools/test.ts fullrun       every chapter on the road: ten minutes a chapter at most, fair and omniscient each
 import { ok } from './lib.ts';
 import { headlessGame, headlessLoad, drive } from '../kit/headless.ts';
-import { ExploreScreen } from '../../src/app/game.ts';
+import { ExploreScreen } from '../../src/ui/explore.ts';
 import type { Game } from '../../src/app/game.ts';
 import { AREAS } from '../../src/content/index.ts';
 import { Pilot } from '../../src/app/pilot/pilot.ts';
