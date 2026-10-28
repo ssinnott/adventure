@@ -74,7 +74,7 @@ function luminary(w: Walk): void {
   p.flags[takenFlag('lanterns_niche')] = p.flags[doneFlag('lanterns_niche')] = 1;
   const q = GUILD_QUESTS.find((g) => g.id === 'lanterns_ring')!;
   const said = take(TABLES, q, w.world.state, p);
-  w.ok(said.length === 2 && said[0].startsWith(q.early![0]) && said[1] === 'Your rank with the Lanterns is now Luminary.' && rankOf('lanterns', p) === 4,
+  w.ok(said.length === 2 && said[0].startsWith(q.early![0]) && said[1] === 'Your rank with the Lanterns is now Luminary.' && rankOf(TABLES, 'lanterns', p) === 4,
     `the ring heard, the Lanterns' ask is paid at the taking, and a company that copied the Tiefzeche's words is made a Luminary (${said.join(' ').replace(/\n+/g, ' ')})`);
 }
 
@@ -483,10 +483,10 @@ function stoneRing(ok: (cond: boolean, msg: string) => void): void {
     ok(said[0].includes(words) && !said[0].includes(lesson) && said[1].includes(lesson) && said[2].includes(words) && !said[2].includes(lesson), `${who.name}'s own words come first, then his lesson to ${an(first)} of 19, once`);
     const young = at(18);
     ok(![talk(young), talk(young)].some((t) => t.includes(lesson)), `to a company of 18 ${who.name} says no lesson`);
-    ok(sought(questLog(v.world.state, v.party)).find((p) => p.at === 'highmoor_o7')?.who.includes(member.name) === true, `at 19 the ${cls} is sent to High Moor`);
+    ok(sought(questLog(TABLES, v.world.state, v.party)).find((p) => p.at === 'highmoor_o7')?.who.includes(member.name) === true, `at 19 the ${cls} is sent to High Moor`);
     v.party.gold = 4000;
     ok(teach(who.teaches!, v.party, v.world.state, 0).taught && prestigeOf(member) === 2 && className(member) === second && v.party.gold === 0
-      && questLog(v.world.state, v.party).find((x) => x.def.id === seekId(0, 2))?.done === true, `${who.name} makes ${an(second)} of ${an(first)} for 4,000 gold, and the seeking is done`);
+      && questLog(TABLES, v.world.state, v.party).find((x) => x.def.id === seekId(0, 2))?.done === true, `${who.name} makes ${an(second)} of ${an(first)} for 4,000 gold, and the seeking is done`);
   }
 
   // The box's groups, each won at its floor: the ravens on the cairn, the lights round the ring by
@@ -1232,7 +1232,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     const first = meet(drover, w.party, heard(w.world, drover)).text, then = meet(drover, w.party, heard(w.world, drover)).text;
     ok(first.includes('lights were out') && !first.includes('shield') && then.includes('"My grandfather\'s grandfather faced a shield with a troll\'s hide. Cut it how you liked, by morning it had closed."')
       && then.includes('"He took it up to the tops when he was old, and the tops kept him."') && !words.sets && !words.choice && box <= SAY_LINES
-      && !JSON.stringify(questLog(w.world.state, w.party)).includes('shield'),
+      && !JSON.stringify(questLog(TABLES, w.world.state, w.party)).includes('shield'),
       `the drover says nothing of the shield at his first meeting, his rumour of the lights, and at the next speaks of it: words only, in no quest, ${box} of his box's ${SAY_LINES} lines`);
     listen(w);
     delete w.party.flags.drover_met;

@@ -51,15 +51,15 @@ export interface Step { name: string; play: (w: Walk) => void; }
 export function newWalk(ok: Ok, seed = 4): Walk {
   const rng = makeRng(seed), party = defaultParty(TABLES, rng);
   const world = new World(TABLES, buildMaps(), party, rng);
-  return { world, party, news: [], level: 1, ok, marks: questMarks(questLog(world.state, party)) };
+  return { world, party, news: [], level: 1, ok, marks: questMarks(questLog(TABLES, world.state, party)) };
 }
 
 /** The one quest as the log shows it now, if it is in the log. */
-export const quest = (w: Walk): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def === THE_QUEST);
+export const quest = (w: Walk): QuestView | undefined => questLog(TABLES, w.world.state, w.party).find((v) => v.def === THE_QUEST);
 
 /** What the log announces since the last look, as the Game does after every action. */
 export function listen(w: Walk): string[] {
-  const log = questLog(w.world.state, w.party);
+  const log = questLog(TABLES, w.world.state, w.party);
   const said = questNews(w.marks, log).map((n) => n.text);
   w.marks = questMarks(log);
   w.news.push(...said);
@@ -259,7 +259,7 @@ export function pilotRun(chapter: Chapter, { until = chapter.done, cap = 200_000
   const t0 = performance.now(), at = (): boolean => holds(until, g.world.state, g.party);
   let ticks = 0, over = false;
   for (; ticks < cap && p.on && !at() && !over; ticks++) { drive(g, [null]); if (ticks % 100 === 0) over = performance.now() - t0 > budget; }
-  const st = g.world.state, goal = questLog(st, g.party).find((v) => v.def === THE_QUEST)?.goal ?? 'no goal shown', reached = at();
+  const st = g.world.state, goal = questLog(TABLES, st, g.party).find((v) => v.def === THE_QUEST)?.goal ?? 'no goal shown', reached = at();
   const capped = reached || !p.on ? '' : over ? 'budget' : ticks >= cap ? 'ticks' : '';
   return { seed, reached, on: p.on, done: holds(chapter.done, st, g.party), capped, ticks, secs: ((performance.now() - t0) / 1000).toFixed(1),
     where: `${g.world.zone?.name ?? g.maps[st.mapId]?.name ?? st.mapId} ${st.x},${st.y}`, level: companyLevel(g.party), goal, why: p.why[0] };
@@ -338,7 +338,7 @@ export function answerTo(w: Walk, map: string, p: Person, by: string | null | { 
 }
 
 /** The first page of the quest `id`, as the log shows it now. */
-export const page = (w: Walk, id: string): PageView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
+export const page = (w: Walk, id: string): PageView | undefined => questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === id)?.pages[0];
 
 /** The quest `id`'s goal as the log shows it now. */
 export const goal = (w: Walk, id: string): string => page(w, id)?.goal ?? '(no goal)';
@@ -434,7 +434,7 @@ export const stock = (d: MapDef, id: string): string => { const c = d.features!.
 export const taught = (map: string) => (mapOf(map).features ?? []).flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
 
 /** The quest `id` as the log shows it now. */
-export const log = (w: Walk, id: string): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+export const log = (w: Walk, id: string): QuestView | undefined => questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === id);
 
 /** Whether event or group `id` of `map` is there: the company taken to its square, and it placed on the map it is written on. */
 export function shows(w: Walk, map: string, id: string): boolean {

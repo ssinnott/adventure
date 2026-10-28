@@ -80,7 +80,7 @@ export class QuestScreen implements Screen {
     this.sel = Math.max(0, this.list(g).findIndex((v) => v.def.id === g.questFocus));
     this.sheet = this.opening(g);
   }
-  private list(g: Game): QuestView[] { return questOrder(questLog(g.world.state, g.party)); }
+  private list(g: Game): QuestView[] { return questOrder(questLog(g.tables, g.world.state, g.party)); }
   private sheets(g: Game): Sheet[] { const v = this.list(g)[this.sel]; return v ? questSheets(v, PAGE.w, PAGE.h) : []; }
   private opening(g: Game): number { const v = this.list(g)[this.sel]; return v ? openingSheet(v, this.sheets(g)) : 0; }
   update(g: Game, a: Action | null): void {

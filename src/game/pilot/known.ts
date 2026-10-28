@@ -191,7 +191,7 @@ export function knownOf(g: Game): Known {
       const key = logKey(w.state, g.party), last = LOGS.get(w.state);
       if (last?.key === key) return last.goals.map((q) => ({ ...q }));
       // The one quest's pages each show their own goal (#723): every page begun and not done, the earliest first, as the journal's pages turn.
-      const goals = questLog(w.state, g.party).flatMap((v) => {
+      const goals = questLog(g.tables, w.state, g.party).flatMap((v) => {
         if (v.done || v.goal === null) return [];
         const shown = v.def.chapters ? v.pages.filter((pg) => pg.goal !== null && !pg.done && (pg.begun || pg.goal === v.goal)) : [];
         if (shown.length > 1) return shown.map((pg) => { const map = pg.def.goals.find((q) => q.text === pg.goal)?.at; return map === undefined ? { quest: v.def.id, text: pg.goal! } : { quest: v.def.id, text: pg.goal!, map }; });

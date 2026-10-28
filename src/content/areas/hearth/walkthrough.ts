@@ -277,12 +277,12 @@ export const walkthrough: Walkthrough = (ok) => {
   // and are gone, and the one who gave it speaks of it after.
   const [aelfric, talwyn, pasco] = ['Sergeant Aelfric', 'Talwyn', 'Pasco'].map(person);
   const asks = [aelfric, talwyn, pasco].map((p) => { w.world.travel('hearthisle_h6', p.x, p.y); return meet(p, w.party, heard(w.world, p)).choice?.ask ?? ''; });
-  ok(asks.join('|') === 'Take the Wardens\' badge down?|Take the hold\'s seal down?|Take Tallis\'s tally down?' && !!w.party.flags[PILGRIMS] && !!questLog(w.world.state, w.party).find((v) => v.def.id === 'bowl_pilgrims' && !v.done),
+  ok(asks.join('|') === 'Take the Wardens\' badge down?|Take the hold\'s seal down?|Take Tallis\'s tally down?' && !!w.party.flags[PILGRIMS] && !!questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === 'bowl_pilgrims' && !v.done),
     'Aelfric, Talwyn and Pasco each ask their token carried down, and the quest begins');
   const take = (p: Person, w: Walk): string => answer(TABLES.items, p.choice!.answers.find((a) => a.label === 'Take it.')!, w.party);
   ok(take(aelfric, w).includes('pins it to your sleeve') && !!w.party.flags[TOKEN_COUSIN] && w.party.bag.includes('wardens_badge')
     && !w.world.present(talwyn) && !w.world.present(pasco) && w.world.present(aelfric)
-    && !!questLog(w.world.state, w.party).find((v) => v.def.id === 'bowl_pilgrims' && !v.done && v.goal === 'Carry the token down the stair under the temple.'),
+    && !!questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === 'bowl_pilgrims' && !v.done && v.goal === 'Carry the token down the stair under the temple.'),
     'the Wardens\' badge taken, Talwyn and Pasco keep theirs and are gone, and the quest goes on down the stair with the badge');
   w.world.travel('hearthisle_h6', aelfric.x, aelfric.y);
   ok(meet(aelfric, w.party, heard(w.world, aelfric)).text.includes('Keep it on your sleeve'), 'Aelfric speaks of the badge after');
@@ -433,13 +433,13 @@ export const walkthrough: Walkthrough = (ok) => {
   see(w, 'hearthfane:hf_vestry');
   const sacristan = inFane('The sacristan');
   const talk = (p: Person) => { w.world.travel('hearthfane', p.x, p.y); return meet(p, w.party, heard(w.world, p)); };
-  const lamps = questLog(w.world.state, w.party);
+  const lamps = questLog(TABLES, w.world.state, w.party);
   ok(!lamps.some((v) => v.def.id === 'lamps') && talk(sacristan).text.includes('the pillar says the way') && !!w.party.flags[LAMPS]
-    && !!questLog(w.world.state, w.party).find((v) => v.def.id === 'lamps' && !v.done), 'the sacristan under the vestry table wants the lamps out in the pillar\'s order, and the quest begins');
+    && !!questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === 'lamps' && !v.done), 'the sacristan under the vestry table wants the lamps out in the pillar\'s order, and the quest begins');
   listen(w);
   // The goal points at the pillar and does not tell its order: no goal of any quest names the four lamps in sequence (#795).
   const orderTold = QUESTS.flatMap((x): readonly QuestDef[] => x.chapters ?? [x]).flatMap((d) => d.goals).filter((g) => /\bSea\b.*\bShore\b.*\bHouse\b.*\bHearth\b/i.test(g.text));
-  ok(!orderTold.length && questLog(w.world.state, w.party).find((v) => v.def.id === 'lamps')?.goal === 'Put out the four lamps in the order the pillar gives.',
+  ok(!orderTold.length && questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === 'lamps')?.goal === 'Put out the four lamps in the order the pillar gives.',
     `the sacristan's goal points at the pillar, and no goal names the four lamps in their order${orderTold.length ? ' -> ' + orderTold.map((g) => g.text).join('; ') : ''}`);
 
   // A lamp out of its turn, the Shore first: the others flare, the swarm comes and the lamp burns on; the
@@ -463,7 +463,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // says so; after all four in the pillar's order the key's offer begins it. Each on a walk of its own.
   const apart = (n: Walk) => {
     const say = (p: Person) => { n.world.travel('hearthfane', p.x, p.y); return meet(p, n.party, heard(n.world, p)); };
-    const log = () => questLog(n.world.state, n.party).find((v) => v.def.id === 'lamps');
+    const log = () => questLog(TABLES, n.world.state, n.party).find((v) => v.def.id === 'lamps');
     return { n, say, pinch: (p: Person): string => answer(TABLES.items, say(p).choice!.answers[0], n.party), log, asked: () => !!log()?.pages[0].entries.some((e) => e.id === 'asked') };
   };
   const first = apart(newWalk(ok));
@@ -492,7 +492,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const offer = talk(sacristan);
   const took = answer(TABLES.items, offer.choice!.answers.find((a) => a.label === 'Take the key.')!, w.party);
   ok(offer.text.includes('Gone. Every one of them') && took.includes('warm from his belt') && w.party.bag.includes(FANE_KEY) && !!w.party.flags[LAMPS_KEY]
-    && w.party.members[0].xp - xp === 500 && !!questLog(w.world.state, w.party).find((v) => v.def.id === 'lamps' && v.done), 'the sacristan gives the treasury\'s key, the company 3,000 experience between them, and the quest is done');
+    && w.party.members[0].xp - xp === 500 && !!questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === 'lamps' && v.done), 'the sacristan gives the treasury\'s key, the company 3,000 experience between them, and the quest is done');
   listen(w);
   ok(talk(sacristan).text.includes('Dark again'), 'after, he trims the wicks and lights none');
   ok(treasury() === 'moved' && w.world.state.x === 11 && w.world.state.y === 10, 'the treasury\'s door opens to the sacristan\'s key');
@@ -658,7 +658,7 @@ export const walkthrough: Walkthrough = (ok) => {
   see(b, 'underdeep:ud_crack');
   const widened = pay(b, knocker, 'Widen it.');
   ok(Math.abs(widened - 4000 / 6) < 1 && !!b.party.flags[CRACK_WIDE] && b.party.bag.includes('old_lanterns_staff') && b.world.liveGroups().some((g) => g.def.id === 'ud_knockers3')
-    && !!questLog(b.world.state, b.party).find((v) => v.def.id === 'crack' && v.done), 'or widened: the Old Lantern\'s Staff from the swallowed hall, 4,000 experience, and the knockers stay');
+    && !!questLog(TABLES, b.world.state, b.party).find((v) => v.def.id === 'crack' && v.done), 'or widened: the Old Lantern\'s Staff from the swallowed hall, 4,000 experience, and the knockers stay');
 
   // Up the main way to the row-10 way, its guard won at 30, and the CREW ONLY door from the inside (60):
   // its marks on the way west, read by a reader, then the feet on the square before it, which begin the
@@ -689,7 +689,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const c2 = newWalk(ok);
   see(c2, 'underdeep:ud_feet');
   const shut = pay(c2, crewDoor, 'Go through and shut it.');
-  ok(Math.abs(shut - 2000 / 6) < 1 && !!c2.party.flags[CREW_SHUT] && !c2.party.flags[CREW_OPEN] && !!questLog(c2.world.state, c2.party).find((v) => v.def.id === 'crew_only' && v.done),
+  ok(Math.abs(shut - 2000 / 6) < 1 && !!c2.party.flags[CREW_SHUT] && !c2.party.flags[CREW_OPEN] && !!questLog(TABLES, c2.world.state, c2.party).find((v) => v.def.id === 'crew_only' && v.done),
     'or opened, gone through and shut: the same 2,000, and the quest done');
   walkThrough(c2, 'underdeep', 3, 10, WEST, 'deep_mines3', 1);
 
@@ -727,7 +727,7 @@ export const walkthrough: Walkthrough = (ok) => {
   for (const m of unheld.party.members) m.level = 30;
   unheld.party.flags[PILGRIMS] = 1;
   fight(unheld, 'underdeep2:ud2_rearguard');
-  const carried = questLog(unheld.world.state, unheld.party).find((v) => v.def.id === 'bowl_pilgrims');
+  const carried = questLog(TABLES, unheld.world.state, unheld.party).find((v) => v.def.id === 'bowl_pilgrims');
   ok(!!carried?.done && carried.pages[0].entries.some((e) => e.id === 'none') && !unheld.world.present(captain), 'with no token and no verdict the rearguard holds the landing; won at 30, the quest is done: we carried none');
   // And a verdict that carried outranks a token: the hold's elves hold it though the company wears the badge.
   const held = newWalk(ok);
@@ -904,11 +904,11 @@ function elevenKept(ok: (cond: boolean, msg: string) => void): void {
     const who = w.party.members.findIndex((m) => m.cls === 'cleric'), cleric = w.party.members[who];
     cleric.xp = xpForLevel(27); cleric.level = 27; takePrestige(cleric); takePrestige(cleric);
     w.level = 29;
-    const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+    const log = (id: string) => questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === id);
     const entered = (id: string): string => (log(id)?.pages.flatMap((p) => p.entries.map((e) => e.id)) ?? []).join();
     const talk = (): string => { w.world.travel('hearthisle_i6', anchoress.x, anchoress.y); const said = meet(anchoress, w.party, heard(w.world, anchoress)).text; listen(w); return said; };
     const bar = (): string => barOf(teaching, cleric, w.party, w.world.state);
-    const sent = sought(questLog(w.world.state, w.party));
+    const sent = sought(questLog(TABLES, w.world.state, w.party));
     ok(sent.find((s) => s.at === 'hearthisle_i6')?.who.includes(cleric.name) === true && teaching.seek?.includes(PRESTIGES.cleric.titles[2]) === true && log(seekId(who, 3))?.done === false && !log('eleven_kept'),
       `${how}: at 27 with the second, ${cleric.name} is sent to the anchoress at Anchorhold, the seeking naming the third, and the quest is not in the log`);
 
@@ -959,7 +959,7 @@ function elevenKept(ok: (cond: boolean, msg: string) => void): void {
   const short = (how: string, make: (w: Walk) => void, rise?: (w: Walk) => void): void => {
     const w = newWalk(ok);
     make(w);
-    const log = (id: string) => questLog(w.world.state, w.party).find((v) => v.def.id === id);
+    const log = (id: string) => questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === id);
     const talk = (): string => { w.world.travel('hearthisle_i6', anchoress.x, anchoress.y); const said = meet(anchoress, w.party, heard(w.world, anchoress)).text; listen(w); return said; };
     const [first, again] = [talk(), talk()];
     ok(first === anchoress.lines.join('\n\n') && again === first && !w.party.flags[KEPT_ASKED] && !log('eleven_kept'),

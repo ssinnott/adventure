@@ -263,7 +263,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     w.world.travel('downs_f3', mender.x, mender.y);
     const first = meet(mender, w.party, heard(w.world, mender)).text, then = meet(mender, w.party, heard(w.world, mender)).text;
     ok(first === own && then === [own, ...gran].join('\n\n') && words.lines.slice(-2).join() === gran.join() && gran.every((l) => logLines(l).length <= 2)
-      && !words.sets && !words.choice && lines <= SAY_LINES && !JSON.stringify(questLog(w.world.state, w.party)).includes('hole worn'),
+      && !words.sets && !words.choice && lines <= SAY_LINES && !JSON.stringify(questLog(TABLES, w.world.state, w.party)).includes('hole worn'),
       `the old man says nothing of the stone at his first meeting, his song, and at the next sings it and speaks of his gran's stone: words only, in no quest, ${lines} of his box's ${SAY_LINES} lines`);
     listen(w);
     delete w.party.flags.netmender_met;
@@ -1248,7 +1248,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   ok(first.includes('lamp') && first !== then && !lesson(none).includes(first.slice(0, 40)), 'Mottram holds a lamp to a paladin of 11 once, and to a company with none never');
 
   // At 11, the old city: the knight to the keep, the paladin and the bard to Helmstow, each taught.
-  const where = (p: Party, map: string) => sought(questLog(at11.world.state, p)).find((s) => s.at === map)?.who ?? [];
+  const where = (p: Party, map: string) => sought(questLog(TABLES, at11.world.state, p)).find((s) => s.at === map)?.who ?? [];
   const named = (p: Party, cls: string) => p.members.find((c) => c.cls === cls)!.name;
   ok(where(at11.party, 'keep').includes(named(at11.party, 'knight')) && ['paladin', 'bard'].every((c) => where(at11.party, 'harrow').includes(named(at11.party, c))), 'at 11 the knight is sent to the keep, and the paladin and the bard to Helmstow');
   const teachAll = (w: Walk, how: string) => {
@@ -1256,7 +1256,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
       const who = w.party.members.findIndex((c) => c.cls === p.teaches!.cls), title = PRESTIGES[p.teaches!.cls].titles[0];
       w.party.gold = 1000;
       ok(teach(p.teaches!, w.party, w.world.state, who).taught && prestigeOf(w.party.members[who]) === 1 && w.party.gold === 0
-        && questLog(w.world.state, w.party).find((v) => v.def.id === seekId(who, 1))?.done === true, `${how}, ${p.name.split(',')[0]} makes ${/^[AEIOU]/.test(title) ? 'an' : 'a'} ${title} for 1,000 gold, and the seeking is done`);
+        && questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === seekId(who, 1))?.done === true, `${how}, ${p.name.split(',')[0]} makes ${/^[AEIOU]/.test(title) ? 'an' : 'a'} ${title} for 1,000 gold, and the seeking is done`);
     }
   };
   teachAll(at11, 'at 11');
@@ -1286,7 +1286,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   const knight = at19.party.members.findIndex((c) => c.cls === 'knight');
   takePrestige(at19.party.members[knight]);
   at19.party.flags.q_salt_done = 1;
-  ok(sought(questLog(at19.world.state, at19.party)).find((s) => s.at === 'downs_f2')?.who.includes(at19.party.members[knight].name) === true, 'at 19 the knight is sent to Coldharbour\'s box');
+  ok(sought(questLog(TABLES, at19.world.state, at19.party)).find((s) => s.at === 'downs_f2')?.who.includes(at19.party.members[knight].name) === true, 'at 19 the knight is sent to Coldharbour\'s box');
   at19.party.gold = 4000;
   ok(there(at19, 'downs_f2', sw) && teach(sw.teaches!, at19.party, at19.world.state, knight).taught && prestigeOf(at19.party.members[knight]) === 2 && at19.party.gold === 0,
     `he makes a ${PRESTIGES.knight.titles[1]} for 4,000 gold`);

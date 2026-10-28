@@ -38,12 +38,12 @@ export function seeking(): void {
   {
     const r = makeRng(807), p = defaultParty(TABLES, r), w = new World(TABLES, buildMaps(), p, r), cassian = p.members[5];
     const magus = TRAINERS().find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3);
-    const view = (): ReturnType<typeof questLog>[number] | undefined => questLog(w.state, p).find((v) => v.def.id === seekId(5, 3));
+    const view = (): ReturnType<typeof questLog>[number] | undefined => questLog(TABLES, w.state, p).find((v) => v.def.id === seekId(5, 3));
     cassian.level = 26; takePrestige(cassian); takePrestige(cassian);
     const under = view();
     cassian.level = 27;
     ok(!!magus && magus.map === 'wold_b9' && cassian.cls === 'sorcerer' && !under && view()?.goal === `Find ${magus.name} in ${magus.place}.` && view()?.pages[0].entries[0]?.text === magus.teaches.seek
-      && sought(questLog(w.state, p)).some((s) => s.at === 'wold_b9' && s.who.includes(cassian.name)),
+      && sought(questLog(TABLES, w.state, p)).some((s) => s.at === 'wold_b9' && s.who.includes(cassian.name)),
       `at 26 nothing, and at 27 with the second Cassian is sent to the scholar (${view()?.goal}), the world map marking his box`);
     const asks = QUESTS.flatMap((q): readonly QuestDef[] => q.chapters ?? [q]).find((q) => q.id === magus?.teaches.asks);
     const first = [asks?.start ?? []].flat()[0] as QuestCond | undefined;

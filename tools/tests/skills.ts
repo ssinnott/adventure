@@ -118,7 +118,7 @@ export function skills(): void {
   // The rows of #857: the Cartographers' Cartographer and Pathfinder, the Compact's Lockpick, Merchant and Navigator.
   const five = (Object.keys(FIVE) as SkillId[]).filter((id) => SKILLS[id].text === FIVE[id] && SKILLS[id].guild === (id === 'cartographer' || id === 'pathfinder' ? 'cartographers' : 'compact'));
   ok(five.length === 5, `Cartographer and Pathfinder are the Cartographers' and Lockpick, Merchant and Navigator the Compact's (${five.map((id) => `"${SKILLS[id].text}"`).join(' / ')})`);
-  const wide = built.map((s) => { const p = company((q) => { q.gold = SKILL_PRICE; q.flags[rankFlag(s.guild)] = 1; q.members[0].name = 'M'.repeat(NAME_MAX); }); return { skill: s.name, lines: logLines(learn(s.id, p, 0).line).length }; });
+  const wide = built.map((s) => { const p = company((q) => { q.gold = SKILL_PRICE; q.flags[rankFlag(s.guild)] = 1; q.members[0].name = 'M'.repeat(NAME_MAX); }); return { skill: s.name, lines: logLines(learn(TABLES, s.id, p, 0).line).length }; });
   ok(wide.every((w) => w.lines >= 1 && w.lines <= 2), `a member with the longest name learns any skill in two lines of the log at most (${wide.map((w) => `${w.skill} ${w.lines}`).join(', ')})`);
 
   // Every hall teaches all its guild has built: each guild's three.
@@ -139,23 +139,23 @@ export function skills(): void {
   {
     const party = company(), maren = party.members[4];
     party.gold = 5000;
-    ok(!mayLearn('linguist', party) && !learn('linguist', party, 4).taught && party.gold === 5000 && !skillsOf(maren).length, 'a company not of the Lanterns is taught nothing');
+    ok(!mayLearn(TABLES, 'linguist', party) && !learn(TABLES, 'linguist', party, 4).taught && party.gold === 5000 && !skillsOf(maren).length, 'a company not of the Lanterns is taught nothing');
     party.flags[rankFlag('lanterns')] = 1;
     const offers = skillOffers('linguist', party);
     ok(offers.length === 6 && offers.every((o, i) => o.who === i && o.skill === 'linguist' && !o.bar && o.price === SKILL_PRICE) && skillLine(offers[4], party) === `Maren\t${SKILL_PRICE}g` && skillRow('linguist') === `Linguist\t${SKILL_PRICE}g\tReads Kiln-script.`,
       `a Taper is offered it for each of the six: the hall's row with its price and text, then each member's with the price (${skillRow('linguist').replace(/\t/g, ' | ')} / ${skillLine(offers[4], party).replace(/\t/g, ' | ')})`);
-    const taught = learn('linguist', party, 4);
+    const taught = learn(TABLES, 'linguist', party, 4);
     ok(taught.taught && taught.line === 'Maren learns Linguist.' && party.gold === 5000 - SKILL_PRICE && hasSkill(maren, 'linguist') && skillNames(maren).join() === 'Linguist',
       `and Maren learns it for ${SKILL_PRICE} ("${taught.line}"), and the sheet lists it`);
-    ok(skillBar('linguist', maren, party) === 'known' && !learn('linguist', party, 4).taught && party.gold === 5000 - SKILL_PRICE && skillsOf(maren).length === 1, 'learnt, it is not taught again');
+    ok(skillBar('linguist', maren, party) === 'known' && !learn(TABLES, 'linguist', party, 4).taught && party.gold === 5000 - SKILL_PRICE && skillsOf(maren).length === 1, 'learnt, it is not taught again');
     party.gold = SKILL_PRICE - 1;
-    ok(skillBar('linguist', party.members[0], party) === 'not enough gold' && !learn('linguist', party, 0).taught, 'short of the price, nothing changes');
+    ok(skillBar('linguist', party.members[0], party) === 'not enough gold' && !learn(TABLES, 'linguist', party, 0).taught, 'short of the price, nothing changes');
   }
   // A dwarf is born to Linguist: it has it without learning, the sheet says so, and the hall says why it need not.
   {
     const party = company((p) => { p.members[1].race = 'dwarf'; p.flags[rankFlag('lanterns')] = 1; p.gold = 5000; });
     const idris = party.members[1];
-    ok(hasSkill(idris, 'linguist') && !skillsOf(idris).length && skillNames(idris).join() === 'Linguist' && skillBar('linguist', idris, party) === 'born to it' && !learn('linguist', party, 1).taught,
+    ok(hasSkill(idris, 'linguist') && !skillsOf(idris).length && skillNames(idris).join() === 'Linguist' && skillBar('linguist', idris, party) === 'born to it' && !learn(TABLES, 'linguist', party, 1).taught,
       'a dwarf has Linguist unlearnt, the sheet lists it, and the hall will not sell it');
     const others = party.members.filter((m) => m !== idris).map((m) => `${m.name} ${skillNames(m).join('+') || 'none'}`).join(', ');
     ok(others === 'Bram none, Wren Perception+Pathfinder, Ottilie Perception+Lockpick, Maren none, Cassian none',
@@ -166,7 +166,7 @@ export function skills(): void {
   {
     const answers = PEOPLES.map((race) => {
       const party = company((p) => { for (const m of p.members) m.race = race; p.flags[rankFlag('lanterns')] = 1; p.gold = 5000; }), c = party.members[0];
-      const isBorn = race === 'elf' || race === 'gnome', had = hasSkill(c, 'perception'), listed = skillNames(c).includes('Perception'), bar = skillBar('perception', c, party), taught = learn('perception', party, 0).taught;
+      const isBorn = race === 'elf' || race === 'gnome', had = hasSkill(c, 'perception'), listed = skillNames(c).includes('Perception'), bar = skillBar('perception', c, party), taught = learn(TABLES, 'perception', party, 0).taught;
       const fine = had === isBorn && listed === isBorn && bar === (isBorn ? 'born to it' : '') && taught === !isBorn && hasSkill(c, 'perception') && party.gold === (isBorn ? 5000 : 5000 - SKILL_PRICE);
       return { fine, said: `${race}: ${bar || 'sold'}${fine ? '' : ' WRONG'}` };
     });
@@ -177,7 +177,7 @@ export function skills(): void {
   for (const [id, cls] of [['pathfinder', 'ranger'], ['lockpick', 'thief']] as const) {
     const answers = KINDS_OF.map((k) => {
       const party = company((p) => { for (const m of p.members) { m.cls = k; m.race = 'human'; } p.flags[rankFlag(SKILLS[id].guild)] = 1; p.gold = 5000; }), c = party.members[0];
-      const isBorn = k === cls, had = hasSkill(c, id), listed = skillNames(c).includes(SKILLS[id].name), bar = skillBar(id, c, party), taught = learn(id, party, 0).taught;
+      const isBorn = k === cls, had = hasSkill(c, id), listed = skillNames(c).includes(SKILLS[id].name), bar = skillBar(id, c, party), taught = learn(TABLES, id, party, 0).taught;
       const fine = had === isBorn && listed === isBorn && bar === (isBorn ? 'born to it' : '') && taught === !isBorn && hasSkill(c, id) && party.gold === (isBorn ? 5000 : 5000 - SKILL_PRICE);
       return { fine, said: `${k}: ${bar || 'sold'}${fine ? '' : ' WRONG'}` };
     });
@@ -188,17 +188,17 @@ export function skills(): void {
   for (const [id, who] of [['mountaineer', 0], ['swimmer', 3], ['perception', 0], ['spirit_sense', 4], ['danger_sense', 1], ['arms_master', 5], ['cartographer', 1], ['pathfinder', 0], ['lockpick', 4], ['merchant', 5], ['navigator', 2]] as const) {
     const s = SKILLS[id], other = (Object.keys(BUILT) as GuildId[]).find((g) => g !== s.guild && BUILT[g].length)!;
     const party = company((p) => { p.gold = 5000; p.flags[rankFlag(other)] = 1; }), m = party.members[who], next = who ? 0 : 1;
-    ok(!mayLearn(id, party) && !learn(id, party, who).taught && party.gold === 5000 && party.members.every((c) => !skillsOf(c).length), `${s.name}: a company of the ${other} and not of the ${s.guild} is taught nothing`);
+    ok(!mayLearn(TABLES, id, party) && !learn(TABLES, id, party, who).taught && party.gold === 5000 && party.members.every((c) => !skillsOf(c).length), `${s.name}: a company of the ${other} and not of the ${s.guild} is taught nothing`);
     party.flags[rankFlag(s.guild)] = 1;
     const offers = skillOffers(id, party);
     ok(offers.length === 6 && offers.every((o, i) => o.who === i && o.skill === id && o.price === SKILL_PRICE && o.bar === (bornTo(party.members[i], id) ? 'born to it' : '')) && skillLine(offers[who], party) === `${m.name}\t${SKILL_PRICE}g`,
       `${s.name}: a company of the ${s.guild} is offered it for each of the six but one born to it (${offers.map((o) => skillLine(o, party).replace('\t', ' ')).join(', ')})`);
-    const taught = learn(id, party, who);
+    const taught = learn(TABLES, id, party, who);
     ok(taught.taught && taught.line === `${m.name} learns ${s.name}.` && party.gold === 5000 - SKILL_PRICE && hasSkill(m, id) && skillNames(m).includes(s.name) && party.members.filter((c) => c !== m).every((c) => hasSkill(c, id) === bornTo(c, id)),
       `${s.name}: ${m.name} learns it for ${SKILL_PRICE} ("${taught.line}"), and the sheet lists it, and none of the others has it but by birth`);
-    ok(skillBar(id, m, party) === 'known' && !learn(id, party, who).taught && party.gold === 5000 - SKILL_PRICE && skillsOf(m).length === 1, `${s.name}: learnt, it is not taught again`);
+    ok(skillBar(id, m, party) === 'known' && !learn(TABLES, id, party, who).taught && party.gold === 5000 - SKILL_PRICE && skillsOf(m).length === 1, `${s.name}: learnt, it is not taught again`);
     party.gold = SKILL_PRICE - 1;
-    ok(skillBar(id, party.members[next], party) === 'not enough gold' && !learn(id, party, next).taught && !skillsOf(party.members[next]).length, `${s.name}: short of the price, nothing changes`);
+    ok(skillBar(id, party.members[next], party) === 'not enough gold' && !learn(TABLES, id, party, next).taught && !skillsOf(party.members[next]).length, `${s.name}: short of the price, nothing changes`);
   }
   // Mountaineer and Swimmer, which partyCan reads through `hasSkill`: a member of any people has one
   // only by learning it, and the company climbs or swims by it only while that member stands.
@@ -422,7 +422,7 @@ function fits(): void {
   const rows = [...ids.map(skillRow), LEAVE_SKILLS, ...offered];
   const cut = rows.filter((r) => { const { label, value } = optionParts(r); return measureText(label) > columnLabelWidth(SIDE_W, value, true); });
   ok(values.size === 4 && !cut.length, `every row of the skill menus fits the ${SIDE_W} px panel: each skill's name beside its price, and a name of ${NAME_MAX} ${widest}s beside each of ${[...values].join(', ')}${cut.length ? ' -> cut: ' + cut.map((r) => r.replace(/\t/g, ' ')).join('; ') : ''}`);
-  const taught = ids.map((id) => learn(id, company((q) => { q.flags[rankFlag(SKILLS[id].guild)] = 1; q.gold = SKILL_PRICE; }), 0).line);
+  const taught = ids.map((id) => learn(TABLES, id, company((q) => { q.flags[rankFlag(SKILLS[id].guild)] = 1; q.gold = SKILL_PRICE; }), 0).line);
   const all = p.members[1];
   all.skills = [...ids];
   const lines = skillsLines(all), over = lines.filter((l) => measureText(l) > SHEET_COL_W);

@@ -33,7 +33,7 @@ export function people(): void {
   const fresh = (t: Tables = TABLES): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(t, rng); return { party, world: new World(t, buildMaps(), party, rng) }; };
   // The log's pages begun, a side quest or a chapter of the one quest each, keyed by their ids.
   const pages = (s: { party: Party; world: World }): { id: string; page: PageView }[] =>
-    questLog(s.world.state, s.party).flatMap((v) => v.pages.filter((p) => p.begun).map((page) => ({ id: v.def.chapters ? `${v.def.id}/${page.def.id}` : v.def.id, page })));
+    questLog(TABLES, s.world.state, s.party).flatMap((v) => v.pages.filter((p) => p.begun).map((page) => ({ id: v.def.chapters ? `${v.def.id}/${page.def.id}` : v.def.id, page })));
   const logKeys = (s: { party: Party; world: World }): string[] => pages(s).flatMap(({ id, page }) => [`${id}${page.done ? ' done' : ''}`, ...page.entries.map((e) => `${id}:${e.id}`)]);
 
   // Every hand-in, carried at the first meeting, is taken there.

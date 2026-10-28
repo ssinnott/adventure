@@ -89,7 +89,7 @@ const satisfy = (s: { party: Party; world: World }, c: QuestCond): void => {
     if (who) { who.level = Math.max(who.level, m.level ?? 0); while (prestigeOf(who) < (m.prestige ?? 0)) takePrestige(who); }
   }
 };
-const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
+const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(TABLES, s.world.state, s.party).find((v) => v.def.id === id);
 const page = (s: { party: Party; world: World }, q: LogQuest, c: QuestDef): PageView | undefined => view(s, q.id)?.pages.find((p) => p.def === c);
 
 /**
@@ -286,7 +286,7 @@ function chapters(): void {
     for (const f of ['q_ashcombe_done', 'q_wenna', 'q_grove', 'q_greywater']) s.party.flags[f] = 1;
     stateFor(s.world, 'downs_e3').used.e3_log = 1;
     s.party.bag.push('meridian_journal');
-    const log = questLog(s.world.state, s.party);
+    const log = questLog(TABLES, s.world.state, s.party);
     const one = log.find((v) => v.def === THE_QUEST);
     ok(log.map((v) => v.def.title).join(', ') === 'The Dimming, The Cargo Ledger, The Lost Expedition', `the log lists the one quest and the two side quests (${log.map((v) => v.def.title).join(', ')})`);
     ok(one !== undefined && !one.done && one.pages.map((p) => `${p.def.title}${p.done ? ' (done)' : ''}`).join(', ') === 'The Quiet Farm (done), The Grove Stone' && one.focus === 1 && /under the Grove/.test(one.goal ?? ''),
@@ -330,7 +330,7 @@ function walk(): void {
     const rng = makeRng(4);
     const party = defaultParty(TABLES, rng);
     const world = new World(TABLES, buildMaps(), party, rng);
-    const log = (): QuestView[] => questLog(world.state, party);
+    const log = (): QuestView[] => questLog(TABLES, world.state, party);
     const quest = (id: string): QuestView => log().find((v) => v.def.id === id)!;
     const chapter = (id: string): PageView => quest(THE_QUEST.id).pages.find((p) => p.def.id === id)!;
     const goal = (): string => quest(THE_QUEST.id).goal ?? '';
@@ -359,7 +359,7 @@ function walk(): void {
     takeItem(party, 'greywater_ledger'); party.flags.q_greywater_done = 1;
     ok(news() === 'Quest complete: The Cargo Ledger.' && /pass/.test(goal()), 'the second hand-in finishes the ledger and leaves the one quest as it was');
     const data = deserialize(serialize(world.state, party, 1));
-    const reloaded = questLog(data.world, data.party);
+    const reloaded = questLog(TABLES, data.world, data.party);
     ok(JSON.stringify(reloaded) === JSON.stringify(log()) && questNews(marks, reloaded).length === 0, 'a save carries the quest log without storing it, and a reload is not news');
     world.travel('thornmark', 1, 9, 1);
     party.flags.q_grove = 1;

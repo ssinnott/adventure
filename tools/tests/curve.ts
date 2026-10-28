@@ -9,7 +9,7 @@
 // its country's window, and what it pays is a figure, counted in no clear; so is an enclave (#845),
 // whose band stands over its box's, shown on the fixture lair beside Saltreach. Pay is booked where it
 // is paid, and each quest a clear counts that belongs to another area is a figure too, printed.
-import { AREAS, ATLAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
+import { AREAS, ATLAS, MAP_DEFS, MONSTERS, ITEMS, TABLES } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
 import { CURVE, MEMBERS, xpBudget, goldBudget } from '../../src/content/progression.ts';
@@ -277,7 +277,7 @@ function crossBooked(id: string, maps: readonly Pick<MapDef, 'id' | 'name' | 'fe
     const deeds = [q.goal ?? []].flat().flatMap((c) => [c.seen ?? [], c.slain ?? [], c.visited ?? []].flat().map((ref) => ref.split(':')[0]));
     const away = [...new Set(deeds.flatMap((m) => areaOf.get(m) ?? []))].filter((a) => a !== id);
     if (away.length && (q.pay.xp || q.pay.gold)) {
-      out.push(`${id}: its clear counts ${said(q.title)}'s ${pays(q.pay.xp ?? 0, q.pay.gold ?? 0)}, ${guildName(q.guild)}'s quest paid at any hall, its deed in ${away.map((a) => said(areaName(a))).join(' and ')}`);
+      out.push(`${id}: its clear counts ${said(q.title)}'s ${pays(q.pay.xp ?? 0, q.pay.gold ?? 0)}, ${guildName(TABLES.guilds, q.guild)}'s quest paid at any hall, its deed in ${away.map((a) => said(areaName(a))).join(' and ')}`);
     }
   }
   return out;

@@ -57,7 +57,7 @@ export function guilds(): void {
 
   { // A stranger, then a member.
     const { party, world } = fresh();
-    ok(rankOf('wardens', party, FIXTURE) === 0 && rankName('wardens', 0) === null, 'a new company has no rank');
+    ok(rankOf('wardens', party, FIXTURE) === 0 && rankName(TABLES.guilds, 'wardens', 0) === null, 'a new company has no rank');
     ok(ids(offered('wardens', party, FIXTURE)) === 'fx_first', `a stranger is offered the first task alone (${ids(offered('wardens', party, FIXTURE))})`);
     ok(report(TABLES, 'wardens', world.state, party, FIXTURE).length === 0, 'a report with nothing done pays nothing');
     ok(take(TABLES, FIXTURE[0], world.state, party, FIXTURE).length === 0 && !!party.flags[takenFlag('fx_first')], 'taking the first task sets its flag and pays nothing yet');
@@ -180,10 +180,10 @@ export function guilds(): void {
   for (const g of new Set(GUILD_QUESTS.map((q) => q.guild))) {
     const { party } = fresh();
     for (const q of GUILD_QUESTS) if (q.after) party.flags[q.after] = 1;
-    for (let offers = offered(g, party); offers.length; offers = offered(g, party)) for (const q of offers) party.flags[takenFlag(q.id)] = party.flags[doneFlag(q.id)] = 1;
-    const r = rankOf(g, party), built = Math.max(...GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank)) + 1;
-    ok(r === built, `${g}: its quests, done as the hall offers them, raise a company to rank ${built}, ${rankName(g, built)} (${rankName(g, r) ?? 'none'})`);
-    if (ACT_I.includes(g)) ok(built >= ACT_I_RANK, `${g}: Act I takes it to rank ${ACT_I_RANK}, ${rankName(g, ACT_I_RANK)} (${rankName(g, built)})`);
+    for (let offers = offered(TABLES, g, party); offers.length; offers = offered(TABLES, g, party)) for (const q of offers) party.flags[takenFlag(q.id)] = party.flags[doneFlag(q.id)] = 1;
+    const r = rankOf(TABLES, g, party), built = Math.max(...GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank)) + 1;
+    ok(r === built, `${g}: its quests, done as the hall offers them, raise a company to rank ${built}, ${rankName(TABLES.guilds, g, built)} (${rankName(TABLES.guilds, g, r) ?? 'none'})`);
+    if (ACT_I.includes(g)) ok(built >= ACT_I_RANK, `${g}: Act I takes it to rank ${ACT_I_RANK}, ${rankName(TABLES.guilds, g, ACT_I_RANK)} (${rankName(TABLES.guilds, g, built)})`);
   }
   // DESIGN §8 gives every guild four ranks: a first task (0) and quests under each rank below the
   // last (1 to 3). A rank with no quests yet is owed to the issue that builds it, or to the owner
@@ -199,7 +199,7 @@ export function guilds(): void {
   for (const g of Object.keys(GUILDS) as GuildId[]) {
     for (let r = 0; r < GUILDS[g].ranks.length; r++) {
       const has = GUILD_QUESTS.some((q) => q.guild === g && q.rank === r), whose = OWED_RANKS[g][r];
-      const what = `${g}: ${r ? `rank ${r}'s quests, ${rankName(g, r)}'s` : 'its first task'}`;
+      const what = `${g}: ${r ? `rank ${r}'s quests, ${rankName(TABLES.guilds, g, r)}'s` : 'its first task'}`;
       if (whose) owed(has, what, whose); else ok(has, what);
     }
   }
