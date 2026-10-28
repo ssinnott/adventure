@@ -6,6 +6,7 @@
 // slice a frame behind a progress bar; after that the arrows scroll it and Z shows it whole. Two
 // modes: the map alone, and the zone overlay, which colours every area by its step on the road of
 // levels, rules the zones inside each, and draws every way between them, built or planned.
+// Its sites are drawn from a table, an entry to each icon; its marks on the sea are the atlas's.
 import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
