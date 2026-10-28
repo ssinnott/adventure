@@ -1,6 +1,7 @@
 // What every part of the view takes and none is above (#1028): the frame's `Paint` and its maker, the
-// distance fog, the projection (`unit`, `unitIn`, `floorPt`), the polygon helpers, `ViewRect` and the
-// colours of the ground the parts share. The frame's state (the canvas and the eye's place on it, the
+// distance fog, the projection (`unit`, `unitIn`, `floorPt`), the polygon helpers, `ViewRect`, the grass
+// of the year and the white of lying snow, which the sky and the grounds' looks share (view/ground/,
+// #1030). The frame's state (the canvas and the eye's place on it, the
 // light, the map, `env`, `present` and the flames being gathered) is one `Paint`, made once at the top
 // of `paintScene` and given to each painter first (#1029); nothing of it is held between frames.
 //
@@ -11,14 +12,13 @@
 // lateral offset l spans x = cx + (l-0.5)*2u .. cx + (l+0.5)*2u on each plane. Everything is
 // painted back to front, outer lateral columns before the centre, so nearer geometry overdraws.
 
-import type { Terrain, Feature } from '../../game/mapdef.ts';
+import type { Feature } from '../../game/mapdef.ts';
 import type { GameMap } from '../../game/map.ts';
 import { shade, mix } from '../../lib/art/palettes.ts';
-import { TERRAIN_COLORS } from '../palette.ts';
 import { HIGH_SUMMER } from '../scenery.ts';
 import type { TreeSeason } from '../scenery.ts';
 import type { Tide } from '../../game/calendar.ts';
-import { SNOW_HOLD, rampColor, heatherBloom, iceColor, cropColor } from './model.ts';
+import { rampColor } from './model.ts';
 import type { Ramp } from './model.ts';
 
 export const VIEW_W = 400, VIEW_H = 268;
@@ -35,8 +35,6 @@ export function unit(k: number, h: number): number { return (h / 2) * NEAR / (k 
  */
 export interface Env { murk: number; cover: number; wet: number; day: number; trees: TreeSeason; tide: Tide; }
 export const CLEAR: Env = { murk: 0, cover: 0, wet: 0, day: 45, trees: HIGH_SUMMER, tide: 'low' };
-/** Tidal ground as it is drawn: the sea over it at high water, wet sand at low. */
-export const asDrawn = (p: Paint, t: Terrain): Terrain => (t === 'tidal' && p.env.tide === 'high' ? 'water' : t);
 
 /**
  * What one frame's painters share (#1029), made once at the top of `paintScene` and given to each
@@ -87,37 +85,6 @@ export const SNOW = '#eef2f7';
 /** The grass through the year: dull after winter, fresh in Sowing, deep in summer, tawny by Mistfall. */
 const GRASS: Ramp = [[0, '#6a7650'], [10, '#6a8a4a'], [22, '#58ae40'], [40, '#4c9a3a'], [62, '#5a9a3a'], [80, '#7a8a44'], [94, '#6e7650'], [120, '#6a7650']];
 export function grassColor(day: number): string { return rampColor(GRASS, day); }
-/** Hill grass: the grass of the year, thinner and drier on the rise. */
-export function hillColor(day: number): string { return mix(grassColor(day), '#8a8450', 0.3); }
-/** The moor: a purple-brown through the year, purple while the heather flowers. */
-function heatherColor(day: number): string { return mix('#644a48', '#7a4a6c', heatherBloom(day)); }
-/** The floor of the woods: the grass of the year in the trees' shade, over moss and leaf litter. */
-function woodsColor(day: number): string { return mix(grassColor(day), '#3e5028', 0.45); }
-/** The pinewoods' floor: needles and moss, brown through the year and a little greener in the spring. */
-function pineColor(day: number): string { return mix(TERRAIN_COLORS.pine, grassColor(day), 0.18); }
-/**
- * The steppe through the year: dun after the winter, green-gold in Sowing, gold by Longlight and
- * tawny at Harvest, the lions' colour, then straw and dun again.
- */
-const STEPPE: Ramp = [[0, '#8a8458'], [14, '#8a9a50'], [28, '#9aa24a'], [42, '#b4a44c'], [56, '#bca252'], [72, '#a8985e'], [94, '#948a62'], [120, '#8a8458']];
-export function steppeColor(day: number): string { return rampColor(STEPPE, day); }
-/** The ground under the shore's creepers: dark loam and moss, greener in the summer. */
-function vinesColor(day: number): string { return mix(TERRAIN_COLORS.vines, grassColor(day), 0.3); }
-/**
- * The colour of the ground: the terrain's, the grass, the hills and the crop by season, darker when
- * wet, whitened by snow.
- */
-export function groundColor(p: Paint, t: Terrain, floorPal: string, crop = 0): string {
-  const { env } = p, kind = p.map.kind;
-  if (kind === 'dungeon') return floorPal;
-  const terrain = asDrawn(p, t);
-  let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'woods' ? woodsColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : terrain === 'heather' ? heatherColor(env.day)
-    : terrain === 'steppe' ? steppeColor(env.day) : terrain === 'vines' ? vinesColor(env.day)
-    : terrain === 'pine' ? pineColor(env.day) : terrain === 'ice' ? iceColor(env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
-  if (env.wet > 0 && terrain !== 'water' && terrain !== 'deep' && terrain !== 'lava' && terrain !== 'chasm') c = shade(c, 1 - 0.18 * env.wet);
-  const s = env.cover * SNOW_HOLD[terrain];
-  return s > 0 ? mix(c, SNOW, s) : c;
-}
 
 /** A torch or lantern's flame, and the pixel it was painted over, read once its wall is done. */
 export interface Flame {

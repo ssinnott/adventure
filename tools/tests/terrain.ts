@@ -3,10 +3,11 @@
 // patchwork, the tide, the ice through the year and every terrain's own colour on the automap; and
 // what a hill hides from lower ground (#53) and a wall from the squares round the company (#889).
 import { GameMap } from '../../src/game/map.ts';
-import type { MapDef } from '../../src/game/mapdef.ts';
+import { existsSync, readFileSync } from 'node:fs';
+import type { MapDef, Terrain } from '../../src/game/mapdef.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
-import { SNOW_HOLD, cropColor, fieldAt, hedgeColor, heatherBloom, iceColor, standsAt } from '../../src/ui/viewport.ts';
+import { GROUND, SNOW_HOLD, cropColor, fieldAt, hedgeColor, heatherBloom, iceColor, standsAt } from '../../src/ui/viewport.ts';
 import { viewCells, markedGroups } from '../../src/game/ink.ts';
 import { tideAt, TIDE_PERIOD, HIGH_WATER, MINUTES_PER_DAY, daylightAt } from '../../src/game/calendar.ts';
 import { hoursHold, VIEW_DEPTH, World, seen } from '../../src/game/world.ts';
@@ -116,6 +117,10 @@ export function terrain(): void {
   let spans = 0, crops = new Set<number>();
   for (let y = 0; y < 12; y++) for (let x = 0; x < 12; x++) { if (fieldAt(x, y).id === fieldAt(x + 1, y).id) spans++; crops.add(fieldAt(x, y).crop); }
   ok(hedgeColor(45) === '#3e5e2a' && hedgeColor(100) === '#5a4a38' && hedgeColor(5) !== hedgeColor(45), `the hedges are in leaf at Harvest and bare in Frost (${hedgeColor(45)}, ${hedgeColor(100)})`);
+  // Each terrain is drawn as a look of its own, which a module of its own in ui/view/ground/ exports (#1030).
+  const own = (t: string): string => { const f = new URL(`../../src/ui/view/ground/${t}.ts`, import.meta.url); return existsSync(f) ? readFileSync(f, 'utf8') : ''; };
+  const lookless = Object.keys(TERRAIN_COLORS).filter((t) => !GROUND[t as Terrain] || !own(t).includes(`export const ${t}: GroundLook = {`));
+  ok(!lookless.length && new Set(Object.values(GROUND)).size === Object.keys(TERRAIN_COLORS).length, `every terrain of TERRAIN_COLORS has a look and a module of its own in ui/view/ground/ (${Object.keys(TERRAIN_COLORS).length} of them${lookless.length ? `; none for ${lookless.join(', ')}` : ''})`);
   // On the automap each open ground is its own colour after the parchment wash: farmland is not road.
   const washed = Object.entries(TERRAIN_COLORS).map(([t, c]) => [t, hexToRgb(mix(c, PARCHMENT, AUTOMAP_WASH))] as const);
   let closest = { d: Infinity, pair: '' };
