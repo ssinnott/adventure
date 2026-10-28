@@ -2,7 +2,7 @@
 // company (ui/create.ts). Enter answers, Esc leaves, and either way out turns the text mode off, or
 // the keys that move the party would go on being typed. What the answer does is the Game's, handed
 // in, so this screen loads in Node for its test (tools/tests/wilds.ts).
-import type { Game, Screen } from '../game/game.ts';
+import type { Game, Screen } from '../app/game.ts';
 import type { Action } from '../app/input.ts';
 import { is } from '../app/input.ts';
 import { drawText } from '../lib/engine/text.ts';

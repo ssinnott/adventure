@@ -1,6 +1,6 @@
 // Party creation: six characters, each named, raced, classed and rolled, or the premade company
 // for players who want to be walking in thirty seconds.
-import type { Game, Screen } from '../game/game.ts';
+import type { Game, Screen } from '../app/game.ts';
 import type { Action } from '../app/input.ts';
 import { is } from '../app/input.ts';
 import { drawText } from '../lib/engine/text.ts';

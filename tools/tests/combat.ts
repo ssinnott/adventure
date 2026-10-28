@@ -22,7 +22,7 @@ import { ROUND_CAP, playOut } from '../kit/fight.ts';
 import { botTurn, asSeen, asWritten, breathGuard, PLAYED } from '../../src/game/bot.ts';
 import type { BotOpts, Sees } from '../../src/game/bot.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
-import type { Game } from '../../src/game/game.ts';
+import type { Game } from '../../src/app/game.ts';
 import { logLines } from '../../src/ui/frame.ts';
 import type { Party } from '../../src/game/party.ts';
 import { spell } from '../../src/game/spells.ts';

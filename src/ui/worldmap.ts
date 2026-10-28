@@ -7,7 +7,7 @@
 // modes: the map alone, and the zone overlay, which colours every area by its step on the road of
 // levels, rules the zones inside each, and draws every way between them, built or planned.
 // Its sites are drawn from a table, an entry to each icon; its marks on the sea are the atlas's.
-import type { Game, Screen } from '../game/game.ts';
+import type { Game, Screen } from '../app/game.ts';
 import type { Action } from '../app/input.ts';
 import { is } from '../app/input.ts';
 import { drawText, drawTextOutlined, measureText } from '../lib/engine/text.ts';

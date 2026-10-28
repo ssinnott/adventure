@@ -2,7 +2,7 @@
 // Heart is taken, the ending's name over the title's dusk with the Hearth as the ending leaves it,
 // and its pages one at a time. The last closes onto the Heart, where the company stands, and the
 // game goes on.
-import type { Game, Screen } from '../game/game.ts';
+import type { Game, Screen } from '../app/game.ts';
 import type { Action } from '../app/input.ts';
 import { is } from '../app/input.ts';
 import { drawText, drawTextOutlined } from '../lib/engine/text.ts';

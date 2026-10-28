@@ -2,7 +2,7 @@
 // what to do next and what the journal says so far, the one quest paged by chapter. It only reads
 // game/quests.ts. The page layout is a pure function so the Node tests can check that every
 // quest's journal is shown whole.
-import type { Game, Screen } from '../game/game.ts';
+import type { Game, Screen } from '../app/game.ts';
 import type { Action } from '../app/input.ts';
 import { is } from '../app/input.ts';
 import { drawText, lineHeight } from '../lib/engine/text.ts';

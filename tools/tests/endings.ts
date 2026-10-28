@@ -13,7 +13,7 @@ import { answer, SHORT } from '../../src/game/people.ts';
 import type { Answer } from '../../src/game/mapdef.ts';
 import { save } from '../../src/game/save.ts';
 import type { Store } from '../../src/game/save.ts';
-import type { Game } from '../../src/game/game.ts';
+import type { Game } from '../../src/app/game.ts';
 import { endingOf, endingTaken, savedHearth, savedStones, hearthLook, hearthWord, flickerOf, steadier } from '../../src/game/stones.ts';
 import { EndingScreen } from '../../src/ui/ending.ts';
 import { ok, fxFlag } from './lib.ts';

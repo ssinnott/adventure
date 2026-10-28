@@ -1,7 +1,7 @@
 // A chapter played whole (#984): the pilot's run of a chapter on a headless game, which the fullrun
 // suite plays and the pilot suite takes from here.
 import { drive } from '../headless.ts';
-import type { Game } from '../../../src/game/game.ts';
+import type { Game } from '../../../src/app/game.ts';
 import type { Chapter } from '../../../src/game/quests.ts';
 import { holds } from '../../../src/game/quests.ts';
 import { companyLevel } from '../../../src/game/party.ts';

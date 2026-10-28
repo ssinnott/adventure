@@ -5,7 +5,7 @@
 // business's first menu (`businessEntries`) and the visit that frames them (`InteriorScreen`). Each
 // service draws its menu and says what its rule in game/services.ts returns, with no sum of its
 // own.
-import type { Game, Screen } from '../game/game.ts';
+import type { Game, Screen } from '../app/game.ts';
 import type { Action } from '../app/input.ts';
 import { is } from '../app/input.ts';
 import { drawText, lineHeight, measureText } from '../lib/engine/text.ts';

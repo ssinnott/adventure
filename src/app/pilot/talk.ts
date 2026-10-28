@@ -6,8 +6,8 @@
 // it has heard that may answer it (`answers`), and stops itself at the ending's question. It reads the
 // world through Known and a menu or a riddle as the screen shows it, and presses the keys a player
 // would: `down` to a row and Space, or Esc; a word's letters as the keyboard types them, then Enter.
-import type { Game } from '../../game/game.ts';
-import { ExploreScreen } from '../../game/game.ts';
+import type { Game } from '../game.ts';
+import { ExploreScreen } from '../game.ts';
 import type { Action } from '../input.ts';
 import type { Feature } from '../../game/mapdef.ts';
 import type { Party } from '../../game/party.ts';

@@ -30,17 +30,6 @@ type Key = keyof typeof KEYS;
 /** Today's crossings, each `importer > imported` under the issue that clears it; a cycle is `cycle: ` and its files. */
 const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
   L7: [
-    'src/game/game.ts > src/content/maps.ts',
-    'src/game/game.ts > src/app/input.ts',
-    'src/game/game.ts > src/ui/combat.ts',
-    'src/game/game.ts > src/ui/ending.ts',
-    'src/game/game.ts > src/ui/frame.ts',
-    'src/game/game.ts > src/ui/quests.ts',
-    'src/game/game.ts > src/ui/riddle.ts',
-    'src/game/game.ts > src/ui/screens.ts',
-    'src/game/game.ts > src/ui/title.ts',
-    'src/game/game.ts > src/ui/viewport.ts',
-    'src/game/game.ts > src/ui/worldmap.ts',
     'src/ui/combat.ts > src/app/input.ts',
     'src/ui/create.ts > src/app/input.ts',
     'src/ui/ending.ts > src/app/input.ts',

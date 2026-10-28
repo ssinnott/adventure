@@ -2,7 +2,7 @@
 // the resolver in game/combat.ts. Monster turns play out on a short timer so the log can be read. With
 // `auto` on, the game's bot (game/bot.ts) plays the company's turns on a timer of its own, by what the
 // fight has shown it, and presses Space at the end; any key takes the fight back.
-import type { Game, Screen } from '../game/game.ts';
+import type { Game, Screen } from '../app/game.ts';
 import type { Action } from '../app/input.ts';
 import { is } from '../app/input.ts';
 import { drawText } from '../lib/engine/text.ts';
