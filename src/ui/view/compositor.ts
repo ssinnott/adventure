@@ -189,7 +189,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     ctx.fillStyle = shade(pal.floor, 0.5); ctx.fillRect(r.x, horizon, r.w, r.h / 2);
   } else {
     const { dawn, dusk } = sunTimes(day);
-    const at = world.worldCell, hearth = at ? { bearing: hearthBearing(at.x, at.y), step: look.step } : undefined;
+    const at = world.worldCell, hearth = at ? { bearing: hearthBearing(world.tables.atlas, at.x, at.y), step: look.step } : undefined;
     const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth, cast: look.cast };
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });

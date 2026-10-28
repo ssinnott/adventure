@@ -32,9 +32,9 @@ export function endings(): void {
   try {
     const party = defaultParty(TABLES, makeRng(750)), took: Answer = { label: 'End it', says: ['So be it.'], sets: [fxFlag('q_other'), fxFlag('fx_end')] };
     const short: Answer = { ...took, price: party.gold + 1 }, plain: Answer = { label: 'Not yet', says: ['Not yet.'], sets: fxFlag('q_other') };
-    ok(answer(TABLES.items, short, party) === SHORT && !endingTaken(short, party.flags) && !party.flags.fx_end, 'an ending\'s answer the company cannot pay for takes no ending and sets nothing');
-    ok(answer(TABLES.items, plain, party) === 'Not yet.' && !endingTaken(plain, party.flags), 'an answer that sets no ending\'s flag takes none');
-    ok(answer(TABLES.items, took, party) === 'So be it.' && endingTaken(took, party.flags) === fixture && (endingOf(party.flags) as string) === 'fx', 'an answer that sets an ending\'s flag among others takes that ending, and the flags say so');
+    ok(answer(TABLES.items, short, party) === SHORT && !endingTaken(TABLES.endings, short, party.flags) && !party.flags.fx_end, 'an ending\'s answer the company cannot pay for takes no ending and sets nothing');
+    ok(answer(TABLES.items, plain, party) === 'Not yet.' && !endingTaken(TABLES.endings, plain, party.flags), 'an answer that sets no ending\'s flag takes none');
+    ok(answer(TABLES.items, took, party) === 'So be it.' && endingTaken(TABLES.endings, took, party.flags) === fixture && (endingOf(TABLES.endings, party.flags) as string) === 'fx', 'an answer that sets an ending\'s flag among others takes that ending, and the flags say so');
 
     // Its pages, turned one at a time by Space or Esc, and past the last the screen beneath is on top again: the game goes on.
     const screens: string[] = ['explore'], g = { pop: () => void screens.pop() } as unknown as Game, pages = new EndingScreen(fixture);
@@ -71,19 +71,19 @@ export function endings(): void {
   }
   ok(world.almanac().split('\n')[0] === plain && world.hearth.ending === undefined, 'with no ending held the almanac says what the count gives it');
   party.flags.q_end_finish = 1; party.flags.q_end_reignite = 1;
-  ok(endingOf(party.flags) === 'reignite', 'two endings held read as the table\'s first');
+  ok(endingOf(TABLES.endings, party.flags) === 'reignite', 'two endings held read as the table\'s first');
   delete party.flags.q_end_finish; delete party.flags.q_end_reignite;
 
   // The title reads it from the save in storage, beside the count: none from no save or a broken one.
   const box = new Map<string, string>(), store: Store = { getItem: (k) => box.get(k) ?? null, setItem: (k, v) => void box.set(k, v), removeItem: (k) => void box.delete(k) };
-  const empty = savedHearth(store);
+  const empty = savedHearth(TABLES, store);
   save(store, world.state, party, 0);
-  const before = savedHearth(store);
+  const before = savedHearth(TABLES, store);
   party.flags.q_end_arrive = 1;
   save(store, world.state, party, 0);
-  const after = savedHearth(store);
+  const after = savedHearth(TABLES, store);
   box.set([...box.keys()][0], '{not a save');
-  const broken = savedHearth(store);
-  ok(empty.stones === 0 && !empty.ending && before.stones === 1 && !before.ending && after.stones === 1 && after.ending === 'arrive' && !broken.ending && broken.stones === 0 && savedStones(null) === 0,
+  const broken = savedHearth(TABLES, store);
+  ok(empty.stones === 0 && !empty.ending && before.stones === 1 && !before.ending && after.stones === 1 && after.ending === 'arrive' && !broken.ending && broken.stones === 0 && savedStones(TABLES, null) === 0,
     `the title reads the saved company's ending beside its count (${after.ending}, ${after.stones}), none before it, and none from no save or a broken one`);
 }

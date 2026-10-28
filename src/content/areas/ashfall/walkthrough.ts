@@ -2120,7 +2120,7 @@ const corridors = (camp: 'none' | 'looked' | 'passed'): Step => ({ name: camp ==
 
 /** Up to the Stone with the parts carried, each set in its own socket at a meeting; the last in lights it. */
 const SET: Step = { name: 'the parts set', play: (w) => {
-  const before = stonesRestored(w.world.state, w.party), lit = !!w.party.flags[LIT], said: string[] = [];
+  const before = stonesRestored(TABLES.stones, w.world.state, w.party), lit = !!w.party.flags[LIT], said: string[] = [];
   SOCKETED.forEach((p, i) => {
     if (!w.party.bag.includes(`ember_part${i + 1}`)) return;
     w.world.travel('ember_stone', p.x, p.y);
@@ -2128,7 +2128,7 @@ const SET: Step = { name: 'the parts set', play: (w) => {
     said.push(a ? answer(TABLES.items, a, w.party) : '');
   });
   listen(w);
-  const now = stonesRestored(w.world.state, w.party);
+  const now = stonesRestored(TABLES.stones, w.world.state, w.party);
   if (w.party.flags[LIT]) {
     w.ok(!lit && now === before + 1 && (said.at(-1) ?? '').startsWith(LIGHTS.join('\n\n')) && SOCKETS.every((f) => w.party.flags[f]),
       `at ${w.level}, the last part in lights the Stone, and it counts for the Hearth (${before} restored, then ${now})`);

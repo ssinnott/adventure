@@ -3,8 +3,9 @@
 // reads something the save already holds, so the log comes back whole from any save, old ones
 // included. The Game compares one look with the next to announce what changed. The words are each
 // area's: its chapter of the one quest in content/areas/<area>/chapter.ts, its side quests in
-// quests.ts. content/index.ts joins the chapters in road order, and the log reads them off the
-// tables handed in (`tables.quests`, #975).
+// quests.ts. content/index.ts joins the chapters in road order; the log reads them off the tables
+// handed in (`tables.quests`, #975), and the trainers its seeking quests are made from off the
+// maps there (`tables.maps`, #976).
 import type { WorldState, MapState } from './world.ts';
 import type { Party } from './party.ts';
 import { countItem, prestigeOf } from './party.ts';
@@ -12,7 +13,6 @@ import type { ClassId, RaceId } from './party.ts';
 import { seekingQuests, trainersIn } from './seeking.ts';
 import type { Trainer } from './seeking.ts';
 import { OUTDOORS } from './outdoors.ts';
-import { MAP_DEFS } from '../content/index.ts';
 import type { MapId, Flag } from '../content/index.ts';
 import type { MapKey } from './keys.ts';
 import type { Tables } from './tables.ts';
@@ -145,12 +145,17 @@ function pageOf(q: QuestDef, world: WorldState, party: Party): PageView {
   };
 }
 
-let placed: readonly Trainer[] | undefined;
+const placed = new WeakMap<Tables['maps'], readonly Trainer[]>();
 /**
- * The trainers the content places, each by its map: what the seeking quests are made from. Read on
- * first use and kept, not as this module loads, when the content may still be loading (#896).
+ * The trainers the maps handed in place, each by its map: what the seeking quests are made from.
+ * Found the first time a table of maps is asked and kept by it (#976), as `statOf`'s raisers are
+ * kept by the items (#973): play has one, and a suite that places its own plays a table of its own.
  */
-export const TRAINERS = (): readonly Trainer[] => (placed ??= trainersIn(MAP_DEFS));
+export function TRAINERS(maps: Tables['maps']): readonly Trainer[] {
+  let found = placed.get(maps);
+  if (!found) placed.set(maps, (found = trainersIn(maps)));
+  return found;
+}
 
 /**
  * Every quest the party knows of, in the content's order, then each member's seeking quests, by its
@@ -159,9 +164,9 @@ export const TRAINERS = (): readonly Trainer[] => (placed ??= trainersIn(MAP_DEF
  * back, passing over a chapter done and one with no chapter begun at or after it: so a company that
  * walked into Thornmark early is not sent to the Grove Stone before anyone has spoken of it.
  */
-export function questLog(tables: Tables, world: WorldState, party: Party, trainers: readonly Trainer[] = TRAINERS()): QuestView[] {
+export function questLog(tables: Tables, world: WorldState, party: Party): QuestView[] {
   const out: QuestView[] = [];
-  for (const q of [...tables.quests, ...seekingQuests(party, trainers, tables.quests)]) {
+  for (const q of [...tables.quests, ...seekingQuests(party, TRAINERS(tables.maps), tables.quests)]) {
     if (!q.chapters) {
       const page = pageOf(q, world, party);
       if (page.begun) out.push({ def: q, done: page.done, goal: page.goal, pages: [page], focus: 0 });

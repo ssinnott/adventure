@@ -215,9 +215,9 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(road(out, i11.x + 27, i11.y) && walked.has(square(out, i11, ({ x: 27, y: 0 }).x, ({ x: 27, y: 0 }).y)) && road(out, i11.x + 27, i11.y - 1),
     'the ridge trail leaves north beside the Stone at 27,0, on into I10 (#502)');
   // The Stone, whole: stood at, it counts toward the Hearth, though nothing was wrong with it.
-  const lit = stonesRestored(w.world.state, w.party);
+  const lit = stonesRestored(TABLES.stones, w.world.state, w.party);
   see(w, 'highspine_i11:i11_stone');
-  ok(stone.kind === 'event' && stone.text.includes('Whole, and steady') && stonesRestored(w.world.state, w.party) === lit + 1, 'the Peak Stone is whole and steady, and stood at it counts toward the Hearth');
+  ok(stone.kind === 'event' && stone.text.includes('Whole, and steady') && stonesRestored(TABLES.stones, w.world.state, w.party) === lit + 1, 'the Peak Stone is whole and steady, and stood at it counts toward the Hearth');
   // And it sets the flag the Core's door asks, which a `seen` cannot be: new play has it, and a save that
   // stood here before gets it from the upgrade to version 5 (tools/tests/save.ts).
   ok(stone.kind === 'event' && stone.sets === 'q_peak_stood' && w.party.flags.q_peak_stood === 1, 'and stood at it sets q_peak_stood, the flag the Core\'s door asks (#751)');
