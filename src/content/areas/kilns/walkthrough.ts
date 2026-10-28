@@ -953,10 +953,10 @@ function ironhide(ok: (cond: boolean, msg: string) => void): void {
   ok(![talk(young), talk(young)].some((t) => t.includes('Stand in the wind')), 'to a company of 18 he says no lesson');
 
   // At 19 the barbarian is sent to Erzkamm, and taught.
-  ok(sought(questLog(w.world.state, w.party)).find((p) => p.at === 'ironfells_n2')?.who.includes(ragna.name) === true, 'at 19 the barbarian is sent to Erzkamm');
+  ok(sought(questLog(TABLES, w.world.state, w.party)).find((p) => p.at === 'ironfells_n2')?.who.includes(ragna.name) === true, 'at 19 the barbarian is sent to Erzkamm');
   w.party.gold = 4000;
   ok(teach(HARTMUT.teaches!, w.party, w.world.state, 0).taught && prestigeOf(ragna) === 2 && className(ragna) === PRESTIGES.barbarian.titles[1] && w.party.gold === 0
-    && questLog(w.world.state, w.party).find((v) => v.def.id === seekId(0, 2))?.done === true, `he makes an ${PRESTIGES.barbarian.titles[1]} of a Berserker for 4,000 gold, and the seeking is done`);
+    && questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === seekId(0, 2))?.done === true, `he makes an ${PRESTIGES.barbarian.titles[1]} of a Berserker for 4,000 gold, and the seeking is done`);
 }
 
 /**
@@ -1028,15 +1028,15 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(after.includes('You read that one at the doors') && !after.includes('DANGER') && after.endsWith('"A warning. The kind you paint on a boiler."') && !!own.party.flags[VERSE_READ], 'and the reader\'s words change: he reads it after them');
   const maren = own.party.members.findIndex((m) => m.name === 'Maren');
   own.party.gold = 1000;
-  ok(CRANE.skill === 'linguist' && !mayLearn('linguist', own.party) && !learn('linguist', own.party, maren).taught, 'the reader teaches Linguist, and to a stranger to the Lanterns, nothing');
+  ok(CRANE.skill === 'linguist' && !mayLearn(TABLES, 'linguist', own.party) && !learn(TABLES, 'linguist', own.party, maren).taught, 'the reader teaches Linguist, and to a stranger to the Lanterns, nothing');
   own.party.flags[rankFlag('lanterns')] = 1;
-  ok(learn('linguist', own.party, maren).taught && hasSkill(own.party.members[maren], 'linguist') && own.party.gold === 0, 'to a Taper of the Lanterns, Linguist, for 1,000 gold');
+  ok(learn(TABLES, 'linguist', own.party, maren).taught && hasSkill(own.party.members[maren], 'linguist') && own.party.gold === 0, 'to a Taper of the Lanterns, Linguist, for 1,000 gold');
 
   // The Older Mark's kept rubbing (Thornmark's, #56's 16 and its promise in 34; #637). A company with
   // none hears Ilse's own words and sets nothing; one carrying it, kept at Henlys, hears her read it by
   // its strokes, and Thornmark's journal first points here and then adds what she found.
   const ILSE = person('Ilse'), rub = newWalk(ok);
-  const markPage = (p: Walk) => questLog(p.world.state, p.party).find((v) => v.def.id === 'mark')?.pages[0];
+  const markPage = (p: Walk) => questLog(TABLES, p.world.state, p.party).find((v) => v.def.id === 'mark')?.pages[0];
   const entry = (p: Walk, id: string): string => markPage(p)?.entries.find((e) => e.id === id)?.text ?? '';
   rub.world.travel('anvilhall', ILSE.x, ILSE.y);
   ok(says(rub, ILSE) === ILSE.lines.join('\n\n') && !rub.party.flags.q_mark_read, 'with no rubbing, Ilse says her own words and sets nothing');
@@ -1590,14 +1590,14 @@ function feuerstollen(w: Walk, ok: (cond: boolean, msg: string) => void): void {
 function fourthRanks(w: Walk): void {
   const p: Party = structuredClone(w.party);
   p.flags[rankFlag('lanterns')] = 3; p.flags[rankFlag('wardens')] = 3;
-  const fourth = (g: GuildId): string => offered(g, p).filter((q) => q.rank === 3).map((q) => q.id).join(',');
+  const fourth = (g: GuildId): string => offered(TABLES, g, p).filter((q) => q.rank === 3).map((q) => q.id).join(',');
   w.ok(!fourth('lanterns') && !fourth('wardens'), 'before Act III a Reader and a Sergeant are offered no fourth rank\'s ask');
   p.flags[FOURTH_RANKS_OPEN] = 1;
   w.ok(fourth('lanterns') === 'lanterns_niche,lanterns_ring' && fourth('wardens') === 'wardens_cages,wardens_hole', `with Act II done, the halls offer the fourth ranks' asks (${fourth('lanterns')}; ${fourth('wardens')})`);
   for (const id of ['lanterns_niche', 'wardens_cages']) {
     const q = GUILD_QUESTS.find((g) => g.id === id)!, gold = p.gold;
     const said = take(TABLES, q, w.world.state, p);
-    w.ok(said.length === 1 && said[0].startsWith(q.early![0]) && p.gold === gold + 300 && rankOf(q.guild, p) === 3,
+    w.ok(said.length === 1 && said[0].startsWith(q.early![0]) && p.gold === gold + 300 && rankOf(TABLES, q.guild, p) === 3,
       `${q.title}: done in the walk, paid at the taking, and the rank waits for the rest (${said.join(' ').replace(/\n+/g, ' ')})`);
   }
 }
@@ -2260,7 +2260,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     w.party.flags[HYMN_SUNG] = 1;
     const told = meet(oldest, w.party, heard(w.world, oldest)).text;
     ok(!untold.includes('Brandt') && told.includes('"Brandt made a shirt of the ore the knockers bring up. So light, he said, his feet forgot it."') && told.includes('"He went down for more. We sang him to the door, and nobody sang him back."')
-      && !words.sets && !words.choice && !JSON.stringify(questLog(w.world.state, w.party)).includes('Brandt'),
+      && !words.sets && !words.choice && !JSON.stringify(questLog(TABLES, w.world.state, w.party)).includes('Brandt'),
       'the oldest miner says nothing of Brandt till he has sung the last verse, and after it speaks of him, who went down for more: words only, in no quest');
     listen(w);
     delete w.party.flags.q_hymn; delete w.party.flags[HYMN_SUNG];

@@ -355,7 +355,7 @@ Decided by the builder for #900, each the owner's to overturn:
 4. **A row is `importer > imported`,** however often the import is written, under the first rule it
    breaks: the walkthroughs' and the suites', the layers, the areas. A cycle is one row, `cycle: `
    and its files sorted, a strongly connected component of `src`'s graph.
-5. **The keys are the plan's:** L4 the guilds and ranks, L5 the climates, stones, endings and
+5. **The keys are the plan's:** L5 the climates, stones, endings and
    `quests.ts` (its `MAP_DEFS` goes with the atlas, the last table);
    L6 the pilot's; L7 `game.ts`'s and the screens' imports of `src/input.ts`; H8 a walkthrough
    taking another's chain (`STEPS`, and Saltreach's two orders of play), keyed K8 until #985 moved

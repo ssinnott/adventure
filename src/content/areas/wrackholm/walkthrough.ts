@@ -588,17 +588,17 @@ function fence(w: Walk): void {
   };
   const runner: Party = structuredClone(w.party), p = fenced();
   runner.flags[rankFlag('compact')] = 1;
-  w.ok(!offered('compact', runner).some((o) => o.id === q.id) && offered('compact', p).map((o) => o.id).join() === q.id,
+  w.ok(!offered(TABLES, 'compact', runner).some((o) => o.id === q.id) && offered(TABLES, 'compact', p).map((o) => o.id).join() === q.id,
     `${q.title}: a Runner is not offered it, and a Fence is, alone`);
   const gold = p.gold;
-  w.ok(!takeWork(TABLES, q, w.world.state, p).length && !report(TABLES, 'compact', w.world.state, p).length && rankOf('compact', p) === 2,
+  w.ok(!takeWork(TABLES, q, w.world.state, p).length && !report(TABLES, 'compact', w.world.state, p).length && rankOf(TABLES, 'compact', p) === 2,
     'taken with the stair\'s foot unseen, the hall pays nothing');
   see(w, `${DEAD_DROP_STAIR.id}:dd_foot`);
   const said = report(TABLES, 'compact', w.world.state, p);
-  w.ok(said.length === 2 && said[0].startsWith(q.paid[0]) && /not yet/i.test(said[0]) && said[1] === 'Your rank with the Salt Compact is now Factor.' && p.gold === gold + 200 && rankOf('compact', p) === 3,
+  w.ok(said.length === 2 && said[0].startsWith(q.paid[0]) && /not yet/i.test(said[0]) && said[1] === 'Your rank with the Salt Compact is now Factor.' && p.gold === gold + 200 && rankOf(TABLES, 'compact', p) === 3,
     `the foot seen, the hall pays 200 gold, says not yet and makes the company a Factor (${said.join(' ').replace(/\n+/g, ' ')})`);
   const late = fenced(), early = takeWork(TABLES, q, w.world.state, late);
-  w.ok(early.length === 2 && early[0].startsWith(q.early![0]) && /not yet/i.test(early[0]) && late.gold === gold + 200 && rankOf('compact', late) === 3,
+  w.ok(early.length === 2 && early[0].startsWith(q.early![0]) && /not yet/i.test(early[0]) && late.gold === gold + 200 && rankOf(TABLES, 'compact', late) === 3,
     `a company that had seen the foot is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
 }
 
@@ -628,17 +628,17 @@ function factor(w: Walk): void {
   const ruanSays = (v: Walk): Meeting => { v.world.travel('saltmouth', ruan.x, ruan.y); return meet(ruan, v.party, heard(v.world, ruan)); };
 
   const a = factors(false);
-  w.ok(q.rank === 3 && !offered('compact', a.party).some((o) => o.id === q.id), `${q.title} waits for Act IV: a Factor is not offered it before the Sleepers are seen`);
+  w.ok(q.rank === 3 && !offered(TABLES, 'compact', a.party).some((o) => o.id === q.id), `${q.title} waits for Act IV: a Factor is not offered it before the Sleepers are seen`);
   a.party.flags[SLEEPERS_SEEN] = 1;
-  w.ok(offered('compact', a.party).map((o) => o.id).join() === q.id && !q.item && ['Keel', 'factor\'s house'].every((h) => q.goals[0].text.includes(h)),
+  w.ok(offered(TABLES, 'compact', a.party).map((o) => o.id).join() === q.id && !q.item && ['Keel', 'factor\'s house'].every((h) => q.goals[0].text.includes(h)),
     'then it is offered alone at any hall of the Compact, the Keel in Saltmouth or the factor\'s house at Cinderport, and takes nothing');
   const fence = factors(false);
   fence.party.flags[rankFlag('compact')] = 2;
   delete fence.party.flags[takenFlag('compact_fence')]; delete fence.party.flags[doneFlag('compact_fence')];
   fence.party.flags[SLEEPERS_SEEN] = 1;
-  w.ok(offered('compact', fence.party).map((o) => o.id).join() === 'compact_fence', 'a Fence, the Sleepers seen, is offered the Fence\'s rung and not this one');
+  w.ok(offered(TABLES, 'compact', fence.party).map((o) => o.id).join() === 'compact_fence', 'a Fence, the Sleepers seen, is offered the Fence\'s rung and not this one');
   const runner = ruanSays(a);
-  w.ok(!takeWork(TABLES, q, a.world.state, a.party).length && !report(TABLES, 'compact', a.world.state, a.party).length && rankOf('compact', a.party) === 3 && !runner.choice && runner.text.startsWith('"Runner."'),
+  w.ok(!takeWork(TABLES, q, a.world.state, a.party).length && !report(TABLES, 'compact', a.world.state, a.party).length && rankOf(TABLES, 'compact', a.party) === 3 && !runner.choice && runner.text.startsWith('"Runner."'),
     'taken with no orders in the pack, the hall pays nothing, and Ruan has her Runner\'s words and no question');
 
   // The orders carried up: paid at the Keel, once, and the orders stay in the pack.
@@ -647,13 +647,13 @@ function factor(w: Walk): void {
   a.world.travel('saltmouth', ruan.x, ruan.y);
   const paid = report(TABLES, 'compact', a.world.state, a.party);
   w.ok(paid.length === 2 && paid[0].startsWith(q.paid[0]) && paid[1] === 'Your rank with the Salt Compact is now Partner.' && a.party.gold === purse + 800 && xpOf(a.party) >= xp + 4800 - a.party.members.length
-    && rankOf('compact', a.party) === 4 && !!a.party.flags[done] && a.party.bag.join() === pack,
+    && rankOf(TABLES, 'compact', a.party) === 4 && !!a.party.flags[done] && a.party.bag.join() === pack,
     `the orders in the pack, the Keel pays 800 gold and 4,800 xp, leaves them in the pack and makes the company Partners (${paid.join(' ').replace(/\n+/g, ' ')})`);
-  w.ok(!report(TABLES, 'compact', a.world.state, a.party).length && !offered('compact', a.party).length && a.party.gold === purse + 800, 'and it is paid the once: a second report pays nothing, and nothing is offered');
+  w.ok(!report(TABLES, 'compact', a.world.state, a.party).length && !offered(TABLES, 'compact', a.party).length && a.party.gold === purse + 800, 'and it is paid the once: a second report pays nothing, and nothing is offered');
   const late = factors(true);
   late.party.flags[SLEEPERS_SEEN] = 1;
   const lateGold = late.party.gold, hasty = takeWork(TABLES, q, late.world.state, late.party);
-  w.ok(hasty.length === 2 && hasty[0].startsWith(q.early![0]) && late.party.gold === lateGold + 800 && rankOf('compact', late.party) === 4 && late.party.bag.includes('compact_orders'),
+  w.ok(hasty.length === 2 && hasty[0].startsWith(q.early![0]) && late.party.gold === lateGold + 800 && rankOf(TABLES, 'compact', late.party) === 4 && late.party.bag.includes('compact_orders'),
     `a company that carried the orders before it took the rung is paid at the taking, with the early words (${hasty.join(' ').replace(/\n+/g, ' ')})`);
 
   // Ruan's choice, put once the rung is paid: no rank waits on it, an unanswered question is put again, and the answers pay nothing.
@@ -662,14 +662,14 @@ function factor(w: Walk): void {
     && reveal.choice.answers.every((x) => !x.pay && !x.gives && !x.price && !x.takes) && !reveal.sets,
     'Ruan has one question with two answers, the orders to the Wardens or the Compact taken over, each setting its own flag and paying, giving and taking nothing');
   const put = ruanSays(a), again = ruanSays(a);
-  w.ok(rankOf('compact', a.party) === 4 && !!reveal && put.text === reveal.lines.join('\n\n') && put.choice === reveal.choice && again.choice === reveal.choice && !a.party.flags[COMPACT_WARDENS] && !a.party.flags[COMPACT_OVER],
+  w.ok(rankOf(TABLES, 'compact', a.party) === 4 && !!reveal && put.text === reveal.lines.join('\n\n') && put.choice === reveal.choice && again.choice === reveal.choice && !a.party.flags[COMPACT_WARDENS] && !a.party.flags[COMPACT_OVER],
     'the rung paid, Ruan puts it at the Keel with the company already Partners, and puts it again if it is not answered');
   for (const [how, sets, other] of [['the orders to the Wardens', COMPACT_WARDENS, COMPACT_OVER], ['the Compact taken over', COMPACT_OVER, COMPACT_WARDENS]] as const) {
     const v = sets === COMPACT_OVER ? factors(true) : a;
     if (v !== a) { v.party.flags[SLEEPERS_SEEN] = 1; takeWork(TABLES, q, v.world.state, v.party); }
     const gold = v.party.gold, xpNow = xpOf(v.party);
     const said = answerTo(v, 'saltmouth', ruan, sets), next = ruanSays(v);
-    w.ok(!!v.party.flags[sets] && !v.party.flags[other] && v.party.gold === gold && xpOf(v.party) === xpNow && rankOf('compact', v.party) === 4 && next.text === words(ruan, sets) && !next.choice,
+    w.ok(!!v.party.flags[sets] && !v.party.flags[other] && v.party.gold === gold && xpOf(v.party) === xpNow && rankOf(TABLES, 'compact', v.party) === 4 && next.text === words(ruan, sets) && !next.choice,
       `${how}: its flag is set and the other's is not, nothing is paid, Ruan says her words for it and the question is not put again (${said.replace(/\n+/g, ' ')})`);
   }
 }
@@ -1313,7 +1313,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
       && says.length === 8 && says.every((s, i) => !s.sets && (i % 2 === 0
         ? JSON.stringify(s.until) === JSON.stringify({ slain: NICK_DOWN }) && s.lines.slice(-2).join('\n') === rumour.join('\n')
         : !s.until && JSON.stringify(s.after) === JSON.stringify({ ...JSON.parse(JSON.stringify(says[i - 1].after)), slain: NICK_DOWN }) && s.lines.join('\n') === says[i - 1].lines.slice(0, -2).join('\n')))
-      && boxes.every((n) => n <= SAY_LINES) && !JSON.stringify(questLog(w.world.state, w.party)).includes('Old Nick'),
+      && boxes.every((n) => n <= SAY_LINES) && !JSON.stringify(questLog(TABLES, w.world.state, w.party)).includes('Old Nick'),
       `Merryn says nothing of Old Nick at her first meeting, after her own words speaks of the ship she counted in and never out at every meeting after it while Old Nick lives, and once it has fallen says her own words alone: words only, in no quest, ${boxes.join(', ')} of her box's ${SAY_LINES} lines`);
     listen(w);
     for (const k of hermit()) delete w.party.flags[k];

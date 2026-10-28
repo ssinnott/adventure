@@ -619,7 +619,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const HESSEL = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Hessel'))!;
   const BOY = C3.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'a boy of Rietum')!;
   ok(!w.world.present(GEESKE) && !w.world.present(HESSEL) && !w.world.present(BOY), 'before Passage Paid is answered, nobody from the barge is in port or at Rietum');
-  const passage = (): string => questLog(w.world.state, w.party).find((v) => v.def.id === 'passage')?.pages[0]?.entries.map((e) => e.text).join(' ') ?? '';
+  const passage = (): string => questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === 'passage')?.pages[0]?.entries.map((e) => e.text).join(' ') ?? '';
   for (const [label, flag] of [['Push her off.', 'q_passage_owed'], ['Cut them loose.', 'q_passage_freed']] as const) {
     for (const f of ['q_passage', 'q_passage_owed', 'q_passage_freed']) delete w.party.flags[f];
     ok(!w.world.walks(CREW, CREW.x, CREW.y), `before '${label}', no crew on the bank`);
@@ -707,7 +707,7 @@ export const walkthrough: Walkthrough = (ok) => {
   // The premade six have no monk; one joins for the look ahead.
   if (!later.members.some((c) => c.cls === 'monk')) later.members[later.members.length - 1] = createCharacter(TABLES, 'Sjoerd', 'human', 'monk', {}, makeRng(19));
   for (const c of later.members) { c.xp = xpForLevel(19); c.level = 19; if (c.cls === 'thief' || c.cls === 'monk') takePrestige(c); }
-  const marked = sought(questLog(w.world.state, later)).filter((p) => p.at === 'upperwater_c3');
+  const marked = sought(questLog(TABLES, w.world.state, later)).filter((p) => p.at === 'upperwater_c3');
   ok(['thief', 'monk'].every((cls) => marked.some((p) => p.who.includes(later.members.find((c) => c.cls === cls)!.name))), `at 19 the thief and the monk are sent to Rietum's box (${marked.map((p) => p.who).join(', ')})`);
   for (const t of trainers) {
     const who = later.members.findIndex((c) => c.cls === t.teaches!.cls);
@@ -920,8 +920,8 @@ export const walkthrough: Walkthrough = (ok) => {
   const taught = TOWN.features!.flatMap((f) => (f.kind === 'npc' && f.teaches ? [f.teaches] : []));
   ok(['sorcerer', 'thief', 'barbarian', 'monk'].every((c) => taught.some((t) => t.cls === c && t.prestige === 1)) && taught.length === 4, 'Saltmouth teaches the first prestige of the sorcerer, the thief, the barbarian and the monk');
   ottilie.level = 11;
-  const seeking = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === seekId(w.party.members.indexOf(ottilie), 1) && !v.done);
-  ok(sought(questLog(w.world.state, w.party)).some((p) => p.at === 'saltmouth' && p.who.includes(ottilie.name)), `at 11, ${ottilie.name} is sent to Saltmouth (${seeking()?.goal})`);
+  const seeking = (): QuestView | undefined => questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === seekId(w.party.members.indexOf(ottilie), 1) && !v.done);
+  ok(sought(questLog(TABLES, w.world.state, w.party)).some((p) => p.at === 'saltmouth' && p.who.includes(ottilie.name)), `at 11, ${ottilie.name} is sent to Saltmouth (${seeking()?.goal})`);
   const locksmith = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.teaches?.cls === 'thief')!;
   w.party.gold = 1000;
   ok(teach(locksmith.teaches!, w.party, w.world.state, w.party.members.indexOf(ottilie)).taught && prestigeOf(ottilie) === 1 && w.party.gold === 0 && !seeking(), `the locksmith makes a ${PRESTIGES.thief.titles[0]} of ${ottilie.name} for 1,000 gold, and the seeking is done`);
@@ -931,24 +931,24 @@ export const walkthrough: Walkthrough = (ok) => {
   // offered the first rank's two quests, and done they make the company Surveyors.
   const room = ofKind(TOWN, 'shop').find((f) => f.hall === 'cartographers');
   ok(!!room && room.interior === 'cartographers_room', `the map room is the Cartographers' hall (${room?.name})`);
-  const first = offered('cartographers', w.party);
-  ok(rankOf('cartographers', w.party) === 0 && first.length === 1 && first[0].id === 'carto_chain', `a stranger is offered the first task alone (${first.map((q) => q.title).join(', ')})`);
+  const first = offered(TABLES, 'cartographers', w.party);
+  ok(rankOf(TABLES, 'cartographers', w.party) === 0 && first.length === 1 && first[0].id === 'carto_chain', `a stranger is offered the first task alone (${first.map((q) => q.title).join(', ')})`);
   ok(!takeWork(TABLES, first[0], w.world.state, w.party).length, 'the first task is not paid on taking, though the company walked past both stones on the way in');
-  const chain = (): QuestView | undefined => questLog(w.world.state, w.party).find((v) => v.def.id === 'carto_chain');
+  const chain = (): QuestView | undefined => questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === 'carto_chain');
   ok(/Kestrel Edge/.test(chain()?.goal ?? ''), `the log sends the company back up the road (${chain()?.goal})`);
   see(w, 'delta_d5:d5_milestone');
   ok(/Saltings/.test(chain()?.goal ?? ''), `the chain begins at the stone under the Edge (${chain()?.goal})`);
   see(w, 'saltings_c6:c6_milestone');
   ok(/Map Room/.test(chain()?.goal ?? ''), `and holds to the stone in the Saltings (${chain()?.goal})`);
   const paid = report(TABLES, 'cartographers', w.world.state, w.party);
-  ok(rankOf('cartographers', w.party) === 1 && paid.at(-1) === `Your rank with the Cartographers' Guild is now ${rankName('cartographers', 1)}.` && !!chain()?.done, `the Map Room pays the chain and makes the company Chainmen (${paid.join(' | ').replace(/\n+/g, ' ')})`);
-  const rank1 = offered('cartographers', w.party);
+  ok(rankOf(TABLES, 'cartographers', w.party) === 1 && paid.at(-1) === `Your rank with the Cartographers' Guild is now ${rankName(TABLES.guilds, 'cartographers', 1)}.` && !!chain()?.done, `the Map Room pays the chain and makes the company Chainmen (${paid.join(' | ').replace(/\n+/g, ' ')})`);
+  const rank1 = offered(TABLES, 'cartographers', w.party);
   ok(rank1.length === 2 && rank1.every((q) => q.rank === 1), `a Chainman is offered the first rank's two quests (${rank1.map((q) => q.title).join(', ')})`);
   for (const q of rank1) takeWork(TABLES, q, w.world.state, w.party);
   see(w, 'delta_b5:b5_west');
   see(w, 'saltings_c6:c6_hut');
   report(TABLES, 'cartographers', w.world.state, w.party);
-  ok(rankOf('cartographers', w.party) === 2 && rank1.every((q) => questLog(w.world.state, w.party).find((v) => v.def.id === q.id)?.done), `the fen's edge and the west arm found and reported make the company ${rankName('cartographers', 2)}s`);
+  ok(rankOf(TABLES, 'cartographers', w.party) === 2 && rank1.every((q) => questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === q.id)?.done), `the fen's edge and the west arm found and reported make the company ${rankName(TABLES.guilds, 'cartographers', 2)}s`);
   // Ysolde reads the first Meridian journal to a company that carries it, and gives it back.
   const ysolde = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Ysolde'))!;
   w.party.bag.push('meridian_journal');
@@ -965,7 +965,7 @@ export const walkthrough: Walkthrough = (ok) => {
   const keel = TOWN.features!.find((f): f is Person => f.kind === 'npc' && f.hall === 'compact');
   ok(keel?.name === 'The Keel' && keel.interior === 'harbour_tavern', 'the Keel, the harbour tavern, is the Salt Compact\'s hall');
   ok(TOWN.features!.some((f) => f.kind === 'npc' && f.x === keel!.x && f.y === keel!.y && !f.interior && f.name.startsWith('Ruan')), 'and Ruan keeps it');
-  const work = (): string => offered('compact', w.party).map((q) => q.id).join(', ');
+  const work = (): string => offered(TABLES, 'compact', w.party).map((q) => q.id).join(', ');
   ok(work() === 'compact_run' && fareOf(boat, w.world) === 150, `a stranger is offered the run alone (${work()}), and pays the boat's whole fare`);
   const run = GUILD_QUESTS.find((q) => q.id === 'compact_run')!;
   takeWork(TABLES, run, w.world.state, w.party);
@@ -980,14 +980,14 @@ export const walkthrough: Walkthrough = (ok) => {
   const passed = w.world.eventsHere();
   ok(passed.some((t) => t.includes('customs house door stays shut')), `carried the long way, past the customs house door (${passed.join(' ')})`);
   const runPaid = report(TABLES, 'compact', w.world.state, w.party);
-  ok(rankOf('compact', w.party) === 1 && !w.party.bag.includes('brandy_cask') && runPaid.at(-1) === 'Your rank with the Salt Compact is now Runner.', `the hall takes the cask and the company is a Runner (${runPaid.join(' | ').replace(/\n+/g, ' ')})`);
-  ok(questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_run')?.done === true, 'and the log has the run finished');
+  ok(rankOf(TABLES, 'compact', w.party) === 1 && !w.party.bag.includes('brandy_cask') && runPaid.at(-1) === 'Your rank with the Salt Compact is now Runner.', `the hall takes the cask and the company is a Runner (${runPaid.join(' | ').replace(/\n+/g, ' ')})`);
+  ok(questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === 'compact_run')?.done === true, 'and the log has the run finished');
   ok(fareOf(boat, w.world) === 75, 'a member pays half the boat\'s fare, never more');
   ok(work() === 'compact_crate, compact_lookout', `a Runner is offered the first rank's two (${work()})`);
   // The first rank's crate, walked in the log: taken, the crate opened on C6's quay, reported.
   const crateWork = GUILD_QUESTS.find((q) => q.id === 'compact_crate')!;
   takeWork(TABLES, crateWork, w.world.state, w.party);
-  const crateGoal = (): string => questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.goal ?? '';
+  const crateGoal = (): string => questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.goal ?? '';
   ok(crateGoal().includes('Open a crate'), `the log sends the company to the crews' crate (${crateGoal()})`);
   // Opened as the game opens a chest: its gold and the Scale Mail to the party, and spent.
   w.world.travel('saltings_c6', crate!.x, crate!.y);
@@ -995,7 +995,7 @@ export const walkthrough: Walkthrough = (ok) => {
   if (crate?.kind === 'chest') { w.world.markUsed(crate.id); w.party.gold += crate.gold; w.party.bag.push(...crate.items); }
   ok(w.party.bag.includes('scale+1'), 'and in it the Scale Mail +1');
   ok(crateGoal().includes('Report to the Keel'), `opened, the log sends it back to the Keel (${crateGoal()})`);
-  ok(report(TABLES, 'compact', w.world.state, w.party).length > 0 && questLog(w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.done === true, 'and the Keel pays for it');
+  ok(report(TABLES, 'compact', w.world.state, w.party).length > 0 && questLog(TABLES, w.world.state, w.party).find((v) => v.def.id === 'compact_crate')?.done === true, 'and the Keel pays for it');
 
   // The secret way down: the sawdust trodden out along the Keel's end wall, the search, and the
   // cellar's passage out under C6's sea wall, by the rope, the stair's own secret still to find.

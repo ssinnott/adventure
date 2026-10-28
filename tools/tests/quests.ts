@@ -5,6 +5,7 @@
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, TABLES } from '../../src/content/index.ts';
+import type { Tables } from '../../src/game/tables.ts';
 import { homeMap, zoneOfMap } from '../../src/game/atlas.ts';
 import { existsSync, readFileSync } from 'node:fs';
 import { World } from '../../src/game/world.ts';
@@ -89,7 +90,7 @@ const satisfy = (s: { party: Party; world: World }, c: QuestCond): void => {
     if (who) { who.level = Math.max(who.level, m.level ?? 0); while (prestigeOf(who) < (m.prestige ?? 0)) takePrestige(who); }
   }
 };
-const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(s.world.state, s.party).find((v) => v.def.id === id);
+const view = (s: { party: Party; world: World }, id: string): QuestView | undefined => questLog(TABLES, s.world.state, s.party).find((v) => v.def.id === id);
 const page = (s: { party: Party; world: World }, q: LogQuest, c: QuestDef): PageView | undefined => view(s, q.id)?.pages.find((p) => p.def === c);
 
 /**
@@ -125,8 +126,10 @@ function flagsOwed(): void {
 function goalmap(): void {
   // goalMap (#720): the map the shown goal is done on, read back from the goal, as the chapter moves.
   const shelf = AREAS.find((a) => a.id === 'shelf')!.chapter!, gp = defaultParty(TABLES, makeRng(4)), gw = new World(TABLES, buildMaps(), gp, makeRng(4));
-  // The chapter as the one quest's only chapter, and as a quest of its own, as the log shows a side quest.
-  const asOne: LogQuest = { id: 'fx_one', title: 'One', chapters: [shelf] }, views = (): QuestView[] => questLog(gw.state, gp, [asOne, shelf], []);
+  // The chapter as the one quest's only chapter, and as a quest of its own, as the log shows a side
+  // quest: the log's quests a table of the suite's own (#975).
+  const asOne: LogQuest = { id: 'fx_one', title: 'One', chapters: [shelf] }, own: Tables = { ...TABLES, quests: [asOne, shelf] };
+  const views = (): QuestView[] => questLog(own, gw.state, gp, []);
   gp.flags.q_ashcombe = 1;
   const hired = views(), hiredAt = hired.map(goalMap);
   gp.flags.q_ashcombe_done = 1;
@@ -236,7 +239,7 @@ function pages(): void {
     const rng = makeRng(167), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng);
     for (let i = 1; i <= 5; i++) party.flags[`fx_c${i}`] = 1;
     for (let i = 1; i <= 4; i++) party.flags[`fx_c${i}_done`] = 1;
-    const v = questLog(world.state, party, [five])[0];
+    const own: Tables = { ...TABLES, quests: [five] }, v = questLog(own, world.state, party)[0];
     const sheets = questSheets(v, PAGE.w, PAGE.h), open = openingSheet(v, sheets);
     const pagesInOrder = sheets.every((s, i) => i === 0 || s.page >= sheets[i - 1].page) && new Set(sheets.map((s) => s.page)).size === 5;
     const headed = sheets.every((s) => s.rows[1].text === `${['I', 'II', 'III', 'IV', 'V'][s.page]}. Chapter ${s.page + 1}` && s.rows[2].text === (s.page === 4 ? 'Go on with chapter 5.' : 'Done.')
@@ -286,7 +289,7 @@ function chapters(): void {
     for (const f of ['q_ashcombe_done', 'q_wenna', 'q_grove', 'q_greywater']) s.party.flags[f] = 1;
     stateFor(s.world, 'downs_e3').used.e3_log = 1;
     s.party.bag.push('meridian_journal');
-    const log = questLog(s.world.state, s.party);
+    const log = questLog(TABLES, s.world.state, s.party);
     const one = log.find((v) => v.def === THE_QUEST);
     ok(log.map((v) => v.def.title).join(', ') === 'The Dimming, The Cargo Ledger, The Lost Expedition', `the log lists the one quest and the two side quests (${log.map((v) => v.def.title).join(', ')})`);
     ok(one !== undefined && !one.done && one.pages.map((p) => `${p.def.title}${p.done ? ' (done)' : ''}`).join(', ') === 'The Quiet Farm (done), The Grove Stone' && one.focus === 1 && /under the Grove/.test(one.goal ?? ''),
@@ -330,7 +333,7 @@ function walk(): void {
     const rng = makeRng(4);
     const party = defaultParty(TABLES, rng);
     const world = new World(TABLES, buildMaps(), party, rng);
-    const log = (): QuestView[] => questLog(world.state, party);
+    const log = (): QuestView[] => questLog(TABLES, world.state, party);
     const quest = (id: string): QuestView => log().find((v) => v.def.id === id)!;
     const chapter = (id: string): PageView => quest(THE_QUEST.id).pages.find((p) => p.def.id === id)!;
     const goal = (): string => quest(THE_QUEST.id).goal ?? '';
@@ -359,7 +362,7 @@ function walk(): void {
     takeItem(party, 'greywater_ledger'); party.flags.q_greywater_done = 1;
     ok(news() === 'Quest complete: The Cargo Ledger.' && /pass/.test(goal()), 'the second hand-in finishes the ledger and leaves the one quest as it was');
     const data = deserialize(serialize(world.state, party, 1));
-    const reloaded = questLog(data.world, data.party);
+    const reloaded = questLog(TABLES, data.world, data.party);
     ok(JSON.stringify(reloaded) === JSON.stringify(log()) && questNews(marks, reloaded).length === 0, 'a save carries the quest log without storing it, and a reload is not news');
     world.travel('thornmark', 1, 9, 1);
     party.flags.q_grove = 1;

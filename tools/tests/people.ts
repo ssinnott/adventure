@@ -33,7 +33,7 @@ export function people(): void {
   const fresh = (t: Tables = TABLES): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(t, rng); return { party, world: new World(t, buildMaps(), party, rng) }; };
   // The log's pages begun, a side quest or a chapter of the one quest each, keyed by their ids.
   const pages = (s: { party: Party; world: World }): { id: string; page: PageView }[] =>
-    questLog(s.world.state, s.party).flatMap((v) => v.pages.filter((p) => p.begun).map((page) => ({ id: v.def.chapters ? `${v.def.id}/${page.def.id}` : v.def.id, page })));
+    questLog(TABLES, s.world.state, s.party).flatMap((v) => v.pages.filter((p) => p.begun).map((page) => ({ id: v.def.chapters ? `${v.def.id}/${page.def.id}` : v.def.id, page })));
   const logKeys = (s: { party: Party; world: World }): string[] => pages(s).flatMap(({ id, page }) => [`${id}${page.done ? ' done' : ''}`, ...page.entries.map((e) => `${id}:${e.id}`)]);
 
   // Every hand-in, carried at the first meeting, is taken there.
@@ -238,12 +238,14 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
     ok(handed === 'He weighs it.\n\n(A Sealed Letter given.)' && !countItem(empty.party, LETTER.id) && !!empty.party.flags.fx_given, `with it, it is taken, its flag set and the line says so: ${String(handed).split('\n\n')[1]}`);
 
     // The log reads the answer's flag: a quest done either way, and the entry of the road taken.
+    // Its quests are a table of the suite's own (#975).
     const quest: QuestDef = {
       id: 'fx_ford', title: 'The Fixture Ford', start: { flag: fxFlag('fx_met') }, done: [{ flag: fxFlag('fx_write') }, { flag: fxFlag('fx_keep') }],
       entries: [{ id: 'wrote', when: { flag: fxFlag('fx_write') }, text: 'The captain wrote to Hale.' }, { id: 'kept', when: { flag: fxFlag('fx_keep') }, text: 'The captain kept it quiet.' }],
       goals: [{ when: { flag: fxFlag('fx_met') }, text: 'Answer the captain.' }],
     };
-    const log = (x: { world: World; party: Party }) => questLog(x.world.state, x.party, [quest])[0];
+    const own: Tables = { ...TABLES, quests: [quest] };
+    const log = (x: { world: World; party: Party }) => questLog(own, x.world.state, x.party)[0];
     ok(log(s)?.done && log(s).pages[0].entries.map((e) => e.id).join() === 'wrote' && log(kept)?.done && log(kept).pages[0].entries.map((e) => e.id).join() === 'kept', 'the quest log reads the answer: done either way, with the entry of the road taken');
     const town: MapDef = { id: 'fx_town', name: 'Fixture', kind: 'town', region: 'shelf', start: { ...at, facing: NORTH }, rows: ['###', '#.#', '###'], features: [captain] };
     ok(!condFaults(quest.done!, [town]).length && !!condFaults(quest.done!, [{ ...town, features: [{ ...captain, choice: undefined, says: undefined }] }]).length, "the answers' flags are flags a person sets (and are not without them)");

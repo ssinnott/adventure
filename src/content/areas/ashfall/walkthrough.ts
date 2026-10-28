@@ -492,7 +492,7 @@ export const walkthrough: Walkthrough = (ok) => {
     `he gives his map, a quest item sewn shut, and its giving sets meridian_map (${given3})`);
   ok(meet(fane, w.party, heard(w.world, fane)).text.includes('fire to keep') && !meet(fane, w.party, heard(w.world, fane)).choice, 'after, he keeps his fire, and asks nothing');
   listen(w);
-  ok(!!questLog(w.world.state, { ...w.party, bag: [...w.party.bag, 'meridian_journal'] }).find((v) => v.def.id === 'meridian')?.done, 'and the Lost Expedition, begun with the first journal, is done');
+  ok(!!questLog(TABLES, w.world.state, { ...w.party, bag: [...w.party.bag, 'meridian_journal'] }).find((v) => v.def.id === 'meridian')?.done, 'and the Lost Expedition, begun with the first journal, is done');
 
   // The groups, each won at 27: the deep knockers along their gallery in a three, a lone one and a four, and the
   // inspector before the door, which calls them; by night two on the steps up to the camp, never at the fire; and
@@ -1013,16 +1013,16 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   };
   const shelf = (v: Walk): string => { v.world.travel('cinderport', chart.x, chart.y); return meet(chart, v.party, heard(v.world, chart)).text; };
   const j = surveyors();
-  ok(!offered('cartographers', j.party).some((o) => o.id === q.id), `${q.title} waits for Act IV: a Surveyor is not offered it before the Sleepers are seen`);
+  ok(!offered(TABLES, 'cartographers', j.party).some((o) => o.id === q.id), `${q.title} waits for Act IV: a Surveyor is not offered it before the Sleepers are seen`);
   j.party.flags[SLEEPERS_SEEN] = 1;
-  ok(offered('cartographers', j.party).map((o) => o.id).join() === q.id && !q.item && ['Map Room', 'Chart House'].every((h) => q.goals[0].text.includes(h)),
+  ok(offered(TABLES, 'cartographers', j.party).map((o) => o.id).join() === q.id && !q.item && ['Map Room', 'Chart House'].every((h) => q.goals[0].text.includes(h)),
     'then it is offered alone at any hall of the Guild, Saltmouth\'s Map Room or the Chart House, and takes nothing');
   const purse = j.party.gold, xp = xpOf(j.party), before = shelf(j);
-  ok(!take(TABLES, q, j.world.state, j.party).length && !report(TABLES, 'cartographers', j.world.state, j.party).length && rankOf('cartographers', j.party) === 2, 'taken with the journal unfound, the hall pays nothing');
+  ok(!take(TABLES, q, j.world.state, j.party).length && !report(TABLES, 'cartographers', j.world.state, j.party).length && rankOf(TABLES, 'cartographers', j.party) === 2, 'taken with the journal unfound, the hall pays nothing');
   open(j, `${ES.id}:es_journal`, 'skip', false);
   j.world.travel('cinderport', chart.x, chart.y);
   const paid = report(TABLES, 'cartographers', j.world.state, j.party), after = shelf(j);
-  ok(paid.length === 2 && paid[0].startsWith(q.paid[0]) && j.party.gold === purse + 500 && xpOf(j.party) >= xp + 3600 - j.party.members.length && rankOf('cartographers', j.party) === 3
+  ok(paid.length === 2 && paid[0].startsWith(q.paid[0]) && j.party.gold === purse + 500 && xpOf(j.party) >= xp + 3600 - j.party.members.length && rankOf(TABLES, 'cartographers', j.party) === 3
     && !!j.party.flags[doneFlag(q.id)] && j.party.bag.includes('meridian_journal4'),
     `the journal found, the Chart House pays 500 gold and 3,600 xp, the book stays in the pack and the company are Mapmakers (${paid.join(' ').replace(/\n+/g, ' ')})`);
   ok(before.includes('shelf of three journals') && after.includes('shelf of four journals'), 'and the Chart House\'s shelf, three journals and a gap before, holds four after');
@@ -1030,7 +1030,7 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   late.party.flags[SLEEPERS_SEEN] = 1;
   open(late, `${ES.id}:es_journal`, 'skip', false);
   const lateGold = late.party.gold, early = take(TABLES, q, late.world.state, late.party);
-  ok(early.length === 2 && early[0].startsWith(q.early![0]) && late.party.gold === lateGold + 500 && rankOf('cartographers', late.party) === 3,
+  ok(early.length === 2 && early[0].startsWith(q.early![0]) && late.party.gold === lateGold + 500 && rankOf(TABLES, 'cartographers', late.party) === 3,
     `a company that had found the journal is paid at the taking, with the early words (${early.join(' ').replace(/\n+/g, ' ')})`);
 
   // The Cartographers' Mapmaker's rung (#635), "Fane's Fire", on the same fresh Surveyors: not offered before
@@ -1051,20 +1051,20 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   /** The Surveyor's rung paid with the fourth journal found first, so the company are Mapmakers. */
   const surveyed = (v: Walk): void => { open(v, `${ES.id}:es_journal`, 'skip', false); take(TABLES, q, v.world.state, v.party); };
   const m = mapmakers();
-  ok(offered('cartographers', m.party).map((o) => o.id).join() === q.id && fq.rank === 3 && !fq.item,
+  ok(offered(TABLES, 'cartographers', m.party).map((o) => o.id).join() === q.id && fq.rank === 3 && !fq.item,
     `${fq.title} waits behind ${q.title}: a Surveyor with the Sleepers seen is offered the fourth journal alone`);
   surveyed(m);
   const said = word(m), pack = m.party.bag.join(), purse2 = m.party.gold, xp2 = xpOf(m.party);
-  ok(rankOf('cartographers', m.party) === 3 && offered('cartographers', m.party).map((o) => o.id).join() === fq.id && ['Map Room', 'Chart House'].every((h) => fq.goals[0].text.includes(h)),
+  ok(rankOf(TABLES, 'cartographers', m.party) === 3 && offered(TABLES, 'cartographers', m.party).map((o) => o.id).join() === fq.id && ['Map Room', 'Chart House'].every((h) => fq.goals[0].text.includes(h)),
     'the Surveyor\'s paid, the company are Mapmakers and it is offered alone at any hall of the Guild, Saltmouth\'s Map Room or the Chart House, and takes nothing');
-  ok(!take(TABLES, fq, m.world.state, m.party).length && !report(TABLES, 'cartographers', m.world.state, m.party).length && rankOf('cartographers', m.party) === 3, 'taken with the fire unseen, the hall pays nothing');
+  ok(!take(TABLES, fq, m.world.state, m.party).length && !report(TABLES, 'cartographers', m.world.state, m.party).length && rankOf(TABLES, 'cartographers', m.party) === 3, 'taken with the fire unseen, the hall pays nothing');
   see(m, FIRE);
   m.world.travel('cinderport', chart.x, chart.y);
   const mapped = report(TABLES, 'cartographers', m.world.state, m.party), pinned = word(m);
-  ok(mapped.length === 2 && mapped[0].startsWith(fq.paid[0]) && m.party.gold === purse2 + 800 && xpOf(m.party) >= xp2 + 4800 - m.party.members.length && rankOf('cartographers', m.party) === 4
+  ok(mapped.length === 2 && mapped[0].startsWith(fq.paid[0]) && m.party.gold === purse2 + 800 && xpOf(m.party) >= xp2 + 4800 - m.party.members.length && rankOf(TABLES, 'cartographers', m.party) === 4
     && !!m.party.flags[doneFlag(fq.id)] && m.party.bag.join() === pack && m.party.bag.includes('fane_map'),
     `the fire seen, the Chart House pays 800 gold and 4,800 xp, the pack as it was with Fane's map in it, and the company are Geographers (${mapped.join(' ').replace(/\n+/g, ' ')})`);
-  ok(!report(TABLES, 'cartographers', m.world.state, m.party).length && !offered('cartographers', m.party).length && m.party.gold === purse2 + 800,
+  ok(!report(TABLES, 'cartographers', m.world.state, m.party).length && !offered(TABLES, 'cartographers', m.party).length && m.party.gold === purse2 + 800,
     'and it is paid the once: a second report pays nothing, and nothing is offered');
   ok(said.includes('no further') && pinned.includes('a pin in the map past the vents') && !pinned.includes('no further'),
     'and Cador Lusk, who had the Company no further than the vents, has a pin in the map past them');
@@ -1072,7 +1072,7 @@ function emberStone(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   surveyed(soon);
   see(soon, FIRE);
   const soonGold = soon.party.gold, hasty = take(TABLES, fq, soon.world.state, soon.party);
-  ok(hasty.length === 2 && hasty[0].startsWith(fq.early![0]) && soon.party.gold === soonGold + 800 && rankOf('cartographers', soon.party) === 4,
+  ok(hasty.length === 2 && hasty[0].startsWith(fq.early![0]) && soon.party.gold === soonGold + 800 && rankOf(TABLES, 'cartographers', soon.party) === 4,
     `a company that had seen the fire first is paid at the taking, with the early words (${hasty.join(' ').replace(/\n+/g, ' ')})`);
 }
 
@@ -1441,7 +1441,7 @@ function thirdPrestiges(ok: (cond: boolean, msg: string) => void): void {
   const talk = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const said = meet(p, w.party, heard(w.world, p)).text; listen(w); return said; };
   const ask = (d: MapDef, p: Person): string => { w.world.travel(d.id, p.x, p.y); const [a] = meet(p, w.party, heard(w.world, p)).choice?.answers ?? []; const said = a ? answer(TABLES.items, a, w.party) : ''; listen(w); return said; };
   const old = person('Wystan, an old Lightbearer', F11), heir = person('Petroc, the warlord\'s heir', G11), druid = person('Kenver, the Archdruid', F10);
-  const sent = sought(questLog(w.world.state, w.party));
+  const sent = sought(questLog(TABLES, w.world.state, w.party));
   ok(([[F11, old, idris], [G11, heir, ragna], [F10, druid, bryn]] as const).every(([d, p, c]) => sent.find((s) => s.at === d.id)?.who.includes(c.name) && p.teaches?.prestige === 3 && p.teaches.seek?.includes(PRESTIGES[c.cls].titles[2])),
     'at 27 with the second, the paladin is sent to the old Lightbearer, the barbarian to the warlord\'s heir and the druid to the Archdruid, each seeking naming the third');
   /** A trainer's own words, then the ask once, which begins the quest and ends the seeking, then `later`, his words at a meeting after; the third waits on the deed. */
@@ -1560,7 +1560,7 @@ function masterOfMagic(ok: (cond: boolean, msg: string) => void): void {
 
   // Found, never told: she has no seeking, and nothing in the log, Ashfall's quests, the chapter or the atlas names her or her roll.
   const mark = /eseld|town roll|scholar|clerk/i;
-  ok(!eseld.teaches && !sought(questLog(w.world.state, w.party)).some((s) => s.at === L1.id) && !mark.test(JSON.stringify([QUESTS, CHAPTER])) && !/eseld|town roll/i.test(JSON.stringify(ATLAS)),
+  ok(!eseld.teaches && !sought(questLog(TABLES, w.world.state, w.party)).some((s) => s.at === L1.id) && !mark.test(JSON.stringify([QUESTS, CHAPTER])) && !/eseld|town roll/i.test(JSON.stringify(ATLAS)),
     'nothing seeks her and nothing in the log, the quests, the chapter or the atlas names her, her room or her roll');
 
   // The hide: the room and its door are the only part of the town the street does not reach, and it stands
@@ -1864,18 +1864,18 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   const chart = ofKind(PORT, 'npc').find((f) => f.interior === 'cinderport_cartographers')!, house = ofKind(PORT, 'npc').find((f) => f.interior === 'cinderport_factor')!;
   ok(chart.hall === 'cartographers' && house.hall === 'compact', `${chart.name} is the Cartographers' hall and ${house.name} the Compact's`);
   for (const g of ['cartographers', 'compact'] as const) {
-    const p = structuredClone(w.party), [first] = offered(g, p);
-    ok(!!first && first.rank === 0 && !take(TABLES, first, w.world.state, p).length && inHand(g, p).some((q) => q.id === first.id), `a new company joins the ${g} ladder here: ${first?.title} offered and taken`);
+    const p = structuredClone(w.party), [first] = offered(TABLES, g, p);
+    ok(!!first && first.rank === 0 && !take(TABLES, first, w.world.state, p).length && inHand(TABLES, g, p).some((q) => q.id === first.id), `a new company joins the ${g} ladder here: ${first?.title} offered and taken`);
   }
   // The Fence's rung (#635), offered to the Compact's rank 2 and paid at the factor's house once the
   // Dead-Drop's stair is gone down, as at the Keel.
   const fence = GUILD_QUESTS.find((q) => q.id === 'compact_fence')!, f = newWalk(ok);
   f.party.flags[rankFlag('compact')] = 2;
-  ok(offered('compact', f.party).some((q) => q.id === fence.id) && !take(TABLES, fence, f.world.state, f.party).length, `${fence.title} offered to a company of the Compact's rank 2, and taken`);
+  ok(offered(TABLES, 'compact', f.party).some((q) => q.id === fence.id) && !take(TABLES, fence, f.world.state, f.party).length, `${fence.title} offered to a company of the Compact's rank 2, and taken`);
   see(f, 'dead_drop_stair:dd_foot');
   f.world.travel('cinderport', house.x, house.y);
   const purse = f.party.gold, paid = report(TABLES, 'compact', f.world.state, f.party);
-  ok(paid.length >= 1 && f.party.gold === purse + (fence.pay.gold ?? 0) && rankOf('compact', f.party) === 3, `and paid at ${house.name} (${paid.join(' ').replace(/\n+/g, ' ')})`);
+  ok(paid.length >= 1 && f.party.gold === purse + (fence.pay.gold ?? 0) && rankOf(TABLES, 'compact', f.party) === 3, `and paid at ${house.name} (${paid.join(' ').replace(/\n+/g, ' ')})`);
 
   // The Compact's ship (#547): sold on Kilnhaven's quay to the Compact's steps here for its whole fare,
   // it sails at 20:00 and ties up two days on at 16:00, the steps said as the company comes ashore, and
@@ -2486,7 +2486,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     const told = heir.says!.filter((s) => s.lines.slice(-2).join('\n') === AXE_RUMOUR.join('\n')), boxes = told.map((s) => wrap(s.lines.join('\n\n'), SAY_W).length);
     ok(heir.flag === MET && first === heir.lines.join('\n\n') && then.startsWith(`${heir.lines.join('\n\n')}\n\n`) && then === [...heir.lines, ...AXE_RUMOUR].join('\n\n')
       && told.length === 2 && JSON.stringify(told[0].after) === JSON.stringify({ flag: BROOD_ASKED, slain: BROOD }) && JSON.stringify(told[1].after) === JSON.stringify({ flag: MET }) && heir.says!.at(-1) === told[1]
-      && told.every((s) => !s.sets && !s.until && !s.choice) && !JSON.stringify(heir.says).includes(GH.id) && boxes.every((n) => n <= SAY_LINES) && !JSON.stringify(questLog(w.world.state, w.party)).includes('Grim\'s'),
+      && told.every((s) => !s.sets && !s.until && !s.choice) && !JSON.stringify(heir.says).includes(GH.id) && boxes.every((n) => n <= SAY_LINES) && !JSON.stringify(questLog(TABLES, w.world.state, w.party)).includes('Grim\'s'),
       `Petroc says nothing of the axe at his first meeting, and at the next after his own words "${AXE_RUMOUR.join(' ')}", as after his words over the old axe once the brood has fallen: words only, in no quest, ${boxes.join(' and ')} of his box's ${SAY_LINES} lines`);
     listen(w);
     for (const [k, v] of kept) { if (v === undefined) delete w.party.flags[k]; else w.party.flags[k] = v; }
