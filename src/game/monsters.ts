@@ -22,7 +22,7 @@ export interface KindDef {
   weak?: readonly Element[];
   /** Holy Strike bites. */
   holy: boolean;
-  /** When it leaves a fight: at its leader's fall, once three in four of its group are down, or never (combat.ts `morale`). */
+  /** When it leaves a fight: at its leader's fall, once three in four of its group are down, or never (combat/foes.ts `morale`). */
   breaks: 'leader' | 'rout' | 'never';
 }
 
@@ -96,12 +96,12 @@ export interface MonsterDef {
   /**
    * A group it may spend a turn bringing into the fight, at `chance` a turn, while the fight has room
    * for the whole of it under the cap of 12 monsters in three groups, those already down counted
-   * (combat.ts `canCall`): the tallyman's knockers, Vask's sentries (#537). By id; a tool may hand in defs.
+   * (combat/foes.ts `canCall`): the tallyman's knockers, Vask's sentries (#537). By id; a tool may hand in defs.
    */
   calls?: { monsters: readonly (string | MonsterDef)[]; chance: number };
   /**
    * One attack at every member of a row, at `chance` a turn, a to-hit and its own dice rolled for each
-   * (combat.ts `sweep`, #545). Bare it is an arm, and takes the front row, the back once the front is
+   * (combat/foes.ts `sweep`, #545). Bare it is an arm, and takes the front row, the back once the front is
    * down: the giants. With an element it is a breath, and takes the row with more standing in it, the
    * front on a tie: the drakes. It neither drains nor inflicts. MONSTERS §3.3 sizes it.
    */
@@ -110,7 +110,7 @@ export interface MonsterDef {
   steady?: boolean;
   /**
    * Stands down and leaves the fight once every leader in it is down, though its kind never breaks
-   * (combat.ts `morale`, #748): the Core Sentries, which take their orders from the ring.
+   * (combat/foes.ts `morale`, #748): the Core Sentries, which take their orders from the ring.
    */
   obeys?: boolean;
   /** Tint of the sprite. */

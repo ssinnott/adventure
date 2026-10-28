@@ -3,7 +3,7 @@
 // ui/combat.ts reads CombatState and calls `partyAct` / `monsterAct`; nothing here draws. This is
 // the fight's flow, from `startCombat` through the rounds and the turns to `checkOutcome`. Its
 // parts, held to the same rule, are in game/combat/ (#1007): the state, the log's lines, the perks,
-// the party's casting and the monsters' side; every name they held here is still given from here.
+// the party's casting and the monsters' side; what it exported of theirs, it exports still.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { monster, monsterSpells } from './monsters.ts';
 import { spell } from './spells.ts';
@@ -24,7 +24,7 @@ import {
   morale,
 } from './combat/foes.ts';
 
-// The old path: every name the parts held when they were here, given on, so no importer changed.
+// The old path: what this file exported of the parts before, given on, so no importer changed.
 export type {
   MonsterInst, TurnRef, PartyAction, Outcome, Loot, CombatState, CombatOpts, Edge, Ranks, Clock, CombatGroup, Fighters,
 } from './combat/state.ts';
