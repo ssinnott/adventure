@@ -1,8 +1,8 @@
-// What every part of the view takes and none is above (#1028): the frame's state, the distance fog, the
-// projection (`unit`, `unitIn`, `floorPt`), the polygon helpers, `ViewRect` and the colours of the
-// ground the parts share. The state (`env`, `present` and `flames`) is held here and set at each paint
-// through `setEnv`, `setPresent` and `setFlames`, never copied: a module's binding cannot be assigned
-// from another, and a copy goes stale between frames.
+// What every part of the view takes and none is above (#1028): the frame's `Paint` and its maker, the
+// distance fog, the projection (`unit`, `unitIn`, `floorPt`), the polygon helpers, `ViewRect` and the
+// colours of the ground the parts share. The frame's state (the canvas and the eye's place on it, the
+// light, the map, `env`, `present` and the flames being gathered) is one `Paint`, made once at the top
+// of `paintScene` and given to each painter first (#1029); nothing of it is held between frames.
 //
 // Geometry. The eye sits at the centre of the party's cell. A plane k cells ahead of the eye
 // projects with a half-size unit u(k) = (H/2) * NEAR / (k + 0.5): the near face of the cell
@@ -12,6 +12,7 @@
 // painted back to front, outer lateral columns before the centre, so nearer geometry overdraws.
 
 import type { Terrain, Feature } from '../../game/mapdef.ts';
+import type { GameMap } from '../../game/map.ts';
 import { shade, mix } from '../../lib/art/palettes.ts';
 import { TERRAIN_COLORS } from '../palette.ts';
 import { HIGH_SUMMER } from '../scenery.ts';
@@ -28,24 +29,51 @@ export interface ViewRect { x: number; y: number; w: number; h: number; }
 export function unit(k: number, h: number): number { return (h / 2) * NEAR / (k + 0.5); }
 
 /**
- * The weather and the season as the scene painter sees them, set at the top of each paint like
- * `flames`: murk is fog or driving rain or snow closing in (0 .. 1), cover the snow lying, wet the
+ * The weather and the season as the scene painter sees them, worked out at the top of each paint:
+ * murk is fog or driving rain or snow closing in (0 .. 1), cover the snow lying, wet the
  * rain standing, `day` the day of the year for the grass, `trees` how the year dresses them.
  */
-interface Env { murk: number; cover: number; wet: number; day: number; trees: TreeSeason; tide: Tide; }
+export interface Env { murk: number; cover: number; wet: number; day: number; trees: TreeSeason; tide: Tide; }
 export const CLEAR: Env = { murk: 0, cover: 0, wet: 0, day: 45, trees: HIGH_SUMMER, tide: 'low' };
 /** Tidal ground as it is drawn: the sea over it at high water, wet sand at low. */
-export const asDrawn = (t: Terrain): Terrain => (t === 'tidal' && env.tide === 'high' ? 'water' : t);
-export let env: Env = CLEAR;
-/** Set at the top of each paint (paintScene): the weather and the season as the parts read them. */
-export function setEnv(e: Env): void { env = e; }
-/** Whether a feature is there now, as the world being painted says: a shut business hangs no sign. */
-export let present: (f: Feature) => boolean = () => true;
-/** Set at the top of each paint (paintScene): whether a feature is there now, as the world being painted says. */
-export function setPresent(p: (f: Feature) => boolean): void { present = p; }
+export const asDrawn = (p: Paint, t: Terrain): Terrain => (t === 'tidal' && p.env.tide === 'high' ? 'water' : t);
 
-/** Distance fog: nearer is truer. `haze` is the colour far things fade toward. */
-export function fog(color: string, d: number, dark: boolean, haze: string | null = null): string {
+/**
+ * What one frame's painters share (#1029), made once at the top of `paintScene` and given to each
+ * painter first: the canvas, the eye's column `cx`, the `horizon` and the view's height `h`; whether the
+ * night is dark, the `haze` far things fade toward, the daylight and the `gloom` a grey day lights the
+ * lamps by; the map, the weather and the season (`env`), whether a feature is there now (`present`: a
+ * shut business hangs no sign) and the flames the scene lights as it is painted, read once it is done.
+ */
+export interface Paint {
+  ctx: CanvasRenderingContext2D; cx: number; horizon: number; h: number;
+  dark: boolean; haze: string | null; daylight: number; gloom: number;
+  map: GameMap; env: Env; present: (f: Feature) => boolean; flames: Flame[];
+}
+/** Where a frame is drawn: the part of a Paint the figures over a finished scene take (`drawViewport`). */
+export type View = Pick<Paint, 'ctx' | 'cx' | 'horizon' | 'h'>;
+/** The light a frame is painted in and what the world says is there, as `paintOn` takes them. */
+export type Light = Pick<Paint, 'dark' | 'haze' | 'daylight' | 'gloom' | 'env' | 'present'>;
+/** A clear day: not dark, no haze, full daylight, the clear `env` and every feature there. */
+const DAY: Light = { dark: false, haze: null, daylight: 1, gloom: 1, env: CLEAR, present: () => true };
+/**
+ * A frame's Paint on `ctx` over `r`: the eye's column and the horizon in the middle of the rect, in the
+ * light given, or a clear day's (the smoke's hill painted alone); no flames gathered yet.
+ */
+export function paintOn(ctx: CanvasRenderingContext2D, r: ViewRect, map: GameMap, light: Light = DAY): Paint {
+  return { ...light, ctx, cx: r.x + r.w / 2, horizon: r.y + r.h / 2, h: r.h, map, flames: [] };
+}
+
+/** What the fog reads of a frame: whether it is dark, its haze and the murk in its `env`. */
+export type Air = Pick<Paint, 'dark' | 'haze' | 'env'>;
+/** The frame's air without its haze: a door, its seam and a sconce's iron darken with the night and never fade into the haze. */
+export const unhazed = (a: Air): Air => ({ dark: a.dark, haze: null, env: a.env });
+/** Neither darkened nor hazed: a window lit at night, and a dungeon's ceiling. */
+export const LIT: Air = { dark: false, haze: null, env: CLEAR };
+
+/** Distance fog: nearer is truer. The air's `haze` is the colour far things fade toward. */
+export function fog(a: Air, color: string, d: number): string {
+  const { dark, haze, env } = a;
   // Outdoors (haze given) keeps its colour with distance, as Xeen does; dungeons fall off into dark.
   const f = dark ? Math.max(0.12, 1 - d * 0.3) : haze ? Math.max(0.7, 1 - d * 0.07) : Math.max(0.5, 1 - d * 0.12);
   const c = shade(color, f);
@@ -79,9 +107,10 @@ function vinesColor(day: number): string { return mix(TERRAIN_COLORS.vines, gras
  * The colour of the ground: the terrain's, the grass, the hills and the crop by season, darker when
  * wet, whitened by snow.
  */
-export function groundColor(t: Terrain, kind: string, floorPal: string, crop = 0): string {
+export function groundColor(p: Paint, t: Terrain, floorPal: string, crop = 0): string {
+  const { env } = p, kind = p.map.kind;
   if (kind === 'dungeon') return floorPal;
-  const terrain = asDrawn(t);
+  const terrain = asDrawn(p, t);
   let c = terrain === 'grass' ? grassColor(env.day) : terrain === 'hills' ? hillColor(env.day) : terrain === 'woods' ? woodsColor(env.day) : terrain === 'farm' ? cropColor(crop, env.day) : terrain === 'heather' ? heatherColor(env.day)
     : terrain === 'steppe' ? steppeColor(env.day) : terrain === 'vines' ? vinesColor(env.day)
     : terrain === 'pine' ? pineColor(env.day) : terrain === 'ice' ? iceColor(env.day) : (TERRAIN_COLORS[terrain] ?? floorPal);
@@ -96,10 +125,6 @@ export interface Flame {
   /** A lamp's light: the strip its glow and beam can reach, as painted when the lamp was, then where nothing nearer painted over it. */
   reach?: { x: number; y: number; w: number; h: number; before?: ImageData; mask?: HTMLCanvasElement };
 }
-/** Filled while a scene is painted: where the torches and lanterns are, for the per-frame flames. */
-export let flames: Flame[] = [];
-/** Set while a scene is painted (paintScene, and a face of the void that hides a torch): the array itself, never a copy. */
-export function setFlames(f: Flame[]): void { flames = f; }
 
 /** The unit at depth fraction s (0 near .. 1 far) through cell d; the party's own cell is clipped at k = 0, as its walls are. */
 export function unitIn(d: number, s: number, h: number): number { return unit(Math.max(0, d - 0.5 + s), h); }
@@ -109,6 +134,12 @@ export function floorPt(cx: number, horizon: number, h: number, d: number, l: nu
   const u = unitIn(d, s, h);
   return [cx + (l - 0.5 + t) * 2 * u, horizon + u];
 }
+
+/**
+ * A wall's front face on the screen (#1029): from x0 across to x1 and from its top down to its foot
+ * (`bottom`), and whether it runs on into the next face on the left and on the right.
+ */
+export interface Front { x0: number; x1: number; top: number; bottom: number; joinL: boolean; joinR: boolean }
 
 /** The colour at a point, as one number. */
 export function pixel(ctx: CanvasRenderingContext2D, x: number, y: number): number {

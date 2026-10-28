@@ -78,7 +78,7 @@ export async function hills({ page, ok }: Run): Promise<void> {
     const ctx = c.getContext('2d', { willReadFrequently: true })!;
     for (const d of [1, 2, 3, 5]) for (const l of [-1, 0, 1]) for (const seed of [3, 71, 409]) {
       ctx.clearRect(0, 0, W, H);
-      const { outline } = V.hillBody(ctx, '#6a8a4a', W / 2, H / 2, H, d, l, seed, false, null, false, false);
+      const { outline } = V.hillBody(V.paintOn(ctx, { x: 0, y: 0, w: W, h: H }, window.__game!.game!.world.map), '#6a8a4a', d, l, seed, false, false);
       const px = ctx.getImageData(0, 0, W, H).data;
       const inside = (x: number, y: number): boolean => ctx.isPointInPath(outline, x + 0.5, y + 0.5);
       let n = 0;

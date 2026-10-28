@@ -36,8 +36,8 @@ import { weatherSight } from '../../game/weather.ts';
 import { sunTimes, DAYS_PER_YEAR } from '../../game/calendar.ts';
 import { hash } from '../paint/brush.ts';
 import { hearthBearing, hearthLook } from '../../game/stones.ts';
-import { unit, CLEAR, env, setEnv, setPresent, groundColor, flames, setFlames, floorPt, pixel, addPoly } from './common.ts';
-import type { ViewRect, Flame } from './common.ts';
+import { unit, CLEAR, paintOn, groundColor, floorPt, pixel, addPoly } from './common.ts';
+import type { ViewRect, Flame, Env, View } from './common.ts';
 import { murkOf, toPair, drawnAt, standsAt, isHouse, building, tentOf } from './model.ts';
 import { cast, drawSkyBand } from './sky.ts';
 import type { SkyOpts } from './sky.ts';
@@ -65,8 +65,10 @@ interface Scene {
   flames: Flame[];
 }
 let scene: Scene | null = null;
+/** The flames the scene last painted left alight, the array itself: the paint's result, kept as the scene is (#1029). */
+let painted: Flame[] = [];
 /** The flames the last scene painted left alight. */
-export function paintedFlames(): readonly Flame[] { return flames; }
+export function paintedFlames(): readonly Flame[] { return painted; }
 
 /**
  * The first-person view at `r`. `weather` draws the rain, snow, fog and lightning over it; a fight
@@ -83,7 +85,7 @@ export function drawViewport(
     canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
     // Each torch's point is read back as the scene is painted (see `pixel`).
     paintScene(canvas.getContext('2d', { willReadFrequently: true })!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
-    scene = { key, canvas, sky, flames };
+    scene = { key, canvas, sky, flames: painted };
   }
   ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
   // The sky, a lightning bolt in it, then the scene in front with the sky showing through.
@@ -103,7 +105,7 @@ export function drawViewport(
   // Monsters, every frame, with a line-of-sight check against the cached walls.
   const map = world.map;
   const { x: px, y: py, facing: f } = world.state;
-  const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
+  const cx = r.x + r.w / 2, horizon = r.y + r.h / 2, view: View = { ctx, cx, horizon, h: r.h };
   const dark = world.isDark && map.kind !== 'dungeon';
   // Grey days dim them, and murk fades the far ones.
   const dim = wx ? 1 - 0.18 * wx.cloud : 1, murk = wx ? murkOf(wx) : 0;
@@ -119,7 +121,7 @@ export function drawViewport(
       const n = ms.length;
       ms.forEach((m, i) => {
         const off = (i - (n - 1) / 2) * u * 0.8;
-        if (m.under === 'ice') drawUnderIce(ctx, m, cx + l * 2 * u + off, cx, horizon, r.h, d, l, tone, frame + i * 7);
+        if (m.under === 'ice') drawUnderIce(view, m, cx + l * 2 * u + off, d, l, tone, frame + i * 7);
         else drawMonsterSprite(ctx, m.sprite, cx + l * 2 * u + off, horizon + u * 0.95, u * 2 * m.size, m.tint, tone, frame + i * 7);
       });
     }
@@ -139,7 +141,8 @@ export function drawViewport(
  * A figure under the ice: its shape dark through the ice, laid flat in its own square and clipped to
  * it, so nothing of it stands over the ice.
  */
-function drawUnderIce(ctx: CanvasRenderingContext2D, m: ViewMonster, x: number, cx: number, horizon: number, h: number, d: number, l: number, tone: number, frame: number): void {
+function drawUnderIce(v: View, m: ViewMonster, x: number, d: number, l: number, tone: number, frame: number): void {
+  const { ctx, cx, horizon, h } = v;
   const pt = (s: number, t: number): [number, number] => floorPt(cx, horizon, h, d, l, s, t);
   const near = pt(0, 0)[1], far = pt(1, 0)[1], mid = (near + far) / 2, tall = unit(d, h) * 2 * m.size;
   const squash = Math.min(0.45, ((near - far) * 0.8) / tall);
@@ -159,13 +162,11 @@ function drawUnderIce(ctx: CanvasRenderingContext2D, m: ViewMonster, x: number, 
 export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderingContext2D, world: World, r: ViewRect, backdrop?: string): void {
   const map = world.map;
   const { x: px, y: py, facing: f } = world.state;
-  const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
   const dark = world.isDark && map.kind !== 'dungeon';
   const daylight = world.daylight;
   const sight = world.sight;
   const wx = world.underSky ? world.weather : null, day = world.date.dayOfYear;
-  setEnv(wx ? { murk: murkOf(wx), cover: wx.cover, wet: wx.cover < 0.3 ? wx.wet : 0, day, trees: treeSeason(day, wx.cover), tide: world.tide } : CLEAR);
-  setPresent((q) => world.present(q));
+  const env: Env = wx ? { murk: murkOf(wx), cover: wx.cover, wet: wx.cover < 0.3 ? wx.wet : 0, day, trees: treeSeason(day, wx.cover), tide: world.tide } : CLEAR;
   const cloud = wx?.cloud ?? 0;
   // A dark day lights the lamps early.
   const gloom = daylight * (1 - 0.3 * cloud - 0.25 * (wx?.precip ?? 0));
@@ -174,7 +175,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const skyBottom = cast(mix(mix('#1a1428', '#c9d6e6', daylight), mix('#1c1f26', '#b8c0c8', daylight), Math.min(1, cloud * 0.6 + env.murk)), look.cast?.foot, daylight);
   const haze = map.kind === 'dungeon' ? null : skyBottom;
 
-  setFlames([]);
+  // The frame's Paint, which each painter below takes first (#1029): the light and the weather worked
+  // out above, whether a feature is there now as the world says, and the flames the scene lights.
+  const p = paintOn(ctx, r, map, { dark, haze, daylight, gloom, env, present: (q) => world.present(q) });
+  const { cx, horizon } = p;
   ctx.save();
   ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
 
@@ -194,7 +198,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     // and past a hill seen from below it the hill's (#53).
     const out = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1)), far = out.look ?? out, brow = hillOver(map, px, py, f, DEPTH + 1, 0);
     const farCell = brow ? map.at(brow.x, brow.y) : far.solid === 'void' || far.terrain === 'chasm' ? map.at(px, py) : far;
-    const ground = shade(groundColor(farCell.terrain, map.kind, pal.floor), dark ? 0.2 : 0.55);
+    const ground = shade(groundColor(p, farCell.terrain, pal.floor), dark ? 0.2 : 0.55);
     const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
     gg.addColorStop(0, mix(ground, skyBottom, dark ? 0.1 : 0.5)); gg.addColorStop(1, ground);
     ctx.fillStyle = gg; ctx.fillRect(r.x, horizon, r.w, r.h / 2);
@@ -233,7 +237,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     const x0 = Math.max(r.x, Math.floor(lamp.x - R)), x1 = Math.min(r.x + r.w, Math.ceil(lamp.x + R));
     const y0 = Math.max(r.y, Math.floor(lamp.y - G)), y1 = Math.min(r.y + r.h, Math.ceil(lamp.y + G));
     if (x1 > x0 && y1 > y0) fl.reach = { x: x0, y: y0, w: x1 - x0, h: y1 - y0, before: ctx.getImageData(x0, y0, x1 - x0, y1 - y0) };
-    flames.push(fl);
+    p.flames.push(fl);
   };
   // Past the squares drawn, a landmark still stands over the land, out to LANDMARK_REACH; anything
   // nearer is painted over it. The weather that takes the fourth square takes it too (fog, a
@@ -253,21 +257,21 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
       const cell = drawn(c.x, c.y), brow = behind(d, l);
-      if (brow) { drawFloor(ctx, 'hills', map.kind, cx, horizon, r.h, d, l, c.x * 131 + c.y * 17 + (map.id.length * 7), dark, haze, map.paletteAt(brow.x, brow.y).floor); continue; }
+      if (brow) { drawFloor(p, 'hills', d, l, c.x * 131 + c.y * 17 + (map.id.length * 7), map.paletteAt(brow.x, brow.y).floor); continue; }
       if (isSolidWall(cell)) continue;
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
       const cellPal = map.paletteAt(c.x, c.y);
       const plot = cell.terrain === 'farm' ? farmPlot(map, c.x, c.y, f) : undefined;
       // The chasm's rims: where the ground stands before it and beyond it.
       const rims = cell.terrain === 'chasm' ? { near: d > 0 && drawn(...toPair(cellAt(px, py, f, d - 1, l))).terrain !== 'chasm', far: drawn(...toPair(cellAt(px, py, f, d + 1, l))).terrain !== 'chasm' } : undefined;
-      drawFloor(ctx, cell.terrain, map.kind, cx, horizon, r.h, d, l, seed, dark, haze, cellPal.floor, plot, rims);
-      if (map.kind === 'dungeon') drawCeiling(ctx, cellPal, cx, horizon, r.h, d, l, seed, f);
+      drawFloor(p, cell.terrain, d, l, seed, cellPal.floor, plot, rims);
+      if (map.kind === 'dungeon') drawCeiling(p, cellPal, d, l, seed, f);
     }
     if (d > 0) for (const l of order) {
       const c = cellAt(px, py, f, d, l);
       if (drawn(c.x, c.y).terrain !== 'hills' || isSolidWall(drawn(c.x, c.y)) || behind(d, l)) continue;
       const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return n.terrain === 'hills' && !isSolidWall(n) && !behind(d, l + dl); };
-      drawHill(ctx, groundColor('hills', map.kind, map.paletteAt(c.x, c.y).floor), cx, horizon, r.h, d, l, c.x * 131 + c.y * 17, dark, haze, hillAt(-1), hillAt(1));
+      drawHill(p, groundColor(p, 'hills', map.paletteAt(c.x, c.y).floor), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1));
     }
     for (const l of order) {
       if (behind(d, l)) continue;
@@ -286,8 +290,8 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         // there does not hide it, since the void stands taller than any wall; the wall is painted
         // over its foot afterwards, nearer cells coming later.
         const s = Math.sign(l);
-        if (d > 0 && !voidAt(d - 1, l)) drawVoidFront(ctx, voids, xl(uN), xr(uN), r.y, horizon + uN);
-        if (l !== 0 && !voidAt(d, l - s)) { const xIn = l > 0 ? xl : xr; drawVoidSide(ctx, voids, xIn(uN), horizon + uN, xIn(uF), horizon + uF, r.y); }
+        if (d > 0 && !voidAt(d - 1, l)) drawVoidFront(p, voids, xl(uN), xr(uN), r.y, horizon + uN);
+        if (l !== 0 && !voidAt(d, l - s)) { const xIn = l > 0 ? xl : xr; drawVoidSide(p, voids, xIn(uN), horizon + uN, xIn(uF), horizon + uF, r.y); }
       } else if (d === 0 && l !== 0 && isSolidWall(cell) && map.landmarkAt(c.x, c.y)?.kind === 'lighthouse' && !backdrop) {
         // At its foot, beside the party: the tower's flank, white and banded red, up past the view. A
         // monastery's square there is the wall of the block it stands in.
@@ -301,28 +305,30 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       } else if (isSolidWall(cell)) {
         // A house's chimney stands on the roof behind its slopes, so it goes down before them.
         const b = map.kind === 'town' && isHouse(map, c.x, c.y) ? building(map, c.x, c.y) : null;
-        if (b && d > 0 && b.chimney === c.y * map.width + c.x) drawChimney(ctx, at, d, l, dark, haze);
-        if (b) drawRoof(ctx, at, d, l, houseAt, b.seed, dark, haze, true);
+        if (b && d > 0 && b.chimney === c.y * map.width + c.x) drawChimney(p, at, d, l);
+        if (b) drawRoof(p, at, d, l, houseAt, b.seed, true);
         // A wall's faces are hidden by the wall beside them and join its faces; a tent's by its own
         // squares and by a wall, and they join only its own.
         const tent = tentAt(d, l) ? tentOf(map, c.x, c.y) : null;
         const own = tent ? (dd: number, ll: number): boolean => inTent(tent, cellAt(px, py, f, dd, ll)) && tentAt(dd, ll) : boxAt;
         const hid = tent ? (dd: number, ll: number): boolean => own(dd, ll) || boxAt(dd, ll) : boxAt;
+        // The wall both its faces are drawn for.
+        const wall = { cell, mx: c.x, my: c.y, d, seed, tent: !!tent };
         // Where a face runs on into the next face of the same wall, the two join with no seam and
         // no outline between them; outlines are for corners and for where a wall ends.
         if (d > 0 && !hid(d - 1, l)) {
           const joinL = own(d, l - 1) && !hid(d - 1, l - 1), joinR = own(d, l + 1) && !hid(d - 1, l + 1);
-          drawFrontFace(ctx, map, cell, c.x, c.y, xl(uN), xr(uN), horizon, uN, d, seed, dark, haze, gloom, joinL, joinR, across, !!tent);
+          drawFrontFace(p, wall, xl(uN), xr(uN), uN, joinL, joinR, across);
         }
         const s = Math.sign(l);
         if (l !== 0 && !hid(d, l - s)) {
           const joinNear = d === 0 || (own(d - 1, l) && !hid(d - 1, l - s)), joinFar = own(d + 1, l) && !hid(d + 1, l - s);
           const xIn = l > 0 ? xl : xr;
-          drawSideFace(ctx, map, cell, c.x, c.y, xIn(uN), uN, xIn(uF), uF, horizon, d, seed, dark, haze, l > 0, joinNear, joinFar, !own(d + 1, l), ahead, !!tent);
+          drawSideFace(p, wall, { x: xIn(uN), u: uN }, { x: xIn(uF), u: uF }, l > 0, { joinNear, joinFar, openFar: !own(d + 1, l) }, ahead);
         }
-        if (b) drawRoof(ctx, at, d, l, houseAt, b.seed, dark, haze, false);
-        if (tent) drawTentRoof(ctx, at, tentView(tent, px, py, f), d, l, map.paletteAt(c.x, c.y), dark, haze);
-        for (const fl of flames) fl.under ??= pixel(ctx, fl.x, fl.y);
+        if (b) drawRoof(p, at, d, l, houseAt, b.seed, false);
+        if (tent) drawTentRoof(p, at, tentView(tent, px, py, f), d, l, map.paletteAt(c.x, c.y));
+        for (const fl of p.flames) fl.under ??= pixel(ctx, fl.x, fl.y);
       } else if (d > 0 && cell.solid !== 'none' && !backdrop) {
         // Over the smoke test's backdrop the billboards stay out: their gaps are not cracks.
         const u = unit(d, r.h);
@@ -358,9 +364,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     }
   }
   // A torch goes out where anything nearer was painted over it, a tree or a rock or a wall.
-  setFlames(flames.filter((fl) => pixel(ctx, fl.x, fl.y) === fl.under));
+  p.flames = p.flames.filter((fl) => pixel(ctx, fl.x, fl.y) === fl.under);
+  painted = p.flames;
   // A lamp's light shows only where nothing nearer was painted over the strip it reaches.
-  for (const fl of flames) if (fl.reach?.before) {
+  for (const fl of p.flames) if (fl.reach?.before) {
     const { x, y, w, h, before } = fl.reach, now = ctx.getImageData(x, y, w, h).data, b = before.data;
     const mask = document.createElement('canvas'); mask.width = w; mask.height = h;
     const mctx = mask.getContext('2d')!, m = mctx.createImageData(w, h);
