@@ -15,7 +15,7 @@ import type { HearthLook } from '../game/stones.ts';
 import { ATLAS, MAP_DEFS, QUESTS } from '../content/index.ts';
 import { GRID } from '../content/maps.ts';
 import { zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, mapPlace, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
-import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt, SiteIcon } from '../game/atlas.ts';
+import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt, SiteIcon, SeaMark } from '../game/atlas.ts';
 import type { World } from '../game/world.ts';
 import { questLog, finishedBy } from '../game/quests.ts';
 import { sought } from '../game/seeking.ts';
@@ -960,13 +960,20 @@ function whirlpool(ctx: CanvasRenderingContext2D, x: number, y: number): void {
   ctx.stroke();
 }
 
+/** Each kind of the atlas's marks on the sea, standing on (x, y); a ship with no pennant flies the ink's. */
+const MARK: Record<SeaMark['kind'], (ctx: CanvasRenderingContext2D, x: number, y: number, mark: SeaMark) => void> = {
+  ship: (ctx, x, y, mark) => ship(ctx, x, y, mark.pennant ?? INK),
+  serpent,
+  whirlpool,
+};
+
 /** The Hearth's place on the cloth, from its site. */
 function hearthAt(): [number, number] {
   const s = ATLAS.sites.find((q) => q.icon === 'hearth');
   return s ? sitePos(s) : [CLOTH.w / 2, CLOTH.h / 2];
 }
 
-/** Little wave marks on open water; ships on the crossings, a serpent, a whirlpool. Only where there is deep water. */
+/** Little wave marks on open water, and the atlas's marks: ships on the crossings, serpents, a whirlpool. Only where there is deep water. */
 function paintSea(ctx: CanvasRenderingContext2D, grid: WorldGrid): void {
   const [hx, hy] = hearthAt();
   const deep = (wx: number, wy: number): boolean => grid.t(Math.floor(wx), Math.floor(wy)) === TI.sea;
@@ -978,12 +985,7 @@ function paintSea(ctx: CanvasRenderingContext2D, grid: WorldGrid): void {
     ctx.beginPath(); ctx.moveTo(x - 3, y); ctx.quadraticCurveTo(x - 1.5, y - 2, x, y); ctx.quadraticCurveTo(x + 1.5, y - 2, x + 3, y); ctx.stroke();
   }
   const put = (wx: number, wy: number, draw: (x: number, y: number) => void): void => { if (deep(wx, wy)) draw(px(wx), py(wy)); };
-  put(128, 186, (x, y) => ship(ctx, x, y, '#2a2a2a'));
-  put(212, 132, (x, y) => ship(ctx, x, y, '#c9a34a'));
-  put(318, 214, (x, y) => ship(ctx, x, y, '#3a5aa0'));
-  put(328, 146, (x, y) => serpent(ctx, x, y));
-  put(222, 232, (x, y) => serpent(ctx, x, y));
-  put(286, 196, (x, y) => whirlpool(ctx, x, y));
+  for (const m of ATLAS.marks) put(m.at[0], m.at[1], (x, y) => MARK[m.kind](ctx, x, y, m));
 }
 
 // ---------------------------------------------------------------- the border, the title, the rose

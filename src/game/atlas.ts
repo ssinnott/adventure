@@ -15,7 +15,7 @@
 // straight lines. Ways between areas come from the built maps' exits and the atlas's planned links;
 // a planned way may open only after a later step, which is what sends the party back through
 // country it has already cleared, or out across the inland sea. Pure: nothing here draws.
-export type { Pt, SiteIcon, LinkKind, Outline, Ridge, River, Patch, Trail, AtlasArea, ZoneMap, AtlasZone, Crossing, AtlasPlace, AtlasSite, AtlasLink, Atlas } from './atlas/schema.ts';
+export type { Pt, SiteIcon, LinkKind, Outline, Ridge, River, Patch, Trail, AtlasArea, ZoneMap, AtlasZone, Crossing, AtlasPlace, AtlasSite, AtlasLink, SeaMark, Atlas } from './atlas/schema.ts';
 export { TERRAINS, TI, MAP_TERRAIN, isWater, lattice, noise, fbm, spline, riverCourse, trailLine } from './atlas/painter.ts';
 export type { WorldTerrain, Course } from './atlas/painter.ts';
 export { worldGrid, gridCuts, boxAt, box, laid, gridFaults } from './atlas/grid.ts';

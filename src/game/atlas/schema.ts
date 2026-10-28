@@ -1,6 +1,7 @@
 // The atlas's schema: the shapes the world map's plan is written in, from a point in world cells to
 // the whole Atlas: the land in strokes (the rim, the seas, the ridges, the rivers, the patches and
-// the trails), the areas of the road of levels and their zones, the places, the sites and the links.
+// the trails), the areas of the road of levels and their zones, the places, the sites, the links and
+// the marks on the sea.
 // Types alone, erased before anything runs, so a change here paints no map and reaches no area
 // (tools/kit/changed.ts). game/atlas.ts re-exports every name.
 import type { MapKind } from '../mapdef.ts';
@@ -146,6 +147,12 @@ export interface AtlasLink {
   noteAt?: Pt;
 }
 
+/**
+ * Something painted on the open sea: a ship, flying its `pennant` (a colour), a serpent or a
+ * whirlpool. The painter sets one only on deep water, and the atlas check holds each to it.
+ */
+export interface SeaMark { kind: 'ship' | 'serpent' | 'whirlpool'; at: Pt; pennant?: string }
+
 export interface Atlas {
   /** World size in cells. */
   width: number;
@@ -172,4 +179,6 @@ export interface Atlas {
   places: readonly AtlasPlace[];
   sites: readonly AtlasSite[];
   links: readonly AtlasLink[];
+  /** The ships, the serpents and the whirlpool on the sea, world cells. */
+  marks: readonly SeaMark[];
 }
