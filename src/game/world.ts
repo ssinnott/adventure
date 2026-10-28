@@ -19,7 +19,6 @@ import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, cl
 import type { CalendarDate, Tide } from './calendar.ts';
 import { weatherAt, classify, isSnowy, skyNews, weatherSight, snowDrag, rangedPenalty, rangedNote, fairStart, tempWord, SKY_NAMES } from './weather.ts';
 import type { Climate, RegionId, Weather, SkyState } from './weather.ts';
-import { CLIMATES } from '../content/index.ts';
 import { holds } from './quests.ts';
 import { open, given } from './people.ts';
 import { pace, denLooks, densOf } from './dens.ts';
@@ -219,7 +218,7 @@ export class World {
       this.state = { mapId: first.id, x: first.def.start.x, y: first.def.start.y, facing: first.def.start.facing, minutes: START_MINUTES, maps: {}, light: 0, truce: 0, truceGroups: [], steps: 0, zones: [] };
       // The company sets out on a dry, clear morning: draw seeds until the first hours are fair.
       let seed = 0;
-      const climate = CLIMATES[regionOf(first, first.def.start.x, first.def.start.y)];
+      const climate = tables.climates[regionOf(first, first.def.start.x, first.def.start.y)];
       for (let i = 0; i < 64; i++) { seed = rng.int(1, 0x7ffffffe); if (fairStart(seed, START_MINUTES, climate)) break; }
       this.state.weatherSeed = seed;
     }
@@ -298,12 +297,12 @@ export class World {
 
   // ---- weather ----
   get region(): RegionId { return regionOf(this.map, this.state.x, this.state.y); }
-  get climate(): Climate { return CLIMATES[this.region]; }
+  get climate(): Climate { return this.tables.climates[this.region]; }
   /** The weather in this map's region now; also the weather over a dungeon, though nobody there sees it. */
   get weather(): Weather {
     const c = this.cached, seed = this.state.weatherSeed!, minutes = this.state.minutes, region = this.region;
     if (c && c.seed === seed && c.minutes === minutes && c.region === region) return c.weather;
-    const weather = weatherAt(seed, minutes, CLIMATES[region]);
+    const weather = weatherAt(seed, minutes, this.tables.climates[region]);
     this.cached = { seed, minutes, region, weather };
     return weather;
   }
@@ -314,7 +313,7 @@ export class World {
     const seed = this.state.weatherSeed!, minutes = this.state.minutes;
     if (!this.skies || this.skies.seed !== seed || this.skies.minutes !== minutes) this.skies = { seed, minutes, by: new Map() };
     let w = this.skies.by.get(region);
-    if (!w) { w = weatherAt(seed, minutes, CLIMATES[region]); this.skies.by.set(region, w); }
+    if (!w) { w = weatherAt(seed, minutes, this.tables.climates[region]); this.skies.by.set(region, w); }
     return w;
   }
 
