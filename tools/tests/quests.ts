@@ -127,9 +127,9 @@ function goalmap(): void {
   // goalMap (#720): the map the shown goal is done on, read back from the goal, as the chapter moves.
   const shelf = AREAS.find((a) => a.id === 'shelf')!.chapter!, gp = defaultParty(TABLES, makeRng(4)), gw = new World(TABLES, buildMaps(), gp, makeRng(4));
   // The chapter as the one quest's only chapter, and as a quest of its own, as the log shows a side
-  // quest: the log's quests a table of the suite's own (#975).
-  const asOne: LogQuest = { id: 'fx_one', title: 'One', chapters: [shelf] }, own: Tables = { ...TABLES, quests: [asOne, shelf] };
-  const views = (): QuestView[] => questLog(own, gw.state, gp, []);
+  // quest: the log's quests a table of the suite's own (#975), and no maps, so no trainer (#976).
+  const asOne: LogQuest = { id: 'fx_one', title: 'One', chapters: [shelf] }, own: Tables = { ...TABLES, quests: [asOne, shelf], maps: [] };
+  const views = (): QuestView[] => questLog(own, gw.state, gp);
   gp.flags.q_ashcombe = 1;
   const hired = views(), hiredAt = hired.map(goalMap);
   gp.flags.q_ashcombe_done = 1;
