@@ -826,7 +826,7 @@ export const walkthrough: Walkthrough = (ok) => {
   ok(asked.text.includes('"I\'m not anyone\'s key."') && !!w.party.flags[RING_GIVEN] && asked.choice?.answers.map((a) => a.label).join() === 'Light it again.,Open the hull.',
     'the girl takes the ring off his finger and puts it in the company\'s hand: two answers without Fane\'s map');
   const relit = asked.choice!.answers[0], said = answer(TABLES.items, relit, w.party);
-  ok(!!w.party.flags[END_REIGNITE] && said.includes('like a tide coming in') && endingTaken(relit, w.party.flags) === ENDINGS.reignite && ENDINGS.reignite.pages.length === 3 && w.party.bag.includes(SIGNET),
+  ok(!!w.party.flags[END_REIGNITE] && said.includes('like a tide coming in') && endingTaken(TABLES.endings, relit, w.party.flags) === ENDINGS.reignite && ENDINGS.reignite.pages.length === 3 && w.party.bag.includes(SIGNET),
     'Light it again.: its flag set, its three pages shown as it is taken, and the ring in the pack');
   const after = speakTo(w, wenna);
   ok(after.text.includes('"Home," she says. "In the spring. Walk me."') && !after.choice && !w.world.present(vaskAfter),
@@ -841,13 +841,13 @@ export const walkthrough: Walkthrough = (ok) => {
   // third, Make it finish., which no company without the map is offered.
   const fallen = (...flags: string[]): Walk => { const v = newWalk(ok); for (const f of [VASK_FALLEN, VOICE_WHOLE, ...flags]) v.party.flags[f] = 1; v.world.travel('core', 8, 9); return v; };
   const hull = fallen(), hulled = speakTo(hull, wenna).choice!.answers.find((a) => a.label === 'Open the hull.')!, hullSaid = answer(TABLES.items, hulled, hull.party);
-  ok(!!hull.party.flags[END_ARRIVE] && hullSaid.includes('you hear wind') && endingTaken(hulled, hull.party.flags) === ENDINGS.arrive && hull.party.bag.includes(SIGNET)
+  ok(!!hull.party.flags[END_ARRIVE] && hullSaid.includes('you hear wind') && endingTaken(TABLES.endings, hulled, hull.party.flags) === ENDINGS.arrive && hull.party.bag.includes(SIGNET)
     && speakTo(hull, wenna).text.includes('I want to see what it looks like from outside.'), 'Open the hull.: its flag, its pages and the ring, and her words after it');
   const charted = fallen('meridian_map'), offered = speakTo(charted, wenna), finish = offered.choice?.answers.find((a) => a.label === 'Make it finish.');
   ok(offered.text.includes('the oilcloth roll in your pack') && !!charted.party.flags[RING_GIVEN] && offered.choice?.answers.length === 3 && !!finish,
     'with Fane\'s map she looks at the oilcloth roll in the pack, and the third answer is put; the ring is given all the same');
   answer(TABLES.items, finish!, charted.party);
-  ok(!!charted.party.flags[END_FINISH] && endingTaken(finish!, charted.party.flags) === ENDINGS.finish && charted.party.bag.includes(SIGNET) && speakTo(charted, wenna).text.includes('"It\'s moving," she says.'),
+  ok(!!charted.party.flags[END_FINISH] && endingTaken(TABLES.endings, finish!, charted.party.flags) === ENDINGS.finish && charted.party.bag.includes(SIGNET) && speakTo(charted, wenna).text.includes('"It\'s moving," she says.'),
     'Make it finish.: its flag, its pages and the ring, and her words after it');
 
   // With Vask removed from Helmstow by the Council his group is gone by the leave rule and the thinned one
@@ -1121,7 +1121,7 @@ const CHOOSE = (label: string, put: number): Step => ({ name: `the choice, ${lab
   w.ok(!!a && asked.choice!.answers.length === put, `she puts the question again, ${put} answers to it (${asked.choice?.answers.map((x) => x.label).join(' ')})`);
   if (!a) return;
   answer(TABLES.items, a, w.party);
-  w.ok(endingTaken(a, w.party.flags)?.pages.length === 3, `${label} taken, its three pages shown`);
+  w.ok(endingTaken(TABLES.endings, a, w.party.flags)?.pages.length === 3, `${label} taken, its three pages shown`);
   listen(w);
 } });
 

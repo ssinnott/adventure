@@ -13,6 +13,7 @@ import type { QuestDef, QuestCond } from '../../src/game/quests.ts';
 import { seekingQuests, trainersIn, sought, seekId } from '../../src/game/seeking.ts';
 import type { Trainer } from '../../src/game/seeking.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
+import { NORTH } from '../../src/game/types.ts';
 import { ok, fxMap, fxFlag } from './lib.ts';
 
 export function seeking(): void {
@@ -26,9 +27,9 @@ export function seeking(): void {
   ok(holds({ member: { who: 2, prestige: 1 } }, world.state, party) && holds({ member: { who: 2, prestige: 2 } }, world.state, party) && !holds({ member: { who: 2, prestige: 3 } }, world.state, party), 'with the prestiges or more: what holds stays held once the next is taken');
 
   // One quest a member and a prestige, from the trainers placed: none placed, none made.
-  ok(TRAINERS().length === trainersIn(MAP_DEFS).length, `the content places ${TRAINERS().length} trainers`);
+  ok(TRAINERS(TABLES.maps).length === trainersIn(MAP_DEFS).length, `the content places ${TRAINERS(TABLES.maps).length} trainers`);
   const perClass = new Map<string, number>();
-  for (const t of TRAINERS()) perClass.set(`${t.teaches.cls}:${t.teaches.prestige}`, (perClass.get(`${t.teaches.cls}:${t.teaches.prestige}`) ?? 0) + 1);
+  for (const t of TRAINERS(TABLES.maps)) perClass.set(`${t.teaches.cls}:${t.teaches.prestige}`, (perClass.get(`${t.teaches.cls}:${t.teaches.prestige}`) ?? 0) + 1);
   const twice = [...perClass].filter(([, n]) => n > 1).map(([k]) => k);
   ok(!twice.length, `no class's prestige is taught by two trainers${twice.length ? ` (${twice.join(', ')})` : ''}`);
   const untaught = Object.keys(PRESTIGES).flatMap((cls) => [1, 2, 3].filter((n) => !perClass.has(`${cls}:${n}`)).map((n) => `${cls}:${n}`));
@@ -38,7 +39,7 @@ export function seeking(): void {
   // Glass's edge, the world map marks his box, and once his quest begins, seeking him is done.
   {
     const r = makeRng(807), p = defaultParty(TABLES, r), w = new World(TABLES, buildMaps(), p, r), cassian = p.members[5];
-    const magus = TRAINERS().find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3);
+    const magus = TRAINERS(TABLES.maps).find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3);
     const view = (): ReturnType<typeof questLog>[number] | undefined => questLog(TABLES, w.state, p).find((v) => v.def.id === seekId(5, 3));
     cassian.level = 26; takePrestige(cassian); takePrestige(cassian);
     const under = view();
@@ -55,14 +56,15 @@ export function seeking(): void {
   const fletcher: Trainer = { map: 'thornhold', place: 'Thornhold', name: 'Aldric the fletcher', teaches: { cls: 'ranger', prestige: 1 } };
   const eyrie: Trainer = { map: fxMap('fx_eyrie'), place: 'the Wold', name: 'the scout', teaches: { cls: 'ranger', prestige: 3, asks: 'fx_fane_map', done: { flag: fxFlag('fx_map_home') } } };
   const fane: QuestDef = { id: 'fx_fane_map', title: "Oriel Fane's Map", start: { flag: fxFlag('fx_asked') }, entries: [], goals: [] };
-  // The log's quests are the scout's alone (#975).
-  const trainers = [fletcher, eyrie], own: Tables = { ...TABLES, quests: [fane] };
+  // The log's quests are the scout's alone (#975), and its maps place the two
+  // trainers alone (#976).
+  const trainers = [fletcher, eyrie], own: Tables = { ...TABLES, quests: [fane], maps: trainers.map(placing) };
   const r2 = makeRng(192), p2 = defaultParty(TABLES, r2), w2 = new World(TABLES, buildMaps(), p2, r2);
   p2.members[3] = createCharacter(TABLES, 'Brin', 'human', 'ranger', {}, r2);
   const made = seekingQuests(p2, trainers, [fane]);
   ok(made.map((q) => q.id).join() === [seekId(2, 1), seekId(2, 3), seekId(3, 1), seekId(3, 3)].join() && made[0].title === 'Wren: Outrider' && made[1].title === 'Wren: Unerring' && made.every((q) => q.mark),
     `two rangers each have a quest for each trainer of their class, by slot (${made.map((q) => q.title).join(', ')})`);
-  const log = (): ReturnType<typeof questLog> => questLog(own, w2.state, p2, trainers);
+  const log = (): ReturnType<typeof questLog> => questLog(own, w2.state, p2);
   ok(!log().some((v) => v.def.id.startsWith('seek:')), 'under the level, no seeking quest is begun');
   const before = questMarks(log());
   p2.members[2].level = 11;
@@ -73,7 +75,7 @@ export function seeking(): void {
   ok(sought(log()).length === 1 && sought(log())[0].at === 'thornhold' && sought(log())[0].who.join() === 'Wren', 'the world map marks Thornhold for Wren');
   // A save carries nothing of it: the log is made again from what the save holds.
   const back = deserialize(serialize(w2.state, p2, 0));
-  ok(JSON.stringify(questLog(own, back.world, back.party, trainers).map((v) => [v.def.id, v.done, v.goal])) === JSON.stringify(log().map((v) => [v.def.id, v.done, v.goal])), 'a save loads with the same seeking quests, and saves none of them');
+  ok(JSON.stringify(questLog(own, back.world, back.party).map((v) => [v.def.id, v.done, v.goal])) === JSON.stringify(log().map((v) => [v.def.id, v.done, v.goal])), 'a save loads with the same seeking quests, and saves none of them');
   takePrestige(p2.members[2]);
   ok(log().find((v) => v.def.id === seekId(2, 1))?.done === true && !sought(log()).length, 'taken, the quest is done and the mark is gone');
   // The third: begun at 27, and done once its trainer's own quest begins.
@@ -84,8 +86,14 @@ export function seeking(): void {
   ok(!log().some((v) => v.def.id === seekId(3, 3) || v.def.id === seekId(3, 1)), 'while Brin, a ranger still at 1, has no quest begun or done by it');
   const named = seekingQuests({ ...p2, members: p2.members.map((m, i) => (i === 2 ? { ...m, name: 'Wren: the Younger' } : m)) }, trainers, [fane]);
   p2.members[2].level = 11; p2.members[2].prestige = 0;
-  ok(sought(questLog(own, w2.state, { ...p2, members: p2.members.map((m, i) => (i === 2 ? { ...m, name: 'Wren: the Younger' } : m)) }, trainers))[0]?.who.join() === 'Wren: the Younger' && named[0].seeker === 'Wren: the Younger', 'the mark names the member the quest carries, a colon in the name or not');
+  ok(sought(questLog(own, w2.state, { ...p2, members: p2.members.map((m, i) => (i === 2 ? { ...m, name: 'Wren: the Younger' } : m)) }))[0]?.who.join() === 'Wren: the Younger' && named[0].seeker === 'Wren: the Younger', 'the mark names the member the quest carries, a colon in the name or not');
   // Content's own words, in place of the system's.
   const worded = seekingQuests(p2, [{ ...fletcher, teaches: { ...fletcher.teaches, seek: 'The fletcher by the oak gate has a bow for Wren.' } }]);
   ok(worded[0].entries[0].text === 'The fletcher by the oak gate has a bow for Wren.', 'a trainer\'s own words stand in for the journal\'s');
 }
+
+/** A map of one square that places a trainer, as content's maps place theirs (#976). */
+const placing = (t: Trainer): Tables['maps'][number] => ({
+  id: t.map, name: t.place, kind: 'town', rows: ['.'], start: { x: 0, y: 0, facing: NORTH },
+  features: [{ kind: 'npc', x: 0, y: 0, name: t.name, lines: [], teaches: t.teaches }],
+});

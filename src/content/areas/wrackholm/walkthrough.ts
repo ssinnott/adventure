@@ -190,7 +190,7 @@ export const STEPS: readonly Step[] = [
 
 /** What the Stone home changes outside the log: the Hearth, the fen's Rifts, the hermit, the porch. */
 function stoneHomeShows(w: Walk, how: string): void {
-  w.ok(stonesRestored(w.world.state, w.party) === 1, `${how}: the Tide Stone home is the Hearth's first step`);
+  w.ok(stonesRestored(TABLES.stones, w.world.state, w.party) === 1, `${how}: the Tide Stone home is the Hearth's first step`);
   const rifts = ['b5_rift_n', 'b5_rift_s', 'c5_rift'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
   const tears = rifts.map((r) => r.features!.find((f) => f.kind === 'event' && f.id === `${r.id}_tear`)!);
   w.ok(tears.every((t) => t.kind === 'event' && w.world.ended(t)), `${how}: the fen's Rifts go quiet with the Stone home, their wardens standing`);

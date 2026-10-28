@@ -344,10 +344,10 @@ export class Game {
   ask(c: Choice, title: string, said?: (text: string) => void): void {
     this.push(new ChoiceScreen(asked(c, this.party), c.answers.map(answerLabel), (i) => {
       if (i < 0) return;
-      const text = answer(this.tables.items, c.answers[i], this.party), end = endingTaken(c.answers[i], this.party.flags);
+      const text = answer(this.tables.items, c.answers[i], this.party), end = endingTaken(this.tables.endings, c.answers[i], this.party.flags);
       const pages = end ? (): void => this.push(new EndingScreen(end)) : undefined;
       if (said) { said(text); pages?.(); } else if (text || !pages) this.push(new MessageScreen(text, pages, title)); else pages();
-    }, title, c.answers.map((a) => barred(a, this.party)), { ends: c.answers.some((a) => !!endsIn(a)) }));
+    }, title, c.answers.map((a) => barred(a, this.party)), { ends: c.answers.some((a) => !!endsIn(this.tables.endings, a)) }));
   }
 
   /**

@@ -29,7 +29,7 @@ export class TitleScreen implements Screen {
   private idle = 0;
   /** The Hearth as the saved company left it, read once from storage. */
   private saved: Hearth | null = null;
-  private hearth(g: Game): Hearth { return (this.saved ??= this.canContinue ? savedHearth(g.store) : { stones: 0 }); }
+  private hearth(g: Game): Hearth { return (this.saved ??= this.canContinue ? savedHearth(g.tables, g.store) : { stones: 0 }); }
   constructor(canContinue: boolean, note = '') {
     this.canContinue = canContinue;
     this.note = note;

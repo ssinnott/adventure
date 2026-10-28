@@ -8,6 +8,7 @@ import { STONES, WHOLE } from '../../src/content/stones.ts';
 import { World } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/mapdef.ts';
+import type { Atlas } from '../../src/game/atlas.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { save } from '../../src/game/save.ts';
@@ -33,12 +34,12 @@ export function stones(): void {
   const rng = makeRng(168), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng);
   const plain = world.almanac().split('\n')[0];
   party.flags.q_grove_done = 1;
-  ok(stonesRestored(world.state, party) === 0 && world.stones === 0 && world.almanac().split('\n')[0] === plain, `the Grove's end restores nothing, and the almanac says only the day ("${plain}")`);
+  ok(stonesRestored(TABLES.stones, world.state, party) === 0 && world.stones === 0 && world.almanac().split('\n')[0] === plain, `the Grove's end restores nothing, and the almanac says only the day ("${plain}")`);
   party.flags.q_tide_home = 1;
   const one = world.almanac().split('\n')[0];
   ok(world.stones === 1 && one === `${plain} ${steadier(1)}`, `the Tide Stone home is one, and the almanac says the Hearth burns steadier ("${one}")`);
   party.flags.q_mender_done = 1;
-  ok(world.stones === 2 && steadier(2) !== steadier(1) && MOST() === STONES.length, `the Grove mended by a Lantern, the Mender's flag, is a second ("${steadier(2)}")`);
+  ok(world.stones === 2 && steadier(2) !== steadier(1) && MOST(TABLES.stones) === STONES.length, `the Grove mended by a Lantern, the Mender's flag, is a second ("${steadier(2)}")`);
   // The Anvil Stone counts once its Warden has fallen and its tear is closed (#540), bought back or taken alike
   // (docs/areas/kilns.md §9): the thane's choice restores nothing by itself, and the tear closed is a third either way.
   for (const [how, flag] of [['bought', 'anvil_bought'], ['taken', 'anvil_taken']] as const) {
@@ -57,7 +58,7 @@ export function stones(): void {
   party.flags.q_ember_lit = 1; alone.flags.q_ember_lit = 1;
   ok(unlit === 3 && world.stones === 4 && steadier(4) !== steadier(3) && world.almanac().split('\n')[0] === `${plain} ${steadier(4)}`,
     `the Ember Stone counts once it is lit and not before, and the almanac says the Hearth hardly wavers ("${steadier(4)}")`);
-  ok(stonesRestored(world.state, alone) === 1, 'lit with no other Stone restored it counts all the same: nothing in the road orders them');
+  ok(stonesRestored(TABLES.stones, world.state, alone) === 1, 'lit with no other Stone restored it counts all the same: nothing in the road orders them');
   ok([0, 1, 2, 3, 4, 5].every((n, i, a) => i === 0 || flickerOf(n) < flickerOf(a[i - 1])) && flickerOf(9) === flickerOf(5), 'each Stone steadies the flicker, and past the last it holds');
 
   // The Underdeep notices (docs/MONSTERS.md §8.2, #548): once the Stone is lit, sentries hunt Ashfall, a group of them on every box `after` the
@@ -77,20 +78,25 @@ export function stones(): void {
 
   // The title reads the save in storage: none, or one that cannot be read, is none restored.
   const box = new Map<string, string>(), store: Store = { getItem: (k) => box.get(k) ?? null, setItem: (k, v) => void box.set(k, v), removeItem: (k) => void box.delete(k) };
-  const empty = savedStones(store);
+  const empty = savedStones(TABLES, store);
   save(store, world.state, party, 0);
-  const kept = savedStones(store);
+  const kept = savedStones(TABLES, store);
   box.set([...box.keys()][0], '{not a save');
-  ok(empty === 0 && kept === 4 && savedStones(store) === 0 && savedStones(null) === 0, `the title reads the saved company's count (${kept}), and none from no save or a broken one`);
+  ok(empty === 0 && kept === 4 && savedStones(TABLES, store) === 0 && savedStones(TABLES, null) === 0, `the title reads the saved company's count (${kept}), and none from no save or a broken one`);
 
   // The Hearth is where the atlas's hearth site is, with no square of its own to fall back on (#945).
   const site = ATLAS.sites.find((s) => s.icon === 'hearth'), lost = ((): string => { try { hearthIn(ATLAS.sites.filter((s) => s.icon !== 'hearth')); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } })();
-  ok(!!site && HEARTH().join() === site.at.join() && lost === 'the atlas has no hearth site, so nothing says where the Hearth burns',
-    `the Hearth burns at the atlas's hearth site (${HEARTH().join(',')}), and an atlas without one throws (${lost})`);
+  ok(!!site && HEARTH(TABLES.atlas).join() === site.at.join() && lost === 'the atlas has no hearth site, so nothing says where the Hearth burns',
+    `the Hearth burns at the atlas's hearth site (${HEARTH(TABLES.atlas).join(',')}), and an atlas without one throws (${lost})`);
+  // Each atlas is read for its own Hearth and kept by it (#976): one of the suite's own, its hearth
+  // site moved, then content's.
+  const moved: Atlas = { ...ATLAS, sites: ATLAS.sites.map((s) => (s.icon === 'hearth' ? { ...s, at: [1, 2] as typeof s.at } : s)) };
+  ok(HEARTH(moved).join() === '1,2' && Math.round(hearthBearing(moved, 1, 9)) === 0 && HEARTH(TABLES.atlas).join() === site?.at.join(),
+    `an atlas of the suite's own is read for its own Hearth (${HEARTH(moved).join(',')}), and content's for content's`);
   // The night sky's Hearth lies where the Hearth does: south of Helmstow, east from the far west shore.
   world.travel('harrow', 7, 14);
-  const from = world.worldCell, b = from ? hearthBearing(from.x, from.y) : -1;
-  ok(!!from && b > 135 && b < 180 && Math.round(hearthBearing(100, 174)) === 90, `from Helmstow's gate (${from?.x},${from?.y}) the Hearth lies south-south-east (${b.toFixed(0)}°), and due east from the west shore`);
+  const from = world.worldCell, b = from ? hearthBearing(TABLES.atlas, from.x, from.y) : -1;
+  ok(!!from && b > 135 && b < 180 && Math.round(hearthBearing(TABLES.atlas, 100, 174)) === 90, `from Helmstow's gate (${from?.x},${from?.y}) the Hearth lies south-south-east (${b.toFixed(0)}°), and due east from the west shore`);
   world.travel('greywater1', 1, 1);
   ok(world.worldCell === undefined, 'underground there is no sky to see it in');
 }
