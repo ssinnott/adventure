@@ -95,10 +95,11 @@ export async function inn({ page, ok }: Run): Promise<void> {
     await press(page, 'Space');
     const back = await top(page);
     const backColours = await colours(page);
-    // With him gone the trade is all the menu offers, and the cursor, kept on the row it left, is on Leave,
-    // which came after his (DESIGN §11): up to the trade, which opens once, with nothing under it to come back to.
+    // With him gone the trade is all the menu offers, and the cursor, kept on the row it left, is
+    // on Leave, which came after his (DESIGN §11). 1 chooses the trade wherever the cursor is: it
+    // opens once, with nothing under it to come back to.
     const backAt = await page.evaluate(() => (window.__game!.game!.top as Shown).sel);
-    await press(page, 'ArrowUp'); await press(page, 'Space');
+    await press(page, 'Digit1');
     const traded = await stack(page);
     await press(page, 'Escape');
     const left = await page.evaluate(() => {

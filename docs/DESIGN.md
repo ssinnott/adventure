@@ -1443,8 +1443,8 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
   stands on it as on any, and nothing chooses it. A digit names the row numbered so, its place from
   the top (`pickMember` writes it: "1. Bram"), or in the spell picker's casters the member's place
   in the party. It moves the cursor there and, on a menu that acts by its digits (a question's
-  answers, the fight's commands and the casters), chooses the row as Space would; the fight's list
-  of members for an item or a spell is only moved on, and the other lists take no digit. On the
+  answers, the fight's commands and the casters), chooses the row as Space would; on the fight's
+  list of members for an item or a spell it only moves, and the other lists take no digit. On the
   sheet a digit turns to that member, and exploring it opens their sheet. A menu a choice opens
   again (a business's first menu, a hall's work, its skills and who would learn one, a spell hall's
   spells, a trainer's members, its Expert's and a Master's, a shop's Buy and Sell lists) opens on

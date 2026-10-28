@@ -2,18 +2,21 @@
 // First its rule alone (the wrap, a barred row, the digits, the cursor kept and held to the rows there
 // are now, the scroll); then the menus as a player meets them in a Game on Harrow: a hall's first menu,
 // a trainer's, a shop's Buy and Sell lists, a hall's skills and who would learn one, each chosen twice
-// and the cursor read after each choice; a barred row and the digit past the last row; the spell
-// picker's casters, whose digit is the member's place; and in a fight the commands by a digit and the
-// members' list, where a digit moves and Space chooses.
+// and the cursor read after each choice; the other menus a choice opens again (a hall's offers, the
+// Expert's line and members, a Master's, a spell hall's spells and the Buy list after "Not enough
+// gold"); a barred row and the digit past the last row; the spell picker's casters, whose digit is
+// the member's place; and in a fight the commands by a digit and the members' list, where a digit
+// moves and Space chooses.
 import type { Action } from '../../src/ui/actions.ts';
 import type { Game } from '../../src/app/game.ts';
 import type { Feature } from '../../src/game/mapdef.ts';
 import { ListMenu } from '../../src/ui/menu.ts';
-import { ChoiceScreen, SpellScreen } from '../../src/ui/screens.ts';
+import { ChoiceScreen, SpellScreen, masterMenu, tierMenu } from '../../src/ui/screens.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
-import { xpForLevel } from '../../src/game/party.ts';
+import { levelUp, xpForLevel } from '../../src/game/party.ts';
+import { TIER_PRICES } from '../../src/game/mastery.ts';
 import { MAP_DEFS } from '../../src/content/index.ts';
-import { ok } from './lib.ts';
+import { ok, fxFlag } from './lib.ts';
 import { headlessGame, drive } from '../kit/headless.ts';
 
 export function menus(): void {
@@ -22,6 +25,7 @@ export function menus(): void {
   trainer();
   shop();
   skills();
+  more();
   casters();
   fight();
 }
@@ -48,6 +52,25 @@ function rule(): void {
   const s = new ListMenu(), tops: number[] = [];
   for (const sel of [9, 2, 11]) { s.sel = sel; tops.push(s.scroll(4, 12)); }
   ok(tops.join() === '6,2,8', `four of twelve rows in view scroll as little as brings the cursor in (rows 9, 2 and 11 show from ${tops.join(', ')})`);
+  s.sel = 5;
+  const cut = s.scroll(4, 6);
+  ok(cut === 2, `a list cut to six rows under a scroll from row 8 shows its last four, from row ${cut}`);
+  const x = new ListMenu(), y = new ListMenu(), z = new ListMenu();
+  const across = (['right', 'right', 'left'] as Action[]).map((a) => `${String(x.press(a, { n: 3, across: true }))} ${x.sel}`).join(' / ');
+  const flat = (['right', 'left'] as Action[]).map((a) => `${String(y.press(a, { n: 3 }))} ${y.sel}`).join(' / ');
+  const none = (['down', 'interact', 'n1'] as Action[]).map((a) => `${String(z.press(a, { n: 0, digits: 'act' }))} ${z.sel}`).join(' / ');
+  ok(across === 'moved 1 / moved 2 / moved 1' && flat === 'null 0 / null 0' && none === 'null 0 / null 0 / null 0',
+    `left and right move a list that runs across and no other, and a list of no rows takes no key (${across}; ${flat}; ${none})`);
+  // A question's rows read when asked: five, then three with the cursor on the fifth. A key holds
+  // it to the last first.
+  const g = headlessGame(4), five = ['One', 'Two', 'Three', 'Four', 'Five'];
+  let chose = -2;
+  const q = new ChoiceScreen('Which?', () => five, (i) => { chose = i; });
+  g.push(q); q.sel = 4; five.length = 3;
+  drive(g, ['up']);
+  const up = q.sel;
+  drive(g, ['interact']);
+  ok(up === 1 && chose === 1, `a question that loses rows under its cursor holds it to its last row before a key: up from the fifth of three is the second (${up}), and Space chooses it (${chose})`);
 }
 
 const harrow = MAP_DEFS.find((d) => d.id === 'harrow')!;
@@ -160,6 +183,71 @@ function skills(): void {
   ok(perception === 1 && spirit === 2 && home === learn,
     `the hall's skills open again on the skill chosen (Perception ${perception}, Spirit Sense ${spirit}), and its first menu on "Learn a skill" (${home})`);
   ok(onWren === 2 && still === 2 && stayed, `on a barred row the cursor stands and nothing is taught, by its digit or Space; a digit past the last row does nothing (${onWren}, ${still})`);
+}
+
+/**
+ * The other menus a choice opens again, each on the row the choice left: the Wardens' offers at
+ * rank 2 (one put by, then one taken, the next offer under the cursor), the Expert's line and
+ * members and a Master's at the Loft, the Lantern Guildhall's spells after the fee and Mottram's
+ * Buy list after "Not enough gold" (the purse emptied under the list).
+ */
+function more(): void {
+  const raise = (g: Game, who: number[], to: number): void => {
+    for (const i of who) { g.party.members[i].xp = xpForLevel(to); levelUp(g.tables.spells, g.party.members[i], g.rng); }
+  };
+  const words = (g: Game): void => { for (let i = 0; i < 3 && g.top.constructor.name === 'MessageScreen'; i++) drive(g, ['interact']); };
+  const h = headlessGame(4);
+  h.party.flags.rank_wardens = 2;
+  enter(h, business('trainer'));
+  choose(h, rowOf(h, 'Work for the Wardens'));
+  const offers = shown(h).rows;
+  choose(h, 1); words(h); choose(h, rowOf(h, 'Not now'));
+  const put = shown(h).sel;
+  choose(h, 2); words(h); choose(h, rowOf(h, 'Take it')); words(h);
+  const took = shown(h);
+  ok(put === 1 && took.sel === 2 && took.rows.length === offers.length - 1 && took.rows[2] === offers[3],
+    `a hall's offers open again on the offer put by (${put}), and once one is taken on the next (${took.sel}: ${took.rows[2]})`);
+  const t = headlessGame(4);
+  t.party.gold = 20000;
+  raise(t, [1, 4], 13);
+  t.push(tierMenu(t, 'Loft'));
+  choose(t, 1);
+  const fresh = shown(t).sel;
+  choose(t, 1);
+  const taught = shown(t).sel;
+  drive(t, ['cancel']);
+  const line = shown(t).sel;
+  const m = headlessGame(4);
+  m.party.gold = 20000;
+  raise(m, [1, 4], 25);
+  for (const i of [1, 4]) m.party.members[i].tiers = { arms: 'expert' };
+  m.party.flags.fx_master = 1;
+  m.push(masterMenu(m, { line: 'arms', tier: 'master', done: { flag: fxFlag('fx_master') }, price: TIER_PRICES.master }, 'Old Hand'));
+  choose(m, 1);
+  const master = shown(m).sel;
+  ok(fresh === 0 && taught === 1 && line === 1 && master === 1,
+    `the Expert's members open at their top (${fresh}) and again on the member taught (${taught}), its lines on the line chosen (${line}); a Master's on the member taught (${master})`);
+  const s = headlessGame(4);
+  s.party.gold = 20000;
+  enter(s, business('guild'));
+  choose(s, rowOf(s, 'Study spells'));
+  choose(s, 0);
+  const fee = shown(s).sel;
+  choose(s, 3);
+  const first = shown(s).sel;
+  choose(s, 1);
+  const second = shown(s).sel;
+  ok(fee === 0 && first === 3 && second === 1, `a spell hall's spells open at their top after the fee (${fee}), and again on the row of the spell learnt: ${first}, then ${second}`);
+  const b = headlessGame(4);
+  b.party.gold = 5000;
+  enter(b, business('shop'));
+  choose(b, rowOf(b, 'Buy and sell'));
+  choose(b, rowOf(b, 'Buy'));
+  choose(b, 5);
+  b.party.gold = 0;
+  choose(b, 3);
+  const poor = shown(b).sel, said = b.log.at(-1);
+  ok(said === 'Not enough gold.' && poor === 3, `after "Not enough gold" the Buy list opens again on the ware asked for (${poor}), as after a sale`);
 }
 
 /** The spell picker's casters, Idris, Wren, Maren and Cassian: a digit is the member's place in the party. */

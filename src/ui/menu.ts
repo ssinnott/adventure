@@ -5,7 +5,7 @@
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
 
-/** What a key did to a list: moved its cursor, chose the row the cursor is on, or nothing. */
+/** What a key did to a list: moved its cursor or chose the row the cursor is on; null, nothing. */
 export type Pressed = 'moved' | 'chosen' | null;
 
 /** A list as a key finds it: its rows now and what its keys do. */
