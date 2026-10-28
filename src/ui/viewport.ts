@@ -1,6 +1,7 @@
 // The first-person viewport, split into its parts in ui/view/ (#1028). This path re-exports every name it
-// exported before the split, so nothing that imports it changes and the smoke's reads of it by path stand,
-// and `paintOn`, the frame's Paint, which the smoke paints a hill alone with (#1029); it holds no drawing.
+// exported before the split, so nothing that imports it changes and the smoke's reads of it by path stand;
+// it holds no drawing. It also exports `paintOn`, which makes a frame's Paint, for the smoke's hill
+// painted alone (#1029).
 //
 // view/compositor.ts draws the view and paints its scene from the parts: view/sky.ts, view/weather.ts,
 // view/floor.ts, view/walls.ts, view/roofs.ts and view/tents.ts. view/model.ts is what the Node suites
