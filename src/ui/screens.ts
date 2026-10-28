@@ -6,8 +6,8 @@
 // service draws its menu and says what its rule in game/services.ts returns, with no sum of its
 // own.
 import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Action } from '../app/input.ts';
+import { is } from '../app/input.ts';
 import { drawText, lineHeight, measureText } from '../lib/engine/text.ts';
 import { panel, paragraph, menu, wrap, columnMenu, optionParts, fit, columnLabelWidth } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawLog, drawViewportFrame, SAY_W, SAY_LINES, SIDE_W, ASK_LINES, ASK_SIDE_LINES } from './frame.ts';

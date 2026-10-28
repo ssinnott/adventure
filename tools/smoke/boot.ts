@@ -8,7 +8,7 @@ import type { Game, Screen } from '../../src/game/game.ts';
 import type { CombatState } from '../../src/game/combat.ts';
 import type { Cell, Feature, Landmark } from '../../src/game/mapdef.ts';
 import type { World } from '../../src/game/world.ts';
-import type { Input } from '../../src/input.ts';
+import type { Input } from '../../src/app/input.ts';
 import type { Flame } from '../../src/ui/viewport.ts';
 
 // The page is read as the game it is (window.__game.game is a Game, types/globals.d.ts); these name the

@@ -3,8 +3,8 @@
 // and its pages one at a time. The last closes onto the Heart, where the company stands, and the
 // game goes on.
 import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Action } from '../app/input.ts';
+import { is } from '../app/input.ts';
 import { drawText, drawTextOutlined } from '../lib/engine/text.ts';
 import { panel, paragraph, wrap } from './draw.ts';
 import { INK, BRASS, TEXT, TEXT_DIM } from './palette.ts';

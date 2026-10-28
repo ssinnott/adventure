@@ -23,7 +23,7 @@ import { meet, heard, answer, handIns, personFlags } from '../../src/game/people
 import type { Person } from '../../src/game/people.ts';
 import { questLog, questMarks, questNews, holds } from '../../src/game/quests.ts';
 import type { Chapter, PageView, QuestCond, QuestView, When } from '../../src/game/quests.ts';
-import { Pilot } from '../../src/game/pilot/pilot.ts';
+import { Pilot } from '../../src/app/pilot/pilot.ts';
 import { headlessGame, drive } from './headless.ts';
 import { homeMap } from '../../src/game/atlas.ts';
 import { useShrine } from '../../src/game/wilds.ts';

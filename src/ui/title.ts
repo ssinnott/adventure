@@ -2,8 +2,8 @@
 // the Hearth over the saved company and attract mode: untouched for 45 seconds, the pilot plays a
 // new game.
 import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Action } from '../app/input.ts';
+import { is } from '../app/input.ts';
 import { drawText, drawTextOutlined } from '../lib/engine/text.ts';
 import { menu, paragraph } from './draw.ts';
 import { freshSeed } from '../lib/engine/rng.ts';

@@ -6,17 +6,17 @@
 // it has heard that may answer it (`answers`), and stops itself at the ending's question. It reads the
 // world through Known and a menu or a riddle as the screen shows it, and presses the keys a player
 // would: `down` to a row and Space, or Esc; a word's letters as the keyboard types them, then Enter.
-import type { Game } from '../game.ts';
-import { ExploreScreen } from '../game.ts';
-import type { Action } from '../../input.ts';
-import type { Feature } from '../mapdef.ts';
-import type { Party } from '../party.ts';
-import { FACING_DX, FACING_DY } from '../types.ts';
-import * as passage from '../passage.ts';
-import * as prestige from '../prestige.ts';
-import { askSkill } from '../skills.ts';
-import { askLine, askTier, TIERS } from '../mastery.ts';
-import { ANSWER_MAX, normalWord } from '../wilds.ts';
+import type { Game } from '../../game/game.ts';
+import { ExploreScreen } from '../../game/game.ts';
+import type { Action } from '../input.ts';
+import type { Feature } from '../../game/mapdef.ts';
+import type { Party } from '../../game/party.ts';
+import { FACING_DX, FACING_DY } from '../../game/types.ts';
+import * as passage from '../../game/passage.ts';
+import * as prestige from '../../game/prestige.ts';
+import { askSkill } from '../../game/skills.ts';
+import { askLine, askTier, TIERS } from '../../game/mastery.ts';
+import { ANSWER_MAX, normalWord } from '../../game/wilds.ts';
 import { ChoiceScreen, InteriorScreen, TRADE, shortName } from '../../ui/screens.ts';
 import { RiddleScreen } from '../../ui/riddle.ts';
 import { optionParts } from '../../ui/draw.ts';

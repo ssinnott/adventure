@@ -25,12 +25,12 @@ import type { Game } from '../../src/game/game.ts';
 import { ChoiceScreen, InteriorScreen, TRADE, businessEntries, weaponLine, spellsLine } from '../../src/ui/screens.ts';
 import { optionParts, columnLabelWidth } from '../../src/ui/draw.ts';
 import { SIDE_W } from '../../src/ui/frame.ts';
-import { talk } from '../../src/game/pilot/talk.ts';
-import { Pilot } from '../../src/game/pilot/pilot.ts';
-import { keep } from '../../src/game/pilot/keep.ts';
-import { trainsTo } from '../../src/game/pilot/known.ts';
+import { talk } from '../../src/app/pilot/talk.ts';
+import { Pilot } from '../../src/app/pilot/pilot.ts';
+import { keep } from '../../src/app/pilot/keep.ts';
+import { trainsTo } from '../../src/app/pilot/known.ts';
 import { NORTH } from '../../src/game/types.ts';
-import type { Action } from '../../src/input.ts';
+import type { Action } from '../../src/app/input.ts';
 import {
   TIERS, LINES, TIER_LEVELS, TIER_PRICES, EXPERT_FROM, EXPERT_ENTRY, LINE_ROWS, TIER_NAMES, LINE_NAMES, linesOf, tierOf, tierBar, expertOffers, masterOffers,
   tierLine, teachTier, teachesExpert, askLine, askTier, noneHere, favourDone, LEAVE_TIERS,

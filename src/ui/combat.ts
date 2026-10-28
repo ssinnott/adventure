@@ -3,8 +3,8 @@
 // `auto` on, the game's bot (game/bot.ts) plays the company's turns on a timer of its own, by what the
 // fight has shown it, and presses Space at the end; any key takes the fight back.
 import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Action } from '../app/input.ts';
+import { is } from '../app/input.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, menu } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect, logTail, COMBAT_LOG_LINES } from './frame.ts';
