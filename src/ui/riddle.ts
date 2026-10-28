@@ -3,8 +3,8 @@
 // the keys that move the party would go on being typed. What the answer does is the Game's, handed
 // in, so this screen loads in Node for its test (tools/tests/wilds.ts).
 import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Action } from '../app/input.ts';
+import { is } from '../app/input.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, paragraph } from './draw.ts';
 import { BRASS, TEXT, TEXT_DIM } from './palette.ts';

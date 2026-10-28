@@ -3,8 +3,8 @@
 // (tools/tests/lib.ts), which a walkthrough may not take.
 import { Game } from '../../src/game/game.ts';
 import type { Party } from '../../src/game/party.ts';
-import type { Action } from '../../src/input.ts';
-import { drainTyped } from '../../src/input.ts';
+import type { Action } from '../../src/app/input.ts';
+import { drainTyped } from '../../src/app/input.ts';
 import { SAVE_KEY } from '../../src/game/save.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';

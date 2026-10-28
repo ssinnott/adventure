@@ -17,7 +17,7 @@ export function lanes(): void {
   // shipped files (an area's, and the central one), the interiors' dispatcher and their folder, the three kits, an
   // area's doc and the files of its folder (#1011) and the rest of docs/, a place's doc and its folder named for its area.
   const cases: [string, string][] = [
-    ['src/game/save.ts', 'systems'], ['src/game/pilot/index.ts', 'systems'], ['src/ui/viewport.ts', 'systems'], ['src/ui/interior.ts', 'systems'],
+    ['src/game/save.ts', 'systems'], ['src/app/pilot/index.ts', 'systems'], ['src/ui/viewport.ts', 'systems'], ['src/ui/interior.ts', 'systems'],
     ['src/content/index.ts', 'systems'], ['src/content/rifts/index.ts', 'systems'], ['src/content/areas/index.ts', 'systems'], ['src/main.ts', 'systems'], ['src/audio/new.ts', 'systems'], ['index.html', 'systems'],
     ['src/content/areas/shelf/maps/shelf.ts', 'area: shelf'], ['src/content/areas/shelf/shipped.json', 'area: shelf'], ['docs/areas/ashfall.md', 'area: ashfall'],
     ['docs/areas/hearth.md', 'area: hearth'], ['docs/areas/dead_drop.md', 'area: wrackholm'], ['docs/areas/meridian_camp.md', 'area: ashfall'],

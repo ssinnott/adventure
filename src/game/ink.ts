@@ -1,6 +1,6 @@
 // The automap's ink: what a cell is drawn as, and what the map marks (a feature there now, the groups
 // in view or near and those a sense finds). The view draws its walls by it, the automap inks and
-// marks its squares by it and the pilot's fair view (game/pilot/known.ts) reads the map through it,
+// marks its squares by it and the pilot's fair view (app/pilot/known.ts) reads the map through it,
 // so all three show one map.
 import type { GameMap } from './map.ts';
 import type { Cell, Solid, Feature } from './mapdef.ts';
