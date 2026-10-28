@@ -72,7 +72,7 @@ which `src/content/maps.ts` runs once to make `PLAYED_DEFS`, the maps as played)
   once the party has set foot in the zone (`WorldState.zones`).
 - **Line of sight.** A hill hides what lies behind it from lower ground (#53): the viewport does
   not draw it, the automap does not mark it and a group standing there is neither drawn, marked nor
-  met (`hillOver` and `World.hidden` in `src/game/world.ts`, `GameMap.blocksView` given the eye's
+  met (`hillOver` and `hidden` in `src/game/world/sight.ts`, `GameMap.blocksView` given the eye's
   square). A company on a hill sees over hills and no farther. Night, a light and the weather say
   how far a company sees; a hill cuts the line, and the nearer stop wins. Woods hide nothing. A
   wall hides what lies past it from the squares the company maps round it (#889, `World.reveal`):
