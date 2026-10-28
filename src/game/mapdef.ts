@@ -280,7 +280,7 @@ export interface EncounterDef extends Presence {
    */
   under?: 'ice';
   /**
-   * The Core's clock (combat.ts `Clock`, docs/MONSTERS.md §9.3, #748): while a monster the `panel`
+   * The Core's clock (combat/state.ts `Clock`, docs/MONSTERS.md §9.3, #748): while a monster the `panel`
    * names stands, the group's `leader` calls one of `calls` every `every` rounds, past the cap of three
    * groups and up to twelve monsters, and the light dims a step a round to `dims`, where it holds.
    */

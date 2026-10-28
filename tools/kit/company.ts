@@ -167,7 +167,7 @@ export function outfit(c: Character, level: number, rules: Readonly<Rules> = RUL
 }
 
 /**
- * The weapon a class's prestige blows want where the ladder's best by its blow is another (combat.ts
+ * The weapon a class's prestige blows want where the ladder's best by its blow is another (combat/perks.ts
  * `blowsOf`), and the kit's own of that kind: the thief's light blade, and the monk's staff (#854), the
  * one of the four newer classes whose blows ask a kind. The ranger's bow is the one it holds.
  */

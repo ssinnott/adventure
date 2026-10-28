@@ -61,7 +61,7 @@ export interface TraitDef {
   immune?: readonly Condition[];
 }
 
-/** What the numeric traits are worth; combat.ts and armorClass read these. */
+/** What the numeric traits are worth; combat/perks.ts, combat/casting.ts and armorClass read these. */
 export const STALWART_AC = 2, WEAPON_MASTER_DMG = 1, HOLY_STRIKE_DMG = 3, MARKSMAN_DMG = 2, HEALING_HANDS = 3,
   SPELLFIRE_DMG = 2, SNEAK_ATTACK_DMG = 4, RAGE_DMG = 3, DIE_HARD_AT = -20, INSPIRE_HIT = 1;
 
