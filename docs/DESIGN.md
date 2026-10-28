@@ -207,8 +207,8 @@ quest reveals where the trainer is. The trainer who teaches a character their 11
 level names who to seek and where, and the quest log and the world map mark the place: one quest for
 each member. For the third, the quest names the place; the way there, and the quest that trainer then
 asks, are the hard part. The cap passed 10 with #159. Built with #19: the titles, the hit points and
-spell points, every perk below (the sorcerer's third is `pierces` in `src/game/combat.ts`, the
-druid's `World.moveMonsters`, #809), a trainer (a person who teaches one class one prestige,
+spell points, every perk below (the sorcerer's third is `pierces` in `src/game/combat/casting.ts`,
+the druid's `World.moveMonsters`, #809), a trainer (a person who teaches one class one prestige,
 `teaches`) and the seeking quests, made from the trainers placed, with the world map's marks. All
 thirty trainers are placed, three to a class; the ten thirds each ask a quest. The ranks' effect on
 spells is built (#20, §7).
