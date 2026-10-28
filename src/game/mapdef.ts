@@ -148,8 +148,8 @@ export type Feature =
   | { kind: 'sign'; x: number; y: number; text: string; id: string; read: string; marks?: string | readonly string[] }
   /**
    * An inn. `nights` makes it count them (Rime Lodge's, docs/areas/rimewater.md §4.3): each stay
-   * sets the first of its flags not yet set, so the nights come in order, a flag a night (game/party.ts
-   * `stayNight`).
+   * sets the first of its flags not yet set, so the nights come in order, a flag a night
+   * (game/party/conditions.ts `stayNight`).
    */
   | ({ kind: 'inn'; price: number; nights?: readonly Flag[] } & Business)
   | ({ kind: 'temple' } & Business)

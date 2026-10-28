@@ -175,9 +175,10 @@ const BLOWS_WANT: Partial<Record<ClassId, { kind: string; kit: readonly string[]
 
 /**
  * The prestiges a company of its level takes (DESIGN.md §5), as play gives them: each at its level,
- * with its hit points, spell points and perks (game/party.ts, the resolver). The thief takes a light
- * weapon, and the monk a staff, where its blows with it beat one with what it holds (BLOWS_WANT). A
- * caster's and a hybrid's prestiges are its spell ranks, as play reads them (party.ts `rankMult`).
+ * with its hit points, spell points and perks (game/party/levels.ts, the resolver). The thief takes
+ * a light weapon, and the monk a staff, where its blows with it beat one with what it holds
+ * (BLOWS_WANT). A caster's and a hybrid's prestiges are its spell ranks, as play reads them
+ * (party/levels.ts `rankMult`).
  */
 function prestige(p: Party): void {
   for (const c of p.members) {
@@ -196,7 +197,7 @@ function prestige(p: Party): void {
  * #865): on each line
  * its class takes (`linesOf`: a fighter's arms, a caster's magic, a hybrid's both), Expert from 13 and
  * Master from 25 (`TIER_LEVELS`), as a company that took each when it could. After the prestiges, as
- * play teaches them; what a tier does is the resolver's (party.ts `armsBonus`, `rankMult`).
+ * play teaches them; what a tier does is the resolver's (party/levels.ts `armsBonus`, `rankMult`).
  */
 function tier(p: Party): void {
   for (const c of p.members) {
