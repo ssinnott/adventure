@@ -6,6 +6,7 @@
 // slice a frame behind a progress bar; after that the arrows scroll it and Z shows it whole. Two
 // modes: the map alone, and the zone overlay, which colours every area by its step on the road of
 // levels, rules the zones inside each, and draws every way between them, built or planned.
+// Its sites are drawn from a table, an entry to each icon; its marks on the sea are the atlas's.
 import type { Game, Screen } from '../game/game.ts';
 import type { Action } from '../input.ts';
 import { is } from '../input.ts';
@@ -15,7 +16,7 @@ import type { HearthLook } from '../game/stones.ts';
 import { ATLAS, MAP_DEFS, QUESTS } from '../content/index.ts';
 import { GRID } from '../content/maps.ts';
 import { zoneEdges, worldPoint, homeMap, zoneOfMap, mapAt, mapPlace, gridCuts, boxAt, areaOf, areaBand, spline, lattice, noise, fbm, TERRAINS, TI } from '../game/atlas.ts';
-import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt } from '../game/atlas.ts';
+import type { WorldTerrain, WorldGrid, AtlasSite, AtlasPlace, ZoneEdge, Pt, SiteIcon, SeaMark } from '../game/atlas.ts';
 import type { World } from '../game/world.ts';
 import { questLog, finishedBy } from '../game/quests.ts';
 import { sought } from '../game/seeking.ts';
@@ -694,208 +695,194 @@ function anchor(ctx: CanvasRenderingContext2D, x: number, y: number): void {
 
 const STONE = '#ddd2b8', STONE_D = '#a8997c', RED = '#a8392a', GREEN = '#3f7a3a', WOOD = '#8a6038';
 
+/** How a site's icon is drawn, standing on (x, y). */
+type DrawIcon = (ctx: CanvasRenderingContext2D, x: number, y: number) => void;
+
+/** A cave's mouth, or a mine's, propped with timbers: one body, which reads which it is. */
+const mouth = (icon: 'cave' | 'mine'): DrawIcon => (ctx, x, y) => {
+  ctx.beginPath(); ctx.ellipse(x, y, 7, 6, 0, Math.PI, 0); ctx.closePath();
+  ctx.fillStyle = icon === 'mine' ? '#b89868' : '#9a8a72'; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.stroke();
+  ctx.fillStyle = '#16100c'; ctx.beginPath(); ctx.ellipse(x, y, 2.6, 3.4, 0, Math.PI, 0); ctx.closePath(); ctx.fill();
+  if (icon === 'mine') { ctx.fillStyle = WOOD; ctx.fillRect(r(x - 3), r(y - 4), 1, 4); ctx.fillRect(r(x + 2), r(y - 4), 1, 4); ctx.fillRect(r(x - 3), r(y - 4), 6, 1); }
+};
+
+/** A name lettered alone, a range's or a water's, has no icon: paintSites letters it. */
+const lettered: DrawIcon = () => {};
+
+/** The icon for each site: an icon with no entry fails the typecheck. */
+const SITE: Record<SiteIcon, DrawIcon> = {
+  city: (ctx, x, y) => {
+    box(ctx, x - 9, y - 5, 18, 5, STONE);
+    for (let i = 0; i < 9; i++) { ctx.fillStyle = INK; ctx.fillRect(r(x - 9) + i * 2, r(y - 7), 1, 1); ctx.fillStyle = STONE; ctx.fillRect(r(x - 9) + i * 2, r(y - 6), 1, 1); }
+    box(ctx, x - 10, y - 10, 4, 10, STONE_D); roof(ctx, x - 10.5, y - 10, 5, 4, RED);
+    box(ctx, x + 6, y - 10, 4, 10, STONE_D); roof(ctx, x + 5.5, y - 10, 5, 4, RED);
+    box(ctx, x - 3, y - 12, 6, 12, STONE); roof(ctx, x - 3.5, y - 12, 7, 5, RED); flag(ctx, x, y - 17, RED);
+    ctx.fillStyle = INK; ctx.fillRect(r(x - 1), r(y - 3), 2, 3);
+  },
+  port: (ctx, x, y) => {
+    // A walled harbour town: towers, a quay running out into the water, a moored ship.
+    box(ctx, x - 8, y - 5, 16, 5, STONE);
+    box(ctx, x - 9, y - 10, 4, 10, STONE_D); roof(ctx, x - 9.5, y - 10, 5, 4, RED);
+    box(ctx, x - 2, y - 11, 5, 11, STONE); roof(ctx, x - 2.5, y - 11, 6, 5, RED); flag(ctx, x, y - 16, RED);
+    box(ctx, x + 4, y - 8, 4, 8, STONE_D); roof(ctx, x + 3.5, y - 8, 5, 3, '#6a4a3a');
+    box(ctx, x + 8, y - 1, 9, 2, WOOD);
+    ctx.fillStyle = INK; ctx.fillRect(r(x + 14), r(y - 10), 1, 9);
+    poly(ctx, [x + 15, y - 9, x + 19, y - 5, x + 15, y - 4], '#f2ead6', INK);
+  },
+  town: (ctx, x, y) => {
+    box(ctx, x - 7, y - 4, 14, 4, STONE);
+    box(ctx, x - 6, y - 9, 5, 5, '#d8c49a'); roof(ctx, x - 6.5, y - 9, 6, 4, RED);
+    box(ctx, x + 1, y - 11, 4, 7, STONE_D); roof(ctx, x + 0.5, y - 11, 5, 4, RED); flag(ctx, x + 3, y - 15, RED);
+  },
+  village: (ctx, x, y) => {
+    for (const [dx, dy, c] of [[-6, 0, RED], [0, -3, '#6a4a3a'], [5, 1, RED]] as const) { box(ctx, x + dx - 2, y + dy - 3, 4, 3, '#e0d0ac'); roof(ctx, x + dx - 2.5, y + dy - 3, 5, 3, c); }
+  },
+  hold: (ctx, x, y) => {
+    ctx.fillStyle = '#2e3d1e'; ctx.beginPath(); ctx.arc(x + 0.5, y - 12, 7.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#4f7a36'; ctx.beginPath(); ctx.arc(x, y - 12.5, 7, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = '#79a552'; ctx.beginPath(); ctx.arc(x - 2.5, y - 15, 3, 0, Math.PI * 2); ctx.fill();
+    box(ctx, x - 1, y - 7, 2, 7, WOOD);
+    box(ctx, x - 7, y - 4, 5, 4, '#c8a878'); roof(ctx, x - 7.5, y - 4, 6, 3, GREEN);
+    box(ctx, x + 2, y - 4, 5, 4, '#c8a878'); roof(ctx, x + 1.5, y - 4, 6, 3, GREEN);
+    flag(ctx, x + 6, y - 7, GREEN);
+  },
+  farm: (ctx, x, y) => {
+    ctx.strokeStyle = '#8a7040'; ctx.lineWidth = 1;
+    for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.moveTo(x + 2, y - 1 - i * 1.6); ctx.lineTo(x + 9, y - 1 - i * 1.6); ctx.stroke(); }
+    box(ctx, x - 6, y - 4, 6, 4, '#d8c49a'); roof(ctx, x - 6.5, y - 4, 7, 4, RED);
+    box(ctx, x - 1, y - 3, 3, 3, WOOD);
+  },
+  cave: mouth('cave'),
+  mine: mouth('mine'),
+  tower: (ctx, x, y) => {
+    box(ctx, x - 2, y - 11, 5, 11, STONE_D);
+    ctx.fillStyle = '#e8dcc0'; ctx.fillRect(r(x + 1), r(y - 11), 2, 3); ctx.fillRect(r(x - 2), r(y - 11), 1, 1);
+    ctx.fillStyle = INK; ctx.fillRect(r(x), r(y - 6), 1, 2);
+  },
+  lighthouse: (ctx, x, y) => {
+    glow(ctx, x + 0.5, y - 13, 9, '#ffe8a0', 0.6);
+    poly(ctx, [x - 3, y, x - 2, y - 11, x + 3, y - 11, x + 4, y], '#f0e8dc', INK);
+    ctx.fillStyle = RED; ctx.fillRect(r(x - 2), r(y - 8), 5, 2); ctx.fillRect(r(x - 2), r(y - 4), 6, 2);
+    box(ctx, x - 1, y - 14, 3, 3, '#ffe08a'); roof(ctx, x - 1.5, y - 14, 4, 2, INK);
+  },
+  barrow: (ctx, x, y) => {
+    ctx.beginPath(); ctx.ellipse(x, y, 7, 4.5, 0, Math.PI, 0); ctx.closePath();
+    ctx.fillStyle = '#8c9a5c'; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.stroke();
+    ctx.fillStyle = '#16100c'; ctx.fillRect(r(x - 1), r(y - 3), 3, 3);
+    box(ctx, x + 4, y - 7, 1, 4, STONE_D);
+  },
+  grove: (ctx, x, y) => {
+    glow(ctx, x, y - 4, 9, '#d8f0a0', 0.5);
+    for (const [dx, dy] of [[-6, 0], [6, 0], [-4, -4], [4, -4], [0, -6]]) tree(ctx, x + dx, y + dy, 2.6, 0.8);
+    box(ctx, x - 1, y - 5, 2, 5, '#c8c0b0');
+  },
+  stone: (ctx, x, y) => {
+    glow(ctx, x, y - 3, 6, '#9ad0ff', 0.55);
+    box(ctx, x - 1, y - 6, 3, 6, '#cfc8bc');
+    ctx.fillStyle = '#5a86b8'; ctx.fillRect(r(x), r(y - 5), 1, 2);
+  },
+  hearth: (ctx, x, y) => {
+    box(ctx, x - 4, y - 5, 8, 5, '#efe6d0');
+    ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x, y - 5, 4.5, Math.PI, 0); ctx.fill();
+    ctx.fillStyle = '#f4ecd6'; ctx.beginPath(); ctx.arc(x, y - 5, 3.5, Math.PI, 0); ctx.fill();
+    for (const cx of [-3, -1, 1, 3]) { ctx.fillStyle = INK; ctx.fillRect(r(x + cx), r(y - 4), 1, 4); }
+  },
+  monastery: (ctx, x, y) => {
+    box(ctx, x - 6, y - 5, 9, 5, STONE); roof(ctx, x - 6.5, y - 5, 10, 3, '#5a5a6a');
+    box(ctx, x + 3, y - 12, 4, 12, STONE); roof(ctx, x + 2.5, y - 12, 5, 4, '#5a5a6a');
+    ctx.fillStyle = '#c9a34a'; ctx.fillRect(r(x + 4), r(y - 10), 2, 2);
+  },
+  forge: (ctx, x, y) => {
+    glow(ctx, x, y - 3, 8, '#ff8a30', 0.55);
+    smoke(ctx, x + 3, y - 12, 4, 0.7);
+    box(ctx, x - 5, y - 5, 8, 5, '#a8906c'); roof(ctx, x - 5.5, y - 5, 9, 3, '#6a4a3a');
+    box(ctx, x + 2, y - 10, 2, 5, '#6a5a4a');
+    ctx.fillStyle = '#ffb040'; ctx.fillRect(r(x - 2), r(y - 3), 2, 2);
+  },
+  fortress: (ctx, x, y) => {
+    poly(ctx, [x - 9, y, x - 4, y - 12, x + 4, y - 12, x + 9, y], '#9a8a70', INK);
+    box(ctx, x - 3, y - 7, 6, 7, '#6a5a4a');
+    ctx.fillStyle = '#16100c'; ctx.fillRect(r(x - 2), r(y - 5), 4, 5);
+    ctx.fillStyle = '#c9a34a'; ctx.fillRect(r(x - 3), r(y - 8), 6, 1);
+    box(ctx, x - 6, y - 6, 1, 6, STONE); box(ctx, x + 5, y - 6, 1, 6, STONE);
+  },
+  volcano: (ctx, x, y) => {
+    glow(ctx, x, y - 18, 16, '#ff7a28', 0.45);
+    ctx.fillStyle = rgba('#4a4440', 0.5);
+    for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(x - 2 + i * 2.5, y - 22 - i * 3.5, 2.4 + i * 0.9, 0, Math.PI * 2); ctx.fill(); }
+    poly(ctx, [x - 18, y, x - 3, y - 17, x + 3, y - 17, x + 18, y], '#5e524c');
+    poly(ctx, [x + 0.5, y - 17, x + 3, y - 17, x + 18, y, x + 3, y], '#3e3632');
+    ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x - 18, y); ctx.lineTo(x - 3, y - 17); ctx.lineTo(x + 3, y - 17); ctx.lineTo(x + 18, y); ctx.stroke();
+    ctx.strokeStyle = '#ff9a38'; ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(x - 1, y - 17); ctx.quadraticCurveTo(x - 4, y - 9, x - 8, y - 1); ctx.moveTo(x + 1, y - 17); ctx.quadraticCurveTo(x + 2, y - 8, x + 6, y - 1); ctx.stroke();
+    ctx.fillStyle = '#ffd070'; ctx.fillRect(r(x - 2), r(y - 18), 4, 1);
+    ctx.lineWidth = 1;
+  },
+  sunken: (ctx, x, y) => {
+    for (const [dx, hh] of [[-5, 5], [-2, 8], [1, 3], [4, 6]]) box(ctx, x + dx, y - hh, 2, hh, STONE);
+    ctx.fillStyle = rgba('#5a8aa0', 0.7); ctx.fillRect(r(x - 7), r(y - 2), 14, 2);
+  },
+  ruin: (ctx, x, y) => {
+    for (const [dx, hh] of [[-6, 4], [-3, 7], [2, 5], [5, 2]]) box(ctx, x + dx, y - hh, 2, hh, STONE_D);
+    box(ctx, x - 4, y - 8, 5, 1, STONE);
+    ctx.fillStyle = rgba('#5a524c', 0.6); ctx.fillRect(r(x - 7), r(y), 14, 1);
+  },
+  gate: (ctx, x, y) => {
+    box(ctx, x - 2, y - 9, 4, 9, STONE_D); roof(ctx, x - 2.5, y - 9, 5, 3, RED); flag(ctx, x, y - 12, RED);
+    ctx.fillStyle = RED; ctx.fillRect(r(x + 2), r(y - 3), 4, 1); ctx.fillStyle = '#f0e8d8'; ctx.fillRect(r(x + 4), r(y - 3), 2, 1);
+  },
+  wreck: (ctx, x, y) => {
+    poly(ctx, [x - 8, y - 3, x + 6, y - 1, x + 4, y + 2, x - 6, y + 1], '#6a4a30', INK);
+    ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x - 1, y - 2); ctx.lineTo(x + 3, y - 12); ctx.moveTo(x + 1, y - 7); ctx.lineTo(x + 5, y - 6); ctx.stroke();
+    ctx.fillStyle = rgba('#d8e8ec', 0.8); ctx.fillRect(r(x - 9), r(y + 1), 4, 1); ctx.fillRect(r(x + 4), r(y + 2), 5, 1);
+  },
+  rift: (ctx, x, y) => {
+    glow(ctx, x, y - 3, 14, '#b070ff', 0.5);
+    poly(ctx, [x - 10, y - 1, x - 5, y - 3, x - 2, y - 1, x + 2, y - 5, x + 5, y - 2, x + 10, y - 4, x + 5, y, x + 1, y - 2, x - 3, y + 1, x - 6, y - 1], '#1a0c26', '#6a3aa0');
+    ctx.fillStyle = '#e8c8ff'; ctx.fillRect(r(x), r(y - 2), 1, 1); ctx.fillRect(r(x - 5), r(y - 2), 1, 1);
+  },
+  ring: (ctx, x, y) => {
+    for (let k = 0; k < 7; k++) {
+      const a = (k / 7) * Math.PI * 2, sx = x + Math.cos(a) * 8, sy = y - 3 + Math.sin(a) * 3.5;
+      box(ctx, sx - 0.5, sy - 4, 2, 4, k % 2 ? STONE : STONE_D);
+    }
+  },
+  lodge: (ctx, x, y) => {
+    smoke(ctx, x + 4, y - 11, 3, 0.6);
+    box(ctx, x - 6, y - 5, 12, 5, '#a07848');
+    poly(ctx, [x - 8, y - 4.5, x, y - 11, x + 8, y - 4.5], '#f4f4f0', INK);
+    ctx.fillStyle = '#ffd070'; ctx.fillRect(r(x - 3), r(y - 3), 2, 2);
+    box(ctx, x + 1, y - 3, 2, 3, '#5a3a20');
+  },
+  obelisk: (ctx, x, y) => {
+    glow(ctx, x, y - 8, 10, '#8ae0f0', 0.35);
+    poly(ctx, [x - 3, y, x - 2, y - 15, x, y - 18, x + 2, y - 15, x + 3, y], '#3a3e44', INK);
+    ctx.fillStyle = '#8ae0f0'; ctx.fillRect(r(x), r(y - 14), 1, 11);
+    ctx.fillStyle = '#e6d29a'; ctx.fillRect(r(x - 6), r(y - 1), 12, 2);
+  },
+  camp: (ctx, x, y) => {
+    for (const [dx, dy, c] of [[-6, 0, '#d8c8a0'], [0, -3, '#c8a878'], [5, 1, '#e0d4b4']] as const) poly(ctx, [x + dx - 3.5, y + dy, x + dx, y + dy - 6, x + dx + 3.5, y + dy], c, INK);
+    flag(ctx, x, y - 9, RED);
+  },
+  falls: (ctx, x, y) => {
+    glow(ctx, x, y + 2, 7, '#e8f6ff', 0.6);
+    ctx.fillStyle = '#e8f4f6'; ctx.fillRect(r(x - 2), r(y - 8), 4, 9);
+    ctx.fillStyle = '#7ab0c8'; ctx.fillRect(r(x - 2), r(y - 8), 1, 9); ctx.fillRect(r(x + 1), r(y - 6), 1, 7);
+    ctx.fillStyle = '#ffffff'; for (const [dx, dy] of [[-4, 1], [3, 2], [-1, 3], [4, 0]]) ctx.fillRect(r(x + dx), r(y + dy), 1, 1);
+  },
+  springs: (ctx, x, y) => {
+    ctx.fillStyle = '#7ec0c8'; ctx.beginPath(); ctx.ellipse(x, y - 1, 5, 2, 0, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.stroke();
+    ctx.strokeStyle = rgba('#ffffff', 0.85);
+    for (const dx of [-2.5, 0.5, 3]) { ctx.beginPath(); ctx.moveTo(x + dx, y - 3); ctx.quadraticCurveTo(x + dx - 2, y - 6, x + dx, y - 8); ctx.quadraticCurveTo(x + dx + 2, y - 10, x + dx, y - 12); ctx.stroke(); }
+  },
+  label: lettered,
+  water: lettered,
+};
+
 /** The icon for a site, standing on (x, y). */
 function drawSite(ctx: CanvasRenderingContext2D, icon: AtlasSite['icon'], x: number, y: number): void {
-  switch (icon) {
-    case 'city': {
-      box(ctx, x - 9, y - 5, 18, 5, STONE);
-      for (let i = 0; i < 9; i++) { ctx.fillStyle = INK; ctx.fillRect(r(x - 9) + i * 2, r(y - 7), 1, 1); ctx.fillStyle = STONE; ctx.fillRect(r(x - 9) + i * 2, r(y - 6), 1, 1); }
-      box(ctx, x - 10, y - 10, 4, 10, STONE_D); roof(ctx, x - 10.5, y - 10, 5, 4, RED);
-      box(ctx, x + 6, y - 10, 4, 10, STONE_D); roof(ctx, x + 5.5, y - 10, 5, 4, RED);
-      box(ctx, x - 3, y - 12, 6, 12, STONE); roof(ctx, x - 3.5, y - 12, 7, 5, RED); flag(ctx, x, y - 17, RED);
-      ctx.fillStyle = INK; ctx.fillRect(r(x - 1), r(y - 3), 2, 3);
-      return;
-    }
-    case 'port': {
-      // A walled harbour town: towers, a quay running out into the water, a moored ship.
-      box(ctx, x - 8, y - 5, 16, 5, STONE);
-      box(ctx, x - 9, y - 10, 4, 10, STONE_D); roof(ctx, x - 9.5, y - 10, 5, 4, RED);
-      box(ctx, x - 2, y - 11, 5, 11, STONE); roof(ctx, x - 2.5, y - 11, 6, 5, RED); flag(ctx, x, y - 16, RED);
-      box(ctx, x + 4, y - 8, 4, 8, STONE_D); roof(ctx, x + 3.5, y - 8, 5, 3, '#6a4a3a');
-      box(ctx, x + 8, y - 1, 9, 2, WOOD);
-      ctx.fillStyle = INK; ctx.fillRect(r(x + 14), r(y - 10), 1, 9);
-      poly(ctx, [x + 15, y - 9, x + 19, y - 5, x + 15, y - 4], '#f2ead6', INK);
-      return;
-    }
-    case 'town': {
-      box(ctx, x - 7, y - 4, 14, 4, STONE);
-      box(ctx, x - 6, y - 9, 5, 5, '#d8c49a'); roof(ctx, x - 6.5, y - 9, 6, 4, RED);
-      box(ctx, x + 1, y - 11, 4, 7, STONE_D); roof(ctx, x + 0.5, y - 11, 5, 4, RED); flag(ctx, x + 3, y - 15, RED);
-      return;
-    }
-    case 'village': {
-      for (const [dx, dy, c] of [[-6, 0, RED], [0, -3, '#6a4a3a'], [5, 1, RED]] as const) { box(ctx, x + dx - 2, y + dy - 3, 4, 3, '#e0d0ac'); roof(ctx, x + dx - 2.5, y + dy - 3, 5, 3, c); }
-      return;
-    }
-    case 'hold': {
-      ctx.fillStyle = '#2e3d1e'; ctx.beginPath(); ctx.arc(x + 0.5, y - 12, 7.5, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#4f7a36'; ctx.beginPath(); ctx.arc(x, y - 12.5, 7, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#79a552'; ctx.beginPath(); ctx.arc(x - 2.5, y - 15, 3, 0, Math.PI * 2); ctx.fill();
-      box(ctx, x - 1, y - 7, 2, 7, WOOD);
-      box(ctx, x - 7, y - 4, 5, 4, '#c8a878'); roof(ctx, x - 7.5, y - 4, 6, 3, GREEN);
-      box(ctx, x + 2, y - 4, 5, 4, '#c8a878'); roof(ctx, x + 1.5, y - 4, 6, 3, GREEN);
-      flag(ctx, x + 6, y - 7, GREEN);
-      return;
-    }
-    case 'farm': {
-      ctx.strokeStyle = '#8a7040'; ctx.lineWidth = 1;
-      for (let i = 0; i < 4; i++) { ctx.beginPath(); ctx.moveTo(x + 2, y - 1 - i * 1.6); ctx.lineTo(x + 9, y - 1 - i * 1.6); ctx.stroke(); }
-      box(ctx, x - 6, y - 4, 6, 4, '#d8c49a'); roof(ctx, x - 6.5, y - 4, 7, 4, RED);
-      box(ctx, x - 1, y - 3, 3, 3, WOOD);
-      return;
-    }
-    case 'cave': case 'mine': {
-      ctx.beginPath(); ctx.ellipse(x, y, 7, 6, 0, Math.PI, 0); ctx.closePath();
-      ctx.fillStyle = icon === 'mine' ? '#b89868' : '#9a8a72'; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.stroke();
-      ctx.fillStyle = '#16100c'; ctx.beginPath(); ctx.ellipse(x, y, 2.6, 3.4, 0, Math.PI, 0); ctx.closePath(); ctx.fill();
-      if (icon === 'mine') { ctx.fillStyle = WOOD; ctx.fillRect(r(x - 3), r(y - 4), 1, 4); ctx.fillRect(r(x + 2), r(y - 4), 1, 4); ctx.fillRect(r(x - 3), r(y - 4), 6, 1); }
-      return;
-    }
-    case 'tower': {
-      box(ctx, x - 2, y - 11, 5, 11, STONE_D);
-      ctx.fillStyle = '#e8dcc0'; ctx.fillRect(r(x + 1), r(y - 11), 2, 3); ctx.fillRect(r(x - 2), r(y - 11), 1, 1);
-      ctx.fillStyle = INK; ctx.fillRect(r(x), r(y - 6), 1, 2);
-      return;
-    }
-    case 'lighthouse': {
-      glow(ctx, x + 0.5, y - 13, 9, '#ffe8a0', 0.6);
-      poly(ctx, [x - 3, y, x - 2, y - 11, x + 3, y - 11, x + 4, y], '#f0e8dc', INK);
-      ctx.fillStyle = RED; ctx.fillRect(r(x - 2), r(y - 8), 5, 2); ctx.fillRect(r(x - 2), r(y - 4), 6, 2);
-      box(ctx, x - 1, y - 14, 3, 3, '#ffe08a'); roof(ctx, x - 1.5, y - 14, 4, 2, INK);
-      return;
-    }
-    case 'barrow': {
-      ctx.beginPath(); ctx.ellipse(x, y, 7, 4.5, 0, Math.PI, 0); ctx.closePath();
-      ctx.fillStyle = '#8c9a5c'; ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.stroke();
-      ctx.fillStyle = '#16100c'; ctx.fillRect(r(x - 1), r(y - 3), 3, 3);
-      box(ctx, x + 4, y - 7, 1, 4, STONE_D);
-      return;
-    }
-    case 'grove': {
-      glow(ctx, x, y - 4, 9, '#d8f0a0', 0.5);
-      for (const [dx, dy] of [[-6, 0], [6, 0], [-4, -4], [4, -4], [0, -6]]) tree(ctx, x + dx, y + dy, 2.6, 0.8);
-      box(ctx, x - 1, y - 5, 2, 5, '#c8c0b0');
-      return;
-    }
-    case 'stone': {
-      glow(ctx, x, y - 3, 6, '#9ad0ff', 0.55);
-      box(ctx, x - 1, y - 6, 3, 6, '#cfc8bc');
-      ctx.fillStyle = '#5a86b8'; ctx.fillRect(r(x), r(y - 5), 1, 2);
-      return;
-    }
-    case 'hearth': {
-      box(ctx, x - 4, y - 5, 8, 5, '#efe6d0');
-      ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(x, y - 5, 4.5, Math.PI, 0); ctx.fill();
-      ctx.fillStyle = '#f4ecd6'; ctx.beginPath(); ctx.arc(x, y - 5, 3.5, Math.PI, 0); ctx.fill();
-      for (const cx of [-3, -1, 1, 3]) { ctx.fillStyle = INK; ctx.fillRect(r(x + cx), r(y - 4), 1, 4); }
-      return;
-    }
-    case 'monastery': {
-      box(ctx, x - 6, y - 5, 9, 5, STONE); roof(ctx, x - 6.5, y - 5, 10, 3, '#5a5a6a');
-      box(ctx, x + 3, y - 12, 4, 12, STONE); roof(ctx, x + 2.5, y - 12, 5, 4, '#5a5a6a');
-      ctx.fillStyle = '#c9a34a'; ctx.fillRect(r(x + 4), r(y - 10), 2, 2);
-      return;
-    }
-    case 'forge': {
-      glow(ctx, x, y - 3, 8, '#ff8a30', 0.55);
-      smoke(ctx, x + 3, y - 12, 4, 0.7);
-      box(ctx, x - 5, y - 5, 8, 5, '#a8906c'); roof(ctx, x - 5.5, y - 5, 9, 3, '#6a4a3a');
-      box(ctx, x + 2, y - 10, 2, 5, '#6a5a4a');
-      ctx.fillStyle = '#ffb040'; ctx.fillRect(r(x - 2), r(y - 3), 2, 2);
-      return;
-    }
-    case 'fortress': {
-      poly(ctx, [x - 9, y, x - 4, y - 12, x + 4, y - 12, x + 9, y], '#9a8a70', INK);
-      box(ctx, x - 3, y - 7, 6, 7, '#6a5a4a');
-      ctx.fillStyle = '#16100c'; ctx.fillRect(r(x - 2), r(y - 5), 4, 5);
-      ctx.fillStyle = '#c9a34a'; ctx.fillRect(r(x - 3), r(y - 8), 6, 1);
-      box(ctx, x - 6, y - 6, 1, 6, STONE); box(ctx, x + 5, y - 6, 1, 6, STONE);
-      return;
-    }
-    case 'volcano': {
-      glow(ctx, x, y - 18, 16, '#ff7a28', 0.45);
-      ctx.fillStyle = rgba('#4a4440', 0.5);
-      for (let i = 0; i < 5; i++) { ctx.beginPath(); ctx.arc(x - 2 + i * 2.5, y - 22 - i * 3.5, 2.4 + i * 0.9, 0, Math.PI * 2); ctx.fill(); }
-      poly(ctx, [x - 18, y, x - 3, y - 17, x + 3, y - 17, x + 18, y], '#5e524c');
-      poly(ctx, [x + 0.5, y - 17, x + 3, y - 17, x + 18, y, x + 3, y], '#3e3632');
-      ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x - 18, y); ctx.lineTo(x - 3, y - 17); ctx.lineTo(x + 3, y - 17); ctx.lineTo(x + 18, y); ctx.stroke();
-      ctx.strokeStyle = '#ff9a38'; ctx.lineWidth = 1.2;
-      ctx.beginPath(); ctx.moveTo(x - 1, y - 17); ctx.quadraticCurveTo(x - 4, y - 9, x - 8, y - 1); ctx.moveTo(x + 1, y - 17); ctx.quadraticCurveTo(x + 2, y - 8, x + 6, y - 1); ctx.stroke();
-      ctx.fillStyle = '#ffd070'; ctx.fillRect(r(x - 2), r(y - 18), 4, 1);
-      ctx.lineWidth = 1;
-      return;
-    }
-    case 'sunken': {
-      for (const [dx, hh] of [[-5, 5], [-2, 8], [1, 3], [4, 6]]) box(ctx, x + dx, y - hh, 2, hh, STONE);
-      ctx.fillStyle = rgba('#5a8aa0', 0.7); ctx.fillRect(r(x - 7), r(y - 2), 14, 2);
-      return;
-    }
-    case 'ruin': {
-      for (const [dx, hh] of [[-6, 4], [-3, 7], [2, 5], [5, 2]]) box(ctx, x + dx, y - hh, 2, hh, STONE_D);
-      box(ctx, x - 4, y - 8, 5, 1, STONE);
-      ctx.fillStyle = rgba('#5a524c', 0.6); ctx.fillRect(r(x - 7), r(y), 14, 1);
-      return;
-    }
-    case 'gate': {
-      box(ctx, x - 2, y - 9, 4, 9, STONE_D); roof(ctx, x - 2.5, y - 9, 5, 3, RED); flag(ctx, x, y - 12, RED);
-      ctx.fillStyle = RED; ctx.fillRect(r(x + 2), r(y - 3), 4, 1); ctx.fillStyle = '#f0e8d8'; ctx.fillRect(r(x + 4), r(y - 3), 2, 1);
-      return;
-    }
-    case 'wreck': {
-      poly(ctx, [x - 8, y - 3, x + 6, y - 1, x + 4, y + 2, x - 6, y + 1], '#6a4a30', INK);
-      ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x - 1, y - 2); ctx.lineTo(x + 3, y - 12); ctx.moveTo(x + 1, y - 7); ctx.lineTo(x + 5, y - 6); ctx.stroke();
-      ctx.fillStyle = rgba('#d8e8ec', 0.8); ctx.fillRect(r(x - 9), r(y + 1), 4, 1); ctx.fillRect(r(x + 4), r(y + 2), 5, 1);
-      return;
-    }
-    case 'rift': {
-      glow(ctx, x, y - 3, 14, '#b070ff', 0.5);
-      poly(ctx, [x - 10, y - 1, x - 5, y - 3, x - 2, y - 1, x + 2, y - 5, x + 5, y - 2, x + 10, y - 4, x + 5, y, x + 1, y - 2, x - 3, y + 1, x - 6, y - 1], '#1a0c26', '#6a3aa0');
-      ctx.fillStyle = '#e8c8ff'; ctx.fillRect(r(x), r(y - 2), 1, 1); ctx.fillRect(r(x - 5), r(y - 2), 1, 1);
-      return;
-    }
-    case 'ring': {
-      for (let k = 0; k < 7; k++) {
-        const a = (k / 7) * Math.PI * 2, sx = x + Math.cos(a) * 8, sy = y - 3 + Math.sin(a) * 3.5;
-        box(ctx, sx - 0.5, sy - 4, 2, 4, k % 2 ? STONE : STONE_D);
-      }
-      return;
-    }
-    case 'lodge': {
-      smoke(ctx, x + 4, y - 11, 3, 0.6);
-      box(ctx, x - 6, y - 5, 12, 5, '#a07848');
-      poly(ctx, [x - 8, y - 4.5, x, y - 11, x + 8, y - 4.5], '#f4f4f0', INK);
-      ctx.fillStyle = '#ffd070'; ctx.fillRect(r(x - 3), r(y - 3), 2, 2);
-      box(ctx, x + 1, y - 3, 2, 3, '#5a3a20');
-      return;
-    }
-    case 'obelisk': {
-      glow(ctx, x, y - 8, 10, '#8ae0f0', 0.35);
-      poly(ctx, [x - 3, y, x - 2, y - 15, x, y - 18, x + 2, y - 15, x + 3, y], '#3a3e44', INK);
-      ctx.fillStyle = '#8ae0f0'; ctx.fillRect(r(x), r(y - 14), 1, 11);
-      ctx.fillStyle = '#e6d29a'; ctx.fillRect(r(x - 6), r(y - 1), 12, 2);
-      return;
-    }
-    case 'camp': {
-      for (const [dx, dy, c] of [[-6, 0, '#d8c8a0'], [0, -3, '#c8a878'], [5, 1, '#e0d4b4']] as const) poly(ctx, [x + dx - 3.5, y + dy, x + dx, y + dy - 6, x + dx + 3.5, y + dy], c, INK);
-      flag(ctx, x, y - 9, RED);
-      return;
-    }
-    case 'falls': {
-      glow(ctx, x, y + 2, 7, '#e8f6ff', 0.6);
-      ctx.fillStyle = '#e8f4f6'; ctx.fillRect(r(x - 2), r(y - 8), 4, 9);
-      ctx.fillStyle = '#7ab0c8'; ctx.fillRect(r(x - 2), r(y - 8), 1, 9); ctx.fillRect(r(x + 1), r(y - 6), 1, 7);
-      ctx.fillStyle = '#ffffff'; for (const [dx, dy] of [[-4, 1], [3, 2], [-1, 3], [4, 0]]) ctx.fillRect(r(x + dx), r(y + dy), 1, 1);
-      return;
-    }
-    case 'springs': {
-      ctx.fillStyle = '#7ec0c8'; ctx.beginPath(); ctx.ellipse(x, y - 1, 5, 2, 0, 0, Math.PI * 2); ctx.fill();
-      ctx.strokeStyle = INK; ctx.lineWidth = 1; ctx.stroke();
-      ctx.strokeStyle = rgba('#ffffff', 0.85);
-      for (const dx of [-2.5, 0.5, 3]) { ctx.beginPath(); ctx.moveTo(x + dx, y - 3); ctx.quadraticCurveTo(x + dx - 2, y - 6, x + dx, y - 8); ctx.quadraticCurveTo(x + dx + 2, y - 10, x + dx, y - 12); ctx.stroke(); }
-      return;
-    }
-    case 'label': case 'water': return;
-  }
+  SITE[icon](ctx, x, y);
 }
 
 /** Cloth position of a site: map-relative sites are placed from their built map's corner. */
@@ -974,13 +961,20 @@ function whirlpool(ctx: CanvasRenderingContext2D, x: number, y: number): void {
   ctx.stroke();
 }
 
+/** Each kind of the atlas's marks on the sea, standing on (x, y); a ship with no pennant flies the ink's. */
+const MARK: Record<SeaMark['kind'], (ctx: CanvasRenderingContext2D, x: number, y: number, mark: SeaMark) => void> = {
+  ship: (ctx, x, y, mark) => ship(ctx, x, y, mark.pennant ?? INK),
+  serpent,
+  whirlpool,
+};
+
 /** The Hearth's place on the cloth, from its site. */
 function hearthAt(): [number, number] {
   const s = ATLAS.sites.find((q) => q.icon === 'hearth');
   return s ? sitePos(s) : [CLOTH.w / 2, CLOTH.h / 2];
 }
 
-/** Little wave marks on open water; ships on the crossings, a serpent, a whirlpool. Only where there is deep water. */
+/** Little wave marks on open water, and the atlas's marks: ships on the crossings, serpents, a whirlpool. Only where there is deep water. */
 function paintSea(ctx: CanvasRenderingContext2D, grid: WorldGrid): void {
   const [hx, hy] = hearthAt();
   const deep = (wx: number, wy: number): boolean => grid.t(Math.floor(wx), Math.floor(wy)) === TI.sea;
@@ -992,12 +986,7 @@ function paintSea(ctx: CanvasRenderingContext2D, grid: WorldGrid): void {
     ctx.beginPath(); ctx.moveTo(x - 3, y); ctx.quadraticCurveTo(x - 1.5, y - 2, x, y); ctx.quadraticCurveTo(x + 1.5, y - 2, x + 3, y); ctx.stroke();
   }
   const put = (wx: number, wy: number, draw: (x: number, y: number) => void): void => { if (deep(wx, wy)) draw(px(wx), py(wy)); };
-  put(128, 186, (x, y) => ship(ctx, x, y, '#2a2a2a'));
-  put(212, 132, (x, y) => ship(ctx, x, y, '#c9a34a'));
-  put(318, 214, (x, y) => ship(ctx, x, y, '#3a5aa0'));
-  put(328, 146, (x, y) => serpent(ctx, x, y));
-  put(222, 232, (x, y) => serpent(ctx, x, y));
-  put(286, 196, (x, y) => whirlpool(ctx, x, y));
+  for (const m of ATLAS.marks) put(m.at[0], m.at[1], (x, y) => MARK[m.kind](ctx, x, y, m));
 }
 
 // ---------------------------------------------------------------- the border, the title, the rose

@@ -296,4 +296,13 @@ export const PLAN: Atlas = {
     { from: 'firemount', to: 'highspine', kind: 'road', a: [258, 306], b: [272, 306], note: 'the Giants\' Stair' },
     { from: 'cinderport', to: 'hearthisle', kind: 'sea', via: [[228, 236]], b: [252, 188], note: 'the last crossing' },
   ],
+  // On the sea: ships on the crossings, two serpents and a whirlpool, each on deep water.
+  marks: [
+    { kind: 'ship', at: [128, 186], pennant: '#2a2a2a' },
+    { kind: 'ship', at: [212, 132], pennant: '#c9a34a' },
+    { kind: 'ship', at: [318, 214], pennant: '#3a5aa0' },
+    { kind: 'serpent', at: [328, 146] },
+    { kind: 'serpent', at: [222, 232] },
+    { kind: 'whirlpool', at: [286, 196] },
+  ],
 };
