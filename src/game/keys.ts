@@ -53,7 +53,7 @@ export const seekId = (who: number, prestige: number): string => `seek:${who}:${
 /** The flag a party holds once it has paid a spell hall's fee to study: made from the hall's name, so renaming a hall forgets who paid. */
 export const guildFlag = (hall: string): Flag => `guild_${hall}` as Flag;
 
-/** The flag that keeps the glove's line said, once a game (game/combat.ts's `GLOVE_LINE`). */
+/** The flag that keeps the glove's line said, once a game (game/combat/lines.ts's `GLOVE_LINE`). */
 export const GLOVE_FLAG: Flag = 'glove_seen';
 
 /** The flag set when a company takes a guild quest, as a person's quests are: `q_<id>`. */

@@ -119,6 +119,11 @@ export function atlas(): void {
   const ids = new Set([...ATLAS.areas.map((a) => a.id), ...ATLAS.zones.map((z) => z.id), ...ATLAS.places.map((q) => q.id), ...MAP_DEFS.map((d) => d.id)]);
   for (const l of ATLAS.links) ok(ids.has(l.from) && ids.has(l.to), `way ${l.from} -> ${l.to}: both ends exist`);
   for (const l of ATLAS.links.filter((q) => q.kind === 'sea')) for (const [x, y] of l.via ?? []) ok(grid.t(Math.floor(x), Math.floor(y)) === TI.sea, `crossing ${l.from} -> ${l.to}: passes ${x},${y} at sea`);
+  // The world map paints a mark on the sea only on deep water and skips one elsewhere unremarked.
+  for (const m of ATLAS.marks) ok(grid.t(Math.floor(m.at[0]), Math.floor(m.at[1])) === TI.sea, `the ${m.kind} at ${m.at[0]},${m.at[1]} is on deep water`);
+  // And the sea keeps its six: one taken out fails here instead of going unremarked.
+  const afloat = ATLAS.marks.map((m) => m.kind).join(', ');
+  ok(afloat === 'ship, ship, ship, serpent, serpent, whirlpool', `three ships, two serpents and a whirlpool on the sea (${afloat})`);
   // Places: a built one is a map, a planned one is not yet; every town and dungeon has one.
   for (const q of ATLAS.places) ok(q.planned ? !MAP_DEFS.some((d) => d.id === q.id) : MAP_DEFS.some((d) => d.id === q.id), `place ${q.id}: ${q.planned ? 'planned and not built yet' : 'a built map'}`);
   for (const d of MAP_DEFS.filter((q) => q.kind !== 'outdoor')) ok(ATLAS.places.some((q) => q.id === d.id), `${d.id}: has a plate on the world map`);
