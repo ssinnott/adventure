@@ -132,7 +132,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   class; `src/ui/scenery.ts` holds the trees, rocks, mountains and pillars; `src/ui/view/` is the
   depth-layered first-person compositor (`compositor.ts`) and its parts by section (the sky, the
   weather, the floors, the walls, the roofs and the tents), a model with no canvas and the common
-  ground they all take, with `src/ui/viewport.ts` their barrel (#1028); its static scene is
+  ground they all take, with `src/ui/viewport.ts` their barrel (#1028). Its painters take the
+  frame's state as one `Paint`, made once at the top of each paint (#1029); its static scene is
   cached in two canvases (the sky, and everything in front of it) and the weather and the year
   reach into it.
 
