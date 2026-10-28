@@ -348,10 +348,10 @@ export class World {
   }
 
   /** The Stones the company has restored, by which the Hearth steadies (game/stones.ts). */
-  get stones(): number { return stonesRestored(this.state, this.party); }
+  get stones(): number { return stonesRestored(this.tables.stones, this.state, this.party); }
 
   /** The Hearth as the company has left it: the Stones restored, and the ending once one is taken (#750). */
-  get hearth(): Hearth { return { stones: this.stones, ending: endingOf(this.party.flags) }; }
+  get hearth(): Hearth { return { stones: this.stones, ending: endingOf(this.tables.endings, this.party.flags) }; }
 
   /**
    * Where the party stands in world cells: its square on the outdoors, which is laid out as the world

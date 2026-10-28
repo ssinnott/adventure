@@ -26,9 +26,9 @@ export function seeking(): void {
   ok(holds({ member: { who: 2, prestige: 1 } }, world.state, party) && holds({ member: { who: 2, prestige: 2 } }, world.state, party) && !holds({ member: { who: 2, prestige: 3 } }, world.state, party), 'with the prestiges or more: what holds stays held once the next is taken');
 
   // One quest a member and a prestige, from the trainers placed: none placed, none made.
-  ok(TRAINERS().length === trainersIn(MAP_DEFS).length, `the content places ${TRAINERS().length} trainers`);
+  ok(TRAINERS(TABLES.maps).length === trainersIn(MAP_DEFS).length, `the content places ${TRAINERS(TABLES.maps).length} trainers`);
   const perClass = new Map<string, number>();
-  for (const t of TRAINERS()) perClass.set(`${t.teaches.cls}:${t.teaches.prestige}`, (perClass.get(`${t.teaches.cls}:${t.teaches.prestige}`) ?? 0) + 1);
+  for (const t of TRAINERS(TABLES.maps)) perClass.set(`${t.teaches.cls}:${t.teaches.prestige}`, (perClass.get(`${t.teaches.cls}:${t.teaches.prestige}`) ?? 0) + 1);
   const twice = [...perClass].filter(([, n]) => n > 1).map(([k]) => k);
   ok(!twice.length, `no class's prestige is taught by two trainers${twice.length ? ` (${twice.join(', ')})` : ''}`);
   const untaught = Object.keys(PRESTIGES).flatMap((cls) => [1, 2, 3].filter((n) => !perClass.has(`${cls}:${n}`)).map((n) => `${cls}:${n}`));
@@ -38,7 +38,7 @@ export function seeking(): void {
   // Glass's edge, the world map marks his box, and once his quest begins, seeking him is done.
   {
     const r = makeRng(807), p = defaultParty(TABLES, r), w = new World(TABLES, buildMaps(), p, r), cassian = p.members[5];
-    const magus = TRAINERS().find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3);
+    const magus = TRAINERS(TABLES.maps).find((t) => t.teaches.cls === 'sorcerer' && t.teaches.prestige === 3);
     const view = (): ReturnType<typeof questLog>[number] | undefined => questLog(TABLES, w.state, p).find((v) => v.def.id === seekId(5, 3));
     cassian.level = 26; takePrestige(cassian); takePrestige(cassian);
     const under = view();

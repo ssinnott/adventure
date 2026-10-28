@@ -1277,7 +1277,7 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   const quests = AREAS.flatMap((a) => [...(a.quests ?? []), ...(a.chapter ? [a.chapter] : [])]);
   const told = quests.flatMap((q) => [q.title, ...q.entries.map((e) => e.text), ...q.goals.map((x) => x.text)]).filter((t) => /Mergen|drillmaster|Drill Bow|small mesa/i.test(t));
   const marked = quests.filter((q) => q.mark && q.goals.some((x) => x.at === D10.id));
-  ok(!told.length && !marked.length && !TRAINERS().some((t) => t.name === mergen.name) && !sought(questLog(TABLES, g.world.state, p)).some((s) => s.at === D10.id)
+  ok(!told.length && !marked.length && !TRAINERS(TABLES.maps).some((t) => t.name === mergen.name) && !sought(questLog(TABLES, g.world.state, p)).some((s) => s.at === D10.id)
     && !ATLAS.sites.some((s) => /Mergen|drillmaster/i.test(s.name)) && !ATLAS.places.some((s) => /Mergen|drillmaster/i.test(s.name ?? '')),
     'found and never told: no quest, seeking, goal or world-map mark names Mergen or his door, and he is no site of the atlas');
 
