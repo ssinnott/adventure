@@ -439,7 +439,7 @@ A content session that needs a change to a system stops and asks for one, or ope
 request first; it never edits shared files on the side.
 
 The imports keep layers as the files keep lanes: `src/lib` under `src/game` under `src/content`
-under `src/ui` under `src/app` (the files directly under `src/` the app's until it is made), the
+under `src/ui` under `src/app` (and its entry, `src/main.ts`), the
 tools taking anything and `tools/kit/` only `src`, the walkthroughs and the suites `src` and
 `tools/kit/` and not each other or the tools, no area another's files but its `public.ts` and no
 cycle among `src`'s runtime imports; `tools/tests/layers.ts` holds it, today's crossings the rows of

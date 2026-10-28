@@ -143,7 +143,7 @@ no map.
 
 ```
 src/main.ts        boot: canvas, input, loop
-src/input.ts       keyboard -> queued actions (plus a text mode for names)
+src/app/           input.ts, keyboard -> queued actions (plus a text mode for names); pilot/, which plays the game for watching
 src/game/          the model: map, outdoors, world, calendar, weather, party, people, guilds, items, spells, monsters, combat, quests, save, game
 src/content/       the content, in TypeScript: index.ts lists the areas in road order and merges their tables; guilds.ts the guilds
 src/content/areas/ one folder per area: its maps, monsters, items, chapter of the one quest, side quests, guild quests and climate (docs/areas/ has each one's doc)

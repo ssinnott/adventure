@@ -382,7 +382,7 @@ Decided by the builder for #861, each the owner's to overturn:
     lists them).
 13. **The pilot is not stranded and does nothing new.** It reads the world through what it has seen; the
     door is drawn as rock and the explorer suspects only cells drawn as wall (`suspects`,
-    `src/game/pilot/explore.ts`), so it never suspects it, and a locked chest it came to would be
+    `src/app/pilot/explore.ts`), so it never suspects it, and a locked chest it came to would be
     pressed on once and walked past, as a locked door with no key is (#857).
 
 Decided by the builder for #835, each the owner's to overturn:
