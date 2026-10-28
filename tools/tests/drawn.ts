@@ -1,7 +1,7 @@
-// A group as the view draws it while exploring (game/world.ts, groupDrawn): to three figures, each
-// of its kinds once in the order they stand, then the rest, so the archer or the caster among ten
-// brigands is seen before the fight. Held over every group on the maps as played, and the look of
-// each kind drawn is said when first seen.
+// A group as the view draws it while exploring (game/world/groups.ts, groupDrawn): to three
+// figures, each of its kinds once in the order they stand, then the rest, so the archer or the
+// caster among ten brigands is seen before the fight. Held over every group on the maps as played,
+// and the look of each kind drawn is said when first seen.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { PLAYED_DEFS } from '../../src/content/maps.ts';
 import { GameMap } from '../../src/game/map.ts';

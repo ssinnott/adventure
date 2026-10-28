@@ -87,6 +87,12 @@ export async function changed(): Promise<void> {
   for (const p of ['painter', 'grid', 'ways']) if (!(await changedMaps([`src/game/atlas/${p}.ts`])).all) unlaid.push(p);
   ok(!unlaid.length && !(await changedMaps(['src/game/atlas/schema.ts'])).all,
     `a change to game/atlas/painter.ts, grid.ts or ways.ts counts every map, as game/atlas.ts does${unlaid.length ? ` (not: ${unlaid.join(', ')})` : ''}; to its schema, game/atlas/schema.ts, none`);
+  // The world's parts count as world.ts did before the split (#1008): a change to lineOfSight, in
+  // sight.ts, is the change the sweep is for (#844).
+  const unseen: string[] = [];
+  for (const p of ['sight', 'sky', 'groups']) if (!(await changedMaps([`src/game/world/${p}.ts`])).all) unseen.push(p);
+  ok(!unseen.length && (await changedMaps(['src/game/world.ts'])).all,
+    `a change to game/world.ts or to its parts, game/world/sight.ts, sky.ts or groups.ts, counts every map${unseen.length ? ` (not: ${unseen.join(', ')})` : ''}`);
   ok(!(await changedMaps(['src/game/mapdef.ts'])).all && (await changedMaps(['src/game/map.ts'])).all,
     "a change to the maps' schema, game/mapdef.ts, types erased before anything paints, counts no map; to game/map.ts, the legend, the palettes and GameMap, every map");
   ok(!(await changedMaps(['docs/DESIGN.md'])).all, 'a change to the docs counts no map');
