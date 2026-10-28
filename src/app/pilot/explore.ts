@@ -3,8 +3,8 @@
 // secret behind, and comes back to a way found shut once the company may open it. It reads the world
 // through Known alone: a secret door is a wall to it until a search finds it, and a gate is learnt by
 // trying it, never by its terms. Outdoors it keeps to one zone's box, as the world map draws the boxes.
-import type { Game } from '../../game/game.ts';
-import { ExploreScreen } from '../../game/game.ts';
+import type { Game } from '../game.ts';
+import { ExploreScreen } from '../../ui/explore.ts';
 import type { Action } from '../input.ts';
 import { passableCell } from '../../game/map.ts';
 import { companyLevel, partyCan } from '../../game/party.ts';

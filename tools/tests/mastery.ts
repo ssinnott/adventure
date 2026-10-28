@@ -21,7 +21,7 @@ import type { MonsterDef } from '../../src/game/monsters.ts';
 import { SPELLS } from '../../src/content/spells.ts';
 import { MAP_DEFS, AREAS, TABLES } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/mapdef.ts';
-import type { Game } from '../../src/game/game.ts';
+import type { Game } from '../../src/app/game.ts';
 import { ChoiceScreen, InteriorScreen, TRADE, businessEntries, weaponLine, spellsLine } from '../../src/ui/screens.ts';
 import { optionParts, columnLabelWidth } from '../../src/ui/draw.ts';
 import { SIDE_W } from '../../src/ui/frame.ts';

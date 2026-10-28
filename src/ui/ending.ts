@@ -2,9 +2,9 @@
 // Heart is taken, the ending's name over the title's dusk with the Hearth as the ending leaves it,
 // and its pages one at a time. The last closes onto the Heart, where the company stands, and the
 // game goes on.
-import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../app/input.ts';
-import { is } from '../app/input.ts';
+import type { Host, Screen } from './screen.ts';
+import type { Action } from './actions.ts';
+import { is } from './actions.ts';
 import { drawText, drawTextOutlined } from '../lib/engine/text.ts';
 import { panel, paragraph, wrap } from './draw.ts';
 import { INK, BRASS, TEXT, TEXT_DIM } from './palette.ts';
@@ -25,12 +25,12 @@ export class EndingScreen implements Screen {
   page = 0;
   constructor(ending: Ending) { this.ending = ending; }
   /** Space or Esc turns the page; past the last, the company is where it stood. */
-  update(g: Game, a: Action | null): void {
+  update(g: Host, a: Action | null): void {
     if (!is(a, 'interact', 'cancel')) return;
     if (this.page < this.ending.pages.length - 1) this.page++;
     else g.pop();
   }
-  render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
+  render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     const n = this.ending.pages.length, hint = PAGE.y + PAGE.h - 14;
     drawFrameBackground(ctx);
     drawDusk(ctx, frame, hearthLook(g.world.hearth));

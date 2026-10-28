@@ -10,7 +10,7 @@ interface Window {
   __game?: {
     ready: boolean;
     errors: string[];
-    game?: import('../src/game/game.ts').Game;
+    game?: import('../src/app/game.ts').Game;
   };
   /** Safari still ships the prefixed WebAudio constructors; src/lib/audio/facade.ts falls back to them. */
   webkitAudioContext?: typeof AudioContext;

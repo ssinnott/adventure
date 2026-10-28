@@ -3,8 +3,8 @@
 // land where nothing else is known. It reads the world through Known alone: a goal's map once the
 // journal shows the goal, a zone's band once the party has set foot in it. It says where it is bound,
 // gives a goal up after three days with no way on, and turns back over a line into a zone too hard.
-import type { Game } from '../../game/game.ts';
-import { ExploreScreen } from '../../game/game.ts';
+import type { Game } from '../game.ts';
+import { ExploreScreen } from '../../ui/explore.ts';
 import type { Action } from '../input.ts';
 import { companyLevel, partyCan } from '../../game/party.ts';
 import type { Party } from '../../game/party.ts';

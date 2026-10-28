@@ -17,7 +17,7 @@ import { useShrine, openCairn, answerRiddle, restRefused, restParty, restAndWake
 import { spell } from '../../src/game/spells.ts';
 import { Input } from '../../src/app/input.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
-import type { Game } from '../../src/game/game.ts';
+import type { Game } from '../../src/app/game.ts';
 import { MAP_DEFS, TABLES } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../kit/shipped.ts';
 import { judge, measure } from '../kit/rules/density.ts';
