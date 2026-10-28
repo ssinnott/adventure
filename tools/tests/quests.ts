@@ -5,6 +5,7 @@
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, QUESTS, THE_QUEST, TABLES } from '../../src/content/index.ts';
+import type { Tables } from '../../src/game/tables.ts';
 import { homeMap, zoneOfMap } from '../../src/game/atlas.ts';
 import { existsSync, readFileSync } from 'node:fs';
 import { World } from '../../src/game/world.ts';
@@ -125,8 +126,10 @@ function flagsOwed(): void {
 function goalmap(): void {
   // goalMap (#720): the map the shown goal is done on, read back from the goal, as the chapter moves.
   const shelf = AREAS.find((a) => a.id === 'shelf')!.chapter!, gp = defaultParty(TABLES, makeRng(4)), gw = new World(TABLES, buildMaps(), gp, makeRng(4));
-  // The chapter as the one quest's only chapter, and as a quest of its own, as the log shows a side quest.
-  const asOne: LogQuest = { id: 'fx_one', title: 'One', chapters: [shelf] }, views = (): QuestView[] => questLog(gw.state, gp, [asOne, shelf], []);
+  // The chapter as the one quest's only chapter, and as a quest of its own, as the log shows a side quest:
+  // the log's quests a table of the suite's own (#975).
+  const asOne: LogQuest = { id: 'fx_one', title: 'One', chapters: [shelf] }, own: Tables = { ...TABLES, quests: [asOne, shelf] };
+  const views = (): QuestView[] => questLog(own, gw.state, gp, []);
   gp.flags.q_ashcombe = 1;
   const hired = views(), hiredAt = hired.map(goalMap);
   gp.flags.q_ashcombe_done = 1;
@@ -236,7 +239,7 @@ function pages(): void {
     const rng = makeRng(167), party = defaultParty(TABLES, rng), world = new World(TABLES, buildMaps(), party, rng);
     for (let i = 1; i <= 5; i++) party.flags[`fx_c${i}`] = 1;
     for (let i = 1; i <= 4; i++) party.flags[`fx_c${i}_done`] = 1;
-    const v = questLog(world.state, party, [five])[0];
+    const own: Tables = { ...TABLES, quests: [five] }, v = questLog(own, world.state, party)[0];
     const sheets = questSheets(v, PAGE.w, PAGE.h), open = openingSheet(v, sheets);
     const pagesInOrder = sheets.every((s, i) => i === 0 || s.page >= sheets[i - 1].page) && new Set(sheets.map((s) => s.page)).size === 5;
     const headed = sheets.every((s) => s.rows[1].text === `${['I', 'II', 'III', 'IV', 'V'][s.page]}. Chapter ${s.page + 1}` && s.rows[2].text === (s.page === 4 ? 'Go on with chapter 5.' : 'Done.')
