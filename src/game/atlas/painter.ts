@@ -1,7 +1,7 @@
 // The atlas's terrain and strokes: the table of terrains a world cell is an index into, the noise,
-// the curve through a stroke's points, a river's course and a trail's line, and the masks an
-// outline is filled by. The grid lays the world with them and the world map paints it with them, so
-// the two agree. Pure: nothing here draws.
+// the curve through a stroke's points, a river's course, a trail's line and the masks an outline
+// is filled by. The grid lays the world with them and the world map paints it with them, so the
+// two agree. Pure: nothing here draws.
 import type { Pt, River, Trail } from './schema.ts';
 
 // ---------------------------------------------------------------- terrain

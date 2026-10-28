@@ -34,8 +34,8 @@ export function changedFiles(base: string): string[] {
  * frame's boot.ts among them (#1006). The maps' schema, game/mapdef.ts, is types, erased before
  * anything paints, so it counts none; game/map.ts, which runs the legend, the palettes and
  * `GameMap`, counts (#1009). The atlas is game/atlas.ts and its parts in game/atlas/ (#1019): the
- * terrain and strokes, the grid and the ways run and count as it did; its schema, types alone, counts
- * none, as mapdef.ts counts none.
+ * terrain and strokes, the grid and the ways run and count as it did; its schema, types alone,
+ * counts none, as mapdef.ts counts none.
  */
 const EVERY_MAP = [
   /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/paint\/(brush|ink)\.ts$/, /^src\/ui\/monsters\/(kit\/)?common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|atlas\/(painter|grid|ways)|ink)\.ts$/,

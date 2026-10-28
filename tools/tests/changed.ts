@@ -71,7 +71,8 @@ function reaches(): void {
   const schema = reach(['src/game/mapdef.ts']), runs = reach(['src/game/map.ts']);
   ok(!schema.all && !schema.areas.size && !schema.walks.size && runs.all?.why === 'the gate or a walkthrough loads it',
     `the maps' schema, game/mapdef.ts, reaches no area (${describeReach(schema)}); game/map.ts, which runs, every area (${describeReach(runs)})`);
-  // So is the atlas's (#1019): its schema is types alone and its parts that run are loaded by the gate through game/atlas.ts.
+  // So is the atlas's (#1019): its schema is types alone and its parts that run are loaded by the
+  // gate through game/atlas.ts.
   const charted = reach(['src/game/atlas/schema.ts']), laid = ['painter', 'grid', 'ways'].filter((p) => reach([`src/game/atlas/${p}.ts`]).all?.why !== 'the gate or a walkthrough loads it');
   ok(!charted.all && !charted.areas.size && !charted.walks.size && !laid.length,
     `the atlas's schema, game/atlas/schema.ts, reaches no area (${describeReach(charted)}); its painter, grid and ways, which run, every area${laid.length ? ` (not: ${laid.join(', ')})` : ''}`);
@@ -80,7 +81,8 @@ function reaches(): void {
 export async function changed(): Promise<void> {
   reaches();
   ok((await changedMaps(['src/game/atlas.ts'])).all, 'a change to game/atlas.ts re-lays the zones, so it counts every map');
-  // Its parts that run count as it did (#1019); its schema, types erased before anything paints, counts none.
+  // Its parts that run count as it did (#1019); its schema, types erased before anything paints,
+  // counts none.
   const unlaid: string[] = [];
   for (const p of ['painter', 'grid', 'ways']) if (!(await changedMaps([`src/game/atlas/${p}.ts`])).all) unlaid.push(p);
   ok(!unlaid.length && !(await changedMaps(['src/game/atlas/schema.ts'])).all,

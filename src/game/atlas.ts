@@ -5,8 +5,8 @@
 // stamps every built outdoor map into it 1:1 where it sits, so the painted map shows the real
 // Foreland and the real Thornmark. Every built outdoor map is one box of a grid, lettered A1, B2...
 // from the atlas's corner, and a zone lists its maps, one box or several.
-// This file gathers its four parts in game/atlas/, the schema, the terrain and strokes, the grid and
-// the ways, and every name is had from here.
+// This file gathers its four parts in game/atlas/, the schema, the terrain and strokes, the grid
+// and the ways, and every name is had from here.
 //
 // The land is divided two ways. Areas are the steps of the one road of levels (I, II, III...), each
 // with its level band, and every area is made of zones, the named country inside it. Which zone a
