@@ -87,6 +87,11 @@ export function stones(): void {
   const site = ATLAS.sites.find((s) => s.icon === 'hearth'), lost = ((): string => { try { hearthIn(ATLAS.sites.filter((s) => s.icon !== 'hearth')); return ''; } catch (e) { return e instanceof Error ? e.message : String(e); } })();
   ok(!!site && HEARTH(TABLES.atlas).join() === site.at.join() && lost === 'the atlas has no hearth site, so nothing says where the Hearth burns',
     `the Hearth burns at the atlas's hearth site (${HEARTH(TABLES.atlas).join(',')}), and an atlas without one throws (${lost})`);
+  // Each atlas is read for its own Hearth and kept by it (#976): one of the suite's own, its hearth
+  // site moved, then content's.
+  const moved = { ...ATLAS, sites: ATLAS.sites.map((s) => (s.icon === 'hearth' ? { ...s, at: [1, 2] as typeof s.at } : s)) };
+  ok(HEARTH(moved).join() === '1,2' && Math.round(hearthBearing(moved, 1, 9)) === 0 && HEARTH(TABLES.atlas).join() === site?.at.join(),
+    `an atlas of the suite's own is read for its own Hearth (${HEARTH(moved).join(',')}), and content's for content's`);
   // The night sky's Hearth lies where the Hearth does: south of Helmstow, east from the far west shore.
   world.travel('harrow', 7, 14);
   const from = world.worldCell, b = from ? hearthBearing(TABLES.atlas, from.x, from.y) : -1;
