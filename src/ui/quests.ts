@@ -1,6 +1,8 @@
 // The quest log (J): the quests the party knows of, active ones first, and for the one selected,
 // what to do next and what the journal says so far, the one quest paged by chapter. It only reads
-// game/quests.ts. The page layout is a pure function so the Node tests can check that every
+// game/quests.ts. The log is worked out when it opens and the selected quest's sheets when the
+// choice moves, and the log is painted into a canvas of its own when the choice or the page changes,
+// which each frame draws. The page layout is a pure function so the Node tests can check that every
 // quest's journal is shown whole.
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
@@ -8,11 +10,11 @@ import { is } from './actions.ts';
 import { ListMenu } from './menu.ts';
 import { drawText, lineHeight } from '../lib/engine/text.ts';
 import { panel, wrap } from './draw.ts';
-import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, GREEN } from './palette.ts';
+import { LAYOUT } from './frame.ts';
+import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, GREEN, SELECTED } from './palette.ts';
 import { questLog } from '../game/quests.ts';
 import type { QuestView, PageView } from '../game/quests.ts';
 
-const BOX = { x: 8, y: 8, w: 624, h: 268 };
 /** The list of quests down the left; a title has to fit its width. */
 export const LIST = { x: 20, y: 36, w: 172, h: 220 };
 /** The selected quest's page, right of the list. */
@@ -79,34 +81,59 @@ export class QuestScreen implements Screen {
   private get sel(): number { return this.menu.sel; }
   private set sel(row: number) { this.menu.sel = row; }
   private sheet = 0;
+  /**
+   * The log, active quests first, worked out when it opens, and the selected quest's sheets, when the
+   * choice moves: nothing the log reads changes while it is open, since the game under it does not
+   * tick (Game.update), and a load or a new game puts a stack of its own in place of it.
+   */
+  private readonly list: QuestView[];
+  private sheets: Sheet[] = [];
+  /** The log as drawn, painted when it opens and again when the choice or the page changes. */
+  private paper: HTMLCanvasElement | null = null;
+  /** The choice and the page the paper shows. */
+  private painted = '';
   constructor(g: Host) {
+    this.list = questOrder(questLog(g.tables, g.world.state, g.party));
     // Open on the quest that last changed, or the one last looked at, at its goal's chapter.
-    this.sel = Math.max(0, this.list(g).findIndex((v) => v.def.id === g.questFocus));
-    this.sheet = this.opening(g);
+    this.sel = Math.max(0, this.list.findIndex((v) => v.def.id === g.questFocus));
+    this.choose();
   }
-  private list(g: Host): QuestView[] { return questOrder(questLog(g.tables, g.world.state, g.party)); }
-  private sheets(g: Host): Sheet[] { const v = this.list(g)[this.sel]; return v ? questSheets(v, PAGE.w, PAGE.h) : []; }
-  private opening(g: Host): number { const v = this.list(g)[this.sel]; return v ? openingSheet(v, this.sheets(g)) : 0; }
+  /** The selected quest's sheets, and the one the log opens it on. */
+  private choose(): void {
+    const v = this.list[this.sel];
+    this.sheets = v ? questSheets(v, PAGE.w, PAGE.h) : [];
+    this.sheet = v ? openingSheet(v, this.sheets) : 0;
+  }
   update(g: Host, a: Action | null): void {
     if (!a) return;
     if (is(a, 'cancel', 'journal')) { g.pop(); return; }
-    const list = this.list(g);
+    const list = this.list;
     if (!list.length) return;
-    const n = this.sheets(g).length;
+    const n = this.sheets.length;
     if (is(a, 'left')) { this.sheet = Math.max(0, this.sheet - 1); return; }
     if (is(a, 'right')) { this.sheet = Math.min(n - 1, this.sheet + 1); return; }
     if (this.menu.press(a, { n: list.length }) !== 'moved') return;
     g.questFocus = list[this.sel].def.id;
-    this.sheet = this.opening(g);
+    this.choose();
   }
-  render(g: Host, ctx: CanvasRenderingContext2D): void {
-    const list = this.list(g);
-    panel(ctx, BOX.x, BOX.y, BOX.w, BOX.h);
+  render(_g: Host, ctx: CanvasRenderingContext2D): void {
+    const r = LAYOUT.sheet, at = Math.min(this.sheet, Math.max(0, this.sheets.length - 1)), shown = `${this.sel} ${at}`;
+    if (!this.paper || this.painted !== shown) {
+      this.paper ??= Object.assign(document.createElement('canvas'), { width: r.w, height: r.h });
+      const pc = this.paper.getContext('2d')!;
+      pc.setTransform(1, 0, 0, 1, -r.x, -r.y);
+      this.paint(pc, at);
+      this.painted = shown;
+    }
+    ctx.drawImage(this.paper, r.x, r.y);
+  }
+  /** The log at page `at`, in the canvas's coordinates: the panel, the list, the page and the keys. */
+  private paint(ctx: CanvasRenderingContext2D, at: number): void {
+    const list = this.list, sheets = this.sheets, r = LAYOUT.sheet, hint = LAYOUT.hint;
+    panel(ctx, r.x, r.y, r.w, r.h);
     drawText(ctx, 'QUEST LOG', 20, 18, { size: 1, color: BRASS });
-    const sheets = this.sheets(g);
-    const at = Math.min(this.sheet, Math.max(0, sheets.length - 1));
     const keys = (sheets.length > 1 ? `←→ PAGE ${at + 1}/${sheets.length}   ` : '') + (list.length > 1 ? '↑↓ CHOOSE   ' : '');
-    drawText(ctx, keys + 'J OR ESC CLOSE', 620, 264, { size: 1, color: TEXT_DIM, align: 'right' });
+    drawText(ctx, keys + 'J OR ESC CLOSE', hint.x, hint.y, { size: 1, color: TEXT_DIM, align: 'right' });
     if (!list.length) { drawText(ctx, 'No quests yet. The Regent-Warden is hiring.', LIST.x, LIST.y, { size: 1, color: TEXT_DIM }); return; }
     const active = list.filter((v) => !v.done).length, done = list.length - active;
     drawText(ctx, [active ? `${active} ACTIVE` : '', done ? `${done} DONE` : ''].filter(Boolean).join('  '), 620, 18, { size: 1, color: TEXT_DIM, align: 'right' });
@@ -117,7 +144,7 @@ export class QuestScreen implements Screen {
       if (i === 0 && !v.done) rows.push({ text: 'ACTIVE', color: BRASS_DARK });
       if (v.done && (i === 0 || !list[i - 1].done)) rows.push({ text: 'DONE', color: BRASS_DARK });
       if (i === this.sel) row = rows.length;
-      rows.push({ text: (i === this.sel ? '▶ ' : '  ') + v.def.title, color: i === this.sel ? '#ffe08a' : v.done ? TEXT_DIM : TEXT });
+      rows.push({ text: (i === this.sel ? '▶ ' : '  ') + v.def.title, color: i === this.sel ? SELECTED : v.done ? TEXT_DIM : TEXT });
     });
     const lh = lineHeight(1) + 1, fit = Math.floor(LIST.h / lh);
     rows.slice(Math.max(0, row - fit + 1)).slice(0, fit).forEach((r, i) => drawText(ctx, r.text, LIST.x, LIST.y + i * lh, { size: 1, color: r.color }));

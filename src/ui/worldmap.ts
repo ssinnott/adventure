@@ -7,6 +7,9 @@
 // modes: the map alone, and the zone overlay, which colours every area by its step on the road of
 // levels, rules the zones inside each, and draws every way between them, built or planned.
 // Its sites are drawn from a table, an entry to each icon; its marks on the sea are the atlas's.
+// The company's marks (the party's place, the pins of the places read and sought, the line of where
+// it is) are worked out as the map opens; what animates (the party's arrow, the Hearth, the
+// locator) is drawn each frame.
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
@@ -21,9 +24,9 @@ import type { World } from '../game/world.ts';
 import { questLog, finishedBy } from '../game/quests.ts';
 import { sought } from '../game/seeking.ts';
 import { readMarks } from '../game/inscriptions.ts';
-import { drawFrameBackground } from './frame.ts';
+import { LAYOUT, drawFrameBackground } from './frame.ts';
 import { MessageScreen } from './screens.ts';
-import { BRASS, TEXT, TEXT_DIM, PANEL } from './palette.ts';
+import { BRASS, TEXT, TEXT_DIM, PANEL, HINT } from './palette.ts';
 import { rgba, hexToRgb } from '../lib/art/palettes.ts';
 
 // ---------------------------------------------------------------- layout
@@ -38,7 +41,7 @@ export const CLOTH = { w: ATLAS.width * S + PAD * 2, h: ATLAS.height * S + PAD *
 const px = (wx: number): number => PAD + wx * S;
 const py = (wy: number): number => PAD + wy * S;
 /** Where the cloth shows on screen: inside the carved frame, above the key hints. */
-const VIEW = { x: 8, y: 8, w: 624, h: 318 } as const;
+const VIEW = LAYOUT.worldmap;
 
 /** Sepia ink, the red ink towns are lettered in, the blue waters are, and the paper labels are haloed with. */
 const INK = '#3b2a1c';
@@ -1424,7 +1427,7 @@ function drawParty(ctx: CanvasRenderingContext2D, at: [number, number], facing: 
   poly(ctx, pts, (frame >> 4) & 1 ? '#ff5a4a' : '#ffb0a0', '#120c14');
   if (scale >= 1) {
     ctx.fillStyle = 'rgba(14,10,16,0.8)'; ctx.fillRect(r(cx) + 7, r(cy) - 5, measureText('YOU') + 4, 9);
-    drawText(ctx, 'YOU', r(cx) + 9, r(cy) - 4, { color: '#ffe08a' });
+    drawText(ctx, 'YOU', r(cx) + 9, r(cy) - 4, { color: HINT });
   }
 }
 
@@ -1534,6 +1537,25 @@ function partyOnCloth(world: World | null): [number, number] | null {
   return (home && mapMiddle(home.id)) ?? null;
 }
 
+/** The line of where the party is, under the cloth: outdoors the zone; in a town or dungeon, the map and the zone it opens onto. */
+function whereOf(world: World | null): string {
+  if (!world) return '';
+  const m = world.map, here = world.here, home = m.kind === 'outdoor' ? undefined : homeMap(MAP_DEFS, m.id);
+  const area = areaOf(ATLAS, world.zone?.id ?? home?.id ?? m.id);
+  let where = home ? `${here.name}, ${home.name}` : here.name;
+  if (area) where = `${roman(area.order)} ${where}`;
+  if (here.band) where += `  LEVELS ${here.band[0]}-${here.band[1]}`;
+  return where;
+}
+
+/** What the map shows of the company: the party's place, the pins of the places read and sought, and the line of where it is. */
+export interface Marks { party: [number, number] | null; read: [number, number][]; sought: { at: [number, number]; who: string[] }[]; where: string }
+
+/** The company's marks, worked out as the map opens (`WorldMapScreen.marked`); the tests hold the map to it. */
+export function marksOf(world: World | null): Marks {
+  return { party: partyOnCloth(world), read: readOnCloth(world), sought: soughtOnCloth(world), where: whereOf(world) };
+}
+
 /** The whole cloth fitted to the view, for Z. */
 const WHOLE = (() => {
   const k = Math.min(VIEW.w / CLOTH.w, VIEW.h / CLOTH.h);
@@ -1554,14 +1576,22 @@ export class WorldMapScreen implements Screen {
   private still = 999;
   whole = false;
   public mode: WorldMapMode;
+  /**
+   * The company's marks, worked out when the map opens (its first update or frame): nothing they read
+   * changes while it is open, since the game under it does not tick (Game.update) and the almanac over
+   * it reads alone. What animates is drawn each frame: the party's arrow, the Hearth and the locator.
+   */
+  private marks: Marks | null = null;
 
   constructor(mode: WorldMapMode = 'art') { this.mode = mode; }
 
   /** Whether the cloth is painted yet (the first opening paints it behind a progress bar). */
   get ready(): boolean { return painted !== null; }
 
+  private marked(g: Host): Marks { return (this.marks ??= marksOf(g.world ?? null)); }
+
   private place(g: Host): void {
-    const at = partyOnCloth(g.world ?? null) ?? [CLOTH.w / 2, CLOTH.h / 2];
+    const at = this.marked(g).party ?? [CLOTH.w / 2, CLOTH.h / 2];
     this.tx = at[0] - VIEW.w / 2; this.ty = at[1] - VIEW.h / 2;
     this.clamp();
     this.vx = this.tx; this.vy = this.ty;
@@ -1608,9 +1638,8 @@ export class WorldMapScreen implements Screen {
     drawFrameBackground(ctx);
     const art = advance(28);
     if (!art) { this.renderProgress(ctx); return; }
-    const world = g.world ?? null;
-    const party = partyOnCloth(world);
-    if (this.whole) this.renderWhole(ctx, art, party, world?.state.facing ?? 0, frame, world);
+    const world = g.world ?? null, marks = this.marked(g), party = marks.party;
+    if (this.whole) this.renderWhole(ctx, art, marks, world?.state.facing ?? 0, frame);
     else {
       const vx = Math.round(this.vx), vy = Math.round(this.vy);
       ctx.drawImage(art.cloth, vx, vy, VIEW.w, VIEW.h, VIEW.x, VIEW.y, VIEW.w, VIEW.h);
@@ -1620,31 +1649,22 @@ export class WorldMapScreen implements Screen {
       drawHearth(ctx, frame, hearthLook(world?.hearth ?? { stones: 0 }));
       if (this.mode === 'zones') {
         ctx.drawImage(art.overlay, vx, vy, VIEW.w, VIEW.h, vx, vy, VIEW.w, VIEW.h);
-        for (const at of readOnCloth(world)) drawRead(ctx, at);
-        for (const p of soughtOnCloth(world)) drawSought(ctx, p.at, p.who);
+        for (const at of marks.read) drawRead(ctx, at);
+        for (const p of marks.sought) drawSought(ctx, p.at, p.who);
         if (party) drawParty(ctx, party, world?.state.facing ?? 0, frame);
       } else {
         drawNames(ctx, art.names, vx, vy, VIEW.w, VIEW.h);
-        for (const at of readOnCloth(world)) drawRead(ctx, at);
-        for (const p of soughtOnCloth(world)) drawSought(ctx, p.at, p.who);
+        for (const at of marks.read) drawRead(ctx, at);
+        for (const p of marks.sought) drawSought(ctx, p.at, p.who);
       }
       ctx.restore();
       if (this.still < 90) drawLocator(ctx, art.thumb, vx, vy, Math.min(1, (90 - this.still) / 30));
     }
     // Keys and where the party is, on the frame under the cloth; the zones' legend above them.
-    const yy = 343;
-    let where = '';
-    if (world) {
-      // Outdoors, the zone; in a town or dungeon, the map and the zone it opens onto.
-      const m = world.map, here = world.here, home = m.kind === 'outdoor' ? undefined : homeMap(MAP_DEFS, m.id);
-      const area = areaOf(ATLAS, world.zone?.id ?? home?.id ?? m.id);
-      where = home ? `${here.name}, ${home.name}` : here.name;
-      if (area) where = `${roman(area.order)} ${where}`;
-      if (here.band) where += `  LEVELS ${here.band[0]}-${here.band[1]}`;
-    }
+    const keys = LAYOUT.worldmapKeys, where = marks.where;
     if (this.mode === 'zones') drawLegend(ctx, 331);
-    drawText(ctx, `ARROWS SCROLL  TAB ${this.mode === 'art' ? 'ZONES' : 'MAP ONLY'}  Z ${this.whole ? 'CLOSER' : 'WHOLE MAP'}  SPACE ALMANAC  M CLOSE`, 14, yy, { color: BRASS });
-    if (where) drawText(ctx, where.toUpperCase(), 626, yy, { color: TEXT_DIM, align: 'right' });
+    drawText(ctx, `ARROWS SCROLL  TAB ${this.mode === 'art' ? 'ZONES' : 'MAP ONLY'}  Z ${this.whole ? 'CLOSER' : 'WHOLE MAP'}  SPACE ALMANAC  M CLOSE`, keys.x, keys.y, { color: BRASS });
+    if (where) drawText(ctx, where.toUpperCase(), keys.right, keys.y, { color: TEXT_DIM, align: 'right' });
   }
 
   /** The cloth being painted: a bar, and what the cartographer is at. */
@@ -1655,11 +1675,11 @@ export class WorldMapScreen implements Screen {
     ctx.fillStyle = '#2a2430'; ctx.fillRect(x, y, w, 8);
     ctx.fillStyle = BRASS; ctx.fillRect(x, y, Math.round(w * progress), 8);
     ctx.strokeStyle = '#4a3f52'; ctx.strokeRect(x - 0.5, y - 0.5, w + 1, 9);
-    drawText(ctx, 'M CLOSE', 14, 343, { color: BRASS });
+    drawText(ctx, 'M CLOSE', LAYOUT.worldmapKeys.x, LAYOUT.worldmapKeys.y, { color: BRASS });
   }
 
   /** The whole cloth fitted to the view: the overlay's colours with each step's numeral, the party, and a frame round what Z goes back to. */
-  private renderWhole(ctx: CanvasRenderingContext2D, art: Painted, party: [number, number] | null, facing: number, frame: number, world: World | null = null): void {
+  private renderWhole(ctx: CanvasRenderingContext2D, art: Painted, marks: Marks, facing: number, frame: number): void {
     const { k, w, h, x, y } = WHOLE;
     ctx.fillStyle = '#120c14'; ctx.fillRect(VIEW.x, VIEW.y, VIEW.w, VIEW.h);
     ctx.save();
@@ -1681,9 +1701,9 @@ export class WorldMapScreen implements Screen {
         drawTextOutlined(ctx, a.name.toUpperCase(), r(ax), r(ay) - 3, { size: 1, color: '#6a2a18', outline: HALO, thickness: 1, shadow: false, align: 'center' });
       }
     }
-    for (const p of readOnCloth(world)) drawRead(ctx, at(p[0], p[1]));
-    for (const p of soughtOnCloth(world)) drawSought(ctx, at(p.at[0], p.at[1]), p.who);
-    if (party) { const [cx, cy] = at(party[0], party[1]); drawParty(ctx, [cx, cy], facing, frame, 0); }
+    for (const p of marks.read) drawRead(ctx, at(p[0], p[1]));
+    for (const p of marks.sought) drawSought(ctx, at(p.at[0], p.at[1]), p.who);
+    if (marks.party) { const [cx, cy] = at(marks.party[0], marks.party[1]); drawParty(ctx, [cx, cy], facing, frame, 0); }
     const [fx, fy] = at(this.vx, this.vy);
     ctx.strokeStyle = '#fff0b0'; ctx.lineWidth = 1; ctx.strokeRect(r(fx) + 0.5, r(fy) + 0.5, r(VIEW.w * k), r(VIEW.h * k));
   }

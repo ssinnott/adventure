@@ -1,6 +1,6 @@
 // Small drawing helpers shared by every screen: panels, bars, wrapped text.
 import { drawText, measureText, lineHeight } from '../lib/engine/text.ts';
-import { PANEL, PANEL_EDGE, PANEL_LIGHT, INK, BRASS, BRASS_DARK } from './palette.ts';
+import { PANEL, PANEL_EDGE, PANEL_LIGHT, INK, BRASS, BRASS_DARK, SELECTED } from './palette.ts';
 
 /** A recessed panel in the carved frame: dark field, brass bevel, a rivet in each corner. */
 export function panel(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, fill = PANEL, edge: string = PANEL_EDGE): void {
@@ -54,7 +54,7 @@ export function menu(ctx: CanvasRenderingContext2D, items: readonly string[], x:
 }
 
 function optionColor(i: number, selected: number, disabled: readonly boolean[] | undefined, o: { color?: string; dim?: string; hi?: string } = {}): string {
-  return disabled?.[i] ? (o.dim ?? '#6a6270') : i === selected ? (o.hi ?? '#ffe08a') : (o.color ?? '#e8dcc0');
+  return disabled?.[i] ? (o.dim ?? '#6a6270') : i === selected ? (o.hi ?? SELECTED) : (o.color ?? '#e8dcc0');
 }
 
 /**
