@@ -355,10 +355,10 @@ Decided by the builder for #900, each the owner's to overturn:
 4. **A row is `importer > imported`,** however often the import is written, under the first rule it
    breaks: the walkthroughs' and the suites', the layers, the areas. A cycle is one row, `cycle: `
    and its files sorted, a strongly connected component of `src`'s graph.
-5. **The keys are the plan's:**
-   L7 `game.ts`'s and the screens' imports of `src/app/input.ts`; H8 a walkthrough
-   taking another's chain (`STEPS`, and Saltreach's two orders of play), keyed K8 until #985 moved
-   `tools/walk.ts` into the kit. L8 and L9 hold none: `src/game` takes a screen only in `game.ts`.
+5. **The keys are the plan's:** L7 `game.ts`'s and the screens' imports of `src/app/input.ts`; H8 a
+   walkthrough taking another's chain (`STEPS`, and Saltreach's two orders of play), keyed K8
+   until #985 moved `tools/walk.ts` into the kit. L8 and L9 hold none: `src/game` takes a screen
+   only in `game.ts`.
 6. **No cycle is left:** #1020 split `party.ts` so that `skills.ts` loads no item, and the last
    (`items.ts`, `skills.ts`, `party.ts`) went with its `split` row; the `dens.ts` one went in #918.
 
