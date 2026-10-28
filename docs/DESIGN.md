@@ -1438,6 +1438,18 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
   sky), the automap under it with its compass rose, the purse under that (gold and food), the
   party's portraits with condition faces along the bottom and the message log over the foot of the
   view, a strip of four lines and five in a fight (`LOG_LINES`, `COMBAT_LOG_LINES`).
+- **Menus:** one cursor serves every list (`ListMenu`, `src/ui/menu.ts`). It goes round, up from the
+  first row to the last and down from the last to the first. A barred row is drawn dim: the cursor
+  stands on it as on any, and nothing chooses it. A digit names the row numbered so, its place from
+  the top (`pickMember` writes it: "1. Bram"), or in the spell picker's casters the member's place
+  in the party. It moves the cursor there and, on a menu that acts by its digits (a question's
+  answers, the fight's commands and the casters), chooses the row as Space would; on the fight's
+  list of members for an item or a spell it only moves, and the other lists take no digit. On the
+  sheet a digit turns to that member, and exploring it opens their sheet. A menu a choice opens
+  again (a business's first menu, a hall's work, its skills and who would learn one, a spell hall's
+  spells, a trainer's members, its Expert's and a Master's, a shop's Buy and Sell lists) opens on
+  the row it left, held to the rows it has now, so where that row has gone the cursor is on the one
+  after it. A menu a choice opens anew starts at its top.
 - **Monsters:** front-facing paintings: 160 kinds, drawn by 28 family modules in `src/ui/monsters/`
   that each register the kinds they draw. A drawing breathes in a slow bob and flashes white when
   it is hit; there is no attack frame and no death frame, and a monster that dies is no longer

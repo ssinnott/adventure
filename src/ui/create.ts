@@ -3,6 +3,7 @@
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
+import { ListMenu } from './menu.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { makeRng } from '../lib/engine/rng.ts';
 import type { RngInstance } from '../lib/engine/rng.ts';
@@ -18,7 +19,10 @@ const CLASS_IDS = Object.keys(CLASSES) as ClassId[];
 
 export class CreateScreen implements Screen {
   private step: Step = 'intro';
-  private sel = 0;
+  /** The race's and the class's cursor, which the two two-row choices share as they toggle it. */
+  private readonly menu = new ListMenu();
+  private get sel(): number { return this.menu.sel; }
+  private set sel(row: number) { this.menu.sel = row; }
   private slot = 0;
   private name = '';
   private race: RaceId = 'human';
@@ -53,16 +57,12 @@ export class CreateScreen implements Screen {
         else if (is(a, 'interact', 'next')) { if (!this.name.trim()) this.name = SUGGESTED[this.slot]; this.setText(g, false); this.step = 'race'; this.sel = RACE_IDS.indexOf(this.race); }
         break;
       case 'race':
-        if (is(a, 'up')) this.sel = (this.sel + RACE_IDS.length - 1) % RACE_IDS.length;
-        else if (is(a, 'down')) this.sel = (this.sel + 1) % RACE_IDS.length;
+        if (this.menu.press(a, { n: RACE_IDS.length }) === 'chosen') { this.race = RACE_IDS[this.sel]; this.step = 'class'; this.sel = CLASS_IDS.indexOf(this.cls); }
         else if (is(a, 'cancel')) { this.step = 'name'; this.setText(g, true); }
-        else if (is(a, 'interact')) { this.race = RACE_IDS[this.sel]; this.step = 'class'; this.sel = CLASS_IDS.indexOf(this.cls); }
         break;
       case 'class':
-        if (is(a, 'up')) this.sel = (this.sel + CLASS_IDS.length - 1) % CLASS_IDS.length;
-        else if (is(a, 'down')) this.sel = (this.sel + 1) % CLASS_IDS.length;
+        if (this.menu.press(a, { n: CLASS_IDS.length }) === 'chosen') { this.cls = CLASS_IDS[this.sel]; this.step = 'stats'; this.sel = 0; }
         else if (is(a, 'cancel')) { this.step = 'race'; this.sel = RACE_IDS.indexOf(this.race); }
-        else if (is(a, 'interact')) { this.cls = CLASS_IDS[this.sel]; this.step = 'stats'; this.sel = 0; }
         break;
       case 'stats':
         if (is(a, 'rest')) this.stats = rollStats(this.rng);
