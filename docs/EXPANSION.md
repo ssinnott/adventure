@@ -366,12 +366,12 @@ Its decisions: decisions.md.
   a clear noon and the light of a spell, so every square of the window is in sight. The audit
   (`SMOKE_SWEEP_AUDIT=1`, on release) judges every view the old way beside the new and fails a view
   the two judge differently, a skipped view whose flat band paints and a window whose views differ.
-  A pull request that changes the painters of a face, a floor or a ceiling (`src/ui/viewport.ts`)
+  A pull request that changes the painters of a face, a floor or a ceiling (`src/ui/view/`)
   or how a cell is drawn (`src/game/ink.ts`) starts the Checks workflow by hand on its branch
   before it merges, so that the audit's fourteen shards judge the rule the skip stands on.
 - **Restraint.** The share of wall faces dressed, per kind of map and per map, stays near its level
   after #9, under caps set above it so an honest new map seldom fails by chance; a new kind of
-  dressing comes with its rate (`DRESSING_RATES` in `src/ui/viewport.ts`, checked in
+  dressing comes with its rate (`DRESSING_RATES` in `src/ui/view/model.ts`, checked in
   `tools/tests/art.ts`).
 - **Distinct.** Every monster def its own sprite kind (`tools/tests/art.ts`), and every business
   its own interior (`tools/tests/maps.ts`).
