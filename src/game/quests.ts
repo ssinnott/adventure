@@ -3,7 +3,8 @@
 // reads something the save already holds, so the log comes back whole from any save, old ones
 // included. The Game compares one look with the next to announce what changed. The words are each
 // area's: its chapter of the one quest in content/areas/<area>/chapter.ts, its side quests in
-// quests.ts. content/index.ts joins the chapters in road order.
+// quests.ts. content/index.ts joins the chapters in road order, and the log reads them off the tables
+// handed in (`tables.quests`, #975).
 import type { WorldState, MapState } from './world.ts';
 import type { Party } from './party.ts';
 import { countItem, prestigeOf } from './party.ts';
@@ -11,9 +12,10 @@ import type { ClassId, RaceId } from './party.ts';
 import { seekingQuests, trainersIn } from './seeking.ts';
 import type { Trainer } from './seeking.ts';
 import { OUTDOORS } from './outdoors.ts';
-import { QUESTS, MAP_DEFS } from '../content/index.ts';
+import { MAP_DEFS } from '../content/index.ts';
 import type { MapId, Flag } from '../content/index.ts';
 import type { MapKey } from './keys.ts';
+import type { Tables } from './tables.ts';
 
 /** Something the save records. Every part given must hold. */
 export interface QuestCond {
@@ -157,9 +159,9 @@ export const TRAINERS = (): readonly Trainer[] => (placed ??= trainersIn(MAP_DEF
  * back, passing over a chapter done and one with no chapter begun at or after it: so a company that
  * walked into Thornmark early is not sent to the Grove Stone before anyone has spoken of it.
  */
-export function questLog(world: WorldState, party: Party, quests: readonly LogQuest[] = QUESTS, trainers: readonly Trainer[] = TRAINERS()): QuestView[] {
+export function questLog(tables: Tables, world: WorldState, party: Party, trainers: readonly Trainer[] = TRAINERS()): QuestView[] {
   const out: QuestView[] = [];
-  for (const q of [...quests, ...seekingQuests(party, trainers, quests)]) {
+  for (const q of [...tables.quests, ...seekingQuests(party, trainers, tables.quests)]) {
     if (!q.chapters) {
       const page = pageOf(q, world, party);
       if (page.begun) out.push({ def: q, done: page.done, goal: page.goal, pages: [page], focus: 0 });
