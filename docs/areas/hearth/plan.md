@@ -1413,7 +1413,7 @@ crossing's isle end landed (§4.2) and its fare `free: { flag: 'q_compact_over' 
 the tears are closed.*; for opened, *It burns as it did. The sky is another colour, and there is
 wind.*; for finished, *It burns harder than it ever has, and the ground hums.* The title's column:
 at full and still for relit; as it was at five Stones for opened, under a sky of the ending's
-cast; taller than full for finished. The night sky's Hearth (`src/ui/viewport.ts`,
+cast; taller than full for finished. The night sky's Hearth (`src/ui/view/sky.ts`,
 `drawHearthLight`) the same.
 
 **Gullwick** (`downs_f3`): Hild's two new `says` and Wenna on the shingle at 11,15, `after: { flag: WENNA_HOME }`

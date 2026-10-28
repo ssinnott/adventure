@@ -95,6 +95,11 @@ export async function changed(): Promise<void> {
   const unswept: string[] = [];
   for (const f of ['tools/smoke.ts', ...['boot', 'flows', 'scenes', 'art', 'cracks'].map((p) => `tools/smoke/${p}.ts`)]) if (!(await changedMaps([f])).all) unswept.push(f);
   ok(!unswept.length, `the smoke's runner and each file of its parts in tools/smoke/ count every map${unswept.length ? ` (not: ${unswept.join(', ')})` : ''}`);
+  // The view's parts (#1028), read from the folder as it stands: a change to any file of ui/view/ sweeps
+  // every map, as one to viewport.ts, their barrel, did before the split.
+  const view = readdirSync(new URL('../../src/ui/view/', import.meta.url)).filter((f) => f.endsWith('.ts')).map((f) => `src/ui/view/${f}`), unviewed: string[] = [];
+  for (const f of view) if (!(await changedMaps([f])).all) unviewed.push(f);
+  ok(view.length >= 9 && !unviewed.length, `each of the ${view.length} files of the view's parts in ui/view/ counts every map, as their barrel does${unviewed.length ? ` (not: ${unviewed.join(', ')})` : ''}`);
   // The kits count what the files they came from counted (#983), and the old paths that re-export them still do.
   const rig = 'src/ui/monsters/kit/figure.ts', plumbing = 'src/ui/monsters/kit/common.ts';
   ok((await changedMaps([plumbing])).all && (await changedMonsters([plumbing])).all && (await changedMonsters([rig])).all && !(await changedMaps([rig])).all,

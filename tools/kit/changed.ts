@@ -38,6 +38,8 @@ export function changedFiles(base: string): string[] {
 const EVERY_MAP = [
   /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/paint\/(brush|ink)\.ts$/, /^src\/ui\/monsters\/(kit\/)?common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|ink)\.ts$/,
   /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|smoke\/[^/]+|changed|sweep|kit\/(sweep|browser|changed))\.ts$/,
+  // The view's parts (#1028): a file of ui/view/ counts as viewport.ts, their barrel, did before the split.
+  /^src\/ui\/view\//,
 ];
 const MAP_FILE = /^src\/content\/areas\/[^/]+\/maps\/[^/]+\.ts$/;
 
