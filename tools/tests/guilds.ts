@@ -2,9 +2,9 @@
 // it in the log; with its deed done the hall pays gold, xp to the living and items, and the company
 // is a member; each rank opens the next; an item is taken at the first meeting whatever the rank;
 // a deed done early is paid when its quest is taken; a later act's ask waits for its act; a save
-// keeps the flags. Walked on a fixture
-// guild, then every real guild quest held to the same rules. Every row of every hall's first menu
-// fits the side panel's column (#890).
+// keeps the flags. Walked on a fixture guild, on a table of the suite's own (#975), then every real
+// guild quest held to the same rules. Every row of every hall's first menu fits the side panel's
+// column (#890).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { measureText } from '../../src/lib/engine/text.ts';
 import { buildMaps } from '../../src/content/maps.ts';
@@ -19,6 +19,7 @@ import type { MapState } from '../../src/game/world.ts';
 import { questLog } from '../../src/game/quests.ts';
 import { rankOf, rankName, offered, inHand, report, take } from '../../src/game/guilds.ts';
 import type { GuildQuest } from '../../src/game/guilds.ts';
+import type { Tables } from '../../src/game/tables.ts';
 import { giftOf } from '../../src/game/wilds.ts';
 import { personFlags, personGives } from '../../src/game/people.ts';
 import { businessEntries } from '../../src/ui/screens.ts';
@@ -44,6 +45,12 @@ const FIXTURE: readonly GuildQuest[] = [
   quest('fx_other', 0, { goal: { seen: 'shelf:coast' } }, 'lanterns'),
 ];
 
+/**
+ * Content's tables with `quests` the guilds' own and their log's (#975): a ladder the suite walks,
+ * content's never written.
+ */
+const ladder = (quests: readonly GuildQuest[]): Tables => ({ ...TABLES, guildQuests: quests, quests: quests.map(guildQuestDef) });
+
 export function guilds(): void {
   const fresh = (): { party: Party; world: World } => { const rng = makeRng(8); const party = defaultParty(TABLES, rng); return { party, world: new World(TABLES, buildMaps(), party, rng) }; };
   // A zone map's ids are kept in the outdoors' state, and the party has to have walked into it.
@@ -53,75 +60,75 @@ export function guilds(): void {
     return w.ensureMapState(on);
   };
   const ids = (qs: readonly GuildQuest[]): string => qs.map((q) => q.id).join(',');
-  const defs = FIXTURE.map(guildQuestDef);
+  const fx = ladder(FIXTURE);
 
   { // A stranger, then a member.
     const { party, world } = fresh();
-    ok(rankOf('wardens', party, FIXTURE) === 0 && rankName('wardens', 0) === null, 'a new company has no rank');
-    ok(ids(offered('wardens', party, FIXTURE)) === 'fx_first', `a stranger is offered the first task alone (${ids(offered('wardens', party, FIXTURE))})`);
-    ok(report(TABLES, 'wardens', world.state, party, FIXTURE).length === 0, 'a report with nothing done pays nothing');
-    ok(take(TABLES, FIXTURE[0], world.state, party, FIXTURE).length === 0 && !!party.flags[takenFlag('fx_first')], 'taking the first task sets its flag and pays nothing yet');
-    const log = questLog(world.state, party, defs);
+    ok(rankOf(fx, 'wardens', party) === 0 && rankName(TABLES.guilds, 'wardens', 0) === null, 'a new company has no rank');
+    ok(ids(offered(fx, 'wardens', party)) === 'fx_first', `a stranger is offered the first task alone (${ids(offered(fx, 'wardens', party))})`);
+    ok(report(fx, 'wardens', world.state, party).length === 0, 'a report with nothing done pays nothing');
+    ok(take(fx, FIXTURE[0], world.state, party).length === 0 && !!party.flags[takenFlag('fx_first')], 'taking the first task sets its flag and pays nothing yet');
+    const log = questLog(fx, world.state, party);
     ok(log.length === 1 && log[0].def.id === 'fx_first' && !log[0].done, 'the log shows the task taken');
-    ok(ids(inHand('wardens', party, FIXTURE)) === 'fx_first' && !offered('wardens', party, FIXTURE).length, 'a task taken is in hand and no longer offered');
-    ok(ids(offered('lanterns', party, FIXTURE)) === 'fx_other', "another guild's ladder is its own");
+    ok(ids(inHand(fx, 'wardens', party)) === 'fx_first' && !offered(fx, 'wardens', party).length, 'a task taken is in hand and no longer offered');
+    ok(ids(offered(fx, 'lanterns', party)) === 'fx_other', "another guild's ladder is its own");
 
     stateFor(world, 'shelf').used.coast = 1;
     const dead = party.members[5]; dead.conditions = ['dead'];
     const xp = party.members.map((c) => c.xp), gold = party.gold;
-    const said = report(TABLES, 'wardens', world.state, party, FIXTURE);
+    const said = report(fx, 'wardens', world.state, party);
     ok(said.length === 2 && said[0].startsWith('Paid fx_first.') && /10 gold, 60 experience, Antidote/.test(said[0]), `with the deed done the hall pays and says so (${said.join(' | ').replace(/\n+/g, ' ')})`);
     ok(party.gold === gold + 10 && countItem(party, 'antidote') > 0 && !!party.flags[doneFlag('fx_first')], 'the pay is gold, an item and the done flag');
     ok(party.members.every((c, i) => c.xp === xp[i] + (c === dead ? 0 : 12)), 'the xp is split among the living, as a fight\'s is: 60 among five');
-    ok(rankOf('wardens', party, FIXTURE) === 1 && said[1] === 'Your rank with the Wardens is now Recruit.', `the first task done, the company is a member: ${said[1]}`);
-    ok(questLog(world.state, party, defs)[0].done, 'the log shows the first task finished');
-    ok(report(TABLES, 'wardens', world.state, party, FIXTURE).length === 0, 'a quest is paid once');
+    ok(rankOf(fx, 'wardens', party) === 1 && said[1] === 'Your rank with the Wardens is now Recruit.', `the first task done, the company is a member: ${said[1]}`);
+    ok(questLog(fx, world.state, party)[0].done, 'the log shows the first task finished');
+    ok(report(fx, 'wardens', world.state, party).length === 0, 'a quest is paid once');
 
     // Rank 1 opens rank 1's quests, and not rank 2's.
-    ok(ids(offered('wardens', party, FIXTURE)) === 'fx_cult,fx_oil', `rank 1 is offered rank 1's quests and not rank 2's (${ids(offered('wardens', party, FIXTURE))})`);
+    ok(ids(offered(fx, 'wardens', party)) === 'fx_cult,fx_oil', `rank 1 is offered rank 1's quests and not rank 2's (${ids(offered(fx, 'wardens', party))})`);
     // A deed done before its quest was taken is paid at the taking, with the early words.
     stateFor(world, 'mill').groups.m_cult1.dead = world.state.minutes;
-    const early = take(TABLES, FIXTURE[1], world.state, party, FIXTURE);
+    const early = take(fx, FIXTURE[1], world.state, party);
     ok(early.length === 1 && early[0].startsWith('Early fx_cult.') && !!party.flags[doneFlag('fx_cult')], 'a deed done before the taking is paid then, with the words for a company that came early');
     // All of rank 1 done raises the company to rank 2; the item quest is paid as the item is carried.
-    take(TABLES, FIXTURE[2], world.state, party, FIXTURE);
+    take(fx, FIXTURE[2], world.state, party);
     party.bag.push('lantern_oil');
-    const r2 = report(TABLES, 'wardens', world.state, party, FIXTURE);
-    ok(!countItem(party, 'lantern_oil') && rankOf('wardens', party, FIXTURE) === 2 && r2.at(-1) === 'Your rank with the Wardens is now Corporal.', 'the hall takes the item, and all of rank 1 done makes the company Corporals');
-    ok(ids(offered('wardens', party, FIXTURE)) === 'fx_pass', 'rank 2 opens rank 2\'s quest');
-    take(TABLES, FIXTURE[3], world.state, party, FIXTURE); stateFor(world, 'thornmark');
-    report(TABLES, 'wardens', world.state, party, FIXTURE);
-    ok(rankOf('wardens', party, FIXTURE) === 3 && !offered('wardens', party, FIXTURE).length, 'the last rank built done, the rank stops there, with nothing more offered');
+    const r2 = report(fx, 'wardens', world.state, party);
+    ok(!countItem(party, 'lantern_oil') && rankOf(fx, 'wardens', party) === 2 && r2.at(-1) === 'Your rank with the Wardens is now Corporal.', 'the hall takes the item, and all of rank 1 done makes the company Corporals');
+    ok(ids(offered(fx, 'wardens', party)) === 'fx_pass', 'rank 2 opens rank 2\'s quest');
+    take(fx, FIXTURE[3], world.state, party); stateFor(world, 'thornmark');
+    report(fx, 'wardens', world.state, party);
+    ok(rankOf(fx, 'wardens', party) === 3 && !offered(fx, 'wardens', party).length, 'the last rank built done, the rank stops there, with nothing more offered');
     // Content grows: a quest added later at a rank the company holds is offered, and the rank holds.
-    const grown = [...FIXTURE, quest('fx_later', 1, { goal: { visited: 'thornmark' } })];
-    ok(party.flags[rankFlag('wardens')] === 3 && rankOf('wardens', party, grown) === 3 && ids(offered('wardens', party, grown)) === 'fx_later',
-      `a quest added later at a rank held is offered, and never lowers the rank (${rankOf('wardens', party, grown)}, offered ${ids(offered('wardens', party, grown))})`);
+    const grown = ladder([...FIXTURE, quest('fx_later', 1, { goal: { visited: 'thornmark' } })]);
+    ok(party.flags[rankFlag('wardens')] === 3 && rankOf(grown, 'wardens', party) === 3 && ids(offered(grown, 'wardens', party)) === 'fx_later',
+      `a quest added later at a rank held is offered, and never lowers the rank (${rankOf(grown, 'wardens', party)}, offered ${ids(offered(grown, 'wardens', party))})`);
     // A later act's ask waits for its act: at the rank, it is offered once its flag is set.
-    const act = [...FIXTURE, quest('fx_act', 3, { goal: { visited: 'thornmark' }, after: fxFlag('fx_act_come') })];
-    ok(!offered('wardens', party, act).length && rankOf('wardens', party, act) === 3, 'a quest whose act has not come is not offered, though the rank is held');
+    const act = ladder([...FIXTURE, quest('fx_act', 3, { goal: { visited: 'thornmark' }, after: fxFlag('fx_act_come') })]);
+    ok(!offered(act, 'wardens', party).length && rankOf(act, 'wardens', party) === 3, 'a quest whose act has not come is not offered, though the rank is held');
     party.flags.fx_act_come = 1;
-    ok(ids(offered('wardens', party, act)) === 'fx_act', 'and is offered once its act has come');
+    ok(ids(offered(act, 'wardens', party)) === 'fx_act', 'and is offered once its act has come');
   }
 
   { // An item is taken at the first meeting, whatever the rank, and pays with the early words.
     const { party, world } = fresh();
     party.bag.push('lantern_oil');
-    const said = report(TABLES, 'wardens', world.state, party, FIXTURE);
+    const said = report(fx, 'wardens', world.state, party);
     ok(said.length === 1 && said[0].startsWith('Early fx_oil.') && !countItem(party, 'lantern_oil') && !!party.flags[doneFlag('fx_oil')] && !party.flags[takenFlag('fx_oil')],
       'a stranger carrying a rank 1 quest\'s item is paid for it at the first meeting, and never took the quest');
-    ok(rankOf('wardens', party, FIXTURE) === 0 && ids(offered('wardens', party, FIXTURE)) === 'fx_first', 'and is still a stranger, offered the first task');
-    const log = questLog(world.state, party, defs);
+    ok(rankOf(fx, 'wardens', party) === 0 && ids(offered(fx, 'wardens', party)) === 'fx_first', 'and is still a stranger, offered the first task');
+    const log = questLog(fx, world.state, party);
     ok(log.length === 1 && log[0].def.id === 'fx_oil' && log[0].done, 'the log shows the item quest finished');
   }
 
   { // A deed of several guardians is done once every one of them is dead.
     const { party, world } = fresh();
     const q = quest('fx_both', 0, { goal: { slain: ['mill:m_cult1', 'mill:m_cult2'] } });
-    take(TABLES, q, world.state, party, [q]);
+    take(ladder([q]), q, world.state, party);
     stateFor(world, 'mill').groups.m_cult1.dead = world.state.minutes;
-    const one = report(TABLES, 'wardens', world.state, party, [q]).length;
+    const one = report(ladder([q]), 'wardens', world.state, party).length;
     stateFor(world, 'mill').groups.m_cult2.dead = world.state.minutes;
-    const both = report(TABLES, 'wardens', world.state, party, [q]).length;
+    const both = report(ladder([q]), 'wardens', world.state, party).length;
     ok(one === 0 && both > 0, `a deed naming two guardians waits for both (${one} paid with one dead, ${both} with both)`);
   }
 
@@ -129,7 +136,7 @@ export function guilds(): void {
     const { party, world } = fresh();
     const q = quest('fx_ready', 0, { goal: { flag: fxFlag('fx_ready_deed') }, pay: { xp: 6 * 1000 } });
     party.flags.fx_ready_deed = 1;
-    const said = take(TABLES, q, world.state, party, [q]).join(' ');
+    const said = take(ladder([q]), q, world.state, party).join(' ');
     ok(/Ready to train: Bram, Idris, Wren, Ottilie, Maren, Cassian\./.test(said), `pay that makes the living ready to train names them (${said.replace(/\n+/g, ' ')})`);
   }
 
@@ -180,10 +187,10 @@ export function guilds(): void {
   for (const g of new Set(GUILD_QUESTS.map((q) => q.guild))) {
     const { party } = fresh();
     for (const q of GUILD_QUESTS) if (q.after) party.flags[q.after] = 1;
-    for (let offers = offered(g, party); offers.length; offers = offered(g, party)) for (const q of offers) party.flags[takenFlag(q.id)] = party.flags[doneFlag(q.id)] = 1;
-    const r = rankOf(g, party), built = Math.max(...GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank)) + 1;
-    ok(r === built, `${g}: its quests, done as the hall offers them, raise a company to rank ${built}, ${rankName(g, built)} (${rankName(g, r) ?? 'none'})`);
-    if (ACT_I.includes(g)) ok(built >= ACT_I_RANK, `${g}: Act I takes it to rank ${ACT_I_RANK}, ${rankName(g, ACT_I_RANK)} (${rankName(g, built)})`);
+    for (let offers = offered(TABLES, g, party); offers.length; offers = offered(TABLES, g, party)) for (const q of offers) party.flags[takenFlag(q.id)] = party.flags[doneFlag(q.id)] = 1;
+    const r = rankOf(TABLES, g, party), built = Math.max(...GUILD_QUESTS.filter((q) => q.guild === g).map((q) => q.rank)) + 1;
+    ok(r === built, `${g}: its quests, done as the hall offers them, raise a company to rank ${built}, ${rankName(TABLES.guilds, g, built)} (${rankName(TABLES.guilds, g, r) ?? 'none'})`);
+    if (ACT_I.includes(g)) ok(built >= ACT_I_RANK, `${g}: Act I takes it to rank ${ACT_I_RANK}, ${rankName(TABLES.guilds, g, ACT_I_RANK)} (${rankName(TABLES.guilds, g, built)})`);
   }
   // DESIGN §8 gives every guild four ranks: a first task (0) and quests under each rank below the
   // last (1 to 3). A rank with no quests yet is owed to the issue that builds it, or to the owner
@@ -199,7 +206,7 @@ export function guilds(): void {
   for (const g of Object.keys(GUILDS) as GuildId[]) {
     for (let r = 0; r < GUILDS[g].ranks.length; r++) {
       const has = GUILD_QUESTS.some((q) => q.guild === g && q.rank === r), whose = OWED_RANKS[g][r];
-      const what = `${g}: ${r ? `rank ${r}'s quests, ${rankName(g, r)}'s` : 'its first task'}`;
+      const what = `${g}: ${r ? `rank ${r}'s quests, ${rankName(TABLES.guilds, g, r)}'s` : 'its first task'}`;
       if (whose) owed(has, what, whose); else ok(has, what);
     }
   }

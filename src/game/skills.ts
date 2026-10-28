@@ -9,12 +9,12 @@
 // square further (`World.reveal`), Pathfinder walks rough ground at the road's pace (`World.move`),
 // Lockpick opens an iron lock and keeps the key (`World.unlock`), Merchant sells dearer (`sellPrice`,
 // game/items.ts) and Navigator crosses for half (`fareOf`, game/passage.ts; #857). Pure apart from the
-// party handed in, so the tests teach as the game does, without a Game.
+// party and the tables handed in, so the tests teach as the game does, without a Game.
 import type { GuildId } from '../content/guilds.ts';
 import type { Character, Party, RaceId, ClassId } from './party.ts';
 import { isDown, countItem } from './party/conditions.ts';
 import { rankOf } from './ranks.ts';
-import type { Items } from './tables.ts';
+import type { Items, Tables } from './tables.ts';
 
 export type SkillId = 'linguist' | 'mountaineer' | 'swimmer' | 'perception' | 'spirit_sense' | 'danger_sense' | 'arms_master'
   | 'cartographer' | 'pathfinder' | 'lockpick' | 'merchant' | 'navigator';
@@ -92,7 +92,7 @@ export function skilled(items: Items, party: Party, id: SkillId): Character | un
 export const taughtBy = (guild: GuildId): SkillId[] => Object.values(SKILLS).filter((s) => s.guild === guild).map((s) => s.id);
 
 /** Whether the company may learn a skill: it is a member of the skill's guild, its first task done (DESIGN §8). */
-export const mayLearn = (id: SkillId, party: Party): boolean => rankOf(SKILLS[id].guild, party) > 0;
+export const mayLearn = (tables: Tables, id: SkillId, party: Party): boolean => rankOf(tables, SKILLS[id].guild, party) > 0;
 
 /** One line of the menu's second level: a member, the skill, its price, and why not, if not. */
 export interface SkillOffer { who: number; skill: SkillId; price: number; bar: string }
@@ -121,9 +121,9 @@ export function skillOffers(id: SkillId, party: Party): SkillOffer[] {
 export const skillLine = (o: SkillOffer, party: Party): string => `${party.members[o.who].name}\t${o.bar || `${o.price}g`}`;
 
 /** Teach a member a skill: the price paid, the skill on its list. Nothing changes, and false, where it may not. */
-export function learn(id: SkillId, party: Party, who: number): { taught: boolean; line: string } {
+export function learn(tables: Tables, id: SkillId, party: Party, who: number): { taught: boolean; line: string } {
   const c = party.members[who];
-  if (!c || !mayLearn(id, party) || skillBar(id, c, party)) return { taught: false, line: '' };
+  if (!c || !mayLearn(tables, id, party) || skillBar(id, c, party)) return { taught: false, line: '' };
   party.gold -= SKILLS[id].price;
   c.skills = [...skillsOf(c), id];
   return { taught: true, line: LEARNT(c.name, SKILLS[id].name) };

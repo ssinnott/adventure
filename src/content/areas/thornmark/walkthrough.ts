@@ -593,14 +593,14 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   const at11: Party = newWalk(ok).party;
   at11.members[5] = createCharacter(TABLES, 'Tamar', 'elf', 'druid', {}, makeRng(11));
   for (const c of at11.members) { c.xp = xpForLevel(11); c.level = 11; }
-  const sent = sought(questLog(w.world.state, at11)).find((p) => p.at === 'thornhold');
+  const sent = sought(questLog(TABLES, w.world.state, at11)).find((p) => p.at === 'thornhold');
   const names = (cls: string[]) => cls.map((k) => at11.members.find((c) => c.cls === k)!.name);
   ok(names(['ranger', 'cleric', 'druid']).every((n) => sent?.who.includes(n)), `at 11 the ranger, the cleric and the druid are sent to Thornhold (${sent?.who.join(', ')})`);
   for (const p of [JAGO(), DERWA(), LOWEN()]) {
     const who = at11.members.findIndex((c) => c.cls === p.teaches!.cls);
     at11.gold = 1000;
     ok(teach(p.teaches!, at11, w.world.state, who).taught && prestigeOf(at11.members[who]) === 1 && at11.gold === 0
-      && questLog(w.world.state, at11).find((v) => v.def.id === seekId(who, 1))?.done === true, `${p.name.split(',')[0]} makes ${/^[AEIOU]/.test(PRESTIGES[p.teaches!.cls].titles[0]) ? 'an' : 'a'} ${PRESTIGES[p.teaches!.cls].titles[0]} for 1,000 gold, and the seeking is done`);
+      && questLog(TABLES, w.world.state, at11).find((v) => v.def.id === seekId(who, 1))?.done === true, `${p.name.split(',')[0]} makes ${/^[AEIOU]/.test(PRESTIGES[p.teaches!.cls].titles[0]) ? 'an' : 'a'} ${PRESTIGES[p.teaches!.cls].titles[0]} for 1,000 gold, and the seeking is done`);
   }
 
   // The second, off the beaten path: off the road and off the fights, and reached on foot.
@@ -627,7 +627,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   const ranger = at19.members.findIndex((m) => m.cls === 'ranger');
   takePrestige(at19.members[ranger]);
   at19.flags.q_hunters_shut = 1;
-  ok(!!sought(questLog(w.world.state, at19)).find((p) => p.at === 'deepthorn_i3')?.who.includes(at19.members[ranger].name), 'at 19 the ranger is sent to the lodge\'s box');
+  ok(!!sought(questLog(TABLES, w.world.state, at19)).find((p) => p.at === 'deepthorn_i3')?.who.includes(at19.members[ranger].name), 'at 19 the ranger is sent to the lodge\'s box');
   at19.gold = 4000;
   ok(there(w, 'deepthorn_i3', c) && teach(c.teaches!, at19, w.world.state, ranger).taught && prestigeOf(at19.members[ranger]) === 2 && at19.gold === 0,
     `with the gate shut to the hunters, the bowman still makes a ${PRESTIGES.ranger.titles[1]} for 4,000 gold`);
@@ -662,7 +662,7 @@ function trainers(ok: (cond: boolean, msg: string) => void): void {
   druids.members[5] = createCharacter(TABLES, 'Tamar', 'elf', 'druid', {}, makeRng(11));
   for (const m of druids.members) { m.xp = xpForLevel(19); m.level = 19; }
   takePrestige(druids.members[5]);
-  ok(!!sought(questLog(mended.world.state, druids)).find((p) => p.at === 'deepthorn_i5')?.who.includes('Tamar'), 'at 19 the druid is sent to the wood to the head');
+  ok(!!sought(questLog(TABLES, mended.world.state, druids)).find((p) => p.at === 'deepthorn_i5')?.who.includes('Tamar'), 'at 19 the druid is sent to the wood to the head');
   druids.gold = 4000;
   ok(teach(elf.teaches!, druids, mended.world.state, 5).taught && prestigeOf(druids.members[5]) === 2 && druids.gold === 0,
     `she makes a ${PRESTIGES.druid.titles[1]} for 4,000 gold`);
