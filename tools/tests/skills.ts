@@ -618,7 +618,7 @@ function lockedChest(): void {
 }
 
 /**
- * The pilot's talk (src/game/pilot/talk.ts) learns no skill (#719, decision 12): put before a Lantern
+ * The pilot's talk (src/app/pilot/talk.ts) learns no skill (#719, decision 12): put before a Lantern
  * hall's skills, the company of the Lanterns with the gold, it leaves the hall's level and, a skill
  * chosen for it, the level of who would learn it, and before a person who teaches, theirs; nobody is
  * taught and no gold is spent.

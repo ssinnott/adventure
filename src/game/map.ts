@@ -237,7 +237,7 @@ export interface Can { swim?: boolean; climb?: boolean; keys?: number; tide?: Ti
 
 /**
  * `GameMap.passable` for a cell given, not read off a map: the map's own, or one as the automap
- * inks it, which is how the pilot's navigator reads it (game/pilot/route.ts).
+ * inks it, which is how the pilot's navigator reads it (app/pilot/route.ts).
  */
 export function passableCell(c: Pick<Cell, 'terrain' | 'solid' | 'door'>, can: Can = {}): PassResult {
   if (c.solid === 'void') return 'void';

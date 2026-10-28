@@ -41,9 +41,9 @@ export const colours = (page: Page): Promise<number> => page.evaluate(() => {
 
 /**
  * The page settled: a tick of the game run since now, the input's queue empty and a frame drawn after it.
- * The game takes one press a tick from its queue (src/input.ts, src/main.ts) and says the sky's news on a
- * tick, so a screen, a log line or the canvas is read once these hold, not after a fixed wait that a
- * starved browser outruns.
+ * The game takes one press a tick from its queue (src/app/input.ts, src/main.ts) and says the
+ * sky's news on a tick, so a screen, a log line or the canvas is read once these hold, not after a
+ * fixed wait that a starved browser outruns.
  */
 export async function settle(page: Page): Promise<void> {
   const from = await page.evaluate(() => window.__game!.game!.frame);

@@ -360,7 +360,7 @@ function fits(): void {
 }
 
 /**
- * The pilot's talk at a Master's person (src/game/pilot/talk.ts), the favour done, a member Expert at 25
+ * The pilot's talk at a Master's person (src/app/pilot/talk.ts), the favour done, a member Expert at 25
  * and the gold: it answers a person's question by its cheapest open priced row, but leaves a tier's
  * menu as it leaves a skill's, and nobody is taught.
  */
@@ -386,7 +386,7 @@ function talked(): void {
 }
 
 /**
- * The pilot's keep at the Sail Loft (src/game/pilot/keep.ts): it presses the first menu's trade and a
+ * The pilot's keep at the Sail Loft (src/app/pilot/keep.ts): it presses the first menu's trade and a
  * `train Ng` row, and nothing of the tiers. A member of 12 ready for 13, a knight of 13 who could buy
  * Expert and gold for it: the keep trains the one and leaves, and the tier menu never opens.
  */

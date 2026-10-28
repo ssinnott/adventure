@@ -41,7 +41,7 @@ export const castRows = (tables: Tables, party: Party, c: Character): { label: s
 });
 
 export class CombatScreen implements Screen {
-  /** Both delays count as none: the combat tests set it, as a pilot's `instant` does (game/pilot/pilot.ts). */
+  /** Both delays count as none: the combat tests set it, as a pilot's `instant` does (app/pilot/pilot.ts). */
   static instant = false;
   /** The bot plays the company's turns and leaves the fight at its end, until a key takes it back (#713). */
   auto = false;
