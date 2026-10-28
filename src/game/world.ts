@@ -6,7 +6,8 @@
 // is in sight is here too (the viewport's rule: `VIEW_DEPTH` and `lineOfSight`; what a hill hides
 // from below it, `hillOver` and `hidden`), with the looks said on first meeting (`sightings`), a
 // lock opened (`unlock`), the region of a square (`regionOf`, #945), roaming groups and when they
-// walk (`walks`), rest, search and an enclave's door crossing in (`enclaveLine`, #845).
+// walk (`walks`), rest, search and an enclave's door crossing in (`enclaveLine`, #845). It reads
+// the climates, the Stones and the endings off the tables it is handed (`w.tables`, #976).
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap, DRAG } from './map.ts';
 import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice, Gate, MapDef } from './mapdef.ts';

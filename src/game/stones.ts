@@ -1,7 +1,8 @@
 // How far the Hearth has steadied: the Stones restored, read from the save's flags and nothing else
 // (DESIGN §9, #168), and once the company has answered at the Heart, the ending's state beside the
 // count (#750). It moves only with the story, never with the clock. The title reads it from the save
-// in storage, the sky and the almanac from the world, the world map from either.
+// in storage, the sky and the almanac from the world, the world map from either. The Stones, the
+// endings and the atlas, where the Hearth burns, are the tables handed in (#976).
 import type { Ending, EndingId } from '../content/endings.ts';
 import type { Answer } from './mapdef.ts';
 import { holds } from './quests.ts';
