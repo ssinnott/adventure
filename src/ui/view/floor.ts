@@ -12,8 +12,8 @@ import type { Plot, Rims, Square } from './ground/look.ts';
 
 export function drawFloor(p: Paint, laid: Terrain, d: number, l: number, seed: number, floorPal: string, plot?: Plot, rims?: Rims): void {
   const { ctx, cx, horizon, h, haze, env } = p, kind = p.map.kind;
-  const ground = GROUND[asDrawn(p, laid)];
-  const base = groundColor(p, laid, floorPal, plot?.crop);
+  const terrain = asDrawn(p, laid), ground = GROUND[terrain];
+  const base = groundColor(p, terrain, floorPal, plot?.crop);
   const sq: Square = { d, l, seed, plot, rims };
   // A drop is a floor of its own, in its own colour underground too, and nothing lies on it.
   if (ground.drop) { ground.drop(p, sq); return; }
