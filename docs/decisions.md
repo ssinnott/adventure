@@ -361,9 +361,8 @@ Decided by the builder for #900, each the owner's to overturn:
    taking another's chain (`STEPS`, and Saltreach's two orders of play), keyed K8 until #985 moved
    `tools/walk.ts` into the kit. L8 and L9 hold none: `src/game` takes a screen only in the pilot
    and `game.ts`.
-6. **One cycle is left, and the plan keys none:** `items.ts` takes `skills.ts` (`skilled`, #879),
-   `skills.ts` takes `party.ts` and `party.ts` takes `items.ts`. Its row is keyed `split`, the big
-   modules split that takes `party.ts` apart. The `dens.ts` cycle is gone (#918).
+6. **No cycle is left:** #1020 split `party.ts` so that `skills.ts` loads no item, and the last
+   (`items.ts`, `skills.ts`, `party.ts`) went with its `split` row; the `dens.ts` cycle went in #918.
 
 Decided by the builder for #899, each the owner's to overturn:
 

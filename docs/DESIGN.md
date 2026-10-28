@@ -227,10 +227,10 @@ Thornhold to 11, Saltmouth to 13, the Kilns' towns to 19 and Cinderport to 27.
 | The rest (Knight, Thief, Barbarian, Monk) | +2 | none | +84 |
 
 **Prices.** The first 1,000 gold, a little under the 1,200 Plate Mail costs in Thornhold's Armoury,
-and the second 4,000 (`PRESTIGE_PRICES`, `src/game/party.ts`); the curve's gold does not count them.
-The third asks a quest. Nor does it count the tiers (Stats, skills, mastery): Expert 2,000 gold a line
-a member at a town's trainer, Master the 5,000 a Master's person asks (`TIER_PRICES`,
-`src/game/mastery.ts`, #852).
+and the second 4,000 (`PRESTIGE_PRICES`, `src/game/party/tables.ts`); the curve's gold does not
+count them. The third asks a quest. Nor does it count the tiers (Stats, skills, mastery): Expert
+2,000 gold a line a member at a town's trainer, Master the 5,000 a Master's person asks
+(`TIER_PRICES`, `src/game/mastery.ts`, #852).
 
 **Perks.** A rank is a spell rank (§7). They lean on offence and on work outside combat, and none
 adds armour: in the harness, armour that keeps up makes monsters hit harder, and harder hits kill
@@ -394,7 +394,7 @@ Decided by the owner's delegate for #891, each the owner's to overturn:
 
 Decided by the builder for #852, each the owner's to overturn:
 
-1. What a tier does (`TIER_ARMS`, `TIER_STEPS`, `armsBonus`, `tierSteps`) is `party.ts`'s, beside
+1. What a tier does (`TIER_ARMS`, `TIER_STEPS`, `armsBonus`, `tierSteps`) is in `party/`, beside
    `RANK_STEP`; `mastery.ts` holds the rest. The party loads the content, and a `mastery.ts` reaching
    the quests from it would read `MAP_DEFS` half loaded, as #805's call 1 found.
 2. The trainer's entry comes after the trade, which stays first; a trainer that offered the trade
@@ -591,8 +591,8 @@ Decided by the owner's delegate for #892, each the owner's to overturn:
 - **Conditions:** Asleep, Poisoned, Diseased, Paralysed, Cursed, Stoned, Unconscious, Dead.
   Cured by spells, temples, or time. Death is reversible in temples at a cost that scales.
 - **The death line** is −10 hit points at every level: a member at 0 or below is unconscious and
-  dies at −10. Die Hard dies at −20 and an Ironhide at −30 (`deathAt`, `src/game/party.ts`).
-  Decided by the owner's delegate, 16 October 2026 (#18, #808).
+  dies at −10. Die Hard dies at −20 and an Ironhide at −30 (`deathAt`,
+  `src/game/party/conditions.ts`). Decided by the owner's delegate, 16 October 2026 (#18, #808).
 - **Flee** is always an option and a chance, not a promise: the faster the party is than what it
   flees, the likelier, from 15% to 90%; a failed flight costs the round (`flee`,
   `src/game/combat.ts`). The cost is where you end up.
@@ -1220,7 +1220,7 @@ and the conditions a ward may keep off, `WARDABLE`).
    felled troll stays down, it never mends the down (unconscious, dead or stoned: `isDown`). Nothing
    is saved.
 5. **A ward against one condition** (`ItemDef.ward`, built, #921): while it is borne, the
-   bearer never takes it, as a trait's immunity works (`immune`, `src/game/party.ts`): one of
+   bearer never takes it, as a trait's immunity works (`immune`, `src/game/party/tables.ts`): one of
    asleep, poisoned, diseased, paralysed, cursed or stoned, never unconscious or dead. It keeps
    the condition off and lifts none already taken: the cure is still a spell's, a temple's or
    time's (§6).
@@ -1496,7 +1496,7 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
   the best content check there is, so a monster with no drawing, a business with no room or a map in
   a region no area has fails it. The monster, item, spell and quest tables and the climates have
   moved out of `src/game/`; the races and classes, with their traits and starting kits, stay in
-  `src/game/party.ts` as rules, which no area adds to.
+  `src/game/party/tables.ts` as rules, which no area adds to.
 - **Determinism:** combat and Rift generation are pure functions of (state, seed). This gives us
   replayable bug reports: the seed replays the game, a random company drawn from it as well
   (`Game.newRandomGame`, `src/game/game.ts`).

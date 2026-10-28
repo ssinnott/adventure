@@ -12,7 +12,7 @@
 // party handed in, so the tests teach as the game does, without a Game.
 import type { GuildId } from '../content/guilds.ts';
 import type { Character, Party, RaceId, ClassId } from './party.ts';
-import { isDown, countItem } from './party.ts';
+import { isDown, countItem } from './party/conditions.ts';
 import { rankOf } from './ranks.ts';
 import type { Items } from './tables.ts';
 

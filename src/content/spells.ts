@@ -1,5 +1,5 @@
 // The spells, which no area owns: seven tiers per spell list (tiers unlock at levels 1, 2, 4, 6 and 8,
-// then 15 and 23, a hybrid's two later; see src/game/party.ts spellTierAt). `list` is who can learn it; `sp` the
+// then 15 and 23, a hybrid's two later; see src/game/party/levels.ts spellTierAt). `list` is who can learn it; `sp` the
 // cost; the effect fields say what it does, and every damage spell has an element (DESIGN §7). The
 // order is the order they are taught in.
 import type { SpellDef } from '../game/spells.ts';

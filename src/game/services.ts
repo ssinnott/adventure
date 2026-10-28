@@ -64,7 +64,7 @@ export function buyRations(party: Pick<Party, 'gold' | 'food'>): Served {
 /** What a donation to the Lanterns is; each is counted (`flags.donations`). */
 export const DONATION = 10;
 
-/** A member restored at a temple for `templePrice` (game/party.ts): every condition lifted, a fallen one on 1 hit point. */
+/** A member restored at a temple for `templePrice` (game/party/conditions.ts): every condition lifted, a fallen one on 1 hit point. */
 export function cure(party: Pick<Party, 'gold'>, c: Character): Served {
   const p = templePrice(c);
   if (!p) return refused(`${c.name} is well.`);
@@ -142,9 +142,9 @@ export function learnSpell(spells: Tables['spells'], party: Pick<Party, 'gold' |
 export const mayTrain = (c: Character, maxLevel: number): boolean => canTrainAt(c, maxLevel) && !isDown(c);
 
 /**
- * A visit to a trainer: one level for `trainPrice` (game/party.ts), however much xp the member has,
- * its hit points drawn on `rng`. One the trainer does not take (`mayTrain`) is refused with nothing
- * said, as the screen bars the row.
+ * A visit to a trainer: one level for `trainPrice` (game/party/levels.ts), however much xp the
+ * member has, its hit points drawn on `rng`. One the trainer does not take (`mayTrain`) is refused
+ * with nothing said, as the screen bars the row.
  */
 export function train(spells: Tables['spells'], party: Pick<Party, 'gold'>, c: Character, rng: RngInstance, maxLevel: number): Served {
   if (!mayTrain(c, maxLevel)) return refused('');

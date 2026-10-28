@@ -2,7 +2,7 @@
 // (whatever weapon is in hand) and in magic (its own list). Fighters take arms, casters magic,
 // hybrids both. Expert is taught by every town trainer whose ceiling is 13 or over, from level 13, for
 // 2,000 gold a line; Master by a person found (`npc.mastery`), to a member Expert in the line, from 25,
-// once their favour is done, for their price. What a tier does is party.ts's (`armsBonus`,
+// once their favour is done, for their price. What a tier does is party/levels.ts's (`armsBonus`,
 // `tierSteps`), beside the ranks it adds to, so the party imports nothing that reaches the quests.
 // Pure apart from the party and the world handed in, so the tests teach as the game does, without a Game.
 import type { Calling, Character, ClassId, Party } from './party.ts';
