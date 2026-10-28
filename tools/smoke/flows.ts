@@ -94,8 +94,10 @@ export async function inn({ page, ok }: Run): Promise<void> {
     await press(page, 'Space');
     const back = await top(page);
     const backColours = await colours(page);
-    // With him gone the trade is all the menu offers: choosing it opens it once, with nothing under it to come back to.
-    await press(page, 'Space');
+    // With him gone the trade is all the menu offers, and the cursor, kept on the row it left, is on Leave,
+    // which came after his (DESIGN §11): up to the trade, which opens once, with nothing under it to come back to.
+    const backAt = await page.evaluate(() => (window.__game!.game!.top as Shown).sel);
+    await press(page, 'ArrowUp'); await press(page, 'Space');
     const traded = await stack(page);
     await press(page, 'Escape');
     const left = await page.evaluate(() => {
@@ -134,13 +136,34 @@ export async function inn({ page, ok }: Run): Promise<void> {
       delete eel!.hall;
       return under;
     });
-    return { menu, words, question, said, back, backColours, traded, left, hob, eel, hall };
+    return { menu, words, question, said, back, backAt, backColours, traded, left, hob, eel, hall };
+  })();
+  // Mottram's Stores, its Buy list chosen twice: the third ware, then the fourth, each opening it again on the ware bought.
+  const shop = await (async () => {
+    const before = await page.evaluate(() => { const g = window.__game!.game!; while (g.screens.length > 1) g.pop(); g.world.travel('harrow', 4, 11, 0); const was = { gold: g.party.gold, bag: g.party.bag.length }; g.party.gold = 5000; return was; });
+    await press(page, 'ArrowUp');
+    const first = await top(page);
+    await press(page, 'Space'); await press(page, 'Space');
+    const sel = (): Promise<number> => page.evaluate(() => (window.__game!.game!.top as Shown).sel);
+    const buys: number[] = [];
+    await press(page, 'ArrowDown'); await press(page, 'ArrowDown'); await press(page, 'Space');
+    buys.push(await sel());
+    await press(page, 'ArrowDown'); await press(page, 'Space');
+    buys.push(await sel());
+    return page.evaluate(({ was, buys, first }) => {
+      const g = window.__game!.game!, bought = g.party.bag.length - was.bag, list = (g.top as Shown).options ?? [];
+      while (g.screens.length > 1) g.pop();
+      g.party.bag.splice(was.bag); g.party.gold = was.gold;
+      return { first, buys: buys.join(), bought, at: list[buys[1]]?.split('\t')[0] ?? '' };
+    }, { was: before, buys, first: first.options[0] ?? '' });
   })();
   ok(inside === 'ExploreScreen,InteriorScreen,ChoiceScreen' && innColours > 400, `walking into the inn opens its interior under its menu (${inside}, ${innColours} colours)`);
   ok(inn.menu.screen === 'ChoiceScreen' && inn.menu.options.join() === 'A room and rations,Talk to Hob,Leave', `a person in the inn joins its first menu, by name to the first comma (${inn.menu.options.join(', ')})`);
   ok(inn.words.text === '"A stranger, and armed."' && inn.question.text === '"Should I go to Gullwick?"' && inn.said.text === '"Then I go."', `talking to him says his words and puts his question in the side panel (${inn.words.screen}, ${inn.question.screen}, ${inn.said.screen})`);
   ok(inn.back.screen === 'ChoiceScreen' && inn.back.options.join() === 'A room and rations,Leave' && inn.backColours > 20, `his answer sends him away: back on the first menu, which no longer lists him (${inn.back.options.join(', ')})`);
+  ok(inn.backAt === 1, `back on the first menu, the cursor is on the row after his, Leave (${inn.backAt}), as a row gone leaves it`);
   ok(inn.traded === 'ExploreScreen,InteriorScreen,ChoiceScreen' && inn.left === 'ExploreScreen', `with him gone, the trade opens once, and Esc leaves (${inn.traded}, then ${inn.left})`);
+  ok(shop.first === 'Buy and sell' && shop.buys === '2,3' && shop.bought === 2, `the shop's Buy list, chosen twice, opens again on the ware bought each time (rows ${shop.buys}, ${shop.at})`);
   ok(inn.hob.join() === 'A room and rations,Talk to Hob,Leave', `the real Hob, by the Hearthlight's fire from a new game, is on its first menu (${inn.hob.join(', ')})`);
   ok(inn.eel.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen,MessageScreen' && inn.eel.options.join() === 'The talk of the room,Talk to Ebba,Talk to Maud,Leave', `the Gilded Eel, with Ebba and Maud in it from a new game, says its room over a menu that lists its keeper and them (${inn.eel.screens}; ${inn.eel.options.join(', ')})`);
   ok(inn.hall.join() === 'The talk of the room,Work for the Wardens,Learn a skill,Talk to Ebba,Talk to Maud,Leave', `a tavern that is a hall lists the guild's work and skill after the talk of the room and before its people (${inn.hall.join(', ')})`);
@@ -325,7 +348,7 @@ export async function hall({ page, ok }: Run): Promise<void> {
   const hallBefore = await page.evaluate(() => (window.__game!.game!.top as Shown).words);
   // Down to the guild's work, First Watch, its offer, Take it and the pay; then back from the rank 1 offers to the menu.
   for (const k of ['ArrowDown', 'Space', 'Space', 'Space', 'Space', 'Space', 'Escape']) await press(page, k);
-  const hallAfter = await page.evaluate(() => { const g = window.__game!.game!; return { screens: g.screens.map((s) => s.constructor.name).join(','), words: (g.top as Shown).words }; });
+  const hallAfter = await page.evaluate(() => { const g = window.__game!.game!, t = g.top as Shown; return { screens: g.screens.map((s) => s.constructor.name).join(','), words: t.words, sel: t.sel, row: (t.options ?? [])[t.sel] ?? '' }; });
   await press(page, 'Escape');
   const hallLeft = await page.evaluate((laid: boolean) => {
     const g = window.__game!.game!, zones = g.world.state.zones ?? [];
@@ -336,6 +359,7 @@ export async function hall({ page, ok }: Run): Promise<void> {
   }, laid);
   ok(hallBefore === 'You have no rank with the Wardens yet.' && hallAfter.screens === 'ExploreScreen,InteriorScreen,ChoiceScreen' && hallAfter.words === 'Your rank with the Wardens: Recruit.' && hallLeft === 'ExploreScreen',
     `a hall's first menu reads the rank the guild's work has just raised, and Leave ends the visit (${hallBefore} -> ${hallAfter.words}; ${hallAfter.screens}; ${hallLeft})`);
+  ok(hallAfter.sel === 1 && hallAfter.row === 'Work for the Wardens', `a hall's first menu, one choice and back, opens on the row chosen (${hallAfter.sel}: ${hallAfter.row})`);
 }
 
 // The quest log: Vask's contract is announced as his dialogue closes, and J opens the log on it. He
@@ -377,6 +401,9 @@ export async function asked({ page, ok }: Run): Promise<void> {
   await press(page, 'Space');
   const after = await page.evaluate(() => { const g = window.__game!.game!; return { screen: g.top.constructor.name, flag: !!g.party.flags.fx_write, bag: g.party.bag.includes('fx_letter') }; });
   await press(page, 'KeyI');
+  // The sheet's item list goes round: up from its first row is its last, the letter just handed over.
+  await press(page, 'ArrowUp');
+  const round = await page.evaluate(() => { const g = window.__game!.game!, t = g.top as Shown, c = g.party.members[g.selected]; return { screen: t.constructor.name, sel: t.sel, rows: c.pack.length + g.party.bag.length, letter: c.pack.length + g.party.bag.indexOf('fx_letter') }; });
   const has = await page.evaluate(() => { const g = window.__game!.game!, t = g.top as Shown, c = g.party.members[g.selected], i = g.party.bag.indexOf('fx_letter'); if (i >= 0 && t.constructor.name === 'SheetScreen') t.sel = c.pack.length + i; return i >= 0; });
   if (has) await press(page, 'Space');
   const letter = has ? await top() : { screen: 'no letter', text: '', title: '' };
@@ -396,6 +423,7 @@ export async function asked({ page, ok }: Run): Promise<void> {
     `a person's first words (not words whose flag is unset) close onto their question, which paints (${words.screen}, then ${question.screen}, ${choiceColours} colours)`);
   ok(said.text === 'He writes, and seals it.\n\n(A Sealed Letter.)' && said.title === 'Captain Fixture' && after.flag && after.bag && after.screen === 'ExploreScreen',
     `the answer is said, sets its flag and hands over the letter (${JSON.stringify(said.text)})`);
+  ok(round.screen === 'SheetScreen' && round.sel === round.rows - 1 && round.sel === round.letter, `the sheet's item list goes round: up from its first row is its last, the letter (${round.sel + 1} of ${round.rows})`);
   ok(letter.screen === 'MessageScreen' && letter.title === 'A Sealed Letter' && letter.text.startsWith('To Captain Hale') && closed === 'ExploreScreen', `the letter is read from the pack, in a box titled with its name, and Esc closes it (${letter.screen} '${letter.title}', then ${closed})`);
 }
 
@@ -522,22 +550,24 @@ export async function lampglass({ page, ok }: Run): Promise<void> {
     for (const c of g.party.members) { c.hp = c.maxHp = 999; c.conditions = []; }
     g.fight(['road_rats']);
     const scr = g.top as Shown, s = scr.state;
-    let asked = '';
+    let asked = '', digit = '';
     for (let guard = 0; guard < 300 && s.outcome === 'ongoing' && !s.glass; guard++) {
       scr.update(g, null);
       const who = s.order[s.turn];
       if (!who || who.side === 'monster') { scr.update(g, 'interact'); continue; }
       if (g.party.members[who.i] !== maren) { scr.update(g, 'n4'); continue; }
       scr.update(g, 'n2');
+      digit ||= `${scr.mode} ${scr.sel}`;
       scr.sub = maren.spells.indexOf('lampglass');
       scr.update(g, 'interact');
       asked = scr.mode;
       scr.update(g, 'down'); scr.update(g, 'interact');
     }
-    const out = { asked, element: s.glass?.element ?? '', line: s.log.find((l: string) => l.includes('Lampglass')) ?? '' };
+    const out = { asked, digit, element: s.glass?.element ?? '', line: s.log.find((l: string) => l.includes('Lampglass')) ?? '' };
     while (g.screens.length > 1) g.pop();
     return out;
   });
+  ok(glass.digit === 'spell 1', `in a fight a digit on the command menu chooses its row as Space there would: 2 is Cast, which lists the spells (${glass.digit})`);
   ok(glass.asked === 'element' && glass.element === 'cold' && glass.line === 'Maren casts Lampglass. The glass dims the cold.', `Lampglass asks against what before it is cast, and casts the pick (${JSON.stringify(glass)})`);
 }
 
@@ -553,7 +583,10 @@ export async function waymark({ page, ok }: Run): Promise<void> {
     w.travel('shelf', 16, 12, 0);
     cassian.spells.push('waymark'); cassian.sp = cassian.maxSp = 99; cassian.conditions = [];
     g.push(new S.SpellScreen('explore'));
+    // The casters are listed without the others; a digit is still the member's place: 6 is Cassian, whatever his row.
+    const row = g.party.members.filter((m, i) => i < 5 && m.spells.length && !m.conditions.includes('dead') && !m.conditions.includes('asleep')).length;
     g.top.update(g, 'n6');
+    const caster = { who: (g.top as unknown as { who: number }).who, row };
     (g.top as Shown).sel = cassian.spells.filter((id: string) => P.spell(g.tables.spells, id).context !== 'combat').indexOf('waymark');
     g.top.update(g, 'interact');
     const asked = { screen: g.top.constructor.name, options: (g.top as Shown).options ?? [] };
@@ -561,8 +594,9 @@ export async function waymark({ page, ok }: Run): Promise<void> {
     const back = w.state.x === at.x && w.state.y === at.y;
     delete w.state.mark;
     while (g.screens.length > 1) g.pop();
-    return { set, asked, back };
+    return { set, asked, back, caster };
   });
+  ok(mark.caster.who === 5, `the spell picker takes a digit as the member's place: 6 opens Cassian's spells, the sixth member, on the casters' row ${mark.caster.row + 1}`);
   ok(mark.set && mark.asked.screen === 'ChoiceScreen' && mark.asked.options.join('|') === 'Return to the mark|Set it here' && mark.back, `with a mark set, Waymark asks whether to return or set it here, and returns (${JSON.stringify(mark)})`);
 }
 
