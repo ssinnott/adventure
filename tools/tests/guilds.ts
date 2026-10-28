@@ -2,9 +2,9 @@
 // it in the log; with its deed done the hall pays gold, xp to the living and items, and the company
 // is a member; each rank opens the next; an item is taken at the first meeting whatever the rank;
 // a deed done early is paid when its quest is taken; a later act's ask waits for its act; a save
-// keeps the flags. Walked on a fixture
-// guild, on a table of the suite's own (#975), then every real guild quest held to the same rules. Every row of every hall's first menu
-// fits the side panel's column (#890).
+// keeps the flags. Walked on a fixture guild, on a table of the suite's own (#975), then every real
+// guild quest held to the same rules. Every row of every hall's first menu fits the side panel's
+// column (#890).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { measureText } from '../../src/lib/engine/text.ts';
 import { buildMaps } from '../../src/content/maps.ts';
@@ -45,7 +45,10 @@ const FIXTURE: readonly GuildQuest[] = [
   quest('fx_other', 0, { goal: { seen: 'shelf:coast' } }, 'lanterns'),
 ];
 
-/** Content's tables with `quests` the guilds' own and their log's (#975): a ladder the suite walks, content's never written. */
+/**
+ * Content's tables with `quests` the guilds' own and their log's (#975): a ladder the suite walks,
+ * content's never written.
+ */
 const ladder = (quests: readonly GuildQuest[]): Tables => ({ ...TABLES, guildQuests: quests, quests: quests.map(guildQuestDef) });
 
 export function guilds(): void {

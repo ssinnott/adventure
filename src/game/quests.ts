@@ -3,8 +3,8 @@
 // reads something the save already holds, so the log comes back whole from any save, old ones
 // included. The Game compares one look with the next to announce what changed. The words are each
 // area's: its chapter of the one quest in content/areas/<area>/chapter.ts, its side quests in
-// quests.ts. content/index.ts joins the chapters in road order, and the log reads them off the tables
-// handed in (`tables.quests`, #975).
+// quests.ts. content/index.ts joins the chapters in road order, and the log reads them off the
+// tables handed in (`tables.quests`, #975).
 import type { WorldState, MapState } from './world.ts';
 import type { Party } from './party.ts';
 import { countItem, prestigeOf } from './party.ts';

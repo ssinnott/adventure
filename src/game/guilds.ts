@@ -3,9 +3,9 @@
 // rank's quests are done, so membership and rank are worked out from the quests' done flags; a rank
 // once reached is kept by its own flag, so that quests added later never lower it. Every hall of a
 // guild keeps the one ladder. A rank decides only which of the guild's own quests a hall offers, so
-// it is no story lock. It depends on the world state, the party and the tables handed in (the guilds
-// and their quests, #975), so the tests can walk a ladder of their own without a Game; the hall's menu
-// is ui/screens.ts.
+// it is no story lock. It depends on the world state, the party and the tables handed in (the
+// guilds and their quests, #975), so the tests can walk a ladder of their own without a Game; the
+// hall's menu is ui/screens.ts.
 import type { GuildId } from '../content/guilds.ts';
 import { takenFlag, doneFlag, rankFlag } from './keys.ts';
 import type { Flag } from '../content/index.ts';

@@ -1,7 +1,8 @@
 // A company's rank in a guild (DESIGN §8), worked out from the guild's quests' done flags and kept by
 // its own flag. It stands apart from game/guilds.ts, whose rules use it, so that game/skills.ts may ask
-// it (`mayLearn`) without pulling the quests' rules in under the content index before its maps are
-// made (#857). It reads the party and the tables handed in alone: the guilds and their quests (#975).
+// it (`mayLearn`) without pulling the quests' rules in under the content index before its maps
+// are made (#857). It reads the party and the tables handed in alone: the guilds and their
+// quests (#975).
 import type { GuildId } from '../content/guilds.ts';
 import { doneFlag, rankFlag } from './keys.ts';
 import type { GuildQuest } from './guilds.ts';

@@ -55,7 +55,8 @@ export function seeking(): void {
   const fletcher: Trainer = { map: 'thornhold', place: 'Thornhold', name: 'Aldric the fletcher', teaches: { cls: 'ranger', prestige: 1 } };
   const eyrie: Trainer = { map: fxMap('fx_eyrie'), place: 'the Wold', name: 'the scout', teaches: { cls: 'ranger', prestige: 3, asks: 'fx_fane_map', done: { flag: fxFlag('fx_map_home') } } };
   const fane: QuestDef = { id: 'fx_fane_map', title: "Oriel Fane's Map", start: { flag: fxFlag('fx_asked') }, entries: [], goals: [] };
-  const trainers = [fletcher, eyrie], own: Tables = { ...TABLES, quests: [fane] }; // the log's quests the scout's alone (#975)
+  // The log's quests are the scout's alone (#975).
+  const trainers = [fletcher, eyrie], own: Tables = { ...TABLES, quests: [fane] };
   const r2 = makeRng(192), p2 = defaultParty(TABLES, r2), w2 = new World(TABLES, buildMaps(), p2, r2);
   p2.members[3] = createCharacter(TABLES, 'Brin', 'human', 'ranger', {}, r2);
   const made = seekingQuests(p2, trainers, [fane]);

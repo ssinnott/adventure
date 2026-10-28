@@ -237,8 +237,8 @@ function fixtures(fresh: (t?: Tables) => { party: Party; world: World }, all: re
     const handed = !barred(coin, empty.party) && answer(lent.items, coin, empty.party);
     ok(handed === 'He weighs it.\n\n(A Sealed Letter given.)' && !countItem(empty.party, LETTER.id) && !!empty.party.flags.fx_given, `with it, it is taken, its flag set and the line says so: ${String(handed).split('\n\n')[1]}`);
 
-    // The log reads the answer's flag: a quest done either way, and the entry of the road taken. Its
-    // quests are a table of the suite's own (#975).
+    // The log reads the answer's flag: a quest done either way, and the entry of the road taken.
+    // Its quests are a table of the suite's own (#975).
     const quest: QuestDef = {
       id: 'fx_ford', title: 'The Fixture Ford', start: { flag: fxFlag('fx_met') }, done: [{ flag: fxFlag('fx_write') }, { flag: fxFlag('fx_keep') }],
       entries: [{ id: 'wrote', when: { flag: fxFlag('fx_write') }, text: 'The captain wrote to Hale.' }, { id: 'kept', when: { flag: fxFlag('fx_keep') }, text: 'The captain kept it quiet.' }],
