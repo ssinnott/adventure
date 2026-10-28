@@ -14,11 +14,20 @@ import type { Env, Paint } from '../common.ts';
 export interface Plot { crop: number; away: boolean; hedge: readonly [boolean, boolean, boolean, boolean]; }
 /** Where ground stands before a drop and beyond it: its lit lip and its far wall. */
 export interface Rims { near: boolean; far: boolean }
-/** A square of ground as its look's painters take it: how deep and how far across it is in view, its seed, and what the scene worked out for it (a field's plot, a drop's rims). */
+/**
+ * A square of ground as its look's painters take it: how deep and how far across it is in view, its
+ * seed and what the scene worked out for it (a field's plot, a drop's rims).
+ */
 export interface Square { d: number; l: number; seed: number; plot?: Plot; rims?: Rims }
-/** A mark lying on a square: its number, where it falls (`s` deep and `t` across the square, `x` and `y` on the screen), its scale there and the square's colour. */
+/**
+ * A mark lying on a square: its number, where it falls (`s` deep and `t` across the square, `x` and
+ * `y` on the screen), its scale there and the square's colour.
+ */
 export interface Mark extends Square { i: number; s: number; t: number; x: number; y: number; sc: number; base: string }
-/** A billboard standing on a square: its foot on the screen, its unit and tone, its square on the map, and the frame's cloud over the sun. */
+/**
+ * A billboard standing on a square: its foot on the screen, its unit and tone, its square on the
+ * map and the frame's cloud over the sun.
+ */
 export interface Board { x: number; y: number; u: number; tone: number; mx: number; my: number; cloud: number }
 /**
  * The trees at the sides of a square, the way through it left open: under what hash a side has none,

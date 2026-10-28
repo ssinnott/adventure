@@ -12,7 +12,7 @@ function heatherColor(day: number): string { return mix('#644a48', '#7a4a6c', he
 
 /** A clump, tipped purple in flower. */
 function mark(p: Paint, m: Mark): void {
-  const { ctx, dark, env } = p, { i, x, y, sc, base, seed, d } = m;
+  const { ctx, env } = p, { i, x, y, sc, base, seed, d } = m;
   // Low clumps, dark and wiry, purple-tipped while the heather flowers; a deep snow buries them.
   if (env.cover > 0.55) return;
   const bloom = heatherBloom(env.day);

@@ -119,7 +119,10 @@ export function terrain(): void {
   ok(hedgeColor(45) === '#3e5e2a' && hedgeColor(100) === '#5a4a38' && hedgeColor(5) !== hedgeColor(45), `the hedges are in leaf at Harvest and bare in Frost (${hedgeColor(45)}, ${hedgeColor(100)})`);
   // Each terrain is drawn as a look of its own, which a module of its own in ui/view/ground/ exports (#1030).
   const own = (t: string): string => { const f = new URL(`../../src/ui/view/ground/${t}.ts`, import.meta.url); return existsSync(f) ? readFileSync(f, 'utf8') : ''; };
-  const lookless = Object.keys(TERRAIN_COLORS).filter((t) => !GROUND[t as Terrain] || !own(t).includes(`export const ${t}: GroundLook = {`));
+  // And GROUND holds each by its own name, its own module's export: no look stands in for another.
+  const index = own('index'), record = (/export const GROUND: Record<Terrain, GroundLook> = \{([^}]*)\}/.exec(index)?.[1] ?? '').split(',').map((e) => e.trim());
+  const lookless = Object.keys(TERRAIN_COLORS).filter((t) => !GROUND[t as Terrain] || !own(t).includes(`export const ${t}: GroundLook = {`)
+    || !index.includes(`import { ${t} } from './${t}.ts';`) || !record.includes(t));
   ok(!lookless.length && new Set(Object.values(GROUND)).size === Object.keys(TERRAIN_COLORS).length, `every terrain of TERRAIN_COLORS has a look and a module of its own in ui/view/ground/ (${Object.keys(TERRAIN_COLORS).length} of them${lookless.length ? `; none for ${lookless.join(', ')}` : ''})`);
   // On the automap each open ground is its own colour after the parchment wash: farmland is not road.
   const washed = Object.entries(TERRAIN_COLORS).map(([t, c]) => [t, hexToRgb(mix(c, PARCHMENT, AUTOMAP_WASH))] as const);

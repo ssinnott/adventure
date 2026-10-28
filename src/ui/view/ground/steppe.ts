@@ -16,7 +16,7 @@ function steppeColor(day: number): string { return rampColor(STEPPE, day); }
 
 /** A tuft, a seed head on two. */
 function mark(p: Paint, m: Mark): void {
-  const { ctx, dark, env } = p, { i, x, y, sc, base, seed, d } = m;
+  const { ctx, env } = p, { i, x, y, sc, base, d } = m;
   // Tall dry grass in tufts, all leaning one way, pale and dark by turns, a seed head on some. A
   // light snow leaves their tops showing; a deep one flattens them.
   if (env.cover > 0.55) return;

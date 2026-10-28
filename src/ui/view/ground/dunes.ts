@@ -9,7 +9,7 @@ import type { GroundLook, Mark } from './look.ts';
 
 /** The crest, then ripples. */
 function mark(p: Paint, m: Mark): void {
-  const { ctx, cx, horizon, h, env } = p, { i, s, x, y, sc, base, seed, d, l } = m;
+  const { ctx, cx, horizon, h, env } = p, { i, x, y, sc, base, seed, d, l } = m;
   // Sand in ridges: a dune's crest across the square, lit along its top with its lee in shadow,
   // and the wind's ripples over the rest. A deep snow hides them.
   if (env.cover > 0.55) return;

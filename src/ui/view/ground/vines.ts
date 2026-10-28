@@ -14,7 +14,7 @@ function vinesColor(day: number): string { return mix(TERRAIN_COLORS.vines, gras
 
 /** Three leaves, then runners. */
 function mark(p: Paint, m: Mark): void {
-  const { ctx, dark, env } = p, { i, s, x, y, sc, base, seed, d } = m;
+  const { ctx, env } = p, { i, x, y, sc, base, seed, d } = m;
   // Fallen leaves and a creeper's runners over the dark ground, buried by a deep snow.
   if (env.cover > 0.55) return;
   if (i < 3) {
