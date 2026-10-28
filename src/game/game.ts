@@ -19,8 +19,8 @@ import * as prestige from './prestige.ts';
 import { startCombat } from './combat.ts';
 import { save as saveTo, load as loadFrom, browserStore, hasSave } from './save.ts';
 import type { Store } from './save.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Action } from '../app/input.ts';
+import { is } from '../app/input.ts';
 import { monster } from './monsters.ts';
 import { drawViewport } from '../ui/viewport.ts';
 import type { ViewMonster } from '../ui/viewport.ts';
@@ -37,7 +37,7 @@ import { drawText } from '../lib/engine/text.ts';
 import { RiddleScreen } from '../ui/riddle.ts';
 import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restAndWake, drinkWell, give, giftOf } from './wilds.ts';
 import { approach, burn } from './dens.ts';
-import type { Pilot } from './pilot/pilot.ts';
+import type { Pilot } from '../app/pilot/pilot.ts';
 import type { Tables } from './tables.ts';
 
 /**

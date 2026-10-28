@@ -16,7 +16,7 @@ import { headlessGame, headlessLoad, drive } from '../kit/headless.ts';
 import { ExploreScreen } from '../../src/game/game.ts';
 import type { Game } from '../../src/game/game.ts';
 import { AREAS } from '../../src/content/index.ts';
-import { Pilot } from '../../src/game/pilot/pilot.ts';
+import { Pilot } from '../../src/app/pilot/pilot.ts';
 import { serialize } from '../../src/game/save.ts';
 import { play } from '../kit/rules/fullrun.ts';
 

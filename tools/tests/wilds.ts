@@ -15,7 +15,7 @@ import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { useShrine, openCairn, answerRiddle, restRefused, restParty, restAndWake, stepLine, normalWord, spentId, ANSWER_MAX, drinkWell, castExplore } from '../../src/game/wilds.ts';
 import { spell } from '../../src/game/spells.ts';
-import { Input } from '../../src/input.ts';
+import { Input } from '../../src/app/input.ts';
 import { RiddleScreen } from '../../src/ui/riddle.ts';
 import type { Game } from '../../src/game/game.ts';
 import { MAP_DEFS, TABLES } from '../../src/content/index.ts';

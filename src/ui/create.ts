@@ -1,8 +1,8 @@
 // Party creation: six characters, each named, raced, classed and rolled, or the premade company
 // for players who want to be walking in thirty seconds.
 import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Action } from '../app/input.ts';
+import { is } from '../app/input.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { makeRng } from '../lib/engine/rng.ts';
 import type { RngInstance } from '../lib/engine/rng.ts';

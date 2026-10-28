@@ -1,6 +1,6 @@
 // The layers (#900, part of #848): the runtime import graph of src/ and tools/, read from the files as
 // they stand, and the rules it keeps (EXPANSION §8.1). src/lib under src/game under src/content under
-// src/ui under src/app, the files directly under src/ the app's until src/app/ is made; the tools take
+// src/ui under src/app (and its entry, src/main.ts); the tools take
 // anything and tools/kit/ only src; the walkthroughs and the suites take src and tools/kit/, not each
 // other or the tools; no area takes another area's files but its public.ts; and no cycle among src's
 // runtime imports. What crosses today is a row of KNOWN, under the issue that clears it: a crossing no
@@ -22,34 +22,16 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
 /** The issues of #848's plan that clear today's crossings, each with what it does. */
 const KEYS = {
-  L6: 'the pilot moved to src/app',
-  L7: 'Game, its screen stack and input moved to src/app, the screens given a Host',
+  L7: 'Game and its screen stack moved to src/app, the screens given a Host',
   H8: "the walkthroughs as scenes: a chain takes an area's steps.ts, not its walkthrough",
 } as const;
 type Key = keyof typeof KEYS;
 
 /** Today's crossings, each `importer > imported` under the issue that clears it; a cycle is `cycle: ` and its files. */
 const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
-  L6: [
-    'src/game/pilot/aims.ts > src/content/index.ts',
-    'src/game/pilot/keep.ts > src/ui/draw.ts',
-    'src/game/pilot/keep.ts > src/ui/screens.ts',
-    'src/game/pilot/known.ts > src/content/index.ts',
-    'src/game/pilot/known.ts > src/ui/draw.ts',
-    'src/game/pilot/known.ts > src/ui/screens.ts',
-    'src/game/pilot/pilot.ts > src/ui/combat.ts',
-    'src/game/pilot/pilot.ts > src/ui/create.ts',
-    'src/game/pilot/pilot.ts > src/ui/screens.ts',
-    'src/game/pilot/pilot.ts > src/ui/title.ts',
-    'src/game/pilot/route.ts > src/ui/draw.ts',
-    'src/game/pilot/route.ts > src/ui/frame.ts',
-    'src/game/pilot/talk.ts > src/ui/draw.ts',
-    'src/game/pilot/talk.ts > src/ui/riddle.ts',
-    'src/game/pilot/talk.ts > src/ui/screens.ts',
-  ],
   L7: [
     'src/game/game.ts > src/content/maps.ts',
-    'src/game/game.ts > src/input.ts',
+    'src/game/game.ts > src/app/input.ts',
     'src/game/game.ts > src/ui/combat.ts',
     'src/game/game.ts > src/ui/ending.ts',
     'src/game/game.ts > src/ui/frame.ts',
@@ -59,14 +41,14 @@ const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
     'src/game/game.ts > src/ui/title.ts',
     'src/game/game.ts > src/ui/viewport.ts',
     'src/game/game.ts > src/ui/worldmap.ts',
-    'src/ui/combat.ts > src/input.ts',
-    'src/ui/create.ts > src/input.ts',
-    'src/ui/ending.ts > src/input.ts',
-    'src/ui/quests.ts > src/input.ts',
-    'src/ui/riddle.ts > src/input.ts',
-    'src/ui/screens.ts > src/input.ts',
-    'src/ui/title.ts > src/input.ts',
-    'src/ui/worldmap.ts > src/input.ts',
+    'src/ui/combat.ts > src/app/input.ts',
+    'src/ui/create.ts > src/app/input.ts',
+    'src/ui/ending.ts > src/app/input.ts',
+    'src/ui/quests.ts > src/app/input.ts',
+    'src/ui/riddle.ts > src/app/input.ts',
+    'src/ui/screens.ts > src/app/input.ts',
+    'src/ui/title.ts > src/app/input.ts',
+    'src/ui/worldmap.ts > src/app/input.ts',
   ],
   H8: [
     'src/content/areas/saltreach/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
@@ -88,7 +70,8 @@ const LAYERS = ['src/lib', 'src/game', 'src/content', 'src/ui', 'src/app'];
 /** Where a file stands: its layer in src, a walkthrough, a suite, the suites' frame (tools/tests/lib.ts), the kit or a tool. */
 export function place(f: string): string {
   if (/^src\/content\/areas\/[^/]+\/walkthrough\.ts$/.test(f)) return 'walkthrough';
-  for (const layer of LAYERS.slice(0, 4)) if (f.startsWith(layer + '/')) return layer;
+  for (const layer of LAYERS) if (f.startsWith(layer + '/')) return layer;
+  // The entry, src/main.ts, is the app's, as is anything else in src/ outside the layers' folders.
   if (f.startsWith('src/')) return 'src/app';
   if (f === 'tools/tests/lib.ts') return 'frame';
   if (/^tools\/tests\/[^/]+\.ts$/.test(f)) return 'suite';

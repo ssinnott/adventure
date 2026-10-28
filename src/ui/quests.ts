@@ -3,8 +3,8 @@
 // game/quests.ts. The page layout is a pure function so the Node tests can check that every
 // quest's journal is shown whole.
 import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Action } from '../app/input.ts';
+import { is } from '../app/input.ts';
 import { drawText, lineHeight } from '../lib/engine/text.ts';
 import { panel, wrap } from './draw.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, GREEN } from './palette.ts';

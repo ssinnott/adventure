@@ -355,11 +355,10 @@ Decided by the builder for #900, each the owner's to overturn:
 4. **A row is `importer > imported`,** however often the import is written, under the first rule it
    breaks: the walkthroughs' and the suites', the layers, the areas. A cycle is one row, `cycle: `
    and its files sorted, a strongly connected component of `src`'s graph.
-5. **The keys are the plan's:**
-   L6 the pilot's; L7 `game.ts`'s and the screens' imports of `src/input.ts`; H8 a walkthrough
-   taking another's chain (`STEPS`, and Saltreach's two orders of play), keyed K8 until #985 moved
-   `tools/walk.ts` into the kit. L8 and L9 hold none: `src/game` takes a screen only in the pilot
-   and `game.ts`.
+5. **The keys are the plan's:** L7 `game.ts`'s and the screens' imports of `src/app/input.ts`; H8 a
+   walkthrough taking another's chain (`STEPS`, and Saltreach's two orders of play), keyed K8
+   until #985 moved `tools/walk.ts` into the kit. L8 and L9 hold none: `src/game` takes a screen
+   only in `game.ts`.
 6. **No cycle is left:** #1020 split `party.ts` so that `skills.ts` loads no item, and the last
    (`items.ts`, `skills.ts`, `party.ts`) went with its `split` row; the `dens.ts` one went in #918.
 
@@ -377,8 +376,8 @@ Decided by the builder for #899, each the owner's to overturn:
 3. **The files the table leaves out:** `README.md` and `CLAUDE.md` are design, the docs' front
    pages; `package.json`, `package-lock.json`, `tsconfig.json`, `.gitignore` and `types/` are
    quality, for they configure the checks; `index.html` and whatever else stands in `src/` outside
-   the folders the table names (`src/main.ts`, `src/input.ts`) are systems, the game's page, entry
-   and input; `src/lib/` is no lane, for it is vendored (DESIGN §13).
+   the folders the table names (`src/main.ts`, `src/app/input.ts`) are systems, the game's page,
+   entry and input; `src/lib/` is no lane, for it is vendored (DESIGN §13).
 4. **The labels are the event's, and the tool never fails.** A pull request with no lane label yet
    gets a line saying so, not a failure, and the tool exits 0 in the checks whatever it finds. The
    event is read as the run began, so labels put on after a pull request opens show from the next

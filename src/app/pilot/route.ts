@@ -3,14 +3,14 @@
 // `turnLeft` and `turnRight`, never `back` or a strafe, so the viewer sees the party face where it
 // goes. It reads the world through Known alone: a secret door is a wall to it until a search finds
 // it, and a gate is learnt by trying it, never by its terms.
-import type { Game } from '../game.ts';
-import { ExploreScreen } from '../game.ts';
-import type { Action } from '../../input.ts';
-import type { Exit } from '../mapdef.ts';
-import { passableCell } from '../map.ts';
-import { partyCan, companyLevel } from '../party.ts';
-import { FACING_DX, FACING_DY, turnLeft, turnRight } from '../types.ts';
-import type { Facing } from '../types.ts';
+import type { Game } from '../../game/game.ts';
+import { ExploreScreen } from '../../game/game.ts';
+import type { Action } from '../input.ts';
+import type { Exit } from '../../game/mapdef.ts';
+import { passableCell } from '../../game/map.ts';
+import { partyCan, companyLevel } from '../../game/party.ts';
+import { FACING_DX, FACING_DY, turnLeft, turnRight } from '../../game/types.ts';
+import type { Facing } from '../../game/types.ts';
 import { LAYOUT } from '../../ui/frame.ts';
 import { wrap } from '../../ui/draw.ts';
 import { measureText } from '../../lib/engine/text.ts';

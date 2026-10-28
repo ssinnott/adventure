@@ -25,7 +25,7 @@ import type { Tier } from '../../src/game/mastery.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
 import { statText, weaponLine, slotLine, describe, businessEntries, artifactLines, power, sheetRows, SheetScreen, MessageScreen, SHEET_COL_W, SHEET_FOOT, SHEET_ITEMS, SHEET_ITEMS_Y } from '../../src/ui/screens.ts';
 import { CombatScreen, castRows } from '../../src/ui/combat.ts';
-import type { Action } from '../../src/input.ts';
+import type { Action } from '../../src/app/input.ts';
 import type { ChoiceScreen } from '../../src/ui/screens.ts';
 import { FONT_CHARS, measureText, lineHeight } from '../../src/lib/engine/text.ts';
 import { makeRng } from '../../src/lib/engine/rng.ts';
