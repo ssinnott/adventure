@@ -1,8 +1,8 @@
 // Party creation: six characters, each named, raced, classed and rolled, or the premade company
 // for players who want to be walking in thirty seconds.
-import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Host, Screen } from './screen.ts';
+import type { Action } from './actions.ts';
+import { is } from './actions.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { makeRng } from '../lib/engine/rng.ts';
 import type { RngInstance } from '../lib/engine/rng.ts';
@@ -33,9 +33,9 @@ export class CreateScreen implements Screen {
     this.stats = rollStats(this.rng);
   }
 
-  private setText(g: Game, on: boolean): void { if (g.input) g.input.textMode = on; }
+  private setText(g: Host, on: boolean): void { if (g.input) g.input.textMode = on; }
 
-  update(g: Game, a: Action | null): void {
+  update(g: Host, a: Action | null): void {
     // Text entry runs every step, action or not.
     if (this.step === 'name' && g.input) this.name = g.input.drainText(this.name, NAME_MAX);
     if (!a) return;
@@ -85,14 +85,14 @@ export class CreateScreen implements Screen {
     }
   }
 
-  private beginSlot(g: Game): void {
+  private beginSlot(g: Host): void {
     this.step = 'name'; this.name = ''; this.stats = rollStats(this.rng);
     // Suggest a spread of classes so a first party is not six knights.
     this.cls = CLASS_IDS[this.slot % CLASS_IDS.length]; this.race = RACE_IDS[this.slot % RACE_IDS.length];
     this.setText(g, true);
   }
 
-  render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
+  render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     ctx.fillStyle = INK; ctx.fillRect(0, 0, 640, 360);
     panel(ctx, 16, 16, 608, 328);
     drawText(ctx, 'THE CHARTER', 32, 28, { size: 2, color: BRASS });

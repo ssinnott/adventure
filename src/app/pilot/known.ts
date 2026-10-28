@@ -7,15 +7,15 @@
 // the automap marks, and no more. The headless run's omniscient view (#723), which the game never
 // sets, has every square seen, each cell as it is and the secret doors as written (`secrets`).
 import type { Game } from '../game.ts';
-import type { GameMap } from '../map.ts';
-import type { Cell, Exit, Feature, MapZone } from '../mapdef.ts';
-import type { Party } from '../party.ts';
-import type { WorldState } from '../world.ts';
-import { seen as lit } from '../world.ts';
-import { drawnCell, onAutomap, markedGroups } from '../ink.ts';
-import { mapPlace } from '../atlas.ts';
-import { spentId } from '../wilds.ts';
-import { questLog, goalMap } from '../quests.ts';
+import type { GameMap } from '../../game/map.ts';
+import type { Cell, Exit, Feature, MapZone } from '../../game/mapdef.ts';
+import type { Party } from '../../game/party.ts';
+import type { WorldState } from '../../game/world.ts';
+import { seen as lit } from '../../game/world.ts';
+import { drawnCell, onAutomap, markedGroups } from '../../game/ink.ts';
+import { mapPlace } from '../../game/atlas.ts';
+import { spentId } from '../../game/wilds.ts';
+import { questLog, goalMap } from '../../game/quests.ts';
 import { ChoiceScreen, InteriorScreen } from '../../ui/screens.ts';
 import { optionParts } from '../../ui/draw.ts';
 import { ATLAS, ITEMS, MAP_DEFS } from '../../content/index.ts';

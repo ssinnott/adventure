@@ -1,9 +1,9 @@
 // The title screen: new game or continue, why a save will not load in the note's two lines (#945),
 // the Hearth over the saved company and attract mode: untouched for 45 seconds, the pilot plays a
 // new game.
-import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Host, Screen } from './screen.ts';
+import type { Action } from './actions.ts';
+import { is } from './actions.ts';
 import { drawText, drawTextOutlined } from '../lib/engine/text.ts';
 import { menu, paragraph } from './draw.ts';
 import { freshSeed } from '../lib/engine/rng.ts';
@@ -29,13 +29,13 @@ export class TitleScreen implements Screen {
   private idle = 0;
   /** The Hearth as the saved company left it, read once from storage. */
   private saved: Hearth | null = null;
-  private hearth(g: Game): Hearth { return (this.saved ??= this.canContinue ? savedHearth(g.tables, g.store) : { stones: 0 }); }
+  private hearth(g: Host): Hearth { return (this.saved ??= this.canContinue ? savedHearth(g.tables, g.store) : { stones: 0 }); }
   constructor(canContinue: boolean, note = '') {
     this.canContinue = canContinue;
     this.note = note;
     this.items = canContinue ? ['Continue', 'New Game'] : ['New Game'];
   }
-  update(g: Game, a: Action | null): void {
+  update(g: Host, a: Action | null): void {
     if (!a) {
       // Untouched for IDLE_TICKS, the pilot plays a new game (Game.attract); a Game with no pilot never does.
       if (++this.idle >= IDLE_TICKS) { this.idle = 0; g.attract(); }
@@ -50,7 +50,7 @@ export class TitleScreen implements Screen {
       else g.push(new CreateScreen(freshSeed()));
     }
   }
-  render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
+  render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     drawFrameBackground(ctx);
     drawDusk(ctx, frame, hearthLook(this.hearth(g)));
     panel(ctx, 150, 40, 340, 80, 'rgba(14,12,16,0.75)');

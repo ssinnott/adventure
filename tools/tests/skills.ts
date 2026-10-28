@@ -24,11 +24,11 @@ import type { ItemDef } from '../../src/game/items.ts';
 import type { Person } from '../../src/game/people.ts';
 import { startCombat, currentTurn } from '../../src/game/combat.ts';
 import type { TurnRef } from '../../src/game/combat.ts';
-import type { Screen } from '../../src/game/game.ts';
+import type { Screen } from '../../src/ui/screen.ts';
 import { ChoiceScreen, skillMenu, skillsLines, SHEET_COL_W } from '../../src/ui/screens.ts';
-import { talk } from '../../src/game/pilot/talk.ts';
-import { Pilot } from '../../src/game/pilot/pilot.ts';
-import type { Action } from '../../src/input.ts';
+import { talk } from '../../src/app/pilot/talk.ts';
+import { Pilot } from '../../src/app/pilot/pilot.ts';
+import type { Action } from '../../src/app/input.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { logLines, SIDE_W } from '../../src/ui/frame.ts';
@@ -618,7 +618,7 @@ function lockedChest(): void {
 }
 
 /**
- * The pilot's talk (src/game/pilot/talk.ts) learns no skill (#719, decision 12): put before a Lantern
+ * The pilot's talk (src/app/pilot/talk.ts) learns no skill (#719, decision 12): put before a Lantern
  * hall's skills, the company of the Lanterns with the gold, it leaves the hall's level and, a skill
  * chosen for it, the level of who would learn it, and before a person who teaches, theirs; nobody is
  * taught and no gold is spent.

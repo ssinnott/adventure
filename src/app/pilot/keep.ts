@@ -6,17 +6,17 @@
 // (`ChoiceScreen.options`), and presses the keys a player would: a goal is the navigator's to walk
 // (route.ts), a row is reached by `down` and taken by Space, and nothing is bought off screen.
 import type { Game } from '../game.ts';
-import { ExploreScreen } from '../game.ts';
-import type { Action } from '../../input.ts';
-import type { Feature } from '../mapdef.ts';
-import type { Character, Party } from '../party.ts';
-import { armorClass, canTrain, canTrainAt, hasCondition, isDown, PRESTIGES, templePrice, trainPrice, weaponOf } from '../party.ts';
-import { hits, item, priceIn } from '../items.ts';
-import { DONATION, RATIONS, RATIONS_PRICE } from '../services.ts';
-import { mustRest, REST_AT } from '../bot.ts';
-import { restRefused } from '../wilds.ts';
+import { ExploreScreen } from '../../ui/explore.ts';
+import type { Action } from '../input.ts';
+import type { Feature } from '../../game/mapdef.ts';
+import type { Character, Party } from '../../game/party.ts';
+import { armorClass, canTrain, canTrainAt, hasCondition, isDown, PRESTIGES, templePrice, trainPrice, weaponOf } from '../../game/party.ts';
+import { hits, item, priceIn } from '../../game/items.ts';
+import { DONATION, RATIONS, RATIONS_PRICE } from '../../game/services.ts';
+import { mustRest, REST_AT } from '../../game/bot.ts';
+import { restRefused } from '../../game/wilds.ts';
 import { ChoiceScreen, InteriorScreen, SheetScreen, SpellScreen, TRADE } from '../../ui/screens.ts';
-import { spell } from '../spells.ts';
+import { spell } from '../../game/spells.ts';
 import { optionParts } from '../../ui/draw.ts';
 import { knownOf, trainsTo, wares } from './known.ts';
 import type { Known } from './known.ts';
@@ -24,7 +24,7 @@ import { routeLengths, routeMaps } from './route.ts';
 import type { Goal } from './route.ts';
 import type { Brain, Pilot } from './pilot.ts';
 import { reserve, spare } from './purse.ts';
-import type { Items, Tables } from '../tables.ts';
+import type { Items, Tables } from '../../game/tables.ts';
 
 export { reserve, spare };
 

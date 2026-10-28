@@ -14,7 +14,7 @@ import { serialize, deserialize, upgrade, load, SAVE_VERSION, SAVE_KEY } from '.
 import { UPGRADES } from '../../src/game/upgrades.ts';
 import type { Upgrade } from '../../src/game/upgrades.ts';
 import type { SaveData, Store } from '../../src/game/save.ts';
-import { Game } from '../../src/game/game.ts';
+import { Game } from '../../src/app/game.ts';
 import { TitleScreen, NOTE_W, NOTE_LINES } from '../../src/ui/title.ts';
 import { wrap } from '../../src/ui/draw.ts';
 import { holds } from '../../src/game/quests.ts';

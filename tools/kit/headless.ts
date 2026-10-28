@@ -1,10 +1,10 @@
 // The game run headless (#984): a Game on no screen, a save loaded into one and the keys driven
 // through it, as the walkthroughs and the suites play the game. Moved from the suites' frame
 // (tools/tests/lib.ts), which a walkthrough may not take.
-import { Game } from '../../src/game/game.ts';
+import { Game } from '../../src/app/game.ts';
 import type { Party } from '../../src/game/party.ts';
-import type { Action } from '../../src/input.ts';
-import { drainTyped } from '../../src/input.ts';
+import type { Action } from '../../src/app/input.ts';
+import { drainTyped } from '../../src/app/input.ts';
 import { SAVE_KEY } from '../../src/game/save.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';

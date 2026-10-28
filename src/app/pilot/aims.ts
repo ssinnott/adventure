@@ -4,13 +4,13 @@
 // journal shows the goal, a zone's band once the party has set foot in it. It says where it is bound,
 // gives a goal up after three days with no way on, and turns back over a line into a zone too hard.
 import type { Game } from '../game.ts';
-import { ExploreScreen } from '../game.ts';
-import type { Action } from '../../input.ts';
-import { companyLevel, partyCan } from '../party.ts';
-import type { Party } from '../party.ts';
-import { passableCell } from '../map.ts';
-import { areaOf, homeMap } from '../atlas.ts';
-import { OUTDOORS } from '../outdoors.ts';
+import { ExploreScreen } from '../../ui/explore.ts';
+import type { Action } from '../input.ts';
+import { companyLevel, partyCan } from '../../game/party.ts';
+import type { Party } from '../../game/party.ts';
+import { passableCell } from '../../game/map.ts';
+import { areaOf, homeMap } from '../../game/atlas.ts';
+import { OUTDOORS } from '../../game/outdoors.ts';
 import { ATLAS, MAP_DEFS, THE_QUEST } from '../../content/index.ts';
 import type { Known } from './known.ts';
 import type { Brain, Pilot } from './pilot.ts';

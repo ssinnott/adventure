@@ -7,9 +7,9 @@
 // modes: the map alone, and the zone overlay, which colours every area by its step on the road of
 // levels, rules the zones inside each, and draws every way between them, built or planned.
 // Its sites are drawn from a table, an entry to each icon; its marks on the sea are the atlas's.
-import type { Game, Screen } from '../game/game.ts';
-import type { Action } from '../input.ts';
-import { is } from '../input.ts';
+import type { Host, Screen } from './screen.ts';
+import type { Action } from './actions.ts';
+import { is } from './actions.ts';
 import { drawText, drawTextOutlined, measureText } from '../lib/engine/text.ts';
 import { hearthLook } from '../game/stones.ts';
 import type { HearthLook } from '../game/stones.ts';
@@ -1560,7 +1560,7 @@ export class WorldMapScreen implements Screen {
   /** Whether the cloth is painted yet (the first opening paints it behind a progress bar). */
   get ready(): boolean { return painted !== null; }
 
-  private place(g: Game): void {
+  private place(g: Host): void {
     const at = partyOnCloth(g.world ?? null) ?? [CLOTH.w / 2, CLOTH.h / 2];
     this.tx = at[0] - VIEW.w / 2; this.ty = at[1] - VIEW.h / 2;
     this.clamp();
@@ -1576,7 +1576,7 @@ export class WorldMapScreen implements Screen {
   /** Scroll so the view's top-left is at (x, y) on the cloth; tools and tests use it. */
   scrollTo(x: number, y: number): void { this.tx = x; this.ty = y; this.clamp(); this.vx = this.tx; this.vy = this.ty; this.placed = true; }
 
-  update(g: Game, a: Action | null): void {
+  update(g: Host, a: Action | null): void {
     if (!this.placed) this.place(g);
     if (a && (is(a, 'cancel') || is(a, 'map'))) { g.pop(); return; }
     if (!painted) return;
@@ -1603,7 +1603,7 @@ export class WorldMapScreen implements Screen {
     this.still++;
   }
 
-  render(g: Game, ctx: CanvasRenderingContext2D, frame: number): void {
+  render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     if (!this.placed) this.place(g);
     drawFrameBackground(ctx);
     const art = advance(28);

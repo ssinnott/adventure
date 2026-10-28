@@ -2,10 +2,10 @@
 import { createCanvas } from './lib/engine/canvas.ts';
 import { createLoop } from './lib/engine/loop.ts';
 import { setTextDefaults } from './lib/engine/text.ts';
-import { Game } from './game/game.ts';
-import { Input, is } from './input.ts';
-import { Pilot } from './game/pilot/pilot.ts';
-import type { Tempo } from './game/pilot/pilot.ts';
+import { Game } from './app/game.ts';
+import { Input, is } from './app/input.ts';
+import { Pilot } from './app/pilot/pilot.ts';
+import type { Tempo } from './app/pilot/pilot.ts';
 import { INK } from './ui/palette.ts';
 import { TABLES } from './content/index.ts';
 
