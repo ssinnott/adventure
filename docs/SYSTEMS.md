@@ -125,9 +125,12 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - The kits are the systems lane's; the old paths (`src/ui/brush.ts` and the rest) re-export them,
   and a family or a scene takes a kit when it is next edited (EXPANSION §8.1).
 - **The rest:** `src/ui/portraits.ts` paints a portrait to each character from the name, race and
-  class; `src/ui/scenery.ts` holds the trees, rocks, mountains and pillars; `src/ui/viewport.ts` is
-  the depth-layered first-person compositor, its static scene cached in two canvases (the sky, and
-  everything in front of it) and the weather and the year reaching into it.
+  class; `src/ui/scenery.ts` holds the trees, rocks, mountains and pillars; `src/ui/view/` is the
+  depth-layered first-person compositor (`compositor.ts`) and its parts by section (the sky, the
+  weather, the floors, the walls, the roofs and the tents), a model with no canvas and the common
+  ground they all take, with `src/ui/viewport.ts` their barrel (#1028); its static scene is
+  cached in two canvases (the sky, and everything in front of it) and the weather and the year
+  reach into it.
 
 ## Stubbed or absent
 

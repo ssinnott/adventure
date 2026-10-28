@@ -308,7 +308,7 @@ function untouched(): void {
   ok(cast > 20 && !changed.length, `${cast} spells cast in a fight with Master and without: each costs what it did, and no buff's rounds, cure, sleep or raising moves${changed.length ? ' -> moved: ' + changed.join(', ') : ''}`);
   const root = fileURLToPath(new URL('../../src/', import.meta.url));
   const files = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const q = join(dir, f); return statSync(q).isDirectory() ? files(q) : q.endsWith('.ts') ? [q] : []; });
-  const READERS = ['game/party.ts', 'game/combat.ts', 'game/mastery.ts', 'ui/screens.ts'];
+  const READERS = ['game/party.ts', 'game/party/tables.ts', 'game/party/levels.ts', 'game/combat.ts', 'game/mastery.ts', 'ui/screens.ts'];
   const reads = files(root).map((f) => relative(root, f).split('\\').join('/')).filter((f) => !READERS.includes(f) && /\btierSteps\(|\barmsBonus\(|\btierOf\(|\.tiers\b|\bTIER_(?:ARMS|STEPS)\b/.test(readFileSync(join(root, f), 'utf8')));
   ok(!reads.length, `nothing under src/ reads a tier but ${READERS.join(', ')}: no map spell, cost or rounds can${reads.length ? ' -> also: ' + reads.join(', ') : ''}`);
 }

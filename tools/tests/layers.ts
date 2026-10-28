@@ -24,7 +24,6 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 const KEYS = {
   L6: 'the pilot moved to src/app',
   L7: 'Game, its screen stack and input moved to src/app, the screens given a Host',
-  split: 'the big modules split: party.ts into its tables, conditions and levels, so skills.ts loads no items',
   H8: "the walkthroughs as scenes: a chain takes an area's steps.ts, not its walkthrough",
 } as const;
 type Key = keyof typeof KEYS;
@@ -68,9 +67,6 @@ const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
     'src/ui/screens.ts > src/input.ts',
     'src/ui/title.ts > src/input.ts',
     'src/ui/worldmap.ts > src/input.ts',
-  ],
-  split: [
-    'cycle: src/game/items.ts src/game/party.ts src/game/skills.ts',
   ],
   H8: [
     'src/content/areas/saltreach/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
