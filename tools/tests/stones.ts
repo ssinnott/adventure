@@ -8,6 +8,7 @@ import { STONES, WHOLE } from '../../src/content/stones.ts';
 import { World } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/mapdef.ts';
+import type { Atlas } from '../../src/game/atlas.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { save } from '../../src/game/save.ts';
@@ -89,7 +90,7 @@ export function stones(): void {
     `the Hearth burns at the atlas's hearth site (${HEARTH(TABLES.atlas).join(',')}), and an atlas without one throws (${lost})`);
   // Each atlas is read for its own Hearth and kept by it (#976): one of the suite's own, its hearth
   // site moved, then content's.
-  const moved = { ...ATLAS, sites: ATLAS.sites.map((s) => (s.icon === 'hearth' ? { ...s, at: [1, 2] as typeof s.at } : s)) };
+  const moved: Atlas = { ...ATLAS, sites: ATLAS.sites.map((s) => (s.icon === 'hearth' ? { ...s, at: [1, 2] as typeof s.at } : s)) };
   ok(HEARTH(moved).join() === '1,2' && Math.round(hearthBearing(moved, 1, 9)) === 0 && HEARTH(TABLES.atlas).join() === site?.at.join(),
     `an atlas of the suite's own is read for its own Hearth (${HEARTH(moved).join(',')}), and content's for content's`);
   // The night sky's Hearth lies where the Hearth does: south of Helmstow, east from the far west shore.
