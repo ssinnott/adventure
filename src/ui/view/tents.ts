@@ -6,6 +6,7 @@ import { FACING_DX, FACING_DY } from '../../game/types.ts';
 import type { Facing } from '../../game/types.ts';
 import { shade } from '../../lib/art/palettes.ts';
 import { fog, outlineRect, line, addPoly } from './common.ts';
+import type { Paint, Front } from './common.ts';
 import type { Tent } from './model.ts';
 import type { At } from './roofs.ts';
 
@@ -37,19 +38,20 @@ export function tentView(t: Tent, px: number, py: number, f: Facing): TentView {
 }
 
 /** A felt wall's front: the felt, the eave's shadow on it, two girth ropes and the band round its foot. */
-export function drawFeltFront(ctx: CanvasRenderingContext2D, pal: MapPalette, x0: number, x1: number, top: number, bottom: number, d: number, dark: boolean, haze: string | null, joinL: boolean, joinR: boolean): void {
+export function drawFeltFront(p: Paint, pal: MapPalette, front: Front, d: number): void {
+  const { ctx } = p, { x0, x1, top, bottom, joinL, joinR } = front;
   const X0 = Math.round(x0), X1 = Math.round(x1), T = Math.round(top), B = Math.round(bottom), w = x1 - x0, h = bottom - top;
-  ctx.fillStyle = fog(pal.wall, d, dark, haze); ctx.fillRect(X0, T, X1 - X0, B - T);
+  ctx.fillStyle = fog(p, pal.wall, d); ctx.fillRect(X0, T, X1 - X0, B - T);
   const sh = ctx.createLinearGradient(0, T, 0, T + h * 0.22);
   sh.addColorStop(0, 'rgba(0,0,0,0.28)'); sh.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = sh; ctx.fillRect(X0, T, X1 - X0, Math.round(h * 0.22));
-  ctx.fillStyle = fog(shade(pal.wall, 0.6), d, dark, haze);
+  ctx.fillStyle = fog(p, shade(pal.wall, 0.6), d);
   for (const t of [0.3, 0.58]) ctx.fillRect(X0, Math.round(top + h * t), X1 - X0, Math.max(1, Math.round(h * 0.03)));
   const b0 = Math.round(bottom - h * 0.2), b1 = Math.round(bottom - h * 0.07);
-  ctx.fillStyle = fog(pal.banner, d, dark, haze); ctx.fillRect(X0, b0, X1 - X0, b1 - b0);
+  ctx.fillStyle = fog(p, pal.banner, d); ctx.fillRect(X0, b0, X1 - X0, b1 - b0);
   if (b1 - b0 >= 4) {
     const n = Math.max(3, Math.round(w / 14)), lw = w / n / 2, mid = (b0 + b1) / 2, lh = (b1 - b0) * 0.36;
-    ctx.fillStyle = fog(OCHRE, d, dark, haze);
+    ctx.fillStyle = fog(p, OCHRE, d);
     for (let i = 0; i < n; i++) { const lx = x0 + (i + 0.5) * w / n; ctx.beginPath(); ctx.moveTo(lx - lw * 0.5, mid); ctx.lineTo(lx, mid - lh); ctx.lineTo(lx + lw * 0.5, mid); ctx.lineTo(lx, mid + lh); ctx.closePath(); ctx.fill(); }
   }
   ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; outlineRect(ctx, X0, T, X1, B, !joinL, !joinR);
@@ -59,17 +61,18 @@ export function drawFeltFront(ctx: CanvasRenderingContext2D, pal: MapPalette, x0
  * A door in felt: the doorway's dark under a flap of the door's colour hung from a rolled head, its
  * lower corner turned back.
  */
-export function drawFlap(ctx: CanvasRenderingContext2D, x0: number, x1: number, top: number, bottom: number, pal: MapPalette, d: number, dark: boolean, haze: string | null): void {
+export function drawFlap(p: Paint, x0: number, x1: number, top: number, bottom: number, pal: MapPalette, d: number): void {
+  const { ctx } = p;
   const w = x1 - x0, h = bottom - top, dw = w * 0.38, x = x0 + (w - dw) / 2, y = bottom - h * 0.8;
   ctx.fillStyle = '#120d0a'; ctx.fillRect(Math.round(x), Math.round(y), Math.round(dw), Math.round(bottom - y));
   const fx = x + dw, fy = y + (bottom - y) * 0.5, tx = x + dw * 0.42;
-  ctx.fillStyle = fog(pal.door, d, dark, haze);
+  ctx.fillStyle = fog(p, pal.door, d);
   ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(fx, y); ctx.lineTo(fx, fy); ctx.lineTo(tx, bottom); ctx.lineTo(x, bottom); ctx.closePath(); ctx.fill();
   ctx.strokeStyle = 'rgba(0,0,0,0.55)'; ctx.lineWidth = 1; ctx.stroke();
   // The corner turned back: its lining, lighter, folded up over the flap.
-  ctx.fillStyle = fog(shade(pal.door, 1.45), d, dark, haze);
+  ctx.fillStyle = fog(p, shade(pal.door, 1.45), d);
   ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(tx, bottom); ctx.lineTo(x + dw * 0.6, fy + (bottom - fy) * 0.15); ctx.closePath(); ctx.fill();
-  ctx.fillStyle = fog(shade(pal.door, 0.7), d, dark, haze);
+  ctx.fillStyle = fog(p, shade(pal.door, 0.7), d);
   ctx.fillRect(Math.round(x - dw * 0.08), Math.round(y - h * 0.05), Math.round(dw * 1.16), Math.max(2, Math.round(h * 0.08)));
 }
 
@@ -101,7 +104,8 @@ function area2(pts: [number, number][]): number {
  * and shaded as it faces, its seams running up to the crown and its hem dark along the eave. The
  * crown's ring goes on last, by every square it stands on, so the one painted last has it over all.
  */
-export function drawTentRoof(ctx: CanvasRenderingContext2D, at: At, v: TentView, d: number, l: number, pal: MapPalette, dark: boolean, haze: string | null): void {
+export function drawTentRoof(p: Paint, at: At, v: TentView, d: number, l: number, pal: MapPalette): void {
+  const { ctx } = p;
   const E = TENT_EAVE, e = E / 2, ax0 = v.X0 - E, ax1 = v.X1 + E, ak0 = v.K0 - e, ak1 = v.K1 + e;
   const Xc = (v.X0 + v.X1) / 2, Kc = (v.K0 + v.K1) / 2, across = Math.min(v.X1 - v.X0, 2 * (v.K1 - v.K0)) / 2;
   const Ye = TENT_WALL + TENT_DROOP, Ya = TENT_WALL - TENT_RISE * (2 + across) / 3;
@@ -126,10 +130,10 @@ export function drawTentRoof(ctx: CanvasRenderingContext2D, at: At, v: TentView,
     const pts = ground.map(([X, k]) => at(X, k, Ye + (Ya - Ye) * up(X, k)));
     if (area2(pts) > -1) continue;
     ctx.beginPath(); addPoly(ctx, pts);
-    ctx.fillStyle = fog(shade(pal.wall, tone), d, dark, haze); ctx.fill();
+    ctx.fillStyle = fog(p, shade(pal.wall, tone), d); ctx.fill();
     ctx.save(); ctx.clip();
     const ea = at(a[0], Math.max(a[1], 0.05), Ye), eb = at(b[0], Math.max(b[1], 0.05), Ye), len = Math.hypot(eb[0] - ea[0], eb[1] - ea[1]);
-    ctx.strokeStyle = fog(shade(pal.wall, tone * 0.8), d, dark, haze); ctx.lineWidth = 1;
+    ctx.strokeStyle = fog(p, shade(pal.wall, tone * 0.8), d); ctx.lineWidth = 1;
     const seams = Math.max(2, Math.min(8, Math.round(len / 12)));
     for (let i = 1; i < seams; i++) {
       const sX = a[0] + (b[0] - a[0]) * i / seams, sk = a[1] + (b[1] - a[1]) * i / seams;
@@ -138,7 +142,7 @@ export function drawTentRoof(ctx: CanvasRenderingContext2D, at: At, v: TentView,
     // The hem along the eave. The eave stands TENT_EAVE out past the wall and goes down after any wall
     // beside the tent, so a tent hard against a wall would lay it over a few pixels of that wall's side
     // near to (8 to 13 at a square's distance); no map puts a tent against a wall.
-    ctx.strokeStyle = fog(shade(pal.wall, 0.55), d, dark, haze); ctx.lineWidth = Math.max(1.5, len * 0.012);
+    ctx.strokeStyle = fog(p, shade(pal.wall, 0.55), d); ctx.lineWidth = Math.max(1.5, len * 0.012);
     line(ctx, ea, eb);
     ctx.restore();
     ctx.strokeStyle = 'rgba(0,0,0,0.45)'; ctx.lineWidth = 1; ctx.stroke();
@@ -147,9 +151,9 @@ export function drawTentRoof(ctx: CanvasRenderingContext2D, at: At, v: TentView,
   // The crown: the ring the poles run up to, standing a little proud of the felt, and the felt cover
   // over its smoke hole.
   const [cx, cy] = at(Xc, Kc, Ya), r = Math.abs(at(Xc + 0.3, Kc, Ya)[0] - cx), ry = Math.max(1, r * 0.32), rise = r * 0.45;
-  ctx.fillStyle = fog('#7a5430', d, dark, haze);
+  ctx.fillStyle = fog(p, '#7a5430', d);
   ctx.beginPath(); ctx.moveTo(cx - r, cy - rise); ctx.lineTo(cx + r, cy - rise); ctx.lineTo(cx + r, cy); ctx.ellipse(cx, cy, r, ry, 0, 0, Math.PI); ctx.closePath(); ctx.fill();
   ctx.strokeStyle = 'rgba(0,0,0,0.5)'; ctx.lineWidth = 1; ctx.stroke();
-  ctx.fillStyle = fog(shade(pal.wall, 0.94), d, dark, haze);
+  ctx.fillStyle = fog(p, shade(pal.wall, 0.94), d);
   ctx.beginPath(); ctx.ellipse(cx, cy - rise, r * 1.05, Math.max(1, r * 0.6), 0, Math.PI, Math.PI * 2); ctx.closePath(); ctx.fill(); ctx.stroke();
 }
