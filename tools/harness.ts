@@ -24,7 +24,7 @@
 //   node tools/harness.ts --company newer [...]        ... or the company were the four newer classes' (`newerCompany`)
 //   node tools/harness.ts --artifacts erzhemd,akkush [...] ... or the company bore the bounds' artifacts named, or all of them (#847), and says who
 // The company is the premade six, trained to the level (to the road's cap, 32), with the prestiges
-// that level brings (game/party.ts), and dressed in what the item tables give it by then (GEAR). Beside
+// that level brings (game/party/levels.ts), and dressed in what the item tables give it by then (GEAR). Beside
 // it stands a company of the four newer classes, made the same way, which the harness suite holds to
 // the line at four levels; the gate judges the premade six alone (EXPANSION §5.2). A thrifty bot plays it (see `thrifty`), where the gate's
 // bot (src/game/bot.ts) spends: it mends whoever is in danger, strikes, and casts a damage spell only when the hit points
