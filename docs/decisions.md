@@ -362,7 +362,7 @@ Decided by the builder for #900, each the owner's to overturn:
    `tools/walk.ts` into the kit. L8 and L9 hold none: `src/game` takes a screen only in the pilot
    and `game.ts`.
 6. **No cycle is left:** #1020 split `party.ts` so that `skills.ts` loads no item, and the last
-   (`items.ts`, `skills.ts`, `party.ts`) went with its `split` row; the `dens.ts` cycle went in #918.
+   (`items.ts`, `skills.ts`, `party.ts`) went with its `split` row; the `dens.ts` one went in #918.
 
 Decided by the builder for #899, each the owner's to overturn:
 
