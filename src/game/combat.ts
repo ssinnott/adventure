@@ -1,234 +1,48 @@
 // Turn-based combat resolver. Pure: every function takes the state, the party and the rng, and the
 // only randomness is the rng handed in, so a fight replays byte-for-byte from a seed. The UI in
-// ui/combat.ts reads CombatState and calls `partyAct` / `monsterAct`; nothing here draws.
+// ui/combat.ts reads CombatState and calls `partyAct` / `monsterAct`; nothing here draws. This is
+// the fight's flow, from `startCombat` through the rounds and the turns to `checkOutcome`. Its
+// parts, held to the same rule, are in game/combat/ (#1007): the state, the log's lines, the perks,
+// the party's casting and the monsters' side; every name they held here is still given from here.
 import type { RngInstance } from '../lib/engine/rng.ts';
-import { monster, monsterImmune, monsterSpells, elementMult, elementDamage, KINDS } from './monsters.ts';
-import type { MonsterDef } from './monsters.ts';
-import { spell, spellDice, SPELLS_GROW_TO } from './spells.ts';
-import type { SpellDef, Element } from './spells.ts';
-import { item, ELEMENT_DIE, ARTIFACT_LEVEL, chargesLeft } from './items.ts';
+import { monster, monsterSpells } from './monsters.ts';
+import { spell } from './spells.ts';
+import { item, ELEMENT_DIE, chargesLeft } from './items.ts';
 import {
-  armorClass, attackBonus, weaponOf, isDown, canAct, damage, heal, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay,
-  hasTrait, spellHeal, rankMult, spellRank, armsBonus, WEAPON_MASTER_DMG, HOLY_STRIKE_DMG, MARKSMAN_DMG, SPELLFIRE_DMG, SNEAK_ATTACK_DMG, RAGE_DMG, INSPIRE_HIT,
-  prestigeOf, deathAt, resists, lift, statOf, borne, useItem,
+  attackBonus, weaponOf, isDown, canAct, damage, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay, armsBonus, prestigeOf,
+  statOf, borne, useItem,
 } from './party.ts';
-import type { ClassId } from './party.ts';
-import type { ItemDef } from './items.ts';
-import type { Party, Character, Condition } from './party.ts';
-import type { World } from './world.ts';
-import { GLOVE_FLAG } from './keys.ts';
-import type { Items, Tables } from './tables.ts';
+import type { Party } from './party.ts';
+import type { Tables } from './tables.ts';
+import { FRONT_ROW, MAX_MONSTERS, HASTE_SPEED, describe, toHit, roll, standing, frontStands, aliveMonsters, HOLD_BREAKS } from './combat/state.ts';
+import type { MonsterInst, TurnRef, PartyAction, Loot, CombatState, CombatOpts, CombatGroup } from './combat/state.ts';
+import { STONE_LINE, victoryLine } from './combat/lines.ts';
+import { blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow } from './combat/perks.ts';
+import { hurtMonster, elemental, castSpell } from './combat/casting.ts';
+import {
+  canReach, waits, monsterAc, monsterHit, guard, castable, struck, monsterCast, sweep, regenerate, dim, calledBy, canCall, clocked, beat, call,
+  morale,
+} from './combat/foes.ts';
 
-export interface MonsterInst {
-  def: MonsterDef;
-  hp: number;
-  /** Its rank of its group: a group's front and back are each a group of the fight's (`Ranks`). */
-  group: number;
-  /** The group on the map it came in with: the index into `groupIds`. */
-  band: number;
-  /** In the back rank: a weapon of the front row reaches it only once the fight's front is down. */
-  back: boolean;
-  /** Broke and left the fight (`morale`): no longer in it, and paying nothing. */
-  fled: boolean;
-  /** Under the ice with its group (`Ranks`): its blows reach only the front row. */
-  under?: 'ice';
-  conditions: Condition[];
-  /** Ticks of white a blow leaves: set to 2 when it lands and taken down by one at the end of each tick of the combat screen, so it shows for the one tick after, at any refresh. */
-  flash: number;
-  /** One that mends (`MonsterDef.regen`) took fire this round, and will not mend at its end (`regenerate`). */
-  burnt?: boolean;
-}
-
-export type TurnRef = { side: 'party'; i: number } | { side: 'monster'; i: number };
-
-export type PartyAction =
-  | { type: 'attack'; target: number }
-  | { type: 'cast'; spellId: string; target: number; element?: Element; from?: string }
-  | { type: 'defend' }
-  | { type: 'use'; itemId: string; target: number }
-  | { type: 'flee' };
-
-export type Outcome = 'ongoing' | 'victory' | 'defeat' | 'fled';
-
-/**
- * `xp` is what the kills were worth before the split, each by the monster's level against a
- * member's (`killPay`), and `shares` what each living member took, in party order: one share for all
- * where all are of one level. `ready` names who now has the experience to train a level (levels are
- * bought at a trainer).
- */
-export interface Loot { xp: number; shares: number[]; gold: number; items: string[]; ready: string[]; }
-
-export interface CombatState {
-  /** The tables the fight reads, from `startCombat` (#973). */
-  readonly tables: Tables;
-  monsters: MonsterInst[];
-  groupIds: string[];
-  /** Each group's leader, by monster id, as `groupIds` lists them (`Ranks`). */
-  leaders: (string | undefined)[];
-  /**
-   * The fight's clock (`Clock`), from the group that carries it (`band`): the steps the light has
-   * dimmed and the one group its calls stand in.
-   */
-  clock?: Clock & { band: number; dim: number; into?: number };
-  round: number;
-  order: TurnRef[];
-  turn: number;
-  /** The company's members down as the fight began: the game's bot flees only once another falls (#723). */
-  downAtStart?: number;
-  /** Rounds left on each party buff: Bless (+to-hit), Ward (+AC), Haste (+speed and +to-hit). */
-  bless: number;
-  shield: number;
-  haste: number;
-  /** Lampglass: the element the party takes half from, and the rounds left on it. */
-  glass?: { element: Element; rounds: number };
-  /** Rounds left on Bless and Ward over each group of monsters, by the group it came in with (`band`). */
-  foeBless: number[];
-  foeShield: number[];
-  /**
-   * What the company has seen each element do to each kind of monster, by its id: the share of a
-   * spell's damage, or of a blow's element die, it took (`elementMult`). A bot learns from it; a
-   * player from the log.
-   */
-  seen: Record<string, Partial<Record<Element, number>>>;
-  /** The most the company has seen each kind of monster mend at a round's end, by its id (`regen`). A bot learns from it. */
-  mends?: Record<string, number>;
-  defending: boolean[];
-  /** To-hit lost by bows, slings and crossbows on both sides: the weather (see weather.ts). */
-  rangedPenalty: number;
-  /** The level damage spells stop growing at, where a tool tries another: SPELLS_GROW_TO in play (see `spellDice`). */
-  spellsGrowTo?: number;
-  /** What a spell rank adds, where a tool tries another: RANK_STEP in play (see `rankMult`). */
-  rankStep?: number;
-  /** What a tool trying new powers gives each member: none in play (see `Edge`). */
-  edge?: (c: Character, s: CombatState) => Edge;
-  log: string[];
-  outcome: Outcome;
-  loot: Loot | null;
-}
-
-/**
- * Where the fight happens, as far as the resolver cares: the weather's toll on missiles, and its line
- * for the log. A tool trying a ceiling on spells may also say where they stop growing, and one trying
- * new powers for the company what each member gains.
- */
-export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; rankStep?: number; edge?: (c: Character, s: CombatState) => Edge; }
-
-/**
- * What a tool trying new powers gives a member in a fight (tools/harness.ts): blows a turn with a
- * weapon, damage added to each, and armour. Play gives none: one blow, nothing added.
- */
-export interface Edge { blows: number; damage: number; ac: number }
-
-/**
- * How a group stands (docs/MONSTERS.md §3.3): the last `back` of its monsters in the back rank, and
- * the monster id of its leader, whose fall breaks the fight's people (`morale`). `under` is a group
- * that fights from under the ice, reaching one square: the front row over it, never the back. `clock`
- * is the Core's (`Clock`).
- */
-export interface Ranks { back?: number; leader?: string; under?: 'ice'; clock?: Clock }
-
-/**
- * The Core's clock (docs/MONSTERS.md §9.3, #748): while a monster the `panel` names stands, the
- * group's leader calls one of `calls` every `every` rounds, on the beat at no cost of a turn and never
- * on its own chance (`beat`), and the light dims a step a round to `dims`, where it holds at a thread
- * (`dim`). The panel down, the calling stops and the light holds where it is. The light never ends a
- * fight.
- */
-export interface Clock { calls: string | MonsterDef; every: number; dims: number; panel: readonly string[] }
-
-/** A group as a fight takes it. Its monsters by id; a tool may hand in defs that no map places (tools/harness.ts). */
-export interface CombatGroup extends Ranks { id: string; monsters: readonly (string | MonsterDef)[] }
-
-/** What a tool fights: a group's monsters, or the group with its ranks. */
-export type Fighters = readonly (string | MonsterDef)[] | (Ranks & { monsters: readonly (string | MonsterDef)[] });
-
-/** The group a tool's fighters make, under `id`. */
-export const asGroup = (id: string, f: Fighters): CombatGroup => ('monsters' in f ? { id, monsters: f.monsters, back: f.back, leader: f.leader, under: f.under, ...(f.clock ? { clock: f.clock } : {}) } : { id, monsters: f });
-
-export const FRONT_ROW = 3;
-/**
- * The most a fight ever holds, those down counted: twelve monsters in three groups (DESIGN §6). A call
- * keeps to it (`canCall`); the clock's keep to twelve and pass the three, into one group (`beat`).
- */
-export const MAX_MONSTERS = 12, MAX_GROUPS = 3;
-
-/** The log's line when people break at their leader's fall, and when beasts run; given who goes, and whether one. */
-export const BREAK_LINE = (names: string, one: boolean): string => one ? `${names} breaks and runs.` : `${names} break and run.`;
-export const ROUT_LINE = (names: string, one: boolean): string => one ? `${names} bolts.` : `${names} bolt.`;
-/**
- * The log's line the first time Smite or Wrath of the Hearth passes through a machine and does nothing
- * (MONSTERS §2), given whether through one; said once a game, and kept by its flag in the party's flags.
- */
-export const GLOVE_LINE = (one: boolean): string => `The light goes into ${one ? 'it' : 'them'} like a hand into a glove.`;
+// The old path: every name the parts held when they were here, given on, so no importer changed.
+export type {
+  MonsterInst, TurnRef, PartyAction, Outcome, Loot, CombatState, CombatOpts, Edge, Ranks, Clock, CombatGroup, Fighters,
+} from './combat/state.ts';
+export {
+  asGroup, FRONT_ROW, MAX_MONSTERS, MAX_GROUPS, BLESS_HIT, HASTE_HIT, HASTE_SPEED, WARD_AC, toHit, standing, frontStands, isLeader,
+  aliveMonsters, ROOTS_CHANCE, HOLD_BREAKS, SLUMBER_CHANCE,
+} from './combat/state.ts';
+export {
+  BREAK_LINE, ROUT_LINE, GLOVE_LINE, STONE_LINE, GLASS_WORD, RITE_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, DIM_LINE, THREAD_LINE, STAND_LINE,
+  SWEEP_LINE, shareRange, victoryLine,
+} from './combat/lines.ts';
+export {
+  PRESTIGE_BLOWS, BANNER_HIT, MARKSMAN_MORE, HOLY_STRIKE_RISEN, SNEAK_GROWTH, VANISH_ROUND, SONG_DMG, SONG_RISEN, rageBelow, blowsOf,
+  sneakDamage, vanished, songWards, buffHit, songDamage, traitDamage, canAttackFromRow,
+} from './combat/perks.ts';
+export { pierces, castOnParty, castOnAlly } from './combat/casting.ts';
+export { canReach, monsterAc, monsterHit, seenMult, sweptRow, canCall, panelStands, meetCalled } from './combat/foes.ts';
 export { GLOVE_FLAG } from './keys.ts';
-/** The log's word when a hit turns a member to glass (#546), in place of the condition's name and a fall. */
-export const STONE_LINE = (who: string): string => `${who} turns to glass!`;
-/** What the buffs are worth while they last. */
-export const BLESS_HIT = 2, HASTE_HIT = 1, HASTE_SPEED = 8, WARD_AC = 3;
-
-// ---- the prestiges' perks (DESIGN §5) ----
-
-/** The blows each prestige adds a turn: a second at the first and a third at the third. */
-export const PRESTIGE_BLOWS: Partial<Record<ClassId, readonly [number, number, number]>> = {
-  knight: [1, 0, 1], barbarian: [1, 0, 1], monk: [1, 0, 1], paladin: [1, 0, 1], ranger: [1, 0, 1], thief: [1, 0, 1],
-};
-/**
- * What the perks are worth: the knight's banner on the front row's to-hit, the ranger's Marksman
- * risen, Holy Strike risen, the thief's sneak attack growing by 2 every two levels past 10, the round
- * it drops from sight, and the bard's song at its first and third.
- */
-export const BANNER_HIT = 2, MARKSMAN_MORE = 2, HOLY_STRIKE_RISEN = 6, SNEAK_GROWTH = 2, VANISH_ROUND = 2, SONG_DMG = 1, SONG_RISEN = 2;
-/** The share of its hit points a barbarian's Rage starts below: half, three quarters at its second prestige. */
-export const rageBelow = (c: Character): number => (c.cls === 'barbarian' && prestigeOf(c) >= 2 ? 0.75 : 0.5);
-
-/**
- * Blows a turn with the weapon in hand: one, and a prestige's more where its weapon suits it, a
- * ranger's with a bow, a thief's with a light weapon, a monk's with a staff or bare hands.
- */
-export function blowsOf(items: Items, c: Character): number {
-  const more = PRESTIGE_BLOWS[c.cls], w = weaponOf(items, c);
-  if (!more) return 1;
-  if ((c.cls === 'ranger' && w.kind !== 'bow') || (c.cls === 'thief' && w.kind !== 'light') || (c.cls === 'monk' && c.equipment.weapon && w.kind !== 'staff')) return 1;
-  return 1 + more.slice(0, prestigeOf(c)).reduce((a, b) => a + b, 0);
-}
-/** The thief's sneak attack: its own, and 2 more every two levels past 10 from its first prestige. */
-export const sneakDamage = (c: Character): number => SNEAK_ATTACK_DMG + (prestigeOf(c) >= 1 ? SNEAK_GROWTH * Math.floor((c.level - 10) / 2) : 0);
-/** The thief's second prestige: in VANISH_ROUND it is out of sight, no foe singles it out, and its blows are sneak attacks. */
-export const vanished = (s: CombatState, c: Character): boolean => c.cls === 'thief' && prestigeOf(c) >= 2 && s.round === VANISH_ROUND;
-/** The bard standing who sings best: its prestiges, or -1 with none standing. */
-const singer = (party: Party): number => Math.max(-1, ...party.members.filter((m) => !isDown(m) && hasTrait(m, 'inspire')).map(prestigeOf));
-/** Whether a standing bard of the second prestige keeps sleep and paralysis off the company. */
-export const songWards = (party: Party, k: Condition): boolean => (k === 'asleep' || k === 'paralysed') && singer(party) >= 2;
-/** Whether the ranger's second prestige keeps the weather off its shots. */
-const weatherproof = (c: Character): boolean => c.cls === 'ranger' && prestigeOf(c) >= 2;
-
-/**
- * The party's current to-hit bonus from buffs, from a bard still standing (more at its third), and
- * for a member of the front row (`at`, its slot) from a knight of the second prestige still standing.
- */
-export function buffHit(s: CombatState, party: Party, at?: number): number {
-  const sung = singer(party), song = sung < 0 ? 0 : sung >= 3 ? SONG_RISEN : INSPIRE_HIT;
-  const banner = at !== undefined && at < FRONT_ROW && party.members.some((m) => !isDown(m) && m.cls === 'knight' && prestigeOf(m) >= 2) ? BANNER_HIT : 0;
-  return (s.bless > 0 ? BLESS_HIT : 0) + (s.haste > 0 ? HASTE_HIT : 0) + song + banner;
-}
-/** The damage a bard's song adds to every blow: 1 from its first prestige, 2 from its third. */
-export function songDamage(party: Party): number {
-  const sung = singer(party);
-  return sung >= 3 ? SONG_RISEN : sung >= 1 ? SONG_DMG : 0;
-}
-
-/** Extra weapon damage from the attacker's traits and prestiges. */
-export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: MonsterInst): number {
-  let n = 0;
-  if (w.ranged) { if (hasTrait(c, 'marksman')) n += MARKSMAN_DMG + (prestigeOf(c) >= 2 ? MARKSMAN_MORE : 0); }
-  else {
-    if (hasTrait(c, 'weapon_master')) n += WEAPON_MASTER_DMG;
-    if (hasTrait(c, 'rage') && c.hp < c.maxHp * rageBelow(c)) n += RAGE_DMG;
-  }
-  if (hasTrait(c, 'holy_strike') && KINDS[m.def.kind].holy) n += c.cls === 'paladin' && prestigeOf(c) >= 2 ? HOLY_STRIKE_RISEN : HOLY_STRIKE_DMG;
-  if (hasTrait(c, 'sneak_attack') && (s.round === 1 || vanished(s, c))) n += sneakDamage(c);
-  return n;
-}
 
 /** Start a fight with up to three groups, twelve monsters at most; each rank of a group is a group of the fight's. */
 export function startCombat(tables: Tables, party: Party, groups: readonly CombatGroup[], rng: RngInstance, opts: CombatOpts = {}): CombatState {
@@ -261,13 +75,6 @@ export function startCombat(tables: Tables, party: Party, groups: readonly Comba
 
 export function describeGroups(s: CombatState): string {
   return describe(s.monsters.filter(standing));
-}
-
-/** Monsters as the log names them: "Bandit", "3 Bandits, Bandit Archer". */
-function describe(ms: readonly MonsterInst[]): string {
-  const counts = new Map<string, { def: MonsterDef; n: number }>();
-  for (const m of ms) { const c = counts.get(m.def.id); if (c) c.n++; else counts.set(m.def.id, { def: m.def, n: 1 }); }
-  return [...counts.values()].map(({ def, n }) => n === 1 ? def.name : `${n} ${def.plural}`).join(', ');
 }
 
 function newRound(s: CombatState, party: Party, rng: RngInstance): void {
@@ -330,54 +137,6 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
     if (hasCondition(c, 'paralysed') && rng.chance(0.35)) { removeCondition(c, 'paralysed'); s.log.push(`${c.name} can move again.`); }
   }
   checkOutcome(s, party, rng);
-}
-
-/** The chance a to-hit bonus has against an armour class, for either side. */
-export function toHit(bonusValue: number, targetAc: number): number {
-  const p = 0.65 + (bonusValue - (targetAc - 10)) * 0.05;
-  return Math.max(0.05, Math.min(0.95, p));
-}
-
-function roll(rng: RngInstance, dice: number, sides: number, plus: number): number {
-  let n = plus;
-  for (let i = 0; i < dice; i++) n += rng.int(1, sides);
-  return Math.max(0, n);
-}
-
-/** Whether the character in party slot `index` may strike with their weapon at all. */
-export function canAttackFromRow(items: Items, c: Character, index: number): boolean {
-  return index < FRONT_ROW || !!weaponOf(items, c).ranged || (c.cls === 'monk' && prestigeOf(c) >= 2);
-}
-
-/** Still in the fight: alive, and not fled. */
-export const standing = (m: MonsterInst): boolean => m.hp > 0 && !m.fled;
-
-/** Whether any of the fight's front rank stands: while one does, the back is out of a blade's reach. */
-export const frontStands = (s: CombatState): boolean => s.monsters.some((m) => standing(m) && !m.back);
-
-/** Whether the character's weapon reaches the monster: a bow or sling any, a blade the back only once the front is down. */
-export function canReach(s: CombatState, c: Character, target: number): boolean {
-  const m = s.monsters[target];
-  return !!m && standing(m) && (!m.back || !!weaponOf(s.tables.items, c).ranged || !frontStands(s));
-}
-
-/** A monster of the back rank with no bow, spell, call or breath waits for the front to fall before it steps up. */
-const waits = (s: CombatState, m: MonsterInst): boolean => m.back && !m.def.ranged && !m.def.cast && !m.def.calls && !m.def.sweep?.element && frontStands(s);
-
-/** A monster's armour, with a Ward over its group. */
-export const monsterAc = (s: CombatState, m: MonsterInst): number => m.def.ac + (s.foeShield[m.band] > 0 ? WARD_AC : 0);
-/** A monster's to-hit, with a Bless over its group and the weather's toll on its bow. */
-export const monsterHit = (s: CombatState, m: MonsterInst): number => m.def.attack + (s.foeBless[m.band] > 0 ? BLESS_HIT : 0) - (m.def.missile ? s.rangedPenalty : 0);
-/** What the company has seen the element do to the monster: the share of a spell's damage or a blow's die, or 1 where it has not seen it. */
-export const seenMult = (s: CombatState, m: MonsterInst, el: Element | undefined): number => (el ? s.seen[m.def.id]?.[el] ?? 1 : 1);
-
-/** Whether the monster leads its group (`Ranks`). */
-export const isLeader = (s: CombatState, m: MonsterInst): boolean => s.leaders[m.band] === m.def.id;
-
-export function aliveMonsters(s: CombatState): number[] {
-  const out: number[] = [];
-  s.monsters.forEach((m, i) => { if (standing(m)) out.push(i); });
-  return out;
 }
 
 /** Resolve the acting character's action. Returns false if the action was not legal (nothing happens). */
@@ -450,386 +209,8 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
   return true;
 }
 
-function hurtMonster(s: CombatState, m: MonsterInst, dmg: number): void {
-  m.hp -= dmg;
-  m.flash = 2;
-  m.conditions = m.conditions.filter((k) => k !== 'asleep');
-}
-
-/**
- * What an element does to a monster, a spell's or a blow's die (#855): its damage by `elementDamage`,
- * which the company now has seen; and fire that lands keeps one that mends from mending at this
- * round's end (`regenerate`).
- */
-function elemental(s: CombatState, m: MonsterInst, el: Element | undefined, d: number, pierce = false): number {
-  if (el) (s.seen[m.def.id] ??= {})[el] = elementMult(m.def, el);
-  const took = elementDamage(m.def, el, d, pierce);
-  if (el === 'fire' && took > 0 && m.def.regen) m.burnt = true;
-  return took;
-}
-
-function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Character, sp: SpellDef, target: number, element?: Element, held = false): void {
-  // A damage spell's roll on one monster: its dice lifted by the caster's ranks, then Spellfire, then
-  // what its element does to the monster (`elemental`). An artifact's (`held`) rolls at the caster's
-  // level held at ARTIFACT_LEVEL, with no rank, tier or trait (DESIGN §9).
-  let gloved = 0;
-  const dmgOf = (m: MonsterInst): number => {
-    const d = held ? roll(rng, spellDice(sp, Math.min(c.level, ARTIFACT_LEVEL), s.spellsGrowTo), sp.sides ?? 4, 0)
-      : Math.round(roll(rng, spellDice(sp, c.level, s.spellsGrowTo), sp.sides ?? 4, 0) * rankMult(c, s.rankStep)) + (hasTrait(c, 'spellfire') ? SPELLFIRE_DMG : 0);
-    const took = elemental(s, m, sp.element, d, !held && pierces(c));
-    // The Hearth's light passes through a machine, doing nothing.
-    if (sp.element === 'holy' && took === 0 && m.def.kind === 'machine') gloved++;
-    return took;
-  };
-  // The first time it does, the log says so, once a game.
-  const glove = (): void => {
-    if (!gloved || party.flags[GLOVE_FLAG]) return;
-    party.flags[GLOVE_FLAG] = 1;
-    s.log.push(GLOVE_LINE(gloved === 1));
-  };
-  switch (sp.target) {
-    case 'enemy': {
-      const m = s.monsters[target];
-      if (!m || !standing(m)) { s.log.push(`${c.name}'s ${sp.name} fizzles.`); return; }
-      const d = dmgOf(m);
-      hurtMonster(s, m, d);
-      s.log.push(`${c.name} casts ${sp.name}: ${m.def.name} takes ${d}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
-      glove();
-      return;
-    }
-    case 'group': {
-      const m0 = s.monsters[target];
-      if (!m0 || !standing(m0)) { s.log.push(`${c.name}'s ${sp.name} fizzles.`); return; }
-      const members = s.monsters.filter((m) => m.group === m0.group && standing(m));
-      if (sp.inflict) {
-        let n = 0;
-        const chance = sp.inflict === 'paralysed' ? ROOTS_CHANCE : SLUMBER_CHANCE;
-        // Slumber's line counts the kind it names, the target's, so that a kind it cannot take shows in a mixed group (#853).
-        let kin = 0;
-        for (const m of members) if (!monsterImmune(m.def, sp.inflict) && rng.chance(chance)) { m.conditions = [sp.inflict]; n++; if (m.def.id === m0.def.id) kin++; }
-        s.log.push(sp.inflict === 'asleep' ? `${c.name} casts ${sp.name}: ${kin} of the ${m0.def.plural} fall asleep.`
-          : n ? `${c.name} casts ${sp.name}: ${n} of the ${m0.def.plural} ${n === 1 ? 'is' : 'are'} held fast.` : `${c.name} casts ${sp.name}, but no root holds.`);
-      } else {
-        let total = 0, killed = 0;
-        for (const m of members) { const d = dmgOf(m); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
-        s.log.push(`${c.name} casts ${sp.name}: ${total} damage to the ${m0.def.plural}` + (killed ? `, ${killed} slain.` : '.'));
-        glove();
-      }
-      return;
-    }
-    case 'all': {
-      const members = s.monsters.filter(standing);
-      let total = 0, killed = 0;
-      for (const m of members) { const d = dmgOf(m); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
-      s.log.push(`${c.name} casts ${sp.name}: ${total} damage to every foe` + (killed ? `, ${killed} slain.` : '.'));
-      glove();
-      return;
-    }
-    case 'ally': {
-      const a = party.members[target] ?? c;
-      s.log.push(castOnAlly(s.tables.items, c, sp, a, s.rankStep));
-      return;
-    }
-    case 'party':
-      if (sp.buff === 'bless') { s.bless = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. The party is blessed.`); }
-      else if (sp.buff === 'shield') { s.shield = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. A ward settles over the party.`); }
-      else if (sp.buff === 'haste') { s.haste = sp.turns ?? 5; s.log.push(`${c.name} casts ${sp.name}. The party quickens.`); }
-      else if (sp.glass && element) { s.glass = { element, rounds: sp.turns ?? 5 }; s.log.push(`${c.name} casts ${sp.name}. The glass dims the ${GLASS_WORD[element]}.`); }
-      else if (sp.heal || sp.cure) s.log.push(castOnParty(s.tables.items, c, sp, party, s.rankStep));
-      return;
-    default:
-      s.log.push(`${c.name} casts ${sp.name}.`);
-  }
-}
-
-/** The sorcerer's third rank (DESIGN §5): its damage spells pass a monster's resistance to their element, never an immunity. */
-export const pierces = (c: Character): boolean => c.cls === 'sorcerer' && spellRank(c) >= 3;
-
-/** What Lampglass's line calls each element: the wood for nature, the light for holy. */
-export const GLASS_WORD: Record<Element, string> = { fire: 'fire', cold: 'cold', lightning: 'lightning', nature: 'wood', holy: 'light' };
-/** The chance Grasping Roots holds each one it falls on, and the chance a round each held monster tears free. */
-export const ROOTS_CHANCE = 0.5, HOLD_BREAKS = 0.35;
-
-/**
- * A healing or curing spell on the whole party, shared by combat and exploration: each member not dead
- * or stoned is healed (see spellHeal) and cured. Returns the log line.
- */
-export function castOnParty(items: Items, c: Character, sp: SpellDef, party: Party, step?: number): string {
-  for (const a of party.members) {
-    if (hasCondition(a, 'dead') || hasCondition(a, 'stoned')) continue;
-    if (sp.heal) heal(a, spellHeal(items, c, sp.heal, step));
-    for (const k of sp.cure ?? []) removeCondition(a, k as Condition);
-  }
-  return `${c.name} casts ${sp.name}. The party is ${sp.heal && sp.cure ? 'healed and cleansed' : sp.heal ? 'healed' : 'cleansed'}.`;
-}
-
-/**
- * A healing, curing or raising spell on one ally, shared by combat and exploration. Returns the log
- * line. Raising brings the dead back at `heal` hp; other healing scales with the caster (see spellHeal).
- * Absolve lifts stone and curse: the stoned come back as they were, out cold if their wounds say so.
- */
-export function castOnAlly(items: Items, c: Character, sp: SpellDef, a: Character, step?: number): string {
-  if (sp.cure?.includes('stoned')) {
-    const curse = hasCondition(a, 'cursed'), stone = lift(items, a, sp.cure);
-    return stone && curse ? `${c.name} casts ${sp.name}: ${a.name} is flesh again, and the curse lifts.` : stone ? `${c.name} casts ${sp.name}: ${a.name} is flesh again.`
-      : curse ? `${c.name} casts ${sp.name}: the curse lifts from ${a.name}.` : `${c.name} casts ${sp.name}, but ${a.name} needs no absolving.`;
-  }
-  if (sp.raise) {
-    if (!hasCondition(a, 'dead')) return `${c.name} casts ${sp.name}, but ${a.name} is not dead.`;
-    a.conditions = a.conditions.filter((k) => k === 'cursed');
-    a.hp = Math.min(a.maxHp, Math.max(1, sp.heal ?? 1));
-    return `${c.name} casts ${sp.name}: ${a.name} draws breath again.`;
-  }
-  const parts: string[] = [];
-  if (sp.heal) parts.push(`${a.name} recovers ${heal(a, spellHeal(items, c, sp.heal, step))}`);
-  if (sp.cure) { for (const k of sp.cure) removeCondition(a, k as Condition); if (!sp.heal) parts.push(`${a.name} is cleansed`); }
-  return `${c.name} casts ${sp.name}: ${parts.join(', ')}.`;
-}
-
-/** The party's members in a row, front or back, still standing. */
-const rowOf = (party: Party, back: boolean): { c: Character; i: number }[] =>
-  party.members.map((c, i) => ({ c, i })).filter(({ c, i }) => (i >= FRONT_ROW) === back && !isDown(c));
-
-/** The row a monster's spell on a row or its breath falls on: the one with more standing in it (for Slumber, `awake`, more awake), the front on a tie. */
-function rowFor(party: Party, awake = false): { c: Character; i: number }[] {
-  const count = (back: boolean): number => rowOf(party, back).filter(({ c }) => !awake || !hasCondition(c, 'asleep')).length;
-  return rowOf(party, count(true) > count(false));
-}
-
-/**
- * The row a sweep falls on (`MonsterDef.sweep`): an arm's the front, the back once the front is down,
- * as its blows reach; a breath's the row with more standing in it, the front on a tie, as a monster's
- * Fire Bolt falls. From under the ice either reaches only the front row over it. Its members still
- * standing, the asleep and the held among them; the fallen are passed over.
- */
-export function sweptRow(party: Party, m: Pick<MonsterInst, 'def' | 'under'>): { c: Character; i: number }[] {
-  const front = rowOf(party, false);
-  if (m.under) return front;
-  if (m.def.sweep?.element) return rowFor(party);
-  return front.length ? front : rowOf(party, true);
-}
-
-/** A member's armour against a monster's blow or sweep: bracing, the Ward over the party and their own edge. */
-const guard = (s: CombatState, c: Character, i: number): number => armorClass(s.tables.items, c) + (s.defending[i] ? 4 : 0) + (s.shield > 0 ? WARD_AC : 0) + (s.edge?.(c, s).ac ?? 0);
-
-/** Whether Lampglass or a member's own resistance halves an element on them: once between them, never to a quarter (#555). */
-const dimmed = (s: CombatState, c: Character, el: Element | undefined): boolean => !!el && (s.glass?.element === el || resists(s.tables.items, c).includes(el));
-
-/** The monster's group still in the fight: those that came in with it. */
-const bandOf = (s: CombatState, m: MonsterInst): MonsterInst[] => s.monsters.filter((q) => q.band === m.band && standing(q));
-/** A group as a line names it: its kind's plural where it is one kind, else "its group". */
-const bandName = (ms: readonly MonsterInst[]): string => (ms.length === 1 ? ms[0].def.name : ms.every((q) => q.def === ms[0].def) ? `The ${ms[0].def.plural}` : 'Its group');
-/** The verb a group's line takes: "The Chanters are", "Its group is". */
-const isAre = (ms: readonly MonsterInst[]): string => (ms.length > 1 && ms.every((q) => q.def === ms[0].def) ? 'are' : 'is');
-/** What a monster's mend restores: the spell's, and its level held to SPELLS_GROW_TO, which stands for a caster's gifts. */
-const foeHeal = (m: MonsterInst, sp: SpellDef): number => (sp.heal ?? 0) + Math.min(m.def.level, SPELLS_GROW_TO);
-/** Whether any of a monster's group is under three quarters of its hit points. */
-const hurt = (q: MonsterInst): boolean => q.hp < q.def.hp * 0.75;
-
-/** Whether the spell would do anything now: a mend with one of its group hurt, a buff not running, Slumber with a row awake. */
-function castable(s: CombatState, party: Party, m: MonsterInst, sp: SpellDef): boolean {
-  if (sp.heal) return bandOf(s, m).some(hurt);
-  if (sp.buff === 'bless') return !(s.foeBless[m.band] > 0);
-  if (sp.buff === 'shield') return !(s.foeShield[m.band] > 0);
-  if (sp.inflict) return rowFor(party, true).some(({ c }) => !hasCondition(c, 'asleep'));
-  return true;
-}
-
-/** Names as a line gives them: "Bram", "Bram and Idris", "Bram, Idris and Wren". */
-const names = (cs: readonly Character[]): string => cs.length < 2 ? cs.map((c) => c.name).join('') : `${cs.slice(0, -1).map((c) => c.name).join(', ')} and ${cs[cs.length - 1].name}`;
-
-/**
- * A member takes a monster's blow or spell: a sleeper is woken by it, unless it fells them. A blow
- * that would kill is held at 1 hit point, once between rests, by a cleric of the third prestige who is
- * not dead (`riteSpent`). Returns what the line adds.
- */
-function struck(items: Items, party: Party, c: Character, dmg: number): string {
-  const slept = hasCondition(c, 'asleep');
-  const rite = !isDown(c) && c.hp - dmg <= deathAt(c) ? party.members.find((m) => m.cls === 'cleric' && prestigeOf(m) >= 3 && !m.riteSpent && !hasCondition(m, 'dead')) : undefined;
-  if (rite) { rite.riteSpent = true; c.hp = 1; removeCondition(c, 'asleep'); return ` ${RITE_LINE(rite.name, c.name)}`; }
-  damage(items, c, dmg);
-  if (slept && !isDown(c) && dmg > 0) { removeCondition(c, 'asleep'); return ` ${c.name} wakes.`; }
-  return '';
-}
-
-/** A monster's turn spent on a spell (`MonsterDef.cast`): at its level held to SPELLS_GROW_TO, unranked, with no Spellfire. */
-function monsterCast(s: CombatState, party: Party, rng: RngInstance, m: MonsterInst, sp: SpellDef): void {
-  const who = m.def.name;
-  const dmgOf = (k: number): number => {
-    let d = roll(rng, spellDice(sp, m.def.level), sp.sides ?? 4, 0);
-    if (s.defending[k]) d = Math.ceil(d / 2);
-    return dimmed(s, party.members[k], sp.element) ? Math.ceil(d / 2) : d;
-  };
-  if (sp.heal) {
-    const mine = bandOf(s, m);
-    if (sp.target === 'party') { for (const q of mine) q.hp = Math.min(q.def.hp, q.hp + foeHeal(m, sp)); s.log.push(`${who} casts ${sp.name}. ${bandName(mine)} ${isAre(mine)} healed.`); return; }
-    const q = mine.reduce((a, b) => (b.hp / b.def.hp < a.hp / a.def.hp ? b : a));
-    const n = Math.min(q.def.hp, q.hp + foeHeal(m, sp)) - q.hp;
-    q.hp += n;
-    s.log.push(q === m ? `${who} casts ${sp.name} and recovers ${n}.` : `${who} casts ${sp.name}: ${q.def.name} recovers ${n}.`);
-    return;
-  }
-  if (sp.buff) {
-    const mine = bandOf(s, m), group = bandName(mine);
-    if (sp.buff === 'bless') { s.foeBless[m.band] = sp.turns ?? 5; s.log.push(`${who} casts ${sp.name}. ${group} ${isAre(mine)} blessed.`); }
-    else { s.foeShield[m.band] = sp.turns ?? 5; s.log.push(`${who} casts ${sp.name}. A ward settles over ${mine.length === 1 ? mine[0].def.name : group === 'Its group' ? 'its group' : `the ${mine[0].def.plural}`}.`); }
-    return;
-  }
-  if (sp.inflict) {
-    const fell: Character[] = [];
-    for (const { c } of rowFor(party, true)) if (!hasCondition(c, sp.inflict) && !songWards(party, sp.inflict) && rng.chance(SLUMBER_CHANCE)) { const before = c.conditions.length; addCondition(s.tables.items, c, sp.inflict); if (c.conditions.length > before) fell.push(c); }
-    s.log.push(fell.length ? `${who} casts ${sp.name}: ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'} asleep.` : `${who} casts ${sp.name}, but no one sleeps.`);
-    return;
-  }
-  if (sp.target === 'enemy') {
-    const up = party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c)), marks = up.filter(({ c }) => !vanished(s, c));
-    const pick = rng.pick(marks.length ? marks : up);
-    if (!pick) return;
-    const d = dmgOf(pick.i), woke = struck(s.tables.items, party, pick.c, d);
-    s.log.push(`${who} casts ${sp.name}: ${pick.c.name} takes ${d}.${woke}` + (isDown(pick.c) ? ` ${pick.c.name} falls!` : ''));
-    return;
-  }
-  const row = sp.target === 'all' ? party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c)) : rowFor(party);
-  let total = 0, woke = '';
-  for (const { c, i } of row) { const d = dmgOf(i); total += d; woke += struck(s.tables.items, party, c, d); }
-  const fell = row.map(({ c }) => c).filter(isDown);
-  const where = sp.target === 'all' ? 'the party' : row[0] && row[0].i >= FRONT_ROW ? 'the back row' : 'the front row';
-  s.log.push(`${who} casts ${sp.name}: ${total} damage to ${where}.${woke}` + (fell.length ? ` ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'}!` : ''));
-}
-
-/** The log's words when a cleric's last rite holds someone back from death. */
-export const RITE_LINE = (cleric: string, who: string): string => (cleric === who ? `${cleric}'s own rite holds. ${cleric} does not fall.` : `${cleric}'s rite holds. ${who} does not fall.`);
-
 /** Sleep is a fight's: its sleepers wake once it is over, won or fled. */
 function wake(party: Party): void { for (const c of party.members) removeCondition(c, 'asleep'); }
-
-/** The chance Slumber puts each one it falls on to sleep, cast by either side. */
-export const SLUMBER_CHANCE = 0.7;
-
-/** The log's lines: a round's mending, one kept from it by fire (`regenerate`) and a call answered (`call`). */
-export const MEND_LINE = (names: string, one: boolean, n: number): string => `${names} ${one ? 'mends' : 'mend'} ${n}.`;
-export const SMOULDER_LINE = (names: string, one: boolean): string => one ? `${names} smoulders and does not mend.` : `${names} smoulder and do not mend.`;
-export const CALL_LINE = (caller: string, names: string, one: boolean): string => `${caller} calls, and ${names} ${one ? 'answers' : 'answer'}.`;
-/** The log's lines under the clock (`dim`): every third step of the light, and its last. */
-export const DIM_LINE = 'Through the roof, the light goes out a little.', THREAD_LINE = 'The light holds at a thread.';
-/** The log's line when those that obey stand down at the last leader's fall (`morale`). */
-export const STAND_LINE = (names: string, one: boolean): string => `${names} ${one ? 'stands' : 'stand'} down.`;
-/** The log's line for a sweep (`sweep`): an arm across a row or a breath of its element on one, and what it dealt, or its miss. */
-export const SWEEP_LINE = (who: string, el: Element | undefined, row: string, dealt?: number): string =>
-  `${who} ${el ? `breathes ${GLASS_WORD[el]} on` : 'sweeps'} ${row}${dealt === undefined ? ' and misses.' : `: ${dealt} damage.`}`;
-
-/**
- * A monster's turn spent on a sweep (`MonsterDef.sweep`, #545): one attack at every member of its row
- * (`sweptRow`), a to-hit and its own dice rolled for each, halved for one bracing and, for a breath,
- * once more where Lampglass or the member's own resistance dims its element. False, and the turn is
- * a blow's, where the row is empty.
- */
-function sweep(s: CombatState, party: Party, rng: RngInstance, m: MonsterInst): boolean {
-  const row = sweptRow(party, m), el = m.def.sweep?.element;
-  if (!row.length) return false;
-  let dealt: number | undefined, woke = '';
-  for (const { c, i } of row) {
-    if (!rng.chance(toHit(monsterHit(s, m), guard(s, c, i)))) continue;
-    let d = roll(rng, m.def.dice, m.def.sides, m.def.bonus);
-    if (s.defending[i]) d = Math.ceil(d / 2);
-    if (dimmed(s, c, el)) d = Math.ceil(d / 2);
-    dealt = (dealt ?? 0) + d;
-    woke += struck(s.tables.items, party, c, d);
-  }
-  const fell = row.map(({ c }) => c).filter(isDown);
-  s.log.push(SWEEP_LINE(m.def.name, el, row[0].i >= FRONT_ROW ? 'the back row' : 'the front row', dealt) + woke + (fell.length ? ` ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'}!` : ''));
-  return true;
-}
-
-/**
- * The round's end for what mends (`MonsterDef.regen`): each one standing mends its amount, never past
- * its own hit points, unless fire burnt it this round, and the burns are the round's. The company
- * sees each kind mend (`mends`), and the log says who mended and who smouldered.
- */
-function regenerate(s: CombatState): void {
-  const mended: MonsterInst[] = [], burnt: MonsterInst[] = [];
-  let total = 0;
-  for (const m of s.monsters) {
-    if (!m.def.regen) continue;
-    const fire = !!m.burnt;
-    m.burnt = false;
-    if (!standing(m) || m.hp >= m.def.hp) continue;
-    if (fire) { burnt.push(m); continue; }
-    const n = Math.min(m.def.regen, m.def.hp - m.hp), known = (s.mends ??= {});
-    m.hp += n; total += n; mended.push(m);
-    known[m.def.id] = Math.max(known[m.def.id] ?? 0, n);
-  }
-  if (mended.length) s.log.push(MEND_LINE(describe(mended), mended.length === 1, total));
-  if (burnt.length) s.log.push(SMOULDER_LINE(describe(burnt), burnt.length === 1));
-}
-
-/**
- * The light under the clock (`Clock`) at a round's end: a step darker while the panel stands, to
- * `dims`, where it holds at a thread. The log says it every third step and at the last.
- */
-function dim(s: CombatState): void {
-  const c = s.clock;
-  if (!c || c.dim >= c.dims || !panelStands(s)) return;
-  c.dim++;
-  if (c.dim === c.dims) s.log.push(THREAD_LINE);
-  else if (c.dim % 3 === 0) s.log.push(DIM_LINE);
-}
-
-/** The group a caller brings (`MonsterDef.calls`), as defs; none for one that calls nobody. */
-const calledBy = (monsters: Tables['monsters'], d: MonsterDef): MonsterDef[] => (d.calls?.monsters ?? []).map((q) => (typeof q === 'string' ? monster(monsters, q) : q));
-
-/**
- * Whether a monster may call its group now: it stands, it calls someone, and the fight has room for
- * the whole group under MAX_GROUPS and MAX_MONSTERS, those already down counted, so that however long
- * a fight runs it never grows past the cap. A group too big for the room left is not called at all.
- */
-export function canCall(s: CombatState, m: MonsterInst): boolean {
-  const n = m.def.calls?.monsters.length ?? 0;
-  return standing(m) && n > 0 && s.groupIds.length < MAX_GROUPS && s.monsters.length + n <= MAX_MONSTERS;
-}
-
-/** Whether a monster the clock's panel names stands (`Clock.panel`): while one does, the clock runs. */
-export const panelStands = (s: CombatState): boolean => !!s.clock && s.monsters.some((m) => standing(m) && s.clock!.panel.includes(m.def.id));
-
-/** Whether a monster calls on the clock and never on its own chance: a leader of the group that carries it. */
-const clocked = (s: CombatState, m: MonsterInst): boolean => !!s.clock && m.band === s.clock.band && isLeader(s, m);
-
-/**
- * The clock's call at the end of a round on its beat (`Clock`): while its caller and the panel stand
- * and the fight holds fewer than twelve, those down counted, the caller calls one more, costing it no
- * turn. The calls ignore `calls.chance` and pass MAX_GROUPS, all standing in the one group the first
- * opened, which grows.
- */
-function beat(s: CombatState): void {
-  const c = s.clock;
-  if (!c || s.round % c.every !== 0 || !panelStands(s) || s.monsters.length >= MAX_MONSTERS) return;
-  const caller = s.monsters.find((m) => clocked(s, m) && standing(m));
-  if (caller) c.into = call(s, caller, [typeof c.calls === 'string' ? monster(s.tables.monsters, c.calls) : c.calls], c.into);
-}
-
-/**
- * A call: `defs` come into the fight whole and act from the next round, in the front rank, as a group
- * of its own with no leader, or into the group `into` (the clock's). The group they stand in.
- */
-function call(s: CombatState, m: MonsterInst, defs: readonly MonsterDef[], into?: number): number {
-  const band = into ?? s.groupIds.length, rank = into === undefined ? Math.max(-1, ...s.monsters.map((q) => q.group)) + 1 : s.monsters.find((q) => q.band === into)!.group;
-  const come = defs.map((def): MonsterInst => ({ def, hp: def.hp, group: rank, band, back: false, fled: false, conditions: [], flash: 0 }));
-  if (into === undefined) { s.groupIds.push(`${s.groupIds[m.band]}:call${band}`); s.leaders.push(undefined); s.foeBless.push(0); s.foeShield.push(0); }
-  s.monsters.push(...come);
-  s.log.push(CALL_LINE(m.def.name, describe(come), come.length === 1));
-  return band;
-}
-
-/**
- * A group called into the fight says the look of each kind in it the company has not met, as the
- * fight's first groups do (`World.meet`, #978). `bands` is how many groups the fight held when last
- * looked at; the count it holds now is returned.
- */
-export function meetCalled(world: Pick<World, 'meet'>, s: CombatState, bands: number): number {
-  if (s.groupIds.length === bands) return bands;
-  s.log.push(...world.meet(s.monsters.filter((m) => m.band >= bands).map((m) => m.def.id)));
-  return s.groupIds.length;
-}
 
 /** Resolve the acting monster's turn. */
 export function monsterAct(s: CombatState, party: Party, rng: RngInstance): boolean {
@@ -881,42 +262,6 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   s.turn++;
   checkOutcome(s, party, rng);
   return true;
-}
-
-/** The least and the most share a fight paid, the same where all took one. */
-export function shareRange(loot: Loot): [number, number] {
-  return loot.shares.length ? [Math.min(...loot.shares), Math.max(...loot.shares)] : [0, 0];
-}
-
-/** The log's line for a won fight: what it was worth, or the least and most share where levels made them differ. */
-export function victoryLine(loot: Loot): string {
-  const [least, most] = shareRange(loot);
-  return least === most ? `Victory! ${loot.xp} experience, ${loot.gold} gold.` : `Victory! ${least} to ${most} experience by level, ${loot.gold} gold.`;
-}
-
-/**
- * Who breaks (docs/MONSTERS.md §2, §3.3): once every leader in the fight is down its people leave it,
- * and those that `obeys` stand down though their kind never breaks; and a group's beasts once three
- * in four of them are down. A `steady` monster never breaks, nor a kind that does not. The fled pay
- * nothing.
- */
-function morale(s: CombatState): void {
-  const breaks = (m: MonsterInst, how: 'leader' | 'rout'): boolean => standing(m) && !m.def.steady && KINDS[m.def.kind].breaks === how;
-  const leaders = s.monsters.filter((m) => isLeader(s, m));
-  if (leaders.length && leaders.every((m) => !standing(m))) {
-    const gone = s.monsters.filter((m) => breaks(m, 'leader')), stood = s.monsters.filter((m) => m.def.obeys && standing(m) && !gone.includes(m));
-    for (const m of [...gone, ...stood]) m.fled = true;
-    if (gone.length) s.log.push(BREAK_LINE(describe(gone), gone.length === 1));
-    if (stood.length) s.log.push(STAND_LINE(describe(stood), stood.length === 1));
-  }
-  s.groupIds.forEach((_, band) => {
-    const beasts = s.monsters.filter((m) => m.band === band && !m.def.steady && KINDS[m.def.kind].breaks === 'rout');
-    const down = beasts.filter((m) => !standing(m)).length;
-    if (down * 4 < beasts.length * 3) return;
-    const gone = beasts.filter((m) => breaks(m, 'rout'));
-    for (const m of gone) m.fled = true;
-    if (gone.length) s.log.push(ROUT_LINE(describe(gone), gone.length === 1));
-  });
 }
 
 function checkOutcome(s: CombatState, party: Party, rng: RngInstance): void {
