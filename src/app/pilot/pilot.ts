@@ -3,8 +3,8 @@
 // (known.ts) and presses the keys a player would, one action a paced tick, through `Game.update`.
 // This is its frame: on and off, the tempo, the why line, the fights handed to the bot and the boxes
 // closed. Which key it presses on the map is the brains' to say, each in a module of its own.
-import type { Game } from '../../game/game.ts';
-import { ExploreScreen } from '../../game/game.ts';
+import type { Game } from '../game.ts';
+import { ExploreScreen } from '../../ui/explore.ts';
 import type { Passage } from '../../game/mapdef.ts';
 import { isDown } from '../../game/party.ts';
 import type { Party } from '../../game/party.ts';

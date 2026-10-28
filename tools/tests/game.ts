@@ -2,7 +2,7 @@
 // presses, which is what the pilot's tests stand on (headlessGame and drive, in lib.ts). Plain node
 // only strips types, so the screens that once took their arguments as parameter properties are each
 // built and read back here as well.
-import { Game } from '../../src/game/game.ts';
+import { Game } from '../../src/app/game.ts';
 import { ChoiceScreen, SheetScreen } from '../../src/ui/screens.ts';
 import { CombatScreen } from '../../src/ui/combat.ts';
 import type { WorldMapScreen } from '../../src/ui/worldmap.ts';

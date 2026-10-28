@@ -6,7 +6,7 @@
 // person or a statue holds, nor a shop's wares before its menu has shown them: a group is a square
 // the automap marks, and no more. The headless run's omniscient view (#723), which the game never
 // sets, has every square seen, each cell as it is and the secret doors as written (`secrets`).
-import type { Game } from '../../game/game.ts';
+import type { Game } from '../game.ts';
 import type { GameMap } from '../../game/map.ts';
 import type { Cell, Exit, Feature, MapZone } from '../../game/mapdef.ts';
 import type { Party } from '../../game/party.ts';

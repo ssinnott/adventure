@@ -1,29 +1,12 @@
 // Keyboard input as a queue of presses. Grid movement wants one step per press (with the browser's
 // own key repeat for holding a key), so the game consumes discrete events rather than polling a
 // held-state table. `held` is kept for the few places that want it (skipping a log).
+import { KEYS } from '../ui/actions.ts';
+import type { Action } from '../ui/actions.ts';
 
-export type Action =
-  | 'forward' | 'back' | 'turnLeft' | 'turnRight' | 'strafeLeft' | 'strafeRight'
-  | 'interact' | 'cancel' | 'map' | 'rest' | 'search' | 'cast' | 'inventory' | 'journal'
-  | 'up' | 'down' | 'left' | 'right'
-  | 'n1' | 'n2' | 'n3' | 'n4' | 'n5' | 'n6' | 'n7' | 'n8' | 'n9' | 'n0'
-  | 'save' | 'load' | 'next' | 'zoom'
-  /** P hands the game to the pilot and takes it back; T sets its tempo (src/main.ts takes both before any screen). */
-  | 'pilot' | 'tempo';
-
-const KEYS: Record<string, Action[]> = {
-  ArrowUp: ['forward', 'up'], KeyW: ['forward', 'up'],
-  ArrowDown: ['back', 'down'], KeyS: ['back', 'down'],
-  ArrowLeft: ['turnLeft', 'left'], KeyA: ['turnLeft', 'left'],
-  ArrowRight: ['turnRight', 'right'], KeyD: ['turnRight', 'right'],
-  KeyQ: ['strafeLeft'], KeyE: ['strafeRight'],
-  Space: ['interact'], Enter: ['interact'], NumpadEnter: ['interact'],
-  Escape: ['cancel'], Backspace: ['cancel'], Tab: ['next'],
-  KeyM: ['map'], KeyR: ['rest'], KeyF: ['search'], KeyC: ['cast'], KeyI: ['inventory'], KeyJ: ['journal'],
-  Digit1: ['n1'], Digit2: ['n2'], Digit3: ['n3'], Digit4: ['n4'], Digit5: ['n5'], Digit6: ['n6'], Digit7: ['n7'], Digit8: ['n8'], Digit9: ['n9'], Digit0: ['n0'],
-  F5: ['save'], F9: ['load'], KeyZ: ['zoom'],
-  KeyP: ['pilot'], KeyT: ['tempo'],
-};
+// What a press means is the screens' (ui/actions.ts); the suites and the pilot take it here too.
+export type { Action } from '../ui/actions.ts';
+export { is } from '../ui/actions.ts';
 
 export class Input {
   private queue: Action[] = [];
@@ -70,15 +53,4 @@ export function drainTyped(typed: string[], current: string, max = 12): string {
   for (const ch of typed) current = ch === '\b' ? current.slice(0, -1) : current.length < max ? current + ch : current;
   typed.length = 0;
   return current;
-}
-
-/** The alias table, so screens can ask "was this press an 'up'?" for a key that is also 'forward'. */
-export function aliases(a: Action): Action[] {
-  for (const list of Object.values(KEYS)) if (list[0] === a) return list;
-  return [a];
-}
-export function is(a: Action | null, ...any: Action[]): boolean {
-  if (!a) return false;
-  const al = aliases(a);
-  return any.some((x) => al.includes(x));
 }

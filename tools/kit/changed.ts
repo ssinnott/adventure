@@ -169,7 +169,7 @@ const READ_BY_NONE = [/^docs\//, /^(README|CLAUDE)\.md$/, /^types\//, /^\.github
 /** What decides what runs: the workflow, the runner, this file and the kit it reads, the graph's and the lanes' (the diff's files). */
 const DECIDES = ['.github/workflows/checks.yml', 'tools/test.ts', 'tools/changed.ts', 'tools/kit/changed.ts', 'tools/kit/graph.ts', 'tools/kit/lanes.ts'];
 /**
- * The drawings, the monsters' and the rooms': the gate and the walkthroughs load them (src/game/game.ts
+ * The drawings, the monsters' and the rooms': the gate and the walkthroughs load them (src/app/game.ts
  * takes the screens) and draw none. A V8 coverage run (NODE_V8_COVERAGE) of both on 4b8986c9 (#955):
  * of the 913 functions of their 109 modules, 4 ran, each called by its own module's top level as it
  * loads (the barrel's `merge`, a table of points in cats.ts, the lantern's in hearth/bowl_lantern.ts).

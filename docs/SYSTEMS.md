@@ -11,13 +11,15 @@ in `docs/areas/`. Cut from the slice's doc by #1023, which keeps that doc whole 
 - **`src/lib/`** is the engine, vendored: never edited here. Its synth stack is unused.
 - **`src/game/`** is the model: the world, the party, combat, the people, the quests, the save and
   the rest, pure where it can be, so the tests play it as the game does; the tables it reads are
-  content's, handed in (#973 to #976), and only `game.ts` takes content as it loads.
+  content's, handed in (#973 to #976), and it loads nothing of content, the UI or the app.
 - **`src/content/`** is what the game is made of: an area to a folder, `src/content/areas/<area>/`,
   listed once in road order in `src/content/index.ts`, which merges their tables; the tables no
   area owns; and the world map's plan, `src/content/atlas.ts`.
-- **`src/ui/`** is the screens, the frame, the viewport, the world map and the art (below).
-- **`src/app/`** is the app, over the UI: the keyboard's queue (`input.ts`) and the pilot, which
-  plays the game for watching (`pilot/`, docs/PILOT.md). The entry, `src/main.ts`, is the app's.
+- **`src/ui/`** is the screens, the frame, the viewport, the world map and the art (below). The
+  screens ask the game only what the `Host` (`screen.ts`) carries, so no file of it names the app.
+- **`src/app/`** is the app, over the UI: the `Game` (`game.ts`: the screen stack, save and load,
+  attract mode), the keyboard's queue (`input.ts`) and the pilot, which plays the game for
+  watching (`pilot/`, docs/PILOT.md). The entry, `src/main.ts`, is the app's.
 - **`tools/`** is the tools, each one's usage in its header; `tools/kit/` is what they share with
   the suites and the walkthroughs (the headless game, the fight, the company, the line and the
   rules, #984); `tools/tests/` holds the suites, a file each, which `tools/test.ts` finds.

@@ -23,11 +23,12 @@ for (let c = 0; c < 128; c++) WORD[c] = /[\w$]/.test(String.fromCharCode(c)) ? 1
 const BEFORE_REGEX = new Set(['return', 'typeof', 'instanceof', 'in', 'of', 'new', 'delete', 'void', 'throw', 'case', 'do', 'else', 'yield', 'await']);
 
 /**
- * The imports a file makes as it runs, and how many it makes in types alone. Comments, strings,
- * template literals and regular expressions are skipped whole, so an import written inside one is
- * not taken; the import forms are read from the tokens between.
+ * The imports a file makes as it runs, and how many it makes in types alone, with their paths
+ * (`typed`, which the layers check reads for the UI, #1022). Comments, strings, template literals
+ * and regular expressions are skipped whole, so an import written inside one is not taken; the
+ * import forms are read from the tokens between.
  */
-export function imports(text: string): { runtime: Spec[]; types: number } {
+export function imports(text: string): { runtime: Spec[]; types: number; typed: string[] } {
   const n = text.length;
   let i = 0;
   /** Each open brace, true where a template's `${` opened it. */
@@ -108,7 +109,7 @@ export function imports(text: string): { runtime: Spec[]; types: number } {
     return undefined;
   };
   const runtime: Spec[] = [];
-  let types = 0;
+  const typed: string[] = [];
   while (next()) {
     if ((!is('w', 'import') && !is('w', 'export')) || (prevKind === 'p' && prevValue === '.')) continue;
     const word = v(), before = prevKind === 'w' ? prevValue : '';
@@ -126,7 +127,7 @@ export function imports(text: string): { runtime: Spec[]; types: number } {
           if (is('p', '.')) inType ||= next() && k() === 'w' && !['then', 'catch', 'finally'].includes(v());
           held = true;
         }
-        if (inType) types++; else runtime.push({ path, dynamic: true });
+        if (inType) typed.push(path); else runtime.push({ path, dynamic: true });
         continue;
       }
       if (k() === 's') { runtime.push({ path: v(), dynamic: false }); continue; }
@@ -140,7 +141,7 @@ export function imports(text: string): { runtime: Spec[]; types: number } {
         held = true;
       }
       const path = from();
-      if (path !== undefined) { if (type) types++; else runtime.push({ path, dynamic: false }); }
+      if (path !== undefined) { if (type) typed.push(path); else runtime.push({ path, dynamic: false }); }
       continue;
     }
     let type = false;
@@ -150,15 +151,15 @@ export function imports(text: string): { runtime: Spec[]; types: number } {
     }
     if (is('p', '*')) {
       const path = from();
-      if (path !== undefined) { if (type) types++; else runtime.push({ path, dynamic: false }); }
+      if (path !== undefined) { if (type) typed.push(path); else runtime.push({ path, dynamic: false }); }
     } else if (is('p', '{')) {
       while (next() && !is('p', '}'));
       if (next() && is('w', 'from')) {
-        if (next() && k() === 's') { if (type) types++; else runtime.push({ path: v(), dynamic: false }); } else held = true;
+        if (next() && k() === 's') { if (type) typed.push(v()); else runtime.push({ path: v(), dynamic: false }); } else held = true;
       } else held = true;
     } else held = true;
   }
-  return { runtime, types };
+  return { runtime, types: typed.length, typed };
 }
 
 // ---- The graph --------------------------------------------------------------------------------

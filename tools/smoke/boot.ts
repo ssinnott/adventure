@@ -4,7 +4,8 @@
 // ok: lines print with it. The runner (tools/smoke.ts) serves the tree, opens the page through the kit and
 // runs the parts one after another, each in `frame`.
 import type { Load, Page } from '../kit/browser.ts';
-import type { Game, Screen } from '../../src/game/game.ts';
+import type { Game } from '../../src/app/game.ts';
+import type { Screen } from '../../src/ui/screen.ts';
 import type { CombatState } from '../../src/game/combat.ts';
 import type { Cell, Feature, Landmark } from '../../src/game/mapdef.ts';
 import type { World } from '../../src/game/world.ts';
