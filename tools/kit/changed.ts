@@ -35,10 +35,11 @@ export function changedFiles(base: string): string[] {
  * anything paints, so it counts none; game/map.ts, which runs the legend, the palettes and
  * `GameMap`, counts (#1009). The atlas is game/atlas.ts and its parts in game/atlas/ (#1019): the
  * terrain and strokes, the grid and the ways run and count as it did; its schema, types alone,
- * counts none, as mapdef.ts counts none.
+ * counts none, as mapdef.ts counts none. The world is game/world.ts and its parts in game/world/
+ * (#1008): sight, the sky and the groups count as world.ts did before the split.
  */
 const EVERY_MAP = [
-  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/paint\/(brush|ink)\.ts$/, /^src\/ui\/monsters\/(kit\/)?common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|types|atlas|atlas\/(painter|grid|ways)|ink)\.ts$/,
+  /^src\/ui\/(viewport|brush|palette|scenery)\.ts$/, /^src\/ui\/paint\/(brush|ink)\.ts$/, /^src\/ui\/monsters\/(kit\/)?common\.ts$/, /^src\/lib\/art\//, /^src\/game\/(map|outdoors|world|world\/(sight|sky|groups)|types|atlas|atlas\/(painter|grid|ways)|ink)\.ts$/,
   /^src\/content\/(index|maps|atlas|area)\.ts$/, /^src\/content\/areas\/[^/]+\/atlas\.ts$/, /^tools\/(smoke|smoke\/[^/]+|changed|sweep|kit\/(sweep|browser|changed))\.ts$/,
   // The view's parts (#1028): a file of ui/view/ counts as viewport.ts, their barrel, did before the split.
   /^src\/ui\/view\//,

@@ -1,35 +1,46 @@
 // The world: which map the party is on, where it stands, what time it is, and what has changed on
-// each map. Movement, the clock, the weather's reach into play, automap reveal, roaming monster
-// groups and encounter triggers live here. The outdoors is one map (game/outdoors.ts), so outdoors
-// the party's zone, not its map, says where it is, what the weather does and what the log calls the
-// place. Pure with respect to rendering and input; the Game drives it and reads the results. What
-// is in sight is here too (the viewport's rule: `VIEW_DEPTH` and `lineOfSight`; what a hill hides
-// from below it, `hillOver` and `hidden`), with the looks said on first meeting (`sightings`), a
-// lock opened (`unlock`), the region of a square (`regionOf`, #945), roaming groups and when they
-// walk (`walks`), rest, search and an enclave's door crossing in (`enclaveLine`, #845). It reads
-// the climates, the Stones and the endings off the tables it is handed (`w.tables`, #976).
+// each map. Movement, the clock's readers, the exits and the ways, a lock opened (`unlock`), the
+// features, rest, search and an enclave's door crossing in (`enclaveLine`, #845) live here. The
+// outdoors is one map (game/outdoors.ts), so outdoors the party's zone, not its map, says where it
+// is, what the weather does and what the log calls the place. Pure with respect to rendering and
+// input; the Game drives it and reads the results. Its parts are in game/world/ (#1008): the sky
+// (the weather's reach into play, the almanac, the clock's passing, the region of a square and when
+// a thing walks), sight (the viewport's rule, `VIEW_DEPTH` and `lineOfSight`, what a hill hides
+// from below it and automap reveal) and the groups (roaming monster groups, encounter triggers and
+// the looks said on first meeting). It reads the climates, the Stones and the endings off the
+// tables it is handed (`w.tables`, #976).
+//
+// Each part is functions of the world. A member that moved stays here as the call into its part,
+// so no caller changes, and this file exports every name it did, each from the part that has it
+// now. No part loads this file as it runs: each takes World and the state as types alone.
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { GameMap, DRAG } from './map.ts';
-import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Hours, Presence, Choice, Gate, MapDef } from './mapdef.ts';
+import type { Feature, Exit, EncounterDef, Door, MapZone, Cell, Presence, Choice, Gate, MapDef } from './mapdef.ts';
 import type { Facing } from './types.ts';
-import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack, manhattan } from './types.ts';
-import { partyCan, takeItem, isDown, hasTrait, companyLevel, prestigeOf, passClock } from './party.ts';
-import { monster, KINDS } from './monsters.ts';
+import { FACING_DX, FACING_DY, turnLeft, turnRight, turnBack } from './types.ts';
+import { partyCan, takeItem, isDown, hasTrait, companyLevel } from './party.ts';
 import type { Party } from './party.ts';
-import { MINUTES_PER_DAY, dateAt, daylightAt, sunTimes, longDate, seasonName, clock, tideAt } from './calendar.ts';
+import { MINUTES_PER_DAY, dateAt, daylightAt, tideAt } from './calendar.ts';
 import type { CalendarDate, Tide } from './calendar.ts';
-import { weatherAt, classify, isSnowy, skyNews, weatherSight, snowDrag, rangedPenalty, rangedNote, fairStart, tempWord, SKY_NAMES } from './weather.ts';
+import { snowDrag, fairStart } from './weather.ts';
 import type { Climate, RegionId, Weather, SkyState } from './weather.ts';
 import { holds } from './quests.ts';
-import { open, given } from './people.ts';
-import { pace, denLooks, densOf } from './dens.ts';
-import { stonesRestored, endingOf, hearthWord } from './stones.ts';
+import { stonesRestored, endingOf } from './stones.ts';
 import type { Hearth } from './stones.ts';
 import type { Tables } from './tables.ts';
 import { signLine, signSays } from './inscriptions.ts';
 import { hasSkill, skilled } from './skills.ts';
+import { bitsFor, VIEW_DEPTH, sight, reveal, hidden, revealAll, explored, sees } from './world/sight.ts';
+import { regionOf, cached, weather, weatherIn, walks, ended, weatherNews, almanac, combatWeather, advance, sleepUntilMorning } from './world/sky.ts';
+import type { Reading } from './world/sky.ts';
+import { liveGroups, groupsInSight, meet, sightings, groupAt, moveMonsters, adjacentGroups, question, standsAside, groupDefs, killGroups, flee, stepOut } from './world/groups.ts';
 
 export { MINUTES_PER_DAY };
+// What the parts have, from the path it always had (#1008).
+export { seen, VIEW_DEPTH, VIEW_LATERAL, viewCell, isSolidWall, lineOfSight, hillOver, hillHiding } from './world/sight.ts';
+export { FOG, SNOW_LYING, hoursHold, regionOf } from './world/sky.ts';
+export { DRAWN_MAX, groupDrawn, AWARE } from './world/groups.ts';
+
 export const START_MINUTES = 7 * 60;
 /** The weather seed of a save made before there was weather. */
 export const LEGACY_WEATHER_SEED = 0x5ca1d;
@@ -73,11 +84,6 @@ export interface WorldState {
   mark?: { mapId: string; x: number; y: number; facing: Facing };
 }
 
-/** Whether cell `i` is set in a map's explored bits. */
-export const seen = (bits: readonly number[], i: number): boolean => (((bits[i >> 5] ?? 0) >>> (i & 31)) & 1) === 1;
-const see = (bits: number[], i: number): void => { bits[i >> 5] = (bits[i >> 5] ?? 0) | (1 << (i & 31)); };
-const bitsFor = (cells: number): number[] => new Array(Math.ceil(cells / 32)).fill(0);
-
 export type MoveResult =
   /** `asks`: the group whose question comes before the fight (#544); then no `encounter`. */
   | { kind: 'moved'; messages: string[]; encounter?: string[]; asks?: string; arrived?: Exit<string> }
@@ -86,114 +92,8 @@ export type MoveResult =
 
 export interface LiveGroup { def: EncounterDef; state: GroupState; }
 
-/** Fog as the almanac reads it, and snow lying as it does. */
-export const FOG = 0.35, SNOW_LYING = 0.15;
-
-/**
- * Whether a time to walk holds at a minute, under a sky (null underground, where there is none).
- * Of a list any one will do, and an entry's parts all hold.
- */
-export function hoursHold(when: Hours | readonly Hours[], minutes: number, weather: Weather | null): boolean {
-  return [when].flat().some((h) => {
-    if (h.hours && (daylightAt(minutes) < 0.25 ? 'night' : 'day') !== h.hours) return false;
-    if (h.season && ![h.season].flat().includes(dateAt(minutes).season)) return false;
-    if (h.tide && tideAt(minutes) !== h.tide) return false;
-    if (h.sky === 'fog' && !(weather && weather.fog >= FOG)) return false;
-    if (h.sky === 'snow' && !(weather && (isSnowy(classify(weather).sky) || weather.cover >= SNOW_LYING))) return false;
-    return true;
-  });
-}
-
-/** How deep and how wide the first-person view reaches: what the viewport draws, and what is seen. */
-export const VIEW_DEPTH = 4, VIEW_LATERAL = 3;
-
-/** Map coordinates of the cell at depth d, lateral l relative to the party. */
-export function viewCell(px: number, py: number, f: Facing, d: number, l: number): { x: number; y: number } {
-  const rf = ((f + 1) & 3) as Facing;
-  return { x: px + FACING_DX[f] * d + FACING_DX[rf] * l, y: py + FACING_DY[f] * d + FACING_DY[rf] * l };
-}
-
-/** What is drawn as faces rather than as a floor and a sprite: walls, buildings, doors, and the void. */
-export function isSolidWall(c: Cell): boolean { return c.solid === 'wall' || c.solid === 'building' || c.solid === 'void' || c.door !== 'none'; }
-
-/**
- * Whether the cell at (d, l) can be seen from the eye: walk the straight line and stop at walls, and
- * at a hill that stands over the eye (`hillOver`).
- */
-export function lineOfSight(map: GameMap, px: number, py: number, f: Facing, d: number, l: number): boolean {
-  const steps = Math.max(d, Math.abs(l)) * 2;
-  let lastD = 0, lastL = 0;
-  for (let i = 1; i < steps; i++) {
-    const t = i / steps;
-    const dd = Math.round(d * t), ll = Math.round(l * t);
-    if (dd === lastD && ll === lastL) continue;
-    if (dd === d && ll === l) break;
-    lastD = dd; lastL = ll;
-    const c = viewCell(px, py, f, dd, ll);
-    if (map.blocksView(c.x, c.y)) return false;
-  }
-  return !hillOver(map, px, py, f, d, l);
-}
-
-/**
- * The hill that hides the cell at (d, l) from the eye, the nearest, or undefined (#53): a square
- * that stops the view from the eye's ground and from no higher (`GameMap.blocksView`), where the line
- * crosses the middle of a row between. Where the line runs on the seam of two squares, it takes both
- * to hide it. Read row by row, as a hill is drawn over the ground behind it and not in its corners.
- * What stands taller than a hill is seen over one (`GameMap.overtops`).
- */
-export function hillOver(map: GameMap, px: number, py: number, f: Facing, d: number, l: number): { x: number; y: number } | undefined {
-  if (d < 2) return undefined;
-  const t = viewCell(px, py, f, d, l), eye = { x: px, y: py };
-  if (map.overtops(t.x, t.y)) return undefined;
-  const hill = (k: number, ll: number): { x: number; y: number } | undefined => {
-    const c = viewCell(px, py, f, k, ll);
-    return map.blocksView(c.x, c.y, eye) && !map.blocksView(c.x, c.y) ? c : undefined;
-  };
-  for (let k = 1; k < d; k++) {
-    const at = (l * k) / d, lo = Math.floor(at);
-    const h = at - lo === 0.5 ? (hill(k, lo + 1) ? hill(k, lo) : undefined) : hill(k, Math.round(at));
-    if (h) return h;
-  }
-  return undefined;
-}
-
-/**
- * `hillOver` for a square of the map: read in the way the eye looks where the square lies ahead,
- * as the viewport draws it, else in the way the square lies from the eye.
- */
-export function hillHiding(map: GameMap, px: number, py: number, f: Facing, x: number, y: number): { x: number; y: number } | undefined {
-  const dx = x - px, dy = y - py;
-  let g = f, d = dx * FACING_DX[g] + dy * FACING_DY[g];
-  if (d < 1) { g = (Math.abs(dy) >= Math.abs(dx) ? (dy < 0 ? 0 : 2) : dx > 0 ? 1 : 3) as Facing; d = dx * FACING_DX[g] + dy * FACING_DY[g]; }
-  const rg = ((g + 1) & 3) as Facing;
-  return hillOver(map, px, py, g, d, dx * FACING_DX[rg] + dy * FACING_DY[rg]);
-}
-
-/** The most figures a group is drawn as while exploring. */
-export const DRAWN_MAX = 3;
-/**
- * The monsters a group is drawn as while exploring, to three: each kind once, in the order they
- * stand, then the rest in order, so no kind of the first three is hidden behind copies of another.
- */
-export function groupDrawn(monsters: readonly string[]): string[] {
-  const kinds = [...new Set(monsters)], out = kinds.slice(0, DRAWN_MAX), rest = [...monsters];
-  for (const k of out) rest.splice(rest.indexOf(k), 1);
-  return [...out, ...rest].slice(0, DRAWN_MAX);
-}
-
 // A sign as the log shows it: game/inscriptions.ts has it, beside an inscription's reading.
 export { signLine };
-
-/**
- * The region whose sky a square of a played map is under: its zone's on the outdoors, else the
- * map's own. Throws, naming the map and the square, where neither names one: no sky is lent (#945).
- */
-export function regionOf(m: GameMap, x: number, y: number): RegionId {
-  const r = m.zoneAt(x, y)?.region ?? m.def.region;
-  if (!r) throw new Error(`map '${m.id}' names no region, nor does a zone at ${x},${y}`);
-  return r;
-}
 
 export class World {
   /** The tables it reads, handed in (#973). */
@@ -205,11 +105,11 @@ export class World {
 
   /** The sky as the party last saw it, for the log; null underground or before the first look. Not saved. */
   sky: SkyState | null = null;
-  private cached: { seed: number; minutes: number; region: RegionId; weather: Weather } | null = null;
+  /** The weather's memo, kept in world/sky.ts; private, the smoke pins a sky through it. */
+  private get cached(): Reading | null { return cached.get(this) ?? null; }
+  private set cached(c: Reading | null) { if (c) cached.set(this, c); else cached.delete(this); }
   /** The last line crossed between zone maps, and when: a step straight back over it says no more. Not saved. */
   private lastCross?: { from: string; to: string; at: number };
-  /** The weather of every region a group has asked after, this minute: liveGroups runs every frame. */
-  private skies: { seed: number; minutes: number; by: Map<RegionId, Weather> } | null = null;
 
   constructor(tables: Tables, maps: Record<string, GameMap>, party: Party, rng: RngInstance, state?: WorldState) {
     this.tables = tables; this.maps = maps; this.party = party; this.rng = rng;
@@ -290,63 +190,20 @@ export class World {
   get isDark(): boolean { return this.daylight < 0.25 && this.map.kind !== 'dungeon'; }
   /** Whether the sky is overhead: everywhere but the dungeons. */
   get underSky(): boolean { return this.map.kind !== 'dungeon'; }
-  /** How far the party can see: 4 by day or with light, 2 by night or in a dungeon without it; fog, driving rain and snow close in on that. */
-  get sight(): number {
-    const s = this.state.light > 0 ? 4 : this.map.kind === 'dungeon' || this.isDark ? 2 : 4;
-    return this.underSky ? Math.min(s, weatherSight(this.weather)) : s;
-  }
+  get sight(): number { return sight(this); }
 
   // ---- weather ----
   get region(): RegionId { return regionOf(this.map, this.state.x, this.state.y); }
   get climate(): Climate { return this.tables.climates[this.region]; }
-  /** The weather in this map's region now; also the weather over a dungeon, though nobody there sees it. */
-  get weather(): Weather {
-    const c = this.cached, seed = this.state.weatherSeed!, minutes = this.state.minutes, region = this.region;
-    if (c && c.seed === seed && c.minutes === minutes && c.region === region) return c.weather;
-    const weather = weatherAt(seed, minutes, this.tables.climates[region]);
-    this.cached = { seed, minutes, region, weather };
-    return weather;
-  }
+  get weather(): Weather { return weather(this); }
 
-  /** The weather in a region now, whoever stands in it. */
-  weatherIn(region: RegionId): Weather {
-    if (region === this.region) return this.weather;
-    const seed = this.state.weatherSeed!, minutes = this.state.minutes;
-    if (!this.skies || this.skies.seed !== seed || this.skies.minutes !== minutes) this.skies = { seed, minutes, by: new Map() };
-    let w = this.skies.by.get(region);
-    if (!w) { w = weatherAt(seed, minutes, this.tables.climates[region]); this.skies.by.set(region, w); }
-    return w;
-  }
+  weatherIn(region: RegionId): Weather { return weatherIn(this, region); }
 
-  /**
-   * Whether a thing with a time to walk is in the world now, at a square of a map: in its hours
-   * (under the sky of that square's region) and past its `after`. `until` is `ended`'s. The map is
-   * the one the party is on unless named; a zone map's square is read where the outdoors lays it.
-   */
-  walks(p: Presence, x: number, y: number, on?: string): boolean {
-    if (p.after && !holds(p.after, this.state, this.party)) return false;
-    if (!p.when) return true;
-    const at = on === undefined ? { mapId: this.state.mapId, x, y } : this.locate(on, x, y), m = this.maps[at.mapId];
-    if (!m) throw new Error(`unknown map '${on}'`);
-    return hoursHold(p.when, this.state.minutes, m.kind === 'dungeon' ? null : this.weatherIn(regionOf(m, at.x, at.y)));
-  }
+  walks(p: Presence, x: number, y: number, on?: string): boolean { return walks(this, p, x, y, on); }
 
-  /** Whether a thing's `until` holds: a group stops coming back (one that `leaves` is gone), a person or an event is gone. */
-  ended(p: Presence): boolean {
-    return !!p.until && holds(p.until, this.state, this.party);
-  }
+  ended(p: Presence): boolean { return ended(this, p); }
 
-  /**
-   * A log line when the sky has changed since the party last looked, or on first seeing it (a new
-   * game, a load, the way out of a dungeon); null when there is nothing to say. Underground the sky
-   * is forgotten, so coming up says what it is doing now rather than what changed.
-   */
-  weatherNews(): string | null {
-    if (!this.underSky) { this.sky = null; return null; }
-    const prev = this.sky;
-    this.sky = classify(this.weather, prev);
-    return skyNews(prev?.sky ?? null, this.sky.sky, this.climate);
-  }
+  weatherNews(): string | null { return weatherNews(this); }
 
   /** The Stones the company has restored, by which the Hearth steadies (game/stones.ts). */
   get stones(): number { return stonesRestored(this.tables.stones, this.state, this.party); }
@@ -365,49 +222,19 @@ export class World {
     return out ? { x: out.tx, y: out.ty } : undefined;
   }
 
-  /** The M screen's almanac: the date and the season, the hours of light, the sky and what it is doing to the party. */
-  almanac(): string {
-    const d = this.date, sun = sunTimes(d.dayOfYear), date = longDate(d);
-    const steady = hearthWord(this.hearth);
-    const lines = [`${date[0].toUpperCase()}${date.slice(1)}: ${seasonName(d)}. Day ${d.gameDay} since the Hearth flickered.${steady ? ' ' + steady : ''}`, `Dawn ${clock(sun.dawn)}, dusk ${clock(sun.dusk)}.`];
-    if (!this.underSky) return [...lines, 'Underground, there is no telling the weather.'].join('\n');
-    const wx = this.weather, sky = classify(wx, this.sky).sky, seen = weatherSight(wx);
-    const cause = wx.fog >= 0.35 ? 'fog' : wx.snow >= 0.7 ? 'snow' : wx.snow > 0.3 ? 'sleet' : 'rain';
-    const effects = [
-      seen < 4 ? `The ${cause} hides all but ${seen === 2 ? 'two squares' : 'three squares'} ahead.` : '',
-      rangedPenalty(wx) ? 'Bows and slings will shoot poorly.' : '',
-      snowDrag(wx) ? 'Snow lies deep, and the going is slow.' : wx.cover >= 0.15 ? 'Snow lies on the ground.' : '',
-    ].filter(Boolean);
-    return [...lines, `${SKY_NAMES[sky]}, and ${tempWord(wx.temp)}.${effects.length ? ' ' + effects.join(' ') : ''}`].join('\n');
-  }
+  almanac(): string { return almanac(this); }
 
-  /** What the weather does to a fight here: a to-hit loss for bows on both sides, and a line for the log. */
-  combatWeather(): { rangedPenalty: number; note?: string } {
-    if (!this.underSky) return { rangedPenalty: 0 };
-    return { rangedPenalty: rangedPenalty(this.weather), note: rangedNote(this.weather) };
-  }
+  combatWeather(): { rangedPenalty: number; note?: string } { return combatWeather(this); }
 
-  /** The clock moves on: every passage of time goes through here, so what it does to what the company bears happens here (`passClock`). */
-  advance(minutes: number): void {
-    const from = this.state.minutes;
-    this.state.minutes += minutes;
-    passClock(this.tables.items, this.party, from, this.state.minutes);
-  }
+  advance(minutes: number): void { advance(this, minutes); }
 
-  /** Sleep through to the next morning: 07:00, or first light where the day breaks later, deep in winter. */
-  sleepUntilMorning(): void {
-    const now = this.state.minutes;
-    let wake = Math.floor(now / MINUTES_PER_DAY) * MINUTES_PER_DAY + 7 * 60;
-    if (wake <= now) wake += MINUTES_PER_DAY;
-    const dawn = Math.floor(wake / MINUTES_PER_DAY) * MINUTES_PER_DAY + Math.ceil(sunTimes(dateAt(wake).dayOfYear).dawn * 60);
-    this.advance(Math.max(wake, dawn) - now);
-  }
+  sleepUntilMorning(): void { sleepUntilMorning(this); }
 
   /** The tide now: high water or low, from the clock. */
   get tide(): Tide { return tideAt(this.state.minutes); }
 
-  /** What the party can cross, at this tide. */
-  private get can(): ReturnType<typeof partyCan> & { tide: Tide; float: boolean } {
+  /** What the party can cross, at this tide: public, as the groups' `flee` reads it (#1008). */
+  get can(): ReturnType<typeof partyCan> & { tide: Tide; float: boolean } {
     const can = partyCan(this.party);
     return { ...can, swim: can.swim || (this.state.walk ?? 0) > 0, tide: this.tide, float: (this.state.float ?? 0) > 0 };
   }
@@ -599,273 +426,42 @@ export class World {
     return true;
   }
 
-  /**
-   * Mark cells around the party seen: the four neighbours always, more with sight, but none past what
-   * blocks the view (`GameMap.blocksView`), so a company maps nothing behind a wall, a door or a secret
-   * door (#889); none a hill hides from the party (`hidden`), so a company below a ridge maps the
-   * valley past it once it climbs.
-   */
-  reveal(radius = 1): void {
-    const ms = this.mapState, m = this.map, { x: px, y: py } = this.state;
-    const base = Math.max(radius, this.map.kind === 'outdoor' && !this.isDark && weatherSight(this.weather) >= 4 ? 2 : 1);
-    // A Cartographer standing, or a chart carried, maps a square further: 3 in the open by day, 2 in a
-    // dungeon, in the dark or in thick weather (#857).
-    const r = base + (skilled(this.tables.items, this.party, 'cartographer') ? 1 : 0);
-    // Every square past the first follows sight (#857, #889): it is mapped only where none of the
-    // squares between it and the company, taken a step at a time toward the company, blocks the view
-    // and no diagonal step on the way slips between two that do, so never past a wall, a door or a
-    // secret door, nor round a corner, and the automap tells nothing hidden. One off, a square between
-    // two that stop the view is mapped only if it stops the view itself, so the walls still close round
-    // the company. A landmark is seen over a wall, as the view draws it (#844); the mountain and the
-    // void are not, or the automap would ink a range round a hide and leave the hide a hole.
-    const stops = (dx: number, dy: number): boolean => m.blocksView(px + dx, py + dy);
-    const cut = (ax: number, ay: number, bx: number, by: number): boolean => ax !== bx && ay !== by && stops(ax, by) && stops(bx, ay);
-    const clear = (dx: number, dy: number): boolean => {
-      if (Math.max(Math.abs(dx), Math.abs(dy)) === 1) return stops(dx, dy) || !cut(dx, dy, 0, 0);
-      for (let d = Math.max(Math.abs(dx), Math.abs(dy)); d > 1; d--) {
-        const ax = dx, ay = dy;
-        dx -= Math.abs(dx) === d ? Math.sign(dx) : 0; dy -= Math.abs(dy) === d ? Math.sign(dy) : 0;
-        if (stops(dx, dy) || cut(ax, ay, dx, dy) || (d === 2 && cut(dx, dy, 0, 0))) return false;
-      }
-      return true;
-    };
-    for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
-      const x = px + dx, y = py + dy;
-      if (!m.inBounds(x, y) || this.hidden(x, y) || (!m.landmarkAt(x, y) && !clear(dx, dy))) continue;
-      see(ms.explored, y * m.width + x);
-    }
-    // And the corridor ahead, as far as the eye sees, so the automap matches the viewport: a square
-    // beside it as one off the company, between two that stop the view toward the eye only if it does.
-    const f = this.state.facing;
-    for (let d = 1; d <= this.sight; d++) {
-      const x = this.state.x + FACING_DX[f] * d, y = this.state.y + FACING_DY[f] * d;
-      if (!m.inBounds(x, y)) break;
-      for (let s = -1; s <= 1; s++) {
-        const sx = x + (f === 0 || f === 2 ? s : 0), sy = y + (f === 1 || f === 3 ? s : 0);
-        if (!m.inBounds(sx, sy) || this.hidden(sx, sy)) continue;
-        if (s && m.blocksView(x, y) && m.blocksView(sx - FACING_DX[f], sy - FACING_DY[f]) && !m.blocksView(sx, sy)) continue;
-        see(ms.explored, sy * m.width + sx);
-      }
-      if (m.blocksView(x, y)) break;
-    }
-  }
+  reveal(radius = 1): void { reveal(this, radius); }
 
-  /** Whether a hill hides the square from the party (#53): `hillHiding`, from where it stands and looks. */
-  hidden(x: number, y: number): boolean {
-    return !!hillHiding(this.map, this.state.x, this.state.y, this.state.facing, x, y);
-  }
+  hidden(x: number, y: number): boolean { return hidden(this, x, y); }
 
-  revealAll(radius: number): void {
-    const ms = this.mapState, m = this.map;
-    for (let dy = -radius; dy <= radius; dy++) for (let dx = -radius; dx <= radius; dx++) {
-      const x = this.state.x + dx, y = this.state.y + dy;
-      if (m.inBounds(x, y)) see(ms.explored, y * m.width + x);
-    }
-  }
+  revealAll(radius: number): void { revealAll(this, radius); }
 
-  explored(x: number, y: number): boolean { return this.map.inBounds(x, y) && seen(this.mapState.explored, y * this.map.width + x); }
+  explored(x: number, y: number): boolean { return explored(this, x, y); }
 
   // ---- monsters ----
-  /**
-   * Live groups on the current map: a killed one back once its respawn is up and its `until` does
-   * not hold, none out of its hours or before its `after`, and none that leaves once its `until`
-   * holds (#747). Every reader of a standing group comes here: the viewport, the sight, the square,
-   * the steps, the fight and the rest.
-   */
-  liveGroups(): LiveGroup[] {
-    const out: LiveGroup[] = [];
-    const ms = this.mapState;
-    // A standing den's brood come back one a pace (game/dens.ts).
-    pace(this);
-    for (const def of this.map.encounters) {
-      const st = ms.groups[def.id];
-      if (!st) continue;
-      // The leave rule: gone, standing or killed, and its record left as it was, so not killed.
-      if (def.leaves && this.ended(def)) continue;
-      if (st.dead >= 0) {
-        if (def.respawn && this.state.minutes - st.dead >= def.respawn && !this.ended(def)) { st.dead = -1; st.x = def.x; st.y = def.y; }
-        else continue;
-      }
-      if ((def.when || def.after) && !this.walks(def, def.x, def.y)) continue;
-      out.push({ def, state: st });
-    }
-    return out;
-  }
+  liveGroups(): LiveGroup[] { return liveGroups(this); }
 
-  /** The live groups the party can see, nearest first: the ones the viewport draws. */
-  groupsInSight(): LiveGroup[] {
-    const { x: px, y: py, facing: f } = this.state, m = this.map, out: LiveGroup[] = [];
-    const live = this.liveGroups();
-    for (let d = 1; d <= Math.min(VIEW_DEPTH, this.sight); d++) for (let l = -VIEW_LATERAL; l <= VIEW_LATERAL; l++) {
-      const c = viewCell(px, py, f, d, l);
-      if (!m.inBounds(c.x, c.y) || isSolidWall(m.at(c.x, c.y)) || !lineOfSight(m, px, py, f, d, l)) continue;
-      const g = live.find((q) => q.state.x === c.x && q.state.y === c.y);
-      if (g) out.push(g);
-    }
-    return out;
-  }
+  groupsInSight(): LiveGroup[] { return groupsInSight(this); }
 
-  /**
-   * Record the defs as met, and return the looks of those met for the first time, once each. What
-   * has no look is recorded all the same.
-   */
-  meet(ids: readonly string[]): string[] {
-    const met = (this.state.met ??= []), said: string[] = [];
-    for (const id of ids) {
-      if (met.includes(id)) continue;
-      met.push(id);
-      const look = monster(this.tables.monsters, id).look;
-      if (look) said.push(look);
-    }
-    return said;
-  }
+  meet(ids: readonly string[]): string[] { return meet(this, ids); }
 
-  /** The looks of the kinds now in sight that the company has not met: each group's kinds as it is drawn (`groupDrawn`). */
-  sightings(): string[] {
-    // A den's look first: the place, then what guards it.
-    const dens = densOf(this.map).length ? denLooks(this, (x, y) => this.sees(x, y)) : [];
-    return [...dens, ...this.meet(this.groupsInSight().flatMap((g) => groupDrawn(g.def.monsters)))];
-  }
+  sightings(): string[] { return sightings(this); }
 
-  /** Whether the party sees a square: its own, or one the viewport draws, by the same rule. */
-  sees(x: number, y: number): boolean {
-    const { x: px, y: py, facing: f } = this.state, rf = ((f + 1) & 3) as Facing, m = this.map;
-    if (x === px && y === py) return true;
-    const d = (x - px) * FACING_DX[f] + (y - py) * FACING_DY[f], l = (x - px) * FACING_DX[rf] + (y - py) * FACING_DY[rf];
-    if (d < 1 || d > Math.min(VIEW_DEPTH, this.sight) || Math.abs(l) > VIEW_LATERAL) return false;
-    return m.inBounds(x, y) && !isSolidWall(m.at(x, y)) && lineOfSight(m, px, py, f, d, l);
-  }
+  sees(x: number, y: number): boolean { return sees(this, x, y); }
 
-  groupAt(x: number, y: number): LiveGroup | undefined {
-    return this.liveGroups().find((g) => g.state.x === x && g.state.y === y);
-  }
+  groupAt(x: number, y: number): LiveGroup | undefined { return groupAt(this, x, y); }
 
-  /**
-   * Where a group may step: where the party could with no key, swimmer or mountaineer, and no group
-   * stands; a group under the ice, only under the ice.
-   */
-  private monsterPassable(x: number, y: number, g?: LiveGroup): boolean {
-    if (g?.def.under === 'ice' && this.map.at(x, y).terrain !== 'ice') return false;
-    return this.map.passable(x, y, { tide: this.tide }) === 'ok' && !this.groupAt(x, y);
-  }
+  moveMonsters(): void { moveMonsters(this); }
 
-  /**
-   * The level of the highest druid of the third prestige standing in the company, or 0 with none:
-   * the Archdruid's perk keeps the beasts under that level off the company (DESIGN §5, #809).
-   */
-  private archdruidLevel(): number {
-    return Math.max(0, ...this.party.members.filter((m) => m.cls === 'druid' && prestigeOf(m) >= 3 && !isDown(m)).map((m) => m.level));
-  }
+  adjacentGroups(): string[] { return adjacentGroups(this); }
 
-  /**
-   * Whether a group is beasts all (a kind that routs, `KINDS`), each of a level under `level`, with
-   * no leader and no caller among them: the one an Archdruid's company is left alone by. Any other
-   * group comes on as it always did.
-   */
-  private beastsUnder(def: EncounterDef, level: number): boolean {
-    return !def.leader && def.monsters.every((id) => { const m = monster(this.tables.monsters, id); return KINDS[m.kind].breaks === 'rout' && !m.calls && m.level < level; });
-  }
+  question(id: string): Choice | undefined { return question(this, id); }
 
-  /**
-   * Each aware, roaming group steps one cell toward the party, but for the beasts an Archdruid
-   * leaves alone (`beastsUnder`): they stay where they are, and are fought as any group is where the
-   * company steps up to them or strikes them. With the druid down they come on.
-   */
-  moveMonsters(): void {
-    if (this.state.truce > 0) return;
-    const { x: px, y: py } = this.state, archdruid = this.archdruidLevel();
-    for (const g of this.liveGroups()) {
-      if (g.def.roams === false || this.standsAside(g.def)) continue;
-      const aware = g.def.aware ?? AWARE;
-      const d = manhattan(g.state.x, g.state.y, px, py);
-      if (d > aware || d <= 1 || (archdruid > 0 && this.beastsUnder(g.def, archdruid))) continue;
-      const dx = px - g.state.x, dy = py - g.state.y;
-      const tries: [number, number][] = Math.abs(dx) >= Math.abs(dy)
-        ? [[Math.sign(dx), 0], [0, Math.sign(dy)]]
-        : [[0, Math.sign(dy)], [Math.sign(dx), 0]];
-      for (const [sx, sy] of tries) {
-        if (sx === 0 && sy === 0) continue;
-        if (this.monsterPassable(g.state.x + sx, g.state.y + sy, g)) { g.state.x += sx; g.state.y += sy; break; }
-      }
-    }
-  }
+  standsAside(def: EncounterDef): boolean { return standsAside(this, def); }
 
-  /**
-   * Group ids within one cell of the party, up to 3 groups and 12 monsters; a group under the ice
-   * only where the party stands on the ice, and none that stands aside (#544).
-   */
-  adjacentGroups(): string[] {
-    const ids: string[] = [];
-    let n = 0;
-    const onIce = this.map.at(this.state.x, this.state.y).terrain === 'ice';
-    for (const g of this.liveGroups()) {
-      if (this.state.truceGroups.includes(g.def.id) || this.standsAside(g.def)) continue;
-      if (manhattan(g.state.x, g.state.y, this.state.x, this.state.y) > 1) continue;
-      if (g.def.under === 'ice' && !onIce) continue;
-      if (ids.length >= 3 || n + g.def.monsters.length > 12) break;
-      ids.push(g.def.id); n += g.def.monsters.length;
-    }
-    return ids;
-  }
+  groupDefs(ids: string[]): { id: string; monsters: string[]; back?: number; leader?: string; under?: 'ice' }[] { return groupDefs(this, ids); }
 
-  /** A group's question while it is still put: none of its answers given (#544). */
-  question(id: string): Choice | undefined {
-    return open(this.map.encounters.find((e) => e.id === id)?.choice, this.party);
-  }
+  killGroups(ids: string[]): string[] { return killGroups(this, ids); }
 
-  /**
-   * Whether a group has been answered without a fight: one of its question's answers that does not
-   * fight is given, so for this company it neither asks nor fights, nor follows (#544).
-   */
-  standsAside(def: EncounterDef): boolean {
-    return !!def.choice?.answers.some((a) => !a.fight && given(a, this.party));
-  }
+  flee(ids: string[]): void { flee(this, ids); }
 
-  groupDefs(ids: string[]): { id: string; monsters: string[]; back?: number; leader?: string; under?: 'ice' }[] {
-    return ids.map((id) => { const e = this.map.encounters.find((x) => x.id === id)!; return { id, monsters: e.monsters, back: e.back, leader: e.leader, under: e.under, clock: e.clock }; });
-  }
-
-  /**
-   * Mark the groups dead and set each one's flags as its `slainText` is said, into the party's flags
-   * as an event's are (#636); returns what the log says about it.
-   */
-  killGroups(ids: string[]): string[] {
-    const said: string[] = [];
-    for (const id of ids) {
-      const st = this.mapState.groups[id]; if (st) st.dead = this.state.minutes;
-      const def = this.map.encounters.find((e) => e.id === id);
-      if (def?.slainText) said.push(def.slainText);
-      for (const flag of [def?.sets ?? []].flat()) this.party.flags[flag] = 1;
-    }
-    return said;
-  }
-
-  /** After a successful flight: step back if possible and grant a truce with those groups. */
-  flee(ids: string[]): void {
-    this.state.truce = 4; this.state.truceGroups = ids;
-    const f = turnBack(this.state.facing);
-    const nx = this.state.x + FACING_DX[f], ny = this.state.y + FACING_DY[f];
-    if (this.map.passable(nx, ny, this.can) === 'ok' && !this.groupAt(nx, ny)) { this.state.x = nx; this.state.y = ny; }
-  }
-
-  /**
-   * Leaving a business: out of its doorway onto the open cell beside it (the one behind the party
-   * if that is open), turned to face the door again. Not a step: no time passes and nothing moves.
-   * False, and nothing changes, when there is no street to step into.
-   */
-  stepOut(): boolean {
-    const { x, y, facing } = this.state;
-    const street = (f: Facing): boolean => {
-      const nx = x + FACING_DX[f], ny = y + FACING_DY[f];
-      return this.map.passable(nx, ny, { tide: this.tide }) === 'ok' && this.map.at(nx, ny).door === 'none' && !this.map.exitAt(nx, ny) && !this.groupAt(nx, ny);
-    };
-    const out = ([turnBack(facing), 0, 1, 2, 3] as Facing[]).find(street);
-    if (out === undefined) return false;
-    this.state.x = x + FACING_DX[out]; this.state.y = y + FACING_DY[out];
-    this.state.facing = turnBack(out);
-    this.reveal();
-    return true;
-  }
+  stepOut(): boolean { return stepOut(this); }
 
   // ---- features ----
   /** The interactable in the party's cell, else the one directly ahead. */
@@ -934,9 +530,6 @@ export class World {
     return true;
   }
 }
-
-/** Cells within which a group notices the party where its def gives none (`EncounterDef.aware`). */
-export const AWARE = 5;
 
 /** How the land feels to a company one or two levels under its floor, and three or more (`crossing`). */
 const HARDER = 'The land here is harder than the road behind.';

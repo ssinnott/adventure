@@ -43,7 +43,8 @@ export async function thornmark({ page, ok }: Run): Promise<void> {
   await page.evaluate(() => { const g = window.__game!.game!; g.world.travel('thornmark', 6, 8, 3); g.enterCell(); });
   await settle(page);
   const thornColours = await colours(page);
-  // The ogre's band as the view draws it before the fight: each of its kinds, to three (world.ts, groupDrawn).
+  // The ogre's band as the view draws it before the fight: each of its kinds, to three
+  // (game/world/groups.ts, groupDrawn).
   const ogreView = await page.evaluate(() => { const g = window.__game!.game!, band = g.world.liveGroups().find((q) => q.def.id === 'tm_ogre'); return band ? (g.monstersAt(band.state.x, band.state.y) ?? []).map((m) => m.id).join(',') : 'no tm_ogre'; });
   await page.evaluate(() => { const g = window.__game!.game!; g.fight(['tm_ogre', 'tm_wraiths']); });
   await settle(page);
