@@ -1,9 +1,9 @@
 // The first-person viewport: a depth-layered compositor in the Might and Magic III-V tradition. It draws
-// the walls and the grounds (hills, and the ground past one seen from below it, `standsAt`; fields, woods,
-// ash, ice, peaks, cliffs, steppe, dunes, vines and the volcano), a landmark tall over its building's
-// square out to `LANDMARK_REACH`, the tents, the wall dressing, the sky, the end of the world drawn as its
-// look and the weather over it: `drawViewport`, the scene it caches and `paintScene`, which paints the
-// scene back to front from the parts beside it (#1028).
+// the walls and the grounds, each as its look in view/ground/ gives it (#1030), and the ground past a hill
+// seen from below it (`standsAt`), a landmark tall over its building's square out to `LANDMARK_REACH`, the
+// tents, the wall dressing, the sky, the end of the world drawn as its look and the weather over it:
+// `drawViewport`, the scene it caches and `paintScene`, which paints the scene back to front from the
+// parts beside it (#1028).
 //
 // Everything is vector, textured procedurally (stone courses, timber frames, flagstones, tufts of
 // grass) with a stable hash so the same wall always has the same darker block. The static scene
@@ -29,20 +29,20 @@ import type { Facing } from '../../game/types.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 import { VOID_PINK } from '../palette.ts';
 import { drawMonsterSprite } from '../sprites.ts';
-import { drawTreeSprite, drawDeadTreeSprite, drawCrystalSprite, drawLighthouseSprite, drawMonasterySprite, drawRockSprite, drawMountainSprite, drawPeakSprite, drawCliffSprite, drawPillarSprite, treeSeason } from '../scenery.ts';
-import { drawVolcanoSprite, drawVineSprite } from '../scenery.ts';
+import { drawTreeSprite, drawLighthouseSprite, drawMonasterySprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason } from '../scenery.ts';
 import type { MonsterSprite } from '../../game/monsters.ts';
 import { weatherSight } from '../../game/weather.ts';
-import { sunTimes, DAYS_PER_YEAR } from '../../game/calendar.ts';
+import { sunTimes } from '../../game/calendar.ts';
 import { hash } from '../paint/brush.ts';
 import { hearthBearing, hearthLook } from '../../game/stones.ts';
-import { unit, CLEAR, paintOn, groundColor, floorPt, pixel, addPoly } from './common.ts';
+import { unit, CLEAR, paintOn, floorPt, pixel, addPoly } from './common.ts';
 import type { ViewRect, Flame, Env, View } from './common.ts';
 import { murkOf, toPair, drawnAt, standsAt, isHouse, building, tentOf } from './model.ts';
 import { cast, drawSkyBand } from './sky.ts';
 import type { SkyOpts } from './sky.ts';
 import { drawWeather, strike, drawBolt } from './weather.ts';
-import { farmPlot, drawHill, drawFloor, drawCeiling } from './floor.ts';
+import { drawFloor, drawCeiling } from './floor.ts';
+import { GROUND, groundColor } from './ground/index.ts';
 import { drawVoidFront, drawVoidSide, drawFrontFace, drawLighthouseFlank, LAMP_REACH, drawLamp, drawFlame, drawSideFace } from './walls.ts';
 import { drawRoof, drawChimney } from './roofs.ts';
 import { inTent, tentView, drawTentRoof } from './tents.ts';
@@ -54,8 +54,6 @@ export const LANDMARK_REACH = 40;
 
 /** A figure the viewport draws for a group: the monster, its sprite, tint and size. `under` draws it under the ice. */
 export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; under?: 'ice'; }
-/** How cold the year is on the heights: 1 in deep Frost, about 0 at Harvest. */
-function cold(day: number): number { return (1 + Math.cos((2 * Math.PI * (day - 100)) / DAYS_PER_YEAR)) / 2; }
 interface Scene {
   key: string;
   /** Everything but the sky, which shows through where nothing was painted. */
@@ -194,10 +192,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
     // The ground runs on to the horizon in the terrain out past the last cell drawn, the void's as
-    // its look; the bare void and the chasm have none, so short of them the ground is the party's own,
+    // its look; the bare void and a drop have none, so short of them the ground is the party's own,
     // and past a hill seen from below it the hill's (#53).
     const out = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1)), far = out.look ?? out, brow = hillOver(map, px, py, f, DEPTH + 1, 0);
-    const farCell = brow ? map.at(brow.x, brow.y) : far.solid === 'void' || far.terrain === 'chasm' ? map.at(px, py) : far;
+    const farCell = brow ? map.at(brow.x, brow.y) : far.solid === 'void' || GROUND[far.terrain].drop ? map.at(px, py) : far;
     const ground = shade(groundColor(p, farCell.terrain, pal.floor), dark ? 0.2 : 0.55);
     const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
     gg.addColorStop(0, mix(ground, skyBottom, dark ? 0.1 : 0.5)); gg.addColorStop(1, ground);
@@ -261,17 +259,20 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       if (isSolidWall(cell)) continue;
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
       const cellPal = map.paletteAt(c.x, c.y);
-      const plot = cell.terrain === 'farm' ? farmPlot(map, c.x, c.y, f) : undefined;
-      // The chasm's rims: where the ground stands before it and beyond it.
-      const rims = cell.terrain === 'chasm' ? { near: d > 0 && drawn(...toPair(cellAt(px, py, f, d - 1, l))).terrain !== 'chasm', far: drawn(...toPair(cellAt(px, py, f, d + 1, l))).terrain !== 'chasm' } : undefined;
+      const look = GROUND[cell.terrain];
+      const plot = look.plot?.(map, c.x, c.y, f);
+      // A drop's rims: where ground stands before it and beyond it, and not the drop.
+      const rims = look.drop ? { near: d > 0 && !GROUND[drawn(...toPair(cellAt(px, py, f, d - 1, l))).terrain].drop, far: !GROUND[drawn(...toPair(cellAt(px, py, f, d + 1, l))).terrain].drop } : undefined;
       drawFloor(p, cell.terrain, d, l, seed, cellPal.floor, plot, rims);
       if (map.kind === 'dungeon') drawCeiling(p, cellPal, d, l, seed, f);
     }
+    // A hill's mound, its look's, over the row's floors.
     if (d > 0) for (const l of order) {
       const c = cellAt(px, py, f, d, l);
-      if (drawn(c.x, c.y).terrain !== 'hills' || isSolidWall(drawn(c.x, c.y)) || behind(d, l)) continue;
-      const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return n.terrain === 'hills' && !isSolidWall(n) && !behind(d, l + dl); };
-      drawHill(p, groundColor(p, 'hills', map.paletteAt(c.x, c.y).floor), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1));
+      const t = drawn(c.x, c.y).terrain, mound = GROUND[t].mound;
+      if (!mound || isSolidWall(drawn(c.x, c.y)) || behind(d, l)) continue;
+      const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return !!GROUND[n.terrain].mound && !isSolidWall(n) && !behind(d, l + dl); };
+      mound(p, groundColor(p, t, map.paletteAt(c.x, c.y).floor), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1));
     }
     for (const l of order) {
       if (behind(d, l)) continue;
@@ -334,31 +335,24 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         const u = unit(d, r.h);
         const bx = cx + l * 2 * u, by = horizon + u;
         const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
-        // A glass tree stands on crystal, catching the light by day.
-        if (cell.solid === 'tree' && cell.terrain === 'crystal') drawCrystalSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 3), dark ? 0 : daylight * (1 - cloud));
+        // The ground may draw its own for what stands on it: a glass tree on crystal, a mountain by its rock.
+        const own = GROUND[cell.terrain].boards?.[cell.solid];
+        if (own) own(p, { x: bx, y: by, u, tone, mx: c.x, my: c.y, cloud });
         else if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 5), env.trees);
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
-        // A peak's snow comes down in the winter and further under lying snow; a cliff's lies along its top.
-        else if (cell.solid === 'mountain' && cell.terrain === 'peak') drawPeakSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3), 0.5 + 0.18 * cold(env.day) + 0.3 * env.cover);
-        // The volcano's cone, and a vent's fire in its lip, dull by day and bright by night; snow lies thin on it.
-        else if (cell.solid === 'mountain' && (cell.terrain === 'volcano' || cell.terrain === 'vent')) drawVolcanoSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3), cell.terrain === 'vent', dark ? 1 : 0.35, 0.6 * env.cover);
-        else if (cell.solid === 'mountain' && cell.terrain === 'cliff') drawCliffSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3), 0.3 * cold(env.day) + env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
-      } else if (d > 0 && (cell.terrain === 'woods' || cell.terrain === 'deadwood' || cell.terrain === 'pine' || cell.terrain === 'vines') && !backdrop) {
-        // Light woods: a tree or two stand to the sides of the square, leaving the way through it open.
-        // None stands on a side a wall or the void closes: drawn after them, it would stand in front.
-        // Dead wood stands the same, its trees dead; the pinewoods closer, taller and all pines.
-        const u = unit(d, r.h), pine = cell.terrain === 'pine';
+      } else if (d > 0 && GROUND[cell.terrain].sides && !backdrop) {
+        // Light woods: a tree or two stand to the sides of the square, leaving the way through it open,
+        // each of the kind and size its look gives. None stands on a side a wall or the void closes:
+        // drawn after them, it would stand in front.
+        const u = unit(d, r.h), sides = GROUND[cell.terrain].sides!;
         const tone = (dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - env.murk * 0.1 * d);
         for (const side of [-1, 1]) {
-          if (hash(c.x, c.y, 60 + side) < (pine ? 0.15 : 0.3) || solidAt(d, l + side)) continue;
+          if (hash(c.x, c.y, 60 + side) < sides.bare || solidAt(d, l + side)) continue;
           const bx = cx + (l * 2 + side * (0.62 + 0.22 * hash(c.x, c.y, 62 + side))) * u, by = horizon + u * (0.8 + 0.4 * hash(c.x, c.y, 64 + side));
-          const s = u * (pine ? 0.55 + 0.25 * hash(c.x, c.y, 66 + side) : 0.5 + 0.2 * hash(c.x, c.y, 66 + side));
-          if (cell.terrain === 'deadwood') drawDeadTreeSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 3), env.cover);
-          // The shore's trees, hung with their creepers.
-          else if (cell.terrain === 'vines') drawVineSprite(ctx, bx, by, s, tone, Math.floor(hash(c.x, c.y, 68 + side) * 3), env.trees);
-          else drawTreeSprite(ctx, bx, by, s, tone, pine ? 3 + Math.floor(hash(c.x, c.y, 68 + side) * 2) : Math.floor(hash(c.x, c.y, 68 + side) * 5), env.trees);
+          const s = u * (sides.size + sides.spread * hash(c.x, c.y, 66 + side));
+          sides.tree(p, bx, by, s, tone, hash(c.x, c.y, 68 + side));
         }
       }
     }
