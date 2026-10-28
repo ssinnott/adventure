@@ -8,6 +8,7 @@
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
+import { ListMenu } from './menu.ts';
 import { drawText, lineHeight, measureText } from '../lib/engine/text.ts';
 import { panel, paragraph, menu, wrap, columnMenu, optionParts, fit, columnLabelWidth } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawLog, drawViewportFrame, SAY_W, SAY_LINES, SIDE_W, ASK_LINES, ASK_SIDE_LINES } from './frame.ts';
@@ -144,9 +145,8 @@ export class MessageScreen implements Screen {
 
 export class ChoiceScreen implements Screen {
   readonly overlay = true;
-  sel = 0;
-  /** The first option in view when the list is longer than the side panel. */
-  private top = 0;
+  /** Its cursor: the row chosen, and the first in view when the list is longer than the side panel. */
+  private readonly menu = new ListMenu();
   private text: string | (() => string);
   private choices: string[] | (() => string[]);
   private then: (i: number) => void;
@@ -175,14 +175,17 @@ export class ChoiceScreen implements Screen {
   get words(): string { return typeof this.text === 'function' ? this.text() : this.text; }
   /** The options as they read now. */
   get options(): string[] { return typeof this.choices === 'function' ? this.choices() : this.choices; }
+  /** The row the cursor is on. */
+  get sel(): number { return this.menu.sel; }
+  set sel(row: number) { this.menu.sel = row; }
+  /** Opened again after a choice (`again`): on the row the choice left, held to the options it has now. */
+  keep(row: number): this { this.menu.keep(row, this.options.length); return this; }
   update(g: Host, a: Action | null): void {
     if (!a) return;
-    this.sel = Math.min(this.sel, this.options.length - 1);
-    if (is(a, 'up')) this.sel = (this.sel + this.options.length - 1) % this.options.length;
-    else if (is(a, 'down')) this.sel = (this.sel + 1) % this.options.length;
+    const n = this.options.length;
+    this.menu.clamp(n);
+    if (this.menu.press(a, { n, barred: (i) => !!this.disabled[i], digits: 'act' }) === 'chosen') { g.pop(); this.then(this.sel); }
     else if (is(a, 'cancel')) { g.pop(); this.then(-1); }
-    else if (is(a, 'interact')) { if (this.disabled[this.sel]) return; g.pop(); this.then(this.sel); }
-    else if (/^n[1-9]$/.test(a)) { const i = Number(a[1]) - 1; if (i < this.options.length && !this.disabled[i]) { g.pop(); this.then(i); } }
   }
   render(g: Host, ctx: CanvasRenderingContext2D): void {
     if (visiting(g)) { this.renderSide(ctx); return; }
@@ -217,10 +220,7 @@ export class ChoiceScreen implements Screen {
     const NOTE_H = lineHeight(1) * 2 + 4, scrollsWithNotes = n > rowsIn(NOTE_H);
     const noteH = this.options.some((_, i) => noteOf(i, scrollsWithNotes) !== '') ? NOTE_H : 0;
     const rows = rowsIn(noteH);
-    if (this.sel < this.top) this.top = this.sel;
-    if (this.sel >= this.top + rows) this.top = this.sel - rows + 1;
-    this.top = Math.max(0, Math.min(this.top, n - rows));
-    columnMenu(ctx, this.options, x, y, TEXT_W, this.sel, this.top, rows, { disabled: this.disabled });
+    columnMenu(ctx, this.options, x, y, TEXT_W, this.sel, this.menu.scroll(rows, n), rows, { disabled: this.disabled });
     const note = noteOf(this.sel, n > rows);
     if (note) {
       // Two lines at most: the second takes the rest, cut to fit.
@@ -240,9 +240,13 @@ export function pickMember(g: Host, text: string, then: (i: number) => void, fil
 /** Character sheet with equip and use. */
 export class SheetScreen implements Screen {
   readonly overlay = true;
-  sel = 0;
+  /** The item list's cursor; the sheet's digits are its own, and name a member. */
+  private readonly menu = new ListMenu();
   private who: number;
   constructor(who: number) { this.who = who; }
+  /** The item the cursor is on. */
+  get sel(): number { return this.menu.sel; }
+  set sel(row: number) { this.menu.sel = row; }
   update(g: Host, a: Action | null): void {
     if (!a) return;
     const c = g.party.members[this.who];
@@ -251,9 +255,7 @@ export class SheetScreen implements Screen {
     if (is(a, 'left')) { this.who = (this.who + 5) % 6; this.sel = 0; g.selected = this.who; return; }
     if (is(a, 'right')) { this.who = (this.who + 1) % 6; this.sel = 0; g.selected = this.who; return; }
     if (/^n[1-6]$/.test(a)) { this.who = Number(a[1]) - 1; this.sel = 0; g.selected = this.who; return; }
-    if (is(a, 'up') && items.length) this.sel = (this.sel + items.length - 1) % items.length;
-    else if (is(a, 'down') && items.length) this.sel = (this.sel + 1) % items.length;
-    else if (is(a, 'interact') && items.length) {
+    if (this.menu.press(a, { n: items.length }) === 'chosen') {
       const it = items[this.sel];
       const d = item(g.tables.items, it.id);
       if (d.slot !== 'none') {
@@ -386,7 +388,10 @@ function explore(g: Host, caster: number, spellId: string, back?: boolean): void
 export class SpellScreen implements Screen {
   readonly overlay = true;
   private who = -1;
-  private sel = 0;
+  /** One cursor for its two lists as each opens: the casters, then the spells of the one chosen. */
+  private readonly menu = new ListMenu();
+  private get sel(): number { return this.menu.sel; }
+  private set sel(row: number) { this.menu.sel = row; }
   private context: 'explore';
   private onDone?: () => void;
   constructor(context: 'explore', onDone?: () => void) {
@@ -401,18 +406,14 @@ export class SpellScreen implements Screen {
       const cs = this.casters(g);
       if (!cs.length) { g.pop(); g.say('Nobody can cast.'); return; }
       if (is(a, 'cancel')) { g.pop(); return; }
-      if (is(a, 'up')) this.sel = (this.sel + cs.length - 1) % cs.length;
-      else if (is(a, 'down')) this.sel = (this.sel + 1) % cs.length;
-      else if (is(a, 'interact')) { this.who = cs[this.sel]; this.sel = 0; }
-      else if (/^n[1-6]$/.test(a)) { const i = Number(a[1]) - 1; if (cs.includes(i)) { this.who = i; this.sel = 0; } }
+      // A caster's row carries the member's place in the party, which its digit names, as the sheet's do.
+      if (this.menu.press(a, { n: cs.length, digits: 'act', number: (row) => cs[row] + 1 }) === 'chosen') { this.who = cs[this.sel]; this.sel = 0; }
       return;
     }
     const list = this.list(g);
     if (is(a, 'cancel')) { this.who = -1; this.sel = 0; return; }
     if (!list.length) { g.say('No spell for here.'); this.who = -1; return; }
-    if (is(a, 'up')) this.sel = (this.sel + list.length - 1) % list.length;
-    else if (is(a, 'down')) this.sel = (this.sel + 1) % list.length;
-    else if (is(a, 'interact')) {
+    if (this.menu.press(a, { n: list.length }) === 'chosen') {
       const sp = spell(g.tables.spells, list[this.sel]);
       const caster = this.who;
       g.pop();
@@ -486,6 +487,12 @@ export function businessEntries(g: Host, f: Business): BusinessEntry[] {
 }
 
 /**
+ * A menu a choice opens again (DESIGN §11): on `row`, the row the choice left, held to the rows it
+ * has now (`ChoiceScreen.keep`). A screen that is no menu (the words where nothing is left) opens as made.
+ */
+function again(s: Screen, row: number): Screen { return s instanceof ChoiceScreen ? s.keep(row) : s; }
+
+/**
  * The screen a business opens on: its trade alone, as ever, or where it offers more, a first menu
  * that each choice returns to (it is pushed again under the screen the choice opens), until Leave.
  */
@@ -502,7 +509,7 @@ export function serviceScreen(g: Host, f: Feature): Screen {
     if (i < 0 || i >= now.length) return;
     // Back to the menu after, while it offers more than the trade: once everyone listed has gone,
     // the trade is all there is, and opening it again under itself would open it twice.
-    if (now.length > 1) g.push(serviceScreen(g, b));
+    if (now.length > 1) g.push(again(serviceScreen(g, b), i));
     g.push(now[i].open());
   }, b.name);
 }
@@ -543,9 +550,9 @@ function guildOffers(g: Host, id: GuildId, hallName: string): Screen {
       if (j === 0) {
         const said = take(g.tables, q, g.world.state, g.party);
         g.say(`You take the work: ${q.title}.`);
-        if (said.length) { g.push(new MessageScreen(said.join('\n\n'), () => g.push(guildOffers(g, id, hallName)), hallName)); return; }
+        if (said.length) { g.push(new MessageScreen(said.join('\n\n'), () => g.push(again(guildOffers(g, id, hallName), i)), hallName)); return; }
       }
-      g.push(guildOffers(g, id, hallName));
+      g.push(again(guildOffers(g, id, hallName), i));
     }, hallName)), hallName));
   }, hallName);
 }
@@ -561,7 +568,7 @@ export function skillMenu(g: Host, ids: readonly SkillId[], title: string): Scre
   return new ChoiceScreen(() => askWhich(g.party), [...ids.map(skillRow), LEAVE_SKILLS], (i) => {
     const id = ids[i];
     if (!id) return;
-    g.push(skillMenu(g, ids, title));
+    g.push(again(skillMenu(g, ids, title), i));
     g.push(learnerMenu(g, id, title));
   }, title);
 }
@@ -578,7 +585,7 @@ export function learnerMenu(g: Host, id: SkillId, title: string): Screen {
     if (!o) return;
     const { line } = learn(g.tables, o.skill, g.party, o.who);
     if (line) g.say(line);
-    g.push(learnerMenu(g, id, title));
+    g.push(again(learnerMenu(g, id, title), i));
   }, title, [...list.map((o) => !!o.bar), false]);
 }
 
@@ -592,7 +599,7 @@ export function tierMenu(g: Host, title: string): Screen {
   return new ChoiceScreen(() => askLine(g.party), [...LINES.map((l) => LINE_ROWS[l]), LEAVE_TIERS], (i) => {
     const line = LINES[i];
     if (!line) return;
-    g.push(tierMenu(g, title));
+    g.push(again(tierMenu(g, title), i));
     g.push(expertMenu(g, line, title));
   }, title);
 }
@@ -604,7 +611,7 @@ function expertMenu(g: Host, line: Line, title: string): Screen {
     if (!o) return;
     const { said } = teachTier(o.line, o.tier, o.price, g.party, o.who);
     if (said) g.say(said);
-    g.push(expertMenu(g, line, title));
+    g.push(again(expertMenu(g, line, title), i));
   }, title, [...list.map((o) => !!o.bar), false]);
 }
 
@@ -621,7 +628,7 @@ export function masterMenu(g: Host, m: Mastery, title: string): Screen {
     if (!o) return;
     const { said } = teachTier(o.line, o.tier, o.price, g.party, o.who, favourDone(m, g.world.state, g.party));
     if (said) g.say(said);
-    g.push(masterMenu(g, m, title));
+    g.push(again(masterMenu(g, m, title), i));
   }, title, [...list.map((o) => !!o.bar), false]);
 }
 
@@ -658,10 +665,10 @@ function buyScreen(g: Host, f: Extract<Feature, { kind: 'shop' }>): Screen {
   const s: ChoiceScreen = new ChoiceScreen(`What will it be? (${g.party.gold} gold.)`, [...names, 'Done'], (i) => {
     if (i < 0 || i === names.length) return;
     const d = buy(g.tables.items, g.party, f, f.stock[i]);
-    if (!d) { g.say('Not enough gold.'); g.push(buyScreen(g, f)); return; }
+    if (!d) { g.say('Not enough gold.'); g.push(again(buyScreen(g, f), i)); return; }
     if (d.use?.food) g.say(`Bought ${d.name}: food is now ${g.party.food}.`);
     else g.say(`Bought ${d.name}.`);
-    const next = buyScreen(g, f); (next as ChoiceScreen).sel = i; g.push(next);
+    g.push(again(buyScreen(g, f), i));
   }, f.name, [...f.stock.map((id) => priceIn(g.tables.items, f, id) > g.party.gold), false]);
   return s;
 }
@@ -678,7 +685,7 @@ function sellScreen(g: Host, f: Extract<Feature, { kind: 'shop' }>): Screen {
     if (i < 0 || i === entries.length) return;
     const e = entries[i];
     g.say(sell(g.tables.items, g.party, e.owner, e.id).line);
-    g.push(sellScreen(g, f));
+    g.push(again(sellScreen(g, f), i));
   }, f.name);
 }
 
@@ -709,7 +716,7 @@ function guild(g: Host, f: Extract<Feature, { kind: 'guild' }>): Screen {
   return new ChoiceScreen(`"What would you learn?" (${g.party.gold} gold.)`, [...offers.map((o) => `${g.party.members[o.who].name}: ${spell(g.tables.spells, o.id).name}\t${o.price}g\t${spell(g.tables.spells, o.id).text}`), 'Leave'], (i) => {
     if (i < 0 || i === offers.length) return;
     g.say(learnSpell(g.tables.spells, g.party, offers[i]).line);
-    g.push(guild(g, f));
+    g.push(again(guild(g, f), i));
   }, f.name, [...offers.map((o) => o.price > g.party.gold), false]);
 }
 
@@ -721,7 +728,7 @@ function trainer(g: Host, f: Extract<Feature, { kind: 'trainer' }>): Screen {
     if (i < 0 || i === names.length) return;
     const { line } = train(g.tables.spells, g.party, g.party.members[i], g.rng, f.maxLevel);
     if (line) g.say(line);
-    g.push(trainer(g, f));
+    g.push(again(trainer(g, f), i));
   }, f.name, [...can.map((x) => !x), false]);
 }
 

@@ -5,6 +5,7 @@
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
+import { ListMenu } from './menu.ts';
 import { drawText, lineHeight } from '../lib/engine/text.ts';
 import { panel, wrap } from './draw.ts';
 import { BRASS, BRASS_DARK, TEXT, TEXT_DIM, YELLOW, GREEN } from './palette.ts';
@@ -73,7 +74,10 @@ export function openingSheet(v: QuestView, sheets: readonly Sheet[]): number {
 
 export class QuestScreen implements Screen {
   readonly overlay = true;
-  private sel = 0;
+  /** The quests' cursor. */
+  private readonly menu = new ListMenu();
+  private get sel(): number { return this.menu.sel; }
+  private set sel(row: number) { this.menu.sel = row; }
   private sheet = 0;
   constructor(g: Host) {
     // Open on the quest that last changed, or the one last looked at, at its goal's chapter.
@@ -91,9 +95,7 @@ export class QuestScreen implements Screen {
     const n = this.sheets(g).length;
     if (is(a, 'left')) { this.sheet = Math.max(0, this.sheet - 1); return; }
     if (is(a, 'right')) { this.sheet = Math.min(n - 1, this.sheet + 1); return; }
-    if (is(a, 'up')) this.sel = (this.sel + list.length - 1) % list.length;
-    else if (is(a, 'down')) this.sel = (this.sel + 1) % list.length;
-    else return;
+    if (this.menu.press(a, { n: list.length }) !== 'moved') return;
     g.questFocus = list[this.sel].def.id;
     this.sheet = this.opening(g);
   }

@@ -4,6 +4,7 @@
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
+import { ListMenu } from './menu.ts';
 import { drawText, drawTextOutlined } from '../lib/engine/text.ts';
 import { menu, paragraph } from './draw.ts';
 import { freshSeed } from '../lib/engine/rng.ts';
@@ -21,7 +22,10 @@ export const IDLE_TICKS = 60 * 45;
 export const NOTE_W = 380, NOTE_LINES = 2;
 
 export class TitleScreen implements Screen {
-  private sel = 0;
+  /** Its cursor. */
+  private readonly menu = new ListMenu();
+  private get sel(): number { return this.menu.sel; }
+  private set sel(row: number) { this.menu.sel = row; }
   private items: string[];
   private canContinue: boolean;
   private note: string;
@@ -42,9 +46,7 @@ export class TitleScreen implements Screen {
       return;
     }
     this.idle = 0;
-    if (is(a, 'up')) this.sel = (this.sel + this.items.length - 1) % this.items.length;
-    else if (is(a, 'down')) this.sel = (this.sel + 1) % this.items.length;
-    else if (is(a, 'interact')) {
+    if (this.menu.press(a, { n: this.items.length }) === 'chosen') {
       const it = this.items[this.sel];
       if (it === 'Continue') { const loaded = g.loadGame(); if (loaded !== true) this.note = loaded; }
       else g.push(new CreateScreen(freshSeed()));

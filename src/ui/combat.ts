@@ -5,6 +5,7 @@
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
+import { ListMenu } from './menu.ts';
 import { drawText } from '../lib/engine/text.ts';
 import { panel, menu } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect, logTail, COMBAT_LOG_LINES } from './frame.ts';
@@ -47,8 +48,14 @@ export class CombatScreen implements Screen {
   auto = false;
   private botTimer = 0;
   private mode: Mode = 'menu';
-  private sel = 0;
-  private sub = 0;
+  /** The command menu's cursor (`sel`). */
+  private readonly commands = new ListMenu();
+  /** One cursor for the lists the commands open, as each opens (`sub`): a target, a spell, an item, an element, a member. */
+  private readonly list = new ListMenu();
+  private get sel(): number { return this.commands.sel; }
+  private set sel(row: number) { this.commands.sel = row; }
+  private get sub(): number { return this.list.sel; }
+  private set sub(row: number) { this.list.sel = row; }
   private timer = 0;
   private pendingSpell = '';
   /** The artifact the pending spell is cast from, if any (#847): a charge and no spell points. */
@@ -153,12 +160,8 @@ export class CombatScreen implements Screen {
     switch (this.mode) {
       case 'menu': {
         const opts = this.options(g, who);
-        if (is(a, 'up')) this.sel = (this.sel + opts.length - 1) % opts.length;
-        else if (is(a, 'down')) this.sel = (this.sel + 1) % opts.length;
-        else if (is(a, 'interact') || /^n[1-5]$/.test(a)) {
-          if (/^n[1-5]$/.test(a)) this.sel = Number(a[1]) - 1;
+        if (this.commands.press(a, { n: opts.length, barred: (i) => opts[i].disabled, digits: 'act' }) === 'chosen') {
           const o = opts[this.sel];
-          if (o.disabled) return;
           if (o.key === 'attack') { this.mode = 'target'; this.sub = 0; }
           else if (o.key === 'cast') { this.mode = 'spell'; this.sub = 0; }
           else if (o.key === 'use') { this.mode = 'item'; this.sub = 0; }
@@ -169,18 +172,14 @@ export class CombatScreen implements Screen {
       }
       case 'target': {
         if (is(a, 'cancel')) { this.mode = 'menu'; return; }
-        if (is(a, 'left', 'up')) this.sub = (this.sub + alive.length - 1) % alive.length;
-        else if (is(a, 'right', 'down')) this.sub = (this.sub + 1) % alive.length;
-        else if (is(a, 'interact')) act({ type: 'attack', target: alive[this.sub] });
+        if (this.list.press(a, { n: alive.length, across: true }) === 'chosen') act({ type: 'attack', target: alive[this.sub] });
         break;
       }
       case 'spell': {
         const c = g.party.members[who];
         const list = castable(g.tables, g.party.members[who]);
         if (is(a, 'cancel')) { this.mode = 'menu'; return; }
-        if (is(a, 'up')) this.sub = (this.sub + list.length - 1) % list.length;
-        else if (is(a, 'down')) this.sub = (this.sub + 1) % list.length;
-        else if (is(a, 'interact')) {
+        if (this.list.press(a, { n: list.length }) === 'chosen') {
           const e = list[this.sub], sp = spell(g.tables.spells, e.id);
           if (e.from ? chargesLeft(g.tables.items, g.party, e.from) < 1 : c.sp < sp.sp) { g.say(e.from ? 'Nothing left in it until dawn.' : 'Not enough spell points.'); return; }
           this.pendingSpell = sp.id;
@@ -194,34 +193,25 @@ export class CombatScreen implements Screen {
       }
       case 'spellTarget': {
         if (is(a, 'cancel')) { this.mode = 'spell'; this.sub = 0; return; }
-        if (is(a, 'left', 'up')) this.sub = (this.sub + alive.length - 1) % alive.length;
-        else if (is(a, 'right', 'down')) this.sub = (this.sub + 1) % alive.length;
-        else if (is(a, 'interact')) cast(alive[this.sub]);
+        if (this.list.press(a, { n: alive.length, across: true }) === 'chosen') cast(alive[this.sub]);
         break;
       }
       case 'item': {
         const items = this.usable(g, who);
         if (is(a, 'cancel')) { this.mode = 'menu'; return; }
-        if (is(a, 'up')) this.sub = (this.sub + items.length - 1) % items.length;
-        else if (is(a, 'down')) this.sub = (this.sub + 1) % items.length;
-        else if (is(a, 'interact')) { this.pendingItem = items[this.sub]; this.mode = 'itemTarget'; this.sub = who; }
+        if (this.list.press(a, { n: items.length }) === 'chosen') { this.pendingItem = items[this.sub]; this.mode = 'itemTarget'; this.sub = who; }
         break;
       }
       case 'element': {
         // Lampglass: what the party is to take half from.
         if (is(a, 'cancel')) { this.mode = 'spell'; this.sub = 0; return; }
-        if (is(a, 'up')) this.sub = (this.sub + ELEMENTS.length - 1) % ELEMENTS.length;
-        else if (is(a, 'down')) this.sub = (this.sub + 1) % ELEMENTS.length;
-        else if (is(a, 'interact')) cast(0, ELEMENTS[this.sub]);
+        if (this.list.press(a, { n: ELEMENTS.length }) === 'chosen') cast(0, ELEMENTS[this.sub]);
         break;
       }
       case 'itemTarget': {
-        const n = g.party.members.length;
         if (is(a, 'cancel')) { this.mode = this.pendingItem ? 'item' : 'spell'; this.sub = 0; return; }
-        if (is(a, 'left', 'up')) this.sub = (this.sub + n - 1) % n;
-        else if (is(a, 'right', 'down')) this.sub = (this.sub + 1) % n;
-        else if (/^n[1-6]$/.test(a)) this.sub = Number(a[1]) - 1;
-        else if (is(a, 'interact')) {
+        // The members' rows, in the party's order: a digit names one and moves there, and Space chooses.
+        if (this.list.press(a, { n: g.party.members.length, across: true, digits: 'move' }) === 'chosen') {
           if (this.pendingItem) act({ type: 'use', itemId: this.pendingItem, target: this.sub });
           else cast(this.sub);
         }
