@@ -23,6 +23,8 @@ export const PLACES: readonly AtlasPlace[] = [
   { id: 'drowned_temples', kind: 'dungeon', at: [56, 160] }, // the upper temple, behind B6's dry door (#175)
   { id: 'drowned_temples2', kind: 'dungeon', at: [56, 166] }, // the choir, below it
   { id: 'wytgat', kind: 'dungeon', band: [13, 14], at: [62, 217] }, // the enclave, the cut in the Scarp's foot at B7's 22,22 (#830, #845)
+  { id: 'sjongwierde', kind: 'dungeon', band: [30, 32], at: [34, 151] }, // the lair, the drowned mound in the fen, its stair in the crown at A5's 26,23 (#830, #845, #846)
+  { id: 'sjongwierde2', kind: 'dungeon', band: [30, 32], at: [34, 155] }, // the undercroft, below it, where the Old Chanter keeps the Telstok
 ];
 
 export const SITES: readonly AtlasSite[] = [

@@ -5,7 +5,7 @@ Saltreach's plan and its history (EXPANSION §8.2): the old §4, §11 and §12 o
 bounds' enclave and lair, §12.10), then under "Moved from the state" the lines of the old header,
 §1, §3 and §5 to §8 that the current state does not keep, each under the heading it had. A new
 box's brief goes here first, with its "As built" once it is built: the enclave's, Wytgat, is §12.12
-(#830), and the lair's is the next. Its decisions are `docs/areas/saltreach/decisions.md`.
+(#830), and the lair's, Sjongwierde, §12.13. Its decisions are `docs/areas/saltreach/decisions.md`.
 
 ## 4. What is still to build
 
@@ -552,8 +552,8 @@ sliver. Eight boxes, 3,645 squares a company could walk by the atlas, which 244 
 Upper Water, the Delta, the Saltings and the Downs open onto. Each box is built to the looser floor
 (EXPANSION §5.3) at its zone's band, from the area's roster, paid from its budget (§8), with nothing
 on the road's quest. Then the area's enclave and its artifact's lair (§12.10), the enclave built as
-Wytgat (§12.12). This is their brief, in §4's form; each box's pull request builds from it, and adds
-its "As built".
+Wytgat (§12.12) and the lair as Sjongwierde (§12.13). This is their brief, in §4's form; each box's
+pull request builds from it, and adds its "As built".
 
 | Box | Laid in | Walkable | Other land in it | Built neighbours | Band | Pull request |
 |---|---|---|---|---|---|---|
@@ -566,6 +566,7 @@ its "As built".
 | B7 | the Saltings, `saltings_b7` | 944 | the Delta's 346; the Wold's 219 above the Scarp | B6, C7, B8 (the Wold) | 11–12 | the fourth, built (#830) |
 | D6 | the Saltings, `saltings_d6` | 61 | the Delta's 48 | C6, D5, D7 (the Wold, #924), E6 (Wrackholm, across the sea) | 11–12 | the fourth, built (#830) |
 | Wytgat, the enclave | off the grid, `wytgat`, its door B7's 22,22 | 98 | | B7 | 13–14 | the fifth, built (#830) |
+| Sjongwierde, the lair | off the grid, `sjongwierde` and `sjongwierde2`, its door A5's 26,23 | 66 and 59 | | A5 | 30–32 | the sixth, built (#830) |
 
 ### 12.1 What every box keeps
 
@@ -764,10 +765,10 @@ its "As built".
 - **The secret and its hint.** A sluice-house in the old dyke, walled up when the dyke was let go:
   the keeper's tally-sticks and his pay-box. The hint: clear water runs out under the dyke's foot into
   the fen's brown.
-- **The lair.** Its door in the drowned mound here (§12.10), in its own pull request once #845, #847
-  and the guardian's drawing are in: this box leaves the mound and the way to it clear. Its rumour is
-  #846's, said in B3, and no word in this box speaks of it.
-- **New here.** Nothing; the lair, when it comes, is #846's and #847's.
+- **The lair.** Its door is the stair in the drowned mound's crown here, Sjongwierde's (§12.13),
+  built in its own pull request. Its rumour is #846's, said in B3, and no word in this box speaks of
+  it.
+- **New here.** Nothing; the lair is #846's and #847's (§12.13).
 - **Finds.** 180 gold in the pay-box and a draught.
 - **Pay.** About 450 xp a member.
 - **As built** (#830, 23 October): `delta_a5`, laid at 8,126, 535 squares to stand on. In from B5's
@@ -786,7 +787,10 @@ its "As built".
   water runs out under the dyke's foot into the marsh; inside, a stool, the tally-sticks and a chest
   of 180 gold and a draught. The gate holds at 10: 6.84 fights to a rest, every fight won; two
   under, 60.5%. Density: 97.0% within 12 steps, the furthest 15. By the curve's count the box pays
-  about 485 xp a member and 235 gold.
+  about 485 xp a member and 235 gold. Since (#830, 29 October): the crown at 26,23 is drawn as
+  stone, the stair down into Sjongwierde (§12.13), walked onto along row 23 as it was left; it was
+  hills and walked before, so A5 still stands 535 squares, 97.0% within 12, and its gate is as
+  it was.
 
 ### 12.7 A6, the fen under the rim: country, band 11–12
 
@@ -920,8 +924,8 @@ at the cap's band, a drowned mound of two levels on the fen's west edge under th
 guardian, its door on A5, as #846's design has it (#908); the artifact, its guardian and the rumour
 that first speaks of it are #846's, and where #846 changes them, this note gives way to it.
 The guardian is drawn: the Old Chanter (`old_chanter`, the skeleton family's, size 1.35), its
-staff the Telstok's bog oak and its numbers the line's boss at 32 for the lair's pull request
-to set. It is owed in `checks.ts` until a group in the mound holds it. **The enclave** (#845):
+staff the Telstok's bog oak and its numbers set by the lair's gate. The lair is built: Sjongwierde,
+at 30–32, the Old Chanter in its undercroft (§12.13). **The enclave** (#845):
 its door in the Scarp's foot on B7, a place of its own held a band or two over the
 Saltings', with its own reward, as #845 sets them. B7 has the room: 614 squares to stand on, its Scarp's foot
 clear of the pans and the smugglers' fire. The owner's delegate moved the two doors so on 18
@@ -997,6 +1001,56 @@ What the seven areas after Saltreach copy from these boxes, and what they avoid 
   it). The gate holds at 13: 6.66 fights to a rest, every fight won; two under, at 11, 4.61, 63.6%
   of the floor's 7.25. Density: 100.0% within 7 steps, the furthest 4. By the curve's count it pays
   1,104 xp a member and 921 gold, counted in no clear.
+
+### 12.13 Sjongwierde, the lair (#830): dungeon, two levels of 16×16, band 30–32
+
+- **Purpose.** Saltreach's artifact lair (#845, #846, #847), in the drowned mound in A5's fen: the
+  church the mound's folk built on its top, silted when the water came over, and under it the
+  mound's heart, where the Old Chanter still sings and keeps the Telstok. A place of its own at the
+  cap's band, with one guardian and the artifact found there alone.
+- **Band.** 30–32, the cap's, as #845 has it for a lair. Its pay is a figure, counted in no clear,
+  and a find of it would sit in the Hearth's window (EXPANSION §5.2); its finds are consumables and
+  the artifact, which no window holds.
+- **Landmarks.** The mound's crown and the stair cut down through its clay; the church under the
+  mound, its nave silted to the knee, the singers' benches and the chancel; the undercroft, its
+  dead on shelves in the clay; the steps down to the singing floor; the hollow of the jars.
+- **Points of interest,** eleven events and two chests: the stair; the nave; the singers' boards,
+  their hymns in notes and never a number; the chancel and its singing heads; the stair down, a
+  voice coming up it; the undercroft; its dead; the steps and the figure singing on them; the
+  singing floor; the wall that answers late, the hint; the hollow and its jars.
+- **Encounters.** One, the guardian: the Old Chanter on the steps to its floor, where the one way on
+  passes, a boss at 32 that never comes back. The church above holds no group.
+- **Ways in and out.** One, the stair in the mound's crown at A5's 26,23, walked onto along row 23:
+  in onto 7,1 facing south, the door's line the game's own, "Sjongwierde: levels 30-32.", with
+  harder one or two under and the warning three or more; out onto A5's 25,23, facing back along the
+  mound. The church's stair at 7,13 goes down to the undercroft's 7,1, and back up onto 7,12.
+- **The secret and its hint.** A hollow behind the singing floor's east wall, its sides set with
+  jars laid mouth out to carry the song, the mound's gifts in them. The hint: by that wall a
+  company's steps come back a beat late, and hollow, as off the inside of a jar.
+- **The rumour.** Hiltje in B3's withy beds (§4.11), at every meeting after her first: her greeting
+  and her word on the god, then *Before the temples there was a priest who sang and never counted.
+  When her staff struck the floor, the dead lay down.* and *The water came up over her mound, and
+  she sang it in.* Words only: no `seek` quest, no line in the journal and no mark on the world map.
+- **New here.** The lair itself (#845, #846), the area's one place at the cap; its guardian, the Old
+  Chanter, drawn by #1045; and the area's artifact, the Telstok, whose blows carry holy (#847).
+- **Finds.** The Telstok, alone on the stone by the guardian's place; 500 gold, an Elixir and a
+  Sapphire Vial in the jars.
+- **As built** (#830, 29 October): `sjongwierde` and `sjongwierde2`, dungeons of 16 by 16,
+  `enclave: true`, their plates at 34,151 and 34,155 in Saltreach's `PLACES`, two and six squares
+  south of the door. A5's crown at 26,23, hills, is drawn as stone, the stair, its one square
+  changed; the hills about it stand, and nothing stands within four squares of it, the nearest the
+  bull toad at 25,28, six away. The church: 66 squares to stand on, the stair's foot at 7,1, the
+  nave at 4–10,3–9 on four piers, the singers' bay at 1–2,5–7, the chancel at 5–9,11–12 and the
+  stair down at 7,13; five looks and no group, chest or secret. The undercroft: 59 squares, its
+  stair's foot at 7,1, its dead at 4,5, the steps from 7,7, where the singer is seen, down to the
+  Old Chanter at 7,9, the one way on; past it the singing floor at 5–9,10–13, the Telstok on the
+  stone at 7,10, a step from its place, and the hint at 9,12; behind the wall at 10,12 the hollow at
+  11–13,11–13 and its gifts at 12,12. With the Old Chanter standing a walker, wader, climber or
+  floater reaches 27 of the undercroft's squares and none of the floor; with it fallen 49, and none
+  of the hollow but through the wall. Its numbers are set by the lair's gate: 2,150 hit points,
+  attack 25 and 25d8+41, its armour, pace, blessing and curse as drawn; it is won 61% at 30 and 93%
+  at 32, and 66% and 92% over 400 seeds. Density: 100.0% within 7 steps on each level, the furthest
+  6. By the curve's count it pays 3,396 xp a member and 500 gold, counted in no clear.
 
 ## Moved from the state
 

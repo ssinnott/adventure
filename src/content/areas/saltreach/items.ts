@@ -26,7 +26,8 @@ export const guildChart: ItemDef = { id: 'guild_chart', name: 'Guild Chart', slo
 ] };
 
 // Saltreach's of the bounds' eight (DESIGN §9, #847): the Grey Staff's 1d10+13 and a point, its blows
-// holy. Found and never sold; placed nowhere yet, for #830 lays its lair and puts it there.
+// holy. Found and never sold; it lies on the stone by the Old Chanter's place in Sjongwierde's
+// undercroft, the lair under A5's drowned mound (#830).
 export const telstok = W('telstok', 'The Telstok', ARTIFACT_PRICE, 1, 10, { kind: 'staff', bonus: 14, twoHanded: true, classes: ['cleric', 'sorcerer', 'druid', 'monk'], element: 'holy', artifact: true, text: [
   'A staff of black bog oak, its foot worn round on a stone floor.',
   'Struck on stone, it rings like a bell under water.',

@@ -73,8 +73,8 @@ import { ACT_II } from '../../../../tools/kit/rules/ladder.ts';
 import { MAP_DEFS, MONSTERS, GUILD_QUESTS, THE_QUEST, TABLES } from '../../index.ts';
 import { CURVE } from '../../progression.ts';
 import { businessEntries, ChoiceScreen } from '../../../ui/screens.ts';
-import { optionParts, columnLabelWidth } from '../../../ui/draw.ts';
-import { SIDE_W } from '../../../ui/frame.ts';
+import { optionParts, columnLabelWidth, wrap } from '../../../ui/draw.ts';
+import { SIDE_W, SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { measureText } from '../../../lib/engine/text.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
@@ -1079,8 +1079,8 @@ export const walkthrough: Walkthrough = (ok) => {
  * the marsh at its corner, where A5 meets it. The fen's west shore (A5): west out of B5's reeds at 0,16
  * and south out of A4's corner, both walked, its north edge the rim's mountain but for that corner; the
  * wildfowler's word on the toads, the shrine at the fen's edge, a rest at the wildfowlers' hide while
- * both groups stand clear of it, the pools and the toad won, the drowned mound left bare and walked to,
- * and the sluice-house found from the clear water at the dyke's foot. The fen under the rim (A6): west
+ * both groups stand clear of it, the pools and the toad won, the stair in the drowned mound's crown walked
+ * to, and the sluice-house found from the clear water at the dyke's foot. The fen under the rim (A6): west
  * out of B6's reeds at 0,16 and south out of A5's corner, both walked, its south edge shut against A7,
  * which stays cut, B6's corner with it; the bell heard, the priest of stone's riddle, a rest
  * at the pilgrims' hearth, the drowned men and the toads won at 11 and the anchorite's cell found from
@@ -1096,6 +1096,11 @@ export const walkthrough: Walkthrough = (ok) => {
  * D5's spit at 10,31, which names the Saltings, and east out of C6's shore at 31,16, both walked; the
  * spit, the shore and its south end three pieces of land, the toads won at 11 and the keeper's store found
  * from the footing's boom. Walked, waded, climbed or floated, no prize is reached but through its door.
+ * Sjongwierde, the lair (#845, #847): east from A5's mound at 25,23 down the stair in its crown, its door
+ * saying its band and how it feels at 10, 28 and 30 and its signs the cap's band; the first level's looks
+ * and no group, chest or secret; the Old Chanter on the steps to its floor, the one way on, won at 30; the
+ * Telstok on the stone by its place, one in the world; the hollow found from the wall that answers late;
+ * up and out onto the mound again; and Hiltje's rumour in B3, at every meeting after her first.
  */
 function theBounds(ok: (cond: boolean, msg: string) => void): void {
   const w = newWalk(ok), out = buildMaps()[OUTDOORS];
@@ -1236,11 +1241,14 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     `the wildfowlers' hide at ${hide.x},${hide.y} stands clear of both groups, and a company rests there while they stand (${restRefused(w.world) || 'rest allowed'})`);
   w.level = 10;
   for (const g of A5.encounters!) fight(w, `${A5.id}:${g.id}`);
-  // The drowned mound is left bare for the lair's door: its crown walked to on foot along row 23, with no
-  // feature or group on it, on its way or beside it.
-  const mound = reach(out, a5, [A5.start.x, A5.start.y], {});
-  ok(mound.has(square(out, a5, 26, 23)) && mound.has(square(out, a5, 21, 23)) && ![...A5.features!, ...A5.encounters!].some((f) => f.x >= 20 && f.x <= 28 && f.y >= 21 && f.y <= 25),
-    'the drowned mound\'s crown, 26,23, is walked to on foot from the way in along row 23, and no feature or group stands on it, on the way or about it');
+  // The drowned mound's crown, 26,23, is the stair down into Sjongwierde, the lair: the one stone on the
+  // mound, its hills about it, walked to on foot along row 23 from the way in, and nothing within four
+  // squares of it.
+  const mound = reach(out, a5, [A5.start.x, A5.start.y], {}), stair = A5.exits!.find((e) => e.to === 'sjongwierde')!;
+  const nearStair = [...A5.features!, ...A5.encounters!, ...A5.secrets!].filter((f) => Math.abs(f.x - 26) + Math.abs(f.y - 23) <= 4);
+  ok(A5.exits!.length === 1 && stair.x === 26 && stair.y === 23 && A5.rows[23].slice(25, 28) === '^"^' && A5.rows[22][26] === '^' && A5.rows[24][26] === '^'
+    && [21, 24, 25, 26].every((x) => mound.has(square(out, a5, x, 23))) && !nearStair.length,
+    `the stair into Sjongwierde is the one stone in the drowned mound's crown at A5's 26,23, its hills about it, walked to on foot along row 23 from the way in; nothing stands within four squares of it${nearStair.length ? ` (${nearStair.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
   // The secret: the clear water at the dyke's foot, the search there and the sluice-house behind the walling.
   const sluice = reach(out, a5, [A5.start.x, A5.start.y], ALL, [21, 15]);
   ok(sluice.size > 450 && !sluice.has(square(out, a5, 20, 15)), `the sluice-house is shut but for its walling: none of A5's ${sluice.size} squares walked, waded, climbed or floated reaches it`);
@@ -1419,6 +1427,105 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   ok(search(w, D6.id, 11, 3, SOUTH, 'd6_store'), 'searched at the footing, the stone gives, and the keeper\'s store behind it can be walked into');
   ok(gold(D6, 'd6_store_chest') === 150 && contents(D6, 'd6_store_chest').includes('potion_heal'), 'in the store, the keeper\'s chest of 150 gold and a draught');
   see(w, `${D6.id}:d6_ribs`);
+
+  // Sjongwierde (#845, #847), the lair: the stair in the drowned mound's crown at A5's 26,23, walked onto
+  // from the mound at 25,23. Its door says its band and how it feels, as a border's line: the warning at
+  // 10, harder at 28 and its band alone at 30; inside, its sign gives the cap's band, and so does the
+  // undercroft's.
+  {
+    const SJ = MAP_DEFS.find((d) => d.id === 'sjongwierde')!, SJ2 = MAP_DEFS.find((d) => d.id === 'sjongwierde2')!, stair = A5.exits!.find((e) => e.to === SJ.id)!;
+    ok(stair.tx === SJ.start.x && stair.ty === SJ.start.y && stair.tf === SJ.start.facing && SJ.exits![0].to === A5.id && SJ.exits![0].tx === 25 && SJ.exits![0].ty === 23,
+      'the stair into Sjongwierde arrives at the lair\'s start, 7,1, facing in; its way out leads back onto the mound at 25,23');
+    const was = w.party.members.map((m) => m.level);
+    const enter = (level: number): string => {
+      for (const m of w.party.members) m.level = level;
+      w.world.travel(A5.id, 25, 23, EAST);
+      const r = w.world.move('forward');
+      return r.kind === 'moved' && w.world.state.mapId === SJ.id && w.world.state.x === SJ.start.x && w.world.state.y === SJ.start.y ? r.messages.join(' | ') : r.kind;
+    };
+    const lairBand = 'Sjongwierde: levels 30-32.', low = enter(10), close = enter(28), at30 = enter(30);
+    ok(low === `${stair.label} | ${lairBand} ${WARNING_IN}` && close === `${stair.label} | ${lairBand} ${HARDER_IN}` && at30 === `${stair.label} | ${lairBand}`,
+      `east from the mound at A5's 25,23 into Sjongwierde, the way's own line and then its band, with the warning at 10, harder at 28 and nothing more at 30 (${low}; ${close}; ${at30})`);
+    ok(!!SJ.enclave && !!SJ2.enclave && w.world.here.name === 'Sjongwierde' && w.world.here.band?.join('-') === '30-32' && SJ2.band?.join('-') === '30-32',
+      `inside, its sign gives the cap's band, over A5's 10-11, and so does the undercroft's (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+    listen(w);
+    w.level = 30;
+    // The first level holds its looks and the way down, and no group, chest or secret: nothing in the
+    // lair is had without the Old Chanter's fight.
+    ok(!SJ.encounters?.length && !SJ.secrets?.length && !(SJ.features ?? []).some((f) => f.kind === 'chest' || f.kind === 'cairn'),
+      'Sjongwierde\'s first level holds no group, no chest and no secret: nothing in the lair is had without the Old Chanter\'s fight');
+    for (const id of ['sw_crown', 'sw_nave', 'sw_boards', 'sw_chancel', 'sw_stair']) see(w, `${SJ.id}:${id}`);
+    // Down the stair to the undercroft: the way's own line, and nothing more, its floor the same.
+    w.world.travel(SJ.id, 7, 12, SOUTH);
+    const down = w.world.move('forward');
+    ok(down.kind === 'moved' && w.world.state.mapId === SJ2.id && w.world.state.x === SJ2.start.x && w.world.state.y === SJ2.start.y && down.messages.join(' | ') === SJ.exits![1].label,
+      `down the stair onto the undercroft, the way's own line alone (${said(down)})`);
+    listen(w);
+    // The guardian: the Old Chanter, a boss that never comes back, on the steps to its floor, the one way
+    // on. Walked, waded, climbed or floated, with it standing (its square and those a step from it shut,
+    // where its fight starts) nothing past it is reached: not the floor, the stone or the echoing wall.
+    const chanter = SJ2.encounters!.find((g) => g.id === 'sw2_chanter')!, [jarWall] = SJ2.secrets!, floor = new GameMap(SJ2);
+    const flood = (live: readonly { x: number; y: number }[]): Set<string> => {
+      const seen = new Set<string>(), todo: [number, number][] = [[SJ2.start.x, SJ2.start.y]];
+      while (todo.length) {
+        const [x, y] = todo.pop()!;
+        if (seen.has(`${x},${y}`) || (x === jarWall.x && y === jarWall.y) || live.some((g) => Math.abs(g.x - x) + Math.abs(g.y - y) <= 1) || floor.passable(x, y, ALL) !== 'ok') continue;
+        seen.add(`${x},${y}`);
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+      }
+      return seen;
+    };
+    const standing = flood([chanter]), gone = flood([]);
+    const stone = SJ2.features!.find((f) => f.kind === 'chest' && f.id === 'sw2_stone')!, gifts = SJ2.features!.find((f) => f.kind === 'chest' && f.id === 'sw2_gifts')!;
+    ok(SJ2.encounters!.length === 1 && chanter.monsters.join() === 'old_chanter' && !!chanter.boss && !chanter.respawn && chanter.roams === false && !!chanter.slainText
+      && standing.has('7,7') && !['7,10', '7,11', '9,12'].some((k) => standing.has(k)) && ['7,10', '7,11', '9,12'].every((k) => gone.has(k)),
+      `the Old Chanter, the one group of the lair, stands on the steps to its floor, the one way on: with it standing, none of the undercroft's ${standing.size} squares walked, waded, climbed or floated reaches the floor, the stone or the echoing wall; with it gone, ${gone.size} do`);
+    for (const id of ['sw2_foot', 'sw2_dead', 'sw2_steps']) see(w, `${SJ2.id}:${id}`);
+    fight(w, `${SJ2.id}:sw2_chanter`);
+    see(w, `${SJ2.id}:sw2_floor`);
+    // The Telstok on the stone by the Old Chanter's place, one in the world: no other chest, cairn or
+    // statue holds it, no shop sells it and no monster drops it.
+    const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('telstok')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== stone && f.items.includes('telstok')) || (f.kind === 'statue' && !!f.gift?.items?.includes('telstok'));
+    const tel = item(TABLES.items, 'telstok');
+    ok(stone.kind === 'chest' && stone.gold === 0 && stone.items.join() === 'telstok' && Math.abs(stone.x - chanter.x) + Math.abs(stone.y - chanter.y) === 1 && !!tel.artifact && tel.element === 'holy'
+      && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'telstok')),
+      'on the stone by the Old Chanter\'s place, the Telstok, whose blows carry holy; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
+    // The secret: the wall that answers late and hollow, the search there and the hollow behind it.
+    // Walked, waded, climbed or floated, it is never reached but through the wall.
+    const hollow = [[11, 11], [12, 11], [13, 11], [11, 12], [12, 12], [13, 12], [11, 13], [12, 13], [13, 13]];
+    ok(jarWall.hint === 'sw2_echo' && jarWall.x === 10 && jarWall.y === 12 && gone.has('9,12') && !hollow.some(([x, y]) => gone.has(`${x},${y}`)),
+      `the hollow is shut but for its wall: none of the undercroft's ${gone.size} squares walked, waded, climbed or floated reaches it`);
+    see(w, `${SJ2.id}:sw2_echo`);
+    ok(search(w, SJ2.id, 9, 12, EAST, 'sw2_jars'), 'searched where the steps come back hollow, the wall gives, and the hollow behind it can be walked into');
+    ok(gifts.kind === 'chest' && gifts.gold === 500 && gifts.items.join() === 'elixir,potion_sp_great' && gifts.x === 12 && gifts.y === 12, 'in the hollow, in the jars: 500 gold, an Elixir and a Sapphire Vial');
+    // And out: up the stair onto Sjongwierde's 7,12, and up out of the crown onto A5's 25,23, each way's
+    // line alone.
+    w.world.travel(SJ2.id, SJ2.start.x, SJ2.start.y + 1, NORTH);
+    const upStair = w.world.move('forward');
+    ok(upStair.kind === 'moved' && w.world.state.mapId === SJ.id && w.world.state.x === 7 && w.world.state.y === 12 && upStair.messages.join(' | ') === SJ2.exits![0].label,
+      `up the stair onto Sjongwierde's chancel, the way's own line alone (${said(upStair)})`);
+    w.world.travel(SJ.id, SJ.start.x, SJ.start.y + 1, NORTH);
+    const outStair = w.world.move('forward');
+    ok(outStair.kind === 'moved' && w.world.zone?.id === A5.id && w.world.state.x === a5.x + 25 && w.world.state.y === a5.y + 23 && w.world.state.facing === WEST && outStair.messages.join(' | ') === SJ.exits![0].label,
+      `up out of the crown onto A5's 25,23, facing back along the mound, the way's own line alone (${said(outStair)})`);
+    listen(w);
+    // The rumour (#846): Hiltje in B3's withy beds says nothing of the priest at her first meeting, and at
+    // every meeting after it her greeting and her word on the god and then of the priest who sang: words
+    // only, which set nothing, in no quest, and inside the say box.
+    const B3 = MAP_DEFS.find((d) => d.id === 'upperwater_b3')!, hiltje = B3.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Hiltje'))!;
+    const words = hiltje.says!.find((s) => s.lines.some((l) => l.includes('sang and never counted')))!;
+    const sang = '"Before the temples there was a priest who sang and never counted. When her staff struck the floor, the dead lay down."';
+    const sangIn = '"The water came up over her mound, and she sang it in."';
+    delete w.party.flags.b3_hiltje_met;
+    w.world.travel(B3.id, hiltje.x, hiltje.y);
+    const firstMeeting = meet(hiltje, w.party, heard(w.world, hiltje)).text, nextMeeting = meet(hiltje, w.party, heard(w.world, hiltje)).text;
+    ok(firstMeeting === hiltje.lines.join('\n\n') && !firstMeeting.includes('priest') && nextMeeting === [...hiltje.lines.slice(0, 2), sang, sangIn].join('\n\n') && !words.sets && !words.choice
+      && wrap(nextMeeting, SAY_W).length <= SAY_LINES && !JSON.stringify(questLog(TABLES, w.world.state, w.party)).includes('priest'),
+      `Hiltje says her own three lines and nothing of the priest at her first meeting, and at the next her greeting, her word on the god and then the priest who sang: words only, in no quest, ${wrap(nextMeeting, SAY_W).length} of the say box's ${SAY_LINES} lines`);
+    listen(w);
+    delete w.party.flags.b3_hiltje_met;
+    w.party.members.forEach((m, i) => { m.level = was[i]; });
+  }
 }
 
 /**

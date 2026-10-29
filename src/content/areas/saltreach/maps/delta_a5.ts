@@ -3,10 +3,12 @@
 // along the shore, and in it a sluice-house walled up, found from the clear water that runs out under
 // its foot; a wildfowler of Stienwierde in his punt, a camp, a cairn and a shrine; four leeches and an
 // eel in the fen's pools and a bull toad alone where the dyke gives out; and the drowned mound in the
-// marsh, left bare for the lair's door. Its north edge is the rim's mountain, as A4's south edge is,
-// but at the corner, where the fen's marsh runs on; its south edge is A6's. Cut from the atlas by
-// hand, its void written in; docs/areas/saltreach.md §12 is its brief.
+// marsh, the stair in its crown at 26,23 the door into Sjongwierde, the Telstok's lair (#830). Its
+// north edge is the rim's mountain, as A4's south edge is, but at the corner, where the fen's marsh
+// runs on; its south edge is A6's. Cut from the atlas by hand, its void written in;
+// docs/areas/saltreach/plan.md §12.6 is its brief, and §12.13 the lair's.
 import type { MapDef } from '../../../../game/mapdef.ts';
+import { anchored } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
@@ -18,6 +20,7 @@ export const DELTA_A5: MapDef<'delta_a5'> = {
   band: [10, 11],
   region: 'saltreach',
   start: { x: 31, y: 16, facing: WEST },
+  anchors: { from_sjongwierde: { x: 25, y: 23, facing: WEST } },
   rows: [
     '%%%%%MMMMMMMMMMMMMMMMMMMMMMMMMMw',
     '%%%%%MMMMMMM^^^^,,,,,,,wwwwwwwww',
@@ -42,7 +45,7 @@ export const DELTA_A5: MapDef<'delta_a5'> = {
     '%%%%%MMMMMMMMMM^^^,,:wwwwwwwwwww',
     '%%%%%MMMMMMMMMM^^^^,:www~~~~~www',
     '%%%%%MMMMMMMMMM^^^^,:wwww^^^~www',
-    '%%%%%MMMMMMMMMM^^^^^wwwww^^^~www',
+    '%%%%%MMMMMMMMMM^^^^^wwwww^"^~www',
     '%%%%%MMMMMMMMMM^^^^^:wwww^^^~www',
     '%%%%%MMMMMMMMM^^^^^^:www~~~~~www',
     '%%%%%MMMMMMMMM^^^^^w:wwwwwwwwwww',
@@ -51,6 +54,11 @@ export const DELTA_A5: MapDef<'delta_a5'> = {
     '%%%%%MMMMMMMMM^^^^^^wwwwwwwwwwww',
     '%%%%%MMMMMMMMM^^^^^^wwwwwwwwwwww',
     '%%%%%MMMMMMMMM^^^^^^wwwwwwwwwwww',
+  ],
+  exits: [
+    // The stair in the drowned mound's crown at 26,23, walked onto along row 23: Sjongwierde, the
+    // Telstok's lair (#830, docs/areas/saltreach/plan.md §12.13).
+    anchored({ x: 26, y: 23, to: 'sjongwierde', at: 'start', label: 'Down a stair cut in the mound\'s crown, into the clay and the cold.' }),
   ],
   features: [
     // The wildfowler in the reeds off the shore, with word of the toads.

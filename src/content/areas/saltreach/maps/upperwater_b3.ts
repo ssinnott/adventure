@@ -3,11 +3,19 @@
 // sluice under its pollards to the river's bank, a plank bridge over it, the willows' quay at its mouth
 // where a barge lies up for the sluice with its crew aboard, the boathouse behind it, the ford below,
 // the carr on the west bank and a bull toad in it, the withy beds north of the diep and the fields of
-// Rietum's west edge running in. Cut from the atlas by tools/scaffold.ts; docs/areas/saltreach.md
-// §4.11 is its brief.
+// Rietum's west edge running in. Hiltje in the withy beds, at every meeting after her first, says two
+// lines more, the Telstok's rumour (#846, #830). Cut from the atlas by tools/scaffold.ts;
+// docs/areas/saltreach/plan.md §4.11 is its brief.
 import type { MapDef } from '../../../../game/mapdef.ts';
 import { WEST } from '../../../../game/types.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
+
+/** Hiltje's own words, said at her first meeting; the first two before the rumour at every one after. */
+const HILTJE = [
+  'A woman of the Tidefolk stands in the withy bed to her knees with a hook, cutting rods and laying them in a bundle at her hip. She does not stop for you. "Hiltje. You want the quay, keep on down the diep."',
+  '"The god on the hill over the broad water, south of here, has had his name cut off his stone. Before my time. My grandmother would not say it. She\'d say he counts now, and go on with her rods."',
+  '"The herons on the water go home at dusk to the willows at the river\'s end, the last of them before the broad water. Every crown has a nest. Don\'t go under them in a clean coat."',
+];
 
 export const UPPERWATER_B3: MapDef<'upperwater_b3'> = {
   id: 'upperwater_b3',
@@ -56,10 +64,15 @@ export const UPPERWATER_B3: MapDef<'upperwater_b3'> = {
     { kind: 'event', x: 29, y: 25, id: 'b3_drains', once: true, text: 'Rietum\'s last drain runs out of the fields into the willows and loses its line among them. Beyond, the sound of the river.' },
     { kind: 'event', x: 2, y: 3, id: 'b3_rim', once: true, text: 'The Long Water comes white out of the rim\'s hills and goes brown under the first willows, and bends, and is slow.' },
     { kind: 'shrine', x: 4, y: 5, id: 'b3_shrine', text: 'A shrine at the bend to the drowned god, its bowl cut in the bank where the river fills it. The bowl is full. No tide reaches here.', stat: 'intellect', done: 'The bowl stays full.' },
-    { kind: 'npc', x: 20, y: 5, name: 'Hiltje, a withy-cutter of Rietum', lines: [
-      'A woman of the Tidefolk stands in the withy bed to her knees with a hook, cutting rods and laying them in a bundle at her hip. She does not stop for you. "Hiltje. You want the quay, keep on down the diep."',
-      '"The god on the hill over the broad water, south of here, has had his name cut off his stone. Before my time. My grandmother would not say it. She\'d say he counts now, and go on with her rods."',
-      '"The herons on the water go home at dusk to the willows at the river\'s end, the last of them before the broad water. Every crown has a nest. Don\'t go under them in a clean coat."',
+    // Hiltje; at every meeting after her first she says her word on the god and then two lines more, the
+    // rumour of the Telstok (#846, #830), where the herons' line was, so that her words fit the say box:
+    // words only, which set nothing and mark nothing on the world map.
+    { kind: 'npc', x: 20, y: 5, name: 'Hiltje, a withy-cutter of Rietum', lines: HILTJE, flag: 'b3_hiltje_met', says: [
+      { after: { flag: 'b3_hiltje_met' }, lines: [
+        ...HILTJE.slice(0, 2),
+        '"Before the temples there was a priest who sang and never counted. When her staff struck the floor, the dead lay down."',
+        '"The water came up over her mound, and she sang it in."',
+      ] },
     ] },
     // The diep, its bridge and the willows' quay at its mouth.
     { kind: 'event', x: 25, y: 13, id: 'b3_bridge', once: true, text: 'A plank footbridge over the diep, two planks and a rail, the water a long way down between them and barge-green, and still.' },
