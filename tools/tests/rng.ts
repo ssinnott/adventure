@@ -49,8 +49,8 @@ function parted<T extends RngInstance>(a: T, b: T, draws: readonly Draw<T>[], st
   return '';
 }
 
-/** A Game as its generator, world and party stand. */
-const look = (g: Game): string => `${g.rng.state} ${JSON.stringify(g.world.state)} ${JSON.stringify(g.party)}`;
+/** A Game's world and party as they stand. */
+const look = (g: Game): string => `${JSON.stringify(g.world.state)} ${JSON.stringify(g.party)}`;
 
 export async function rng(): Promise<void> {
   const url = new URL('../../src/lib/engine/rng.ts', import.meta.url);
@@ -97,7 +97,9 @@ export async function rng(): Promise<void> {
   if (b.rng.state !== s9) moved.push(`a hundred draws on the Game at 4 took the one at 9 from ${hex(s9)} to ${hex(b.rng.state)}`);
   ok(a.rng !== b.rng && moved.length === 0, `two Games, at seeds 4 and 9, draw two streams: building the second and a hundred draws on each move nothing of the other${moved.length ? ': ' + moved.join('; ') : ''}`);
   const c = headlessGame(4), sc = c.rng.state, c4 = look(c), again = Array.from({ length: 100 }, () => c.rng.next());
-  ok(c4 === a4 && again.join() === drawn.join(), `a Game at seed 4 built after two others drew stands where the first stood when it was built (the state ${hex(sc)}, the first's ${hex(s4)}), its world and party the same, and draws the first's hundred draws`);
+  const off = again.findIndex((x, i) => x !== drawn[i]);
+  const unlike = [sc !== s4 ? `the state is ${hex(sc)}` : '', c4 !== a4 ? 'its world or party differs' : '', off >= 0 ? `its draw ${off + 1} is ${again[off]}, the first's ${drawn[off]}` : ''].filter((u) => u !== '');
+  ok(unlike.length === 0, `a Game at seed 4 built after two others drew stands where the first stood when it was built (${hex(s4)}), its world and party the same, and draws the first's hundred draws${unlike.length ? ': ' + unlike.join('; ') : ''}`);
 
   // (4) A save's state round-trips from one Game into another, and loading it moves nothing of the first.
   const g = headlessGame(4);
