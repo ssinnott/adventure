@@ -24,6 +24,7 @@ import { monster } from '../game/monsters.ts';
 import type { ViewMonster } from '../ui/viewport.ts';
 import { ExploreScreen } from '../ui/explore.ts';
 import { LAYOUT, drawFrameBackground } from '../ui/frame.ts';
+import { HINT } from '../ui/palette.ts';
 import { CombatScreen } from '../ui/combat.ts';
 import { MessageScreen, ChoiceScreen, serviceScreen, InteriorScreen, learnerMenu, masterMenu } from '../ui/screens.ts';
 import { questLog, questMarks, questNews } from '../game/quests.ts';
@@ -225,9 +226,9 @@ export class Game implements Host {
     if (!band) return;
     ctx.fillStyle = 'rgba(0,0,0,0.6)';
     ctx.fillRect(v.x, v.y, v.w, 24);
-    drawText(ctx, band.lines[0], v.x + 6, v.y + 4, { size: 1, color: '#ffe08a' });
+    drawText(ctx, band.lines[0], v.x + 6, v.y + 4, { size: 1, color: HINT });
     if (band.lines[1]) drawText(ctx, band.lines[1], v.x + 6, v.y + 14, { size: 1, color: '#d8d0c0' });
-    if (band.tag) drawText(ctx, band.tag, v.x + v.w - 6, v.y + 4, { size: 1, color: '#ffe08a', align: 'right' });
+    if (band.tag) drawText(ctx, band.tag, v.x + v.w - 6, v.y + 4, { size: 1, color: HINT, align: 'right' });
   }
 
   // ---- quests ----

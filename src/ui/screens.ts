@@ -33,7 +33,7 @@ import { teachesExpert, expertOffers, masterOffers, favourDone, tierLine, teachT
 import type { Line, Mastery } from '../game/mastery.ts';
 import type { Items, Tables } from '../game/tables.ts';
 
-const BOX = { x: 40, y: 40, w: SAY_W + 24, h: 220 };
+const BOX = LAYOUT.box;
 
 // ---- a visit to a business ----
 
@@ -280,7 +280,8 @@ export class SheetScreen implements Screen {
   }
   render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     const c = g.party.members[this.who];
-    panel(ctx, 8, 8, 624, 268);
+    const sheet = LAYOUT.sheet, hint = LAYOUT.hint;
+    panel(ctx, sheet.x, sheet.y, sheet.w, sheet.h);
     drawText(ctx, `${c.name}  ${RACES[c.race].name} ${className(c)}  LEVEL ${c.level}`, 20, 18, { size: 1, color: BRASS });
     drawText(ctx, c.level >= MAX_LEVEL ? `XP ${c.xp}  (AT THE CAP)` : `XP ${c.xp} / ${xpForLevel(c.level + 1)}`, 620, 18, { size: 1, color: canTrain(c) ? YELLOW : TEXT_DIM, align: 'right' });
     drawPortraitLarge(ctx, c, 20, 34);
@@ -299,7 +300,7 @@ export class SheetScreen implements Screen {
     drawText(ctx, 'ITEMS (SPACE: EQUIP OR USE)', 340, 36, { size: 1, color: TEXT_DIM });
     if (!items.length) drawText(ctx, 'nothing carried', 340, 50, { size: 1, color: TEXT_DIM });
     else menu(ctx, items.slice(0, SHEET_ITEMS).map((it) => `${item(g.tables.items, it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, SHEET_ITEMS_Y, this.sel);
-    drawText(ctx, '< > OR 1-6 SWITCH   ESC CLOSE', 620, 264, { size: 1, color: TEXT_DIM, align: 'right' });
+    drawText(ctx, '< > OR 1-6 SWITCH   ESC CLOSE', hint.x, hint.y, { size: 1, color: TEXT_DIM, align: 'right' });
     drawPartyCards(g.tables.items, ctx, g.party, this.who, frame);
   }
 }

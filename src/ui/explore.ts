@@ -9,6 +9,7 @@ import { allDown } from '../game/party.ts';
 import type { Feature } from '../game/mapdef.ts';
 import { monster } from '../game/monsters.ts';
 import { drawViewport } from './viewport.ts';
+import { HINT } from './palette.ts';
 import { LAYOUT, drawStatus, drawAutomap, drawPartyCards, drawLog, drawViewportFrame, drawPurse } from './frame.ts';
 import { SpellScreen, SheetScreen } from './screens.ts';
 import { QuestScreen } from './quests.ts';
@@ -67,7 +68,7 @@ export class ExploreScreen implements Screen {
     const grp = g.world.groupAt(ahead.x, ahead.y);
     const hint = grp ? `${monster(g.tables.monsters, grp.def.monsters[0]).plural}: Space to attack` : f ? `${featureLabel(f)}: Space` : '';
     // The pilot's band takes the top of the view while it is up.
-    if (hint && !g.bandUp) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: '#ffe08a', align: 'center' });
+    if (hint && !g.bandUp) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: HINT, align: 'center' });
     drawStatus(ctx, g.world);
     drawAutomap(ctx, g.world, frame);
     drawPartyCards(g.tables.items, ctx, g.party, -1, frame);

@@ -1,7 +1,9 @@
 // The frame around the viewport: the status strip (the time, the date, the sky and its glyph), the
 // automap (whole, or a window round the party outdoors; the features and the groups marked as
-// game/ink.ts says), the party cards, the message log and the purse. Layout for the 640x360 canvas
-// is fixed here in LAYOUT so every screen agrees on it.
+// game/ink.ts says; its parchment painted once and kept), the party cards, the message log and the
+// purse. Layout for the 640x360 canvas is fixed here in LAYOUT so every screen agrees on it: the
+// sheet over the view, the hint on its last line, the message box and the world map's window and
+// keys too.
 import { drawText } from '../lib/engine/text.ts';
 import type { World } from '../game/world.ts';
 import type { Party, Character, Condition } from '../game/party.ts';
@@ -26,6 +28,16 @@ export const LAYOUT = {
   purse: { x: 416, y: 260, w: 216, h: 16 },
   party: { x: 8, y: 284, w: 624, h: 68 },
   log: { x: 8, y: 8, w: 400, h: 268 },
+  /** A sheet over the view and the column beside it: a member's sheet, the quest log. */
+  sheet: { x: 8, y: 8, w: 624, h: 268 },
+  /** Where a sheet's keys are lettered, flush right on its last line. */
+  hint: { x: 620, y: 264 },
+  /** A person's box: a message, a question, the spell picker; its words wrap at `SAY_W`. */
+  box: { x: 40, y: 40, w: 560, h: 220 },
+  /** The world map's window on the cloth, over the view and the cards. */
+  worldmap: { x: 8, y: 8, w: 624, h: 318 },
+  /** The world map's keys on the frame under its window, and where the party is, flush right. */
+  worldmapKeys: { x: 14, y: 343, right: 626 },
 } as const;
 
 const CARD_W = 100, CARD_GAP = 4.8;
@@ -94,8 +106,21 @@ const AUTOMAP_MIN = 6;
 /** A den on the automap: a smoky red while it stands, ash once burnt. */
 const DEN = '#6a2a1a', DEN_ASH = '#9a948a';
 
-export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: number): void {
-  const r = LAYOUT.map;
+/** The parchment painted last, and the rect it was painted for. */
+let painted: { key: string; canvas: HTMLCanvasElement } | null = null;
+
+/**
+ * The automap's parchment in the rect `r`: the panel, a mottled field and a burnt edge, from the rect
+ * and `hash` alone, so it is painted once and kept, and painted again only for a rect of another
+ * place or size. Its canvas reaches from the corner to the rect's far corner and the parchment is
+ * painted where it stands, since a gradient's pixels follow the place it falls (drawAutomap draws
+ * the rect of it alone).
+ */
+export function parchment(r: { readonly x: number; readonly y: number; readonly w: number; readonly h: number }): HTMLCanvasElement {
+  const key = `${r.x} ${r.y} ${r.w} ${r.h}`;
+  if (painted?.key === key) return painted.canvas;
+  const cv = document.createElement('canvas'); cv.width = r.x + r.w; cv.height = r.y + r.h;
+  const ctx = cv.getContext('2d')!;
   panel(ctx, r.x, r.y, r.w, r.h, PARCHMENT_DARK);
   // Parchment: a mottled field with a burnt edge.
   ctx.save(); ctx.beginPath(); ctx.rect(r.x + 2, r.y + 2, r.w - 4, r.h - 4); ctx.clip();
@@ -109,6 +134,13 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   const edge = ctx.createLinearGradient(r.x, r.y, r.x, r.y + r.h);
   edge.addColorStop(0, 'rgba(60,30,10,0.25)'); edge.addColorStop(0.15, 'rgba(60,30,10,0)'); edge.addColorStop(0.85, 'rgba(60,30,10,0)'); edge.addColorStop(1, 'rgba(60,30,10,0.25)');
   ctx.fillStyle = edge; ctx.fillRect(r.x + 2, r.y + 2, r.w - 4, r.h - 4);
+  painted = { key, canvas: cv };
+  return cv;
+}
+
+export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: number): void {
+  const r = LAYOUT.map;
+  ctx.drawImage(parchment(r), r.x, r.y, r.w, r.h, r.x, r.y, r.w, r.h);
   const m = world.map;
   // A map that fits is drawn whole; one too big for that (the outdoors) shows the cells round the
   // party, as many as fit at the size a 32-square map is drawn, an odd number so it stands mid-panel.
@@ -229,7 +261,7 @@ export const logLines = (text: string): string[] => wrap(text, LAYOUT.log.w - 12
  * without a word; a question shows `ASK_LINES` and the box grows to hold them and its answers. In
  * a business the side panel takes them, `SIDE_W` wide, a question `ASK_SIDE_LINES` of it.
  */
-export const SAY_W = 536, SAY_LINES = 14, ASK_LINES = 5, SIDE_W = LAYOUT.map.w - 16, ASK_SIDE_LINES = 7;
+export const SAY_W = LAYOUT.box.w - 24, SAY_LINES = 14, ASK_LINES = 5, SIDE_W = LAYOUT.map.w - 16, ASK_SIDE_LINES = 7;
 
 /** The last `max` lines of a log as shown: each entry wrapped to the viewport, the newest kept, the latest entry's lines marked. */
 export function logTail(lines: readonly string[], max = LOG_LINES): { text: string; latest: boolean }[] {

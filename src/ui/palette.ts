@@ -15,6 +15,10 @@ export const GREEN = '#5ea85a';
 export const BLUE = '#5a8ac6';
 export const YELLOW = '#e0c04a';
 export const PURPLE = '#8a5ac6';
+/** The row a menu or a list stands on: its marker and its words. */
+export const SELECTED = '#ffe08a';
+/** A hint over the view or the map: what is ahead, the pilot's band, the map's YOU. */
+export const HINT = '#ffe08a';
 
 /** The void, where the world ends until it is built further: pink empty space, unlit and untextured. */
 export const VOID_PINK = '#ff5fbf';
