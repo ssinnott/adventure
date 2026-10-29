@@ -1,7 +1,8 @@
 // The game's own generator (#1021): `makeRng` gives each Game a generator with its own state, so two
-// Games in one process draw two streams, where they drew on the engine's one singleton. A copy of
-// engine code, named as one: the singleton's mulberry32 step, its `seed` (a zero falls back to
-// 0x9e3779b9) and its start state, closed over and typed as the engine's `Rng`, so a save keeps the
+// Games in one process draw two streams, where they drew on the engine's one singleton.
+//
+// A copy of engine code, named as one: the singleton's mulberry32 step, its `seed` (a zero falls back
+// to 0x9e3779b9) and its start state, closed over and typed as the engine's `Rng`, so a save keeps the
 // state as it did. game-engine's own `makeRng` gives up no state and seeds a zero to 1, and src/lib is
 // never edited here (DESIGN §13): this file goes, and one import changes, when game-engine ships a
 // `makeRng` with a state. tools/tests/rng.ts holds it to the singleton, draw for draw and state for
