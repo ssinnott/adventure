@@ -1,17 +1,17 @@
 // What the screens work out once (#1032): the quest log's list when it opens and the selected
 // quest's sheets when the choice moves, the world map's marks (the party's place, the pins of the
 // places read and sought, the line of where) when it opens, each held to what a frame worked out
-// before (the log's list and sheets, `marksOf`) at every key the screen takes, and worked out anew
-// at the next opening after the game has changed them; a load, a new game and attract mode put a
-// stack of their own in place of an open log; the pilot at the helm over the log presses its keys
-// alone; and LAYOUT's sheet, hint, box and world map rects and the palette's selection and hint as
-// the screens wrote them. What is painted (the log's canvas, the automap's parchment) needs a
-// canvas, so it is the smoke test's (tools/smoke/flows.ts, `questlog` and `explore`).
+// before (the log's list and sheets, `companyMarks`) at every key the screen takes, and worked out
+// anew at the next opening after the game has changed them; a load, a new game and attract mode
+// put a stack of their own in place of an open log; the pilot at the helm over the log presses its
+// keys alone; and LAYOUT's sheet, hint, box and world map rects and the palette's selection and
+// hint as the screens wrote them. What is painted (the log's canvas, the automap's parchment)
+// needs a canvas, so it is the smoke test's (tools/smoke/flows.ts, `questlog` and `explore`).
 import type { Action } from '../../src/ui/actions.ts';
 import type { Game } from '../../src/app/game.ts';
 import type { Feature } from '../../src/game/mapdef.ts';
 import { QuestScreen, questOrder, questSheets, openingSheet, PAGE } from '../../src/ui/quests.ts';
-import { WorldMapScreen, marksOf } from '../../src/ui/worldmap.ts';
+import { WorldMapScreen, companyMarks } from '../../src/ui/worldmap.ts';
 import type { Marks } from '../../src/ui/worldmap.ts';
 import { LAYOUT, SAY_W } from '../../src/ui/frame.ts';
 import { SELECTED, HINT } from '../../src/ui/palette.ts';
@@ -56,7 +56,7 @@ function log(): void {
     `the log opens worked out as a frame worked it out: ${list.length} quests, the first's ${sheets0.length} sheets, on sheet ${s['sheet'] + 1}`);
   drive(g, [null, null, null]);
   ok(s['list'] === list && s['sheets'] === sheets0, 'three frames with no key work out nothing: the same list and the same sheets');
-  // Every key the log takes, each against a frame of the base: the choice, the page, and keys it ignores.
+  // Every key the log takes, each against a frame of the base: the choice, the page and keys it ignores.
   const keys: Action[] = ['left', 'left', 'right', 'down', 'down', 'right', 'up', 'interact', 'n3', 'rest', 'up', 'left', 'right', 'down', 'up'];
   const wrong: string[] = [];
   let moved = 0, turned = 0;
@@ -80,7 +80,7 @@ function log(): void {
   drive(g, ['down']);
   const v = list[s['menu'].sel];
   ok(s['sheet'] === openingSheet(v, s['sheets']) && kept(s) === framed(g, s), `the next choice opens on its own opening sheet (${s['sheet'] + 1} of ${s['sheets'].length}, ${v.def.title})`);
-  // A change through the game: shut, Vask's dialogue begins his quest, and the log opened again has it.
+  // A change through the game: shut, Vask's dialogue begins his quest and the log opened again has it.
   const h = headlessGame(4);
   drive(h, ['journal']);
   const first = h.top as QuestScreen, none = first['list'].length;
@@ -131,7 +131,7 @@ function pilot(): void {
     `with the pilot at the helm over the open log, ${ticks} ticks, the log the one a frame drew at each and no flag written under it; then ${g.top.constructor.name} on top (${wrong.join(', ') || 'none wrong'})`);
 }
 
-/** The world map: its marks worked out as it opens, kept while it is open, and worked out anew at the next opening. */
+/** The world map: its marks worked out as it opens, kept while it is open and worked out anew at the next opening. */
 function chart(): void {
   const g = headlessGame(4);
   const kilns = g.world.locate('kilnsheart_o6', 0, 0).mapId;
@@ -140,21 +140,25 @@ function chart(): void {
   drive(g, ['map', null]);
   const m = g.top;
   if (!(m instanceof WorldMapScreen)) { ok(false, `M opens the world map (${m.constructor.name})`); return; }
-  const marks: Marks | null = m['marks'], want = JSON.stringify(marksOf(g.world));
+  const marks: Marks | null = m['marks'], want = JSON.stringify(companyMarks(g.world));
   ok(marks !== null && JSON.stringify(marks) === want && marks.read.length === 4 && marks.sought.length >= 1 && marks.party !== null && marks.where !== '',
     `the map opens with the company's marks worked out: the party at ${marks?.party?.map(Math.round).join(', ')}, ${marks?.read.length} places read, sought by ${marks?.sought.map((p) => p.who.join(' and ')).join(', ')}, "${marks?.where}"`);
   drive(g, [null, 'up', 'next', 'zoom', null]);
   ok(m['marks'] === marks && g.top === m, 'five ticks and keys on the open map work out nothing: the same marks');
-  // Shut; a step through the game, a reading forgotten and a third member at the prestige's level; open again.
+  // Shut; a step through the game, then out to the Foreland, a reading forgotten and a third member
+  // at the prestige's level; open again: the party's place and the line of where move with it.
   drive(g, ['map']);
   const at = (): string => `${g.world.state.mapId} ${g.world.state.x},${g.world.state.y}`, was = at();
   for (let i = 0; i < 4 && at() === was; i++) { drive(g, ['forward']); if (at() === was) drive(g, ['turnRight']); }
+  const stepped = at();
+  g.world.travel('shelf', 16, 9, 2);
   delete g.world.state.maps[kilns].used.o6_mouth;
   g.party.members[4].level = PRESTIGE_LEVELS[0];
   drive(g, ['map', null]);
-  const m2 = g.top as WorldMapScreen, again: Marks | null = m2['marks'], now = JSON.stringify(marksOf(g.world));
-  ok(m2 !== m && again !== null && JSON.stringify(again) === now && now !== want && again.read.length === 0 && at() !== was,
-    `opened again after a step (${was} to ${at()}), the reading forgotten and a third member at the prestige's level, the map works its marks out anew: ${again?.read.length} read, sought by ${again?.sought.map((p) => p.who.join(' and ')).join(', ')}`);
+  const m2 = g.top as WorldMapScreen, again: Marks | null = m2['marks'], now = JSON.stringify(companyMarks(g.world));
+  ok(m2 !== m && again !== null && JSON.stringify(again) === now && now !== want && again.read.length === 0 && stepped !== was
+      && again.party?.join() !== marks?.party?.join() && again.where !== marks?.where,
+    `opened again after a step (${was} to ${stepped}) and out on the Foreland (${at()}), the reading forgotten and a third member at the prestige's level, the map works its marks out anew: the party at ${again?.party?.map(Math.round).join(', ')}, ${again?.read.length} read, sought by ${again?.sought.map((p) => p.who.join(' and ')).join(', ')}, "${again?.where}"`);
 }
 
 /** LAYOUT's rects and the palette's colours as the screens wrote them before (#1032). */

@@ -36,15 +36,22 @@ export async function explore({ page, seed, ok }: Run): Promise<void> {
   const combatColours = await colours(page);
   ok(state.map === 'caldera' && state.zone === 'shelf' && state.steps === 3, `three steps back through the gate reach the Foreland, outdoors (${JSON.stringify(state)})`);
   ok(exploreColours > 20, `the viewport, automap and party cards painted (${exploreColours} colours)`);
-  // The automap's parchment is painted once and kept, and painted again for a rect of another size or place (#1032).
+  // The automap's parchment is painted once and kept, and painted again for a rect of another size
+  // or place (#1032); the automap drawn over a colour it never has leaves none of it in its rect.
   const parchment = await page.evaluate(async () => {
     const load: Load = (p) => import(p);
     const F = await load<typeof import('../../src/ui/frame.ts')>('/src/ui/frame.ts'), r = F.LAYOUT.map;
     const a = F.parchment(r), b = F.parchment(r), c = F.parchment({ ...r, h: r.h - 14 }), d = F.parchment({ ...r, x: r.x - 8 }), e = F.parchment(r);
-    return { kept: a === b, sizes: [a, c, d, e].map((v) => `${v.width}x${v.height}`).join(', '), again: e !== a };
+    const cv = document.createElement('canvas'); cv.width = 640; cv.height = 360;
+    const x = cv.getContext('2d')!; x.fillStyle = '#ff00ff'; x.fillRect(0, 0, 640, 360);
+    F.drawAutomap(x, window.__game!.game!.world, 7);
+    const px = x.getImageData(r.x, r.y, r.w, r.h).data;
+    let bare = 0;
+    for (let i = 0; i < px.length; i += 4) if (px[i] === 255 && px[i + 1] === 0 && px[i + 2] === 255) bare++;
+    return { kept: a === b, sizes: [a, c, d, e].map((v) => `${v.width}x${v.height}`).join(', '), again: e !== a, bare };
   });
-  ok(parchment.kept && parchment.again && parchment.sizes === '632x256, 632x242, 624x256, 632x256',
-    `the automap's parchment is painted once and kept, and painted again for a rect 14 shorter, one 8 to the left and the automap's again (${parchment.sizes})`);
+  ok(parchment.kept && parchment.again && parchment.sizes === '632x256, 632x242, 624x256, 632x256' && parchment.bare === 0,
+    `the automap's parchment is painted once and kept, and painted again for a rect 14 shorter, one 8 to the left and the automap's again (${parchment.sizes}); drawn, it covers its rect (${parchment.bare} pixels bare)`);
   ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
 }
 
@@ -389,10 +396,12 @@ export async function questlog({ page, ok }: Run): Promise<void> {
   const questClosed = await page.evaluate(() => window.__game!.game!.top.constructor.name);
   ok(questLine === 'New quest: The Dimming.', `closing Vask's dialogue announces his quest (${questLine})`);
   ok(questScreen === 'QuestScreen' && questColours > 20 && questClosed === 'ExploreScreen', `J opens the quest log, it paints, and Esc closes it (${questScreen}, ${questColours} colours, then ${questClosed})`);
-  // Every flag the content declares, the log opened on the quest of the most sheets (#1032): it paints as
-  // it opens and again as a page turns or the choice moves, each time what a log opened afresh on that
-  // choice and page paints; and 200 frames of it, each flushed, timed with no bound (runners vary). The
-  // company's own flags are put back before the log shuts, so nothing is announced.
+  // Every flag the content declares, the log opened on the quest of the most sheets (#1032): it
+  // paints as it opens and again as a page turns or the choice moves (twice, the second time onto
+  // a quest that opens on the same page number), each time what a log opened afresh on that choice
+  // and page paints, and what its paint gives straight onto the stage, as each frame drew it
+  // before; and 200 frames of it, each flushed, timed with no bound (runners vary). The company's
+  // own flags are put back before the log shuts, so nothing is announced.
   const kept = await page.evaluate(async () => {
     const load: Load = (p) => import(p);
     const g = window.__game!.game!, C = await load<typeof import('../../src/content/index.ts')>('/src/content/index.ts');
@@ -408,10 +417,13 @@ export async function questlog({ page, ok }: Run): Promise<void> {
   const afresh = (): Promise<{ same: boolean; sel: number; rows: number; sheet: number; sheets: number }> => page.evaluate((r: { x: number; y: number; w: number; h: number }) => {
     const g = window.__game!.game!, s = g.top as QuestScreen, t = new (s.constructor as typeof QuestScreen)(g);
     t['sheet'] = s['sheet'];
-    const drawn = (q: QuestScreen): Uint8ClampedArray => { const c = document.createElement('canvas'); c.width = 640; c.height = 360; const x = c.getContext('2d')!; q.render(g, x); return x.getImageData(r.x, r.y, r.w, r.h).data; };
-    const a = drawn(s), b = drawn(t);
-    let same = a.length === b.length;
-    for (let i = 0; same && i < a.length; i++) same = a[i] === b[i];
+    const stage = (): CanvasRenderingContext2D => { const c = document.createElement('canvas'); c.width = 640; c.height = 360; return c.getContext('2d')!; };
+    const drawn = (q: QuestScreen): Uint8ClampedArray => { const x = stage(); q.render(g, x); return x.getImageData(r.x, r.y, r.w, r.h).data; };
+    // The log painted straight onto the stage, no canvas of its own, as each frame drew it before.
+    const straight = (q: QuestScreen): Uint8ClampedArray => { const x = stage(); q['paint'](x, Math.min(q['sheet'], Math.max(0, q['sheets'].length - 1))); return x.getImageData(r.x, r.y, r.w, r.h).data; };
+    const a = drawn(s), b = drawn(t), d = straight(t);
+    let same = a.length === b.length && a.length === d.length;
+    for (let i = 0; same && i < a.length; i++) same = a[i] === b[i] && a[i] === d[i];
     return { same, sel: s['menu'].sel, rows: s['list'].length, sheet: s['sheet'], sheets: s['sheets'].length };
   }, LAYOUT.sheet);
   const opened = await afresh();
@@ -422,6 +434,8 @@ export async function questlog({ page, ok }: Run): Promise<void> {
   const right = await afresh();
   await press(page, 'ArrowDown');
   const down = await afresh();
+  await press(page, 'ArrowDown');
+  const onward = await afresh();
   const ms = await page.evaluate(() => {
     const g = window.__game!.game!, s = g.top, c = document.createElement('canvas'); c.width = 640; c.height = 360;
     const x = c.getContext('2d')!, t = performance.now();
@@ -436,9 +450,10 @@ export async function questlog({ page, ok }: Run): Promise<void> {
   }, kept);
   await press(page, 'Escape');
   const shut = await page.evaluate(() => { const g = window.__game!.game!; return `${g.top.constructor.name}, "${g.log.at(-1)}"`; });
-  ok(opened.same && left.same && right.same && down.same && opened.sheets > 2 && left.sheet === Math.max(0, opened.sheet - 1) && right.sheet === Math.min(opened.sheets - 1, left.sheet + 2)
-      && (left.sheet !== opened.sheet || right.sheet !== left.sheet) && down.sel === (opened.sel + 1) % opened.rows && shut === `ExploreScreen, "${questLine}"`,
-    `every flag set, the log paints as it opens and at each page turned and choice moved what a log opened afresh there paints (sheet ${opened.sheet + 1} of ${opened.sheets}, then ${left.sheet + 1} and ${right.sheet + 1}; the next quest on ${down.sheet + 1} of ${down.sheets}), and shuts with nothing announced (${shut})`);
+  ok(opened.same && left.same && right.same && down.same && onward.same && opened.sheets > 2 && left.sheet === Math.max(0, opened.sheet - 1) && right.sheet === Math.min(opened.sheets - 1, left.sheet + 2)
+      && (left.sheet !== opened.sheet || right.sheet !== left.sheet) && down.sel === (opened.sel + 1) % opened.rows
+      && onward.sel === (down.sel + 1) % down.rows && onward.sheet === down.sheet && shut === `ExploreScreen, "${questLine}"`,
+    `every flag set, the log paints as it opens and at each page turned and choice moved what a log opened afresh there paints and what it paints straight onto the stage (sheet ${opened.sheet + 1} of ${opened.sheets}, then ${left.sheet + 1} and ${right.sheet + 1}; the next quest on ${down.sheet + 1} of ${down.sheets} and the one after on ${onward.sheet + 1} of ${onward.sheets}), and shuts with nothing announced (${shut})`);
   ok(Number.isFinite(ms), `the quest log, every flag set, draws 200 frames in ${ms.toFixed(1)} ms, each flushed`);
 }
 

@@ -1548,11 +1548,11 @@ function whereOf(world: World | null): string {
   return where;
 }
 
-/** What the map shows of the company: the party's place, the pins of the places read and sought, and the line of where it is. */
+/** What the map shows of the company: the party's place, the line of where it is and the pins of the places read and sought. */
 export interface Marks { party: [number, number] | null; read: [number, number][]; sought: { at: [number, number]; who: string[] }[]; where: string }
 
 /** The company's marks, worked out as the map opens (`WorldMapScreen.marked`); the tests hold the map to it. */
-export function marksOf(world: World | null): Marks {
+export function companyMarks(world: World | null): Marks {
   return { party: partyOnCloth(world), read: readOnCloth(world), sought: soughtOnCloth(world), where: whereOf(world) };
 }
 
@@ -1588,7 +1588,7 @@ export class WorldMapScreen implements Screen {
   /** Whether the cloth is painted yet (the first opening paints it behind a progress bar). */
   get ready(): boolean { return painted !== null; }
 
-  private marked(g: Host): Marks { return (this.marks ??= marksOf(g.world ?? null)); }
+  private marked(g: Host): Marks { return (this.marks ??= companyMarks(g.world ?? null)); }
 
   private place(g: Host): void {
     const at = this.marked(g).party ?? [CLOTH.w / 2, CLOTH.h / 2];
