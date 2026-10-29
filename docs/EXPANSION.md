@@ -396,10 +396,10 @@ secret found and never told, restraint), reads the text and the code.
   its entries and its goals), and `content/index.ts` joins them in road order into one quest, with
   the goals furthest along first, as the log tries them. No area edits another's chapter, so one
   quest is not one file that everyone edits.
-- **The road's own test.** The quest's walkthrough plays the chapters in order with a company at
-  the curve's level for each step, and checks at every step that the goal names a place that
-  exists, that the company's level sits in that place's band, and that the step can be finished.
-  Each area's walkthrough is its chapter; the whole is the chain.
+- **The road's own test.** The walkthrough plays the chapters in order, each step at the curve's
+  level, checking that the goal names a built place, the level sits in its band and the step is
+  finished. An area's walkthrough is its chapter in scenes, each its own walk, run alone
+  (`node tools/test.ts walkthrough:kilns:n4`); the whole is the chain.
 - **Early is fine.** It is played again with an area taken before the quest sends the company
   there, and the log must still read true.
 - **Today's quests.** The Quiet Farm and The Grove Stone become its first chapters. The Cargo
