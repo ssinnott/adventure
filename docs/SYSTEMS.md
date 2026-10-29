@@ -16,10 +16,11 @@ in `docs/areas/`. Cut from the slice's doc by #1023, which keeps that doc whole 
   listed once in road order in `src/content/index.ts`, which merges their tables; the tables no
   area owns; and the world map's plan, `src/content/atlas.ts`.
 - **`src/ui/`** is the screens, the frame, the viewport, the world map and the art (below). The
-  screens ask the game only what the `Host` (`screen.ts`) carries, so no file of it names the app.
-- **`src/app/`** is the app, over the UI: the `Game` (`game.ts`: the screen stack, save and load,
-  attract mode), the keyboard's queue (`input.ts`) and the pilot, which plays the game for
-  watching (`pilot/`, docs/PILOT.md). The entry, `src/main.ts`, is the app's.
+  screens ask the game only what the `Host` (`src/ui/screen.ts`) carries, so no file of it names
+  the app.
+- **`src/app/`** is the app, over the UI: the `Game` (`src/app/game.ts`: the screen stack, save and
+  load, attract mode), the keyboard's queue (`src/app/input.ts`) and the pilot, which plays the game
+  for watching (`src/app/pilot/`, docs/PILOT.md). The entry, `src/main.ts`, is the app's.
 - **`tools/`** is the tools, each one's usage in its header; `tools/kit/` is what they share with
   the suites and the walkthroughs (the headless game, the fight, the company, the line and the
   rules, #984); `tools/tests/` holds the suites, a file each, which `tools/test.ts` finds.
@@ -130,7 +131,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   and a family or a scene takes a kit when it is next edited (EXPANSION §8.1).
 - **The rest:** `src/ui/portraits.ts` paints a portrait to each character from the name, race and
   class; `src/ui/scenery.ts` holds the trees, rocks, mountains and pillars; `src/ui/view/` is the
-  depth-layered first-person compositor (`compositor.ts`) and its parts by section (the sky, the
+  depth-layered first-person compositor (`src/ui/view/compositor.ts`) and its parts by section
+  (the sky, the
   weather, the floors, the walls, the roofs and the tents), a model with no canvas and the common
   ground they all take, with `src/ui/viewport.ts` their barrel (#1028). Its painters take the
   frame's state as one `Paint`, made once at the top of each paint (#1029); its static scene is
@@ -138,10 +140,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   reach into it.
 - **The grounds' looks**, `src/ui/view/ground/`: a module to each terrain exports its look (#1030),
   its colour through the year, how white snow makes it, whether rain darkens it or splashes on it,
-  its tiles, what lies on it and what stands about it. `GROUND` in its `index.ts` holds them, a
-  record over the terrains; the floors, the scene and the rain ask it and name no ground. In the
-  view a new ground is a module there, its line in `index.ts` and its colour in `TERRAIN_COLORS`
-  (the automap's): the typecheck names a terrain without either.
+  its tiles, what lies on it and what stands about it. `GROUND` in
+  `src/ui/view/ground/index.ts` holds them, a record over the terrains; the floors, the scene and
+  the rain ask it and name no ground. In the view a new ground is a module there, its line in
+  `src/ui/view/ground/index.ts` and its colour in `TERRAIN_COLORS` (the automap's): the typecheck
+  names a terrain without either.
 
 ## Stubbed or absent
 

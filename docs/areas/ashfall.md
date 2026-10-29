@@ -17,7 +17,7 @@ Its ids: the area `ashfall`; its zones `cindercoast`, `firemount` and `emberwast
 
 ## 1. Where it is
 
-The tenth step of the road of levels (DESIGN §9) and the second of Act IV, band 24–26: three zones
+The tenth step of the road of levels (DESIGN §4, §9) and the second of Act IV: three zones
 of the atlas (`src/content/areas/ashfall/atlas.ts`) on the grid of boxes 32 squares a side
 (EXPANSION §8.2), the E to H columns from row 9 to row 12. Cindercoast, band 24–25, is H10, G10,
 F9, G9 and H9; Fire Mountain, band 25–26, is G11, H11, H12 and G12; the Ember Waste, band 25–26, is
@@ -164,7 +164,8 @@ machines and the volcano with G11 and the springs with H10; the rest is on the r
   checks). Meridian Camp's last level is outside its budget (3,003 xp a member and 1,200 gold), and
   the enclave and the lair are counted in no clear (4,186 xp a member and 1,200 gold).
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.6% of its 45 groups'
-  fights (aim 90%); two under, its groups pooled at 22, 7.61 fights to a rest, 76.1% of the floor's
+  fights (`GATE.through`'s aim); two under, its groups pooled at 22, 7.61 fights to a rest, 76.1% of
+  the floor's
   10. Old Cinder and the Ember Stone at 25 win 82.5% each, their bosses deciding it: the Old Drake
   65% at 25 and 99% at 27, the Sentinel 65% and 97%. The Brood Drake is won 61% at 26 and 100% at
   28, the Grave Drake 59% at 30 and 81% at 32. The corridors win 90.3% at 26 and every other map

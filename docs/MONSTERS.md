@@ -243,7 +243,8 @@ place, are for the spells past 10 and the prestiges to settle (#20, #19).
 
 ### 3.3 What the road asks
 
-Each ask is a field on `MonsterDef` or `EncounterDef` and a few lines of `combat.ts` or `world.ts`,
+Each ask is a field on `MonsterDef` or `EncounterDef` and a few lines of `src/game/combat.ts` or
+`src/game/world.ts`,
 made once in the systems lane and first spent by the area named, which waits for it (EXPANSION.md
 §3, principle 2); no area invents one on the side. Each lands with the gate bot's answer to it
 (EXPANSION.md §5.2), or the check will call a monster harder than it is.
@@ -279,7 +280,7 @@ and `obeys` (#748), the bots killing the panel first. Still to come: a light see
 Decided by delegate for #537, each the owner's to overturn:
 
 1. **A troll mends a tenth of its hit points a round, on three quarters of a brute's** (`TROLL` in
-   `tools/testmonster.ts`, `node tools/harness.ts --abilities`): at 19, 361 mending 36. With fire a
+   `tools/kit/line.ts`, `node tools/harness.ts --abilities`): at 19, 361 mending 36. With fire a
    company fights 12.4 pairs to a rest where it fights 11.7 pairs of brutes, a pair in 4.6 rounds
    for 7% of itself; with none it takes 6.7 rounds for 9%, a grind. On a brute's whole hit points a
    tenth nears a wall once spells are spent: weapons alone win 54% inside fifteen rounds at 19.
@@ -289,7 +290,8 @@ Decided by delegate for #537, each the owner's to overturn:
 3. **Fire stops the mending for the round it lands in,** the damage of one of the four fire spells
    (since #855 a fire weapon's die as well: the Beacon Hammer and Trollbrand); the log says
    "Tor Troll mends 36." and, burnt, "Tor Troll smoulders and does not mend."
-4. **A curse is what `party.ts` makes it, as disease is:** it outlasts a rest and a raising; Faith
+4. **A curse is what `src/game/party.ts` makes it, as disease is:** it outlasts a rest and a
+   raising; Faith
    keeps it off, and Restore, Absolve (tier 7) or a temple lifts it. It takes nothing in a fight, so
    no bot answers it; a bite there (Bless turned round) is the owner's to ask for.
 5. **A call brings its whole group or none, and the cap counts every monster that came in,** the
@@ -343,7 +345,7 @@ Decided by delegate for #545, each the owner's to overturn:
    the front row and misses." Each member hit flashes as at a blow, so `src/ui/combat.ts` needs
    nothing new.
 6. **A sweeper is the test brute come down whole to 0.85 of its line, sweeping a turn in four**
-   (`SWEEP` in `tools/testmonster.ts`, `node tools/harness.ts --abilities`): at 23, 537 hit points
+   (`SWEEP` in `tools/kit/line.ts`, `node tools/harness.ts --abilities`): at 23, 537 hit points
    and a blow of 24, so one sweep at its worst takes 38 of each of a front row whose least has 112.
    A company fights 9.8 pairs to a rest where it fights 10.3 of brutes, a pair in 5.3 rounds for 11%
    of itself, and 9.7 pairs of drakes at 25 where it fights 8.8. On the brute's whole line a sweep a
@@ -397,7 +399,8 @@ Decided by delegate for #546, each the owner's to overturn:
 1. **Stone rides a hit, as a curse does** (`inflict: { cond: 'stoned', chance }`): a hit that lands
    and does not fell the member glasses it at its chance, and the log says "Bram turns to glass!"
    in place of a fall, once. The party card shows it as it shows the fallen, STONED in grey.
-2. **The glassed are out of the fight and the walk, as `party.ts` had them, and a rest mends
+2. **The glassed are out of the fight and the walk, as `src/game/party.ts` had them, and a rest
+   mends
    nothing in them:** DESIGN §6's "or time" is not stone's. Their wounds wait as they were, and a
    raising does not touch them.
 3. **One rule lifts it in three places:** Absolve (tier 7, from 23) as before; a Quickening
@@ -434,7 +437,7 @@ Decided by delegate for #636, each the owner's to overturn:
    already, so the structure check's guardians stay those with a quest item or a `slainText`. The
    Warden of the Anvil has its `slainText`.
 3. **The checks count a group's flags with its question's** (`groupFlags`), so a condition on one
-   names something real and its area's `shipped.json` keeps it.
+   names something real and `src/content/areas/<area>/shipped.json` keeps it.
 4. **The Kilns claims the mechanic (`encounter:sets`)** when the Warden of the Anvil sets
    `q_anvil_closed`, the first group on the road to set a flag: that, its step events and its doc
    are #636's second pull request.
@@ -532,8 +535,8 @@ heavier is both lost at 3 and cheap at 6. Elsewhere they are fewer and harder, a
 (the owner, on #40).
 
 The gate holds each of these figures to an aim and a limit beyond it (EXPANSION.md §5.2, #273): six
-or seven fights to a rest is the aim; a map outside it but between four and ten passes, and is listed
-as off its aim; only past its limit does it fail. Tune to the aim, not to the decimal.
+or seven fights to a rest is the aim; a map outside it but inside `GATE.perRest`'s limit passes, and
+is listed as off its aim; only past its limit does it fail. Tune to the aim, not to the decimal.
 
 Two under a floor the gate judges Act I's fights and, from 10, the day (EXPANSION.md §5.2, #851).
 From 10 the damage spells roll their full dice and every group is sized for the day, so a company
@@ -547,9 +550,9 @@ other runs of the harness: what the line showed and each time it was made again 
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
-1. **From 10 a company two under a floor is held by its day,** not its fights: it rests after at most
-   two thirds of the floor's aim (the aim) and never gets as many as the aim (the limit), the gate's
-   `GATE.backDay`. No tier, item or counter could make a tenth of fights two under lost without the
+1. **From 10 a company two under a floor is held by its day,** not its fights: it rests after fewer
+   fights than the floor's aim gives, by the gate's `GATE.backDay`. No tier, item or counter could
+   make a tenth of fights two under lost without the
    cliff DESIGN.md §1 forbids, and Act I keeps its fights, where two levels are a cliff by design.
 2. **The line is not moved for it.** A group stays sized for its floor's day; a map past the limit is
    re-sized inside its floor's own aims, a role up or a group thinner and never more monsters (#865).
@@ -557,7 +560,8 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 `tools/kit/line.ts` stats a generic monster for every role at every level (its two tables
 in `tools/kit/line.json`), and `tools/harness.ts` measures it. The company is the
 premade six at the level, in the gear the tables give it by then (the gear ladder,
-`GEAR`, from each area's rungs in its `checks.ts`: the kits, the Foreland's band
+`GEAR`, from each area's rungs in `src/content/areas/<area>/checks.ts`: the kits, the
+Foreland's band
 gear and its finds with a plus by 3 and 5, then Thornmark's past them, the Deepthorn's at 10). It
 fights the encounter again and again from a fresh start, mending between fights with spells as a
 player would, until it loses one or must rest. A bot plays it that mends whoever is in danger and
@@ -651,8 +655,9 @@ points, armour, to-hit, blow and xp are `testMonster(role, level)`'s (`node tool
 healer's `cast`. When `--calibrate --write` makes the line again, a def on it is re-derived the same
 way, from its role and level, and keeps its notes: only its hit points and its dice move, since its
 armour, to-hit and xp come from the line's formulas and the curve. A def on a shape of the line, the
-test troll (`testTroll`) or a role come down whole by a share it names (`offLine`, on its def in its
-area's `monsters.ts`), is re-derived from that shape, its mending with it. A def set off the line on
+test troll (`testTroll`) or a role come down whole by a share it names (`offLine`, on its def in
+`src/content/areas/<area>/monsters.ts`), is re-derived from that shape, its mending with it. A def
+set off the line on
 purpose, a boss its box's gate tuned, keeps its numbers and says so on itself (`offLine`) with the
 issue that set it. The harness suite fails any other monster past 10 that stands on no shape of the
 line at its level, so a def drawn on the old line fails until it is re-derived, as #414 re-derived

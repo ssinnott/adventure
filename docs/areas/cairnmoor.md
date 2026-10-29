@@ -15,7 +15,7 @@ Its ids: the area `cairnmoor`, its zones `highmoor` and `cairnfield`, the dungeo
 
 ## 1. Where it is
 
-The second step of Act III, The Deep Script, on the road of levels (DESIGN §9), band 18–20: two
+The second step of Act III, The Deep Script, on the road of levels (DESIGN §4, §9): two
 zones of the atlas (`src/content/areas/cairnmoor/atlas.ts`) on the grid of boxes 32 squares a side
 (EXPANSION §8.2). High Moor, band 18–19, is N7, O7, O8, P7 and P8; the Cairnfield, band 19–20, is
 N8, M7, M8 and L8. P7, P8 and L8 are the bounds' (#834). The dungeons stand off the grid, each
@@ -126,7 +126,8 @@ It claims the lights, a new family, snow and ice underfoot, curse and the ring (
   20.3, the next floor 20. Carn Fada and Bearn Liath are counted in no clear: 5,166 xp a member and
   1,360 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.8% of its 36 groups'
-  fights (aim 90%); two under, pooled at 16, 6.82 fights to a rest, 80.2% of the floor's 8.5. The
+  fights (`GATE.through`'s aim); two under, pooled at 16, 6.82 fights to a rest, 80.2% of the
+  floor's 8.5. The
   Cairn King is won 57% at 19 and 94% at 21, the Rim Troll 59% at 30 and 89% at 32. Under Carn Dubh
   a company at 19 wins 85.7% of its fights. High Moor's road and the Cairnfield's are walked every
   time.
@@ -179,7 +180,8 @@ elves' Cornish and the Tidefolk's Frisian.
 - **Owed to no check:** its checks have no `owes`, and the curve, the gate, density and the ladder
   hold Cairnmoor with nothing owed.
 - **Watched, not moved:** O8's 11.13 fights to a rest and Carn Dubh's 10.70 sit off the aim, near
-  the limit of 12, and the Rim Troll's 89% at 32 is under its aim of 90% (plan, §8). What the owner
+  the limit of 12, and the Rim Troll's 89% at 32 is under `GATE.bossAbove`'s aim (plan, §8). What
+  the owner
   finds by hand goes here; none yet.
 - **Owed by a box as built** (plan, §11): the Watcher's page lies in a chest, not on his wight; the
   door behind the Cairn King's seat opens on nothing.

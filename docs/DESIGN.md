@@ -124,7 +124,8 @@ with a **Wardstone**. In the road's order, as the atlas (`src/content/atlas.ts`)
 | **The Glasswold** | Steppe round a desert of fused glass. | 26–28 | |
 | **Hearth Isle** | The temple over the Core. | 28–32 | |
 
-The bands are the atlas's (`areaBand` in `src/game/atlas.ts`), the Foreland's and Thornmark's from
+The bands are `CURVE`'s (`src/content/progression.ts`; the docs suite holds this table to it) and
+the atlas's (`areaBand` in `src/game/atlas.ts`), the Foreland's and Thornmark's from
 their maps. Two zones are not on the road: the Glass in the Glasswold and Glacier Foot in
 Rimewater are the reach (§9), off the quest and optional by design. Nothing on the road is locked
 by a skill or a flag (docs/EXPANSION.md §2.2): a mountaineer or a ship is a shortcut, never a key.
@@ -382,7 +383,8 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 7. Might, Accuracy, Speed and Personality do something live; this epic's items raise one by 3, a step.
    Endurance, Intellect and Luck have no live effect and get none here: #847's, if an artifact wants one.
 8. The sheet prints a stat's total with its raise and the weapon's element, and a shop says both.
-   What a shop pays is `sellPrice` in `items.ts`, asked of the company (#857 adds the Merchant's).
+   What a shop pays is `sellPrice` in `src/game/items.ts`, asked of the company (#857 adds the
+   Merchant's).
 9. Inert until #861: no item of the content carries either, and the gate and the harness never wear
    one (off the ladder, as the charms are). (#861 placed the first.)
 
@@ -394,9 +396,10 @@ Decided by the owner's delegate for #891, each the owner's to overturn:
 
 Decided by the builder for #852, each the owner's to overturn:
 
-1. What a tier does (`TIER_ARMS`, `TIER_STEPS`, `armsBonus`, `tierSteps`) is in `party/`, beside
-   `RANK_STEP`; `mastery.ts` holds the rest. The party loads the content, and a `mastery.ts` reaching
-   the quests from it would read `MAP_DEFS` half loaded, as #805's call 1 found.
+1. What a tier does (`TIER_ARMS`, `TIER_STEPS`, `armsBonus`, `tierSteps`) is in `src/game/party/`,
+   beside `RANK_STEP`; `src/game/mastery.ts` holds the rest. The party loads the content, and a
+   `src/game/mastery.ts` reaching the quests from it would read `MAP_DEFS` half loaded, as #805's
+   call 1 found.
 2. The trainer's entry comes after the trade, which stays first; a trainer that offered the trade
    alone now opens on a first menu, which the pilot's keep answers by its trade as at any business.
 3. A Master's person lists only the members of their line; a company with none hears "I teach arms.
@@ -408,7 +411,8 @@ Decided by the builder for #852, each the owner's to overturn:
 6. The words: "Arms, or magic?", then "Who would be Expert?" (or Master). Each row is the member's
    name and the price or the reason, the question and the line chosen saying the rest; once taught,
    "<name> is Expert at arms now."
-7. `shipped.json`'s `tiers` holds the tier ids a save's `tiers` holds (expert, master); the lines
+7. `src/content/shipped.json`'s `tiers` holds the tier ids a save's `tiers` holds (expert,
+   master); the lines
    are its keys, and no field's name is recorded there.
 8. The sheet says the tier after the weapon ("WEAPON Long Sword, EXPERT") and before the spells
    ("SPELLS (MASTER) ..."), in capitals as its labels are.
@@ -543,8 +547,8 @@ Decided by the builder for #857, each the owner's to overturn:
 7. The roundings are down: a Navigator pays 75 for 150, 37 once half holds; a Merchant is paid 80
    for 120 and 26 for 40.
 8. `sellPrice` asks `skilled`, as the world does. For that, a company's rank in a guild (`rankOf`)
-   moves to `game/ranks.ts`: `skills.ts` asked it of `game/guilds.ts`, which pulled the quests'
-   rules in under the content index before its maps were made.
+   moves to `game/ranks.ts`: `src/game/skills.ts` asked it of `game/guilds.ts`, which pulled the
+   quests' rules in under the content index before its maps were made.
 9. The shops test asks the sell-back of a company with a Merchant, the most a shop pays, so no shop
    may price an item under two thirds of its own price (none does), and the quests test asks the
    same company whether a shop buys an item.

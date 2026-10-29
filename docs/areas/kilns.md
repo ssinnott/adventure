@@ -17,7 +17,7 @@ Its ids: the area `kilns`; its zones `ironfells`, `kilnsheart` and `kilnmouth`; 
 
 ## 1. Where it is
 
-The sixth step on the road of levels (DESIGN §9), band 16–18, the first of Act III: three zones of
+The sixth step on the road of levels (DESIGN §4, §9), the first of Act III: three zones of
 the atlas (`src/content/areas/kilns/atlas.ts`). The Iron Fells, band 16–17, are M3, N3, N2 and O3,
 over the east road from Lanternwood. The Kilns' heart (`kilnsheart`, "The Kilns" on the atlas),
 band 16–18, is N4, O4, N5, O5, N6 and O6, the hill country of spoil, smelter and ash, with P4, P5
@@ -28,10 +28,10 @@ and the dungeons stand off the grid, each entered from a map.
 
 - **North: the rim,** the mountains inside the world's edge, with the Fells' tops under it: snow on
   them in winter. Its row (N1 to P1) and O2 are cut (plan, §11).
-- **West: Sunderwood** (14–16). The east road comes out of Lanternwood's M2 into M3, open from the
+- **West: Sunderwood.** The east road comes out of Lanternwood's M2 into M3, open from the
   start: the only way between the two areas. South of the Fells, Kilnmouth meets Lanternwood over
   the mountains with no way through.
-- **South: Cairnmoor** (18–20), where the drove road runs on out of N6 into High Moor's N7, open
+- **South: Cairnmoor**, where the drove road runs on out of N6 into High Moor's N7, open
   from the start.
 - **East: the rim** again and the world's end past the P column.
 - **South-west: the sea,** off Kilnhaven. The ferry to Saltmouth, the Compact ship to Cinderport
@@ -166,7 +166,8 @@ here (`novel`): the knockers and the salamanders; pine, ash and lava underfoot; 
   19.4, +1.4 over the next floor 18, a named exception held at 19.5 (`overRoad`, in its checks).
   The enclave and the lair, counted in no clear, give 4,617 xp a member and 1,200 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.8% of its 66 groups'
-  fights (aim 90%); two under, its groups pooled at 14 manage 4.83 fights to a rest, 60.4% of the
+  fights (`GATE.through`'s aim); two under, its groups pooled at 14 manage 4.83 fights to a rest,
+  60.4% of the
   floor's 8 (aim at most 66.7%). Each zone's road is walked every time at 16. The bosses at their
   floors and two above: the Foreman 50% and 95%, the Warden of the Anvil 54% and 93%, the Great
   Salamander 53% and 94%; the Steiger 56% at 30 and 81% at 32. The bottom's groups with the

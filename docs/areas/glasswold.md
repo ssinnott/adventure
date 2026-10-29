@@ -15,7 +15,7 @@ It has no town; its one business is the Riders' trader at Akordu, whose tent has
 
 ## 1. Where it is
 
-The last step of Act IV, Beyond the Sky, on the road of levels (DESIGN §9), band 26–28: two zones
+The last step of Act IV, Beyond the Sky, on the road of levels (DESIGN §4, §9): two zones
 of the atlas (`src/content/areas/glasswold/atlas.ts`) on the grid of boxes 32 squares a side
 (EXPANSION §8.2). The Wold, band 26–28, is ten boxes: D9, D10, D8, C8, B8 and B9 on the road; E9
 and E8 behind it on the coast; D7 and E7, the bounds' (#833). The Glass, the reach, holds no map
@@ -134,7 +134,8 @@ the glass walkers are a family of their own. It claims the glass walkers, dunes 
   28.0, the next floor 28. Karaordu and Kushdag are counted in no clear: 4,906 xp a member and
   2,500 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 99.2% of its 32 groups'
-  fights (aim 90%); two under, pooled at 24, 7.52 fights to a rest, 71.6% of the floor's 10.5. The
+  fights (`GATE.through`'s aim); two under, pooled at 24, 7.52 fights to a rest, 71.6% of the
+  floor's 10.5. The
   Grey Lion, set off the line, is won 75% at 27 and 96% at 29, the Foal-taker 57% at 30 and 81% at
   32. The Wold's road is walked every time.
 - **Fights to a rest** (aim 9.5 to 11.5, limit 8 to 14): D10 10.76, D9 9.67, D8 10.95, C8 10.46, B9

@@ -18,13 +18,13 @@ the temple `hearthfane` and its crypt `hearthfane2`; the Underdeep's two levels,
 
 ## 1. Where it is
 
-The twelfth and last step on the road of levels (DESIGN §9) and the whole of Act V, band 28–32, to
+The twelfth and last step on the road of levels (DESIGN §4, §9) and the whole of Act V, to
 the cap: a rocky rim round a green bowl in the middle of the inland sea, the column of light
 standing up out of the bowl. One zone of the atlas (`src/content/areas/hearth/atlas.ts`), Hearth
 Isle, band 28–29, in two boxes of the grid (EXPANSION §8.2; docs/areas/shelf.md §1): the isle's
 body in H6 and the east rim in I6. Below the isle, off the grid, each down from the last: the
 temple, Hearthfane (28–29), entered from the Bowl, its crypt (29), the Ways (30), the Stair (30–31)
-and the Heart (32). The deep places widen the area's band to 28–32 (`areaBand`,
+and the Heart (32). The deep places widen the area's band to the cap (`areaBand`,
 `src/game/atlas.ts`).
 
 - **South: the Sound.** The last crossing comes over from Cinderport to H6's strand, a boat open
@@ -150,7 +150,8 @@ crawlers, the Core's clock (`encounter:clock`) and the Hearth, its landmark.
   0.1 under the next floor, the cap, 32. The row is `band: [28, 32]` with a window of 7,000,
   and the dearest find, the Grey Mail at 7,000, sits in it.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.9% of its 51 groups'
-  fights (aim 90%); two under, its groups pooled at 26 manage 5.02 fights to a rest, 45.6% of the
+  fights (`GATE.through`'s aim); two under, its groups pooled at 26 manage 5.02 fights to a rest,
+  45.6% of the
   floor's 11 (aim at most 66.7%). Its road is walked every time at 28. The Stair is won 95.2% at its
   floor. The Catcher is won 57% at 30 and 80% at 32; Vask 60% at 32 with the Hands first and 33%
   with the clock let run (held to 20% to 45%); his thinned group 78%.
