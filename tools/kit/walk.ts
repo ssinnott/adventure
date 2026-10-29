@@ -1,18 +1,28 @@
 // The one quest walked through (EXPANSION §5.8): a new game played by the game's own moves, one step
 // of a chapter at a time, and each step checked before and after. Each area's walkthrough
-// (src/content/areas/<area>/walkthrough.ts) writes its chapter's plays with these; Thornmark's plays
-// the chain, and again with Thornmark taken early. Nothing in the game imports this. The helpers the
-// walkthroughs wrote out each for itself are here once (#985), the floods over a map's squares in
-// grid.ts beside it.
+// (src/content/areas/<area>/walkthrough.ts) writes its chapter's plays with these, as one function or
+// as ordered, named scenes that each run alone (#1018); Thornmark's plays the chain, and again with
+// Thornmark taken early. Nothing in the game imports this. The helpers the walkthroughs wrote out each
+// for itself are here once (#985), the floods over a map's squares in grid.ts beside it.
 //
 // A step is checked as it comes up: the goal the log shows is one of the chapter's, placed at a
 // built map and named in its words; the company's level, the curve's for the step, sits in that
 // map's band; the play finishes it (every fight it needs is won at least once in ten by the gate's
 // bot at that level, and the goal moves on); and a person who takes an item stands at the step's
 // place. Every goal of every chapter has to come up in some run (`everyGoalWalked`).
+//
+// A scene (#1018) is a name and a play, given an `ok` of its own: it starts its own walks, where it
+// needs, with `newWalk(ok, { at, level, flags, seed })`, so that it needs no other scene to have run,
+// and says which goals its plays walk (`walks`). `playScenes` plays a walkthrough's scenes in order,
+// or the one the runner names (`walkthrough:<area>:<scene>`): a scene that throws fails by name and
+// the next plays all the same. The maps are built once for the run and each walk takes its own copy
+// (`ownMaps`). `mapDef`, `groupOn`, `featureOn` and `exitTo` find a map, a group, a feature or a way out
+// that has to be there, and throw naming it and what stands nearest where it is not.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { AREAS, ATLAS, MAP_DEFS, MONSTERS, THE_QUEST, TABLES } from '../../src/content/index.ts';
+import type { Flag } from '../../src/content/index.ts';
+import { GameMap } from '../../src/game/map.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import { World } from '../../src/game/world.ts';
 import type { MoveResult } from '../../src/game/world.ts';
@@ -29,7 +39,7 @@ import { homeMap } from '../../src/game/atlas.ts';
 import { useShrine } from '../../src/game/wilds.ts';
 import type { EncounterDef, Feature, MapDef } from '../../src/game/mapdef.ts';
 import type { Facing } from '../../src/game/types.ts';
-import { winRate, gateOpts } from './fight.ts';
+import { rate } from './fight.ts';
 
 type Ok = (cond: boolean, msg: string) => void;
 
@@ -48,10 +58,61 @@ export interface Walk {
 /** One step of a chapter: what is done to finish the goal it shows. */
 export interface Step { name: string; play: (w: Walk) => void; }
 
-export function newWalk(ok: Ok, seed = 4): Walk {
-  const rng = makeRng(seed), party = defaultParty(TABLES, rng);
-  const world = new World(TABLES, buildMaps(), party, rng);
-  return { world, party, news: [], level: 1, ok, marks: questMarks(questLog(TABLES, world.state, party)) };
+/**
+ * Where a walk starts and what it brings (#1018), each part left out as a new game has it: where the
+ * company stands (a map, and a square and a facing on it, the map's start where they are left out),
+ * the level of every member (with the experience it takes, as `walkAt` sets it), the flags set and
+ * the generator's seed (4).
+ */
+export interface Start {
+  at?: { map: string; x?: number; y?: number; facing?: Facing };
+  level?: number;
+  flags?: Readonly<Partial<Record<Flag, number>>>;
+  seed?: number;
+}
+
+/**
+ * A new game being walked, from `start` where one is given: the flags set, then the level, then the
+ * company taken to its place. The log is read there, so that the walk hears nothing of its start.
+ * `newWalk(ok)` is a new game at the gate, its company at level 1.
+ */
+export function newWalk(ok: Ok, start: Start = {}): Walk {
+  const rng = makeRng(start.seed ?? 4), party = defaultParty(TABLES, rng);
+  const world = new World(TABLES, ownMaps(), party, rng);
+  Object.assign(party.flags, start.flags);
+  if (start.level !== undefined) for (const m of party.members) { m.level = start.level; m.xp = xpForLevel(start.level); }
+  if (start.at) {
+    const { map, x, y, facing } = start.at, d = mapDef(map);
+    world.travel(map, x ?? d.start.x, y ?? d.start.y, facing ?? d.start.facing);
+  }
+  return { world, party, news: [], level: start.level ?? 1, ok, marks: questMarks(questLog(TABLES, world.state, party)) };
+}
+
+/**
+ * The maps as played, built once for the run (a build is about 30 to 50 ms, a walk's copy about one).
+ * `buildMaps()` shares the defs with MAP_DEFS (the features, groups, ways out and zones as written,
+ * which nothing in play writes) and gives each map its cells; of those, play writes only a locked or
+ * secret door's (World's search and unlock, and a save's doors put back). So a walk's copy of a map
+ * has its own array of cells and its own door cells, and shares the rest, frozen: a walk that wrote one
+ * would throw, not leak into the next.
+ */
+let BUILT: { maps: Record<string, GameMap>; doors: Map<string, number[]> } | undefined;
+export function ownMaps(): Record<string, GameMap> {
+  if (!BUILT) {
+    const maps = buildMaps(), doors = new Map<string, number[]>();
+    for (const m of Object.values(maps)) {
+      const at: number[] = [];
+      m.cells.forEach((c, i) => { if (c.door === 'locked' || c.door === 'secret') at.push(i); else Object.freeze(c); });
+      doors.set(m.id, at);
+    }
+    BUILT = { maps, doors };
+  }
+  const { maps, doors } = BUILT;
+  return Object.fromEntries(Object.entries(maps).map(([id, m]) => {
+    const cells = m.cells.slice();
+    for (const i of doors.get(m.id)!) cells[i] = { ...cells[i] };
+    return [id, Object.assign(Object.create(GameMap.prototype) as GameMap, m, { cells })];
+  }));
 }
 
 /** The one quest as the log shows it now, if it is in the log. */
@@ -68,6 +129,50 @@ export function listen(w: Walk): string[] {
 
 const def = (map: string) => MAP_DEFS.find((d) => d.id === map);
 const ref = (r: string): [string, string] => r.split(':') as [string, string];
+
+/** The ids of `ids` nearest `id`, the fewest edits first: what a lookup that fails names. */
+function nearest(id: string, ids: readonly string[], n = 5): string[] {
+  const edits = (a: string, b: string): number => {
+    let row = Array.from({ length: b.length + 1 }, (_, j) => j);
+    for (let i = 1; i <= a.length; i++) {
+      const next = [i];
+      for (let j = 1; j <= b.length; j++) next[j] = Math.min(row[j] + 1, next[j - 1] + 1, row[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+      row = next;
+    }
+    return row[b.length];
+  };
+  return [...new Set(ids)].map((x) => [x, edits(id, x)] as const).sort((a, b) => a[1] - b[1] || a[0].localeCompare(b[0])).slice(0, n).map(([x]) => x);
+}
+/** A lookup that failed: what was not there, and the ids of `ids` nearest the one asked for. */
+const missing = (what: string, id: string, ids: readonly string[]): Error =>
+  new Error(`${what}: ${ids.length ? `the nearest are ${nearest(id, ids).join(', ')}` : 'there are none'}`);
+
+/** The map `id` as written; one that is not there throws, naming it and the maps whose ids are nearest. */
+export function mapDef(id: string): MapDef {
+  const d = def(id);
+  if (!d) throw missing(`no map is named ${id}`, id, MAP_DEFS.map((m) => m.id));
+  return d;
+}
+const onMap = (map: string | MapDef): MapDef => (typeof map === 'string' ? mapDef(map) : map);
+/** The group `id` on `map` (its id or its def); one that is not there throws, naming it and the map's groups nearest. */
+export function groupOn(map: string | MapDef, id: string): EncounterDef {
+  const d = onMap(map), g = d.encounters?.find((e) => e.id === id);
+  if (!g) throw missing(`no group is named ${id} on ${d.id}`, id, (d.encounters ?? []).map((e) => e.id));
+  return g;
+}
+/** The feature `id` on `map`, of `kind` where one is given; one that is not there throws, naming it and the map's features nearest. */
+export function featureOn<K extends Feature['kind'] = Feature['kind']>(map: string | MapDef, id: string, kind?: K): Extract<Feature, { kind: K }> {
+  const d = onMap(map), of = (d.features ?? []).filter((f): f is Extract<Feature, { kind: K }> => kind === undefined || f.kind === kind);
+  const f = of.find((x) => 'id' in x && x.id === id);
+  if (!f) throw missing(`no ${kind ?? 'feature'} is named ${id} on ${d.id}`, id, of.flatMap((x) => ('id' in x && typeof x.id === 'string' ? [x.id] : [])));
+  return f;
+}
+/** The way out of `map` that leads to `to`; one that is not there throws, naming it and where the map's ways out lead. */
+export function exitTo(map: string | MapDef, to: string): NonNullable<MapDef['exits']>[number] {
+  const d = onMap(map), e = (d.exits ?? []).find((x) => x.to === to);
+  if (!e) throw missing(`no way out of ${d.id} leads to ${to}`, to, (d.exits ?? []).map((x) => x.to));
+  return e;
+}
 
 /**
  * Walk from a square, facing a way, until the party is in `to` (a map, or a zone of the outdoors):
@@ -114,15 +219,16 @@ export function kneel(w: Walk, at: string): void {
 
 /**
  * Fight a group, 'map:id', at the step's level: the gate's bot must win it at least once in ten
- * seeded fights. Won, it dies there and its sure drops go into the bag.
+ * seeded fights, with no round cap, each group and level worked out once for the run (#984's memo).
+ * Won, it dies there and its sure drops go into the bag.
  */
 export function fight(w: Walk, at: string): void {
   const [map, id] = ref(at);
   const g = def(map)?.encounters?.find((e) => e.id === id);
   if (!g) { w.ok(false, `there is a group ${at}`); return; }
   if (g.leaves && w.world.ended(g)) { w.ok(false, `${at} is there to fight, not gone by the leave rule`); return; }
-  const rate = winRate(w.level, g, 10, Infinity, gateOpts(g));
-  w.ok(rate > 0, `${at} is won at level ${w.level} (${Math.round(rate * 100)}% of ten fights)`);
+  const won = rate(g, w.level, 10, Infinity);
+  w.ok(won > 0, `${at} is won at level ${w.level} (${Math.round(won * 100)}% of ten fights)`);
   w.world.travel(map, g.x, g.y);
   w.world.killGroups([id]);
   for (const m of g.monsters) for (const d of MONSTERS[m].drops ?? []) if (d.chance >= 1) w.party.bag.push(d.item);
@@ -275,11 +381,57 @@ const walked = (ok: Ok): Set<string> => { let s = WALKED.get(ok); if (!s) WALKED
 
 /**
  * Every goal of every chapter given came up in some run under `ok`, the walkthrough's: none is words
- * no company is ever shown. An area's walkthrough gives the chapters its own runs walk whole.
+ * no company is ever shown. An area's walkthrough gives the chapters its own runs walk whole. Given
+ * the walkthrough's scenes, it reads what they say they walk instead, so that it is a scene of its own
+ * and needs no other to have run: each scene is held to what it says as it plays (`playScenes`).
  */
-export function everyGoalWalked(ok: Ok, chapters: readonly Chapter[] = THE_QUEST.chapters): void {
-  const seen = walked(ok), missed = chapters.flatMap((c) => c.goals.filter((g) => !seen.has(g.text)).map((g) => `${c.id}: "${g.text}"`));
+export function everyGoalWalked(ok: Ok, chapters: readonly Chapter[] = THE_QUEST.chapters, scenes?: readonly Scene[]): void {
+  const seen = scenes ? new Set(scenes.flatMap((s) => goalsIn(s.walks))) : walked(ok);
+  const missed = chapters.flatMap((c) => c.goals.filter((g) => !seen.has(g.text)).map((g) => `${c.id}: "${g.text}"`));
   ok(!missed.length, `every goal of the one quest comes up in a run${missed.length ? ' -> ' + missed.join('; ') : ''}`);
+}
+
+/**
+ * One scene of a walkthrough (#1018). Its name is lower case, of letters, digits, hyphens and
+ * underscores, and once in its walkthrough: the runner runs it alone as `walkthrough:<area>:<name>`.
+ * Its play is given an `ok` of its own, which it hands to its walks: it starts each where it needs
+ * (`newWalk(ok, start)`) and reads nothing another scene left. `walks` says which goals its plays walk,
+ * a chapter for every goal of it and a goal's words (`goalOf`) for one: it is held to them as it plays,
+ * and `everyGoalWalked` reads them.
+ */
+export interface Scene {
+  name: string;
+  play: (ok: Ok) => void | Promise<void>;
+  walks?: readonly (Chapter | string)[];
+}
+
+/** The goals' words a scene says it walks. */
+const goalsIn = (walks: Scene['walks']): string[] => (walks ?? []).flatMap((x) => (typeof x === 'string' ? [x] : x.goals.map((g) => g.text)));
+
+/** The names of `scenes` the runner cannot run alone: not lower case, holding a colon, or come twice. */
+export const misnamed = (scenes: readonly Scene[]): string[] => {
+  const names = scenes.map((s) => s.name);
+  return names.filter((n, i) => !/^[a-z0-9][a-z0-9_-]*$/.test(n) || names.indexOf(n) !== i);
+};
+
+/**
+ * A walkthrough's scenes played in order, or the one named `only`, each given an `ok` of its own: one
+ * that throws fails by name with its stack, and the next plays all the same; one whose plays never came
+ * to a goal it says it walks fails, naming the goal. Names that are not lower case, that hold a colon or
+ * that come twice fail the walkthrough before any scene plays. A walkthrough that exports only
+ * `walkthrough` is one scene named for its area.
+ */
+export async function playScenes(ok: Ok, scenes: readonly Scene[], only?: string): Promise<void> {
+  const names = scenes.map((s) => s.name), bad = misnamed(scenes);
+  if (bad.length) { ok(false, `a scene's name is lower case, holds no colon and comes once: not ${bad.join(', ')}`); return; }
+  if (only !== undefined && !names.includes(only)) { ok(false, `no scene is named ${only}: the scenes are ${names.join(', ')}`); return; }
+  for (const s of scenes) {
+    if (only !== undefined && s.name !== only) continue;
+    const own: Ok = (cond, msg) => ok(cond, msg);
+    try { await s.play(own); } catch (e) { ok(false, `scene ${s.name} threw ${e instanceof Error ? e.stack : String(e)}`); continue; }
+    const missed = goalsIn(s.walks).filter((g) => !walked(own).has(g));
+    if (missed.length) ok(false, `scene ${s.name} says it walks what none of its plays came to: ${missed.map((g) => `"${g}"`).join('; ')}`);
+  }
 }
 
 /** The quest's goal comes only from a chapter begun, or one before a chapter begun. */
@@ -405,8 +557,8 @@ export function search(w: Walk, map: string, x: number, y: number, facing: Facin
   return found && into.every((r) => r.kind === 'moved') && w.world.used(room);
 }
 
-/** The map whose id is `id`. */
-export const mapOf = (id: string): MapDef => MAP_DEFS.find((d) => d.id === id)!;
+/** The map whose id is `id`, as `mapDef` finds it. */
+export const mapOf = (id: string): MapDef => mapDef(id);
 
 /** The `n`th person (the first, unless told) on `map` whose name is `name`. */
 export const npc = (map: string, name: string, n = 0): Person => mapOf(map).features!.filter((f) => f.kind === 'npc' && f.name === name)[n] as Person;

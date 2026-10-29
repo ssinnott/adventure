@@ -1,6 +1,7 @@
 // The runner's own check: tools/test.ts run in a child process against ./fixture/, ./stuck/,
 // ./leaves/ and ./narrow/, folders the real run never reads, so the owed lines and failures here
-// stay out of its output; in one process and under --jobs (#954).
+// stay out of its output; in one process and under --jobs (#954). ./walks/ holds the areas of a
+// walkthrough's scenes (#1018), run with --walks.
 //   node tools/tests/runner/check.ts
 import { execFileSync, spawn } from 'node:child_process';
 import { readFileSync, rmSync } from 'node:fs';
@@ -17,15 +18,16 @@ interface Run { status: number | null; out: string; stdout: string }
 let free = availableParallelism();
 const waiting: (() => void)[] = [];
 /**
- * The runner on `dir`, started once a core is free (#954: every run below starts at once, and each is
- * read where it is checked); `TEST_LIST=1` among the args sets it for the run, else it is unset there,
- * whatever it is here, and so are TEST_SINCE, TEST_AREAS, TEST_DEAR and GITHUB_STEP_SUMMARY but as `set` gives them.
+ * The runner on `dir` (its suites' folder, or the folder flags whole: `['--walks', walks]`), started
+ * once a core is free (#954: every run below starts at once, and each is read where it is checked);
+ * `TEST_LIST=1` among the args sets it for the run, else it is unset there, whatever it is here, and so
+ * are TEST_SINCE, TEST_AREAS, TEST_DEAR and GITHUB_STEP_SUMMARY but as `set` gives them.
  */
-const runWith = (set: Record<string, string>, dir: string, ...args: string[]): Promise<Run> => new Promise((resolve) => {
+const runWith = (set: Record<string, string>, dir: string | string[], ...args: string[]): Promise<Run> => new Promise((resolve) => {
   const env = { ...process.env, TEST_LIST: args.includes('TEST_LIST=1') ? '1' : '', TEST_SINCE: '', TEST_AREAS: '', TEST_DEAR: '', GITHUB_STEP_SUMMARY: '', ...set };
   const go = (): void => {
     free--;
-    const child = spawn(process.execPath, [runner, '--dir', dir, ...args.filter((a) => a !== 'TEST_LIST=1')], { env });
+    const child = spawn(process.execPath, [runner, ...(typeof dir === 'string' ? ['--dir', dir] : dir), ...args.filter((a) => a !== 'TEST_LIST=1')], { env });
     let stdout = '', stderr = '';
     child.stdout.setEncoding('utf8').on('data', (s: string) => { stdout += s; });
     child.stderr.setEncoding('utf8').on('data', (s: string) => { stderr += s; });
@@ -36,6 +38,9 @@ const runWith = (set: Record<string, string>, dir: string, ...args: string[]): P
 const runIn = (dir: string, ...args: string[]): Promise<Run> => runWith({}, dir, ...args);
 /** The runner on the fixture. */
 const run = (...args: string[]): Promise<Run> => runIn(fixture, ...args);
+/** The runner on the walkthroughs of ./walks/'s areas, and no suites (#1018). */
+const walks = fileURLToPath(new URL('./walks', import.meta.url));
+const walk = (...args: string[]): Promise<Run> => runWith({}, ['--walks', walks], ...args);
 
 console.log('\nrunner');
 const narrow = folder('narrow'), step = join(tmpdir(), `runner-check-${process.pid}.md`);
@@ -51,6 +56,9 @@ const started = {
   alone: runWith({ TEST_DEAR: 'holds,later,owing,rejects,slow,unnamed' }, fixture, '--jobs', '3', '--list'), twoJobs: runIn(narrow, '--areas', 'shelf,thornmark', '--list', '--jobs', '2'),
   died: runIn(folder('stuck'), '--jobs', '1'), diedPacked: runIn(folder('stuck'), '--jobs', '2'), leftAlone: runWith({ TEST_DEAR: 'leaves,next' }, folder('leaves'), '--jobs', '2'),
   dealt: run('--shuffle', '2'), again: run('--shuffle', '2'), drawn: run('--shuffle'),
+  walked: walk('--list'), scene: walk('walkthrough:fx:three', '--list'), dearScene: runWith({ TEST_DEAR: 'walkthrough:fx:three' }, ['--walks', walks], '--jobs', '2', '--list'),
+  both: runWith({}, ['--dir', fixture, '--walks', walks], 'owing', 'walkthrough:whole'), nope: walk('walkthrough:fx:nope'), noScenes: walk('walkthrough:whole:x'),
+  nosuch: run('nosuch'), noPart: runIn(narrow, 'gate:nosuch'), noParts: run('slow:x'),
 };
 const owing = await started.owing;
 ok(owing.status === 0, 'a run with only owed lines passes');
@@ -183,6 +191,49 @@ ok(runsOf(dealt.out).join(' ') !== order.join(' ') && [...runsOf(dealt.out)].sor
   `--shuffle 2 runs every suite in an order of its own, the same twice (${runsOf(dealt.out).join(' ')})`);
 ok(dealt.out.includes('\nShuffled by seed 2: --shuffle 2 plays this order again.\n') && dealt.out.includes(', shuffled by seed 2.\n'), 'a shuffled run prints its seed first and last');
 ok(!!replayed && runsOf(replayed.out).join(' ') === runsOf(drawn.out).join(' ') && shape(replayed.out) === shape(drawn.out), `--shuffle given no seed prints the one it drew, which plays the same order again (${seed})`);
+
+// A walkthrough's scenes (#1018), on ./walks/: fx's three, in their order and not their names', each a
+// run of its own with its line and its row in the table, then whole's walkthrough of one function.
+const walked = await started.walked, wRuns = runsOf(walked.out);
+/** What one run printed: its lines from its name to its line of seconds. */
+const section = (out: string, name: string): string => { const i = out.indexOf(`\n${name}\n`); return i < 0 ? '' : out.slice(i, out.indexOf('\n', out.indexOf(`\n${name} `, i) + 1)); };
+const fxCounts: Record<string, string> = { 'walkthrough:fx:one': '14 ok', 'walkthrough:fx:n4': '1 ok, 1 failed', 'walkthrough:fx:three': '2 ok, 1 failed', 'walkthrough:whole': '1 ok' };
+const fxTable = walked.out.slice(walked.out.indexOf("Each suite's seconds"));
+ok(wRuns.join(' ') === Object.keys(fxCounts).join(' ') && Object.entries(fxCounts).every(([n, c]) => new RegExp(`^${n} +\\d+\\.\\d s {2}${c}$`, 'm').test(walked.out) && fxTable.includes(`  ${n} `)),
+  `a walkthrough of scenes runs as its scenes in their order, each with its line of seconds and counts and its row; one of a function runs whole (${wRuns.join(' ')})`);
+const one = section(walked.out, 'walkthrough:fx:one'), n4 = section(walked.out, 'walkthrough:fx:n4'), three = section(walked.out, 'walkthrough:fx:three');
+ok(['a walk given no start is a new game', "a walk starts at its start's place (keep 3,3, facing 1)", "a walk starts at its start's level (3,", "a walk starts with its start's flags, hired"].every((s) => one.includes(`  ok:   ${s}`)) && !one.includes('FAIL'),
+  'a walk given no start is a new game, and one given a start stands at its place, at its level, with its flags');
+ok(/\n {2}FAIL: scene n4 threw Error: no map is named nowhere: the nearest are .+\n(?: {4}at .+\n)* {4}at mapDef /.test(n4) && !walked.out.includes('goes on past a map that is not there'),
+  'a scene that throws fails by name with its stack, and the rest of it never plays: here mapDef, naming the map that is not there');
+const declared = '  ok:   every goal of the one quest comes up in a run\n', undeclared = '  FAIL: every goal of the one quest comes up in a run -> ashcombe: "';
+ok(three.includes(declared) && three.includes(undeclared) && !three.includes('Ashcombe is past Gullwick'), 'the scene after one that threw runs, and fails its own check: everyGoalWalked fails the goals no scene says it walks, and passes on those one says');
+ok(['a new walk reads that map as built, the secret shut', 'the third scene reads the maps as built, whatever the first opened', 'a walkthrough of one function runs whole, and its walk reads'].every((s) => walked.out.includes(`  ok:   ${s}`)),
+  'a walk changes only its own copy of the maps: a secret it opens is shut to the next walk, in its scene, the next scene and the next walkthrough');
+ok(walked.status === 1 && (walked.out.match(/^ {2}FAIL: /gm) ?? []).length === 2 && walked.out.trimEnd().endsWith('2 FAILURE(S)'), `the scenes fail only as they mean to (exit ${walked.status})`);
+const scene = await started.scene;
+ok(runsOf(scene.out).join(' ') === 'walkthrough:fx:three' && section(scene.out, 'walkthrough:fx:three').replace(/\d+\.\d s/, '') === three.replace(/\d+\.\d s/, ''),
+  `a scene named runs alone and prints what it printed in the whole: everyGoalWalked reads what the scenes say, not who ran before (${runsOf(scene.out).join(' ')})`);
+const dearScene = await started.dearScene;
+ok(dearScene.status === walked.status && shape(dearScene.out) === shape(walked.out) && /^4 runs in 2 processes/m.test(dearScene.out), 'a scene may be the dear run: alone in its process, it prints what one process prints');
+ok(runsOf((await started.both).out).join(' ') === 'owing walkthrough:whole', '--dir and --walks together give the suites of the one and the walkthroughs of the other');
+// A name no run has stops the run before it starts, naming those there are, where it ran nothing and passed.
+const refusals: [Run, string][] = [[await started.nope, 'No run is named walkthrough:fx:nope: the scenes of walkthrough:fx are one, n4, three.'],
+  [await started.noScenes, 'No run is named walkthrough:whole:x: walkthrough:whole has no scenes.'], [await started.nosuch, 'No run is named nosuch: the suites are fullrun, holds, later, owing, rejects, slow, survival, unnamed.'],
+  [await started.noPart, `No run is named gate:nosuch: the parts of gate are fixed, ${AREAS.map((a) => a.id).join(', ')}.`], [await started.noParts, 'No run is named slow:x: slow has no parts.']];
+const unrefused = refusals.filter(([r, said]) => r.status !== 2 || r.out.trim() !== said).map(([r, said]) => `${said.slice('No run is named '.length, said.indexOf(': '))} (exit ${r.status})`);
+ok(!unrefused.length, `a scene, a suite or a part no run has stops the run, naming the runs there are, exit 2${unrefused.length ? ` -> not ${unrefused.join(', ')}` : ''}`);
+// Played whole by the kit, as where the plan cannot name its scenes: in order, a throw stopping none, and
+// names the runner cannot run alone failing the walkthrough before any scene plays.
+const { playScenes } = await import('../../kit/walk.ts'), { scenes: fx } = await import('./walks/fx/walkthrough.ts');
+const heard: string[] = [], hear = (cond: boolean, msg: string): void => { heard.push(`${cond ? 'ok' : 'FAIL'}: ${msg.split('\n')[0]}`); };
+await playScenes(hear, fx);
+const where = (s: string): number => heard.findIndex((l) => l.startsWith(s));
+const marks = ['ok: a walk starts at', 'ok: the second scene begins', 'FAIL: scene n4 threw Error: no map is named nowhere', 'ok: the third scene reads', 'FAIL: every goal of the one quest'].map(where);
+ok(marks.every((m, i) => m >= 0 && (i === 0 || m > marks[i - 1])) && heard.length === 19, `the kit plays a walkthrough's scenes whole in their order, and one that throws stops none (${heard.length} lines)`);
+heard.length = 0;
+await playScenes(hear, [{ name: 'Upper', play: () => hear(true, 'played') }, { name: 'a:b', play: () => hear(true, 'played') }, { name: 'twice', play: () => hear(true, 'played') }, { name: 'twice', play: () => hear(true, 'played') }]);
+ok(heard.join('|') === "FAIL: a scene's name is lower case, holds no colon and comes once: not Upper, a:b, twice", `names the runner cannot run alone fail the walkthrough before a scene plays (${heard.join('|')})`);
 
 console.log('\n' + summary(failureCount(), new Map()));
 process.exit(failureCount() ? 1 : 0);

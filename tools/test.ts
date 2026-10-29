@@ -4,14 +4,21 @@
 // then any other in name order, then each area's walkthrough
 // (src/content/areas/<area>/walkthrough.ts) where it has one, in road order. A suite is added by
 // its file alone. One that exports `parts()` runs as its parts, each a run of its own named
-// `suite:part`, its function given the part (the gate's: `fixed` and one to each area, #954).
+// `suite:part`, its function given the part (the gate's: `fixed` and one to each area, #954). A
+// walkthrough that exports `scenes` (tools/kit/walk.ts, #1018) runs as its scenes in their order,
+// each a run named `walkthrough:<area>:<scene>`; one that exports only `walkthrough` is one run, as a
+// suite is. The plan reads each walkthrough's text, and imports the file where it exports `scenes`,
+// for their names. A name no run has stops the run before it starts, naming those there are (exit 2).
 //   node tools/test.ts                  run everything but the suites run only when named (ASKED)
 //   node tools/test.ts maps combat      run selected suites
 //   node tools/test.ts walkthrough:shelf  run one area's walkthrough
 //   node tools/test.ts gate:kilns       run one part of a suite
+//   node tools/test.ts walkthrough:kilns:n4  run one scene of a walkthrough
 //   FULLRUN=all node tools/test.ts fullrun  the pilot's full run on the areas FULLRUN names (shelf unset)
 //   node tools/test.ts --dir <folder>   run the suites in another folder, and no walkthroughs (the
 //                                       runner's own check, tools/tests/runner/check.ts)
+//   node tools/test.ts --walks <folder> run the walkthroughs of the areas in another folder (each
+//                                       <area>/walkthrough.ts), and no suites but --dir's
 //   node tools/test.ts --list           print every line, as TEST_LIST=1 does (#895)
 //   node tools/test.ts --since <ref>    the gate and the walkthroughs only for the areas the diff
 //                                       since <ref> reaches (tools/changed.ts), as TEST_SINCE does
@@ -35,7 +42,7 @@ import { randomInt } from 'node:crypto';
 import { availableParallelism } from 'node:os';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { ok, fail, failureCount, heldCount, owedCount, summary, ranLine, narrow, narrowed, asked, LIST, type Ran } from './tests/lib.ts';
-import type { Walkthrough } from '../src/content/area.ts';
+import type { Scene } from './kit/walk.ts';
 import { AREAS, ITEMS, MONSTERS } from '../src/content/index.ts';
 import { makeRng } from '../src/lib/engine/rng.ts';
 
@@ -68,10 +75,13 @@ type Suite = (part?: string) => void | Promise<void>;
 const suites = new Map<string, () => Promise<Suite>>();
 
 const args = process.argv.slice(2).filter((a) => a !== '--list');
-const at = args.indexOf('--dir');
-const dir = at >= 0 ? pathToFileURL(args.splice(at, 2)[1] + '/') : new URL('./tests/', import.meta.url);
 /** A flag's value, taken out of the args. */
 const value = (flag: string): string | undefined => { const i = args.indexOf(flag); return i >= 0 ? args.splice(i, 2)[1] : undefined; };
+// The suites' folder and the walkthroughs': --dir gives the one and --walks the other, and either given
+// alone drops the other's own (the runner's own check).
+const dirArg = value('--dir'), walksArg = value('--walks');
+const dir = dirArg !== undefined ? pathToFileURL(dirArg + '/') : walksArg === undefined ? new URL('./tests/', import.meta.url) : undefined;
+const walksDir = walksArg !== undefined ? pathToFileURL(walksArg + '/') : dirArg === undefined ? new URL('../src/content/areas/', import.meta.url) : undefined;
 /** A flag a number may follow, taken out of the args: undefined where it is not given, `bare()` where no number follows it. */
 const counted = (flag: string, bare: () => number): number | undefined => {
   const i = args.indexOf(flag);
@@ -88,12 +98,12 @@ const since = value('--since') ?? (process.env.TEST_SINCE || undefined), named =
 // A flag the runner does not know, or a count that is no whole number (`--jobs=4`, `--jobs -1`), would
 // be taken for a suite's name and run nothing: it stops the run instead.
 const stray = args.filter((a) => a.startsWith('-'));
-if (stray.length) { console.error(`No flag is named ${stray.join(', ')}: the flags are --list, --dir, --since, --areas, --jobs [N] and --shuffle [seed].`); process.exit(2); }
+if (stray.length) { console.error(`No flag is named ${stray.join(', ')}: the flags are --list, --dir, --walks, --since, --areas, --jobs [N] and --shuffle [seed].`); process.exit(2); }
 const wanted = args;
 
-const found = readdirSync(dir).filter((f) => f.endsWith('.ts') && f !== 'lib.ts').map((f) => f.slice(0, -3));
+const found = dir ? readdirSync(dir).filter((f) => f.endsWith('.ts') && f !== 'lib.ts').map((f) => f.slice(0, -3)) : [];
 const order = [...FIRST.filter((n) => found.includes(n)), ...found.filter((n) => !FIRST.includes(n)).sort()];
-if (at < 0) for (const name of FIRST.filter((n) => !found.includes(n))) {
+if (dir && dirArg === undefined) for (const name of FIRST.filter((n) => !found.includes(n))) {
   suites.set(name, () => Promise.reject(new Error(`tools/tests/${name}.ts is gone, but the runner still lists it first`)));
 }
 for (const name of order) {
@@ -104,24 +114,33 @@ for (const name of order) {
   });
 }
 
-// Each area's walkthrough, found by its file, in the order of AREAS: an area adds one without
-// touching this runner.
-if (at < 0) {
-  const areas = new URL('../src/content/areas/', import.meta.url);
+/** A walkthrough module's scenes: its `scenes`, or its `walkthrough` as one scene named for its area. */
+const scenesIn = (area: string, m: { scenes?: unknown; walkthrough?: unknown }): readonly Scene[] => {
+  if (Array.isArray(m.scenes)) return m.scenes as Scene[];
+  if (typeof m.walkthrough === 'function') return [{ name: area, play: m.walkthrough as Scene['play'] }];
+  throw new Error(`${area}/walkthrough.ts exports no scenes and no function named walkthrough`);
+};
+/** Each area's walkthrough file, by its area. */
+const walkFiles = new Map<string, URL>();
+// Each area's walkthrough, found by its file, in the order of AREAS (a folder's under --walks in name
+// order): an area adds one without touching this runner.
+if (walksDir) {
   const ids: string[] = await import('../src/content/index.ts').then((m) => m.AREAS.map((a) => a.id), (e: unknown) => {
     suites.set('walkthroughs', () => Promise.reject(e));
     return [];
   });
-  const folders = readdirSync(areas, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
-  for (const area of [...ids, ...folders.filter((f) => !ids.includes(f)).sort()]) {
-    const file = new URL(`${area}/walkthrough.ts`, areas);
+  const folders = readdirSync(walksDir, { withFileTypes: true }).filter((d) => d.isDirectory()).map((d) => d.name);
+  for (const area of walksArg === undefined ? [...ids, ...folders.filter((f) => !ids.includes(f)).sort()] : folders.sort()) {
+    const file = new URL(`${area}/walkthrough.ts`, walksDir);
     if (!existsSync(file)) continue;
+    walkFiles.set(area, file);
     suites.set(`walkthrough:${area}`, async () => {
-      if (!ids.includes(area)) throw new Error(`src/content/areas/${area}/ has a walkthrough but is no area in AREAS`);
-      const fn = ((await import(file.href)) as { walkthrough?: unknown }).walkthrough;
-      if (typeof fn !== 'function') throw new Error(`${area}/walkthrough.ts exports no function named walkthrough`);
+      if (walksArg === undefined && !ids.includes(area)) throw new Error(`src/content/areas/${area}/ has a walkthrough but is no area in AREAS`);
+      const scenes = scenesIn(area, (await import(file.href)) as { scenes?: unknown; walkthrough?: unknown });
+      const { playScenes } = await import('./kit/walk.ts');
       // An `ok` of its own, under which its runs keep the goals they walk (tools/kit/walk.ts), so it passes alone as in the full run (#946).
-      return () => (fn as Walkthrough)((cond: boolean, msg: string) => ok(cond, msg));
+      const own = (cond: boolean, msg: string): void => ok(cond, msg);
+      return (part?: string) => playScenes(own, scenes, part);
     });
   }
 }
@@ -214,6 +233,40 @@ if (job !== undefined) {
   }
   process.stdout.write('', () => process.exit(failed ? 1 : 0));
 } else {
+  /** A suite's parts where its file exports them (read from its text first, so no other suite loads here), as the run narrows them. */
+  const partsOf = async (name: string): Promise<string[] | undefined> => {
+    try {
+      if (!/^export (?:async )?(?:function|const) parts\b/m.test(readFileSync(new URL(`${name}.ts`, dir), 'utf8'))) return undefined;
+      const parts = ((await import(new URL(`${name}.ts`, dir).href)) as { parts?: unknown }).parts;
+      return typeof parts === 'function' ? (parts as () => string[])() : undefined;
+    } catch { return undefined; }
+  };
+  /**
+   * A walkthrough's scenes by name where its file exports `scenes` (read from its text first, then the
+   * file imported), each a name the runner can run alone (`misnamed`); else undefined, and it runs whole.
+   */
+  const scenesOf = async (area: string): Promise<string[] | undefined> => {
+    const file = walkFiles.get(area)!;
+    try {
+      if (!/^export const scenes\b/m.test(readFileSync(file, 'utf8'))) return undefined;
+      const scenes = scenesIn(area, (await import(file.href)) as { scenes?: unknown }), { misnamed } = await import('./kit/walk.ts');
+      return misnamed(scenes).length ? undefined : scenes.map((s) => s.name);
+    } catch { return undefined; }
+  };
+  /** A run's parts: a walkthrough's scenes, or a suite's parts. */
+  const partsOfRun = (name: string): Promise<string[] | undefined> => (name.startsWith('walkthrough:') ? scenesOf(name.slice('walkthrough:'.length)) : partsOf(name));
+  // A name no run has stops the run before it starts, naming those there are: a suite, a part or a scene
+  // misspelt would run nothing and end ALL OK. Read before the run narrows the parts to areas.
+  const refused: string[] = [];
+  for (const w of wanted) {
+    const [name, part] = split(w), kind = name.startsWith('walkthrough:') ? 'scenes' : 'parts';
+    if (!suites.has(name)) { refused.push(`No run is named ${w}: the suites are ${[...suites.keys()].join(', ')}.`); continue; }
+    const parts = part === undefined ? undefined : await partsOfRun(name);
+    if (part !== undefined && !parts) refused.push(`No run is named ${w}: ${name} has no ${kind}.`);
+    else if (part !== undefined && !parts!.includes(part)) refused.push(`No run is named ${w}: the ${kind} of ${name} are ${parts!.join(', ')}.`);
+  }
+  if (refused.length) { console.error(refused.join('\n')); process.exit(2); }
+
   const listed = [...suites.keys()].filter((name) => (wanted.length ? wanted.some((w) => split(w)[0] === name) : !ASKED.includes(name)));
   // The areas the gate and the walkthroughs run for (#955): those named, else those the diff since the
   // ref reaches; every area where neither is given, the diff reaches them all or cannot be read. Every
@@ -241,23 +294,12 @@ if (job !== undefined) {
     const n = only ? only.length : ids.length;
     reached += walks.length ? `: the gate ran for ${n} of ${ids.length} areas and the walkthroughs for ${n + walks.length}` : `: the gate and the walkthroughs ran for ${n} of ${ids.length} areas`;
   }
-  /** A suite's parts where its file exports them (read from its text first, so no other suite loads here), as the run narrows them. */
-  const partsOf = async (name: string): Promise<string[] | undefined> => {
-    try {
-      if (!/^export (?:async )?(?:function|const) parts\b/m.test(readFileSync(new URL(`${name}.ts`, dir), 'utf8'))) return undefined;
-      const parts = ((await import(new URL(`${name}.ts`, dir).href)) as { parts?: unknown }).parts;
-      return typeof parts === 'function' ? (parts as () => string[])() : undefined;
-    } catch { return undefined; }
-  };
-  /** The runs in the runner's order: each suite whole or as its parts, those named alone where only they are. */
+  /** The runs in the runner's order: each suite whole or as its parts, those named alone where only they are; a walkthrough's scenes are its parts. */
   const runs: string[] = [];
   for (const name of listed) {
-    if (name.startsWith('walkthrough:')) {
-      const area = name.slice('walkthrough:'.length);
-      if (asked(area) || walks.includes(area)) runs.push(name);
-      continue;
-    }
-    const whole = !wanted.length || wanted.includes(name), parts = await partsOf(name);
+    const area = name.startsWith('walkthrough:') ? name.slice('walkthrough:'.length) : undefined;
+    if (area !== undefined && !asked(area) && !walks.includes(area)) continue;
+    const whole = !wanted.length || wanted.includes(name), parts = await partsOfRun(name);
     if (!parts) { if (whole) runs.push(name); continue; }
     runs.push(...parts.map((p) => `${name}:${p}`).filter((r) => whole || wanted.includes(r)));
   }
@@ -291,7 +333,8 @@ if (job !== undefined) {
     const slots = Math.min(jobs, queue.length), areas = narrowed();
     // The harness's workers take the cores over the jobs (TEST_CORES, tools/harness.ts); a child reads no diff and no areas but its parent's.
     const env = { ...process.env, TEST_CORES: String(Math.max(1, Math.floor(cores / Math.max(1, slots)))), TEST_SINCE: '', TEST_AREAS: '' };
-    const argv = [...(at >= 0 ? ['--dir', fileURLToPath(dir)] : []), ...(LIST ? ['--list'] : []), ...(areas ? ['--narrow', areas.join(',')] : [])];
+    const argv = [...(dir && dirArg !== undefined ? ['--dir', fileURLToPath(dir)] : []), ...(walksDir && walksArg !== undefined ? ['--walks', fileURLToPath(walksDir)] : []),
+      ...(LIST ? ['--list'] : []), ...(areas ? ['--narrow', areas.join(',')] : [])];
     const settle = new Map<string, (o: Outcome) => void>();
     const outcomes = new Map(runs.map((r) => [r, new Promise<Outcome>((res) => settle.set(r, res))]));
     const starts: number[] = [];
