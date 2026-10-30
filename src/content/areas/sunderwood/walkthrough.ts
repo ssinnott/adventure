@@ -124,6 +124,7 @@ function act(w: Walk, how: string): void {
   playChapter(w, TIDE, TIDE_STEPS, how);
   playChapter(w, WRACK, WRACK_STEPS, how);
 }
+
 /**
  * The chapter's runs (#204): in order, the Watch first and the Sunder first, one scene, since the two after
  * the first read the Wall as in order wrote it; and the Reader's single readings, seeded. Their steps are
@@ -188,6 +189,7 @@ function theWall(): Scene[] {
     } },
   ];
 }
+
 /**
  * The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run
  * builds once (#1018), its doors its own and its other cells frozen. Its zones, groups and ways
