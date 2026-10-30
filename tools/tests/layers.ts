@@ -2,7 +2,9 @@
 // they stand, and the rules it keeps (EXPANSION §8.1). src/lib under src/game under src/content under
 // src/ui under src/app (and its entry, src/main.ts); the tools take anything and tools/kit/ only src;
 // the walkthroughs and the suites take src and tools/kit/, not each other or the tools; no area takes
-// another area's files but its public.ts; no cycle among src's runtime imports; and no file of src/ui
+// another area's files but its public.ts, save that a walkthrough or an area's steps.ts (the chain its
+// walkthrough plays, #1033) takes any area's steps.ts, which nothing in src takes; no cycle among src's
+// runtime imports; and no file of src/ui
 // names a file of src/app, in its types either (#1022). What crosses today is a row of KNOWN, under
 // the issue that clears it: a crossing no row holds fails, and so does a row that no longer crosses,
 // so the table only shrinks, and by name.
@@ -31,13 +33,8 @@ type Key = keyof typeof KEYS;
 /** Today's crossings, each `importer > imported` under the issue that clears it; a cycle is `cycle: ` and its files. */
 const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
   H8: [
-    'src/content/areas/saltreach/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
-    'src/content/areas/saltreach/walkthrough.ts > src/content/areas/thornmark/walkthrough.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/saltreach/walkthrough.ts',
-    'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
-    'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/thornmark/walkthrough.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/wrackholm/walkthrough.ts',
-    'src/content/areas/thornmark/walkthrough.ts > src/content/areas/shelf/walkthrough.ts',
     'src/content/areas/wrackholm/walkthrough.ts > src/content/areas/saltreach/walkthrough.ts',
   ],
 };
@@ -47,9 +44,10 @@ const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
 /** The layers of src, lowest first. */
 const LAYERS = ['src/lib', 'src/game', 'src/content', 'src/ui', 'src/app'];
 
-/** Where a file stands: its layer in src, a walkthrough, a suite, the suites' frame (tools/tests/lib.ts), the kit or a tool. */
+/** Where a file stands: its layer in src, a walkthrough, an area's steps.ts, a suite, the suites' frame (tools/tests/lib.ts), the kit or a tool. */
 export function place(f: string): string {
   if (/^src\/content\/areas\/[^/]+\/walkthrough\.ts$/.test(f)) return 'walkthrough';
+  if (/^src\/content\/areas\/[^/]+\/steps\.ts$/.test(f)) return 'steps';
   for (const layer of LAYERS) if (f.startsWith(layer + '/')) return layer;
   // The entry, src/main.ts, is the app's, as is anything else in src/ outside the layers' folders.
   if (f.startsWith('src/')) return 'src/app';
@@ -61,9 +59,9 @@ export function place(f: string): string {
 export type Rule = 'layers' | 'areas' | 'tests' | 'kit';
 /** Each rule as the check says it, of an import from `a` to `b`. */
 const SAYS: Record<Rule, (a: string, b: string) => string> = {
-  layers: (a, b) => LAYERS.includes(place(b)) ? `${place(a)} is under ${place(b)}` : 'src takes no tool and no walkthrough',
+  layers: (a, b) => LAYERS.includes(place(b)) ? `${place(a)} is under ${place(b)}` : 'src takes no tool, no walkthrough and no steps.ts',
   areas: () => "an area takes another area's files only through its public.ts",
-  tests: () => 'a walkthrough or a suite takes src and tools/kit/, not another walkthrough or suite and not a tool',
+  tests: () => "a walkthrough, a steps.ts or a suite takes src and tools/kit/ (and a walkthrough or a steps.ts any area's steps.ts), not another walkthrough or suite and not a tool",
   kit: () => 'tools/kit/ takes src only',
 };
 
@@ -73,15 +71,17 @@ const areaOf = (f: string): string | undefined => /^src\/content\/areas\/([^/]+)
 export function broken(a: string, b: string): Rule | undefined {
   const pa = place(a), pb = place(b);
   const inSrc = (p: string): boolean => LAYERS.includes(p);
-  if (pa === 'walkthrough' || pa === 'suite') {
-    if (!inSrc(pb) && pb !== 'kit' && !(pa === 'suite' && pb === 'frame')) return 'tests';
+  // A walkthrough's chain is its area's steps.ts (#1033): a walkthrough or a steps.ts takes any area's, and src none.
+  const chain = (pa === 'walkthrough' || pa === 'steps') && pb === 'steps';
+  if (pa === 'walkthrough' || pa === 'steps' || pa === 'suite') {
+    if (!inSrc(pb) && pb !== 'kit' && !(pa === 'suite' && pb === 'frame') && !chain) return 'tests';
   } else if (pa === 'kit') {
     return inSrc(pb) || pb === 'kit' ? undefined : 'kit';
   } else if (inSrc(pa)) {
     if (!inSrc(pb) || LAYERS.indexOf(pb) > LAYERS.indexOf(pa)) return 'layers';
   } else return undefined;
   const from = areaOf(a), to = areaOf(b);
-  return from && to && from !== to && b !== `src/content/areas/${to}/public.ts` ? 'areas' : undefined;
+  return from && to && from !== to && b !== `src/content/areas/${to}/public.ts` && !chain ? 'areas' : undefined;
 }
 
 /** Each crossing as `importer > imported`, with the rule it breaks. */
@@ -187,6 +187,18 @@ export function layers(): void {
   ok(stale.failures.join() === 'KNOWN: src/game/a.ts > src/ui/gone.ts (H8) no longer crosses: the row goes', `a row that no longer crosses fails: ${stale.failures.join('; ')}`);
   const loop = judge(fixture, { H8: ['src/game/a.ts > src/content/b.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
   ok(loop.failures.join() === 'cycle: src/content/b.ts, src/game/a.ts import each other as they load; no KNOWN row holds it', `a cycle no row holds fails, by its files: ${loop.failures.join('; ')}`);
+  // An area's steps.ts is the chain its walkthrough plays (#1033): a walkthrough or a steps.ts takes its
+  // own area's and any other's, as it takes the kit; a steps.ts takes no walkthrough; nothing in src takes one.
+  const chains = graph(['src/content/areas/x/walkthrough.ts', 'src/content/areas/x/steps.ts', 'src/content/areas/y/steps.ts', 'src/content/areas/y/walkthrough.ts', 'src/content/areas/y/maps/n.ts', 'tools/kit/k.ts'], (f) => ({
+    'src/content/areas/x/walkthrough.ts': "import { S } from './steps.ts';\nimport { T } from '../y/steps.ts';",
+    'src/content/areas/x/steps.ts': "import { T } from '../y/steps.ts';\nimport { K } from '../../../../tools/kit/k.ts';",
+    'src/content/areas/y/steps.ts': "import { W } from './walkthrough.ts';",
+    'src/content/areas/y/maps/n.ts': "import { S } from '../../x/steps.ts';",
+  } as Record<string, string>)[f] ?? '');
+  const chained = judge(chains, {}).failures;
+  ok(chained.join('; ') === "tests: src/content/areas/y/steps.ts imports src/content/areas/y/walkthrough.ts, and a walkthrough, a steps.ts or a suite takes src and tools/kit/ (and a walkthrough or a steps.ts any area's steps.ts), not another walkthrough or suite and not a tool; no KNOWN row holds it; "
+    + 'layers: src/content/areas/y/maps/n.ts imports src/content/areas/x/steps.ts, and src takes no tool, no walkthrough and no steps.ts; no KNOWN row holds it',
+    `a walkthrough or a steps.ts takes any area's steps.ts, a steps.ts no walkthrough and src none: ${chained.join('; ')}`);
 
   // The tree.
   const t0 = performance.now();

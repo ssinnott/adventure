@@ -292,8 +292,8 @@ export function changedAreas(base: string): Reach {
 }
 
 /**
- * A reach in words: `shelf (src/content/areas/shelf/maps/downs_e4.ts), thornmark (imports
- * shelf/walkthrough.ts)` and the walkthroughs reached alone, `every area, by package.json (...)` or `no area`.
+ * A reach in words: `shelf (src/content/areas/shelf/steps.ts), thornmark (imports
+ * shelf/steps.ts)` and the walkthroughs reached alone, `every area, by package.json (...)` or `no area`.
  */
 export const describeReach = (r: Reach): string => {
   if (r.all) return `every area, by ${r.all.file} (${r.all.why})`;

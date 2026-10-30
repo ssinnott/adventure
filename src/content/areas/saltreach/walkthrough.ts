@@ -42,13 +42,13 @@
 // from the trodden wall, and the crabs and the toads won at 11; and The Star That Moved (#183)
 // played every way. Then the bounds (#830), as `theBounds` walks them, box by box.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, fight, listen, see, kneel, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, written, search, hired, ledgerGiven, log, ofKind } from '../../../../tools/kit/walk.ts';
+import { newWalk, walkThrough, fight, listen, see, kneel, meetWho, playChapter, everyGoalWalked, goalFromBegun, quest, said, hear, written, search, log, ofKind } from '../../../../tools/kit/walk.ts';
 import { square, ALL, reach } from '../../../../tools/kit/grid.ts';
 import { headlessGame, drive } from '../../../../tools/kit/headless.ts';
 import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { CHAPTER } from './chapter.ts';
-import { STEPS as FORELAND_STEPS } from '../shelf/walkthrough.ts';
-import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
+import { STEPS as FORELAND_STEPS, hired, ledgerGiven } from '../shelf/steps.ts';
+import { STEPS as GROVE_STEPS } from '../thornmark/steps.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/mapdef.ts';
