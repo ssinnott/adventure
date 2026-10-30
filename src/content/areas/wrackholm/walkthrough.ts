@@ -1,4 +1,5 @@
-// Wrackholm's walkthrough. First its chapter, The Stone Carried Home (#191), played a step at a
+// Wrackholm's walkthrough, as scenes that each run alone (#1033), a box's section to each. First its
+// chapter, The Stone Carried Home (#191), its steps from steps.ts, played a step at a
 // time (tools/kit/walk.ts) on from Saltreach's runs, which leave the company on the landing. In order:
 // the Foreland, the Grove and the Tide Stone played from a new game; Kelp Hole's crates, east over
 // the moor at 13 and out to the ship by night; the decks at 12, the captain's table, Hale freed and
@@ -35,14 +36,14 @@
 // beast and his mother told, or the beast slain before she is met and Tam home on the steps.
 //
 // And the bounds (#835), the three strands round the isle, in a walk of their own (`theBounds`), last.
-import type { Walkthrough } from '../../area.ts';
-import { newWalk, see, fight, listen, walkThrough, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, written, reads, there, here, open, search, holding, keys, xpOf, thiefDown, same, clock, who, stock, shows, alive, key, press, chest } from '../../../../tools/kit/walk.ts';
+import { newWalk, see, fight, listen, walkThrough, playChapter, ending, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, written, reads, there, here, open, search, holding, keys, xpOf, thiefDown, same, clock, who, stock, shows, alive, key, press, chest, mapDef, groupOn, featureOn, exitTo, ownMaps } from '../../../../tools/kit/walk.ts';
 import { zone, square, ALL, reach, each, row, col, apartFrom } from '../../../../tools/kit/grid.ts';
-import type { Step, Walk } from '../../../../tools/kit/walk.ts';
+import type { Walk, Scene } from '../../../../tools/kit/walk.ts';
 import { CHAPTER } from './chapter.ts';
+import { STEPS, PAPERS_LAST } from './steps.ts';
 import { SLEEPERS_SEEN } from '../rimewater/public.ts';
 import { COMPACT_WARDENS, COMPACT_OVER } from '../saltreach/public.ts';
-import { inOrder, saltmouthFirst } from '../saltreach/walkthrough.ts';
+import { inOrder, saltmouthFirst } from '../saltreach/steps.ts';
 import { stonesRestored } from '../../../game/stones.ts';
 import { meet, heard } from '../../../game/people.ts';
 import { questLog } from '../../../game/quests.ts';
@@ -77,7 +78,6 @@ import { NICKS_LOCKER, NICK_DOWN } from './maps/nicks_locker.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Can } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/mapdef.ts';
-import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { answerRiddle } from '../../../game/wilds.ts';
 import { item, hits, sellPrice } from '../../../game/items.ts';
@@ -87,6 +87,10 @@ import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { RESPAWN } from '../../../game/keys.ts';
 import type { Flag } from '../../index.ts';
 
+// The chain, for Sunderwood's walkthrough, which takes it from here until its own cut points it at
+// steps.ts (#1033).
+export { STEPS };
+
 // Another area's chapter, taken from the quest by its id and not from its file (#992).
 const TIDE = THE_QUEST.chapters.find((c) => c.id === 'tide')!;
 
@@ -94,105 +98,14 @@ const TIDE = THE_QUEST.chapters.find((c) => c.id === 'tide')!;
 // ---- the chapter (#191) ----
 
 const E6 = WRACKHOLM_E6, F6 = WRACKHOLM_F6;
-const KITTO = E6.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
-const DANDO = F6.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
-const B5 = MAP_DEFS.find((d) => d.id === 'delta_b5')!;
+const B5 = mapDef('delta_b5');
 const COUNTER = B5.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('a hermit'))!;
-
-/** East over the moor into F6 at 13, and out to the ship in Dando's boat by night. */
-function outToTheShip(w: Walk): void {
-  w.level = 13;
-  walkThrough(w, E6.id, 30, 12, EAST, F6.id, 4);
-  fight(w, `${F6.id}:f6_crew`);
-  clock(w, 23);
-  see(w, `${F6.id}:f6_boats`);
-  w.world.travel(F6.id, DANDO.x, DANDO.y);
-  meet(DANDO, w.party, heard(w.world, DANDO));
-  w.party.gold += DANDO.passage![0].fare;
-  const rowed = take(DANDO.passage![0], w.world, w.party);
-  w.ok(rowed.taken && w.world.state.mapId === TIDE_SHIP.id, 'Dando rows the company out to the ship by night');
-  see(w, `${TIDE_SHIP.id}:ts_aboard`);
-}
-
-/**
- * The decks at 12, the captain's table opened or left shut, the hold's crew and Hale freed if he is
- * there, past the elder at the bulkhead door, and the Warden at 14 for the Stone.
- */
-function theStone(table: boolean): (w: Walk) => void {
-  return (w) => {
-    const ship = TIDE_SHIP, lower = TIDE_SHIP2, hold = TIDE_SHIP3;
-    w.level = 12;
-    for (const g of ship.encounters ?? []) fight(w, `${ship.id}:${g.id}`);
-    walkThrough(w, ship.id, 8, 5, NORTH, lower.id, 2);
-    for (const g of lower.encounters ?? []) fight(w, `${lower.id}:${g.id}`);
-    if (table) { see(w, `${lower.id}:ts2_cabin`); open(w, `${lower.id}:ts2_table`, 'any', false); listen(w); }
-    walkThrough(w, lower.id, 4, 9, SOUTH, hold.id, 2);
-    see(w, `${hold.id}:ts3_beam`);
-    fight(w, `${hold.id}:ts3_crew`);
-    if (w.party.flags.q_hale_taken) meetWho(w, 'q_hale_freed');
-    else see(w, `${hold.id}:ts3_last_row`);
-    fight(w, `${hold.id}:ts3_elder`);
-    see(w, `${hold.id}:ts3_forward`);
-    const tear = hold.features!.find((f) => f.kind === 'rift')!;
-    walkThrough(w, hold.id, tear.x, tear.y + 1, NORTH, TIDE_RIFT.map.id, 1);
-    for (const g of (TIDE_RIFT.map.encounters ?? []).filter((e) => !e.id.endsWith('_warden'))) fight(w, `${TIDE_RIFT.map.id}:${g.id}`);
-    w.level = 14;
-    fight(w, `${TIDE_RIFT.map.id}:tide_ship_rift_warden`);
-    open(w, `${TIDE_RIFT.map.id}:tide_ship_rift_hoard`, 'any', false);
-    listen(w);
-    w.ok(w.party.bag.includes('tide_stone'), 'beside the fallen Warden, the Tide Stone, carried');
-  };
-}
-
-/** Over the side to the shingle, Kitto's boat back to Saltmouth, out by the land gate, and west over the fen to the plinth. */
-function home(w: Walk): void {
-  w.level = 12;
-  walkThrough(w, TIDE_SHIP.id, 5, 9, WEST, F6.id, 1);
-  w.world.travel(E6.id, KITTO.x, KITTO.y);
-  w.party.gold += KITTO.passage![0].fare;
-  const back = take(KITTO.passage![0], w.world, w.party);
-  w.ok(back.taken && w.world.state.mapId === 'saltmouth', 'Kitto takes the company back to Saltmouth\'s quay');
-  walkThrough(w, 'saltmouth', 7, 1, NORTH, 'saltings_c6', 2);
-  walkThrough(w, 'saltings_c6', 26, 1, NORTH, 'delta_c5', 3);
-  walkThrough(w, 'delta_c5', 0, 13, WEST, 'delta_b5', 2);
-  meetWho(w, 'q_tide_home');
-  w.ok(!!w.party.flags.q_tide_home && !w.party.bag.includes('tide_stone'), 'the plinth takes the Stone, and the Stone is home');
-}
-
-/** Back out to the ship for the papers left on the captain's table. */
-function thePapers(w: Walk): void {
-  w.level = 12;
-  w.world.travel('saltmouth', 14, 10);
-  const kitto = MAP_DEFS.find((d) => d.id === 'saltmouth')!.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
-  w.party.gold += kitto.passage![0].fare;
-  take(kitto.passage![0], w.world, w.party);
-  listen(w);
-  w.level = 13;
-  walkThrough(w, E6.id, 30, 12, EAST, F6.id, 4);
-  clock(w, 23);
-  w.world.travel(F6.id, DANDO.x, DANDO.y);
-  w.party.gold += DANDO.passage![0].fare;
-  take(DANDO.passage![0], w.world, w.party);
-  w.level = 12;
-  walkThrough(w, TIDE_SHIP.id, 8, 5, NORTH, TIDE_SHIP2.id, 2);
-  open(w, `${TIDE_SHIP2.id}:ts2_table`, 'any', false);
-  listen(w);
-  w.ok(w.party.bag.includes('ships_papers') && w.party.bag.includes('ships_log'), 'the papers and the log, off the captain\'s table');
-}
-
-/** The chapter in order: by Kelp Hole's crates out to the ship, the Stone and the table, and home. */
-export const STEPS: readonly Step[] = [
-  { name: 'out to the ship', play: (w) => { walkThrough(w, E6.id, 18, 13, NORTH, SMUGGLERS_COVE.id, 2); see(w, `${SMUGGLERS_COVE.id}:kh1_crates`); walkThrough(w, SMUGGLERS_COVE.id, 12, 13, SOUTH, E6.id, 2); outToTheShip(w); } },
-  { name: 'the Stone', play: theStone(true) },
-  { name: 'home', play: home },
-];
-
 
 /** What the Stone home changes outside the log: the Hearth, the fen's Rifts, the hermit, the porch. */
 function stoneHomeShows(w: Walk, how: string): void {
   w.ok(stonesRestored(TABLES.stones, w.world.state, w.party) === 1, `${how}: the Tide Stone home is the Hearth's first step`);
-  const rifts = ['b5_rift_n', 'b5_rift_s', 'c5_rift'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
-  const tears = rifts.map((r) => r.features!.find((f) => f.kind === 'event' && f.id === `${r.id}_tear`)!);
+  const rifts = ['b5_rift_n', 'b5_rift_s', 'c5_rift'].map((id) => mapDef(id));
+  const tears = rifts.map((r) => featureOn(r, `${r.id}_tear`, 'event'));
   w.ok(tears.every((t) => t.kind === 'event' && w.world.ended(t)), `${how}: the fen's Rifts go quiet with the Stone home, their wardens standing`);
   w.world.travel(B5.id, COUNTER.x, COUNTER.y);
   w.ok(meet(COUNTER, w.party, heard(w.world, COUNTER)).text.startsWith('"None tonight'), `${how}: the hermit on the hummock counts no lights`);
@@ -200,49 +113,52 @@ function stoneHomeShows(w: Walk, how: string): void {
   w.ok(w.world.used('b6_stair_sing') && !w.world.used('b6_stair'), `${how}: at the far roof's porch, something sings below`);
 }
 
-/** In order, and with the ship boarded before the temples are seen. */
-function theStoneCarriedHome(ok: (cond: boolean, msg: string) => void): void {
-  const chain = inOrder(ok);
-  goalFromBegun(chain, 'in order, on the isle');
-  playChapter(chain, CHAPTER, STEPS, 'in order');
-  ok(['cove', 'ship', 'hold', 'hale', 'papers', 'stone', 'home'].every((e) => written(chain, CHAPTER).includes(e)), `in order, the whole chapter is written (${written(chain, CHAPTER).join(', ')})`);
-  const said = chain.news.slice(chain.news.lastIndexOf('Chapter complete: The Tide Stone.'));
-  ok(said.join(' ') === 'Chapter complete: The Tide Stone. Chapter complete: The Stone Carried Home. New chapter: The Wall.', `in order, the plinth ends the Tide Stone and the Stone Carried Home, and begins the Wall (${said.join(' ')})`);
-  const wall = quest(chain)?.goal ?? '';
-  ok(/^Go east through the Eaves/.test(wall), `in order, the Wall's goal is the way east (${wall})`);
-  stoneHomeShows(chain, 'in order');
-  const want = ending(chain, 'in order', CHAPTER);
+/**
+ * The chain, each run on from Saltreach's (its steps.ts): in order, and with the ship boarded before the
+ * temples are seen. The second reads what the first ended with (`want`), so the two are one scene. Then
+ * every goal of the chapter walked, where its call stood.
+ */
+function theStoneCarriedHome(): Scene[] {
+  return [
+    { name: 'chain', walks: [CHAPTER], play: (ok) => {
+      // In order, and with the ship boarded before the temples are seen.
+      const chain = inOrder(ok);
+      goalFromBegun(chain, 'in order, on the isle');
+      playChapter(chain, CHAPTER, STEPS, 'in order');
+      ok(['cove', 'ship', 'hold', 'hale', 'papers', 'stone', 'home'].every((e) => written(chain, CHAPTER).includes(e)), `in order, the whole chapter is written (${written(chain, CHAPTER).join(', ')})`);
+      const said = chain.news.slice(chain.news.lastIndexOf('Chapter complete: The Tide Stone.'));
+      ok(said.join(' ') === 'Chapter complete: The Tide Stone. Chapter complete: The Stone Carried Home. New chapter: The Wall.', `in order, the plinth ends the Tide Stone and the Stone Carried Home, and begins the Wall (${said.join(' ')})`);
+      const wall = quest(chain)?.goal ?? '';
+      ok(/^Go east through the Eaves/.test(wall), `in order, the Wall's goal is the way east (${wall})`);
+      stoneHomeShows(chain, 'in order');
+      const want = ending(chain, 'in order', CHAPTER);
 
-  // Saltmouth first, the temples not seen: the table left shut, the Stone home, then the papers.
-  const first = saltmouthFirst(ok);
-  playChapter(first, CHAPTER, [
-    { name: 'out to the ship', play: outToTheShip },
-    { name: 'the Stone, the table shut', play: theStone(false) },
-    { name: 'home', play: home },
-    { name: 'the papers', play: thePapers },
-  ], 'Saltmouth first');
-  ok(first.news.includes('Chapter complete: The Tide Stone.') && first.news.at(-1) === 'New chapter: The Wall.', `Saltmouth first, the papers taken end the chapter and begin the Wall (${first.news.slice(-2).join(' ')})`);
-  goalFromBegun(first, 'Saltmouth first, the papers taken');
-  stoneHomeShows(first, 'Saltmouth first');
-  // The temples first seen with the Stone home: the god sings at the apse's stair, though the count
-  // goes on below while the Choirmaster stands.
-  walkThrough(first, 'delta_b6', 16, 12, NORTH, 'drowned_temples', 2);
-  // Up the nave's east side, wide of the stair's own square: the song is heard all the same, and once.
-  first.world.travel('drowned_temples', 9, 3);
-  const heard9 = first.world.eventsHere();
-  first.world.travel('drowned_temples', 8, 3);
-  const heard8 = first.world.eventsHere();
-  first.world.travel('drowned_temples', 8, 2);
-  const atStair = first.world.eventsHere();
-  listen(first);
-  ok(heard9.length === 1 && first.world.used('dt1_sing_9') && !heard8.length && !atStair.length && !first.world.used('dt1_stair') && !first.world.used('dt1_stair_quiet'),
-    'Saltmouth first, the song comes up the apse\'s stair to whichever side of the nave the company walks, once, and no count comes up it');
-  const tide = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === TIDE)?.entries ?? []).map((e) => e.id);
-  ok(JSON.stringify(tide(first)) === JSON.stringify(['plinth', 'ship']), `Saltmouth first, the Tide Stone holds only what was seen and said (${tide(first).join(', ')})`);
-  const read = written(first, CHAPTER).map((e) => `wrack.${e}`).sort();
-  ok(JSON.stringify(read) === JSON.stringify(want.filter((e) => e.startsWith('wrack.') && e !== 'wrack.cove' && e !== 'wrack.hale')), `Saltmouth first, the chapter reads as in order, without the crates and Hale (${read.join(', ')})`);
-
-  everyGoalWalked(ok, [CHAPTER]);
+      // Saltmouth first, the temples not seen: the table left shut, the Stone home, then the papers.
+      const first = saltmouthFirst(ok);
+      playChapter(first, CHAPTER, PAPERS_LAST, 'Saltmouth first');
+      ok(first.news.includes('Chapter complete: The Tide Stone.') && first.news.at(-1) === 'New chapter: The Wall.', `Saltmouth first, the papers taken end the chapter and begin the Wall (${first.news.slice(-2).join(' ')})`);
+      goalFromBegun(first, 'Saltmouth first, the papers taken');
+      stoneHomeShows(first, 'Saltmouth first');
+      // The temples first seen with the Stone home: the god sings at the apse's stair, though the count
+      // goes on below while the Choirmaster stands.
+      walkThrough(first, 'delta_b6', 16, 12, NORTH, 'drowned_temples', 2);
+      // Up the nave's east side, wide of the stair's own square: the song is heard all the same, and once.
+      first.world.travel('drowned_temples', 9, 3);
+      const heard9 = first.world.eventsHere();
+      first.world.travel('drowned_temples', 8, 3);
+      const heard8 = first.world.eventsHere();
+      first.world.travel('drowned_temples', 8, 2);
+      const atStair = first.world.eventsHere();
+      listen(first);
+      ok(heard9.length === 1 && first.world.used('dt1_sing_9') && !heard8.length && !atStair.length && !first.world.used('dt1_stair') && !first.world.used('dt1_stair_quiet'),
+        'Saltmouth first, the song comes up the apse\'s stair to whichever side of the nave the company walks, once, and no count comes up it');
+      const tide = (w: Walk): string[] => (quest(w)?.pages.find((p) => p.def === TIDE)?.entries ?? []).map((e) => e.id);
+      ok(JSON.stringify(tide(first)) === JSON.stringify(['plinth', 'ship']), `Saltmouth first, the Tide Stone holds only what was seen and said (${tide(first).join(', ')})`);
+      const read = written(first, CHAPTER).map((e) => `wrack.${e}`).sort();
+      ok(JSON.stringify(read) === JSON.stringify(want.filter((e) => e.startsWith('wrack.') && e !== 'wrack.cove' && e !== 'wrack.hale')), `Saltmouth first, the chapter reads as in order, without the crates and Hale (${read.join(', ')})`);
+    } },
+    { name: 'goals', play: (ok) => everyGoalWalked(ok, [CHAPTER], scenes) },
+  ];
 }
 
 /**
@@ -253,7 +169,7 @@ function theStoneCarriedHome(ok: (cond: boolean, msg: string) => void): void {
  */
 function causewaySeen(ok: (cond: boolean, msg: string) => void): void {
   const eventSays = (w: Walk, map: string, id: string): string[] => {
-    const f = MAP_DEFS.find((d) => d.id === map)!.features!.find((x) => x.kind === 'event' && x.id === id)!;
+    const f = featureOn(map, id, 'event');
     w.world.travel(map, f.x, f.y);
     return w.world.eventsHere();
   };
@@ -270,7 +186,7 @@ function causewaySeen(ok: (cond: boolean, msg: string) => void): void {
 
 type Chest = Extract<Feature, { kind: 'chest' }>;
 type Happening = Extract<Feature, { kind: 'event' }>;
-const eventOf = (id: string): Happening => WRACKHOLM_F6.features!.find((f): f is Happening => f.kind === 'event' && f.id === id)!;
+const eventOf = (id: string): Happening => featureOn(WRACKHOLM_F6, id, 'event');
 
 
 /**
@@ -390,186 +306,204 @@ function hollowFinds(ok: (cond: boolean, msg: string) => void): void {
     `the hollow is off the road: where the groove ends is ${far.walking} squares from the nearest square on a shortest walk across F6 (${far.steps} steps from the way in to the shingle) by the way a company walks, and ${far.crow} as the crow flies; a square of the way itself is ${on.walking}`);
 }
 
-export const walkthrough: Walkthrough = (ok) => {
-  theStoneCarriedHome(ok);
-  sideQuests(ok);
-  causewaySeen(ok);
-  hollowFinds(ok);
-  hollowLocked(ok);
-
-  const w = newWalk(ok);
-  w.level = 12;
-  const e6 = WRACKHOLM_E6, { x, y, facing } = e6.start;
-
-  // Put ashore at the stage, as the boat will (#177).
-  w.world.travel(e6.id, x, y, facing);
-  ok(w.world.zone?.id === e6.id && w.world.map.passable(w.world.state.x, w.world.state.y) === 'ok', `the landing at ${x},${y} is open ground in E6`);
-  see(w, 'wrackholm_e6:e6_stage');
-
-  // The gulls on one roof, and the door in its wall found by searching from where they are seen.
-  const hint = e6.features!.find((f) => f.kind === 'event' && f.id === 'e6_gulls_roof')!, door = e6.secrets![0];
-  see(w, 'wrackholm_e6:e6_gulls_roof');
-  ok(hint.x === door.x && hint.y === door.y + 1, 'the gulls are seen from the square below the hut\'s secret door');
-  w.world.travel(e6.id, hint.x, hint.y, NORTH);
-  let found = false;
-  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
-  ok(found, 'a search from below the gulls finds the door in the hut\'s wall');
-  w.world.move('forward'); w.world.move('forward');
-  const chest = e6.features!.find((f) => f.kind === 'chest' && f.id === 'e6_cache_box');
-  const at = chest && w.world.locate(e6.id, chest.x, chest.y);
-  ok(!!at && w.world.state.x === at.x && w.world.state.y === at.y, 'through it, the cache under the floor');
-  if (chest?.kind === 'chest') {
-    w.world.markUsed(chest.id); w.party.gold += chest.gold; w.party.bag.push(...chest.items);
-    ok(w.party.bag.includes('longbow+1'), 'and in it the Long Bow +1');
-  }
-  see(w, 'wrackholm_e6:e6_cache');
-  listen(w);
-
-  // Every group of the box, at the floor.
-  for (const g of MAP_DEFS.find((d) => d.id === e6.id)!.encounters ?? []) fight(w, `${e6.id}:${g.id}`);
-
-  // Kelp Hole: up the wet path from the stage and into the cliff.
-  const up = SMUGGLERS_COVE, down = SMUGGLERS_COVE2;
-  walkThrough(w, e6.id, 18, 13, NORTH, up.id, 2);
-  see(w, `${up.id}:kh1_crates`);
-  ok(!w.world.peopleAt(12, 5).length, 'the brother is not among the rows while the overseers stand');
-  for (const g of up.encounters ?? []) fight(w, `${up.id}:${g.id}`);
-  w.world.travel(up.id, 12, 6, NORTH);
-  ok(w.world.peopleAt(12, 5).some((p) => p.name.startsWith('Colan')), 'with the overseers down, the brother sits by the rows');
-  const box = up.features!.find((f) => f.kind === 'chest' && f.id === 'kh1_strongbox');
-  ok(box?.kind === 'chest' && box.items.includes('plate+1'), 'the crews\' strongbox holds the Plate Mail +1');
-
-  // The sea cave: the boy at the black pool while the beast lives, and the beast at the band's top.
-  walkThrough(w, up.id, 4, 3, NORTH, down.id, 2);
-  ok(w.world.peopleAt(13, 12).some((p) => p.name.startsWith('Tam')), 'the boy feeds the beast at the pool\'s edge');
-  for (const g of (down.encounters ?? []).filter((e) => e.id !== 'kh2_great_devilfish')) fight(w, `${down.id}:${g.id}`);
-  w.level = 14;
-  fight(w, `${down.id}:kh2_great_devilfish`);
-  w.world.travel(down.id, 13, 11, NORTH);
-  ok(w.world.peopleAt(13, 12).map((p) => p.flag).join() === 'q_feed_home', 'with the beast dead, the boy at the pool has done with feeding it');
-
-  // The tide-mark stops short, and a search west of it finds the flooded passage: out, onto E6's shore.
-  const mark = down.features!.find((f) => f.kind === 'event' && f.id === 'kh2_tidemark')!, gap = down.secrets![0];
-  see(w, `${down.id}:kh2_tidemark`);
-  ok(mark.x === gap.x + 1 && mark.y === gap.y, 'the tide-mark is seen from the square east of the passage\'s door');
-  w.world.travel(down.id, mark.x, mark.y, WEST);
-  found = false;
-  for (let i = 0; i < 20 && !found; i++) found = w.world.search();
-  ok(found, 'a search west from the tide-mark finds the way into the flooded passage');
-  w.world.travel(down.id, mark.x, mark.y, WEST);
-  for (let i = 0; i < 3; i++) w.world.move('forward');
-  ok(w.world.state.mapId === down.id && w.world.state.x === gap.x - 2 && w.world.state.y === gap.y, 'through the door the passage runs on west, under the wall');
-  walkThrough(w, down.id, w.world.state.x, w.world.state.y, SOUTH, WRACKHOLM_F6.id, 4);
-  ok(w.world.map.at(w.world.state.x, w.world.state.y).terrain === 'sand', 'the flooded passage lets out on F6\'s sand, the isle\'s east shore');
-
-  // East over the moor into F6, at its floor.
-  w.level = 13;
-  const f6 = WRACKHOLM_F6;
-  walkThrough(w, e6.id, 30, 12, EAST, f6.id, 4);
-
-  // The hermit's tally starts at a date; the cairn on the point keeps the rest, behind a door a
-  // search finds.
-  const tally = f6.features!.find((f) => f.kind === 'event' && f.id === 'f6_tally')!, grave = f6.secrets![0];
-  ok(grave.hint === 'f6_tally', 'the door in the cairn names the hermit\'s tally as its hint');
-  ok(Math.abs(tally.x - grave.x) + Math.abs(tally.y - grave.y) > 1, 'the tally is not beside the door it hints at');
-  see(w, 'wrackholm_f6:f6_tally');
-  see(w, 'wrackholm_f6:f6_cairn');
-  w.world.travel(f6.id, grave.x - 1, grave.y, EAST);
-  let opened = false;
-  for (let i = 0; i < 20 && !opened; i++) opened = w.world.search();
-  ok(opened, 'a search at the cairn finds the door in it');
-  w.world.move('forward'); w.world.move('forward');
-  const dug = f6.features!.find((f) => f.kind === 'chest' && f.id === 'f6_grave');
-  const under = dug && w.world.locate(f6.id, dug.x, dug.y);
-  ok(!!under && w.world.state.x === under.x && w.world.state.y === under.y, 'through it, the grave under the cairn');
-  if (dug?.kind === 'chest') {
-    w.world.markUsed(dug.id); w.party.gold += dug.gold; w.party.bag.push(...dug.items);
-    ok(w.party.bag.includes('founders_seal'), 'and in it the founder\'s seal');
-  }
-  see(w, 'wrackholm_f6:f6_grave_seen');
-  listen(w);
-
-  // A detour off the road (#861): the hollow in the rock's east face, found from the groove in the turf.
-  theHollow(w);
-
-  for (const g of MAP_DEFS.find((d) => d.id === f6.id)!.encounters ?? []) fight(w, `${f6.id}:${g.id}`);
-
-  // Out to the Tide Ship. By day the shingle is empty; by night Dando rows whoever pays.
+/**
+ * The built maps, as a company the boat has put ashore at 12, each box's section a scene of its own walk,
+ * started with the level and the flags the sections before it left on the old body's one walk, as data;
+ * and in their order the rungs and the Dead-Drop it called at the stair's foot.
+ */
+function ashore(): Scene[] {
+  const e6 = WRACKHOLM_E6, up = SMUGGLERS_COVE, down = SMUGGLERS_COVE2, f6 = WRACKHOLM_F6;
   const ship = TIDE_SHIP, lower = TIDE_SHIP2, hold = TIDE_SHIP3, foot = DEAD_DROP_STAIR;
-  const pender = f6.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
-  clock(w, 12);
-  w.world.travel(f6.id, pender.x, pender.y);
-  ok(!w.world.present(pender, f6.id), 'by day nobody on the shingle rows out to the ship');
-  clock(w, 23);
-  w.world.travel(f6.id, pender.x, pender.y);
-  ok(w.world.present(pender, f6.id) && meet(pender, w.party, heard(w.world, pender)).text.startsWith('An old man sits on a thwart'), 'by night Dando sits in his boat on the shingle');
-  w.party.gold += 20;
-  const rowed = take(pender.passage![0], w.world, w.party);
-  ok(rowed.taken && w.world.state.mapId === ship.id && w.world.hour < 6, 'he rows the company out, and it comes aboard by night');
-  see(w, `${ship.id}:ts_aboard`);
-  w.level = 12;
-  for (const g of ship.encounters ?? []) fight(w, `${ship.id}:${g.id}`);
-  ok(open(w, `${ship.id}:ts_locker`, 'any', false).includes('potion_heal'), 'the deck locker holds the crews\' draughts');
+  return [
+    { name: 'e6', play: (ok) => {
+      // Put ashore at the stage, as the boat will (#177).
+      const w = newWalk(ok, { level: 12 });
+      const { x, y, facing } = e6.start;
+      w.world.travel(e6.id, x, y, facing);
+      ok(w.world.zone?.id === e6.id && w.world.map.passable(w.world.state.x, w.world.state.y) === 'ok', `the landing at ${x},${y} is open ground in E6`);
+      see(w, 'wrackholm_e6:e6_stage');
 
-  // The lower deck: the rats and the Hand's post, and the captain's cabin.
-  walkThrough(w, ship.id, 8, 5, NORTH, lower.id, 2);
-  for (const g of lower.encounters ?? []) fight(w, `${lower.id}:${g.id}`);
-  see(w, `${lower.id}:ts2_cabin`);
-  const table = open(w, `${lower.id}:ts2_table`, 'any', false), sea = open(w, `${lower.id}:ts2_sea_chest`, 'any', false);
-  ok(table.includes('ships_papers') && table.includes('ships_log') && sea.includes('tide_cutlass'), 'on the captain\'s table the papers and the log, and in his sea chest the cutlass');
+      // The gulls on one roof, and the door in its wall found by searching from where they are seen.
+      const hint = featureOn(e6, 'e6_gulls_roof', 'event'), door = e6.secrets![0];
+      see(w, 'wrackholm_e6:e6_gulls_roof');
+      ok(hint.x === door.x && hint.y === door.y + 1, 'the gulls are seen from the square below the hut\'s secret door');
+      w.world.travel(e6.id, hint.x, hint.y, NORTH);
+      let found = false;
+      for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+      ok(found, 'a search from below the gulls finds the door in the hut\'s wall');
+      w.world.move('forward'); w.world.move('forward');
+      const chest = e6.features!.find((f) => f.kind === 'chest' && f.id === 'e6_cache_box');
+      const at = chest && w.world.locate(e6.id, chest.x, chest.y);
+      ok(!!at && w.world.state.x === at.x && w.world.state.y === at.y, 'through it, the cache under the floor');
+      if (chest?.kind === 'chest') {
+        w.world.markUsed(chest.id); w.party.gold += chest.gold; w.party.bag.push(...chest.items);
+        ok(w.party.bag.includes('longbow+1'), 'and in it the Long Bow +1');
+      }
+      see(w, 'wrackholm_e6:e6_cache');
+      listen(w);
 
-  // The hold: the crew among the rows, and in the last row strangers, while Hale holds the Scarth.
-  walkThrough(w, lower.id, 4, 9, SOUTH, hold.id, 2);
-  see(w, `${hold.id}:ts3_beam`);
-  const hale = hold.features!.find((f): f is Person => f.kind === 'npc' && f.flag === 'q_hale_freed')!;
-  fight(w, `${hold.id}:ts3_crew`);
-  w.world.travel(hold.id, hale.x, hale.y - 1, SOUTH);
-  ok(!w.world.present(hale) && w.world.peopleAt(hale.x, hale.y).length === 0, 'while Hale holds the Scarth, he is not in the last row');
-  see(w, `${hold.id}:ts3_last_row`);
-  ok(w.world.used('ts3_last_row'), 'strangers sit in the last row');
-  // Taken from the Scarth: #156 sets the flag when it puts strangers at the pass.
-  w.party.flags.q_hale_taken = 1;
-  w.world.travel(hold.id, hale.x, hale.y - 1, SOUTH);
-  ok(w.world.present(hale), 'once he is taken from the Scarth and the crew is down, Hale is in the last row');
-  ok(meet(hale, w.party, heard(w.world, hale)).text.includes('The Regent got his copy') && !!w.party.flags.q_hale_freed, 'he knows the company, says who came for him, and is freed');
-  ok(!w.world.present(hale), 'freed, he is gone over the side with the rest');
-  listen(w);
+      // Every group of the box, at the floor.
+      for (const g of mapDef(e6.id).encounters ?? []) fight(w, `${e6.id}:${g.id}`);
+    } },
+    { name: 'kelp-hole', play: (ok) => {
+      // Kelp Hole: up the wet path from the stage and into the cliff.
+      const w = newWalk(ok, { level: 12 });
+      walkThrough(w, e6.id, 18, 13, NORTH, up.id, 2);
+      see(w, `${up.id}:kh1_crates`);
+      ok(!w.world.peopleAt(12, 5).length, 'the brother is not among the rows while the overseers stand');
+      for (const g of up.encounters ?? []) fight(w, `${up.id}:${g.id}`);
+      w.world.travel(up.id, 12, 6, NORTH);
+      ok(w.world.peopleAt(12, 5).some((p) => p.name.startsWith('Colan')), 'with the overseers down, the brother sits by the rows');
+      const box = up.features!.find((f) => f.kind === 'chest' && f.id === 'kh1_strongbox');
+      ok(box?.kind === 'chest' && box.items.includes('plate+1'), 'the crews\' strongbox holds the Plate Mail +1');
+    } },
+    { name: 'sea-cave', play: (ok) => {
+      // The sea cave: the boy at the black pool while the beast lives, and the beast at the band's top.
+      const w = newWalk(ok, { level: 12 });
+      walkThrough(w, up.id, 4, 3, NORTH, down.id, 2);
+      ok(w.world.peopleAt(13, 12).some((p) => p.name.startsWith('Tam')), 'the boy feeds the beast at the pool\'s edge');
+      for (const g of (down.encounters ?? []).filter((e) => e.id !== 'kh2_great_devilfish')) fight(w, `${down.id}:${g.id}`);
+      w.level = 14;
+      fight(w, `${down.id}:kh2_great_devilfish`);
+      w.world.travel(down.id, 13, 11, NORTH);
+      ok(w.world.peopleAt(13, 12).map((p) => p.flag).join() === 'q_feed_home', 'with the beast dead, the boy at the pool has done with feeding it');
 
-  // The straw is fresh on one side, and a search there finds the shard-cut past the elder's door.
-  const straw = hold.features!.find((f) => f.kind === 'event' && f.id === 'ts3_straw')!, cut = hold.secrets![0];
-  ok(cut.hint === 'ts3_straw' && straw.x === cut.x && straw.y === cut.y + 1, 'the straw is seen from the square aft of the shard-cut');
-  see(w, `${hold.id}:ts3_straw`);
-  w.world.travel(hold.id, straw.x, straw.y, NORTH);
-  let cutFound = false;
-  for (let i = 0; i < 20 && !cutFound; i++) cutFound = w.world.search();
-  ok(cutFound, 'a search at the fresh straw finds the shard-cut in the bulkhead');
-  w.world.move('forward'); w.world.move('forward');
-  ok(w.world.state.mapId === hold.id && w.world.state.y === cut.y - 1, 'through it, the forward hold, past the elder at the door');
-  ok(open(w, `${hold.id}:ts3_strongbox`, 'any', false).includes('long_axe+1'), 'the Hand\'s strongbox stands in the forward hold, the Long Axe +1 in it');
-  see(w, `${hold.id}:ts3_forward`);
-  fight(w, `${hold.id}:ts3_elder`);
+      // The tide-mark stops short, and a search west of it finds the flooded passage: out, onto E6's shore.
+      const mark = featureOn(down, 'kh2_tidemark', 'event'), gap = down.secrets![0];
+      see(w, `${down.id}:kh2_tidemark`);
+      ok(mark.x === gap.x + 1 && mark.y === gap.y, 'the tide-mark is seen from the square east of the passage\'s door');
+      w.world.travel(down.id, mark.x, mark.y, WEST);
+      let found = false;
+      for (let i = 0; i < 20 && !found; i++) found = w.world.search();
+      ok(found, 'a search west from the tide-mark finds the way into the flooded passage');
+      w.world.travel(down.id, mark.x, mark.y, WEST);
+      for (let i = 0; i < 3; i++) w.world.move('forward');
+      ok(w.world.state.mapId === down.id && w.world.state.x === gap.x - 2 && w.world.state.y === gap.y, 'through the door the passage runs on west, under the wall');
+      walkThrough(w, down.id, w.world.state.x, w.world.state.y, SOUTH, WRACKHOLM_F6.id, 4);
+      ok(w.world.map.at(w.world.state.x, w.world.state.y).terrain === 'sand', 'the flooded passage lets out on F6\'s sand, the isle\'s east shore');
+    } },
+    { name: 'f6', play: (ok) => {
+      // East over the moor into F6, at its floor.
+      const w = newWalk(ok, { level: 13 });
+      walkThrough(w, e6.id, 30, 12, EAST, f6.id, 4);
 
-  // The tear: the Rift's rooms at its floor, the Warden at 14, and the Stone beside it.
-  const tear = hold.features!.find((f) => f.kind === 'rift')!;
-  walkThrough(w, hold.id, tear.x, tear.y + 1, NORTH, TIDE_RIFT.map.id, 1);
-  for (const g of (TIDE_RIFT.map.encounters ?? []).filter((e) => !e.id.endsWith('_warden'))) fight(w, `${TIDE_RIFT.map.id}:${g.id}`);
-  w.level = 14;
-  fight(w, `${TIDE_RIFT.map.id}:tide_ship_rift_warden`);
-  ok(open(w, `${TIDE_RIFT.map.id}:tide_ship_rift_hoard`, 'any', false).includes('tide_stone') && w.party.bag.includes('tide_stone'), 'beside the fallen Warden, the Tide Stone');
+      // The hermit's tally starts at a date; the cairn on the point keeps the rest, behind a door a
+      // search finds.
+      const tally = featureOn(f6, 'f6_tally', 'event'), grave = f6.secrets![0];
+      ok(grave.hint === 'f6_tally', 'the door in the cairn names the hermit\'s tally as its hint');
+      ok(Math.abs(tally.x - grave.x) + Math.abs(tally.y - grave.y) > 1, 'the tally is not beside the door it hints at');
+      see(w, 'wrackholm_f6:f6_tally');
+      see(w, 'wrackholm_f6:f6_cairn');
+      w.world.travel(f6.id, grave.x - 1, grave.y, EAST);
+      let opened = false;
+      for (let i = 0; i < 20 && !opened; i++) opened = w.world.search();
+      ok(opened, 'a search at the cairn finds the door in it');
+      w.world.move('forward'); w.world.move('forward');
+      const dug = f6.features!.find((f) => f.kind === 'chest' && f.id === 'f6_grave');
+      const under = dug && w.world.locate(f6.id, dug.x, dug.y);
+      ok(!!under && w.world.state.x === under.x && w.world.state.y === under.y, 'through it, the grave under the cairn');
+      if (dug?.kind === 'chest') {
+        w.world.markUsed(dug.id); w.party.gold += dug.gold; w.party.bag.push(...dug.items);
+        ok(w.party.bag.includes('founders_seal'), 'and in it the founder\'s seal');
+      }
+      see(w, 'wrackholm_f6:f6_grave_seen');
+      listen(w);
 
-  // The hatch aft: the stair's foot, at the Dead-Drop's band, and the way back up.
-  see(w, `${hold.id}:ts3_hatch`);
-  walkThrough(w, hold.id, 7, 13, SOUTH, foot.id, 1);
-  ok(w.world.map.def.band?.[0] === 26, 'the stair\'s foot is the Dead-Drop\'s country, 26 and over, as its sign says');
-  fence(w);
-  see(w, `${foot.id}:dd_door`);
-  drop(w);
-  factor(w);
-  walkThrough(w, foot.id, 4, 6, SOUTH, hold.id, 1);
+      // A detour off the road (#861): the hollow in the rock's east face, found from the groove in the turf.
+      theHollow(w);
 
-  // The bounds (#835): the strands round the isle.
-  theBounds(ok);
-};
+      for (const g of mapDef(f6.id).encounters ?? []) fight(w, `${f6.id}:${g.id}`);
+    } },
+    { name: 'tide-ship', play: (ok) => {
+      // Out to the Tide Ship. By day the shingle is empty; by night Dando rows whoever pays.
+      const w = newWalk(ok, { level: 13 });
+      const pender = f6.features!.find((f): f is Person => f.kind === 'npc' && !!f.passage?.length)!;
+      clock(w, 12);
+      w.world.travel(f6.id, pender.x, pender.y);
+      ok(!w.world.present(pender, f6.id), 'by day nobody on the shingle rows out to the ship');
+      clock(w, 23);
+      w.world.travel(f6.id, pender.x, pender.y);
+      ok(w.world.present(pender, f6.id) && meet(pender, w.party, heard(w.world, pender)).text.startsWith('An old man sits on a thwart'), 'by night Dando sits in his boat on the shingle');
+      w.party.gold += 20;
+      const rowed = take(pender.passage![0], w.world, w.party);
+      ok(rowed.taken && w.world.state.mapId === ship.id && w.world.hour < 6, 'he rows the company out, and it comes aboard by night');
+      see(w, `${ship.id}:ts_aboard`);
+      w.level = 12;
+      for (const g of ship.encounters ?? []) fight(w, `${ship.id}:${g.id}`);
+      ok(open(w, `${ship.id}:ts_locker`, 'any', false).includes('potion_heal'), 'the deck locker holds the crews\' draughts');
+    } },
+    { name: 'lower-deck', play: (ok) => {
+      // The lower deck: the rats and the Hand's post, and the captain's cabin.
+      const w = newWalk(ok, { level: 12 });
+      walkThrough(w, ship.id, 8, 5, NORTH, lower.id, 2);
+      for (const g of lower.encounters ?? []) fight(w, `${lower.id}:${g.id}`);
+      see(w, `${lower.id}:ts2_cabin`);
+      const table = open(w, `${lower.id}:ts2_table`, 'any', false), sea = open(w, `${lower.id}:ts2_sea_chest`, 'any', false);
+      ok(table.includes('ships_papers') && table.includes('ships_log') && sea.includes('tide_cutlass'), 'on the captain\'s table the papers and the log, and in his sea chest the cutlass');
+    } },
+    { name: 'hold', play: (ok) => {
+      // The hold: the crew among the rows, and in the last row strangers, while Hale holds the Scarth.
+      const w = newWalk(ok, { level: 12 });
+      walkThrough(w, lower.id, 4, 9, SOUTH, hold.id, 2);
+      see(w, `${hold.id}:ts3_beam`);
+      const hale = hold.features!.find((f): f is Person => f.kind === 'npc' && f.flag === 'q_hale_freed')!;
+      fight(w, `${hold.id}:ts3_crew`);
+      w.world.travel(hold.id, hale.x, hale.y - 1, SOUTH);
+      ok(!w.world.present(hale) && w.world.peopleAt(hale.x, hale.y).length === 0, 'while Hale holds the Scarth, he is not in the last row');
+      see(w, `${hold.id}:ts3_last_row`);
+      ok(w.world.used('ts3_last_row'), 'strangers sit in the last row');
+      // Taken from the Scarth: #156 sets the flag when it puts strangers at the pass.
+      w.party.flags.q_hale_taken = 1;
+      w.world.travel(hold.id, hale.x, hale.y - 1, SOUTH);
+      ok(w.world.present(hale), 'once he is taken from the Scarth and the crew is down, Hale is in the last row');
+      ok(meet(hale, w.party, heard(w.world, hale)).text.includes('The Regent got his copy') && !!w.party.flags.q_hale_freed, 'he knows the company, says who came for him, and is freed');
+      ok(!w.world.present(hale), 'freed, he is gone over the side with the rest');
+      listen(w);
+
+      // The straw is fresh on one side, and a search there finds the shard-cut past the elder's door.
+      const straw = featureOn(hold, 'ts3_straw', 'event'), cut = hold.secrets![0];
+      ok(cut.hint === 'ts3_straw' && straw.x === cut.x && straw.y === cut.y + 1, 'the straw is seen from the square aft of the shard-cut');
+      see(w, `${hold.id}:ts3_straw`);
+      w.world.travel(hold.id, straw.x, straw.y, NORTH);
+      let cutFound = false;
+      for (let i = 0; i < 20 && !cutFound; i++) cutFound = w.world.search();
+      ok(cutFound, 'a search at the fresh straw finds the shard-cut in the bulkhead');
+      w.world.move('forward'); w.world.move('forward');
+      ok(w.world.state.mapId === hold.id && w.world.state.y === cut.y - 1, 'through it, the forward hold, past the elder at the door');
+      ok(open(w, `${hold.id}:ts3_strongbox`, 'any', false).includes('long_axe+1'), 'the Hand\'s strongbox stands in the forward hold, the Long Axe +1 in it');
+      see(w, `${hold.id}:ts3_forward`);
+      fight(w, `${hold.id}:ts3_elder`);
+    } },
+    { name: 'tear', play: (ok) => {
+      // The tear: the Rift's rooms at its floor, the Warden at 14, and the Stone beside it.
+      const w = newWalk(ok, { level: 12, flags: { q_hale_freed: 1, q_hale_taken: 1 } });
+      const tear = hold.features!.find((f) => f.kind === 'rift')!;
+      walkThrough(w, hold.id, tear.x, tear.y + 1, NORTH, TIDE_RIFT.map.id, 1);
+      for (const g of (TIDE_RIFT.map.encounters ?? []).filter((e) => !e.id.endsWith('_warden'))) fight(w, `${TIDE_RIFT.map.id}:${g.id}`);
+      w.level = 14;
+      fight(w, `${TIDE_RIFT.map.id}:tide_ship_rift_warden`);
+      ok(open(w, `${TIDE_RIFT.map.id}:tide_ship_rift_hoard`, 'any', false).includes('tide_stone') && w.party.bag.includes('tide_stone'), 'beside the fallen Warden, the Tide Stone');
+    } },
+    { name: 'hatch', play: (ok) => {
+      // The hatch aft: the stair's foot, at the Dead-Drop's band, and the way back up.
+      const w = newWalk(ok, { level: 14, flags: { q_hale_freed: 1, q_hale_taken: 1 } });
+      see(w, `${hold.id}:ts3_hatch`);
+      walkThrough(w, hold.id, 7, 13, SOUTH, foot.id, 1);
+      ok(w.world.map.def.band?.[0] === 26, 'the stair\'s foot is the Dead-Drop\'s country, 26 and over, as its sign says');
+    } },
+    { name: 'fence', play: (ok) => fence(newWalk(ok, { level: 14, flags: { q_hale_freed: 1, q_hale_taken: 1 } })) },
+    { name: 'dead-drop', play: (ok) => {
+      const w = newWalk(ok, { level: 14, flags: { q_hale_freed: 1, q_hale_taken: 1 } });
+      see(w, `${foot.id}:dd_door`);
+      drop(w);
+    } },
+    { name: 'factor', play: (ok) => {
+      const w = newWalk(ok, { level: 14, flags: { q_hale_freed: 1, q_hale_taken: 1, q_writer_seen: 1 }, bag: ['compact_orders'] });
+      factor(w);
+      walkThrough(w, foot.id, 4, 6, SOUTH, hold.id, 1);
+    } },
+  ];
+}
 
 /**
  * The Compact's Fence's rung at the stair's foot (DESIGN §8, #635), on copies of the walk's company
@@ -683,7 +617,7 @@ function factor(w: Walk): void {
  * line said at its head the once, and the vaults below it.
  */
 function drop(w: Walk): void {
-  const D = DEAD_DROP, foot = DEAD_DROP_STAIR, level = w.level, way = foot.exits!.find((e) => e.to === D.id)!;
+  const D = DEAD_DROP, foot = DEAD_DROP_STAIR, level = w.level, way = exitTo(foot, D.id);
   w.world.travel(foot.id, way.x, way.y + 1, NORTH);
   const down = w.world.move('forward');
   w.ok(down.kind === 'moved' && w.world.state.mapId === D.id && w.world.state.x === D.start.x && w.world.state.y === D.start.y && w.world.state.facing === D.start.facing
@@ -753,7 +687,7 @@ function vaults(w: Walk): void {
   w.level = 27;
   for (const id of ['dd2_in', 'dd2_vault', 'dd2_bare', 'dd2_rails', 'dd2_coin', 'dd2_door', 'dd2_seal', 'dd2_pens', 'dd2_count', 'dd2_left', 'dd2_right']) see(w, `${V.id}:${id}`);
   // The rails' door opens for nobody the company has; beside it the Hand's seal, as on Sheer Point's crates.
-  const door = ev('dd2_door')!, cave = MAP_DEFS.find((d) => d.id === 'sheerpoint_i8')?.features?.find((f) => f.kind === 'event' && f.id === 'i8_crates');
+  const door = ev('dd2_door')!, cave = mapDef('sheerpoint_i8').features?.find((f) => f.kind === 'event' && f.id === 'i8_crates');
   const sealed = [[-1, 0], [1, 0], [0, -1], [0, 1]].map(([dx, dy]) => ({ x: door.x + dx, y: door.y + dy })).filter((c) => map.at(c.x, c.y).door === 'door' && map.passable(c.x, c.y) !== 'ok');
   w.ok(sealed.length === 1 && !(V.exits ?? []).some((e) => e.x === sealed[0].x && e.y === sealed[0].y),
     `at the vault's far end the rails run under a door that opens for nobody, a wall drawn as a door (${sealed.map((c) => `${c.x},${c.y}`).join(' ')})`);
@@ -931,122 +865,131 @@ function haleFreed(w: Walk): void {
   w.ok(there(w, 'tide_ship', HALE_DECK()) && there(w, 'tide_ship', BOY_DECK()) && shows(w, 'tide_ship', 'ts_freed'), 'freed, Hale waits at the rail over the boats with the thirty, Wat\'s boy among them');
 }
 
-function sideQuests(ok: (cond: boolean, msg: string) => void): void {
-  { // The Captain's Brother: Kitto asks, Colan answers, and the truth is told. The cove's landing
-    // crew comes no more once it is next put down.
-    const w = newWalk(ok);
-    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === KITTO_E6().lines.join('\n\n') && w.news.at(-1) === 'New quest: The Captain\'s Brother.' && /Kelp Hole/.test(goal(w, 'brother')),
-      `Kitto's first lines ashore begin The Captain's Brother, its goal Kelp Hole (${goal(w, 'brother')})`);
-    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === words(KITTO_E6(), 'q_brother'), 'asked again, Kitto says it short');
-    w.ok(!there(w, 'smugglers_cove', COLAN()), 'Colan is not at his crate while the overseers stand');
-    toTheRows(w);
-    w.ok(there(w, 'smugglers_cove', COLAN()), 'the overseers down, Colan sits by the rows');
-    answerTo(w, 'smugglers_cove', COLAN(), 'q_brother_truth');
-    w.ok(!there(w, 'smugglers_cove', COLAN()) && shows(w, 'smugglers_cove', 'kh1_colan_gone') && !w.party.bag.includes('colans_letter'), 'the truth to carry, Colan goes below, his crate empty, and no letter');
-    w.ok(/Kitto/.test(goal(w, 'brother')), `the goal is Kitto at the landing (${goal(w, 'brother')})`);
-    fight(w, 'smugglers_cove:kh1_crew_landing');
-    days(w, 3);
-    w.ok(alive(w, 'smugglers_cove', 'kh1_crew_landing'), 'until Kitto is told, the cove\'s landing crew comes back');
-    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === words(KITTO_E6(), 'q_brother_truth') && !!w.party.flags.q_brother_told, 'Kitto hears what his brother is');
-    reads(w, 'brother', ['kitto', 'found', 'truth', 'told'], ['letter', 'delivered'], 'the truth told');
-    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === words(KITTO_E6(), 'q_brother_told'), 'Kitto\'s after-lines are the truth\'s');
-    fight(w, 'smugglers_cove:kh1_crew_landing');
-    days(w, 3);
-    w.ok(!alive(w, 'smugglers_cove', 'kh1_crew_landing') && alive(w, 'smugglers_cove', 'kh1_crew_fires'), 'told, Kitto carries for the cove no more: its landing crew, put down, does not come back, and the fires\' crew does');
-  }
-  { // The Captain's Brother: Colan found before Kitto has asked, and his letter carried sealed.
-    const w = newWalk(ok);
-    toTheRows(w);
-    answerTo(w, 'smugglers_cove', COLAN(), 'q_brother_letter');
-    w.ok(w.news.includes('New quest: The Captain\'s Brother.') && w.party.bag.includes('colans_letter') && !there(w, 'smugglers_cove', COLAN()), 'Colan met first begins the quest; his letter in the pack, he goes below');
-    w.ok(/Kitto/.test(goal(w, 'brother')), `the goal is Kitto at the landing (${goal(w, 'brother')})`);
-    const gold = w.party.gold;
-    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()).startsWith((KITTO_E6().quest as { done: string[] }).done.join('\n\n')) && w.party.gold === gold + 200 && !w.party.bag.includes('colans_letter'), 'Kitto, never having asked, takes the letter at the first meeting and pays 200');
-    reads(w, 'brother', ['found', 'letter', 'delivered'], ['kitto', 'truth', 'told'], 'the letter carried');
-    w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === (KITTO_E6().quest as { after: string[] }).after.join('\n\n') && !w.party.flags.q_brother, 'Kitto\'s after-lines are the letter\'s, and he never hires');
-    fight(w, 'smugglers_cove:kh1_crew_landing');
-    days(w, 3);
-    w.ok(alive(w, 'smugglers_cove', 'kh1_crew_landing'), 'the letter carried, the cove\'s landing crew comes back');
-  }
-  { // The Hermit of the Point: not yet, then carried, and to the Keel.
-    const w = newWalk(ok);
-    w.level = 13;
-    answerTo(w, 'wrackholm_f6', MERRYN(), null);
-    w.ok(w.news.at(-1) === 'New quest: The Hermit of the Point.' && !w.party.bag.includes('founders_letter') && /point/.test(goal(w, 'hermit')), `Not yet: the quest begins, no letter, and its goal is her answer (${goal(w, 'hermit')})`);
-    answerTo(w, 'wrackholm_f6', MERRYN(), 'q_hermit_carried');
-    w.ok(w.party.bag.includes('founders_letter') && /Keel/.test(goal(w, 'hermit')) && hear(w, 'wrackholm_f6', MERRYN()) === words(MERRYN(), 'q_hermit_carried'), `asked again she gives the letter, sends the company on, and the goal is the Keel or Tallis (${goal(w, 'hermit')})`);
-    const gold = w.party.gold;
-    hear(w, 'saltmouth', RUAN());
-    w.ok(w.party.gold === gold + 300 && !w.party.bag.includes('founders_letter'), 'Ruan takes the letter at the Keel and pays 300');
-    reads(w, 'hermit', ['asked', 'carried', 'hall'], ['tallis'], 'to the hall');
-    w.ok(hear(w, 'wrackholm_f6', MERRYN()) === words(MERRYN(), 'q_hermit_hall'), 'Merryn\'s after-lines are the hall\'s');
-  }
-  { // The Hermit of the Point: carried at once, and sold to Tallis.
-    const w = newWalk(ok);
-    w.level = 13;
-    answerTo(w, 'wrackholm_f6', MERRYN(), 'q_hermit_carried');
-    const gold = w.party.gold;
-    hear(w, 'saltmouth', TALLIS());
-    w.ok(w.party.gold === gold + 500 && !w.party.bag.includes('founders_letter'), 'Tallis takes the letter and pays 500');
-    reads(w, 'hermit', ['asked', 'carried', 'tallis'], ['hall'], 'to Tallis');
-    w.ok(hear(w, 'wrackholm_f6', MERRYN()) === words(MERRYN(), 'q_hermit_tallis'), 'Merryn\'s after-lines are Tallis\'s');
-  }
-  { // Every Name in the Column: Hale at the rail asks for the book, it is fetched, and the thirty go
-    // to Saltmouth by the boat.
-    const w = newWalk(ok);
-    haleFreed(w);
-    w.ok(hear(w, 'tide_ship', HALE_DECK()) === HALE_DECK().lines.join('\n\n') && w.news.at(-1) === 'New quest: Every Name in the Column.' && /lower deck/.test(goal(w, 'column')),
-      `at the rail Hale asks for the clerk's book, and the goal is the cabin below (${goal(w, 'column')})`);
-    w.ok(hear(w, 'tide_ship', HALE_DECK()) === words(HALE_DECK(), 'q_column'), 'asked again, Hale says it short');
-    w.ok(hear(w, 'tide_ship', BOY_DECK()) === BOY_DECK().lines.join('\n\n'), 'Wat\'s elder boy is among the freed');
-    see(w, 'tide_ship2:ts2_clerk_desk');
-    open(w, 'tide_ship2:ts2_clerk', 'any', false);
-    listen(w);
-    w.ok(w.party.bag.includes('clerks_book') && /rail/.test(goal(w, 'column')), `the book in the pack, the goal is Hale at the rail (${goal(w, 'column')})`);
-    answerTo(w, 'tide_ship', HALE_DECK(), 'q_column_saltmouth');
-    reads(w, 'column', ['hale', 'book', 'saltmouth'], ['road'], 'to Saltmouth');
-    w.ok(!there(w, 'tide_ship', HALE_DECK()) && !there(w, 'tide_ship', BOY_DECK()) && !shows(w, 'tide_ship', 'ts_freed') && w.party.bag.includes('clerks_book'), 'answered, Hale and the thirty are gone from the rail, and the book stays in the pack');
-    w.ok(there(w, 'saltmouth', BOY_QUAY()) && !there(w, 'downs_f3', BOY_HOME()), 'Wat\'s boy is on Saltmouth\'s quay, not at Gullwick');
-    w.ok(hear(w, 'downs_f3', WAT()) === WAT().lines.join('\n\n'), 'Wat, his boy not home, says what he said');
-  }
-  { // Every Name in the Column: the book found first, and the thirty home by the coast road; Wat,
-    // with his boat's board home in the loft and without it.
-    const w = newWalk(ok);
-    open(w, 'tide_ship2:ts2_clerk', 'any', false);
-    haleFreed(w);
-    const first = hear(w, 'tide_ship', HALE_DECK());
-    w.ok(first === HALE_DECK().says![0].lines.join('\n\n') && w.news.includes('New quest: Every Name in the Column.'), 'the book carried, Hale goes straight to it and the quest begins');
-    answerTo(w, 'tide_ship', HALE_DECK(), 'q_column_road');
-    reads(w, 'column', ['hale', 'book', 'road'], ['saltmouth'], 'home by the road');
-    w.ok(!there(w, 'saltmouth', BOY_QUAY()) && there(w, 'downs_f3', BOY_HOME()) && hear(w, 'downs_f3', BOY_HOME()) === BOY_HOME().lines.join('\n\n'), 'Wat\'s boy is on Gullwick\'s shingle, not the quay');
-    w.ok(hear(w, 'downs_f3', WAT()) === WAT().says![1].lines.join('\n\n'), 'with no board in the loft, Wat\'s words are his boy\'s and no board\'s');
-    w.party.flags.q_board_home = 1;
-    w.ok(hear(w, 'downs_f3', WAT()) === WAT().says![0].lines.join('\n\n'), 'with the board in the loft, Wat\'s words are his boy\'s and the board\'s');
-  }
-  { // What the Smugglers Feed: Tam met and the beast left alone; his mother told why he stays.
-    const w = newWalk(ok);
-    hear(w, 'saltmouth', LOVEDAY());
-    w.ok(w.news.at(-1) === 'New quest: What the Smugglers Feed.' && /sea cave/.test(goal(w, 'feed')), `Loveday on the steps begins What the Smugglers Feed, its goal the sea cave (${goal(w, 'feed')})`);
-    w.ok(hear(w, 'saltmouth', LOVEDAY()) === words(LOVEDAY(), 'q_feed'), 'asked again, Loveday says it short');
-    w.ok(!there(w, 'smugglers_cove2', TAM_FREE()) && hear(w, 'smugglers_cove2', TAM()) === TAM().lines.join('\n\n'), 'Tam feeds the beast at the pool');
-    w.ok(/steps/.test(goal(w, 'feed')), `Tam met, the goal is his mother on the steps (${goal(w, 'feed')})`);
-    w.ok(hear(w, 'saltmouth', LOVEDAY()) === words(LOVEDAY(), 'q_feed_tam'), 'Loveday is told he stays');
-    reads(w, 'feed', ['loveday', 'tam', 'told'], ['home'], 'the beast left alone');
-    w.ok(!there(w, 'saltmouth', TAM_HOME()) && there(w, 'smugglers_cove2', TAM()), 'Tam stays at the pool, and is not on the steps');
-  }
-  { // What the Smugglers Feed: the beast slain before Loveday is met; Tam goes home to the steps.
-    const w = newWalk(ok);
-    hear(w, 'smugglers_cove2', TAM());
-    w.ok(w.news.at(-1) === 'New quest: What the Smugglers Feed.', 'Tam met first begins the quest');
-    w.level = 14;
-    fight(w, 'smugglers_cove2:kh2_great_devilfish');
-    w.ok(!there(w, 'smugglers_cove2', TAM()) && there(w, 'smugglers_cove2', TAM_FREE()) && /black pool/.test(goal(w, 'feed')), `the beast dead, Tam stands over his bucket, and the goal is him (${goal(w, 'feed')})`);
-    w.ok(hear(w, 'smugglers_cove2', TAM_FREE()) === TAM_FREE().lines.join('\n\n') && !there(w, 'smugglers_cove2', TAM_FREE()), 'Tam has done with the arrangement, and goes');
-    reads(w, 'feed', ['tam', 'home'], ['loveday', 'told'], 'the beast slain');
-    w.ok(there(w, 'saltmouth', TAM_HOME()) && hear(w, 'saltmouth', TAM_HOME()) === TAM_HOME().lines.join('\n\n'), 'Tam is on the harbour steps');
-    w.ok(hear(w, 'saltmouth', LOVEDAY()) === words(LOVEDAY(), 'q_feed_home') && !w.party.flags.q_feed, 'Loveday, beside him, has her son home, and never hires');
-  }
+/** The side quests (#192), each block of the old body a scene of its own walk, in their order. */
+function sideQuests(): Scene[] {
+  return [
+    { name: 'brother-told', play: (ok) => { // The Captain's Brother: Kitto asks, Colan answers, and the truth is told. The cove's landing
+      // crew comes no more once it is next put down.
+      const w = newWalk(ok);
+      w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === KITTO_E6().lines.join('\n\n') && w.news.at(-1) === 'New quest: The Captain\'s Brother.' && /Kelp Hole/.test(goal(w, 'brother')),
+        `Kitto's first lines ashore begin The Captain's Brother, its goal Kelp Hole (${goal(w, 'brother')})`);
+      w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === words(KITTO_E6(), 'q_brother'), 'asked again, Kitto says it short');
+      w.ok(!there(w, 'smugglers_cove', COLAN()), 'Colan is not at his crate while the overseers stand');
+      toTheRows(w);
+      w.ok(there(w, 'smugglers_cove', COLAN()), 'the overseers down, Colan sits by the rows');
+      answerTo(w, 'smugglers_cove', COLAN(), 'q_brother_truth');
+      w.ok(!there(w, 'smugglers_cove', COLAN()) && shows(w, 'smugglers_cove', 'kh1_colan_gone') && !w.party.bag.includes('colans_letter'), 'the truth to carry, Colan goes below, his crate empty, and no letter');
+      w.ok(/Kitto/.test(goal(w, 'brother')), `the goal is Kitto at the landing (${goal(w, 'brother')})`);
+      fight(w, 'smugglers_cove:kh1_crew_landing');
+      days(w, 3);
+      w.ok(alive(w, 'smugglers_cove', 'kh1_crew_landing'), 'until Kitto is told, the cove\'s landing crew comes back');
+      w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === words(KITTO_E6(), 'q_brother_truth') && !!w.party.flags.q_brother_told, 'Kitto hears what his brother is');
+      reads(w, 'brother', ['kitto', 'found', 'truth', 'told'], ['letter', 'delivered'], 'the truth told');
+      w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === words(KITTO_E6(), 'q_brother_told'), 'Kitto\'s after-lines are the truth\'s');
+      fight(w, 'smugglers_cove:kh1_crew_landing');
+      days(w, 3);
+      w.ok(!alive(w, 'smugglers_cove', 'kh1_crew_landing') && alive(w, 'smugglers_cove', 'kh1_crew_fires'), 'told, Kitto carries for the cove no more: its landing crew, put down, does not come back, and the fires\' crew does');
+    } },
+    { name: 'brother-letter', play: (ok) => { // The Captain's Brother: Colan found before Kitto has asked, and his letter carried sealed.
+      const w = newWalk(ok);
+      toTheRows(w);
+      answerTo(w, 'smugglers_cove', COLAN(), 'q_brother_letter');
+      w.ok(w.news.includes('New quest: The Captain\'s Brother.') && w.party.bag.includes('colans_letter') && !there(w, 'smugglers_cove', COLAN()), 'Colan met first begins the quest; his letter in the pack, he goes below');
+      w.ok(/Kitto/.test(goal(w, 'brother')), `the goal is Kitto at the landing (${goal(w, 'brother')})`);
+      const gold = w.party.gold;
+      w.ok(hear(w, 'wrackholm_e6', KITTO_E6()).startsWith((KITTO_E6().quest as { done: string[] }).done.join('\n\n')) && w.party.gold === gold + 200 && !w.party.bag.includes('colans_letter'), 'Kitto, never having asked, takes the letter at the first meeting and pays 200');
+      reads(w, 'brother', ['found', 'letter', 'delivered'], ['kitto', 'truth', 'told'], 'the letter carried');
+      w.ok(hear(w, 'wrackholm_e6', KITTO_E6()) === (KITTO_E6().quest as { after: string[] }).after.join('\n\n') && !w.party.flags.q_brother, 'Kitto\'s after-lines are the letter\'s, and he never hires');
+      fight(w, 'smugglers_cove:kh1_crew_landing');
+      days(w, 3);
+      w.ok(alive(w, 'smugglers_cove', 'kh1_crew_landing'), 'the letter carried, the cove\'s landing crew comes back');
+    } },
+    { name: 'hermit-keel', play: (ok) => { // The Hermit of the Point: not yet, then carried, and to the Keel.
+      const w = newWalk(ok, { level: 13 });
+      answerTo(w, 'wrackholm_f6', MERRYN(), null);
+      w.ok(w.news.at(-1) === 'New quest: The Hermit of the Point.' && !w.party.bag.includes('founders_letter') && /point/.test(goal(w, 'hermit')), `Not yet: the quest begins, no letter, and its goal is her answer (${goal(w, 'hermit')})`);
+      answerTo(w, 'wrackholm_f6', MERRYN(), 'q_hermit_carried');
+      w.ok(w.party.bag.includes('founders_letter') && /Keel/.test(goal(w, 'hermit')) && hear(w, 'wrackholm_f6', MERRYN()) === words(MERRYN(), 'q_hermit_carried'), `asked again she gives the letter, sends the company on, and the goal is the Keel or Tallis (${goal(w, 'hermit')})`);
+      const gold = w.party.gold;
+      hear(w, 'saltmouth', RUAN());
+      w.ok(w.party.gold === gold + 300 && !w.party.bag.includes('founders_letter'), 'Ruan takes the letter at the Keel and pays 300');
+      reads(w, 'hermit', ['asked', 'carried', 'hall'], ['tallis'], 'to the hall');
+      w.ok(hear(w, 'wrackholm_f6', MERRYN()) === words(MERRYN(), 'q_hermit_hall'), 'Merryn\'s after-lines are the hall\'s');
+    } },
+    { name: 'hermit-tallis', play: (ok) => { // The Hermit of the Point: carried at once, and sold to Tallis.
+      const w = newWalk(ok, { level: 13 });
+      answerTo(w, 'wrackholm_f6', MERRYN(), 'q_hermit_carried');
+      const gold = w.party.gold;
+      hear(w, 'saltmouth', TALLIS());
+      w.ok(w.party.gold === gold + 500 && !w.party.bag.includes('founders_letter'), 'Tallis takes the letter and pays 500');
+      reads(w, 'hermit', ['asked', 'carried', 'tallis'], ['hall'], 'to Tallis');
+      w.ok(hear(w, 'wrackholm_f6', MERRYN()) === words(MERRYN(), 'q_hermit_tallis'), 'Merryn\'s after-lines are Tallis\'s');
+    } },
+    { name: 'column-saltmouth', play: (ok) => { // Every Name in the Column: Hale at the rail asks for the book, it is fetched, and the thirty go
+      // to Saltmouth by the boat.
+      const w = newWalk(ok);
+      haleFreed(w);
+      w.ok(hear(w, 'tide_ship', HALE_DECK()) === HALE_DECK().lines.join('\n\n') && w.news.at(-1) === 'New quest: Every Name in the Column.' && /lower deck/.test(goal(w, 'column')),
+        `at the rail Hale asks for the clerk's book, and the goal is the cabin below (${goal(w, 'column')})`);
+      w.ok(hear(w, 'tide_ship', HALE_DECK()) === words(HALE_DECK(), 'q_column'), 'asked again, Hale says it short');
+      w.ok(hear(w, 'tide_ship', BOY_DECK()) === BOY_DECK().lines.join('\n\n'), 'Wat\'s elder boy is among the freed');
+      see(w, 'tide_ship2:ts2_clerk_desk');
+      open(w, 'tide_ship2:ts2_clerk', 'any', false);
+      listen(w);
+      w.ok(w.party.bag.includes('clerks_book') && /rail/.test(goal(w, 'column')), `the book in the pack, the goal is Hale at the rail (${goal(w, 'column')})`);
+      answerTo(w, 'tide_ship', HALE_DECK(), 'q_column_saltmouth');
+      reads(w, 'column', ['hale', 'book', 'saltmouth'], ['road'], 'to Saltmouth');
+      w.ok(!there(w, 'tide_ship', HALE_DECK()) && !there(w, 'tide_ship', BOY_DECK()) && !shows(w, 'tide_ship', 'ts_freed') && w.party.bag.includes('clerks_book'), 'answered, Hale and the thirty are gone from the rail, and the book stays in the pack');
+      w.ok(there(w, 'saltmouth', BOY_QUAY()) && !there(w, 'downs_f3', BOY_HOME()), 'Wat\'s boy is on Saltmouth\'s quay, not at Gullwick');
+      w.ok(hear(w, 'downs_f3', WAT()) === WAT().lines.join('\n\n'), 'Wat, his boy not home, says what he said');
+    } },
+    { name: 'column-road', play: (ok) => { // Every Name in the Column: the book found first, and the thirty home by the coast road; Wat,
+      // with his boat's board home in the loft and without it.
+      const w = newWalk(ok);
+      open(w, 'tide_ship2:ts2_clerk', 'any', false);
+      haleFreed(w);
+      const first = hear(w, 'tide_ship', HALE_DECK());
+      w.ok(first === HALE_DECK().says![0].lines.join('\n\n') && w.news.includes('New quest: Every Name in the Column.'), 'the book carried, Hale goes straight to it and the quest begins');
+      answerTo(w, 'tide_ship', HALE_DECK(), 'q_column_road');
+      reads(w, 'column', ['hale', 'book', 'road'], ['saltmouth'], 'home by the road');
+      w.ok(!there(w, 'saltmouth', BOY_QUAY()) && there(w, 'downs_f3', BOY_HOME()) && hear(w, 'downs_f3', BOY_HOME()) === BOY_HOME().lines.join('\n\n'), 'Wat\'s boy is on Gullwick\'s shingle, not the quay');
+      w.ok(hear(w, 'downs_f3', WAT()) === WAT().says![1].lines.join('\n\n'), 'with no board in the loft, Wat\'s words are his boy\'s and no board\'s');
+      w.party.flags.q_board_home = 1;
+      w.ok(hear(w, 'downs_f3', WAT()) === WAT().says![0].lines.join('\n\n'), 'with the board in the loft, Wat\'s words are his boy\'s and the board\'s');
+    } },
+    { name: 'feed-left', play: (ok) => { // What the Smugglers Feed: Tam met and the beast left alone; his mother told why he stays.
+      const w = newWalk(ok);
+      hear(w, 'saltmouth', LOVEDAY());
+      w.ok(w.news.at(-1) === 'New quest: What the Smugglers Feed.' && /sea cave/.test(goal(w, 'feed')), `Loveday on the steps begins What the Smugglers Feed, its goal the sea cave (${goal(w, 'feed')})`);
+      w.ok(hear(w, 'saltmouth', LOVEDAY()) === words(LOVEDAY(), 'q_feed'), 'asked again, Loveday says it short');
+      w.ok(!there(w, 'smugglers_cove2', TAM_FREE()) && hear(w, 'smugglers_cove2', TAM()) === TAM().lines.join('\n\n'), 'Tam feeds the beast at the pool');
+      w.ok(/steps/.test(goal(w, 'feed')), `Tam met, the goal is his mother on the steps (${goal(w, 'feed')})`);
+      w.ok(hear(w, 'saltmouth', LOVEDAY()) === words(LOVEDAY(), 'q_feed_tam'), 'Loveday is told he stays');
+      reads(w, 'feed', ['loveday', 'tam', 'told'], ['home'], 'the beast left alone');
+      w.ok(!there(w, 'saltmouth', TAM_HOME()) && there(w, 'smugglers_cove2', TAM()), 'Tam stays at the pool, and is not on the steps');
+    } },
+    { name: 'feed-slain', play: (ok) => { // What the Smugglers Feed: the beast slain before Loveday is met; Tam goes home to the steps.
+      const w = newWalk(ok);
+      hear(w, 'smugglers_cove2', TAM());
+      w.ok(w.news.at(-1) === 'New quest: What the Smugglers Feed.', 'Tam met first begins the quest');
+      w.level = 14;
+      fight(w, 'smugglers_cove2:kh2_great_devilfish');
+      w.ok(!there(w, 'smugglers_cove2', TAM()) && there(w, 'smugglers_cove2', TAM_FREE()) && /black pool/.test(goal(w, 'feed')), `the beast dead, Tam stands over his bucket, and the goal is him (${goal(w, 'feed')})`);
+      w.ok(hear(w, 'smugglers_cove2', TAM_FREE()) === TAM_FREE().lines.join('\n\n') && !there(w, 'smugglers_cove2', TAM_FREE()), 'Tam has done with the arrangement, and goes');
+      reads(w, 'feed', ['tam', 'home'], ['loveday', 'told'], 'the beast slain');
+      w.ok(there(w, 'saltmouth', TAM_HOME()) && hear(w, 'saltmouth', TAM_HOME()) === TAM_HOME().lines.join('\n\n'), 'Tam is on the harbour steps');
+      w.ok(hear(w, 'saltmouth', LOVEDAY()) === words(LOVEDAY(), 'q_feed_home') && !w.party.flags.q_feed, 'Loveday, beside him, has her son home, and never hires');
+    } },
+  ];
 }
+
+/**
+ * The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run
+ * builds once (#1018), its doors its own and its other cells frozen. Its zones, groups and ways
+ * out are every walk's in the run, so a scene writes nothing on it: a write would reach the scenes
+ * after it in one process, which --jobs 1 hides.
+ */
+const outdoors = (): GameMap => ownMaps()[OUTDOORS];
 
 /**
  * The bounds (#835, docs/areas/wrackholm.md §12): the scraps of shore round the isle, three strands
@@ -1066,259 +1009,287 @@ function sideQuests(ok: (cond: boolean, msg: string) => void): void {
  * and shut to the four ways but through its rock; out onto F5's 16,31; and Merryn's two lines at
  * every meeting after her first while Old Nick lives, and her own words alone once it has fallen.
  */
-function theBounds(ok: (cond: boolean, msg: string) => void): void {
-  const w = newWalk(ok);
-  w.level = 12;
-  const out = buildMaps()[OUTDOORS];
+function theBounds(): Scene[] {
   const E5 = WRACKHOLM_E5, F5 = WRACKHOLM_F5, F7 = WRACKHOLM_F7;
-  const e5 = zone(out, E5.id), f5 = zone(out, F5.id), f7 = zone(out, F7.id), e6 = zone(out, E6.id), f6 = zone(out, F6.id), e7 = zone(out, 'wold_e7');
-  ok([E5, F5, F7].every((d) => !(d.encounters ?? []).length) && (E5.exits ?? []).map((e) => e.to).join() === BROKENBACK.id && (F5.exits ?? []).map((e) => e.to).join() === NICKS_LOCKER.id && !(F7.exits ?? []).length,
-    'the strands hold no group, and nothing is taken out of them but E5\'s one way, in at the break into the Brokenback, and F5\'s, in under the reef into Nick\'s Locker');
+  /** The outdoors as built (`outdoors`) and the boxes round the strands on it, for a scene to read. */
+  const strands = () => {
+    const out = outdoors();
+    const e5 = zone(out, E5.id), f5 = zone(out, F5.id), f7 = zone(out, F7.id), e6 = zone(out, E6.id), f6 = zone(out, F6.id), e7 = zone(out, 'wold_e7');
+    return { out, e5, f5, f7, e6, f6, e7 };
+  };
+  return [
+    { name: 'e5', play: (ok) => {
+      const w = newWalk(ok), { out, e5, e6, f5 } = strands();
+      w.level = 12;
+      ok([E5, F5, F7].every((d) => !(d.encounters ?? []).length) && (E5.exits ?? []).map((e) => e.to).join() === BROKENBACK.id && (F5.exits ?? []).map((e) => e.to).join() === NICKS_LOCKER.id && !(F7.exits ?? []).length,
+        'the strands hold no group, and nothing is taken out of them but E5\'s one way, in at the break into the Brokenback, and F5\'s, in under the reef into Nick\'s Locker');
 
-  // E5: north from E6's grass at 24,0 onto the strand's 24,31, walked, in Wrackholm still.
-  w.world.travel(e6.id, 24, 0, NORTH);
-  const north = w.world.move('forward');
-  ok(north.kind === 'moved' && w.world.zone?.id === E5.id && w.world.state.x === e5.x + 24 && w.world.state.y === e5.y + 31 && e5.y + e5.h === e6.y && !said(north).includes('Wrackholm'),
-    `north from E6's 24,0 onto E5's 24,31, walked, and the land not named again (${said(north)})`);
-  listen(w);
-  ok(E5.start.x === 24 && E5.start.y === 31 && E5.start.facing === NORTH, 'E5 starts at its south edge, in from the moor');
-  const strand5 = reach(out, e5, [E5.start.x, E5.start.y], {});
-  ok(strand5.size > 60 && [[15, 31], [18, 29], [24, 30], [25, 28], [28, 27], [31, 26]].every(([x, y]) => strand5.has(square(out, e5, x, y))),
-    `E5's strand (${strand5.size} squares): its west end, the way to the black rocks, the figurehead and the stack's face are walked to from the way in`);
-  see(w, `${E5.id}:e5_strand`);
-  const figure = E5.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue' && f.id === 'e5_figurehead')!;
-  w.world.travel(E5.id, figure.x, figure.y);
-  ok(!answerRiddle(w.world, w.party, figure, 'tide').right && answerRiddle(w.world, w.party, figure, 'Anchor').right, 'the figurehead\'s riddle is answered anchor, let go for the ship to stay and hauled home for her to sail, and not tide');
-  // The secret: the soot on the stack's face, the search there and the hollow behind it.
-  const lamp = reach(out, e5, [E5.start.x, E5.start.y], ALL, [28, 26]);
-  ok(lamp.size > 60 && !lamp.has(square(out, e5, 28, 25)), `the hollow is shut but for its door in the stack: none of E5's ${lamp.size} squares walked, waded, climbed or floated reaches it`);
-  see(w, `${E5.id}:e5_soot`);
-  ok(search(w, E5.id, 28, 27, NORTH, 'e5_lamp'), 'searched where the soot is, the rock gives, and the hollow behind it can be walked into');
-  ok(stock(E5, 'e5_chest') === '150 elixir', `in the hollow, a sea chest with 150 gold and an Elixir (${stock(E5, 'e5_chest')})`);
-  // The enclave's door (docs §12.5) is the break in the wreck's side, 18,28 in the black rocks at the strand's west end: walked into last.
-  // And on east along the strand into F5, walked.
-  w.world.travel(E5.id, 31, 28, EAST);
-  const east = w.world.move('forward');
-  ok(east.kind === 'moved' && w.world.zone?.id === F5.id && w.world.state.x === f5.x && w.world.state.y === f5.y + 28 && !said(east).includes('Wrackholm'), `east along the strand from E5's 31,28 onto F5's 0,28, walked (${said(east)})`);
-  listen(w);
-
-  // F5: north from F6's grass at 8,0 onto the strand's 8,31, walked.
-  w.level = 13;
-  w.world.travel(f6.id, 8, 0, NORTH);
-  const onto5 = w.world.move('forward');
-  ok(onto5.kind === 'moved' && w.world.zone?.id === F5.id && w.world.state.x === f5.x + 8 && w.world.state.y === f5.y + 31 && !said(onto5).includes('Wrackholm'),
-    `north from F6's 8,0 onto F5's 8,31, walked (${said(onto5)})`);
-  listen(w);
-  const strand6 = reach(out, f5, [F5.start.x, F5.start.y], {});
-  ok(strand6.size > 60 && [[0, 26], [2, 27], [8, 30], [9, 28], [16, 31], [18, 31]].every(([x, y]) => strand6.has(square(out, f5, x, y))),
-    `F5's strand (${strand6.size} squares): the cairn, the stack's foot, the way to the reef and the strand's east end are walked to from the way in`);
-  see(w, `${F5.id}:f5_strand`);
-  const cairn = F5.features!.find((f) => f.kind === 'cairn' && f.id === 'f5_cairn');
-  ok(cairn?.kind === 'cairn' && cairn.gold === 80 && cairn.items?.join() === 'potion_sp_great', 'above the weed, a cairn with 80 gold and a Sapphire Vial');
-  const bait = reach(out, f5, [F5.start.x, F5.start.y], ALL, [9, 27]);
-  ok(bait.size > 60 && !bait.has(square(out, f5, 9, 26)), `the bait store is shut but for its door in the stack: none of F5's ${bait.size} squares walked, waded, climbed or floated reaches it`);
-  see(w, `${F5.id}:f5_scales`);
-  ok(search(w, F5.id, 9, 28, NORTH, 'f5_store'), 'searched where the scales are dried on the rock\'s foot, the rock gives, and the store behind it can be walked into');
-  ok(stock(F5, 'f5_box') === '120 elixir', `under the casks, a box with 120 gold and an Elixir (${stock(F5, 'f5_box')})`);
-  // The lair's door (docs §12.6) is the way in under the reef at the strand's east end, 16,30: walked into last.
-
-  // F7: south from F6's shingle at 14,31 onto the strand's 14,0, walked.
-  w.world.travel(f6.id, 14, 31, SOUTH);
-  const south = w.world.move('forward');
-  ok(south.kind === 'moved' && w.world.zone?.id === F7.id && w.world.state.x === f7.x + 14 && w.world.state.y === f7.y && f6.y + f6.h === f7.y && !said(south).includes('Wrackholm'),
-    `south from F6's shingle at 14,31 onto F7's 14,0, walked (${said(south)})`);
-  listen(w);
-  ok(F7.start.x === 14 && F7.start.y === 0 && F7.start.facing === SOUTH, 'F7 starts at its north edge, in from the shingle');
-  const strand7 = reach(out, f7, [F7.start.x, F7.start.y], {});
-  const spring = F7.features!.find((f) => f.kind === 'fountain')!;
-  ok(strand7.size > 40 && [[1, 0], [5, 1], [10, 3], [12, 4], [15, 3], [19, 0]].every(([x, y]) => strand7.has(square(out, f7, x, y))) && spring.x === 5 && spring.y === 1,
-    `F7's strand (${strand7.size} squares): the spring under the cliff, the rock's foot and both ends are walked to from the way in`);
-  see(w, `${F7.id}:f7_strand`);
-  const irons = reach(out, f7, [F7.start.x, F7.start.y], ALL, [10, 4]);
-  ok(irons.size > 40 && !irons.has(square(out, f7, 10, 5)), `the hollow is shut but for its door in the rock: none of F7's ${irons.size} squares walked, waded, climbed or floated reaches it`);
-  see(w, `${F7.id}:f7_links`);
-  ok(search(w, F7.id, 10, 3, SOUTH, 'f7_hole'), 'searched where the cut chain lies, the rock gives, and the hollow behind it can be walked into');
-  ok(stock(F7, 'f7_purse') === '100 potion_sp_great', `in the weed, a purse with 100 gold and a Sapphire Vial (${stock(F7, 'f7_purse')})`);
-
-  // The edges: E5's south meets E6's north, open at 15 to 31; E5's east meets F5's west, open at 26 to
-  // 31; F5's south meets F6's north, open at 0 to 18; F7's north meets F6's south, open at 1 to 10, 13 to
-  // 15 and 17 to 19, its rock and shingle as F6's. The rest is the sea, shut to every company, but
-  // F7's 0,0, shallows a swimmer wades, against the Wold's deep water at E7's 31,0.
-  ok(row(out, e5, 31) === each(32, (i) => i >= 15) && row(out, e5, 31) === row(out, e6, 0) && col(out, e5, 31) === each(32, (i) => i >= 26) && col(out, e5, 31) === col(out, f5, 0)
-    && row(out, f5, 31) === each(32, (i) => i <= 18) && row(out, f5, 31) === row(out, f6, 0)
-    && row(out, f7, 0) === each(32, (i) => (i >= 1 && i <= 10) || (i >= 13 && i <= 15) || (i >= 17 && i <= 19)) && row(out, f7, 0) === row(out, f6, 31),
-    'E5 meets E6 at 15 to 31 and F5 at 26 to 31, F5 meets F6 at 0 to 18 and F7 meets F6 at 1 to 10, 13 to 15 and 17 to 19, square for square');
-  const none = each(32, () => false);
-  ok([row(out, e5, 0, ALL), col(out, e5, 0, ALL), row(out, f5, 0, ALL), col(out, f5, 31, ALL), row(out, f7, 31, ALL), col(out, f7, 31, ALL)].every((s) => s === none)
-    && col(out, f7, 0, ALL) === each(32, (i) => i === 0) && col(out, f7, 0) === none && out.passable(e7.x + 31, e7.y, ALL) !== 'ok',
-    'past the strands the sea, shut to every company, but F7\'s 0,0, shallows a swimmer wades and the Wold\'s deep water shuts');
-
-  // The Brokenback, the enclave (#845): in at the break in the wreck's side, E5's 18,28, one stone among the black
-  // rocks with rock either side, walked onto from the strand at 18,29, and nothing within four squares of it. Its
-  // door says its band and how it feels, as a border's line: the warning at 11, harder at 12 and its band alone at
-  // 14; inside, its sign gives its band.
-  {
-    const WB = BROKENBACK, mouth = E5.exits!.find((e) => e.to === WB.id)!, levels = w.party.members.map((m) => m.level);
-    type Group = NonNullable<MapDef['encounters']>[number];
-    const near4 = [...E5.features!, ...(E5.encounters ?? []), ...E5.secrets!].filter((f) => Math.abs(f.x - 18) + Math.abs(f.y - 28) <= 4);
-    ok(mouth.x === 18 && mouth.y === 28 && mouth.tx === WB.start.x && mouth.ty === WB.start.y && E5.rows[28].slice(17, 20) === 'r"r' && strand5.has(square(out, e5, 18, 29)) && !near4.length,
-      `the break into the Brokenback is the one stone in the black rocks at E5's 18,28, rock either side, walked to from the strand at 18,29, and nothing stands within four squares of it${near4.length ? ` (${near4.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
-    const door = (level: number): string => {
-      for (const m of w.party.members) m.level = level;
-      w.world.travel(E5.id, 18, 29, NORTH);
-      const r = w.world.move('forward');
-      return r.kind === 'moved' && w.world.state.mapId === WB.id && w.world.state.x === WB.start.x && w.world.state.y === WB.start.y ? r.messages.join(' | ') : r.kind;
-    };
-    const band = 'The Brokenback: levels 14-15.', far = door(11), near = door(12), at14 = door(14);
-    ok(far === `${mouth.label} | ${band} ${WARNING_IN}` && near === `${mouth.label} | ${band} ${HARDER_IN}` && at14 === `${mouth.label} | ${band}`,
-      `in at the break from E5's 18,29, the way's own line and then its band, with the warning at 11, harder at 12 and nothing more at 14 (${far}; ${near}; ${at14})`);
-    ok(!!WB.enclave && w.world.here.name === 'The Brokenback' && w.world.here.band?.join('-') === '14-15', `inside, its sign gives its own band, over E5's 12-13 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
-    listen(w);
-    // Its two groups, won at its floor, the nearer the gentler (13.5 and 15): three overseers with a gleaner at the hold's mouth and
-    // four gleaners at the cabin's door. A company on foot, swimming or climbing meets them in that order and passes neither: the
-    // way aft runs through the doorway the first stands behind, and the cabin and the plank lie past the second.
-    w.level = 14;
-    const [first, last] = [WB.encounters!.find((g) => g.id === 'wb_strippers')!, WB.encounters!.find((g) => g.id === 'wb_gleaners')!];
-    ok(WB.encounters!.length === 2 && first.monsters.join() === 'ashen_overseer,ashen_overseer,ashen_overseer,ashen_gleaner' && last.monsters.join() === 'ashen_gleaner,ashen_gleaner,ashen_gleaner,ashen_gleaner'
-      && WB.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && g.roams === false), 'three overseers with a gleaner at the hold\'s mouth and four gleaners at the cabin\'s door, and no guardian');
-    for (const g of WB.encounters!) fight(w, `${WB.id}:${g.id}`);
-    for (const id of ['wb_break', 'wb_tide', 'wb_hold', 'wb_bulkhead', 'wb_cabin', 'wb_stern']) see(w, `${WB.id}:${id}`);
-    const hold = new GameMap(WB), key = (x: number, y: number): string => `${x},${y}`, [wall] = WB.secrets!;
-    /** What a company reaches from the way in, the secret wall shut and the squares within a step of a live group not entered (a fight takes them), and the live groups it comes up to. */
-    const walk = (live: readonly Group[], can: Can): { seen: Set<string>; met: string[] } => {
-      const seen = new Set<string>(), met = new Set<string>(), todo: [number, number][] = [[WB.start.x, WB.start.y]];
-      while (todo.length) {
-        const [x, y] = todo.pop()!;
-        if (seen.has(key(x, y)) || (x === wall.x && y === wall.y) || hold.passable(x, y, can) !== 'ok') continue;
-        const next = live.filter((g) => Math.abs(g.x - x) + Math.abs(g.y - y) <= 1);
-        next.forEach((g) => met.add(g.id));
-        if (next.length) continue;
-        seen.add(key(x, y));
-        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
-      }
-      return { seen, met: [...met] };
-    };
-    const both = walk([first, last], {}), swum = walk([first, last], ALL), second = walk([last], {}), waded = walk([last], ALL), done = walk([], ALL);
-    ok(both.met.join() === first.id && swum.met.join() === first.id && !both.seen.has(key(7, 8)) && !swum.seen.has(key(7, 8))
-      && second.met.join() === last.id && waded.met.join() === last.id && second.seen.has(key(4, 10)) && !second.seen.has(key(11, 13)) && !waded.seen.has(key(11, 13)) && done.seen.has(key(11, 13)),
-      'a company on foot or any way else meets the overseers first and cannot pass them to the hold; with them down it comes up to the gleaners and cannot pass them, the cargo behind it and the cabin and the plank beyond them');
-    const feat = (id: string): Feature => WB.features!.find((f) => 'id' in f && f.id === id)!;
-    ok(stock(WB, 'wb_cargo') === '250 elixir', `in the hold, the cargo's chest: 250 gold and an Elixir (${stock(WB, 'wb_cargo')})`);
-    // The secret: the one plank of the cabin's deck worn bright, the search there and the hollow under the deck behind the
-    // wall. Walked, waded, climbed or floated, it is never reached but through the wall.
-    ok(wall.hint === 'wb_plank' && feat('wb_plank').x === wall.x - 1 && feat('wb_plank').y === wall.y && done.seen.size > 80 && !done.seen.has(key(wall.x + 1, wall.y)) && !done.seen.has(key(wall.x + 2, wall.y)),
-      `the master's strongbox is shut but for the wall by the plank: none of the Brokenback's ${done.seen.size} squares walked, waded, climbed or floated reaches it`);
-    see(w, `${WB.id}:wb_plank`);
-    ok(search(w, WB.id, wall.x - 1, wall.y, EAST, 'wb_under'), 'searched where the plank is worn bright, the wall gives, and the hollow under the deck can be walked into');
-    const axe = item(TABLES.items, 'keelhaul'), great = item(TABLES.items, 'great_axe'), plus = item(TABLES.items, 'great_axe+1');
-    ok(stock(WB, 'wb_strongbox') === '300 keelhaul'
-      && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('keelhaul')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'wb_strongbox' && f.items?.includes('keelhaul'))))
-      && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'keelhaul')),
-      'in the master\'s strongbox, 300 gold and Keelhaul; no shop sells it, no other chest or cairn holds it and no monster drops it');
-    ok(axe.element === 'cold' && !axe.artifact && axe.price <= CURVE.sunderwood.price && hits(axe) > hits(plus) && hits(plus) > hits(great)
-      && GEAR.some(([level, ids]) => level === 14 && ids.includes(great.id)) && GEAR.some(([level, ids]) => level === 16 && ids.includes(plus.id)) && !GEAR.some(([, ids]) => ids.includes(axe.id)),
-      `Keelhaul, the long axe with a die of cold and on no rung of the ladder, hits ${hits(axe)} against the Great Axe's ${hits(great)}, the ladder's from 14, and its plus's ${hits(plus)}, from 16, at ${axe.price} inside the Sunderwood's ${CURVE.sunderwood.price}`);
-    // And out: through the break onto E5's 18,29, with the way's own line and no other.
-    w.world.travel(WB.id, WB.start.x, WB.start.y + 1, NORTH);
-    const back = w.world.move('forward');
-    ok(back.kind === 'moved' && w.world.zone?.id === E5.id && w.world.state.x === e5.x + 18 && w.world.state.y === e5.y + 29 && back.messages.join(' | ') === WB.exits![0].label,
-      `out through the break onto E5's 18,29, the way's own line alone (${said(back)})`);
-    listen(w);
-    w.party.members.forEach((m, i) => { m.level = levels[i]; });
-    w.level = 13;
-  }
-
-  // Nick's Locker, the lair (#845, #847): in under the reef at F5's 16,30, one stone in the reef with rock either
-  // side, walked onto from the strand at 16,31, and nothing within four squares of it. Its door says its band and
-  // how it feels, as a border's line: the warning at F5's 13, harder at 28 and its band alone at 30; inside, its
-  // sign gives its band.
-  {
-    const NL = NICKS_LOCKER, mouth = F5.exits!.find((e) => e.to === NL.id)!, levels = w.party.members.map((m) => m.level);
-    const near4 = [...F5.features!, ...(F5.encounters ?? []), ...F5.secrets!].filter((f) => Math.abs(f.x - 16) + Math.abs(f.y - 30) <= 4);
-    ok(F5.exits!.length === 1 && mouth.x === 16 && mouth.y === 30 && mouth.tx === NL.start.x && mouth.ty === NL.start.y && F5.rows[30].slice(15, 18) === 'r"r' && strand6.has(square(out, f5, 16, 31)) && !near4.length
-      && out.passable(f5.x + 16, f5.y + 29, ALL) === 'ok' && out.passable(f5.x + 16, f5.y + 29, {}) !== 'ok',
-      `the way into Nick's Locker is the one stone in the reef at F5's 16,30, rock either side, walked to from the strand at 16,31 and waded to from the shallows at 16,29, and nothing stands within four squares of it${near4.length ? ` (${near4.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
-    const door = (level: number): string => {
-      for (const m of w.party.members) m.level = level;
-      w.world.travel(F5.id, 16, 31, NORTH);
-      const r = w.world.move('forward');
-      return r.kind === 'moved' && w.world.state.mapId === NL.id && w.world.state.x === NL.start.x && w.world.state.y === NL.start.y && w.world.state.facing === NORTH ? r.messages.join(' | ') : r.kind;
-    };
-    const band = 'Nick\'s Locker: levels 30-32.', low = door(13), close = door(28), at30 = door(30);
-    ok(low === `${mouth.label} | ${band} ${WARNING_IN}` && close === `${mouth.label} | ${band} ${HARDER_IN}` && at30 === `${mouth.label} | ${band}`,
-      `in under the reef from F5's 16,31, the way's own line and then its band, with the warning at 13, harder at 28 and nothing more at 30 (${low}; ${close}; ${at30})`);
-    ok(!!NL.enclave && w.world.here.name === 'Nick\'s Locker' && w.world.here.band?.join('-') === '30-32', `inside, its sign gives the cap's band, over F5's 13-14 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
-    listen(w);
-    w.level = 30;
-    for (const id of ['nl_mouth', 'nl_flood', 'nl_throat']) see(w, `${NL.id}:${id}`);
-    // The guardian: Old Nick, a boss that never comes back, in the cave's throat, the one way in, so no company steps
-    // round it: with its square and those a step from it shut, nothing past it is reached, walked, waded, climbed or
-    // floated. Won at the lair's floor.
-    const hold = new GameMap(NL);
-    const flood = (...shut: (readonly [number, number])[]): Set<string> => {
-      const seen = new Set<string>(), todo: [number, number][] = [[NL.start.x, NL.start.y]];
-      while (todo.length) {
-        const [x, y] = todo.pop()!;
-        if (seen.has(`${x},${y}`) || shut.some(([sx, sy]) => sx === x && sy === y) || hold.passable(x, y, ALL) !== 'ok') continue;
-        seen.add(`${x},${y}`);
-        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
-      }
-      return seen;
-    };
-    const nick = NL.encounters!.find((g) => g.id === 'nl_nick')!;
-    const shut = flood([nick.x, nick.y], [nick.x - 1, nick.y], [nick.x + 1, nick.y], [nick.x, nick.y - 1], [nick.x, nick.y + 1]);
-    ok(NL.encounters!.length === 1 && nick.monsters.join() === 'old_nick' && !!nick.boss && !nick.respawn && nick.roams === false && !!nick.slainText
-      && shut.has('7,11') && shut.has('3,13') && !['7,7', '7,5', '12,5', '12,6', '9,3', '9,1', '8,1'].some((k) => shut.has(k)),
-      `Old Nick, the one group of the lair, lies in the cave's throat: with it there, none of Nick's Locker's ${shut.size} squares walked, waded, climbed or floated reaches the cave, the ship, her master, the kelp or the cleft`);
-    fight(w, `${NL.id}:nl_nick`);
-    for (const id of ['nl_cave', 'nl_ribs', 'nl_master']) see(w, `${NL.id}:${id}`);
-    // Holdfast on the ship's master, one in the world: no other chest, cairn or statue holds it, no shop sells it and
-    // no monster drops it.
-    const belt = NL.features!.find((f) => f.kind === 'chest' && f.id === 'nl_belt')!;
-    const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('holdfast')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== belt && !!f.items?.includes('holdfast')) || (f.kind === 'statue' && !!f.gift?.items?.includes('holdfast'));
-    ok(belt.kind === 'chest' && belt.gold === 0 && belt.items.join() === 'holdfast' && !!item(TABLES.items, 'holdfast').artifact
-      && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'holdfast')),
-      'on her master, Holdfast; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
-    // The secret: kelp grown green behind her bows where no wave comes, the search there and the master's sea chest in
-    // the cleft behind it. Walked, waded, climbed or floated, it is never reached but through the rock.
-    const [rock] = NL.secrets!, closed = flood([rock.x, rock.y]);
-    ok(rock.hint === 'nl_kelp' && closed.size > 40 && closed.has('9,3') && !['8,1', '9,1'].some((k) => closed.has(k)),
-      `the cleft is shut but for its rock: none of Nick's Locker's ${closed.size} squares walked, waded, climbed or floated reaches it`);
-    see(w, `${NL.id}:nl_kelp`);
-    ok(search(w, NL.id, 9, 3, NORTH, 'nl_cleft'), 'searched where the kelp grows, the rock gives, and the cleft behind it can be walked into');
-    ok(stock(NL, 'nl_sea_chest') === '500 elixir,potion_sp_great', `in the cleft, her master's sea chest: 500 gold, an Elixir and a Sapphire Vial (${stock(NL, 'nl_sea_chest')})`);
-    // And out under the reef onto F5's 16,31, facing the land, with the way's own line and no other.
-    w.world.travel(NL.id, NL.start.x, NL.start.y - 1, SOUTH);
-    const back = w.world.move('forward');
-    ok(back.kind === 'moved' && w.world.zone?.id === F5.id && w.world.state.x === f5.x + 16 && w.world.state.y === f5.y + 31 && w.world.state.facing === SOUTH && back.messages.join(' | ') === NL.exits![0].label,
-      `out under the reef onto F5's 16,31, facing the land, the way's own line alone (${said(back)})`);
-    listen(w);
-    // The rumour (#846): Merryn on F6 says DESIGN §9's two lines at every meeting after her first while Old Nick lives,
-    // whatever became of the founder's letter, and nothing of it at the first; once it has fallen, "Nick gives nothing
-    // back" is no longer so, and she says her own words alone. Words only, setting nothing, in no quest, and every
-    // meeting with them fits her box. `fight` has slain Old Nick, so it is stood up again for the first two meetings.
-    const merryn = F6.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Merryn'))!;
-    const rumour = ['"One ship I counted in and never out. Her master had a knife the weed obeyed: cut a line with it and the kelp held her fast."', '"Old Nick had ship, master and knife. Nick gives nothing back."'];
-    const hermit = (): string[] => Object.keys(w.party.flags).filter((k) => k.startsWith('q_hermit'));
-    const kept = Object.fromEntries(hermit().map((k) => [k, w.party.flags[k]]));
-    for (const k of hermit()) delete w.party.flags[k];
-    const standing = w.world.state.maps[NL.id]!.groups[nick.id]!, fell = standing.dead;
-    standing.dead = -1;
-    w.world.travel(F6.id, merryn.x, merryn.y);
-    const first = meet(merryn, w.party, heard(w.world, merryn)).text, then = meet(merryn, w.party, heard(w.world, merryn)).text;
-    standing.dead = fell;
-    const since = meet(merryn, w.party, heard(w.world, merryn)).text;
-    const says = merryn.says!, boxes = says.filter((s) => s.until).map((s) => wrap(s.lines.join('\n\n'), SAY_W).length);
-    ok(fell >= 0 && !first.includes('Old Nick') && then.startsWith('Another stroke on the wall') && rumour.every((l) => then.includes(l)) && !since.includes('Old Nick') && since.startsWith('Another stroke on the wall')
-      && says.length === 8 && says.every((s, i) => !s.sets && (i % 2 === 0
-        ? JSON.stringify(s.until) === JSON.stringify({ slain: NICK_DOWN }) && s.lines.slice(-2).join('\n') === rumour.join('\n')
-        : !s.until && JSON.stringify(s.after) === JSON.stringify({ ...JSON.parse(JSON.stringify(says[i - 1].after)), slain: NICK_DOWN }) && s.lines.join('\n') === says[i - 1].lines.slice(0, -2).join('\n')))
-      && boxes.every((n) => n <= SAY_LINES) && !JSON.stringify(questLog(TABLES, w.world.state, w.party)).includes('Old Nick'),
-      `Merryn says nothing of Old Nick at her first meeting, after her own words speaks of the ship she counted in and never out at every meeting after it while Old Nick lives, and once it has fallen says her own words alone: words only, in no quest, ${boxes.join(', ')} of her box's ${SAY_LINES} lines`);
-    listen(w);
-    for (const k of hermit()) delete w.party.flags[k];
-    Object.assign(w.party.flags, kept);
-    w.party.members.forEach((m, i) => { m.level = levels[i]; });
-    w.level = 13;
-  }
+      // E5: north from E6's grass at 24,0 onto the strand's 24,31, walked, in Wrackholm still.
+      w.world.travel(e6.id, 24, 0, NORTH);
+      const north = w.world.move('forward');
+      ok(north.kind === 'moved' && w.world.zone?.id === E5.id && w.world.state.x === e5.x + 24 && w.world.state.y === e5.y + 31 && e5.y + e5.h === e6.y && !said(north).includes('Wrackholm'),
+        `north from E6's 24,0 onto E5's 24,31, walked, and the land not named again (${said(north)})`);
+      listen(w);
+      ok(E5.start.x === 24 && E5.start.y === 31 && E5.start.facing === NORTH, 'E5 starts at its south edge, in from the moor');
+      const strand5 = reach(out, e5, [E5.start.x, E5.start.y], {});
+      ok(strand5.size > 60 && [[15, 31], [18, 29], [24, 30], [25, 28], [28, 27], [31, 26]].every(([x, y]) => strand5.has(square(out, e5, x, y))),
+        `E5's strand (${strand5.size} squares): its west end, the way to the black rocks, the figurehead and the stack's face are walked to from the way in`);
+      see(w, `${E5.id}:e5_strand`);
+      const figure = featureOn(E5, 'e5_figurehead', 'statue');
+      w.world.travel(E5.id, figure.x, figure.y);
+      ok(!answerRiddle(w.world, w.party, figure, 'tide').right && answerRiddle(w.world, w.party, figure, 'Anchor').right, 'the figurehead\'s riddle is answered anchor, let go for the ship to stay and hauled home for her to sail, and not tide');
+      // The secret: the soot on the stack's face, the search there and the hollow behind it.
+      const lamp = reach(out, e5, [E5.start.x, E5.start.y], ALL, [28, 26]);
+      ok(lamp.size > 60 && !lamp.has(square(out, e5, 28, 25)), `the hollow is shut but for its door in the stack: none of E5's ${lamp.size} squares walked, waded, climbed or floated reaches it`);
+      see(w, `${E5.id}:e5_soot`);
+      ok(search(w, E5.id, 28, 27, NORTH, 'e5_lamp'), 'searched where the soot is, the rock gives, and the hollow behind it can be walked into');
+      ok(stock(E5, 'e5_chest') === '150 elixir', `in the hollow, a sea chest with 150 gold and an Elixir (${stock(E5, 'e5_chest')})`);
+      // The enclave's door (docs §12.5) is the break in the wreck's side, 18,28 in the black rocks at the strand's west end: walked into last.
+      // And on east along the strand into F5, walked.
+      w.world.travel(E5.id, 31, 28, EAST);
+      const east = w.world.move('forward');
+      ok(east.kind === 'moved' && w.world.zone?.id === F5.id && w.world.state.x === f5.x && w.world.state.y === f5.y + 28 && !said(east).includes('Wrackholm'), `east along the strand from E5's 31,28 onto F5's 0,28, walked (${said(east)})`);
+      listen(w);
+    } },
+    { name: 'f5', play: (ok) => {
+      // F5: north from F6's grass at 8,0 onto the strand's 8,31, walked.
+      const w = newWalk(ok, { level: 13 }), { out, f5, f6 } = strands();
+      w.world.travel(f6.id, 8, 0, NORTH);
+      const onto5 = w.world.move('forward');
+      ok(onto5.kind === 'moved' && w.world.zone?.id === F5.id && w.world.state.x === f5.x + 8 && w.world.state.y === f5.y + 31 && !said(onto5).includes('Wrackholm'),
+        `north from F6's 8,0 onto F5's 8,31, walked (${said(onto5)})`);
+      listen(w);
+      const strand6 = reach(out, f5, [F5.start.x, F5.start.y], {});
+      ok(strand6.size > 60 && [[0, 26], [2, 27], [8, 30], [9, 28], [16, 31], [18, 31]].every(([x, y]) => strand6.has(square(out, f5, x, y))),
+        `F5's strand (${strand6.size} squares): the cairn, the stack's foot, the way to the reef and the strand's east end are walked to from the way in`);
+      see(w, `${F5.id}:f5_strand`);
+      const cairn = F5.features!.find((f) => f.kind === 'cairn' && f.id === 'f5_cairn');
+      ok(cairn?.kind === 'cairn' && cairn.gold === 80 && cairn.items?.join() === 'potion_sp_great', 'above the weed, a cairn with 80 gold and a Sapphire Vial');
+      const bait = reach(out, f5, [F5.start.x, F5.start.y], ALL, [9, 27]);
+      ok(bait.size > 60 && !bait.has(square(out, f5, 9, 26)), `the bait store is shut but for its door in the stack: none of F5's ${bait.size} squares walked, waded, climbed or floated reaches it`);
+      see(w, `${F5.id}:f5_scales`);
+      ok(search(w, F5.id, 9, 28, NORTH, 'f5_store'), 'searched where the scales are dried on the rock\'s foot, the rock gives, and the store behind it can be walked into');
+      ok(stock(F5, 'f5_box') === '120 elixir', `under the casks, a box with 120 gold and an Elixir (${stock(F5, 'f5_box')})`);
+      // The lair's door (docs §12.6) is the way in under the reef at the strand's east end, 16,30: walked into last.
+    } },
+    { name: 'f7', play: (ok) => {
+      // F7: south from F6's shingle at 14,31 onto the strand's 14,0, walked.
+      const w = newWalk(ok, { level: 13 }), { out, f6, f7 } = strands();
+      w.world.travel(f6.id, 14, 31, SOUTH);
+      const south = w.world.move('forward');
+      ok(south.kind === 'moved' && w.world.zone?.id === F7.id && w.world.state.x === f7.x + 14 && w.world.state.y === f7.y && f6.y + f6.h === f7.y && !said(south).includes('Wrackholm'),
+        `south from F6's shingle at 14,31 onto F7's 14,0, walked (${said(south)})`);
+      listen(w);
+      ok(F7.start.x === 14 && F7.start.y === 0 && F7.start.facing === SOUTH, 'F7 starts at its north edge, in from the shingle');
+      const strand7 = reach(out, f7, [F7.start.x, F7.start.y], {});
+      const spring = F7.features!.find((f) => f.kind === 'fountain')!;
+      ok(strand7.size > 40 && [[1, 0], [5, 1], [10, 3], [12, 4], [15, 3], [19, 0]].every(([x, y]) => strand7.has(square(out, f7, x, y))) && spring.x === 5 && spring.y === 1,
+        `F7's strand (${strand7.size} squares): the spring under the cliff, the rock's foot and both ends are walked to from the way in`);
+      see(w, `${F7.id}:f7_strand`);
+      const irons = reach(out, f7, [F7.start.x, F7.start.y], ALL, [10, 4]);
+      ok(irons.size > 40 && !irons.has(square(out, f7, 10, 5)), `the hollow is shut but for its door in the rock: none of F7's ${irons.size} squares walked, waded, climbed or floated reaches it`);
+      see(w, `${F7.id}:f7_links`);
+      ok(search(w, F7.id, 10, 3, SOUTH, 'f7_hole'), 'searched where the cut chain lies, the rock gives, and the hollow behind it can be walked into');
+      ok(stock(F7, 'f7_purse') === '100 potion_sp_great', `in the weed, a purse with 100 gold and a Sapphire Vial (${stock(F7, 'f7_purse')})`);
+    } },
+    { name: 'edges', play: (ok) => {
+      // The edges: E5's south meets E6's north, open at 15 to 31; E5's east meets F5's west, open at 26 to
+      // 31; F5's south meets F6's north, open at 0 to 18; F7's north meets F6's south, open at 1 to 10, 13 to
+      // 15 and 17 to 19, its rock and shingle as F6's. The rest is the sea, shut to every company, but
+      // F7's 0,0, shallows a swimmer wades, against the Wold's deep water at E7's 31,0.
+      const { out, e5, e6, f5, f6, f7, e7 } = strands();
+      ok(row(out, e5, 31) === each(32, (i) => i >= 15) && row(out, e5, 31) === row(out, e6, 0) && col(out, e5, 31) === each(32, (i) => i >= 26) && col(out, e5, 31) === col(out, f5, 0)
+        && row(out, f5, 31) === each(32, (i) => i <= 18) && row(out, f5, 31) === row(out, f6, 0)
+        && row(out, f7, 0) === each(32, (i) => (i >= 1 && i <= 10) || (i >= 13 && i <= 15) || (i >= 17 && i <= 19)) && row(out, f7, 0) === row(out, f6, 31),
+        'E5 meets E6 at 15 to 31 and F5 at 26 to 31, F5 meets F6 at 0 to 18 and F7 meets F6 at 1 to 10, 13 to 15 and 17 to 19, square for square');
+      const none = each(32, () => false);
+      ok([row(out, e5, 0, ALL), col(out, e5, 0, ALL), row(out, f5, 0, ALL), col(out, f5, 31, ALL), row(out, f7, 31, ALL), col(out, f7, 31, ALL)].every((s) => s === none)
+        && col(out, f7, 0, ALL) === each(32, (i) => i === 0) && col(out, f7, 0) === none && out.passable(e7.x + 31, e7.y, ALL) !== 'ok',
+        'past the strands the sea, shut to every company, but F7\'s 0,0, shallows a swimmer wades and the Wold\'s deep water shuts');
+    } },
+    { name: 'brokenback', play: (ok) => {
+      // The Brokenback, the enclave (#845): in at the break in the wreck's side, E5's 18,28, one stone among the black
+      // rocks with rock either side, walked onto from the strand at 18,29, and nothing within four squares of it. Its
+      // door says its band and how it feels, as a border's line: the warning at 11, harder at 12 and its band alone at
+      // 14; inside, its sign gives its band.
+      const w = newWalk(ok, { level: 13 }), { out, e5 } = strands(), strand5 = reach(out, e5, [E5.start.x, E5.start.y], {});
+      const WB = BROKENBACK, mouth = exitTo(E5, WB.id), levels = w.party.members.map((m) => m.level);
+      type Group = NonNullable<MapDef['encounters']>[number];
+      const near4 = [...E5.features!, ...(E5.encounters ?? []), ...E5.secrets!].filter((f) => Math.abs(f.x - 18) + Math.abs(f.y - 28) <= 4);
+      ok(mouth.x === 18 && mouth.y === 28 && mouth.tx === WB.start.x && mouth.ty === WB.start.y && E5.rows[28].slice(17, 20) === 'r"r' && strand5.has(square(out, e5, 18, 29)) && !near4.length,
+        `the break into the Brokenback is the one stone in the black rocks at E5's 18,28, rock either side, walked to from the strand at 18,29, and nothing stands within four squares of it${near4.length ? ` (${near4.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+      const door = (level: number): string => {
+        for (const m of w.party.members) m.level = level;
+        w.world.travel(E5.id, 18, 29, NORTH);
+        const r = w.world.move('forward');
+        return r.kind === 'moved' && w.world.state.mapId === WB.id && w.world.state.x === WB.start.x && w.world.state.y === WB.start.y ? r.messages.join(' | ') : r.kind;
+      };
+      const band = 'The Brokenback: levels 14-15.', far = door(11), near = door(12), at14 = door(14);
+      ok(far === `${mouth.label} | ${band} ${WARNING_IN}` && near === `${mouth.label} | ${band} ${HARDER_IN}` && at14 === `${mouth.label} | ${band}`,
+        `in at the break from E5's 18,29, the way's own line and then its band, with the warning at 11, harder at 12 and nothing more at 14 (${far}; ${near}; ${at14})`);
+      ok(!!WB.enclave && w.world.here.name === 'The Brokenback' && w.world.here.band?.join('-') === '14-15', `inside, its sign gives its own band, over E5's 12-13 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+      listen(w);
+      // Its two groups, won at its floor, the nearer the gentler (13.5 and 15): three overseers with a gleaner at the hold's mouth and
+      // four gleaners at the cabin's door. A company on foot, swimming or climbing meets them in that order and passes neither: the
+      // way aft runs through the doorway the first stands behind, and the cabin and the plank lie past the second.
+      w.level = 14;
+      const [first, last] = [groupOn(WB, 'wb_strippers'), groupOn(WB, 'wb_gleaners')];
+      ok(WB.encounters!.length === 2 && first.monsters.join() === 'ashen_overseer,ashen_overseer,ashen_overseer,ashen_gleaner' && last.monsters.join() === 'ashen_gleaner,ashen_gleaner,ashen_gleaner,ashen_gleaner'
+        && WB.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && g.roams === false), 'three overseers with a gleaner at the hold\'s mouth and four gleaners at the cabin\'s door, and no guardian');
+      for (const g of WB.encounters!) fight(w, `${WB.id}:${g.id}`);
+      for (const id of ['wb_break', 'wb_tide', 'wb_hold', 'wb_bulkhead', 'wb_cabin', 'wb_stern']) see(w, `${WB.id}:${id}`);
+      const hold = new GameMap(WB), key = (x: number, y: number): string => `${x},${y}`, [wall] = WB.secrets!;
+      /** What a company reaches from the way in, the secret wall shut and the squares within a step of a live group not entered (a fight takes them), and the live groups it comes up to. */
+      const walk = (live: readonly Group[], can: Can): { seen: Set<string>; met: string[] } => {
+        const seen = new Set<string>(), met = new Set<string>(), todo: [number, number][] = [[WB.start.x, WB.start.y]];
+        while (todo.length) {
+          const [x, y] = todo.pop()!;
+          if (seen.has(key(x, y)) || (x === wall.x && y === wall.y) || hold.passable(x, y, can) !== 'ok') continue;
+          const next = live.filter((g) => Math.abs(g.x - x) + Math.abs(g.y - y) <= 1);
+          next.forEach((g) => met.add(g.id));
+          if (next.length) continue;
+          seen.add(key(x, y));
+          for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+        }
+        return { seen, met: [...met] };
+      };
+      const both = walk([first, last], {}), swum = walk([first, last], ALL), second = walk([last], {}), waded = walk([last], ALL), done = walk([], ALL);
+      ok(both.met.join() === first.id && swum.met.join() === first.id && !both.seen.has(key(7, 8)) && !swum.seen.has(key(7, 8))
+        && second.met.join() === last.id && waded.met.join() === last.id && second.seen.has(key(4, 10)) && !second.seen.has(key(11, 13)) && !waded.seen.has(key(11, 13)) && done.seen.has(key(11, 13)),
+        'a company on foot or any way else meets the overseers first and cannot pass them to the hold; with them down it comes up to the gleaners and cannot pass them, the cargo behind it and the cabin and the plank beyond them');
+      const feat = (id: string): Feature => featureOn(WB, id);
+      ok(stock(WB, 'wb_cargo') === '250 elixir', `in the hold, the cargo's chest: 250 gold and an Elixir (${stock(WB, 'wb_cargo')})`);
+      // The secret: the one plank of the cabin's deck worn bright, the search there and the hollow under the deck behind the
+      // wall. Walked, waded, climbed or floated, it is never reached but through the wall.
+      ok(wall.hint === 'wb_plank' && feat('wb_plank').x === wall.x - 1 && feat('wb_plank').y === wall.y && done.seen.size > 80 && !done.seen.has(key(wall.x + 1, wall.y)) && !done.seen.has(key(wall.x + 2, wall.y)),
+        `the master's strongbox is shut but for the wall by the plank: none of the Brokenback's ${done.seen.size} squares walked, waded, climbed or floated reaches it`);
+      see(w, `${WB.id}:wb_plank`);
+      ok(search(w, WB.id, wall.x - 1, wall.y, EAST, 'wb_under'), 'searched where the plank is worn bright, the wall gives, and the hollow under the deck can be walked into');
+      const axe = item(TABLES.items, 'keelhaul'), great = item(TABLES.items, 'great_axe'), plus = item(TABLES.items, 'great_axe+1');
+      ok(stock(WB, 'wb_strongbox') === '300 keelhaul'
+        && !MAP_DEFS.some((d) => (d.features ?? []).some((f) => (f.kind === 'shop' && f.stock.includes('keelhaul')) || ((f.kind === 'chest' || f.kind === 'cairn') && f.id !== 'wb_strongbox' && f.items?.includes('keelhaul'))))
+        && !Object.values(MONSTERS).some((m) => m.drops?.some((d) => d.item === 'keelhaul')),
+        'in the master\'s strongbox, 300 gold and Keelhaul; no shop sells it, no other chest or cairn holds it and no monster drops it');
+      ok(axe.element === 'cold' && !axe.artifact && axe.price <= CURVE.sunderwood.price && hits(axe) > hits(plus) && hits(plus) > hits(great)
+        && GEAR.some(([level, ids]) => level === 14 && ids.includes(great.id)) && GEAR.some(([level, ids]) => level === 16 && ids.includes(plus.id)) && !GEAR.some(([, ids]) => ids.includes(axe.id)),
+        `Keelhaul, the long axe with a die of cold and on no rung of the ladder, hits ${hits(axe)} against the Great Axe's ${hits(great)}, the ladder's from 14, and its plus's ${hits(plus)}, from 16, at ${axe.price} inside the Sunderwood's ${CURVE.sunderwood.price}`);
+      // And out: through the break onto E5's 18,29, with the way's own line and no other.
+      w.world.travel(WB.id, WB.start.x, WB.start.y + 1, NORTH);
+      const back = w.world.move('forward');
+      ok(back.kind === 'moved' && w.world.zone?.id === E5.id && w.world.state.x === e5.x + 18 && w.world.state.y === e5.y + 29 && back.messages.join(' | ') === WB.exits![0].label,
+        `out through the break onto E5's 18,29, the way's own line alone (${said(back)})`);
+      listen(w);
+      w.party.members.forEach((m, i) => { m.level = levels[i]; });
+      w.level = 13;
+    } },
+    { name: 'nicks-locker', play: (ok) => {
+      // Nick's Locker, the lair (#845, #847): in under the reef at F5's 16,30, one stone in the reef with rock either
+      // side, walked onto from the strand at 16,31, and nothing within four squares of it. Its door says its band and
+      // how it feels, as a border's line: the warning at F5's 13, harder at 28 and its band alone at 30; inside, its
+      // sign gives its band.
+      const w = newWalk(ok, { level: 13 }), { out, f5 } = strands(), strand6 = reach(out, f5, [F5.start.x, F5.start.y], {});
+      const NL = NICKS_LOCKER, mouth = exitTo(F5, NL.id), levels = w.party.members.map((m) => m.level);
+      const near4 = [...F5.features!, ...(F5.encounters ?? []), ...F5.secrets!].filter((f) => Math.abs(f.x - 16) + Math.abs(f.y - 30) <= 4);
+      ok(F5.exits!.length === 1 && mouth.x === 16 && mouth.y === 30 && mouth.tx === NL.start.x && mouth.ty === NL.start.y && F5.rows[30].slice(15, 18) === 'r"r' && strand6.has(square(out, f5, 16, 31)) && !near4.length
+        && out.passable(f5.x + 16, f5.y + 29, ALL) === 'ok' && out.passable(f5.x + 16, f5.y + 29, {}) !== 'ok',
+        `the way into Nick's Locker is the one stone in the reef at F5's 16,30, rock either side, walked to from the strand at 16,31 and waded to from the shallows at 16,29, and nothing stands within four squares of it${near4.length ? ` (${near4.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+      const door = (level: number): string => {
+        for (const m of w.party.members) m.level = level;
+        w.world.travel(F5.id, 16, 31, NORTH);
+        const r = w.world.move('forward');
+        return r.kind === 'moved' && w.world.state.mapId === NL.id && w.world.state.x === NL.start.x && w.world.state.y === NL.start.y && w.world.state.facing === NORTH ? r.messages.join(' | ') : r.kind;
+      };
+      const band = 'Nick\'s Locker: levels 30-32.', low = door(13), close = door(28), at30 = door(30);
+      ok(low === `${mouth.label} | ${band} ${WARNING_IN}` && close === `${mouth.label} | ${band} ${HARDER_IN}` && at30 === `${mouth.label} | ${band}`,
+        `in under the reef from F5's 16,31, the way's own line and then its band, with the warning at 13, harder at 28 and nothing more at 30 (${low}; ${close}; ${at30})`);
+      ok(!!NL.enclave && w.world.here.name === 'Nick\'s Locker' && w.world.here.band?.join('-') === '30-32', `inside, its sign gives the cap's band, over F5's 13-14 (${w.world.here.name}, ${w.world.here.band?.join('-')})`);
+      listen(w);
+      w.level = 30;
+      for (const id of ['nl_mouth', 'nl_flood', 'nl_throat']) see(w, `${NL.id}:${id}`);
+      // The guardian: Old Nick, a boss that never comes back, in the cave's throat, the one way in, so no company steps
+      // round it: with its square and those a step from it shut, nothing past it is reached, walked, waded, climbed or
+      // floated. Won at the lair's floor.
+      const hold = new GameMap(NL);
+      const flood = (...shut: (readonly [number, number])[]): Set<string> => {
+        const seen = new Set<string>(), todo: [number, number][] = [[NL.start.x, NL.start.y]];
+        while (todo.length) {
+          const [x, y] = todo.pop()!;
+          if (seen.has(`${x},${y}`) || shut.some(([sx, sy]) => sx === x && sy === y) || hold.passable(x, y, ALL) !== 'ok') continue;
+          seen.add(`${x},${y}`);
+          for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) todo.push([x + dx, y + dy]);
+        }
+        return seen;
+      };
+      const nick = groupOn(NL, 'nl_nick');
+      const shut = flood([nick.x, nick.y], [nick.x - 1, nick.y], [nick.x + 1, nick.y], [nick.x, nick.y - 1], [nick.x, nick.y + 1]);
+      ok(NL.encounters!.length === 1 && nick.monsters.join() === 'old_nick' && !!nick.boss && !nick.respawn && nick.roams === false && !!nick.slainText
+        && shut.has('7,11') && shut.has('3,13') && !['7,7', '7,5', '12,5', '12,6', '9,3', '9,1', '8,1'].some((k) => shut.has(k)),
+        `Old Nick, the one group of the lair, lies in the cave's throat: with it there, none of Nick's Locker's ${shut.size} squares walked, waded, climbed or floated reaches the cave, the ship, her master, the kelp or the cleft`);
+      fight(w, `${NL.id}:nl_nick`);
+      for (const id of ['nl_cave', 'nl_ribs', 'nl_master']) see(w, `${NL.id}:${id}`);
+      // Holdfast on the ship's master, one in the world: no other chest, cairn or statue holds it, no shop sells it and
+      // no monster drops it.
+      const belt = featureOn(NL, 'nl_belt', 'chest');
+      const holds = (f: Feature): boolean => (f.kind === 'shop' && f.stock.includes('holdfast')) || ((f.kind === 'chest' || f.kind === 'cairn') && f !== belt && !!f.items?.includes('holdfast')) || (f.kind === 'statue' && !!f.gift?.items?.includes('holdfast'));
+      ok(belt.kind === 'chest' && belt.gold === 0 && belt.items.join() === 'holdfast' && !!item(TABLES.items, 'holdfast').artifact
+        && !MAP_DEFS.some((d) => (d.features ?? []).some(holds)) && !Object.values(MONSTERS).some((m) => m.drops?.some((x) => x.item === 'holdfast')),
+        'on her master, Holdfast; no other chest, cairn or statue holds it, no shop sells it and no monster drops it');
+      // The secret: kelp grown green behind her bows where no wave comes, the search there and the master's sea chest in
+      // the cleft behind it. Walked, waded, climbed or floated, it is never reached but through the rock.
+      const [rock] = NL.secrets!, closed = flood([rock.x, rock.y]);
+      ok(rock.hint === 'nl_kelp' && closed.size > 40 && closed.has('9,3') && !['8,1', '9,1'].some((k) => closed.has(k)),
+        `the cleft is shut but for its rock: none of Nick's Locker's ${closed.size} squares walked, waded, climbed or floated reaches it`);
+      see(w, `${NL.id}:nl_kelp`);
+      ok(search(w, NL.id, 9, 3, NORTH, 'nl_cleft'), 'searched where the kelp grows, the rock gives, and the cleft behind it can be walked into');
+      ok(stock(NL, 'nl_sea_chest') === '500 elixir,potion_sp_great', `in the cleft, her master's sea chest: 500 gold, an Elixir and a Sapphire Vial (${stock(NL, 'nl_sea_chest')})`);
+      // And out under the reef onto F5's 16,31, facing the land, with the way's own line and no other.
+      w.world.travel(NL.id, NL.start.x, NL.start.y - 1, SOUTH);
+      const back = w.world.move('forward');
+      ok(back.kind === 'moved' && w.world.zone?.id === F5.id && w.world.state.x === f5.x + 16 && w.world.state.y === f5.y + 31 && w.world.state.facing === SOUTH && back.messages.join(' | ') === NL.exits![0].label,
+        `out under the reef onto F5's 16,31, facing the land, the way's own line alone (${said(back)})`);
+      listen(w);
+      // The rumour (#846): Merryn on F6 says DESIGN §9's two lines at every meeting after her first while Old Nick lives,
+      // whatever became of the founder's letter, and nothing of it at the first; once it has fallen, "Nick gives nothing
+      // back" is no longer so, and she says her own words alone. Words only, setting nothing, in no quest, and every
+      // meeting with them fits her box. `fight` has slain Old Nick, so it is stood up again for the first two meetings.
+      const merryn = F6.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Merryn'))!;
+      const rumour = ['"One ship I counted in and never out. Her master had a knife the weed obeyed: cut a line with it and the kelp held her fast."', '"Old Nick had ship, master and knife. Nick gives nothing back."'];
+      const hermit = (): string[] => Object.keys(w.party.flags).filter((k) => k.startsWith('q_hermit'));
+      const kept = Object.fromEntries(hermit().map((k) => [k, w.party.flags[k]]));
+      for (const k of hermit()) delete w.party.flags[k];
+      const standing = w.world.state.maps[NL.id]!.groups[nick.id]!, fell = standing.dead;
+      standing.dead = -1;
+      w.world.travel(F6.id, merryn.x, merryn.y);
+      const first = meet(merryn, w.party, heard(w.world, merryn)).text, then = meet(merryn, w.party, heard(w.world, merryn)).text;
+      standing.dead = fell;
+      const since = meet(merryn, w.party, heard(w.world, merryn)).text;
+      const says = merryn.says!, boxes = says.filter((s) => s.until).map((s) => wrap(s.lines.join('\n\n'), SAY_W).length);
+      ok(fell >= 0 && !first.includes('Old Nick') && then.startsWith('Another stroke on the wall') && rumour.every((l) => then.includes(l)) && !since.includes('Old Nick') && since.startsWith('Another stroke on the wall')
+        && says.length === 8 && says.every((s, i) => !s.sets && (i % 2 === 0
+          ? JSON.stringify(s.until) === JSON.stringify({ slain: NICK_DOWN }) && s.lines.slice(-2).join('\n') === rumour.join('\n')
+          : !s.until && JSON.stringify(s.after) === JSON.stringify({ ...JSON.parse(JSON.stringify(says[i - 1].after)), slain: NICK_DOWN }) && s.lines.join('\n') === says[i - 1].lines.slice(0, -2).join('\n')))
+        && boxes.every((n) => n <= SAY_LINES) && !JSON.stringify(questLog(TABLES, w.world.state, w.party)).includes('Old Nick'),
+        `Merryn says nothing of Old Nick at her first meeting, after her own words speaks of the ship she counted in and never out at every meeting after it while Old Nick lives, and once it has fallen says her own words alone: words only, in no quest, ${boxes.join(', ')} of her box's ${SAY_LINES} lines`);
+      listen(w);
+      for (const k of hermit()) delete w.party.flags[k];
+      Object.assign(w.party.flags, kept);
+      w.party.members.forEach((m, i) => { m.level = levels[i]; });
+      w.level = 13;
+    } },
+  ];
 }
+
+/**
+ * The scenes, in the old body's order: the chain and its goals, the side quests, the causeway seen, the
+ * hollow's finds and its lock, the built maps ashore, and the bounds.
+ */
+export const scenes: readonly Scene[] = [
+  ...theStoneCarriedHome(),
+  ...sideQuests(),
+  { name: 'causeway', play: causewaySeen },
+  { name: 'hollow-finds', play: hollowFinds },
+  { name: 'hollow-locked', play: hollowLocked },
+  ...ashore(),
+  // The bounds (#835): the strands round the isle.
+  ...theBounds(),
+];
