@@ -364,7 +364,7 @@ export interface MapDef<Id extends string = string, Off extends string = never> 
   bare?: boolean;
   /** Landmarks drawn tall over their building squares and seen from far off (`Landmark`). */
   landmarks?: readonly Landmark[];
-  /** Party level the content is tuned for; shown on the map sign and used by respawn scaling. */
+  /** Party level the content is tuned for; shown on the map sign. */
   band?: [number, number];
   /**
    * An enclave (#845): a place of its own beside the road, a dungeon entered from a box (a hollow, a
