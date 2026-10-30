@@ -2,9 +2,12 @@
 // tracked file or folder, from the root, then src/, then the area's folder; a backticked name, a word
 // with a capital or an underscore, is a word of src/, tools/, types/ or .github/; no backticked path
 // cites a line; and the facts the docs repeat are the code's: DESIGN §4's bands are CURVE's, and the
-// lanes' words in docs/ISSUES.md §2 and EXPANSION §8.1 are .github/labels.json's. A rule is a
-// function of one doc and the tree (RULES), so a rule more is one function more. The library of
-// tools/tests/docs.ts, and a file of tools/kit/, which takes src only (tools/tests/layers.ts).
+// lanes' words in docs/ISSUES.md §2 and EXPANSION §8.1 are .github/labels.json's. Each lane's first
+// read (FIRST_READ, #1026) is 25,000 tokens or fewer and is what CLAUDE.md names, in 60 lines or
+// fewer, and EXPANSION is 46,000 bytes or fewer with no "Decided by" list. A rule is a function of
+// one doc and the tree, which holds the texts a first read takes (RULES), so a rule more is one
+// function more. The library of tools/tests/docs.ts, and a file of tools/kit/, which takes src only
+// (tools/tests/layers.ts).
 //
 // What a doc names that is not ours, or is no path, is a row of NOT_OURS with its reason; a row that
 // starts to resolve, or that no live doc names, is refused, so the table only shrinks. The live docs
@@ -17,7 +20,7 @@ import { fileURLToPath } from 'node:url';
 import { PLAN } from '../../src/content/atlas.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
-import { laneOf } from './lanes.ts';
+import { LANES, laneOf, type Lane } from './lanes.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -25,12 +28,16 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 export interface Doc { path: string; text: string }
 /** What a rule refuses: the doc, the line (from 1) and what is wrong. */
 export interface Fault { doc: string; line: number; what: string }
-/** What the docs are read against: the tracked files and folders, the code's words and each label's description. */
+/**
+ * What the docs are read against: the tracked files and folders, the code's words, each label's
+ * description and the text of each file a lane's first read takes, by its path.
+ */
 export interface Tree {
   files: ReadonlySet<string>;
   folders: ReadonlySet<string>;
   words: ReadonlySet<string>;
   labels: ReadonlyMap<string, string>;
+  texts: ReadonlyMap<string, string>;
 }
 /** A rule: the faults of one doc, read against the tree. */
 export type Rule = (doc: Doc, tree: Tree) => Fault[];
@@ -43,8 +50,13 @@ export const LEFT_OUT: Readonly<Record<string, string>> = {
   'docs/CODEMAP.md': 'made from the files\' headers by tools/codemap.ts and held to them by the codemap suite: a row is a header\'s words, a path in it written from its file',
   'docs/ROSTER.md': 'made from the monsters\' defs by tools/roster.ts and held to them by the roster suite',
 };
-/** The check's own files, whose words are not the code's: the table's rows and the copies' made-up names are written in them. */
+/**
+ * The check's own files: the table's rows and the copies' made-up names are written in them, so of
+ * their words only the names they declare are the code's, and a doc may name the check's own.
+ */
 const OWN = ['tools/kit/docs.ts', 'tools/tests/docs.ts'];
+/** A name a line of code declares, at the line's start: its comments and strings are passed over. */
+const DECLARED = /^\s*(?:export\s+)?(?:const|let|function|interface|type|class)\s+([\w$]+)/gm;
 
 /**
  * What the docs name in backticks that is not ours or is no path, each with why. A row that resolves,
@@ -231,8 +243,248 @@ export const lanes: Rule = (doc, tree) => {
   return out;
 };
 
+/** A figure as the docs write it: `100,000`. */
+const n = (x: number): string => x.toLocaleString('en-GB');
+
+/** What a lane's first read may come to: 25,000 tokens at four bytes a token (#1026). */
+export const BUDGET = 100_000;
+
+/**
+ * A part of a lane's first read: a file, or a folder whose .ts files' headers are read; the sections
+ * of it read, each a heading's start, its lines to the next heading of its level or above, with the
+ * file's head before its first `##`, and all of it where none is given; or its header, the comment
+ * lines a file opens on. A part that stands for one of several, the lane's own (a list of paths or a
+ * `<name>` in a path or a heading), is counted at its largest; a heading named without a `<name>`
+ * that starts two of a file's headings is refused, as it names no one section.
+ */
+export interface Part { path: string | readonly string[]; sections?: readonly string[]; headers?: true }
+/** A lane's reading: the sections of DESIGN it reads beside §1, and its own parts. */
+export interface Reading { design: readonly string[]; own: readonly Part[] }
+
+/**
+ * What each lane reads first (#1026), in this order: CLAUDE.md, DESIGN §1 and the lane's `design`
+ * sections, all of EXPANSION (its §3 to §5 and §8), then its `own`. CLAUDE.md's "Before you start"
+ * says it and names each path here and no other (`reading`); `budget` holds each lane at BUDGET. A
+ * lane over it, or so near it that the next content would meet it, has its sections cut by
+ * sub-heading, never the budget raised: the systems lane reads DESIGN §5's Races and Classes and
+ * prestiges, not its Stats, skills, mastery, and the creatures lane MONSTERS §3.1 and §3.2, not §3.3.
+ */
+export const FIRST_READ: Readonly<Record<Lane, Reading>> = {
+  systems: {
+    design: ['### Races', '### Classes and prestiges', '## 6.', '## 7.', '## 11.', '## 13.'],
+    own: [{ path: 'docs/SYSTEMS.md' }],
+  },
+  area: { design: ['## 4.', '### Act <n> —'], own: [{ path: 'docs/areas/<name>.md' }] },
+  creatures: {
+    design: [],
+    own: [
+      { path: 'docs/MONSTERS.md', sections: ['## 1.', '## 2.', '### 3.1', '### 3.2', '### 4.1', '### 4.2', '### 4.3'] },
+      { path: 'docs/ROSTER.md', sections: ['## The families'] },
+    ],
+  },
+  interiors: { design: ['## 11.'], own: [{ path: 'src/ui/interiors/', headers: true }] },
+  quality: {
+    design: ['## 13.'],
+    own: [{ path: 'docs/EXPANSION.md', sections: ['## 5.'] }, { path: 'tools/test.ts', headers: true }],
+  },
+  design: {
+    design: [],
+    own: [{ path: ['docs/DESIGN.md', 'docs/STORY.md', 'docs/MONSTERS.md'], sections: ['## <section>'] }],
+  },
+};
+
+/** The parts of a lane's first read, in order: CLAUDE.md, DESIGN, EXPANSION, then its own. */
+export const partsOf = (lane: Lane): Part[] => [
+  { path: 'CLAUDE.md' },
+  { path: 'docs/DESIGN.md', sections: ['## 1.', ...FIRST_READ[lane].design] },
+  { path: 'docs/EXPANSION.md' },
+  ...FIRST_READ[lane].own,
+];
+
+/** Each path the first reads name, as FIRST_READ writes it, with the lanes that read it. */
+export function readingPaths(): Map<string, Lane[]> {
+  const out = new Map<string, Lane[]>();
+  for (const lane of LANES) {
+    for (const p of partsOf(lane).flatMap((part) => [part.path].flat())) {
+      if (!out.get(p)?.includes(lane)) out.set(p, [...(out.get(p) ?? []), lane]);
+    }
+  }
+  return out;
+}
+
+/** The tracked files a part may read: a folder's .ts files, a path's matches where it holds a `<name>`, or the path. */
+const filesOf = (part: Part, files: ReadonlySet<string>): string[] => [part.path].flat().flatMap((p) => {
+  if (p.endsWith('/')) return [...files].filter((f) => f.startsWith(p) && f.endsWith('.ts')).sort();
+  return /[<*]/.test(p) ? [...files].filter((f) => pattern(p).test(f)).sort() : files.has(p) ? [p] : [];
+});
+
+/** A heading of a text: its line, its level and its section's end, the next heading of its level or above. */
+export interface Heading { text: string; level: number; from: number; to: number }
+/** A text's headings, outside its fenced blocks. */
+export function headings(text: string): Heading[] {
+  const lines = text.split('\n'), out: Heading[] = [];
+  let fenced = false;
+  lines.forEach((l, i) => {
+    if (/^\s*(```|~~~)/.test(l)) fenced = !fenced;
+    else if (!fenced && /^#{1,6} /.test(l)) out.push({ text: l, level: l.indexOf(' '), from: i, to: lines.length });
+  });
+  out.forEach((h, k) => { h.to = out.slice(k + 1).find((x) => x.level <= h.level)?.from ?? lines.length; });
+  return out;
+}
+
+/** The lines from one to before another. */
+const run = (from: number, to: number): number[] => Array.from({ length: Math.max(0, to - from) }, (_, i) => from + i);
+/** The bytes of some of a text's lines, each with its line's end. */
+const bytesOf = (lines: readonly string[], take: Iterable<number>): number => {
+  let b = 0;
+  for (const i of take) b += Buffer.byteLength(lines[i]) + (i < lines.length - 1 ? 1 : 0);
+  return b;
+};
+
+/**
+ * What a part reads of a text: its lines and their bytes, the headings it takes with each one's
+ * bytes, and what is wrong with a heading it names: the text lacks it, or it starts two.
+ */
+function readOf(text: string, part: Part): { take: number[]; of: string[]; sizes: number[]; lacks: string[]; bytes: number } {
+  const lines = text.split('\n'), of: string[] = [], sizes: number[] = [], lacks: string[] = [];
+  let take: number[];
+  if (part.headers) {
+    let end = 0;
+    while (end < lines.length && lines[end].startsWith('//')) end++;
+    take = run(0, end);
+    of.push('header');
+  } else if (!part.sections) take = run(0, lines.length);
+  else {
+    const hs = headings(text), size = (h: Heading): number => bytesOf(lines, run(h.from, h.to));
+    take = run(0, hs.find((h) => h.level === 2)?.from ?? 0);
+    for (const s of part.sections) {
+      const re = new RegExp('^' + s.split(/(<[^>]*>)/).map((x) => (x.startsWith('<') ? '.+?' : x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))).join(''));
+      const [best, ...more] = hs.filter((h) => re.test(h.text)).sort((a, b) => size(b) - size(a));
+      if (!best) { lacks.push(`has no heading \`${s}\``); continue; }
+      if (more.length && !s.includes('<')) lacks.push(`has ${more.length + 1} headings \`${s}\`: it names no one section`);
+      take.push(...run(best.from, best.to));
+      of.push(best.text.replace(/^#+ /, '').replace(/ \(.*$/, ''));
+      sizes.push(size(best));
+    }
+  }
+  return { take, of, sizes, lacks, bytes: bytesOf(lines, new Set(take)) };
+}
+
+/**
+ * A lane's first read: each file in order (a folder for its headers), what of it and its bytes;
+ * their sum; what is not there; and the largest section it reads, which a fault names.
+ */
+export interface FirstRead {
+  reads: { path: string; of: string[]; bytes: number }[];
+  bytes: number;
+  lacks: string[];
+  largest?: { path: string; of: string; bytes: number };
+}
+
+/** A lane's first read, by FIRST_READ, against the tree's texts: a line two parts read counts once. */
+export function firstRead(lane: Lane, tree: Tree): FirstRead {
+  const take = new Map<string, Set<number>>(), lacks: string[] = [];
+  const shown = new Map<string, { files: Set<string>; of: string[]; all: boolean }>();
+  let largest: FirstRead['largest'];
+  for (const part of partsOf(lane)) {
+    const paths = [part.path].flat(), folder = paths.length === 1 && paths[0].endsWith('/');
+    const got = filesOf(part, tree.files).filter((f) => tree.texts.has(f)).map((f) => ({ f, ...readOf(tree.texts.get(f)!, part) }));
+    if (!got.length) { lacks.push(`\`${paths.join('` or `')}\` names no file`); continue; }
+    for (const g of folder ? got : [got.reduce((a, b) => (b.bytes > a.bytes ? b : a))]) {
+      take.set(g.f, new Set([...(take.get(g.f) ?? []), ...g.take]));
+      const key = folder ? paths[0] : g.f, s = shown.get(key) ?? { files: new Set<string>(), of: [], all: false };
+      s.files.add(g.f);
+      s.all ||= !part.sections && !part.headers;
+      s.of.push(...(folder ? ['headers'] : g.of).filter((o) => !s.of.includes(o)));
+      shown.set(key, s);
+      lacks.push(...g.lacks.map((h) => `\`${g.f}\` ${h}`));
+      for (const [i, b] of g.sizes.entries()) if (!largest || b > largest.bytes) largest = { path: g.f, of: g.of[i], bytes: b };
+    }
+  }
+  const reads = [...shown].map(([p, s]) => ({ path: p, of: s.all ? [] : s.of,
+    bytes: [...s.files].reduce((b, f) => b + bytesOf(tree.texts.get(f)!.split('\n'), take.get(f)!), 0) }));
+  return { reads, bytes: reads.reduce((b, r) => b + r.bytes, 0), lacks, largest };
+}
+
+/** A first read as the check says it: each file, what of it and its bytes. */
+export const listed = (r: FirstRead): string =>
+  r.reads.map((x) => `${x.path}${x.of.length ? ` (${x.of.join(', ')})` : ''} ${n(x.bytes)}`).join('; ');
+
+/** The heading CLAUDE.md says each lane's first read under. */
+export const BEFORE = '## Before you start';
+
+/**
+ * 5. Each lane's first read is BUDGET bytes or fewer, and every file and heading FIRST_READ names is
+ * there. Held on CLAUDE.md, the page that says the reading: its own text the doc's, the rest the tree's.
+ */
+export const budget: Rule = (doc, tree) => {
+  if (doc.path !== 'CLAUDE.md') return [];
+  const t: Tree = { ...tree, texts: new Map(tree.texts).set(doc.path, doc.text) };
+  const line = doc.text.split('\n').indexOf(BEFORE) + 1 || 1;
+  return LANES.flatMap((lane) => {
+    const r = firstRead(lane, t);
+    return [...r.lacks.map((l) => fault(doc, line, `the ${lane} lane's first read (FIRST_READ): ${l}`)),
+      ...(r.bytes <= BUDGET ? [] : [fault(doc, line, `the ${lane} lane's first read is ${n(r.bytes)} bytes, over ${n(BUDGET)} `
+        + `(${n(BUDGET / 4)} tokens): ${listed(r)}; ${r.largest ? `its largest section is ${r.largest.path}'s ${r.largest.of}, `
+        + `${n(r.largest.bytes)} bytes: ` : ''}cut its reading by sub-heading in FIRST_READ and CLAUDE.md, never the budget raised`)])];
+  });
+};
+
+/** What CLAUDE.md may come to (#1026): the page every session reads first, which points at the docs. */
+export const CLAUDE_MOST = 60;
+
+/** 6. CLAUDE.md is CLAUDE_MOST lines or fewer, and its "Before you start" names in backticks each path of FIRST_READ and no other. */
+export const reading: Rule = (doc) => {
+  if (doc.path !== 'CLAUDE.md') return [];
+  const lines = doc.text.split('\n'), at = lines.indexOf(BEFORE), end = lines.findIndex((l, i) => i > at && /^##? /.test(l));
+  const count = lines.length - (doc.text.endsWith('\n') ? 1 : 0);
+  const long = count <= CLAUDE_MOST ? [] : [fault(doc, CLAUDE_MOST + 1, `CLAUDE.md is ${count} lines, over ${CLAUDE_MOST}: it points at the docs; it does not repeat them`)];
+  if (at < 0) return [...long, fault(doc, 1, `CLAUDE.md has no ${BEFORE}, where each lane's first read is said`)];
+  const named = spans(lines.slice(at, end < 0 ? undefined : end).join('\n')).flatMap((s) => pathsOf(s).map((p) => ({ p, line: at + s.line })));
+  const table = readingPaths();
+  return [...long, ...named.filter((x) => !table.has(x.p)).map((x) => fault(doc, x.line,
+    `CLAUDE.md's "Before you start" names \`${x.p}\`, which no lane's first read holds (FIRST_READ, tools/kit/docs.ts)`)),
+  ...[...table].filter(([p]) => !named.some((x) => x.p === p)).map(([p, ls]) => fault(doc, at + 1,
+    `FIRST_READ's \`${p}\` (${ls.join(', ')}) is not named in CLAUDE.md's "Before you start"`))];
+};
+
+/** What EXPANSION may come to: its working rules and their index, its decisions in docs/decisions.md (#1024). */
+export const EXPANSION_MOST = 46_000;
+/**
+ * A "Decided by" list: a heading that opens so; a paragraph or quote that opens so, its marks aside,
+ * and ends on a colon or runs into a list, in it or straight after it; or a list two of whose items
+ * open so. One ruling said in a sentence is no list.
+ */
+const DECIDED = /^\s*(?:>\s*)*(?:#{1,6}\s+|[-*+]\s+|\d+[.)]\s+)?[*_]*Decided by\b/;
+/** A list item's first line, in a quote or not. */
+const ITEM = /^\s*(?:>\s*)*(?:[-*+]|\d+[.)])\s/;
+
+/** 7. EXPANSION is EXPANSION_MOST bytes or fewer and holds no "Decided by" list: a decision goes to docs/decisions.md. */
+export const expansion: Rule = (doc) => {
+  if (doc.path !== 'docs/EXPANSION.md') return [];
+  const out: Fault[] = [], bytes = Buffer.byteLength(doc.text), lines = doc.text.split('\n'), paras: [number, number][] = [];
+  if (bytes > EXPANSION_MOST) out.push(fault(doc, 1, `docs/EXPANSION.md is ${n(bytes)} bytes, over ${n(EXPANSION_MOST)}: it holds its working rules only`));
+  let fenced = false;
+  lines.forEach((l, i) => {
+    if (/^\s*(```|~~~)/.test(l)) { fenced = !fenced; return; }
+    if (fenced || !l.trim()) return;
+    const last = paras[paras.length - 1];
+    if (last && last[1] === i - 1 && !/^#{1,6} /.test(l) && !/^#{1,6} /.test(lines[last[0]])) last[1] = i;
+    else paras.push([i, i]);
+  });
+  for (const [k, [a, b]] of paras.entries()) {
+    const body = lines.slice(a, b + 1), next = paras[k + 1];
+    const list = body.slice(1).some((l) => ITEM.test(l)) || (next !== undefined && ITEM.test(lines[next[0]]));
+    if ((DECIDED.test(lines[a]) && (/^#{1,6} /.test(lines[a]) || /:[*_]*\s*$/.test(lines[b]) || list))
+      || body.filter((l) => ITEM.test(l) && DECIDED.test(l)).length > 1) {
+      out.push(fault(doc, a + 1, 'EXPANSION holds a "Decided by" list: a decision goes to docs/decisions.md, under its issue and its rule\'s section'));
+    }
+  }
+  return out;
+};
+
 /** The rules, by name, each a function of a doc and the tree. */
-export const RULES: Readonly<Record<string, Rule>> = { paths, names, lines, bands, lanes };
+export const RULES: Readonly<Record<string, Rule>> = { paths, names, lines, bands, lanes, budget, reading, expansion };
 
 /** Every fault of the docs, by every rule given. */
 export const check = (docs: readonly Doc[], tree: Tree, rules: Readonly<Record<string, Rule>> = RULES): Fault[] =>
@@ -254,17 +506,21 @@ export const liveDocs = (files: Iterable<string>): string[] => [...files].filter
 /** The text files whose words are the code's: under src/, tools/, types/ and .github/, but the check's own. */
 const CODE = /^(src|tools|types|\.github)\//;
 
-/** The tree as git tracks it: its files and folders, the code's words and the labels' descriptions. */
+/** The tree as git tracks it: its files and folders, the code's words, the labels' descriptions and the first reads' texts. */
 export function readTree(root = ROOT): Tree {
   const files = execFileSync('git', ['ls-files'], { cwd: root, encoding: 'utf8' }).split('\n').filter(Boolean);
-  const folders = new Set<string>(), words = new Set<string>();
+  const folders = new Set<string>(), words = new Set<string>(), all = new Set(files);
   for (const f of files) for (let i = f.indexOf('/'); i > 0; i = f.indexOf('/', i + 1)) folders.add(f.slice(0, i));
   for (const f of files) {
-    if (!CODE.test(f) || OWN.includes(f) || /\.(png|jpg|ico|woff2?)$/.test(f)) continue;
-    for (const m of readFileSync(path.join(root, f), 'utf8').matchAll(/[\w$]+/g)) words.add(m[0]);
+    if (!CODE.test(f) || /\.(png|jpg|ico|woff2?)$/.test(f)) continue;
+    const text = readFileSync(path.join(root, f), 'utf8');
+    if (OWN.includes(f)) for (const m of text.matchAll(DECLARED)) words.add(m[1]);
+    else for (const m of text.matchAll(/[\w$]+/g)) words.add(m[0]);
   }
   const labels = JSON.parse(readFileSync(path.join(root, '.github/labels.json'), 'utf8')) as { name: string; description: string }[];
-  return { files: new Set(files), folders, words, labels: new Map(labels.map((l) => [l.name, l.description])) };
+  const read = new Set(LANES.flatMap((lane) => partsOf(lane).flatMap((p) => filesOf(p, all))));
+  return { files: all, folders, words, labels: new Map(labels.map((l) => [l.name, l.description])),
+    texts: new Map([...read].map((f) => [f, readFileSync(path.join(root, f), 'utf8')])) };
 }
 
 /** The live docs as they stand on the disk. */

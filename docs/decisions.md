@@ -575,6 +575,42 @@ Decided by the builder for #986, each the owner's to overturn:
    truth. Its five lines left with `any` (the lighthouse's and the tents' records and an early
    return's `wold`) are H9's.
 
+Decided by the builder for #1026, each the owner's to overturn:
+
+1. **The table is `FIRST_READ` in `tools/kit/docs.ts`, which §8.1 names in a sentence:** a table in
+   §8.1 would be a third copy of what CLAUDE.md says and the measure reads, and EXPANSION had 115
+   bytes to spare. The sentence's room is the two lists cut from §8.1's #985 paragraph, which the
+   files' headers hold.
+2. **DESIGN beside §1:** systems §5's Races and Classes and prestiges, §6, §7, §11 and §13; area §4
+   and its act; interiors §11; quality §13; creatures and design none. All of §5 put the systems
+   lane over 112,000 bytes; cut by sub-heading, it leaves Stats, skills, mastery for a question.
+3. **EXPANSION is read whole:** since #1048 it is its §3 to §5 and §8 alone, held at 46,000 bytes;
+   the quality lane's §5 is in it and counted once.
+4. **The interiors lane reads the header of every .ts file of `src/ui/interiors/`, its kit's too:**
+   a room paints with the kit and the rule of three asks what it holds; 81 files, 22,384 bytes. The
+   code map folds an area's rooms into one row, so it is not the reading.
+5. **One of several is counted at its largest:** an area's state at the largest of `docs/areas/`
+   (Saltreach's since #1067, the Kilns' before), its act at Act I's; the design lane's doc at the
+   `##` section of DESIGN, STORY and MONSTERS (DESIGN §9).
+6. **The creatures lane's family is ROSTER's families with its head;** a family's row there names
+   its defs. It reads MONSTERS §1 to §4.3 but §3.3, What the road asks (18,477 bytes), the systems
+   lane's list of a def's fields: read whole, the lane was about 2,800 bytes under budget, which
+   the next monsters ROSTER lists would spend in a content pull request, so §3.3 is cut now.
+7. **A file read in part counts its head,** the lines before its first `##`, as the issue counted
+   DESIGN §1 "2,464 with the title"; a header is all the comment lines a file opens on.
+8. **CLAUDE.md names a file of the reading in backticks, as the docs check reads a path;** what is
+   not read first (README.md, the folder an area is named by, its decisions.md and plan.md) is
+   written bare.
+9. **A rule gets the docs through the tree:** `Tree` gains the texts the first reads take, and
+   `budget` and `reading` are held on CLAUDE.md; a rule stays a function of one doc and the tree.
+10. **A doc may name the check's own:** of its two files only the names a line declares are the
+    code's words, not their strings or comments, so the copies' made-up names stay refused.
+11. **The name rule stays a word's:** a member rule would hold 97 of the 98 dotted names, but the
+    maps' `GATE` would still let `GATE.through` pass; not built.
+12. **A "Decided by" list is a heading that opens so, a paragraph or quote that opens so and ends
+    on a colon or runs into a list (as this file writes one) or a list two of whose items open so;**
+    one ruling said in a sentence is no list, nor are the three §5.2 states inside its paragraphs.
+
 ## EXPANSION §8.2 The recipe for a zone map
 
 Decided by the builder for #915, each the owner's to overturn:
