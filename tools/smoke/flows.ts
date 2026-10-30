@@ -897,3 +897,33 @@ export async function drawing({ page, seed, ok }: Run): Promise<void> {
   ok(drawing.slept.at >= 0 && drawing.slept.still, `a fight drawn ten times with a sleeper next in the order is as it was, its state and the generator's (a rat at ${drawing.slept.at} of ${drawing.slept.of})`);
   ok(/[1-9]/.test(drawing.struck.flash) && drawing.struck.still, `a fight drawn ten times with a monster just struck is as it was, its state and the generator's (flash ${drawing.struck.flash})`);
 }
+
+// A wipe on the page (#1069): the road rats fought on the Foreland, the company put down in the fight and
+// Space pressed on it fallen, through the real Input. The Lanterns carry it to Helmstow's Chapel of the
+// Lanterns with the chapel's menu open, the first member on 1 hit point and the clock at the next morning.
+// The company and the clock are put back after; run alone, it plays a new game on the pinned seed.
+export async function fall({ page, seed, ok }: Run): Promise<void> {
+  const was = await page.evaluate((seed: number) => {
+    const g = window.__game!.game!;
+    if (g.screens[0].constructor.name !== 'ExploreScreen') g.newGame(seed);
+    while (g.screens.length > 1) g.pop();
+    g.world.travel('shelf', 16, 4);
+    g.fight(['road_rats']);
+    const kept = { party: JSON.stringify(g.party), minutes: g.world.state.minutes };
+    for (const c of g.party.members) { c.conditions = ['dead']; c.hp = -1; }
+    return kept;
+  }, seed);
+  await page.waitForFunction(() => { const t = window.__game!.game!.top as Shown; return t.constructor.name === 'CombatScreen' && t.state.outcome === 'defeat'; }, undefined, { timeout: 15000 });
+  await press(page, 'Space');
+  const woke = await page.evaluate((was: { party: string; minutes: number }) => {
+    const g = window.__game!.game!, s = g.world.state, m = g.party.members[0];
+    const out = { stack: g.screens.map((x) => x.constructor.name).join(','), at: `${s.mapId} ${s.x},${s.y}`, hp: m.hp, clean: !m.conditions.length, minutes: s.minutes, menu: (g.top as Shown).options?.[0] ?? '', line: g.log.at(-2) ?? '' };
+    while (g.screens.length > 1) g.pop();
+    Object.assign(g.party, JSON.parse(was.party));
+    s.minutes = was.minutes;
+    return out;
+  }, was);
+  const gone = woke.minutes - was.minutes, hour = Math.floor((woke.minutes % 1440) / 60);
+  ok(woke.stack === 'ExploreScreen,InteriorScreen,ChoiceScreen' && woke.at === 'harrow 11,4' && woke.hp === 1 && woke.clean && gone > 0 && gone <= 1440 && hour >= 7 && hour < 10,
+    `a wipe in a fight wakes the company in Helmstow's chapel, its menu open (${woke.stack}; "${woke.menu.split('\t')[0]}"), the first on ${woke.hp} hp, the clock ${gone} minutes on at ${hour}:${String(woke.minutes % 60).padStart(2, '0')} ("${woke.line}")`);
+}

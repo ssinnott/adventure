@@ -9,7 +9,7 @@ import { createServer } from './server.ts';
 import { open } from './kit/browser.ts';
 import { shardAsked, sweepAsked } from './sweep.ts';
 import { frame, type Part, type Run } from './smoke/boot.ts';
-import { asked, attract, coach, drawing, edge, explore, hall, inn, kept, lampglass, pass, pilot, questlog, script, thornmark, title, trainer, waymark, weather, worldmap } from './smoke/flows.ts';
+import { asked, attract, coach, drawing, edge, explore, fall, hall, inn, kept, lampglass, pass, pilot, questlog, script, thornmark, title, trainer, waymark, weather, worldmap } from './smoke/flows.ts';
 import { ice, landmarks, lighthouse, range, smooth, sunder, terrains, torches } from './smoke/scenes.ts';
 import { endings, hearth, hills, interiors, silhouettes, winding } from './smoke/art.ts';
 import { cracks, sweep } from './smoke/cracks.ts';
@@ -24,7 +24,7 @@ if (process.env.SMOKE_SEED === 'random') console.log(`SMOKE_SEED=${SEED}`);
 
 // The parts in the order they run, each starting from the state it makes (boot.ts).
 const PARTS: Part[] = [title, explore, kept, thornmark, inn, coach, trainer, script, hall, interiors, terrains, torches, sunder, smooth, lighthouse, landmarks, ice, range,
-  questlog, asked, weather, worldmap, edge, pass, winding, cracks, hills, silhouettes, hearth, endings, lampglass, waymark, pilot, attract, drawing, sweep];
+  questlog, asked, weather, worldmap, edge, pass, winding, cracks, hills, silhouettes, hearth, endings, lampglass, waymark, pilot, attract, drawing, fall, sweep];
 
 // The crack sweep looks one way from every square of the cellar, Helmstow and its keep on every
 // run, and all four ways from every square of the maps a pull request changes. SMOKE_BASE=<ref>

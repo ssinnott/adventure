@@ -23,7 +23,7 @@ export class ExploreScreen implements Screen {
     if (!a) return;
     const w = g.world;
     g.actionFrom = g.said;
-    if (allDown(g.party)) { g.gameOver(); return; }
+    if (allDown(g.party)) { g.fall(); return; }
     let res: ReturnType<World['move']> | null = null;
     if (is(a, 'forward')) res = w.move('forward');
     else if (is(a, 'back')) res = w.move('back');
