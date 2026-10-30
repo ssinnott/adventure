@@ -193,7 +193,7 @@ pilot on every box of the Downs and left as they were until the owner's own play
   company stands above it; and a map of nothing but its boss is judged on the boss's odds, with no
   floor of fights to pool and no day. Where the rise from the floor to two above is too short for
   both odds, the floor binds and the second stands inside its limit, short of its aim: the Stair's
-  Catcher, 57% at 30 and 80% at 32 on the gate's seeds (#752, #796; docs/areas/hearth.md §8).
+  Catcher, 57% at 30 and 79% at 32 on the gate's seeds (#752, #796; docs/areas/hearth.md §8).
   A boss set off the line is sized on these odds against the gate's bot, by its box's gate
   (`offLine` on its def in `src/content/areas/<area>/monsters.ts`, which `tools/tests/harness.ts`
   reads).
@@ -266,14 +266,15 @@ sampled floor from 10, and nearly every fight eight under from 18, while Thornma
 rest it got at the floor, about 62% the median. So a company two under a floor rests after fewer
 fights than the floor's aim gives, its share held by `GATE.backDay`'s aim and limit
 (`tools/kit/rules/gate.ts`). It is judged over each map two under is asked of alone, at its own
-floor less two, and over the area, its groups pooled at the area's floor less two: 100 seeds or more,
+floor less two, and over the area, its groups pooled at its floor less two: 100 seeds or more,
 dealt, no boss as from the floor's day. On 17 October 2026 the gate judges 81 maps' days and 10
 areas', at 29% to 109% of their floors' aims (the median 62%). It lists 29 maps and three areas off
 their aim, the soft ones: seven each of Ashfall's and the Glasswold's, six of Cairnmoor's. One map
 was past its limit, owed to #865: `cairnfield_m8`, whose two groups were fought 9.29 to a rest two
 under against the floor's 8.5. The 86 two-under figures owed to #18 went (#851). On 18 October #865
 re-sized its crag group, two ravens and two tor trolls where eight ravens stood: two under it fights
-5.52 to a rest (64.9%), and 7.60 at its floor (8.5 asked). No row is owed.
+5.52 to a rest (64.9%), and 7.60 at its floor (8.5 asked). No day is owed; since #848 three other
+figures are.
 
 Its decisions: decisions.md.
 

@@ -106,6 +106,8 @@ function check(key: string, v: number, aim: (v: number) => number, limit: (v: nu
 }
 /** How far an owed figure misses the line it is held to: no more than a point, or a tenth of a fight, further from its limit than the figure `at` it was owed at. */
 const heldMiss = (at: number, limit: (v: number) => number, fights: boolean) => (v: number): number => limit(v) - limit(at) - (fights ? 0.1 : 0.01);
+/** The lines a figure settles against (#848): its limit, and an owed one's held line (`heldMiss`). */
+const linesOf = (key: string, limit: (v: number) => number, fights: boolean): ((v: number) => number)[] => { const o = OWED[key]; return o ? [limit, heldMiss(o.at, limit, fights)] : [limit]; };
 /** The figures the seeds' ladder's top leaves within its margin of a limit, listed at the end of the part. */
 const near: string[] = [];
 /** How a line says the seeds a figure was settled on, where it took more than SEEDS. */
@@ -117,7 +119,7 @@ const onSeeds = (s: Settled<Measure>): string => (s.seeds > SEEDS ? `; settled o
  * top leaves within the margin is judged on its top figure and listed at the end of the part.
  */
 function judged<M extends Measure>(key: string, at: (n: number) => M, aim: (v: number) => number, limit: (v: number) => number, line: (m: Settled<M>) => string, fights = false): Settled<M> {
-  const o = OWED[key], s = settle(at, o ? [limit, heldMiss(o.at, limit, fights)] : [limit]), msg = line(s) + onSeeds(s);
+  const s = settle(at, linesOf(key, limit, fights)), msg = line(s) + onSeeds(s);
   if (s.near) near.push(msg);
   check(key, s.value, aim, limit, msg, fights);
   return s;
@@ -438,6 +440,26 @@ function fixed(): void {
     const walk = dayAt(1, [pair, rats]), first = walk(SEEDS).value, twice = walk(2 * SEEDS).value, walked = days(1, [pair, rats], 2 * SEEDS, 1, true).fights;
     ok(climbed.seeds === 2 * SEEDS && climbed.value === flat && first === days(1, [pair, rats], SEEDS, 1, true).fights && twice === walked,
       `a figure climbed a rung equals it flat on as many seeds: a smuggler captain at 1 won ${pc(rate(captain, 1))} on ${SEEDS} seeds and ${pc(climbed.value)} on ${climbed.seeds}, flat ${pc(flat)}; a day ${first.toFixed(2)} on ${SEEDS} and ${twice.toFixed(2)} on ${2 * SEEDS}, flat ${walked.toFixed(2)}`);
+    // A pooled figure settles as one: seed k's value is its share of the pool's fights won, so a group
+    // pooled with itself keeps its own error, and two groups pooled the spread of their shares.
+    const mate: EncounterDef = { id: 'fx_mate', x: 0, y: 0, monsters: ['smuggler_captain', 'rat'] };
+    const alone = ratesAt([[captain, 1]])(SEEDS), twin = ratesAt([[captain, 1], [captain, 1]])(SEEDS), mixed = ratesAt([[captain, 1], [mate, 1]])(SEEDS);
+    const ours = fights(captain, 1), theirs = fights(mate, 1), shares = theirs.slice(0, SEEDS).map((w, k) => (ours[k] + w) / 2);
+    const apart = Math.sqrt(spread(ours, SEEDS) ** 2 + spread(theirs, SEEDS) ** 2) / 2;
+    ok(twin.value === alone.value && twin.se === alone.se && mixed.se === spread(shares, SEEDS) && Math.abs(mixed.se - apart) > 1e-6,
+      `a pooled figure settles as one figure: a smuggler captain pooled with itself keeps its error (${pc(alone.se)}), and pooled with a captain and a rat has the spread of its shares (${pc(mixed.se)}), not the two groups' taken apart (${pc(apart)})`);
+    // A group's fights are kept apart by their round cap and their what-ifs: the memo keys on both.
+    const tiers = { tiers: true } as const, runs = [fights(captain, 1), fights(captain, 1, SEEDS, Infinity), fights(captain, 1, SEEDS, ROUND_CAP, tiers)];
+    const asked = [rate(captain, 1), rate(captain, 1, SEEDS, Infinity), rate(captain, 1, SEEDS, ROUND_CAP, tiers)];
+    const worked = [winRate(1, captain, SEEDS, ROUND_CAP, gateOpts(captain)), winRate(1, captain, SEEDS, Infinity, gateOpts(captain)), winRate(1, captain, SEEDS, ROUND_CAP, gateOpts(captain), tiers)];
+    ok(new Set(runs).size === 3 && asked.join() === worked.join(),
+      `a group's fights are kept apart by their round cap and their what-ifs: the smuggler captain at 1 under the cap, with none and with the tiers keeps three runs of fights, each winRate's (${asked.map(pc).join(', ')})`);
+    // An owed figure settles against the line it is held to as well as its limit: far past its limit
+    // and near its held line, it climbs.
+    OWED['fixture: owed'] = { whose: '#848', at: 0.5 };
+    const held = settle(drawn(0.495), linesOf('fixture: owed', atLeast(0.8), false));
+    delete OWED['fixture: owed'];
+    ok(held.seeds === top, `an owed figure settles against its held line as well as its limit: 49.5% owed at 50%, far past a limit of 80% and near its held line of 49%, is judged on ${held.seeds.toLocaleString('en-GB')} seeds`);
   }
   // A group that waits on an `after` is no warning at the way in.
   {
