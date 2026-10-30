@@ -9,6 +9,7 @@ import { combatHeight } from '../../src/ui/sprites.ts';
 import type { LabelMonster, LabelLine } from '../../src/ui/grouplabels.ts';
 import { LAYOUT, COMBAT_LOG_LINES } from '../../src/ui/frame.ts';
 import { measureText } from '../../src/lib/engine/text.ts';
+import { seatedFights } from '../kit/fights.ts';
 import { ok } from './lib.ts';
 
 const V = LAYOUT.view;
@@ -68,25 +69,16 @@ export function labelFaults(monsters: readonly LabelMonster[], width: number = V
 }
 
 export function labels(): void {
-  // Every group on the maps as played alone and in every fight of up to three of a map's groups.
-  // The outdoors as played, since a group follows the party over a zone's edge (docs/SYSTEMS.md).
+  // Every group on the maps as played alone and in every fight of up to three of a map's groups, each
+  // fight that seats apart once (tools/kit/fights.ts). The outdoors as played, since a group follows
+  // the party over a zone's edge (docs/SYSTEMS.md).
   const bad: string[] = [];
   let fights = 0, faulty = 0;
-  for (const d of PLAYED_DEFS) {
-    const es = d.encounters ?? [];
-    const check = (ids: string[], groups: { monsters: readonly string[]; back?: number }[]): void => {
-      fights++;
-      const faults = labelFaults(seat(groups));
-      if (faults.length) faulty++;
-      for (const f of faults) bad.push(`${d.id} ${ids.join('+')}: ${f}`);
-    };
-    for (let a = 0; a < es.length; a++) {
-      check([es[a].id], [es[a]]);
-      for (let b = a + 1; b < es.length; b++) {
-        check([es[a].id, es[b].id], [es[a], es[b]]);
-        for (let c = b + 1; c < es.length; c++) check([es[a].id, es[b].id, es[c].id], [es[a], es[b], es[c]]);
-      }
-    }
+  for (const { map, groups, seated } of seatedFights(PLAYED_DEFS, seat)) {
+    fights++;
+    const faults = labelFaults(seated);
+    if (faults.length) faulty++;
+    for (const f of faults) bad.push(`${map} ${groups.map((g) => g.id).join('+')}: ${f}`);
   }
   ok(bad.length === 0, `every group on the maps as played, alone and in ${fights} fights of up to three, names each kind with its count and labels inside the view, above the monsters${bad.length ? ` -> ${faulty} fights with ${bad.length} faults: ${bad.slice(0, 5).join('; ')}` : ''}`);
 
