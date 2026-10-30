@@ -1,7 +1,7 @@
 // Where a fallen company wakes (#1069): `nearestChapel`, the chapel the Lanterns carry a wiped company
 // to, nearest by the road of levels (a temple standing in the area it fell in, else in the nearest
 // area behind it on the road, else ahead; with none standing, Town Portal's town), and `wakeAtChapel`,
-// the carrying: the next morning, the chapel's square, the first in the party order on 1 hit point,
+// the carrying: the next morning, the chapel's square, the first in the party order on 1 hit point
 // and the two lines the log says. The Game (app/game.ts, `Game.fall`) calls it and opens the chapel.
 import { areaOf, homeMap, mapPlace } from './atlas/ways.ts';
 import type { Facing } from './types.ts';
@@ -56,8 +56,8 @@ export function nearestChapel(w: World): Haven {
 
 /**
  * The Lanterns carry a fallen company in (#1069): the clock to the next morning, then to the chapel
- * standing then (`nearestChapel`), the truce gone as Town Portal ends it, and the first in the party
- * order restored as a chapel's cure restores (`cure`, game/services.ts), for nothing: every condition
+ * standing then (`nearestChapel`), the truce gone as Town Portal ends it. The first in the party order
+ * is restored as a chapel's cure restores (`cure`, game/services.ts), for nothing: every condition
  * lifted, a fallen one on 1 hit point. The rest lie as they fell. The two lines the log says of it.
  */
 export function wakeAtChapel(w: World): [string, string] {

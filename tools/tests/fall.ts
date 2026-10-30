@@ -1,6 +1,6 @@
 // A wipe and the chapel the company wakes in (#1069): `nearestChapel` (src/game/chapel.ts) by the road
-// of levels from every area, a chapel out of its presence passed over, and Town Portal's town where
-// none stands or the atlas places the fall nowhere; then `Game.fall` as a player meets it, from a
+// of levels from every area, a chapel out of its presence passed over; Town Portal's town where none
+// stands or the atlas places the fall nowhere; then `Game.fall` as a player meets it, from a
 // fight in the Grove and from all down between fights on the isle: the next morning, the first in
 // the party order on 1 hit point and clean, the rest as they fell, nothing taken, the fight's groups
 // standing, the two lines and the chapel's menu open; a save made there loads there, and the pilot
@@ -23,7 +23,7 @@ import { logLines } from '../../src/ui/frame.ts';
 import { Pilot } from '../../src/app/pilot/pilot.ts';
 import type { Game } from '../../src/app/game.ts';
 
-/** Where each place the ruling names wakes (#1069, ruling 2): a map of it, the chapel, and the flags set first. */
+/** Where each place the ruling names wakes (#1069, ruling 2): a map of it, the chapel and the flags set first. */
 const ROAD: readonly [where: string, map: string, chapel: string, flags?: readonly string[]][] = [
   ['the Foreland', 'shelf', 'Chapel of the Lanterns'],
   ['Helmstow', 'harrow', 'Chapel of the Lanterns'],
@@ -104,7 +104,7 @@ export function fall(): void {
   ok(first.hp === 1 && first.conditions.length === 0 && JSON.stringify(rest) === was.rest,
     `the first in the party order wakes on 1 hit point, every condition lifted (${first.name}: ${first.hp} hp, ${first.conditions.join(', ') || 'well'}); the rest lie as they fell, unconscious, stoned and dead, their spell points spent`);
   ok(f.party.gold === was.gold && JSON.stringify(f.party.bag) === was.bag && JSON.stringify(f.party.flags) === was.flags && JSON.stringify(st.maps.grove1.groups[group] ?? null) === was.group,
-    `nothing is taken: the gold (${f.party.gold}), the bag, the flags, and the fight's group stands where it stood, alive (${was.group})`);
+    `nothing is taken: the gold (${f.party.gold}), the bag and the flags are as they were; the fight's group stands where it stood, alive (${was.group})`);
   ok(st.minutes === nextSeven(was.minutes) && st.minutes > was.minutes, `the clock moves to the next 07:00 (day ${Math.floor(was.minutes / 1440)} ${was.minutes % 1440} minutes to day ${Math.floor(st.minutes / 1440)} ${st.minutes % 1440})`);
   const said = f.log.slice(-2), rows = said.map((l) => logLines(l).length);
   ok(said.join('|') === lines.join('|') && rows.every((r) => r === 1) && !!room && room.roomLog(f).join('|') === lines.join('|'),
