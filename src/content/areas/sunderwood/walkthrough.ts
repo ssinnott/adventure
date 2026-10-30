@@ -45,12 +45,12 @@
 // clearing (#19): heard after his hint, and taught at 19; and the Cleric's second, taught by the sister
 // at L3's moth shrine (#203): her lesson after her own words, and taught at 19.
 import type { Walkthrough } from '../../area.ts';
-import { newWalk, walkThrough, see, fight, gone, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest, hear, answerTo, page, written, reads, there, clock, hired, who, shows, live, ofKind } from '../../../../tools/kit/walk.ts';
+import { newWalk, walkThrough, see, fight, gone, listen, meetWho, playChapter, ending, everyGoalWalked, goalFromBegun, quest, hear, answerTo, page, written, reads, there, clock, who, shows, live, ofKind } from '../../../../tools/kit/walk.ts';
 import { inBox } from '../../../../tools/kit/grid.ts';
 import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { CHAPTER } from './chapter.ts';
-import { STEPS as FORELAND_STEPS } from '../shelf/walkthrough.ts';
-import { STEPS as GROVE_STEPS } from '../thornmark/walkthrough.ts';
+import { STEPS as FORELAND_STEPS, hired } from '../shelf/steps.ts';
+import { STEPS as GROVE_STEPS } from '../thornmark/steps.ts';
 import { STEPS as TIDE_STEPS } from '../saltreach/walkthrough.ts';
 import { STEPS as WRACK_STEPS } from '../wrackholm/walkthrough.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
