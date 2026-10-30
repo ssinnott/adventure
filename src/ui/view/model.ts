@@ -1,6 +1,7 @@
 // What the view decides and does not draw (#1028), which the Node suites and the sweep's plan take: what
-// stands on a square ahead (`standsAt`), the houses, their buildings and the tents (`isHouse`, `building`,
-// `isTent`, `tentOf`), a wall's dressing and its rates (`wallDressing`, `DRESSING_RATES`, held by
+// stands on a square ahead (`standsAt`) and a cell as the scene draws it (`drawnAt`), a town's gates
+// (`isGateway`), the houses, how they look, their buildings and the tents (`isHouse`, `looksHouse`,
+// `building`, `isTent`, `tentOf`), a wall's dressing and its rates (`wallDressing`, `DRESSING_RATES`, held by
 // tools/tests/art.ts), the fields and the colours of the ground through the year (`fieldAt`, `cropColor`,
 // `hedgeColor`, `heatherBloom`, `iceColor`), how cold the year is on the heights (`cold`) and how far the
 // weather closes the view (`murkOf`, `washes`). It takes src/game and nothing of the painters: no canvas.
@@ -66,8 +67,56 @@ export function fieldAt(x: number, y: number): Field {
 
 export function toPair(p: { x: number; y: number }): [number, number] { return [p.x, p.y]; }
 
-/** A cell as the scene draws it: a door outdoors among mountain, rock or trees as they are, the void as its look (#829). */
-export function drawnAt(map: GameMap, x: number, y: number): Cell { const c = drawnCell(map, x, y); return c.look ?? c; }
+/**
+ * A cell as the scene draws it: a door outdoors among mountain, rock or trees as they are, the void as
+ * its look (#829) and a town's gate as a face of the wall it is set in, which carries the gate (#1071),
+ * but the open way it is to an eye standing in it.
+ */
+export function drawnAt(map: GameMap, x: number, y: number, eye?: { x: number; y: number }): Cell {
+  const c = drawnCell(map, x, y);
+  const gate = c.solid === 'none' && c.door === 'none' && !(eye && eye.x === x && eye.y === y) && isGateway(map, x, y);
+  return gate ? { ...c, solid: 'wall' } : c.look ?? c;
+}
+
+const gateways = new WeakMap<GameMap, ReadonlySet<number>>();
+/** The map last asked and its gates, so a frame's many asks of one map skip the lookup. */
+let lastMap: GameMap | undefined, lastGates: ReadonlySet<number> = new Set();
+
+/**
+ * A town's gate (#1071): a way through a wall, on a town's map or the outdoors (a dungeon's ways are
+ * its own), drawn as the wall with a gate in it. Its square is an exit and no door. Along its wall the
+ * squares beside it are wall, building or the map's edge, or more of the gate's squares and then one
+ * of those, so a gate is never at a wall's end or corner; across the wall it has open ground before it
+ * and the wall's mass behind. Found once a map, from its exits.
+ */
+export function isGateway(map: GameMap, x: number, y: number): boolean {
+  if (map === lastMap) return map.inBounds(x, y) && lastGates.has(y * map.width + x);
+  let found = gateways.get(map);
+  if (!found) {
+    const set = new Set<number>();
+    if (map.kind !== 'dungeon') {
+      const open = (cx: number, cy: number): boolean => { const n = map.at(cx, cy); return n.solid === 'none' && n.door === 'none'; };
+      const hard = (cx: number, cy: number): boolean => { const n = map.at(cx, cy); return n.solid === 'wall' || n.solid === 'building'; };
+      const way = (cx: number, cy: number): boolean => map.inBounds(cx, cy) && open(cx, cy) && map.exits.some((e) => e.x === cx && e.y === cy);
+      // From a square of the gate along its wall: past its own squares, the next must be wall.
+      const ends = (cx: number, cy: number, dx: number, dy: number): boolean => {
+        let k = 1;
+        while (k < 4 && way(cx + dx * k, cy + dy * k)) k++;
+        return hard(cx + dx * k, cy + dy * k);
+      };
+      for (const e of map.exits) {
+        if (!way(e.x, e.y)) continue;
+        // Set in a wall that runs (dx, dy): walled at both ends, open ground on one side and the wall's mass on the other.
+        const setIn = ([dx, dy]: [number, number]): boolean => ends(e.x, e.y, dx, dy) && ends(e.x, e.y, -dx, -dy)
+          && ((open(e.x + dy, e.y + dx) && hard(e.x - dy, e.y - dx)) || (open(e.x - dy, e.y - dx) && hard(e.x + dy, e.y + dx)));
+        if (setIn([1, 0]) || setIn([0, 1])) set.add(e.y * map.width + e.x);
+      }
+    }
+    gateways.set(map, found = set);
+  }
+  lastMap = map; lastGates = found;
+  return map.inBounds(x, y) && found.has(y * map.width + x);
+}
 
 /**
  * What the scene takes to stand on the cell at (d, l) from the eye: a wall (as `drawnAt` has it), a
@@ -81,11 +130,11 @@ export function standsAt(map: GameMap, px: number, py: number, f: Facing, backdr
   behind: (d: number, l: number) => { x: number; y: number } | undefined; solidAt: (d: number, l: number) => boolean;
   houseAt: (d: number, l: number) => boolean; tentAt: (d: number, l: number) => boolean;
 } {
-  const sq = (d: number, l: number): [number, number] => toPair(cellAt(px, py, f, d, l));
+  const sq = (d: number, l: number): [number, number] => toPair(cellAt(px, py, f, d, l)), eye = { x: px, y: py };
   const behind = (d: number, l: number): { x: number; y: number } | undefined => hillOver(map, px, py, f, d, l);
   return {
     behind,
-    solidAt: (d, l) => !behind(d, l) && isSolidWall(drawnAt(map, ...sq(d, l))),
+    solidAt: (d, l) => !behind(d, l) && isSolidWall(drawnAt(map, ...sq(d, l), eye)),
     houseAt: (d, l) => !behind(d, l) && isHouse(map, ...sq(d, l)),
     tentAt: (d, l) => !backdrop && !behind(d, l) && isTent(map, ...sq(d, l)),
   };
@@ -104,6 +153,15 @@ export function isHouse(map: GameMap, x: number, y: number): boolean {
   if (c.solid === 'building') return true;
   if (c.door !== 'door' && c.door !== 'locked') return false;
   return [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].some(([nx, ny]) => map.inBounds(nx, ny) && map.at(nx, ny).solid === 'building');
+}
+
+/**
+ * Whether a house's cell is drawn as a house, in plaster and timber under its building's roof: in a
+ * town every one, and outdoors one of a building its map marks a house (`MapDef.houses`, #1072). Any
+ * other building outdoors is the stone, or the felt, of its palette.
+ */
+export function looksHouse(map: GameMap, x: number, y: number): boolean {
+  return isHouse(map, x, y) && (map.kind === 'town' || building(map, x, y).marked);
 }
 
 /**
@@ -147,7 +205,7 @@ export const DRESSING_RATES: Record<Dressing, number> = {
 export function wallDressing(map: GameMap, x: number, y: number): Dressing | null {
   const cell = map.at(x, y);
   if (map.def.bare || !isSolidWall(cell) || cell.solid === 'void' || cell.door === 'door' || cell.door === 'locked') return null;
-  const house = map.kind === 'town' && isHouse(map, x, y);
+  const house = looksHouse(map, x, y);
   if (!house && map.bannerAt(x, y)) return 'banner';
   if (!isDressed(map, x, y)) return null;
   // Felt carries nothing: no sconce, crack or carving on a tent.
@@ -161,8 +219,11 @@ export function wallDressing(map: GameMap, x: number, y: number): Dressing | nul
   return null;
 }
 
-/** One building: the seed its plaster, roof and windows take their colours from, and its chimney's cell. */
-interface Building { seed: number; chimney: number; }
+/**
+ * One building: the seed its plaster, roof and windows take their colours from, its chimney's cell, and
+ * whether its map marks it a house (`MapDef.houses`).
+ */
+interface Building { seed: number; chimney: number; marked: boolean }
 const buildings = new WeakMap<GameMap, Map<number, Building>>();
 
 /**
@@ -184,7 +245,8 @@ export function building(map: GameMap, mx: number, my: number): Building {
   const all = [...cells].sort((a, b) => a - b);
   // Seeded by the top-left corner of its bounds, as a rectangular block always was.
   const seed = Math.min(...all.map((c) => c % map.width)) * 977 + Math.floor(all[0] / map.width) * 31 + map.id.length;
-  const b: Building = { seed, chimney: all[Math.floor(hash(seed, 5) * all.length)] };
+  const marked = all.some((c) => map.markedHouse(c % map.width, Math.floor(c / map.width)));
+  const b: Building = { seed, chimney: all[Math.floor(hash(seed, 5) * all.length)], marked };
   for (const c of all) known.set(c, b);
   return b;
 }
@@ -194,10 +256,10 @@ export interface Tent { x0: number; y0: number; x1: number; y1: number }
 
 /**
  * A tent's square: a building's square, or a door beside one, under a felt palette ('tent'), outside a
- * town, where a house is a house whatever the palette.
+ * town, where a house is a house whatever the palette, as is a building its map marks a house.
  */
 export function isTent(map: GameMap, x: number, y: number): boolean {
-  return map.kind !== 'town' && isHouse(map, x, y) && map.paletteAt(x, y).wallStyle === 'tent';
+  return isHouse(map, x, y) && !looksHouse(map, x, y) && map.paletteAt(x, y).wallStyle === 'tent';
 }
 
 /**

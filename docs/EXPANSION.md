@@ -144,13 +144,12 @@ ends 0.8 over the road at three quarters cleared and 1.4 at a full clear; Act IV
 over, Act II's own areas 0.5 to 0.8 and 1.2 to 1.6.
 
 Its first rows are the slice's own figures from its doc (`docs/archive/SLICE-history.md`): level 2
-from the Foreland and the cellar, level 4 with Brandy Hole, level 9 from one clear of everything,
-about two fifths of one more sweep of the Grove to 10 (a sweep pays 34% less once the Warden of the
-Cut is dead) and about 8,400 gold for six members from 5 to 10. Act I falls short of the budget:
+from the Foreland and the cellar, level 4 with Brandy Hole, level 9 from one clear of everything
+and about 8,400 gold for six members from 5 to 10. Act I falls short of the budget:
 three quarters of it should reach 10, where a clear of everything reaches 9. The maps have grown
 since: summed at ×1, one clear of Act I is worth 19,957 xp a member, level 12; paid by level in road
-order (#159), 15,292, level 10 and three quarters of the way to 11, and a sweep of the Grove at 10
-pays about 1,000, so seven tenths of one more reaches Thornhold's 11. Act II's three rows came
+order (#159), 15,292, level 10 and three quarters of the way to 11, and no box cleared whole is
+swept again: it stays empty (DESIGN §6). Act II's three rows came
 before their maps, each owed to the issue that builds its area (#159), and Act III's and Act IV's
 three the same way (#535, #542); each row's band and price window are in `CURVE` alone.
 
