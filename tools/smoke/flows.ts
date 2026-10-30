@@ -487,17 +487,37 @@ export async function asked({ page, ok }: Run): Promise<void> {
   if (has) await press(page, 'Space');
   const letter = has ? await top() : { screen: 'no letter', text: '', title: '' };
   await press(page, 'Escape');
+  // X on the sheet and another's digit swap the two (#1066); X and the first one's put them back.
+  type Order = { names: string[]; screen: string; at: number };
+  const order = (): Promise<Order> => page.evaluate(() => {
+    const g = window.__game!.game!, names = g.party.members.map((m) => m.name);
+    return { names, screen: g.top.constructor.name, at: g.selected };
+  });
+  const before = await order(), to = before.at === 5 ? 0 : 5;
+  await press(page, 'KeyX');
+  await press(page, `Digit${to + 1}`);
+  const swapped = await order();
+  await press(page, 'KeyX');
+  await press(page, `Digit${before.at + 1}`);
+  const back = await order();
   await press(page, 'Escape');
-  const closed = await page.evaluate(async () => {
+  const closed = await page.evaluate(async (names) => {
     const load: Load = (p) => import(p);
     const g = window.__game!.game!, C = await load<typeof import('../../src/content/index.ts')>('/src/content/index.ts');
     const top = g.top.constructor.name;
-    // Whatever went wrong above, the rest of the run starts in the street.
+    // Whatever went wrong above, the rest of the run starts in the street, the company in order.
     while (g.screens.length > 1) g.pop();
+    g.party.members.sort((a, b) => names.indexOf(a.name) - names.indexOf(b.name));
     if (g.party.bag.includes('fx_letter')) g.party.bag.splice(g.party.bag.indexOf('fx_letter'), 1);
     delete g.party.flags.fx_write; (g as { tables: typeof g.tables }).tables = C.TABLES;
     return top;
-  });
+  }, before.names);
+  const want = [...before.names];
+  [want[before.at], want[to]] = [want[to], want[before.at]];
+  ok(swapped.screen === 'SheetScreen' && swapped.names.join() === want.join() && swapped.at === to
+    && back.screen === 'SheetScreen' && back.names.join() === before.names.join(), `on the sheet X `
+    + `then ${to + 1}: ${before.names[before.at]} and ${before.names[to]} change places, the sheet `
+    + `following (${swapped.names.join(', ')}); X then ${before.at + 1} puts them back`);
   ok(words.screen === 'MessageScreen' && words.text === '"Riders, by night."' && question.screen === 'ChoiceScreen' && question.text === 'Shall I write to Hale?' && choiceColours > 20,
     `a person's first words (not words whose flag is unset) close onto their question, which paints (${words.screen}, then ${question.screen}, ${choiceColours} colours)`);
   ok(said.text === 'He writes, and seals it.\n\n(A Sealed Letter.)' && said.title === 'Captain Fixture' && after.flag && after.bag && after.screen === 'ExploreScreen',
