@@ -226,8 +226,8 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
 
 ## Open and owed
 
-- **Owed, not started:** nothing. The bounds are built: the eight boxes, the enclave, Wytgat (plan,
-  §12.12), and the lair, Sjongwierde, with the Old Chanter and the Telstok in it (plan, §12.13).
+- **Owed, not started:** nothing. The bounds are built: the eight boxes; the enclave, Wytgat (plan,
+  §12.12); and the lair, Sjongwierde, with the Old Chanter and the Telstok in it (plan, §12.13).
 - **Owed to a check:** nothing. Its checks hold no `owes` row and the items suite owes the Telstok
   no more; the curve, the gate, density and the ladder hold Saltreach with nothing owed.
 - **Watched, not moved:** B5's two Rifts, 4.75 fights to a rest each, and the choir's 82.7% won sit

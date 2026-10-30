@@ -1043,8 +1043,8 @@ What the seven areas after Saltreach copy from these boxes, and what they avoid 
   nave at 4–10,3–9 on four piers, the singers' bay at 1–2,5–7, the chancel at 5–9,11–12 and the
   stair down at 7,13; five looks and no group, chest or secret. The undercroft: 59 squares, its
   stair's foot at 7,1, its dead at 4,5, the steps from 7,7, where the singer is seen, down to the
-  Old Chanter at 7,9, the one way on; past it the singing floor at 5–9,10–13, the Telstok on the
-  stone at 7,10, a step from its place, and the hint at 9,12; behind the wall at 10,12 the hollow at
+  Old Chanter at 7,9, the one way on; past it the singing floor at 5–9,10–13, the hint at 9,12 and
+  the Telstok on the stone at 7,10, a step from its place; behind the wall at 10,12 the hollow at
   11–13,11–13 and its gifts at 12,12. With the Old Chanter standing a walker, wader, climber or
   floater reaches 27 of the undercroft's squares and none of the floor; with it fallen 49, and none
   of the hollow but through the wall. Its numbers are set by the lair's gate: 2,150 hit points,

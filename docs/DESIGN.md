@@ -1177,9 +1177,8 @@ without them. Designed in #846 to the direction of the owner's delegate (18 Octo
 #847 built the mark and the powers, in two halves, the first the mark and the three whose kinds were
 built (the Telstok, the Erzhemd and Akkush, then defined and placed nowhere), the second the three
 kinds not yet built and the other five (#921). Each area's issue (#830 to #837) builds the lair,
-its door and the rumour, and the creatures lane the guardians (docs/MONSTERS.md §13): seven lie in
-their lairs, named in the table below, and the Telstok waits in Saltreach's items for its lair
-(#830). Each area's doc has its own under §6.
+its door and the rumour, and the creatures lane the guardians (docs/MONSTERS.md §13): all eight
+lie in their lairs, named in the table below. Each area's doc has its own under §6.
 
 **What an artifact is.** An item marked so (`ItemDef.artifact`, #847): one in the world, found in its
 lair and never sold, with no price in any window: no shop stocks one or takes one, and the windows
@@ -1233,7 +1232,7 @@ and the conditions a ward may keep off, `WARDABLE`).
 | Artifact | Area | Slot; who may bear it | Numbers | Power | Lair, its door; guardian |
 |---|---|---|---|---|---|
 | the Hagstone | the Foreland | carried; any of the ten | none | a ward: never paralysed | Hag Hole, the sea cave behind a mouth in the cliff at E4's 3,6; the Hag |
-| the Telstok | Saltreach | a staff; cleric, sorcerer, druid, monk | 1d10+14, two-handed | an element: holy | A5, a drowned mound on the fen's west edge; the Old Chanter |
+| the Telstok | Saltreach | a staff; cleric, sorcerer, druid, monk | 1d10+14, two-handed | an element: holy | Sjongwierde, the drowned mound in the fen, down the stair in its crown at A5's 26,23; the Old Chanter |
 | Holdfast | Wrackholm | a light weapon; thief, bard, sorcerer | 1d8+15 | a spell: Grasping Roots, three a day | Nick's Locker, the sea cave under the reef at F5's 16,30; Old Nick |
 | the Erzhemd | the Kilns | armour; knight, paladin, ranger, thief, barbarian, bard, druid | armour 15 | a stat: speed +5 | the Randzeche, the old working behind an adit in the rim's foot at P5's 11,23; the Steiger |
 | Torhide | Cairnmoor | a shield; knight, paladin, ranger | armour 9 | regeneration | Bearn Liath, the cleft in the rim's face at P7's 5,24; the Rim Troll |

@@ -941,7 +941,7 @@ Decided by the builder for #830, each the owner's to overturn:
     generalisation and no weakening.
 51. **The lair is Sjongwierde,** the song mound in the Tidefolk's tongue (*sjong* song, *wierde* a
     mound above the flood): the mound where the priest of the rumour sang, a compound in the area's
-    tongue as Stienwierde and Sjonghol are (NAMES §3), and nothing a company is told outright.
+    tongue as Stienwierde and Sjonghol are (NAMES §3); it tells a company nothing outright.
     Its two levels are `sjongwierde`, the church under the mound, and `sjongwierde2`, the
     Undercroft; their features' and group's ids begin `sw_` and `sw2_`.
 52. **Its door is the stair in the drowned mound's crown, A5's 26,23,** the hills square A5 left
@@ -949,8 +949,8 @@ Decided by the builder for #830, each the owner's to overturn:
     facing back along the mound. It is the one square of A5 that changes, and A5 still stands 535
     squares, since the crown was hills and walked before; nothing stands within four squares of it,
     the nearest the bull toad at 25,28, six away, and it is no edge square, so no seam or row moves.
-    Its plates are at 34,151 and 34,155, two and six squares south of the door, as the Spittal's
-    two stand six apart.
+    Its plates are at 34,151 and 34,155, two and six squares south of the door, as the
+    Randzeche's two stand south of its adit on P5.
 53. **Two levels, the first holding no group, chest or secret,** so that nothing in the lair is had
     without the Old Chanter's fight: the church is its looks and the way down, as the Spittal's
     first level is. The owner may want a group there; none of the area's kinds stands at 30, and a
@@ -985,8 +985,9 @@ Decided by the builder for #830, each the owner's to overturn:
     the signs; the first level's looks and nothing more; the Old Chanter on the one way on, nothing
     past it reached while it stands, won at 30; the Telstok one in the world; the hollow found from
     the wall and shut but through it; the way out onto A5's 25,23; and Hiltje's first meeting
-    without the lines and the next with them. A5's check that the mound was left bare gives way to
-    the door's: the stone with its hills about it, walked to along row 23, nothing within four.
+    without the lines and the next with them. A5's check that the mound was left bare is kept in
+    the door's: the stone with its hills about it, walked to along row 23, nothing within four
+    squares, on the mound or on its way from 20,23.
 60. **The owed rows go,** since the lair places both: `old_chanter` from the `owes` of Saltreach's
     `checks.ts` (a monster no map places is owed in `owes.unplaced` until one does, EXPANSION §8.2),
     which owes nothing now, and `telstok` from `UNPLACED` in `tools/tests/items.ts`, the one

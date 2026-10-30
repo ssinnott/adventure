@@ -1080,7 +1080,7 @@ export const walkthrough: Walkthrough = (ok) => {
  * and south out of A4's corner, both walked, its north edge the rim's mountain but for that corner; the
  * wildfowler's word on the toads, the shrine at the fen's edge, a rest at the wildfowlers' hide while
  * both groups stand clear of it, the pools and the toad won, the stair in the drowned mound's crown walked
- * to, and the sluice-house found from the clear water at the dyke's foot. The fen under the rim (A6): west
+ * to and the sluice-house found from the clear water at the dyke's foot. The fen under the rim (A6): west
  * out of B6's reeds at 0,16 and south out of A5's corner, both walked, its south edge shut against A7,
  * which stays cut, B6's corner with it; the bell heard, the priest of stone's riddle, a rest
  * at the pilgrims' hearth, the drowned men and the toads won at 11 and the anchorite's cell found from
@@ -1242,13 +1242,13 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
   w.level = 10;
   for (const g of A5.encounters!) fight(w, `${A5.id}:${g.id}`);
   // The drowned mound's crown, 26,23, is the stair down into Sjongwierde, the lair: the one stone on the
-  // mound, its hills about it, walked to on foot along row 23 from the way in, and nothing within four
-  // squares of it.
+  // mound, its hills about it, walked to on foot along row 23 from the way in; nothing within four
+  // squares of it, on the mound or on its way from 20,23 (the bare mound's check, kept).
   const mound = reach(out, a5, [A5.start.x, A5.start.y], {}), stair = A5.exits!.find((e) => e.to === 'sjongwierde')!;
-  const nearStair = [...A5.features!, ...A5.encounters!, ...A5.secrets!].filter((f) => Math.abs(f.x - 26) + Math.abs(f.y - 23) <= 4);
+  const nearStair = [...A5.features!, ...A5.encounters!, ...A5.secrets!].filter((f) => Math.abs(f.x - 26) + Math.abs(f.y - 23) <= 4 || (f.x >= 20 && f.x <= 28 && f.y >= 21 && f.y <= 25));
   ok(A5.exits!.length === 1 && stair.x === 26 && stair.y === 23 && A5.rows[23].slice(25, 28) === '^"^' && A5.rows[22][26] === '^' && A5.rows[24][26] === '^'
     && [21, 24, 25, 26].every((x) => mound.has(square(out, a5, x, 23))) && !nearStair.length,
-    `the stair into Sjongwierde is the one stone in the drowned mound's crown at A5's 26,23, its hills about it, walked to on foot along row 23 from the way in; nothing stands within four squares of it${nearStair.length ? ` (${nearStair.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
+    `the stair into Sjongwierde is the one stone in the drowned mound's crown at A5's 26,23, its hills about it, walked to on foot along row 23 from the way in; nothing stands within four squares of it, on the mound or on its way from 20,23${nearStair.length ? ` (${nearStair.map((f) => `${f.x},${f.y}`).join(' ')})` : ''}`);
   // The secret: the clear water at the dyke's foot, the search there and the sluice-house behind the walling.
   const sluice = reach(out, a5, [A5.start.x, A5.start.y], ALL, [21, 15]);
   ok(sluice.size > 450 && !sluice.has(square(out, a5, 20, 15)), `the sluice-house is shut but for its walling: none of A5's ${sluice.size} squares walked, waded, climbed or floated reaches it`);
@@ -1511,7 +1511,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
     listen(w);
     // The rumour (#846): Hiltje in B3's withy beds says nothing of the priest at her first meeting, and at
     // every meeting after it her greeting and her word on the god and then of the priest who sang: words
-    // only, which set nothing, in no quest, and inside the say box.
+    // only, which set nothing, in no quest and inside the say box.
     const B3 = MAP_DEFS.find((d) => d.id === 'upperwater_b3')!, hiltje = B3.features!.find((f): f is Person => f.kind === 'npc' && f.name.startsWith('Hiltje'))!;
     const words = hiltje.says!.find((s) => s.lines.some((l) => l.includes('sang and never counted')))!;
     const sang = '"Before the temples there was a priest who sang and never counted. When her staff struck the floor, the dead lay down."';
