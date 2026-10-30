@@ -42,14 +42,15 @@ export function docs(): void {
     const got = Object.keys(RULES).flatMap((r) => said(d, r).map((f) => `${r} ${f}`));
     return got.length === want.length && want.every((w) => got.some((g) => g.startsWith(`${rule} `) && g.includes(w)));
   };
-  ok(only(copy('docs/DESIGN.md', '`src/content/atlas.ts`', '`src/content/atlases.ts`'), 'paths', '`src/content/atlases.ts` names no tracked file or folder'),
-    'a copy of DESIGN.md with a path made up is refused, the path named');
+  ok(only(copy('docs/DESIGN.md', '`src/content/atlas.ts`', '`src/content/atlases.ts`'), 'paths', '`src/content/atlases.ts` names no tracked file or folder')
+    && only(copy('docs/DESIGN.md', '`src/content/atlas.ts`', "`import './src/content/atlases.ts'`"), 'paths', '`src/content/atlases.ts` names no tracked file or folder'),
+    'a copy of DESIGN.md with a path made up is refused, the path named, quoted in a phrase as well');
   ok(only(copy('docs/DESIGN.md', '`areaBand`', '`areaBandOf`'), 'names', '`areaBandOf` is no word of src/, tools/, types/ or .github/ (areaBandOf)'),
     'a copy of DESIGN.md with a name made up is refused, the word named');
-  const cited = copy('docs/EXPANSION.md', '`tools/tests/curve.ts`)', '`tools/tests/curve.ts:42`), `docs/SYSTEMS.md`:12, `:7`');
-  ok(only(cited, 'lines', '`tools/tests/curve.ts:42` cites a line', '`docs/SYSTEMS.md`:12 cites a line', '`:7` cites a line')
+  const cited = copy('docs/EXPANSION.md', '`tools/tests/curve.ts`)', '`tools/tests/curve.ts:42`), `docs/SYSTEMS.md`:12, `:7`, `tools/smoke.ts#L5`');
+  ok(only(cited, 'lines', '`tools/tests/curve.ts:42` cites a line', '`docs/SYSTEMS.md`:12 cites a line', '`:7` cites a line', '`tools/smoke.ts#L5` cites a line')
     && !said({ path: CITES_ASKED[0], text: cited.text }, 'lines').length,
-  `a copy of EXPANSION.md citing a line in a span, after one and bare is refused at each; the same lines in ${CITES_ASKED[0]}, which asks an issue for one, are not`);
+  `a copy of EXPANSION.md citing a line in a span, by an anchor, after one and bare is refused at each; the same lines in ${CITES_ASKED[0]}, which asks an issue for one, are not`);
   const row = road()[2];
   ok(only(copy('docs/DESIGN.md', `| ${row.band} |`, '| 10–13 |'), 'bands', `DESIGN §4's row 3 is ${row.name} 10–13; the atlas and CURVE (src/content/progression.ts) have ${row.name} ${row.band}`),
     `a copy of DESIGN.md with a band changed is refused, the row and CURVE's band named (${row.name}, ${row.band})`);

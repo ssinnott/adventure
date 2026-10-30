@@ -127,10 +127,9 @@ It claims the lights, a new family, snow and ice underfoot, curse and the ring (
   1,360 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.8% of its 36 groups'
   fights (`GATE.through`'s aim); two under, pooled at 16, 6.82 fights to a rest, 80.2% of the
-  floor's 8.5. The
-  Cairn King is won 57% at 19 and 94% at 21, the Rim Troll 59% at 30 and 89% at 32. Under Carn Dubh
-  a company at 19 wins 85.7% of its fights. High Moor's road and the Cairnfield's are walked every
-  time.
+  floor's 8.5. The Cairn King is won 57% at 19 and 94% at 21, the Rim Troll 59% at 30 and 89% at 32.
+  Under Carn Dubh a company at 19 wins 85.7% of its fights. High Moor's road and the Cairnfield's
+  are walked every time.
 - **Fights to a rest** (aim 7.5 to 9.5, limit 6 to 12): N7 8.46, N8 8.66, O7 8.88, O8 11.13, M7
   10.51, M8 7.60, P7 8.94, P8 7.97, L8 8.54 and Carn Dubh 10.70; Under Carn Dubh 9.20 at 19 and Carn
   Fada 9.08 at 20, each inside its own aim. Fifteen figures are off their aim, inside their limits.
@@ -181,8 +180,7 @@ elves' Cornish and the Tidefolk's Frisian.
   hold Cairnmoor with nothing owed.
 - **Watched, not moved:** O8's 11.13 fights to a rest and Carn Dubh's 10.70 sit off the aim, near
   the limit of 12, and the Rim Troll's 89% at 32 is under `GATE.bossAbove`'s aim (plan, §8). What
-  the owner
-  finds by hand goes here; none yet.
+  the owner finds by hand goes here; none yet.
 - **Owed by a box as built** (plan, §11): the Watcher's page lies in a chest, not on his wight; the
   door behind the Cairn King's seat opens on nothing.
 - **Cut:** the Rimefells (O9 and N9) and the moor's slivers in the Kilns' boxes (plan, §11).

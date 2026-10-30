@@ -127,10 +127,9 @@ brothers are machines in robes. It claims the giants, peaks and cliffs underfoot
   24.4, the next floor 24.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.5% of its 31 groups'
   fights (`GATE.through`'s aim); two under, pooled at 20, 6.24 fights to a rest, 65.7% of the
-  floor's 9.5. The
-  Abbot is won 66% at 23 and 93% at 25, the Stair-king 58% at 22 and 79% at 24; at I10's floor a
-  company wins 91.6% of its fights, the king counted. The roads of Monks' Vale, the High Spine and
-  Sheer Point are walked every time.
+  floor's 9.5. The Abbot is won 66% at 23 and 93% at 25, the Stair-king 58% at 22 and 79% at 24; at
+  I10's floor a company wins 91.6% of its fights, the king counted. The roads of Monks' Vale, the
+  High Spine and Sheer Point are walked every time.
 - **Fights to a rest** (aim 8.5 to 10.5, limit 7 to 13): J11 8.69, Highcell's upper house 11.38,
   I11 10.12, I10 10.59, I9 9.43, I8 8.99, J10 9.72, I12 and J12 8.22 and J8 9.76; the lower house
   10.59 at 23, where a company wins 83% of its fights. Ten figures are off their aim, inside their

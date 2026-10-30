@@ -165,11 +165,10 @@ machines and the volcano with G11 and the springs with H10; the rest is on the r
   the enclave and the lair are counted in no clear (4,186 xp a member and 1,200 gold).
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.6% of its 45 groups'
   fights (`GATE.through`'s aim); two under, its groups pooled at 22, 7.61 fights to a rest, 76.1% of
-  the floor's
-  10. Old Cinder and the Ember Stone at 25 win 82.5% each, their bosses deciding it: the Old Drake
-  65% at 25 and 99% at 27, the Sentinel 65% and 97%. The Brood Drake is won 61% at 26 and 100% at
-  28, the Grave Drake 59% at 30 and 81% at 32. The corridors win 90.3% at 26 and every other map
-  every fight at its floor; the three zones' roads are walked every time.
+  the floor's 10. Old Cinder and the Ember Stone at 25 win 82.5% each, their bosses deciding it: the
+  Old Drake 65% at 25 and 99% at 27, the Sentinel 65% and 97%. The Brood Drake is won 61% at 26 and
+  100% at 28, the Grave Drake 59% at 30 and 81% at 32. The corridors win 90.3% at 26 and every other
+  map every fight at its floor; the three zones' roads are walked every time.
 - **Fights to a rest** (aim 9 to 11 at 24, a quarter more a level): H10 10.21, G10 10.88, F10 9.19,
   F9, G9 and H9 10.51 and the undercroft 10.10 at 24; G11 10.23, the vents 10.98, E10 10.49 and F11
   10.82 at 25, with the Ember Stone's 8.57, Old Cinder's 11.76 and E11's, H11's, H12's and G12's

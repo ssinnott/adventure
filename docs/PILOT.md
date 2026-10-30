@@ -451,14 +451,13 @@ not the finish.
 - **The stall in the Ashcombe cellar** (the same run, from about tick 34,000). In the cellar (map
   `mill`) at 11,10, a dead-end room three squares by two whose door is 13,11, on the map screen: no
   key for 6,000 ticks, the clock stopped at minute 126,836, the why "Bram is ready to train, and no
-  trainer seen to teach them.", no goal and no aim. A live group (`m_slime`) stands on 12,11, the only
-  square to the door; the navigator goes round the groups the automap shows, so only 5 squares are
-  reachable. `chooseAim` sees the doors to Thornhold, grove1 and greywater1 and `routeMaps` finds each,
-  but `toward` gets no key and marks each walked out (`src/app/pilot/aims.ts`); with no key there
-  is no clock, so
-  the group never moves: a deadlock. Mended by #723's first part: the navigator goes through a
-  group that stands in the only way, and the watchdog searches after 600 ticks with no key, so the
-  clock runs.
+  trainer seen to teach them.", no goal and no aim. A live group (`m_slime`) stands on 12,11, the
+  only square to the door; the navigator goes round the groups the automap shows, so only 5 squares
+  are reachable. `chooseAim` sees the doors to Thornhold, grove1 and greywater1 and `routeMaps`
+  finds each, but `toward` gets no key and marks each walked out (`src/app/pilot/aims.ts`); with no
+  key there is no clock, so the group never moves: a deadlock. Mended by #723's first part: the
+  navigator goes through a group that stands in the only way, and the watchdog searches after 600
+  ticks with no key, so the clock runs.
 - **The rations shuttle** (#842's review). The rule by member rested a company for a druid or a
   sorcerer with few points after nearly every fight, and the quartermaster bought only to two rations
   a head, so every second rest was a walk back for food: a drawn company on seed 4 said "Resting: Rook

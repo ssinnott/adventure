@@ -148,10 +148,9 @@ underfoot and the wreck, the Tide Ship's site.
   member and 1,368 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.3% of its 25 groups'
   fights (`GATE.through`'s aim); two under, its groups pooled at 10 manage 3.58 fights to a rest,
-  51.1% of the
-  floor's 7 (aim at most 66.7%). The road is walked every time at 12. The bosses at their floors
-  and two above: the Great Devilfish 66% and 99%, the Warden of the Tide 66% and 100%; Old Nick 57%
-  at 30 and 81% at 32.
+  51.1% of the floor's 7 (at most: `GATE.backDay`'s aim). The road is walked every time at 12. The
+  bosses at their floors and two above: the Great Devilfish 66% and 99%, the Warden of the Tide 66%
+  and 100%; Old Nick 57% at 30 and 81% at 32.
 - **Fights to a rest** (aim 6 to 8 at 12, 6.25 to 8.25 at 13): E6 7.20, Kelp Hole's two levels
   6.83 and 6.19, F6 8.02, the Tide Ship's three decks 5.72, 7.36 and 6.77 and the Rift 7.24; the
   Brokenback 7.48 at 14 (aim 6.5 to 8.5). Three figures are off their aim, inside the limits: the

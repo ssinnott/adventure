@@ -90,8 +90,8 @@ export function spans(text: string): Span[] {
 
 /** The extensions that make a word a path without a slash. */
 const EXT = /\.(ts|js|mjs|json|md|yml|yaml|html|css|png|txt|sh)$/;
-/** A line cite at a word's end: `:162`, `:12-14`. */
-const CITE = /:\d+(?:[-–:]\d+)*$/;
+/** A line cite at a word's end: `:162`, `:12-14`, or an anchor, `#L162`. */
+const CITE = /(?::\d+(?:[-–:]\d+)*|#L\d+(?:-L?\d+)?)$/;
 /** Whether a word is a path: one word with a slash or a known extension, a line cite after it or not. */
 export const isPath = (w: string): boolean => !/\s/.test(w) && (w.includes('/') || EXT.test(w.replace(CITE, '')));
 /** Whether a word is a name: one word, no path, with a capital or an underscore. */
@@ -100,12 +100,14 @@ export const isName = (w: string): boolean => !/\s/.test(w) && !isPath(w) && /[A
 export const nameParts = (w: string): string[] => w.split(/[^\w$]+/).filter(Boolean);
 /** The top folders a phrase's path is held from, as a command's file (`node tools/test.ts docs`). */
 const TOP = /^(src|tools|docs|types|\.github)\//;
+/** A phrase's word as a path: its quotes, brackets and trailing stops off, and a leading `./`. */
+const phraseWord = (w: string): string => w.replace(/^[('"]+|[)'",;]+$/g, '').replace(/^\.\//, '');
 /**
  * The paths a span names: its word, if a path; in a phrase (a command, a fragment of code, a line of
- * the game's), each word from a top folder, and not its flags, its outputs or a link.
+ * the game's), each word from a top folder, quoted or not, and not its flags, its outputs or a link.
  */
 export const pathsOf = (s: Span): string[] =>
-  /\s/.test(s.word) ? s.word.split(/\s+/).filter((w) => TOP.test(w)) : isPath(s.word) ? [s.word] : [];
+  /\s/.test(s.word) ? s.word.split(/\s+/).map(phraseWord).filter((w) => TOP.test(w)) : isPath(s.word) ? [s.word] : [];
 
 const NOT_OURS_WORDS = (table: readonly { word: string }[]): ReadonlySet<string> => new Set(table.map((r) => r.word));
 

@@ -158,11 +158,10 @@ gleaners. New here (`novel`): the long bodies and the toads, two new families, a
   and 921 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.9% of its 48 groups'
   fights (`GATE.through`'s aim); two under, its groups pooled at 8 manage 2.85 fights to a rest,
-  43.8% of the
-  floor's 6.5 (aim at most 66.7%). Each zone's road is walked every time, the Upper Water's and the
-  Delta's at 10 and the Saltings' at 11. The Choirmaster is won 48% at 11 and 100% at 13. Wytgat is
-  judged at its own band and out of these: every fight won at 13, and two under, at 11, 4.61 fights
-  to a rest, 63.6% of the floor's 7.25.
+  43.8% of the floor's 6.5 (at most: `GATE.backDay`'s aim). Each zone's road is walked every time,
+  the Upper Water's and the Delta's at 10 and the Saltings' at 11. The Choirmaster is won 48% at 11
+  and 100% at 13. Wytgat is judged at its own band and out of these: every fight won at 13, and two
+  under, at 11, 4.61 fights to a rest, 63.6% of the floor's 7.25.
 - **Fights to a rest** (aim 5.5 to 7.5 at 10, 5.75 to 7.75 at 11): C5 7.02 and its Rift 6.39, C4
   6.70, C3 7.12, B5 7.11 and its Rifts 4.75 each, B6 6.96, the temples' two levels 7.18 and 7.49,
   C6 7.26, C7 6.00, B3 7.09, B4 7.10, C2 6.47, B2 5.76, A3 5.89, A4 6.82, A5 6.84, A6 7.18, B7 7.41

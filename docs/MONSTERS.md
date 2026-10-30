@@ -244,10 +244,9 @@ place, are for the spells past 10 and the prestiges to settle (#20, #19).
 ### 3.3 What the road asks
 
 Each ask is a field on `MonsterDef` or `EncounterDef` and a few lines of `src/game/combat.ts` or
-`src/game/world.ts`,
-made once in the systems lane and first spent by the area named, which waits for it (EXPANSION.md
-§3, principle 2); no area invents one on the side. Each lands with the gate bot's answer to it
-(EXPANSION.md §5.2), or the check will call a monster harder than it is.
+`src/game/world.ts`, made once in the systems lane and first spent by the area named, which waits
+for it (EXPANSION.md §3, principle 2); no area invents one on the side. Each lands with the gate
+bot's answer to it (EXPANSION.md §5.2), or the check will call a monster harder than it is.
 
 | Ask | What it is | First needed | For |
 |---|---|---|---|
@@ -291,9 +290,8 @@ Decided by delegate for #537, each the owner's to overturn:
    (since #855 a fire weapon's die as well: the Beacon Hammer and Trollbrand); the log says
    "Tor Troll mends 36." and, burnt, "Tor Troll smoulders and does not mend."
 4. **A curse is what `src/game/party.ts` makes it, as disease is:** it outlasts a rest and a
-   raising; Faith
-   keeps it off, and Restore, Absolve (tier 7) or a temple lifts it. It takes nothing in a fight, so
-   no bot answers it; a bite there (Bless turned round) is the owner's to ask for.
+   raising; Faith keeps it off, and Restore, Absolve (tier 7) or a temple lifts it. It takes nothing
+   in a fight, so no bot answers it; a bite there (Bless turned round) is the owner's to ask for.
 5. **A call brings its whole group or none, and the cap counts every monster that came in,** the
    fallen too: never more than 12 in three groups, and no caller to farm. The called stand as their
    own group, act from the next round and pay as the rest; one called may call in its turn.
@@ -400,9 +398,8 @@ Decided by delegate for #546, each the owner's to overturn:
    and does not fell the member glasses it at its chance, and the log says "Bram turns to glass!"
    in place of a fall, once. The party card shows it as it shows the fallen, STONED in grey.
 2. **The glassed are out of the fight and the walk, as `src/game/party.ts` had them, and a rest
-   mends
-   nothing in them:** DESIGN §6's "or time" is not stone's. Their wounds wait as they were, and a
-   raising does not touch them.
+   mends nothing in them:** DESIGN §6's "or time" is not stone's. Their wounds wait as they were,
+   and a raising does not touch them.
 3. **One rule lifts it in three places:** Absolve (tier 7, from 23) as before; a Quickening
    Draught, which lifts stone and nothing else, from the bag or a pack, in a fight or on the walk;
    and any temple, at 80 gold a level of the member (`templePrice`, the rule and not a town's). The
@@ -552,23 +549,22 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
 
 1. **From 10 a company two under a floor is held by its day,** not its fights: it rests after fewer
    fights than the floor's aim gives, by the gate's `GATE.backDay`. No tier, item or counter could
-   make a tenth of fights two under lost without the
-   cliff DESIGN.md §1 forbids, and Act I keeps its fights, where two levels are a cliff by design.
+   make a tenth of fights two under lost without the cliff DESIGN.md §1 forbids, and Act I keeps its
+   fights, where two levels are a cliff by design.
 2. **The line is not moved for it.** A group stays sized for its floor's day; a map past the limit is
    re-sized inside its floor's own aims, a role up or a group thinner and never more monsters (#865).
 
-`tools/kit/line.ts` stats a generic monster for every role at every level (its two tables
-in `tools/kit/line.json`), and `tools/harness.ts` measures it. The company is the
-premade six at the level, in the gear the tables give it by then (the gear ladder,
-`GEAR`, from each area's rungs in `src/content/areas/<area>/checks.ts`: the kits, the
-Foreland's band
-gear and its finds with a plus by 3 and 5, then Thornmark's past them, the Deepthorn's at 10). It
-fights the encounter again and again from a fresh start, mending between fights with spells as a
-player would, until it loses one or must rest. A bot plays it that mends whoever is in danger and
-strikes, and casts a damage spell only when the hit points it saves are worth the spell points. Each
-is counted against what the company has left of that pool before it must rest, and a healer's spell
-points are priced at what they would mend. So the bot spends on what hurts while it is fresh, and
-holds back as its spell points run down. The calibration:
+`tools/kit/line.ts` stats a generic monster for every role at every level (its two tables in
+`tools/kit/line.json`), and `tools/harness.ts` measures it. The company is the premade six at the
+level, in the gear the tables give it by then (the gear ladder, `GEAR`, from each area's rungs in
+`src/content/areas/<area>/checks.ts`: the kits, the Foreland's band gear and its finds with a plus
+by 3 and 5, then Thornmark's past them, the Deepthorn's at 10). It fights the encounter again and
+again from a fresh start, mending between fights with spells as a player would, until it loses one
+or must rest. A bot plays it that mends whoever is in danger and strikes, and casts a damage spell
+only when the hit points it saves are worth the spell points. Each is counted against what the
+company has left of that pool before it must rest, and a healer's spell points are priced at what
+they would mend. So the bot spends on what hurts while it is fresh, and holds back as its spell
+points run down. The calibration:
 
 - Every role keeps its shape (§4.2) and hits as today's monsters hit, on the line; its hit points
   are whatever makes the day's fights.
@@ -650,18 +646,18 @@ level 1, 1,573 at 10 and 5,093 at 32; a boss pays four. There is no boss under l
 sits at its band's top.
 
 **When the line moves.** A monster past Act I stands on the line by its role and its level: its hit
-points, armour, to-hit, blow and xp are `testMonster(role, level)`'s (`node tools/harness.ts --stats
---roles soldier --levels 17` prints them), and its notes go on top: an `inflict`, a resistance, a
-healer's `cast`. When `--calibrate --write` makes the line again, a def on it is re-derived the same
-way, from its role and level, and keeps its notes: only its hit points and its dice move, since its
-armour, to-hit and xp come from the line's formulas and the curve. A def on a shape of the line, the
-test troll (`testTroll`) or a role come down whole by a share it names (`offLine`, on its def in
-`src/content/areas/<area>/monsters.ts`), is re-derived from that shape, its mending with it. A def
-set off the line on
-purpose, a boss its box's gate tuned, keeps its numbers and says so on itself (`offLine`) with the
-issue that set it. The harness suite fails any other monster past 10 that stands on no shape of the
-line at its level, so a def drawn on the old line fails until it is re-derived, as #414 re-derived
-Act II's after #409 and #541 Act III's.
+points, armour, to-hit, blow and xp are `testMonster(role, level)`'s
+(`node tools/harness.ts --stats --roles soldier --levels 17` prints them), and its notes go on top:
+an `inflict`, a resistance, a healer's `cast`. When `--calibrate --write` makes the line again, a
+def on it is re-derived the same way, from its role and level, and keeps its notes: only its hit
+points and its dice move, since its armour, to-hit and xp come from the line's formulas and the
+curve. A def on a shape of the line, the test troll (`testTroll`) or a role come down whole by a
+share it names (`offLine`, on its def in `src/content/areas/<area>/monsters.ts`), is re-derived from
+that shape, its mending with it. A def set off the line on purpose, a boss its box's gate tuned,
+keeps its numbers and says so on itself (`offLine`) with the issue that set it. The harness suite
+fails any other monster past 10 that stands on no shape of the line at its level, so a def drawn on
+the old line fails until it is re-derived, as #414 re-derived Act II's after #409 and #541 Act
+III's.
 
   Decided by the owner's delegate for #18, each the owner's to overturn:
 

@@ -135,9 +135,8 @@ the glass walkers are a family of their own. It claims the glass walkers, dunes 
   2,500 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 99.2% of its 32 groups'
   fights (`GATE.through`'s aim); two under, pooled at 24, 7.52 fights to a rest, 71.6% of the
-  floor's 10.5. The
-  Grey Lion, set off the line, is won 75% at 27 and 96% at 29, the Foal-taker 57% at 30 and 81% at
-  32. The Wold's road is walked every time.
+  floor's 10.5. The Grey Lion, set off the line, is won 75% at 27 and 96% at 29, the Foal-taker 57%
+  at 30 and 81% at 32. The Wold's road is walked every time.
 - **Fights to a rest** (aim 9.5 to 11.5, limit 8 to 14): D10 10.76, D9 9.67, D8 10.95, C8 10.46, B9
   10.41, E9 11.86, E8 12.00 and D7 9.95; B8 10.91 at 27, where a company wins 91.7% of its fights;
   Karaordu 10.60 at 28. Thirteen figures are off their aim, inside their limits.

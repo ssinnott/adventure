@@ -411,9 +411,8 @@ Decided by the builder for #852, each the owner's to overturn:
 6. The words: "Arms, or magic?", then "Who would be Expert?" (or Master). Each row is the member's
    name and the price or the reason, the question and the line chosen saying the rest; once taught,
    "<name> is Expert at arms now."
-7. `src/content/shipped.json`'s `tiers` holds the tier ids a save's `tiers` holds (expert,
-   master); the lines
-   are its keys, and no field's name is recorded there.
+7. `src/content/shipped.json`'s `tiers` holds the tier ids a save's `tiers` holds (expert, master);
+   the lines are its keys, and no field's name is recorded there.
 8. The sheet says the tier after the weapon ("WEAPON Long Sword, EXPERT") and before the spells
    ("SPELLS (MASTER) ..."), in capitals as its labels are.
 9. After a lesson the menu comes again, as the skills' does, at a trainer and at a Master's person.

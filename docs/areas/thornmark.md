@@ -135,9 +135,8 @@ the tower, the barrow and the grove.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.1% of its 75 groups'
   fights (`GATE.through`'s aim); two under (a town's or dungeon's, the area's 5), 60.6%, off
   `GATE.back`'s aim and inside its limit. The Thornmark map wins 100% at 5 and 22.2% at 3. The
-  bosses at their
-  floors and two above: the Hand of Ash 63% and 100%, the Warden of the Cut 41% and 100%, the
-  Eldest 55% and 100%.
+  bosses at their floors and two above: the Hand of Ash 63% and 100%, the Warden of the Cut 41% and
+  100%, the Eldest 55% and 100%.
 - **Fights to a rest** (aim 5.5 to 7.5, limit 4 to 10): the Thornmark map 5.96, the Grove Roots
   5.95, the Cut Stone 6.70, H3 8.06, I3 7.47, I4 7.55, I5 7.31, J4 7.58 and J5 6.27. H3, I4 and J4
   are off their aim, and with the two under they are the gate's four.
