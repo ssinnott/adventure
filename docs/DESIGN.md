@@ -507,18 +507,20 @@ Decided by the owner's delegate for #1070, each the owner's to overturn:
    acts before the monsters in every round, in its own speed order, and the log says "The company
    strikes first." once, at the fight's start. It takes the first round out of the 5 for #18 above.
 3. Sneak Attack is a blow on a foe before it acts, and the log marks it as a second sentence:
-   "Ottilie hits Giant Rat for 7. Sneak attack." The ruling made it +2, and 1 more every two levels
-   past 10 with the Tumbler, on a blow before the foe's turn in any round; as built, the builder's 1.
+   "Ottilie hits Giant Rat for 7. Sneak attack." It was ruled +2, and 1 more every two levels
+   past 10 with the Tumbler, on a blow before the foe's turn in any round; the gate's figures
+   withdrew that (4 lines past their limits, 23 off their aim), and the delegate's second ruling
+   adopts the first-round form of the builder's 1.
 
 Decided by the builder for #1070, each the owner's to overturn:
 
 1. Sneak Attack is a blow on a foe in its first round, before its turn: the fight's first round, or
    the round it is called in; and every blow of the Nightjar's vanished round, as before. It keeps
-   main's +4 and the Tumbler's 2 more every two levels past 10. Measured, a sneak attack in every
-   round took a boss off its aim at any value that kept the thief's late blow (the tallymaster at
-   27, at 70% before, to 71% at +1), and the ruling's +2 took 23 of the gate's lines off their aim
-   and 4 past their limits; this takes no line off its aim, three come back into theirs, and the
-   harness stays within a sixth of a fight.
+   main's +4 and the Tumbler's 2 more every two levels past 10. Measured, a sneak attack on every
+   blow of every round took a boss off its aim at any value that kept the thief's late blow (the
+   tallymaster at 27, at 70% before, to 71% at +1), and the ruling's +2 took 23 of the gate's lines
+   off their aim and 4 past their limits; this takes no line off its aim, three come back into
+   theirs and the harness stays within a sixth of a fight.
 2. The mark follows the hit's own sentence and comes before a death: "... for 7. Sneak attack.
    Giant Rat dies." The log's readers keep the hit's head.
 3. "The company strikes first." follows the fight's "... attack!" and comes before the weather's
