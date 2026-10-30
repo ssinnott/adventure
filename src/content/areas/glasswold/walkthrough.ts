@@ -90,8 +90,8 @@ import { CHAPTER } from './chapter.ts';
 import { WATCH, SCHOLAR_ASKED, ETCHING_GIVEN, ETCHING_READ } from './maps/wold_b9.ts';
 import { MASTER_MET, MASTER_FAVOUR } from './maps/wold_d10.ts';
 import { RESPAWN } from '../../../game/keys.ts';
-
 import { STEPS, GAP_FIRST, BY_THE_RIDE, UP_THE_STAIR, npcOn } from './steps.ts';
+
 // Another area's chapter, taken from the quest by its id and not from its file (#992).
 const WINDOW = THE_QUEST.chapters.find((c) => c.id === 'window')!;
 

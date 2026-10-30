@@ -789,10 +789,15 @@ function theRoad(): Scene[] {
       ok(log(w, 'frames')!.goal === 'Follow her knots down to the last frame before the foot of the stair.', 'the knots followed down the stair to the last frame');
       see(w, 'underdeep2:ud2_word');
       ok(log(w, 'frames')!.done && log(w, 'frames')!.pages[0].entries.some((e) => e.id === 'name'), 'on the last frame her name, not her knot: Every Frame She Marked is done');
-
+    } },
+    { name: 'foot', play: (ok) => {
       // The foot at 31, where the Catcher is sized on its odds, and the last door (#759): on four of the road's
       // five it stays shut, listening for five voices, and the way back up to the camp is open; the Hand's own
       // door beside it, shut behind her. On the five it opens as the company comes near, into the Heart.
+      const w = newWalk(ok, { level: 30, flags: {
+        lamp_hearth: 1, lamp_house: 1, lamp_sea: 1, lamp_shore: 1, q_bowl_pilgrims: 1, q_crack_sealed: 1, q_crew_open: 1, q_lamps: 1, q_lamps_key: 1,
+        q_lamps_out: 1, q_lamps_wrong: 1, q_token_cousin: 1,
+      } }), UD2 = mapDef('underdeep2');
       w.level = 31;
       for (const m of w.party.members) m.level = 31;
       fight(w, 'underdeep2:ud2_catcher');
