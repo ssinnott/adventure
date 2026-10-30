@@ -153,9 +153,11 @@ export function prestige(): void {
     }
     ok(hitThief === 0, 'and no foe strikes it then');
   }
-  // The monk of the second acts first and strikes from the back row.
+  // The monk of the second takes its speed's place in a round (#1070: its follow-through is
+  // tools/tests/skills.ts's), and strikes from the back row.
   const fast = member('monk', 19), mx = startCombat(TABLES, company(member('knight', 19), member('cleric', 19), member('sorcerer', 19), fast), [{ id: 'g', monsters: [foe('person', { speed: 99 })] }], makeRng(9));
-  ok(mx.order[0].side === 'party' && mx.order[0].i === 3 && canAttackFromRow(TABLES.items, fast, 3) && !canAttackFromRow(TABLES.items, member('monk', 11), 3), 'a Windwalker acts first in a round, and strikes from the back row');
+  const mxOrder = mx.order.map((r) => (r.side === 'party' ? String(r.i) : 'm')).join('');
+  ok(mx.order[0].side === 'monster' && canAttackFromRow(TABLES.items, fast, 3) && !canAttackFromRow(TABLES.items, member('monk', 11), 3), `a Windwalker no longer acts first: a foe of speed 99 comes before it (${mxOrder}); it strikes from the back row, and a Stillwater does not`);
   // The bard: +1 damage from its first, wards sleep and paralysis from its second, +2 and +2 from its third.
   const songs = [10, 11, 19, 27].map((l) => company(member('bard', l), member('knight', l)));
   const sb = startCombat(TABLES, songs[3], [{ id: 'g', monsters: [foe('person')] }], makeRng(10));
