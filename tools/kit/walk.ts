@@ -672,21 +672,3 @@ export const atLevel = (level: number, s: Step): Step => ({ name: `${s.name} at 
   w.level = level;
   s.play(w);
 } });
-
-/** Vask hires the company: before the chapter, or its last step for a company that came early. */
-export const HIRE: Step = { name: 'the hire', play: (w) => meetWho(w, 'q_ashcombe') };
-
-/** A new game hired by Vask, the way the chapter begins in order. */
-export function hired(w: Walk): void {
-  listen(w);
-  w.ok(!quest(w), 'a new game has no quest yet');
-  HIRE.play(w);
-  w.ok(w.news.at(-1) === 'New quest: The Dimming.', `Vask's hire begins the one quest (${w.news.at(-1)})`);
-}
-
-/** The Cargo Ledger found in Brandy Hole and given to Hale, as his first hand-in. */
-export function ledgerGiven(w: Walk): void {
-  open(w, 'greywater2:gw2_ledger');
-  meetWho(w, 'q_greywater_done');
-  w.ok(!!w.party.flags.q_greywater_done && !w.party.bag.includes('greywater_ledger'), 'Hale takes the ledger');
-}
