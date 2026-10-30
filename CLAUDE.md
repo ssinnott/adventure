@@ -12,7 +12,8 @@ question that needs it; README.md lists the docs. By lane:
 - **Area:** DESIGN §4 and the area's act in §9; its state, `docs/areas/<name>.md`, by its folder's
   name in src/content/areas/ or its place's (dead_drop.md, meridian_camp.md); the decisions.md
   and plan.md beside it when a question needs them.
-- **Creatures:** `docs/MONSTERS.md` §1 to §4.3; `docs/ROSTER.md`'s families, for its family.
+- **Creatures:** `docs/MONSTERS.md` §1 to §4.3 but §3.3, What the road asks; `docs/ROSTER.md`'s
+  families, for its family.
 - **Interiors:** DESIGN §11; the header of each file of `src/ui/interiors/`, its kit's with them.
 - **Quality:** DESIGN §13; EXPANSION §5, the contract it keeps; the runner's header,
   `tools/test.ts`.

@@ -2,14 +2,15 @@
 // not ours holds no row that resolves or that no doc names. Copies made from the real docs, with a
 // path made up, a name made up, a line cite added, a band changed and a lane's words changed in each
 // table that carries them, are each refused by the rule that holds it, and by no other. Each lane's
-// first read (#1026) is printed and held under the budget; copies with a section grown past it, a
-// heading renamed, CLAUDE.md naming a file more or one less, EXPANSION a byte over its most and a
-// "Decided by" list in it are refused as well.
+// first read (#1026) is printed and held under the budget, a file read whole at its size; copies
+// with each lane's own part grown past it, a heading renamed or named twice, CLAUDE.md naming a
+// file more or one less or past its 60 lines, EXPANSION a byte over its most and a "Decided by"
+// list in it are refused as well, and each grown only to its most passes.
 import {
-  BUDGET, CITES_ASKED, EXPANSION_MOST, LEFT_OUT, NOT_OURS, RULES, areaOf, firstRead, listed, readDocs, readTree, resolves,
-  road, spans, unneeded, type Doc, type Tree,
+  BUDGET, CITES_ASKED, CLAUDE_MOST, EXPANSION_MOST, LEFT_OUT, NOT_OURS, RULES, areaOf, firstRead, listed, readDocs, readTree,
+  resolves, road, spans, unneeded, type Doc, type Tree,
 } from '../kit/docs.ts';
-import { LANES } from '../kit/lanes.ts';
+import { LANES, type Lane } from '../kit/lanes.ts';
 import { ok } from './lib.ts';
 
 export function docs(): void {
@@ -45,8 +46,12 @@ export function docs(): void {
     if (!d.text.includes(from)) throw new Error(`${p} no longer says ${from}: the copy wants a new line to change`);
     return { path: p, text: d.text.replace(from, to) };
   };
+  // A copy grown to plant one fault is judged without the sizes, EXPANSION's and the first reads',
+  // which their own copies hold: a doc at its most stays a legal place to plant one.
+  const SIZE = /^(?:expansion )?docs\/EXPANSION\.md:1 docs\/EXPANSION\.md is [\d,]+ bytes, over|^(?:budget )?CLAUDE\.md:\d+ the \w+ lane's first read is [\d,]+ bytes, over/;
   const onlyIn = (t: Tree, d: Doc, rule: string, ...want: string[]): boolean => {
-    const got = Object.keys(RULES).flatMap((r) => said(d, r, t).map((f) => `${r} ${f}`));
+    const sized = want.some((w) => w.includes('bytes, over'));
+    const got = Object.keys(RULES).flatMap((r) => said(d, r, t).map((f) => `${r} ${f}`)).filter((g) => sized || !SIZE.test(g));
     return got.length === want.length && want.every((w) => got.some((g) => g.startsWith(`${rule} `) && g.includes(w)));
   };
   const only = (d: Doc, rule: string, ...want: string[]): boolean => onlyIn(tree, d, rule, ...want);
@@ -71,37 +76,65 @@ export function docs(): void {
     && !said(copy('docs/EXPANSION.md', '| one per family |', '| two per family |'), 'lanes').length,
   'a copy of ISSUES.md or EXPANSION.md with a lane\'s words changed is refused, and one with a lane renamed; EXPANSION\'s "At once" column is its own');
 
-  // Each lane's first read, its files and what of each, at the budget or under; a copy with a section
-  // grown by one byte past what its lane has to spare is refused, the lane named, and one with a
-  // heading FIRST_READ names renamed, the heading named. The texts a first read takes are the tree's.
+  // Each lane's first read, its files and what of each, at the budget or under, a file read whole
+  // counted at its size. A copy with each lane's own part grown by what the lane has to spare
+  // passes and one a byte longer is refused, the lane named: a section, a file's head, the largest
+  // of several and a header past its first line. One with a heading FIRST_READ names renamed, or
+  // named twice, is refused, the heading named. The texts a first read takes are the tree's.
   const n = (x: number): string => x.toLocaleString('en-GB');
   for (const lane of LANES) {
     const r = firstRead(lane, tree);
-    ok(r.bytes <= BUDGET && !r.lacks.length,
-      `${lane}: its first read is ${n(r.bytes)} bytes, ${n(Math.ceil(r.bytes / 4))} tokens of ${n(BUDGET / 4)}: ${listed(r)}${r.lacks.length ? '; ' + r.lacks.join('; ') : ''}`);
+    const whole = r.reads.filter((x) => !x.of.length).every((x) => x.bytes === Buffer.byteLength(tree.texts.get(x.path)!));
+    ok(r.bytes <= BUDGET && !r.lacks.length && whole,
+      `${lane}: its first read is ${n(r.bytes)} bytes, ${n(Math.ceil(r.bytes / 4))} tokens of ${n(BUDGET / 4)}: ${listed(r)}${r.lacks.length ? '; ' + r.lacks.join('; ') : ''}${whole ? '' : '; a file read whole is not counted at its size'}`);
   }
   const claude = doc('CLAUDE.md'), design = tree.texts.get('docs/DESIGN.md')!;
   const withDesign = (from: string, to: string): Tree => {
     if (!design.includes(from)) throw new Error(`docs/DESIGN.md no longer says ${from}: the copy wants a new line to change`);
     return { ...tree, texts: new Map(tree.texts).set('docs/DESIGN.md', design.replace(from, to)) };
   };
-  const room = BUDGET - firstRead('systems', tree).bytes;
-  const grown = (by: number): Tree => withDesign('## 6. Combat\n', `## 6. Combat\n${'a'.repeat(by - 1)}\n`);
-  ok(!said(claude, 'budget', grown(room)).length && onlyIn(grown(room + 1), claude, 'budget', `the systems lane's first read is ${n(BUDGET + 1)} bytes, over`),
-    `a copy of DESIGN.md with §6 grown by the ${n(room)} bytes the systems lane has to spare passes, and one a byte longer is refused, the lane named`);
-  ok(onlyIn(withDesign('### Races\n', '### The races\n'), claude, 'budget', "the systems lane's first read (FIRST_READ): `docs/DESIGN.md` has no heading `### Races`"),
-    'and one with a heading FIRST_READ names renamed, the heading named');
+  // Where each lane's own part grows: at the start of the line after a heading or a title, at
+  // the end of the largest state's first line, or in a comment line put after a header's first.
+  const state = [...tree.texts.keys()].filter((f) => /^docs\/areas\/[^/]+\.md$/.test(f))
+    .reduce((a, b) => (Buffer.byteLength(tree.texts.get(b)!) > Buffer.byteLength(tree.texts.get(a)!) ? b : a));
+  const GROW: Readonly<Record<Lane, [string, string]>> = {
+    systems: ['docs/DESIGN.md', '## 6. Combat\n'], area: [state, ''], creatures: ['docs/ROSTER.md', '# Roster\n'],
+    interiors: ['src/ui/interiors/shops.ts', '//'], quality: ['tools/test.ts', '//'], design: ['docs/DESIGN.md', "### The bounds' eight\n"],
+  };
+  const grownBy = (lane: Lane, by: number): Tree => {
+    const [p, after] = GROW[lane], t = tree.texts.get(p)!, k = Math.max(0, by);
+    const i = after === '//' || !after ? t.indexOf('\n') : t.indexOf(after) + after.length;
+    if (after && after !== '//' && i < after.length) throw new Error(`${p} no longer says ${after}: the copy wants a new place to grow`);
+    const pad = after === '//' && k >= 4 ? `\n// ${'a'.repeat(k - 4)}` : 'a'.repeat(k);
+    return { ...tree, texts: new Map(tree.texts).set(p, t.slice(0, i) + pad + t.slice(i)) };
+  };
+  const bites = LANES.filter((lane) => {
+    const room = BUDGET - firstRead(lane, tree).bytes;
+    return !said(claude, 'budget', grownBy(lane, room)).length
+      && onlyIn(grownBy(lane, room + 1), claude, 'budget', `the ${lane} lane's first read is ${n(BUDGET + 1)} bytes, over`);
+  });
+  ok(bites.length === LANES.length, `a copy with each lane's own part grown by what the lane has to spare passes, and one a byte longer is refused, the lane named (${LANES.map((l) => `${l} at ${GROW[l][0]}`).join(', ')})${bites.length < LANES.length ? `; not so for ${LANES.filter((l) => !bites.includes(l)).join(', ')}` : ''}`);
+  ok(onlyIn(withDesign('### Races\n', '### The races\n'), claude, 'budget', "the systems lane's first read (FIRST_READ): `docs/DESIGN.md` has no heading `### Races`")
+    && onlyIn(withDesign('## 14. ', '## 6. Combat\n\nAgain.\n\n## 14. '), claude, 'budget', "the systems lane's first read (FIRST_READ): `docs/DESIGN.md` has 2 headings `## 6.`"),
+    'and one with a heading FIRST_READ names renamed, or named twice, the heading named');
 
   // CLAUDE.md names the first reads' files and no other; EXPANSION is at its most or under, with no
   // "Decided by" list (a decision goes to docs/decisions.md).
+  const tall = claude.text.split('\n').length - 1;
+  const taller = (k: number): Doc => copy('CLAUDE.md', '## The voice', `${'.\n'.repeat(Math.max(0, k))}## The voice`);
   ok(only(copy('CLAUDE.md', '`docs/SYSTEMS.md`', '`docs/SYSTEMS.md` and `docs/PILOT.md`'), 'reading', "names `docs/PILOT.md`, which no lane's first read holds")
-    && only(copy('CLAUDE.md', '`docs/SYSTEMS.md`', 'SYSTEMS'), 'reading', "FIRST_READ's `docs/SYSTEMS.md` (systems) is not named"),
-  'a copy of CLAUDE.md naming a file FIRST_READ lacks is refused, the file named, and one lacking a file of FIRST_READ');
-  const spare = EXPANSION_MOST - Buffer.byteLength(doc('docs/EXPANSION.md').text);
-  const longer = (by: number): Doc => copy('docs/EXPANSION.md', 'Its decisions: decisions.md.', `Its decisions: decisions.md. ${'a'.repeat(by - 1)}`);
+    && only(copy('CLAUDE.md', '`docs/SYSTEMS.md`', 'SYSTEMS'), 'reading', "FIRST_READ's `docs/SYSTEMS.md` (systems) is not named")
+    && !said(taller(CLAUDE_MOST - tall), 'reading').length && only(taller(CLAUDE_MOST - tall + 1), 'reading', `CLAUDE.md is ${CLAUDE_MOST + 1} lines, over ${CLAUDE_MOST}`),
+  `a copy of CLAUDE.md naming a file FIRST_READ lacks is refused, the file named, and one lacking a file of FIRST_READ; one at its ${CLAUDE_MOST} lines passes, one a line longer is refused`);
+  const spare = EXPANSION_MOST - Buffer.byteLength(doc('docs/EXPANSION.md').text), at = 'Its decisions: decisions.md.';
+  const longer = (by: number): Doc => copy('docs/EXPANSION.md', at, `${at}${'a'.repeat(Math.max(0, by))}`);
+  const ruled = (s: string): Doc => copy('docs/EXPANSION.md', at, s), list = 'EXPANSION holds a "Decided by" list';
   ok(!said(longer(spare), 'expansion').length && only(longer(spare + 1), 'expansion', `docs/EXPANSION.md is ${n(EXPANSION_MOST + 1)} bytes, over ${n(EXPANSION_MOST)}`)
-    && only(copy('docs/EXPANSION.md', 'Its decisions: decisions.md.', "Decided by the builder for #1026, each the owner's to overturn:"), 'expansion', 'EXPANSION holds a "Decided by" list'),
-  `a copy of EXPANSION.md grown by its ${n(spare)} bytes to spare passes, one a byte longer is refused, and one with a "Decided by" list`);
+    && only(ruled("Decided by the builder for #1026, each the owner's to overturn:"), 'expansion', list)
+    && only(ruled("Decided by the builder for #1026, each the owner's to overturn.\n\n1. A call."), 'expansion', list)
+    && only(ruled("Decided by the builder for #1026, each the owner's to overturn.\n1. A call."), 'expansion', list)
+    && !said(ruled("Decided by the owner's delegate (#1026): kept as built."), 'expansion').filter((f) => !SIZE.test(f)).length,
+  `a copy of EXPANSION.md grown by its ${n(spare)} bytes to spare passes, one a byte longer is refused, and one with a "Decided by" list, its first line ending on a colon or a list after it; one ruling in a sentence passes`);
 
   // The table only shrinks: a row whose word comes to resolve goes, and so does one no doc names.
   const built: Tree = { ...tree, files: new Set([...tree.files, 'dist/index.js']), folders: new Set([...tree.folders, 'dist']) };
