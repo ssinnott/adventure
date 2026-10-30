@@ -8,12 +8,14 @@
 // as a player meets it, and every row of it fits the panel. Each skill does its work with it and not
 // without, for a company of each people: Mountaineer and Swimmer climb and swim; Perception finds
 // surely, and a square further; Spirit Sense marks the dead through a wall and Danger Sense an aware
-// group behind a hill; with an Arms Master standing the company's first round comes before the
-// monsters'; a Cartographer, or a chart, maps a square further; a Lockpick, or a set of picks, opens a
+// group behind a hill; with an Arms Master standing the company comes before the monsters in every
+// round, a Windwalker in its speed's place among them, whose felling blow carries on; a Cartographer,
+// or a chart, maps a square further; a Lockpick, or a set of picks, opens a
 // locked chest, which a key opens too and nothing else. Pathfinder's pace and Lockpick's doors are
 // tools/tests/movement.ts's, Merchant's price tools/tests/shops.ts's and Navigator's fare
 // tools/tests/passage.ts's. A save keeps a member's skills, and one from before them has none.
 import { makeRng } from '../../src/lib/engine/rng.ts';
+import type { RngInstance } from '../../src/lib/engine/rng.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { defaultParty, partyCan, isDown, takePrestige, RACES, CLASSES, NAME_MAX } from '../../src/game/party.ts';
 import type { Party, RaceId, ClassId } from '../../src/game/party.ts';
@@ -22,9 +24,10 @@ import { GameMap } from '../../src/game/map.ts';
 import type { MapDef, Feature } from '../../src/game/mapdef.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { Person } from '../../src/game/people.ts';
-import { startCombat, currentTurn } from '../../src/game/combat.ts';
+import { startCombat, currentTurn, partyAct, aliveMonsters } from '../../src/game/combat.ts';
 import type { TurnRef } from '../../src/game/combat.ts';
-import { FIRST_LINE } from '../../src/game/combat/lines.ts';
+import { FIRST_LINE, FOLLOW_LINE } from '../../src/game/combat/lines.ts';
+import { monster } from '../../src/game/monsters.ts';
 import type { Screen } from '../../src/ui/screen.ts';
 import { ChoiceScreen, skillMenu, skillsLines, SHEET_COL_W } from '../../src/ui/screens.ts';
 import { talk } from '../../src/app/pilot/talk.ts';
@@ -214,6 +217,8 @@ export function skills(): void {
   }
   // newRound reads Arms Master off the member's list, and is held to `hasSkill`.
   armsMaster();
+  // The Windwalker's follow-through, in place of its acting first of all.
+  followThrough();
   // The halls' own menus, through a Game, and a person who teaches; every row of them fits the panel.
   menus(halls);
   fits();
@@ -274,8 +279,9 @@ function armsMaster(): void {
       : `${race} ${cls} ${how}: ${one} then ${two}, said ${said}`;
   })));
   ok(answers.every((a) => !a), `with an Arms Master standing the company comes before the wolves in the first round and in the second, and "${FIRST_LINE}" is said once, at the start; unlearnt or down, the wolves come first and it is not said; for every people and class (${[...seen].join('; ')})${answers.some((a) => a) ? ' -> astray: ' + answers.filter((a) => a).slice(0, 6).join(', ') : ''}`);
-  // A monk of the second prestige acts first of all (#856's builder's 5): before an Arms Master's
-  // company, and before the wolves without one. He is the slowest of the six, so only that rule puts him first.
+  // A monk of the second prestige no longer acts first of all (#1070, in place of #856's builder's 5):
+  // it takes its speed's place, in the company's own order with an Arms Master and among the wolves
+  // without one. He is the slowest of the six, so he comes last of the company either way.
   const monk = (master: boolean): string => {
     const rng = makeRng(23), p = defaultParty(TABLES, rng);
     for (const m of p.members) { m.race = 'human'; m.cls = 'knight'; m.stats.speed = -100; }
@@ -285,7 +291,43 @@ function armsMaster(): void {
     return startCombat(TABLES, p, [{ id: 'g', monsters: ['wolf', 'wolf', 'wolf'] }], rng).order.map((r) => (r.side === 'party' ? String(r.i) : 'm')).join('');
   };
   const led = monk(true), alone = monk(false);
-  ok(/^3[0-5]{5}mmm$/.test(led) && /^3mmm[0-5]{5}$/.test(alone), `a monk of the second prestige acts first of all: before the rest of a company with an Arms Master, then the wolves; before the wolves without one (${led} / ${alone})`);
+  ok(/^[0-245]{5}3mmm$/.test(led) && /^mmm[0-245]{5}3$/.test(alone), `a monk of the second prestige takes its speed's place: last of a company with an Arms Master, then the wolves; last of all without one (${led} / ${alone})`);
+}
+
+/**
+ * The Windwalker's follow-through (#1070, in place of acting first): a blow of a monk of the second
+ * prestige that fells its foe is not spent while a foe it can reach stands, and it strikes again at
+ * the next, at most once more for each of the turn's own blows, from the back row as well; the log
+ * marks each blow that carries on with FOLLOW_LINE, after the death. A miss, a blow that fells
+ * nothing, a felling blow with no foe left and a Stillwater's carry nothing on. One turn of the
+ * monk's, played by a generator that always hits (or always misses) at its dice's top, against wolves
+ * of 1 hit point (or of 1,000).
+ */
+function followThrough(): void {
+  const sure = (hit: boolean): RngInstance => ({ ...makeRng(1), chance: () => hit, int: (_a: number, z: number) => z, range: (_a: number, z: number) => z });
+  const turn = (prestiges: number, weapon: string | null, wolves: number, hp: number, hit: boolean, slot: number): string => {
+    const rng = makeRng(23), p = defaultParty(TABLES, rng), mk = p.members[slot];
+    mk.cls = 'monk';
+    for (let n = 0; n < prestiges; n++) takePrestige(mk);
+    mk.equipment.weapon = weapon;
+    const wolf = { ...monster(TABLES.monsters, 'wolf'), hp };
+    const s = startCombat(TABLES, p, [{ id: 'g', monsters: Array.from({ length: wolves }, () => wolf) }], rng);
+    s.turn = s.order.findIndex((r) => r.side === 'party' && r.i === slot);
+    const at = s.log.length, acted = partyAct(s, p, sure(hit), { type: 'attack', target: aliveMonsters(s)[0] });
+    const mine = s.log.slice(at).filter((l) => l.startsWith(`${mk.name} `));
+    const fell = mine.filter((l) => l.includes(' dies.')).length, on = mine.filter((l) => l.endsWith(` dies. ${FOLLOW_LINE}`)).length;
+    return `${acted ? '' : 'refused, '}${mine.length} blow${mine.length === 1 ? '' : 's'}, ${fell} fell, ${on} carried on`;
+  };
+  const cases: [string, string][] = [
+    ['two blows bare-handed from the back row, six wolves of 1', turn(2, null, 6, 1, true, 3)],
+    ['one blow with steel, six wolves', turn(2, 'shortsword', 6, 1, true, 3)],
+    ['two blows that miss', turn(2, null, 6, 1, false, 3)],
+    ['two blows on wolves of 1,000', turn(2, null, 6, 1000, true, 3)],
+    ['two blows on one wolf of 1', turn(2, null, 1, 1, true, 3)],
+    ['a Stillwater\'s two blows in front, six wolves of 1', turn(1, null, 6, 1, true, 0)],
+  ];
+  const want = ['4 blows, 4 fell, 2 carried on', '2 blows, 2 fell, 1 carried on', '2 blows, 0 fell, 0 carried on', '2 blows, 0 fell, 0 carried on', '1 blow, 1 fell, 0 carried on', '2 blows, 2 fell, 0 carried on'];
+  ok(cases.every(([, got], k) => got === want[k]), `a Windwalker's blow that fells its foe carries on to the next, once more at most for each of its own, from the back row too, and the log says "${FOLLOW_LINE}"; a miss, a blow that fells nothing, the last foe's fall and a Stillwater's carry nothing on (${cases.map(([how, got]) => `${how}: ${got}`).join('; ')})`);
 }
 
 /** The Foreland's ridge, a step east of 30,2, and its water, a step south of 12,28 (tools/tests/movement.ts): what a company can cross, as the world answers a step. */
