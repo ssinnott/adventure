@@ -5,7 +5,7 @@
 // is left alone by.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { MONSTERS, ITEMS, CLIMATES, TABLES } from '../../src/content/index.ts';
+import { MONSTERS, CLIMATES, TABLES } from '../../src/content/index.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { findWeather, SNOW_DRAG } from '../../src/game/weather.ts';
 import { World, WALK_STEPS, WALK_ENDS, FLOAT_ENDS, FLOAT_FAILS, START_MINUTES } from '../../src/game/world.ts';

@@ -69,7 +69,6 @@ import { INTERIORS } from './interiors.ts';
 import { NIGHTS, WENNA_UP } from './maps/rime_lodge.ts';
 import { CHAPTER } from './chapter.ts';
 import { STEPS, PASS_FIRST, backUp } from './steps.ts';
-import { buildMaps } from '../../maps.ts';
 import { OUTDOORS } from '../../../game/outdoors.ts';
 import { HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { worldGrid } from '../../../game/atlas.ts';

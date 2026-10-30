@@ -3,7 +3,7 @@
 // made here with the helper and lent, only where absent, by a table of the suite's own (`tablesWith`):
 // content's ITEMS is never written.
 import { makeRng } from '../../src/lib/engine/rng.ts';
-import { ITEMS, TABLES } from '../../src/content/index.ts';
+import { ITEMS } from '../../src/content/index.ts';
 import { P, PLUS_PRICE, core } from '../../src/content/items.ts';
 import { defaultParty, createCharacter, attackBonus, armorClass } from '../../src/game/party.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, toHit } from '../../src/game/combat.ts';

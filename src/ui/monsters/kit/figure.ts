@@ -167,7 +167,7 @@ export function headRing(cx: number, cy: number, r: number): number[] {
     o.push(cx + Math.cos(a) * rx, cy + s * ry);
   }
   return o;
-}const legPts = (l: [Pt, Pt, Pt]): number[] => [l[0].x, l[0].y, l[1].x, l[1].y, l[2].x, l[2].y];
+}
 /**
  * An arm as two tubes in one mass: an upper arm from the shoulder to the elbow and a forearm that
  * tapers clearly from elbow to wrist. Together they span about 0.37h, so a hanging hand reaches

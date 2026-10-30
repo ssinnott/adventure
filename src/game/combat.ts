@@ -159,7 +159,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
           // attack (`sneaks`, read before the blow lands) is marked after the hit's own sentence.
           const sneak = sneaks(s, c, m), dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
             + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
-          hurtMonster(s, m, dmg);
+          hurtMonster(m, dmg);
           s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
         } else s.log.push(`${c.name} misses ${m.def.name}.`);
       }

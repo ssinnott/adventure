@@ -63,7 +63,6 @@ export class CombatScreen implements Screen {
   /** The artifact the pending spell is cast from, if any (#847): a charge and no spell points. */
   private pendingFrom = '';
   private pendingItem = '';
-  private logSeen = 0;
   /**
    * Whose turn it is as the last `update` left it, for `render` to read; unset until the first. `update` is the
    * only place the screen walks the turn on (`currentTurn` rolls a sleeper's waking and, at a round's end, the next

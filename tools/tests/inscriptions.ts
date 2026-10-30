@@ -19,7 +19,7 @@ import { holds } from '../../src/game/quests.ts';
 import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { readerOf, readMarks, signLine, readLine, markLine, isInscription, marksOf, readId } from '../../src/game/inscriptions.ts';
-import { ATLAS, MAP_DEFS, ITEMS, TABLES } from '../../src/content/index.ts';
+import { ATLAS, MAP_DEFS, TABLES } from '../../src/content/index.ts';
 import { CONTENT, collect, compare } from '../kit/shipped.ts';
 import { ok, fxMap, fxKey, fxFlag } from './lib.ts';
 import { tablesWith } from '../kit/headless.ts';

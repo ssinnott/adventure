@@ -70,7 +70,9 @@ export function weather(): void {
   }
   {
     const a = makeRng(3), b = makeRng(3);
-    const wa = new World(TABLES, buildMaps(), defaultParty(TABLES, a), a), wb = new World(TABLES, buildMaps(), defaultParty(TABLES, b), b);
+    // b's world is built as a's is, so that b has drawn what building a's drew.
+    const wa = new World(TABLES, buildMaps(), defaultParty(TABLES, a), a);
+    new World(TABLES, buildMaps(), defaultParty(TABLES, b), b);
     for (let i = 0; i < 50; i++) { wa.advance(97); void wa.weather; wa.weatherNews(); void wa.sight; }
     ok(a.next() === b.next() && a.next() === b.next(), 'reading the weather draws nothing from the gameplay rng');
   }

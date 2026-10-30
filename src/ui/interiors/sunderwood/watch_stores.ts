@@ -3,7 +3,7 @@
 // lamp that is lit.
 import { shade, rgba } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
-import { STAGE_W, STAGE_H, rnd, stones, beam, planks, flagstones, windowIn, forestFill, line, fillPoly, smudge, contact, slab } from '../kit.ts';
+import { STAGE_W, STAGE_H, rnd, stones, beam, planks, flagstones, windowIn, forestFill, line, smudge, contact, slab } from '../kit.ts';
 import { K, shelf, lantern, sword, spear, mace, staff, bow, shield, mail, crate, sack, books } from '../props.ts';
 import { glossPoly, glossEllipse } from '../../monsters/gloss.ts';
 import { armsRack } from '../yards.ts';
@@ -44,7 +44,7 @@ function wardingLamp(ctx: CanvasRenderingContext2D, x: number, y: number, h: num
 }
 
 /** The quartermaster's desk, its top's front edge at y: a sloped writing board on a cupboard, a stool. */
-function desk(ctx: CanvasRenderingContext2D, s: Stage, x0: number, x1: number, y: number): void {
+function desk(ctx: CanvasRenderingContext2D, x0: number, x1: number, y: number): void {
   slab(ctx, x0 + 4, y, x1 - x0 - 8, STAGE_H - y, shade(OAK, 0.8), { lit: 2 });
   planks(ctx, x0 + 10, y + 10, (x1 - x0) / 2 - 14, STAGE_H - y - 14, shade(OAK, 0.9), 2, true, 91);
   planks(ctx, (x0 + x1) / 2 + 4, y + 10, (x1 - x0) / 2 - 14, STAGE_H - y - 14, shade(OAK, 0.9), 2, true, 92);
@@ -92,7 +92,7 @@ export const STORES: Scene = {
     // The one lamp that is lit, hung over the desk.
     lantern(ctx, s, 134, 132, 11, '#6a5a3a', 20, s.daylight > 0.5 ? 120 : 210);
     smudge(ctx, 134, 180, 60, '#ffb060', 0.12);
-    desk(ctx, s, 46, 210, 224);
+    desk(ctx, 46, 210, 224);
     // Oil on the flags under the jars, and dust.
     for (let i = 0; i < 5; i++) { ctx.fillStyle = rgba('#2a1a0a', 0.25); ctx.beginPath(); ctx.ellipse(20 + rnd(100, i) * 100, FLOOR + 14 + rnd(101, i) * 10, 6 + rnd(102, i) * 8, 2, 0, 0, Math.PI * 2); ctx.fill(); }
   },

@@ -139,7 +139,7 @@ function meeting(g: Game, k: Known, p: Pilot, mem: Talk): Action | null {
     mem.goal = undefined;
   }
   const seen = k.features(st.mapId), people = seen.filter((f) => f.kind === 'npc' || f.kind === 'guild'), stood = people.filter((f) => keyOf(st.mapId, f) === at);
-  if (mem.at !== at) for (const f of stood) meet(p, mem, at, now);
+  if (mem.at !== at && stood.length) meet(p, mem, at, now);
   mem.at = at;
   if (p.goal) return null;
   const stones = seen.filter((f) => f.kind === 'statue' && stoneDue(p, mem, keyOf(st.mapId, f), k.heard));

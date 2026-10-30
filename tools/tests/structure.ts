@@ -23,7 +23,7 @@ import type { Answer, EncounterDef, Exit, Feature, Gate, MapDef, Night, NpcQuest
 import { EAST, SOUTH } from '../../src/game/types.ts';
 import { RESPAWN } from '../../src/game/keys.ts';
 import { ok, fxMap, fxFlag } from './lib.ts';
-import { presenceFaults, strandedLocks, respawnsOutOfRange, returningGuardians, questItems, guardian } from '../kit/rules/structure.ts';
+import { presenceFaults, strandedLocks, respawnsOutOfRange, returningGuardians, questItems } from '../kit/rules/structure.ts';
 
 /**
  * What a locked chest holds that the road may need (#857): an item a quest turns on (`questItems`) or

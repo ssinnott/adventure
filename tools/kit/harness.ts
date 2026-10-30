@@ -5,7 +5,7 @@ import os from 'node:os';
 import { Worker, isMainThread, parentPort } from 'node:worker_threads';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
-import { isDown, hasCondition, lift, heal, weaponOf, attackBonus, armsBonus, armorClass, bonus, statOf, hasTrait, spellHeal, rankMult, SPELLFIRE_DMG, MAX_LEVEL, prestigeOf, borne } from '../../src/game/party.ts';
+import { isDown, hasCondition, lift, weaponOf, attackBonus, armsBonus, armorClass, bonus, statOf, hasTrait, spellHeal, rankMult, SPELLFIRE_DMG, MAX_LEVEL, prestigeOf, borne } from '../../src/game/party.ts';
 import type { Character, Party } from '../../src/game/party.ts';
 import { startCombat, partyAct, aliveMonsters, canAttackFromRow, canReach, sweptRow, asGroup, castOnAlly, castOnParty, toHit, buffHit, traitDamage, monsterAc, monsterHit, seenMult, blowsOf, songDamage, FRONT_ROW, SLUMBER_CHANCE, ROOTS_CHANCE, HOLD_BREAKS } from '../../src/game/combat.ts';
 import type { CombatState, MonsterInst, PartyAction, Edge, Fighters } from '../../src/game/combat.ts';

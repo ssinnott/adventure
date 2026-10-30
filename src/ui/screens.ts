@@ -427,10 +427,8 @@ export class SpellScreen implements Screen {
   private readonly menu = new ListMenu();
   private get sel(): number { return this.menu.sel; }
   private set sel(row: number) { this.menu.sel = row; }
-  private context: 'explore';
   private onDone?: () => void;
-  constructor(context: 'explore', onDone?: () => void) {
-    this.context = context;
+  constructor(onDone?: () => void) {
     this.onDone = onDone;
   }
   private casters(g: Host): number[] { return g.party.members.map((m, i) => ({ m, i })).filter(({ m }) => m.spells.length && !isDown(m) && !hasCondition(m, 'asleep')).map(({ i }) => i); }

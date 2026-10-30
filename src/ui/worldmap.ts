@@ -690,11 +690,6 @@ function smoke(ctx: CanvasRenderingContext2D, x: number, y: number, n: number, g
   ctx.fillStyle = rgba('#5a524c', 0.5);
   for (let i = 0; i < n; i++) { ctx.beginPath(); ctx.arc(x + i * 1.6, y - i * 3.2, 1.6 + i * grow, 0, Math.PI * 2); ctx.fill(); }
 }
-function anchor(ctx: CanvasRenderingContext2D, x: number, y: number): void {
-  ctx.strokeStyle = INK; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.arc(x, y - 3, 3, 0.15 * Math.PI, 0.85 * Math.PI); ctx.moveTo(x, y - 9); ctx.lineTo(x, y); ctx.moveTo(x - 2.5, y - 7); ctx.lineTo(x + 2.5, y - 7); ctx.stroke();
-  ctx.beginPath(); ctx.arc(x, y - 9.5, 1.2, 0, Math.PI * 2); ctx.stroke();
-}
 
 const STONE = '#ddd2b8', STONE_D = '#a8997c', RED = '#a8392a', GREEN = '#3f7a3a', WOOD = '#8a6038';
 

@@ -13,7 +13,7 @@ import { writeFileSync, existsSync } from 'node:fs';
 import { relative, dirname, resolve } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';
 import { FACING_NAMES } from '../src/game/types.ts';
-import { SIZE, type Draft, baseline, cut, start, emit } from './kit/scaffold.ts';
+import { SIZE, type Draft, baseline, cut, emit } from './kit/scaffold.ts';
 
 /** The import path of a module under src/game/ from a file that lands at `out`, or in an area's maps folder. */
 const importFrom = (out: string | undefined, file: string): string => {

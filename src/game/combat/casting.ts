@@ -16,7 +16,7 @@ import { roll, standing, ROOTS_CHANCE, SLUMBER_CHANCE } from './state.ts';
 import type { MonsterInst, CombatState } from './state.ts';
 import { GLOVE_LINE, GLASS_WORD } from './lines.ts';
 
-export function hurtMonster(s: CombatState, m: MonsterInst, dmg: number): void {
+export function hurtMonster(m: MonsterInst, dmg: number): void {
   m.hp -= dmg;
   m.flash = 2;
   m.conditions = m.conditions.filter((k) => k !== 'asleep');
@@ -58,7 +58,7 @@ export function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Cha
       const m = s.monsters[target];
       if (!m || !standing(m)) { s.log.push(`${c.name}'s ${sp.name} fizzles.`); return; }
       const d = dmgOf(m);
-      hurtMonster(s, m, d);
+      hurtMonster(m, d);
       s.log.push(`${c.name} casts ${sp.name}: ${m.def.name} takes ${d}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
       glove();
       return;
@@ -77,7 +77,7 @@ export function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Cha
           : n ? `${c.name} casts ${sp.name}: ${n} of the ${m0.def.plural} ${n === 1 ? 'is' : 'are'} held fast.` : `${c.name} casts ${sp.name}, but no root holds.`);
       } else {
         let total = 0, killed = 0;
-        for (const m of members) { const d = dmgOf(m); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
+        for (const m of members) { const d = dmgOf(m); hurtMonster(m, d); total += d; if (m.hp <= 0) killed++; }
         s.log.push(`${c.name} casts ${sp.name}: ${total} damage to the ${m0.def.plural}` + (killed ? `, ${killed} slain.` : '.'));
         glove();
       }
@@ -86,7 +86,7 @@ export function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Cha
     case 'all': {
       const members = s.monsters.filter(standing);
       let total = 0, killed = 0;
-      for (const m of members) { const d = dmgOf(m); hurtMonster(s, m, d); total += d; if (m.hp <= 0) killed++; }
+      for (const m of members) { const d = dmgOf(m); hurtMonster(m, d); total += d; if (m.hp <= 0) killed++; }
       s.log.push(`${c.name} casts ${sp.name}: ${total} damage to every foe` + (killed ? `, ${killed} slain.` : '.'));
       glove();
       return;

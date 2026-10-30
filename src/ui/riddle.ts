@@ -38,7 +38,7 @@ export class RiddleScreen implements Screen {
     g.pop();
   }
 
-  render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
+  render(_g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     panel(ctx, BOX.x, BOX.y, BOX.w, BOX.h);
     const x = BOX.x + 12;
     let y = BOX.y + 10;

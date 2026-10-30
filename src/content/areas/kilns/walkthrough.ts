@@ -92,7 +92,7 @@ import { LOCKS } from '../../locks.ts';
 import { meet, heard, answer, barred, SHORT } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { buy, item } from '../../../game/items.ts';
-import { canTrainAt, xpForLevel, rest, createCharacter, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
+import { canTrainAt, xpForLevel, createCharacter, className, prestigeOf, takePrestige, PRESTIGES } from '../../../game/party.ts';
 import { nightCost, stay, train } from '../../../game/services.ts';
 import { teach } from '../../../game/prestige.ts';
 import { sought, seekId } from '../../../game/seeking.ts';
@@ -1343,7 +1343,7 @@ function anvilRift(w: Walk, ok: (cond: boolean, msg: string) => void): void {
 
   // The first step after it falls, into the cut or back out of it, says the tear has gone quiet; the
   // other square says nothing more.
-  for (const [dx, dy] of [[0, -1], [0, 1]]) {
+  for (const [, dy] of [[0, -1], [0, 1]]) {
     const t = dy < 0 ? w : newWalk(ok);
     t.level = 17;
     if (t !== w) { t.world.travel('anvil_stone', warden.x, warden.y + 1, NORTH); t.world.killGroups([warden.id]); }
@@ -1932,7 +1932,7 @@ function theBounds(): Scene[] {
       // The hills under the rim at the Stone (P5): east from O5's 31,16 onto P5's 0,16, walked, in the same
       // land at the same floor, so nothing is said of it.
       const w = newWalk(ok, { level: 16 }), out = outdoors();
-      const [p5, p6] = [P5.id, P6.id].map((id) => out.zones.find((z) => z.id === id)!);
+      const [p5] = [P5.id].map((id) => out.zones.find((z) => z.id === id)!);
       w.world.travel('kilnsheart_o5', 31, 16, EAST);
       const east = w.world.move('forward');
       ok(east.kind === 'moved' && w.world.zone?.id === P5.id && w.world.state.x === p5.x && w.world.state.y === p5.y + 16 && !east.messages.some((m) => m.includes('The Kilns.') || m.includes('harder')),
@@ -2003,7 +2003,7 @@ function theBounds(): Scene[] {
       // The shore under the port (L7): south from L6's 28,31 onto L7's 28,0, walked, in the same land at the
       // same floor, so nothing is said of it.
       const w = newWalk(ok, { level: 16 }), out = outdoors();
-      const [l7, p4, m7, o4, o5] = [L7.id, P4.id, 'cairnfield_m7', 'kilnsheart_o4', 'kilnsheart_o5'].map((id) => out.zones.find((z) => z.id === id)!);
+      const [l7, m7] = [L7.id, 'cairnfield_m7'].map((id) => out.zones.find((z) => z.id === id)!);
       w.world.travel('kilnmouth_l6', 28, 31, SOUTH);
       const shore = w.world.move('forward');
       ok(shore.kind === 'moved' && w.world.zone?.id === L7.id && w.world.state.x === l7.x + 28 && w.world.state.y === l7.y && !shore.messages.some((m) => m.includes('Kilnmouth.') || m.includes('harder')),

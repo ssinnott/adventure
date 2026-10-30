@@ -44,7 +44,7 @@ export class ExploreScreen implements Screen {
     }
     else if (is(a, 'search')) { w.advance(10); g.say(w.search() ? 'You find a hidden door!' : 'You search the wall ahead and find nothing.'); }
     else if (is(a, 'rest')) g.offerRest();
-    else if (is(a, 'cast')) g.push(new SpellScreen('explore'));
+    else if (is(a, 'cast')) g.push(new SpellScreen());
     else if (is(a, 'inventory')) g.push(new SheetScreen(g.selected));
     else if (is(a, 'journal')) g.push(new QuestScreen(g));
     else if (is(a, 'save')) g.saveGame();

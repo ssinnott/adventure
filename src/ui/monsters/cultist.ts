@@ -978,15 +978,6 @@ function vask(ctx: CanvasRenderingContext2D, x: number, y: number, h0: number, p
 
 
 
-function robeCreases(x: number, y: number, h: number, sy: number, hx: number, hy: number, shW: number): Crease[] {
-  const X = (u: number) => x + u * h, Y = (u: number) => y + u * h;
-  return [
-    { x0: X(shW * 0.85), y0: sy + h * 0.09, x1: X(shW * 1.05), y1: Y(-0.5), r: h * 0.02, a: 0.3 },
-    { x0: X(-shW * 0.95), y0: Y(-0.47), x1: X(shW * 1.05), y1: Y(-0.47), r: h * 0.02, a: 0.3 },
-    { x0: hx - h * 0.09, y0: hy + h * 0.13, x1: hx + h * 0.09, y1: hy + h * 0.13, r: h * 0.02, a: 0.35 },
-    { x0: X(-0.04), y0: Y(-0.44), x1: X(-0.08), y1: Y(-0.1), r: h * 0.018, a: 0.2 },
-  ];
-}
 
 /** The dark hollow under a cowl: a lumpy void with no line, a shade paler toward its rim. */
 function faceVoid(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx: number, ry: number, seed: number): void {
@@ -1039,34 +1030,6 @@ function halfMask(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: numb
   ctx.beginPath(); ctx.ellipse(cx + r * 0.48, cy - r * 0.24, r * 0.36, r * 0.19, 0.2, 0, Math.PI * 2); ctx.fill();
   emberEyes(ctx, cx - r * 0.46, cy - r * 0.26, cx + r * 0.48, cy - r * 0.24, r * 0.14, pulse, true, 2.2);
   if (h >= 46) softLine(ctx, B, [cx - r * 0.3, cy + r * 0.56, cx + r * 0.32, cy + r * 0.54], bone, Math.max(1, r * 0.14), 0.55);
-}
-
-/** Hands as small lumpy skin masses (near, far); each entry is [x, y, r]. */
-function hands(ctx: CanvasRenderingContext2D, h: number, skin: string, ...hs: [number, number, number][]): void {
-  // One blob PER hand. In a single blob the gradient runs across the union of both, so a hand out
-  // on the far side of the figure sits at the shadow end of the ramp and renders as a grey lump
-  // while its pair, a body's width away, renders as skin.
-  hs.forEach(([x, y, r], i) => {
-    blob(ctx, B, skin, [{ k: 'curve', pts: ring(x, y, r, r * 0.9, 7), wobble: 0.07, seed: 80 + i, sub: 2 }], { h, formK: 0.5 });
-  });
-}
-
-/**
- * Fingers closed round a shaft: bands across the hand, perpendicular to the shaft's axis `a`, so
- * the hand reads as gripping the thing under it rather than resting beside it.
- */
-function fingers(ctx: CanvasRenderingContext2D, h: number, skin: string, cx: number, cy: number, r: number, a: number): void {
-  if (h < 30) return;
-  const ux = Math.cos(a), uy = Math.sin(a), nx = -uy, ny = ux, w = Math.max(1, h * 0.009);
-  for (let i = -1; i <= 1; i++) {
-    const px = cx + ux * r * i * 0.6, py = cy + uy * r * i * 0.6;
-    softLine(ctx, B, [px - nx * r * 0.95, py - ny * r * 0.95, px + nx * r * 0.95, py + ny * r * 0.95], skin, w, 0.5);
-  }
-}
-
-/** Where the thumb sits for a hand of radius r closed on a shaft at angle `a`: [x, y, r] for hands(). */
-function thumb(cx: number, cy: number, r: number, a: number): [number, number, number] {
-  return [cx + Math.cos(a) * r * 0.5 + Math.sin(a) * r * 0.42, cy + Math.sin(a) * r * 0.5 - Math.cos(a) * r * 0.42, r * 0.44];
 }
 
 /** The soft dark a limb or a mantle throws on the cloth behind it, laid inside the mass, no line. */

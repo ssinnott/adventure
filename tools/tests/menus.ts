@@ -254,7 +254,7 @@ function more(): void {
 function casters(): void {
   const g = headlessGame(4);
   const picked = (['n1', 'n4', 'n7', 'n3', 'n6', 'interact'] as Action[]).map((a) => {
-    g.push(new SpellScreen('explore'));
+    g.push(new SpellScreen());
     drive(g, [a]);
     const who = (g.top as unknown as { who: number }).who;
     g.pop();

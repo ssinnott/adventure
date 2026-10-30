@@ -9,8 +9,7 @@
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
-import { ATLAS, MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
-import type { MonsterDef } from '../../src/game/monsters.ts';
+import { ATLAS, MAP_DEFS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import type { EncounterDef, Feature, MapDef } from '../../src/game/mapdef.ts';
 import { rest, MAX_LEVEL } from '../../src/game/party.ts';

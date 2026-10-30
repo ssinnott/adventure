@@ -140,7 +140,6 @@ function ogre(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p:
   const leather = shade('#5a3c22', tone), wrap = shade('#3a2c1c', tone), wood = shade('#4e3a22', tone);
   const rope = shade('#8e7a4c', tone), ivory = shade('#efe6cf', tone), farHex = shade(p.dark, 0.74);
   const iron = shade('#7d838c', tone), gum = shade('#2a1a1e', tone);
-  const Ys = Y(0.775) - b;                           // the shoulder line: high, and hunched
   const hy = Y(0.868) - b, hr = h * 0.105;           // the head centre and radius
   // Everything on the skull is laid out in head-radius units around (hx, hy) so the face cannot
   // drift off it: P maps (right, down) in those units to the canvas.

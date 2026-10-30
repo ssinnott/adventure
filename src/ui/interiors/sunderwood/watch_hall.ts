@@ -3,7 +3,7 @@
 // scrolls the order keeps.
 import { shade, rgba } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
-import { STAGE_W, STAGE_H, rnd, block, beam, planks, flagstones, line, smudge, fillPoly, path, ink, inkRect, slab, pool, clipRect, skyFill } from '../kit.ts';
+import { STAGE_W, STAGE_H, rnd, block, beam, planks, flagstones, line, smudge, fillPoly, path, ink, slab, pool, skyFill } from '../kit.ts';
 import { K, lantern, lanternRing } from '../props.ts';
 import { glossPoly, glossEllipse, glossBall } from '../../monsters/gloss.ts';
 import { lectern } from '../guilds.ts';
