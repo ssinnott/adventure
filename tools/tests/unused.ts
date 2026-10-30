@@ -27,7 +27,6 @@ export const ENTRY: readonly Entry[] = [
   { what: 'the paint kit', file: /^src\/ui\/paint\//, why: 'a kit (#983): a helper waits in it, adopted by nothing yet, until a family or a scene takes it (the rule of three)' },
   { what: "the monsters' kit", file: /^src\/ui\/monsters\/kit\//, why: 'a kit, as the paint kit is, for the families' },
   { what: "the rooms' kit", file: /^src\/ui\/interiors\/kit\//, why: 'a kit, as the paint kit is, for the scenes' },
-  { what: "the content's NARROW and LISTED", file: /^src\/content\/index\.ts$/, names: ['NARROW', 'LISTED'], why: 'the typecheck reads their types (a union widened, an area left out of AreaMaps); nothing reads their values' },
 ];
 
 /** What the check finds of the files given, each read by `read`: the exports, how many pass each way, each row's entry points and what fails. */
