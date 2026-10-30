@@ -242,7 +242,7 @@ adds armour: in the harness, armour that keeps up makes monsters hit harder, and
 | Knight | a second attack each turn | while the knight stands, the front row gains +2 to-hit | a third attack each turn |
 | Thief | a second attack each turn with a light weapon (dagger, short sword, sling), and Sneak Attack, a blow on a foe in its first round before its turn, grows by 2 every two levels | once a fight, drops from sight for a round: no foe can single the thief out, and its blows that round are sneak attacks | a third attack each turn with a light weapon |
 | Barbarian | a second attack each turn | Rage starts below three quarters of hit points, and the barbarian dies only at −30 | a third attack each turn |
-| Monk | two strikes a turn with a staff or bare hands | always acts first in a round, and can strike from the back row | a third strike each turn |
+| Monk | two strikes a turn with a staff or bare hands | a strike that fells a foe carries on to the next, once more at most for each, and can strike from the back row | a third strike each turn |
 | Paladin | rank 1, and a second attack each turn | rank 2, and Holy Strike rises to +6, on the dead only | rank 3, and a third attack each turn |
 | Ranger | rank 1, and two shots a turn with a bow | rank 2; Marksman rises to +4, and the weather no longer spoils the ranger's shots | rank 3, and three shots a turn |
 | Bard | rank 1; Inspiring Song adds +1 damage as well | rank 2; while the bard stands, the company can't be put to sleep or paralysed | rank 3; the song rises to +2 to-hit and +2 damage |
@@ -511,6 +511,8 @@ Decided by the owner's delegate for #1070, each the owner's to overturn:
    past 10 with the Tumbler, on a blow before the foe's turn in any round; the gate's figures
    withdrew that (4 lines past their limits, 23 off their aim), and the delegate's second ruling
    adopts the first-round form of the builder's 1.
+4. The Windwalker no longer acts first: a strike of its that fells a foe carries on to the next
+   (§5's table), and the log marks it. This ends the 5 for #856 above.
 
 Decided by the builder for #1070, each the owner's to overturn:
 
@@ -527,6 +529,12 @@ Decided by the builder for #1070, each the owner's to overturn:
    note.
 4. `sneaks` reads the trait, the round and the order, and the damage and the mark both read it, so
    that they never disagree; nothing in it, or in `strikesFirst`, draws on the generator.
+
+Decided by the builder for #1070 (pull request B), each the owner's to overturn:
+
+1. The bound is the turn's, twice the monk's own strikes, so a strike carried on may carry on again.
+2. It carries on only while a foe the monk can reach stands, to the weakest, as any later strike.
+3. The mark follows the death, "... Wolf dies. The blow carries on.", so the hit's head stays.
 
 The secondary skills of #857, Cartographer, Pathfinder, Lockpick, Merchant and Navigator:
 

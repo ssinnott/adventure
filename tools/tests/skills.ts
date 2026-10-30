@@ -318,16 +318,14 @@ function followThrough(): void {
     const fell = mine.filter((l) => l.includes(' dies.')).length, on = mine.filter((l) => l.endsWith(` dies. ${FOLLOW_LINE}`)).length;
     return `${acted ? '' : 'refused, '}${mine.length} blow${mine.length === 1 ? '' : 's'}, ${fell} fell, ${on} carried on`;
   };
-  const cases: [string, string][] = [
-    ['two blows bare-handed from the back row, six wolves of 1', turn(2, null, 6, 1, true, 3)],
-    ['one blow with steel, six wolves', turn(2, 'shortsword', 6, 1, true, 3)],
-    ['two blows that miss', turn(2, null, 6, 1, false, 3)],
-    ['two blows on wolves of 1,000', turn(2, null, 6, 1000, true, 3)],
-    ['two blows on one wolf of 1', turn(2, null, 1, 1, true, 3)],
-    ['a Stillwater\'s two blows in front, six wolves of 1', turn(1, null, 6, 1, true, 0)],
-  ];
-  const want = ['4 blows, 4 fell, 2 carried on', '2 blows, 2 fell, 1 carried on', '2 blows, 0 fell, 0 carried on', '2 blows, 0 fell, 0 carried on', '1 blow, 1 fell, 0 carried on', '2 blows, 2 fell, 0 carried on'];
-  ok(cases.every(([, got], k) => got === want[k]), `a Windwalker's blow that fells its foe carries on to the next, once more at most for each of its own, from the back row too, and the log says "${FOLLOW_LINE}"; a miss, a blow that fells nothing, the last foe's fall and a Stillwater's carry nothing on (${cases.map(([how, got]) => `${how}: ${got}`).join('; ')})`);
+  const back = turn(2, null, 6, 1, true, 3), steel = turn(2, 'shortsword', 6, 1, true, 0), missed = turn(2, null, 6, 1, false, 0);
+  const tough = turn(2, null, 6, 1000, true, 0), last = turn(2, null, 1, 1, true, 0), still = turn(1, null, 6, 1, true, 0);
+  ok(back === '4 blows, 4 fell, 2 carried on', `a Windwalker's blow that fells its foe carries on to the next, from the back row as well, and the log says "${FOLLOW_LINE}" after the death: two blows bare-handed from the back row on six wolves of 1 (${back})`);
+  ok(steel === '2 blows, 2 fell, 1 carried on' && back.startsWith('4 blows'), `once more at most for each of its own blows: one blow, with steel, fells two of six wolves (${steel}), two blows four`);
+  ok(missed === '2 blows, 0 fell, 0 carried on', `a miss carries nothing on (${missed})`);
+  ok(tough === '2 blows, 0 fell, 0 carried on', `nor a blow that fells nothing, on wolves of 1,000 (${tough})`);
+  ok(last === '1 blow, 1 fell, 0 carried on', `nor one that fells the last foe (${last})`);
+  ok(still === '2 blows, 2 fell, 0 carried on', `nor a Stillwater's, a monk of the first prestige (${still})`);
 }
 
 /** The Foreland's ridge, a step east of 30,2, and its water, a step south of 12,28 (tools/tests/movement.ts): what a company can cross, as the world answers a step. */
