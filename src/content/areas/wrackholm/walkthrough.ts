@@ -87,10 +87,6 @@ import { SAY_W, SAY_LINES } from '../../../ui/frame.ts';
 import { RESPAWN } from '../../../game/keys.ts';
 import type { Flag } from '../../index.ts';
 
-// The chain, for Sunderwood's walkthrough, which takes it from here until its own cut points it at
-// steps.ts (#1033).
-export { STEPS };
-
 // Another area's chapter, taken from the quest by its id and not from its file (#992).
 const TIDE = THE_QUEST.chapters.find((c) => c.id === 'tide')!;
 

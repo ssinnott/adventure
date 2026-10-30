@@ -24,19 +24,11 @@ import { ok, fail } from './lib.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
-/** The issues of #848's plan that clear today's crossings, each with what it does. */
-const KEYS = {
-  H8: "the walkthroughs as scenes: a chain takes an area's steps.ts, not its walkthrough",
-} as const;
-type Key = keyof typeof KEYS;
+/** The issues of #848's plan that clear today's crossings, each with what it does: none is left, H8 (#1033) the last. */
+const KEYS: Readonly<Record<string, string>> = {};
 
 /** Today's crossings, each `importer > imported` under the issue that clears it; a cycle is `cycle: ` and its files. */
-const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
-  H8: [
-    'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/saltreach/walkthrough.ts',
-    'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/wrackholm/walkthrough.ts',
-  ],
-};
+const KNOWN: Readonly<Record<string, readonly string[]>> = {};
 
 // ---- The rules --------------------------------------------------------------------------------
 
@@ -117,12 +109,12 @@ export function cycles(g: Graph): string[][] {
   return out.sort((a, b) => a[0] < b[0] ? -1 : 1);
 }
 
-/** The check of a graph against a table: each line that fails, the file pair or the cycle and the rule. */
-export function judge(g: Graph, known: Readonly<Partial<Record<Key, readonly string[]>>>): { failures: string[]; byRule: Map<string, number>; byKey: Map<string, number> } {
+/** The check of a graph against a table and its issues: each line that fails, the file pair or the cycle and the rule. */
+export function judge(g: Graph, known: Readonly<Record<string, readonly string[]>>, keys: Readonly<Record<string, string>> = KEYS): { failures: string[]; byRule: Map<string, number>; byKey: Map<string, number> } {
   const failures: string[] = [];
-  const rows = new Map<string, Key>();
-  for (const [key, list] of Object.entries(known) as [Key, readonly string[]][]) {
-    if (!(key in KEYS)) failures.push(`KNOWN: ${key} is no issue of #848's plan`);
+  const rows = new Map<string, string>();
+  for (const [key, list] of Object.entries(known)) {
+    if (!(key in keys)) failures.push(`KNOWN: ${key} is no issue of #848's plan`);
     for (const row of list) {
       if (rows.has(row)) failures.push(`KNOWN: ${row} is a row twice`);
       rows.set(row, key);
@@ -130,7 +122,7 @@ export function judge(g: Graph, known: Readonly<Partial<Record<Key, readonly str
   }
   const byRule = new Map<string, number>(), byKey = new Map<string, number>();
   const seen = new Set<string>();
-  const count = (rule: string, key: Key): void => {
+  const count = (rule: string, key: string): void => {
     byRule.set(rule, (byRule.get(rule) ?? 0) + 1);
     byKey.set(key, (byKey.get(key) ?? 0) + 1);
   };
@@ -171,21 +163,30 @@ export function layers(): void {
   const typed = forms.flatMap(([text]) => imports(text).typed), named = ['./c.ts', './x.ts', './t.ts', './u.ts', './t.ts', './u.ts'];
   ok(typed.join() === named.join(), `the lexer names what the forms import in types alone, which the UI's line reads: ${named.join(', ')}${typed.join() === named.join() ? '' : `, not ${typed.join(', ') || 'nothing'}`}`);
 
-  // The rules on a graph in memory: a new crossing fails, and so does a row that no longer crosses.
+  // The rules on a graph in memory: a new crossing fails, and so does a row that no longer crosses. The plan's
+  // keys are gone (#1033), so the fixture's rows stand under an issue of its own, X.
+  const X = { X: "the fixture's issue" };
   const fixture = graph(['src/game/a.ts', 'src/content/b.ts', 'src/content/areas/x/maps/m.ts', 'src/content/areas/y/public.ts', 'src/content/areas/y/maps/n.ts'], (f) => ({
     'src/game/a.ts': "import { B } from '../content/b.ts';",
     'src/content/b.ts': "import { A } from '../game/a.ts';",
     'src/content/areas/x/maps/m.ts': "import { N } from '../../y/maps/n.ts';\nimport { P } from '../../y/public.ts';",
   } as Record<string, string>)[f] ?? '');
-  const held = judge(fixture, { H8: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
+  const held = judge(fixture, { X: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] }, X);
   ok(held.failures.length === 0, `a graph in memory whose crossings and cycle KNOWN holds passes${held.failures.length ? ': ' + held.failures.join('; ') : ''}`);
-  const fresh = judge(fixture, { H8: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts'] });
+  const fresh = judge(fixture, { X: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts'] }, X);
   ok(fresh.failures.join() === "areas: src/content/areas/x/maps/m.ts imports src/content/areas/y/maps/n.ts, and an area takes another area's files only through its public.ts; no KNOWN row holds it",
     `a crossing no row holds fails, by its pair and its rule: ${fresh.failures.join('; ')}`);
-  const stale = judge(fixture, { H8: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts', 'src/game/a.ts > src/ui/gone.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
-  ok(stale.failures.join() === 'KNOWN: src/game/a.ts > src/ui/gone.ts (H8) no longer crosses: the row goes', `a row that no longer crosses fails: ${stale.failures.join('; ')}`);
-  const loop = judge(fixture, { H8: ['src/game/a.ts > src/content/b.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] });
+  const stale = judge(fixture, { X: ['src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts', 'src/game/a.ts > src/ui/gone.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] }, X);
+  ok(stale.failures.join() === 'KNOWN: src/game/a.ts > src/ui/gone.ts (X) no longer crosses: the row goes', `a row that no longer crosses fails: ${stale.failures.join('; ')}`);
+  const loop = judge(fixture, { X: ['src/game/a.ts > src/content/b.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] }, X);
   ok(loop.failures.join() === 'cycle: src/content/b.ts, src/game/a.ts import each other as they load; no KNOWN row holds it', `a cycle no row holds fails, by its files: ${loop.failures.join('; ')}`);
+  // A row under a key that is no issue of the plan fails by its key, which no type holds now.
+  const unkeyed = judge(fixture, { Y: [
+    'src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts',
+    'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts',
+  ] }, X);
+  ok(unkeyed.failures.join() === "KNOWN: Y is no issue of #848's plan",
+    `a row under no issue of the plan fails, by its key: ${unkeyed.failures.join('; ')}`);
   // An area's steps.ts is the chain its walkthrough plays (#1033): a walkthrough or a steps.ts takes its
   // own area's and any other's, as it takes the kit; a steps.ts takes no walkthrough; nothing in src takes one.
   const chains = graph(['src/content/areas/x/walkthrough.ts', 'src/content/areas/x/steps.ts', 'src/content/areas/y/steps.ts', 'src/content/areas/y/walkthrough.ts', 'src/content/areas/y/maps/n.ts', 'tools/kit/k.ts'], (f) => ({

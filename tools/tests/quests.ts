@@ -208,13 +208,13 @@ function zones(): void {
     ok(AREAS.every((a) => a.chapter || !a.maps.length) && !walks.length, `every area with a map has a chapter of the one quest and a walkthrough${walks.length ? ' -> none in ' + walks.map((a) => a.id).join(', ') : ''}`);
     // Act II read end to end (#204, #191): the Wall begins on Wrackholm's done flag, not on the Tide
     // Ship's papers picked up, and Sunderwood's walkthrough plays it on from Wrackholm's chapter, the
-    // papers carried from the ship and none put in the bag by hand.
+    // papers carried from the ship and none put in the bag by hand: its scenes and its chain, steps.ts (#1033).
     const wall = THE_QUEST.chapters.find((c) => c.id === 'wall'), wrack = AREAS.find((a) => a.id === 'wrackholm')?.chapter as Chapter | undefined;
     const flagsOf = (w: When): string[] => conds(w).flatMap((k) => [k.flag ?? []].flat());
     ok(!!wall && !!wrack && flagsOf(wrack.done).some((f) => flagsOf(wall.start).includes(f)) && !conds(wall.start).some((k) => k.item),
       'the Wall begins on Wrackholm\'s done flag, not on the Tide Ship\'s papers picked up');
-    const seeds = /fromTheTideShip\(|party\.flags\.q_tide_home = 1/.test(readFileSync(new URL('../../src/content/areas/sunderwood/walkthrough.ts', import.meta.url), 'utf8'));
-    ok(!seeds, 'Sunderwood\'s walkthrough puts no papers in the bag and no Stone home by hand, and plays the Wall on from Wrackholm\'s chapter');
+    const seeds = ['walkthrough.ts', 'steps.ts'].filter((f) => /fromTheTideShip\(|party\.flags\.q_tide_home = 1/.test(readFileSync(new URL(`../../src/content/areas/sunderwood/${f}`, import.meta.url), 'utf8')));
+    ok(!seeds.length, `Sunderwood's walkthrough and its steps.ts put no papers in the bag and no Stone home by hand, and play the Wall on from Wrackholm's chapter${seeds.length ? ' -> not ' + seeds.join(', ') : ''}`);
   }
 }
 
