@@ -441,9 +441,11 @@ holds under 25,000 tokens.
 The imports keep layers as the files keep lanes: `src/lib` under `src/game` under `src/content`
 under `src/ui` under `src/app` (and its entry, `src/main.ts`), the tools taking anything and
 `tools/kit/` only `src`, the walkthroughs and the suites `src` and `tools/kit/` and not each other
-or the tools, no area another's files but its `src/content/areas/<area>/public.ts` and no cycle
-among `src`'s runtime imports; `tools/tests/layers.ts` holds it, today's crossings the rows of its
-`KNOWN`, which only ever go (#900).
+or the tools (but a walkthrough or an area's steps.ts, the chain it plays, takes any area's
+steps.ts, which nothing in `src` takes), no area another's files but its
+`src/content/areas/<area>/public.ts` and no cycle among `src`'s runtime imports;
+`tools/tests/layers.ts` holds it, today's crossings the rows of its `KNOWN`, which only ever go
+(#900): none is left since H8 (#1033).
 
 The lanes are read as code, not by eye (#899): `node tools/lanes.ts <base>` lists the lanes the
 files changed since `<base>` fall in, each with its files, by the table of docs/ISSUES.md §2 (which
@@ -468,8 +470,8 @@ each other; `roadPlace` is `src/game/atlas.ts`'s, beside `areaBand`.
 #985 put the walk in it: `tools/kit/walk.ts`, the walk the walkthroughs and three suites take and,
 once, the helpers the walkthroughs wrote each for itself, and `tools/kit/grid.ts` beside it, the
 floods and tests over a map's squares and `ALL`. The chain a later chapter replays (`STEPS`,
-`FARM_FIRST`, Saltreach's `inOrder` and `saltmouthFirst`) moves to its steps.ts in H8: the kit
-takes no walkthrough.
+`FARM_FIRST`, Saltreach's `inOrder` and `saltmouthFirst`) is in its area's steps.ts since H8
+(#1033): the kit takes no walkthrough, and no walkthrough another's.
 
 The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; it, the monsters' kit
 (`src/ui/monsters/kit/`) and the rooms' (`src/ui/interiors/kit/`) are the systems lane's, as

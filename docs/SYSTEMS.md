@@ -30,8 +30,10 @@ The `layers` suite (`tools/tests/layers.ts`, EXPANSION §8.1, #900) reads the ru
 `src/` and `tools/` and holds them to the layers: no cycle among `src`'s, nothing in `src/game`
 taking content, the UI or the app, nothing in the UI the app, no area another's files but its
 `src/content/areas/<area>/public.ts` (#992) and the walkthroughs and the suites taking `src` and
-`tools/kit/` alone. Today's crossings are the rows of its `KNOWN`, each under the issue that clears
-it; a new crossing fails, and so does a row that no longer crosses.
+`tools/kit/` alone, but that a walkthrough or an area's steps.ts (its chain, #1033) takes any
+area's steps.ts, which nothing in `src` takes. A crossing is a row of its `KNOWN`, under the issue
+that clears it, and none is left since H8 (#1033): a new crossing fails, and so does a row that no
+longer crosses.
 
 ## The outdoors as one map
 
