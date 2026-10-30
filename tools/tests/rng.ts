@@ -1,16 +1,22 @@
 // The game's generator held to the engine's (#1021): src/game/rng.ts against the singleton, draw for
 // draw and state for state, from ten seeds and from the start state; against the engine's `makeRng`
 // on the nine seeds it takes, a zero being the singleton's and not its; two Games drawing two streams;
-// and a save's state carried from one Game into another.
+// a Game not yet seeded standing at the start state, whatever others drew; and a save's state
+// carried from one Game into another.
 //
 // The singleton is a copy of the engine's module of this suite's own, loaded again by its URL with a
 // query of its own: it stands at the engine's start state whatever else the process has drawn, and the
-// suite draws on no generator another suite reads.
+// suite draws on no generator another suite reads. No other file takes the singleton: each import
+// of the engine's rng.ts in src/ and tools/ names makeRng, freshSeed or a type (5).
+import { readFileSync } from 'node:fs';
+import { posix } from 'node:path';
 import { makeRng } from '../../src/game/rng.ts';
 import type { Rng, RngInstance } from '../../src/lib/engine/rng.ts';
 import { serialize } from '../../src/game/save.ts';
-import type { Game } from '../../src/app/game.ts';
+import { Game } from '../../src/app/game.ts';
+import { TABLES } from '../../src/content/index.ts';
 import { headlessGame, headlessLoad } from '../kit/headless.ts';
+import { imports, treeFiles } from '../kit/graph.ts';
 import { ok } from './lib.ts';
 
 /** The ten seeds: zero, small ones, the start state, the fallback, the 32-bit edges and a negative. */
@@ -56,11 +62,12 @@ export async function rng(): Promise<void> {
   const url = new URL('../../src/lib/engine/rng.ts', import.meta.url);
   url.search = '?rng-suite';
   const engine = (await import(url.href)) as typeof import('../../src/lib/engine/rng.ts');
-  const singleton = engine.rng;
+  const singleton = engine.rng, begins = singleton.state;
   const state = (r: Rng): number => r.state;
 
   // (1) Against the singleton: from where it starts, before anything seeds it, then from each seed, on
-  // a generator made at the seed and on one seeded after it was made, as the Game seeds its own.
+  // a generator made at the seed and on one seeded after it was made, as the Game seeds its own,
+  // then drawn on and seeded again, as the title seeds it, draws the company and starts the game.
   const start = makeRng().state, fromStart = parted(makeRng(), singleton, SIX, state);
   ok(fromStart === '', `a generator made with no seed starts where the singleton does (${hex(start)}), and a thousand draws of next, range, int, pick, chance and sign in turn equal its in value and in state${fromStart ? ': ' + fromStart : ''}`);
   const bySeed = SEEDS.map((s) => {
@@ -70,10 +77,21 @@ export async function rng(): Promise<void> {
     singleton.seed(s);
     const later = makeRng();
     later.seed(s);
+    later.next();
+    later.seed(s);
     const seeded = parted(later, singleton, SIX, state);
     return seeded && `seed ${shown(s)}, seeded after: ${seeded}`;
   }).filter((p) => p !== '');
-  ok(bySeed.length === 0, `from each of ten seeds (${SEEDS.map(shown).join(', ')}), made at it or seeded after, a thousand draws in turn equal the singleton's in value and in state${bySeed.length ? ': ' + bySeed.join('; ') : ''}`);
+  ok(bySeed.length === 0, `from each of ten seeds (${SEEDS.map(shown).join(', ')}), made at it or seeded after and again after a draw, a thousand draws in turn equal the singleton's in value and in state${bySeed.length ? ': ' + bySeed.join('; ') : ''}`);
+
+  // `chance` is strict, as the singleton's: at exactly the value its next draw gives, false (the
+  // engine's makeRng at a generator's state reads that value).
+  const lax = SEEDS.filter((s) => {
+    singleton.seed(s);
+    const r = makeRng(s), p = engine.makeRng(r.state).next();
+    return r.chance(p) || singleton.chance(p) || r.state !== singleton.state;
+  });
+  ok(lax.length === 0, `chance is strict, as the singleton's: at exactly the value its next draw gives it is false, on each of the ten seeds${lax.length ? ': not on ' + lax.map(shown).join(', ') : ''}`);
 
   // (2) Against the engine's makeRng: its five draws on the nine seeds it takes. A zero it takes to 1,
   // where the singleton falls back to 0x9e3779b9; the game's is the singleton's.
@@ -101,6 +119,13 @@ export async function rng(): Promise<void> {
   const unlike = [sc !== s4 ? `the state is ${hex(sc)}` : '', c4 !== a4 ? 'its world or party differs' : '', off >= 0 ? `its draw ${off + 1} is ${again[off]}, the first's ${drawn[off]}` : ''].filter((u) => u !== '');
   ok(unlike.length === 0, `a Game at seed 4 built after two others drew stands where the first stood when it was built (${hex(s4)}), its world and party the same, and draws the first's hundred draws${unlike.length ? ': ' + unlike.join('; ') : ''}`);
 
+  // A Game that draws before newGame or loadGame seeds it stands at the start state, whatever the
+  // others drew, and draws on no other's stream: two made bare after the three above.
+  const bare = [new Game(TABLES, null), new Game(TABLES, null)], was = bare.map((x) => x.rng.state);
+  bare[0].rng.next();
+  ok(was.every((s) => s === begins) && bare[1].rng.state === begins,
+    `two Games made after the others drew, before anything seeds them, stand at the start state (${was.map(hex).join(', ')}; the singleton's ${hex(begins)}), and a draw on one moves nothing of the other (${hex(bare[1].rng.state)})`);
+
   // (4) A save's state round-trips from one Game into another, and loading it moves nothing of the first.
   const g = headlessGame(4);
   for (let i = 0; i < 37; i++) g.rng.next();
@@ -108,4 +133,18 @@ export async function rng(): Promise<void> {
   const left = g.rng.state, loaded = h.rng.state, nextH = h.rng.next(), nextG = g.rng.next();
   ok(h.rng !== g.rng && left === saved && loaded === saved && nextH === nextG,
     `a save of one Game (serialize) loaded into another (headlessLoad) carries its generator's state, ${hex(saved)} to ${hex(loaded)}, and the next draw, ${nextG} to ${nextH}`);
+
+  // (5) No file but this suite takes the singleton. In src/ and tools/ (src/lib, vendored, apart),
+  // each import of the engine's rng.ts that tools/kit/graph.ts's lexer reads names makeRng,
+  // freshSeed or a type, never `rng` or the module whole, and none is an import().
+  const ENGINE = 'src/lib/engine/rng.ts', root = new URL('../../', import.meta.url);
+  const engineIn = (f: string, p: string): boolean => posix.normalize(posix.join(posix.dirname(f), p)) === ENGINE;
+  const takers = treeFiles().filter((f) => f.endsWith('.ts') && !f.startsWith('src/lib/') && f !== 'tools/tests/rng.ts').filter((f) => {
+    const text = readFileSync(new URL(f, root), 'utf8');
+    if (!text.includes('rng.ts')) return false;
+    const found = imports(text).runtime.filter((s) => engineIn(f, s.path));
+    const named = [...text.matchAll(/^(?:import|export)\s+(?!type\s)([^;]*?)\s+from\s+['"]([^'"]+)['"]/gm)].filter((m) => engineIn(f, m[2]));
+    return found.some((s) => s.dynamic) || (found.length > 0 && named.some((m) => /\*|\{[^}]*\brng\b/.test(m[1])));
+  });
+  ok(takers.length === 0, `no file of src/ or tools/ but this suite takes the singleton: each import of the engine's rng.ts names makeRng, freshSeed or a type${takers.length ? ': ' + takers.join(', ') : ''}`);
 }
