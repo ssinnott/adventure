@@ -568,6 +568,9 @@ function range(): Scene[] {
       const masons9 = groupOn(I9, 'i9_masons');
       w.world.travel(I9.id, masons9.x, masons9.y);
       w.world.killGroups([masons9.id]);
+      if ((w.world.mapState.groups[masons9.id]?.dead ?? -1) < 0) {
+        throw new Error(`i8's start: ${masons9.id} still stands`);
+      }
       const onTo8 = (level: number) => {
         for (const m of w.party.members) m.level = level;
         w.world.travel('sheerpoint_i9', 20, 0, NORTH);

@@ -492,10 +492,14 @@ function theRoad(): Scene[] {
       // loch's crossing line said at each level, as at a border walked (#166): at its floor the name alone,
       // two under the rest in its own words, three under the harsher and the way back east still open.
       const w = newWalk(ok, { level: 20, flags: { [WENNA_UP]: 1 } }), { out, l9 } = parts();
-      // The hole's group won, as the fourth night left it: a start says no group dead.
+      // The hole's group won, as the fourth night left it: a start says no group dead. No check
+      // would see a win that did not take, so it throws by name.
       const hole = groupOn(M9, 'm9_night_4'), girl = person(M9, 'A girl out of the hole');
       w.world.travel(M9.id, hole.x, hole.y);
       w.world.killGroups([hole.id]);
+      if ((w.world.mapState.groups[hole.id]?.dead ?? -1) < 0) {
+        throw new Error(`k9's start: ${hole.id} still stands`);
+      }
       const k9 = out.zones.find((z) => z.id === 'coldmere_k9')!;
       const fuar = (level: number): string[] => {
         for (const m of w.party.members) m.level = level;
