@@ -10,7 +10,7 @@
 
 export { VIEW_W, VIEW_H, paintOn } from './view/common.ts';
 export type { ViewRect, Flame } from './view/common.ts';
-export { murkOf, washes, heatherBloom, iceColor, cropColor, fieldAt, standsAt, hedgeColor, isHouse, DRESSINGS, DRESSING_RATES, wallDressing, isTent, tentOf } from './view/model.ts';
+export { murkOf, washes, heatherBloom, iceColor, cropColor, fieldAt, standsAt, hedgeColor, isHouse, DRESSINGS, DRESSING_RATES, wallDressing, isTent, tentOf, drawnAt, isGateway, looksHouse } from './view/model.ts';
 export type { Field, Dressing } from './view/model.ts';
 export { drawSkyBand, DUSK, drawDusk } from './view/sky.ts';
 export type { SkyOpts } from './view/sky.ts';
