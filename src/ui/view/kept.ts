@@ -1,9 +1,9 @@
 // What the first-person view keeps between frames (#1073): the scenes `drawViewport` paints
 // (compositor.ts), `Scenes`, which holds the one drawn last and the other facings of the square the
 // party stands on, each under its place (`placeKey`: everything its paint reads that the world says at
-// once, but the facing) and drawn again for a facing other than the last only while all else its paint
-// read holds (`readsOf`, `sameReads`). It takes no canvas of its own, the compositor handing in how one
-// is made, so the Node suite drives it (tools/tests/kept.ts).
+// once, but the facing) and drawn again, the last as any other, only while all else its paint read
+// holds (`readsOf`, `sameReads`). It takes no canvas of its own, the compositor handing in how one is
+// made, so the Node suite drives it (tools/tests/kept.ts).
 //
 // What a kept scene holds and when it goes: at most `KEPT_MAX` scenes, each two canvases the rect's
 // size (857,600 bytes at the view's 400 by 268), so 3.4 MB at most; a place that changes (a step, a
@@ -78,19 +78,20 @@ export class Scenes<C extends Sized> {
   private last: Scene<C> | null = null;
   /** The canvases of the scenes a change of place dropped, to paint the next into. */
   private spare: { canvas: C; sky: C }[] = [];
-  constructor(private readonly make: () => C) {}
+  /** How a canvas is made: the page's in the compositor, a stand-in in the suite. */
+  private readonly make: () => C;
+  constructor(make: () => C) { this.make = make; }
 
   /**
-   * The scene for the world at `r`: the last drawn while its place and facing hold (as the one kept
-   * scene always was), the facing's own of the square while what else it read holds, or else one
-   * `paint` paints now into the canvases sized to the rect, returning the flames it left alight.
+   * The scene for the world at `r`: the facing's own of the square, the last drawn or another, while
+   * what else it read holds, or else one `paint` paints now into the canvases sized to the rect,
+   * returning the flames it left alight.
    */
   scene(world: World, r: ViewRect, paint: (canvas: C, sky: C) => Flame[]): { scene: Scene<C>; had: Had } {
     const place = placeKey(world, r), facing = world.state.facing;
     if (place !== this.place) { this.place = place; this.spare.push(...this.kept); this.kept = []; this.last = null; }
     let s = this.kept.find((k) => k.facing === facing);
-    if (s && s === this.last) return { scene: s, had: 'last' };
-    if (s && sameReads(s.reads, readsOf(world))) { this.last = s; return { scene: s, had: 'kept' }; }
+    if (s && sameReads(s.reads, readsOf(world))) { const had = s === this.last ? 'last' : 'kept'; this.last = s; return { scene: s, had }; }
     if (!s) {
       const { canvas, sky } = this.spare.pop() ?? { canvas: this.make(), sky: this.make() };
       s = { facing, canvas, sky, flames: [], reads: readsOf(world) };
