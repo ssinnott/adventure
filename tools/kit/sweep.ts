@@ -14,11 +14,11 @@
 // (`standsAt`, which reads the drawn cell and `hillOver`): its flat band can show nothing but the
 // backdrop, and a wall beside the party is a square of the window, so none stands there. A kept view's
 // window is the key its flat band is painted from, once for every view that shares it: the map's kind;
-// on each square of the window what stands there, and of a face its door, whether it is a house, its
-// wall's style, its dressing and what hangs on it; and on the squares past the window that a face reads
-// to join the next (`own`, viewport.ts: one farther ahead, one farther out), whether one stands. The
-// faces are geometry, so alike windows paint alike bands; the audit (SMOKE_SWEEP_AUDIT) holds the key
-// to the painter, view by view, as the painter changes.
+// on each square of the window what stands there, and of a face its door, whether a house or a
+// town's gate (#1071), its wall's style, its dressing and what hangs on it; and on the squares past
+// the window that a face reads to join the next (`own`, viewport.ts: one farther ahead, one farther
+// out), whether one stands. The faces are geometry, so alike windows paint alike bands; the audit
+// (SMOKE_SWEEP_AUDIT) holds the key to the painter, view by view, as the painter changes.
 import type { GameMap } from '../../src/game/map.ts';
 import type { Cell } from '../../src/game/mapdef.ts';
 import type { Facing } from '../../src/game/types.ts';

@@ -226,7 +226,14 @@ export async function art(): Promise<void> {
     && round(m, e.x, e.y, hard) && round(m, e.x, e.y, open)).map((e) => ({ m, e })));
   const where = ({ m, e }: { m: GameMap; e: { x: number; y: number } }): string => { const z = m.zoneAt(e.x, e.y); return z ? `${z.id} ${e.x - z.x},${e.y - z.y}` : `${m.id} ${e.x},${e.y}`; };
   const cornered = ways.filter(({ m, e }) => !isGateway(m, e.x, e.y)).map(where);
-  ok(ways.length > 0 && !cornered.length, `every way through a town's wall is a gate set in its side, not at its end or corner (${ways.length} squares on ${new Set(ways.map(({ m }) => m.id)).size} maps)${cornered.length ? ' -> not a gate: ' + cornered.join(', ') : ''}`);
+  // And no other square is drawn as one: the rule asks the shape alone (#1071), so a way into a
+  // walled ruin or any other that takes that shape is met here, not first on the owner's sheet.
+  const wayAt = new Set(ways.map(({ m, e }) => `${m.id} ${e.x},${e.y}`)), strays: string[] = [];
+  for (const m of maps) for (let i = 0; i < m.cells.length; i++) {
+    const e = { x: i % m.width, y: Math.floor(i / m.width) };
+    if (isGateway(m, e.x, e.y) && !wayAt.has(`${m.id} ${e.x},${e.y}`)) strays.push(where({ m, e }));
+  }
+  ok(ways.length > 0 && !cornered.length && !strays.length, `every way through a town's wall is a gate set in its side, not at its end or corner; nothing else is one (${ways.length} squares on ${new Set(ways.map(({ m }) => m.id)).size} maps)${cornered.length ? ' -> not a gate: ' + cornered.join(', ') : ''}${strays.length ? ' -> a gate on no town\'s way: ' + strays.join(', ') : ''}`);
 
   // A secret door outdoors or underground set among mountain, rock or trees is drawn as they are, so a sett or a
   // cave is found and never seen; in a wall, or in a town, it stays a door, and a door the map shows

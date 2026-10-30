@@ -69,7 +69,7 @@ export function toPair(p: { x: number; y: number }): [number, number] { return [
 
 /**
  * A cell as the scene draws it: a door outdoors among mountain, rock or trees as they are, the void as
- * its look (#829), and a town's gate as a face of the wall it is set in, which carries the gate (#1071),
+ * its look (#829) and a town's gate as a face of the wall it is set in, which carries the gate (#1071),
  * but the open way it is to an eye standing in it.
  */
 export function drawnAt(map: GameMap, x: number, y: number, eye?: { x: number; y: number }): Cell {
