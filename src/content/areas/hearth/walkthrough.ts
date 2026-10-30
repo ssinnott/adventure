@@ -36,8 +36,8 @@
 // brought before the ask. Then three companies short of the ask: she never asks it of them, and the log
 // she takes from them begins no journal. Then the chapter, The Heart (#760), played to each of its three
 // ends from the road behind done, and once by a company over early on four of the road's five.
-// The Ways and the Stair are one scene, as the Stair reads her knots seen in the Ways; the chapter's
-// steps are in steps.ts.
+// The Stair's scene sees her knots in the Ways by hand, as the Ways left them; the chapter's steps
+// are in steps.ts.
 import { newWalk, mapDef, groupOn, featureOn, ownMaps, see, kneel, fight, listen, walkThrough, gone as left, playChapter, everyGoalWalked, goalFromBegun, quest, ending, goalOf, written, holding, keys, thiefDown, same, hour, log, key, press, chest } from '../../../../tools/kit/walk.ts';
 import { apartFrom, zone } from '../../../../tools/kit/grid.ts';
 import type { Walk, Scene } from '../../../../tools/kit/walk.ts';
@@ -226,9 +226,9 @@ const outdoors = (): GameMap => ownMaps()[OUTDOORS];
 /**
  * The isle and the road down under it (#753 to #759), a scene to each box's or level's section in road
  * order: the isle (H6) from a new game, as the old body began, and each after it started with the level
- * and the flags the sections before it left on the old body's one walk, as data. The Ways and the Stair
- * are one scene, as the Stair reads her knots seen in the Ways (the frames' goal and end, which no
- * start can carry).
+ * and the flags the sections before it left on the old body's one walk, as data. The Stair reads
+ * her knots seen in the Ways (the frames' goal and end), which no start carries: its scene
+ * sees them by hand, as the Ways left them.
  */
 function theRoad(): Scene[] {
   return [
@@ -596,7 +596,7 @@ function theRoad(): Scene[] {
         && (CRYPT.exits ?? []).length === 2 && !(CRYPT.features ?? []).some((f) => (CRYPT.exits ?? []).some((e) => e.x === f.x && e.y === f.y)),
         'the grey door\'s sign read on the passage, her knot on its frame, and the door standing open onto the Ways with nothing on its square');
     } },
-    { name: 'ways-stair', play: (ok) => {
+    { name: 'ways', play: (ok) => {
       // The Ways (#757): through the grey door onto its foot, 16,30, facing up the main way, and back up onto
       // the knot's square, 8,2, facing away from the door: the way to the camp to rest, and down again.
       const w = newWalk(ok, { level: 29, flags: {
@@ -729,9 +729,18 @@ function theRoad(): Scene[] {
       fight(w, 'underdeep:ud_keepers4');
       fight(w, 'underdeep:ud_crawlers');
       see(w, 'underdeep:ud_end');
-
+    } },
+    { name: 'stair', play: (ok) => {
       // The Stair (#758), at its floor, 30: through the ways' last door onto its head, and back up again.
-      const UD2 = mapDef('underdeep2');
+      // Her knots in the Ways are seen by hand, as the Ways left them: the frames' goal and
+      // end read them.
+      const w = newWalk(ok, { level: 30, flags: {
+        lamp_hearth: 1, lamp_house: 1, lamp_sea: 1, lamp_shore: 1, q_bowl_pilgrims: 1, q_crack_sealed: 1, q_crew_open: 1, q_lamps: 1, q_lamps_key: 1,
+        q_lamps_out: 1, q_lamps_wrong: 1, q_token_cousin: 1,
+      } }), UD2 = mapDef('underdeep2');
+      w.world.travel('underdeep', 16, 30);
+      for (const n of [1, 2, 3, 4, 5, 6, 7, 8]) w.world.markUsed(`ud_knot${n}`);
+      w.world.markUsed('ud_hatch');
       walkThrough(w, 'underdeep', STAIR_DOOR.x, STAIR_DOOR.y + 1, NORTH, 'underdeep2', 2);
       ok(w.world.state.x === 16 && w.world.state.y === 30 && w.world.state.facing === NORTH, 'through the ways\' last door onto the stair\'s head, 16,30, facing down it');
       walkThrough(w, 'underdeep2', 16, 30, SOUTH, 'underdeep', 2);

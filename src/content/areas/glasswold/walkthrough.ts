@@ -1292,7 +1292,9 @@ function woldQuests(): Scene[] {
  * that stops at the slab, and the bow at the back of it; the bow handed in, which sets the flag his
  * teaching waits on; and the Master taught to the member Expert at arms of 25, the level he asks, for 5,000,
  * where the one of 24 is refused. He is off the road and off the chapter's path by more than ten squares, and so
- * is the bow, and no quest, seeking or mark names him.
+ * is the bow, and no quest, seeking or mark names him. What he is, the rumour and the hide are
+ * played here; the door, the bow and the lesson on a game of their own, `mergensLesson`, which
+ * reads nothing the rumour's walk left.
  */
 function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   const g = headlessGame(4), p = g.party, LEVEL = 26;
@@ -1303,9 +1305,9 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   const [d10, e9] = [zone(out, D10.id), zone(out, E9.id)];
   const feature = (d: MapDef, id: string) => featureOn(d, id);
   const who = (d: MapDef, name: string): Person => d.features!.find((f): f is Person => f.kind === 'npc' && f.name === name)!;
-  const rider = who(D8, 'A Rider by the trader\'s tent'), mergen = who(D10, 'Mergen, the drillmaster'), herder = who(E9, 'A herder at the yurts');
+  const rider = who(D8, 'A Rider by the trader\'s tent'), mergen = who(D10, 'Mergen, the drillmaster');
   const shop = D8.features!.find((f) => f.kind === 'shop')!, mastery = mergen.mastery!;
-  const [, door] = D10.secrets!, [slab] = E9.secrets!, chest = feature(E9, 'e9_drill_bow'), hint = feature(D10, door.hint), path9 = feature(E9, slab.hint);
+  const chest = feature(E9, 'e9_drill_bow');
   const chebyshev = (a: readonly [number, number], b: readonly [number, number]): number => Math.max(Math.abs(a[0] - b[0]), Math.abs(a[1] - b[1]));
 
   // What he is: a Master of arms for 5,000 at 25 who waits on the hand-in of the bow and on nothing else, a
@@ -1369,6 +1371,19 @@ function masterOfArms(ok: (cond: boolean, msg: string) => void): void {
   const hideAt = apart([d10.x + mergen.x, d10.y + mergen.y]), bowAt = apart([e9.x + chest.x, e9.y + chest.y]);
   ok(onPath.length >= 8 && walks.length >= 8 && [hideAt, bowAt].every((a) => a.road > 10 && a.path > 10 && a.walk > 10),
     `the hide is ${hideAt.road} squares from the nearest road square, ${hideAt.path} from the chapter's nearest step (${hideAt.what}) and ${hideAt.walk} from the nearest walk between two steps (${hideAt.between}), and the bow's chest ${bowAt.road}, ${bowAt.path} and ${bowAt.walk} (${bowAt.between}), of ${onPath.length} squares the chapter keys on and ${walks.length} walks between them`);
+}
+
+/** Mergen's door, the bow and his lesson (#858; see `masterOfArms`), on a game of their own. */
+function mergensLesson(ok: (cond: boolean, msg: string) => void): void {
+  const g = headlessGame(4), p = g.party, LEVEL = 26;
+  const w: Walk = { world: g.world, party: p, news: [], level: LEVEL, ok, marks: questMarks(questLog(TABLES, g.world.state, p)) };
+  for (const m of p.members) { m.level = LEVEL; m.xp = xpForLevel(LEVEL); }
+  const out = outdoors();
+  const [D10, E9] = ['wold_d10', 'wold_e9'].map((id) => mapDef(id));
+  const [d10, e9] = [zone(out, D10.id), zone(out, E9.id)];
+  const feature = (d: MapDef, id: string) => featureOn(d, id);
+  const mergen = npcOn(D10.id, 'Mergen, the drillmaster'), herder = npcOn(E9.id, 'A herder at the yurts'), mastery = mergen.mastery!, [hand] = handIns(mergen);
+  const [, door] = D10.secrets!, [slab] = E9.secrets!, chest = feature(E9, 'e9_drill_bow'), hint = feature(D10, door.hint), path9 = feature(E9, slab.hint);
 
   // The door: shut to every walker, wader, climber and floater but through it, with the hint on the near side.
   const sealed = reach(out, d10, [hint.x, hint.y], ALL, [door.x, door.y]);
@@ -1839,6 +1854,7 @@ export const scenes: readonly Scene[] = [
   ...woldQuests(),
   // The Master of arms (#858), found and never told.
   { name: 'master-of-arms', play: masterOfArms },
+  { name: 'mergens-lesson', play: mergensLesson },
   // The chapter (#531), three ways in.
   { name: 'chain', walks: [CHAPTER], play: theWarning },
   // Every goal of the chapter comes up in the chain's plays, as the scenes say (#1018).
