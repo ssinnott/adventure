@@ -1,6 +1,6 @@
 // A chapter played whole (#984): the pilot's run of a chapter on a headless game, which the fullrun
 // suite plays and the pilot suite takes from here.
-import { drive } from '../headless.ts';
+import { drive, stoppedAt } from '../headless.ts';
 import type { Game } from '../../../src/app/game.ts';
 import type { Chapter } from '../../../src/game/quests.ts';
 import { holds } from '../../../src/game/quests.ts';
@@ -44,8 +44,8 @@ export function play(g: Game, chapter: Chapter, settled = 0, from = g.world.stat
   for (; ticks < TICK_CAP && p.on && !done() && !over; ticks++) { drive(g, [null]); if (ticks % 100 === 0) over = performance.now() - t0 > BUDGET; }
   takeEnding(g);
   p.hear = hear;
-  const st = g.world.state, where = `${g.world.zone?.name ?? g.maps[st.mapId]?.name ?? st.mapId} ${st.x},${st.y}`, finished = done();
+  const { where, minutes } = stoppedAt(g), finished = done();
   const stop = finished ? '' : p.on ? `capped by ${over ? `the budget (${BUDGET / 60_000} minutes)` : `the ticks (${TICK_CAP.toLocaleString('en-GB')})`} in ${where} ("${p.why[0]}")`
     : p.why[0] === 'The company has fallen.' ? `fell in ${where}` : `stopped itself in ${where} ("${p.why[0]}")`;
-  return { done: finished, ticks, days: ((st.minutes - from) / 1440).toFixed(1), secs: ((performance.now() - t0) / 1000).toFixed(1), level: companyLevel(g.party), stop, notes };
+  return { done: finished, ticks, days: ((minutes - from) / 1440).toFixed(1), secs: ((performance.now() - t0) / 1000).toFixed(1), level: companyLevel(g.party), stop, notes };
 }

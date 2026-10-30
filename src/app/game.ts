@@ -36,6 +36,7 @@ import { drawText } from '../lib/engine/text.ts';
 import { RiddleScreen } from '../ui/riddle.ts';
 import { stepLine, useShrine, openCairn, answerRiddle, restRefused, restAndWake, drinkWell, give, giftOf } from '../game/wilds.ts';
 import { approach, burn } from '../game/dens.ts';
+import { wakeAtChapel } from '../game/chapel.ts';
 import type { Pilot } from './pilot/pilot.ts';
 import type { Tables } from '../game/tables.ts';
 import type { Host, Screen, TextInput } from '../ui/screen.ts';
@@ -82,6 +83,12 @@ export class Game implements Host {
   attracting = false;
   /** The frame attract mode began on, for its opening lines in the band. */
   private attractFrom = 0;
+  /**
+   * Where and when the company last fell (`fall`), before the Lanterns carried it: what a pilot's run
+   * that ends in a wipe says it fell in (tools/kit/walk.ts, tools/kit/rules/fullrun.ts). Not saved; a
+   * new game or a load clears it.
+   */
+  fell: { mapId: string; x: number; y: number; minutes: number } | null = null;
 
   constructor(tables: Tables, store: Store | null = browserStore()) {
     this.tables = tables; this.store = store;
@@ -95,6 +102,7 @@ export class Game implements Host {
     this.party = party ?? defaultParty(this.tables, this.rng);
     this.world = new World(this.tables, this.maps, this.party, this.rng);
     this.log = [];
+    this.fell = null;
     this.pilot?.forget();
     this.screens = [new ExploreScreen()];
     this.say('Arrows move. Space acts. R rests, F searches, C casts, I inventory, J quests, F5/F9 save/load.');
@@ -113,7 +121,7 @@ export class Game implements Host {
   /**
    * Attract mode (DESIGN §1; #722): the title sat untouched, so a new game on a fresh seed plays itself
    * with the pilot at the helm, as P on the title starts one. It saves nothing (`saveGame`), a wipe
-   * starts another on a new seed (`gameOver`) and a key of the viewer's brings the title back (`update`).
+   * starts another on a new seed (`fall`) and a key of the viewer's brings the title back (`update`).
    * The game has no sound to mute. A Game with no pilot has none to start.
    */
   attract(): void {
@@ -156,6 +164,7 @@ export class Game implements Host {
     this.party = data.party;
     this.world = world;
     this.log = [];
+    this.fell = null;
     this.pilot?.forget();
     this.screens = [new ExploreScreen()];
     this.say('Loaded.');
@@ -438,15 +447,29 @@ export class Game implements Host {
     this.pop();
     if (outcome === 'victory') { for (const m of this.world.killGroups(groupIds)) this.say(m); this.enterCell(); }
     else if (outcome === 'fled') this.world.flee(groupIds);
-    else this.gameOver();
+    else this.fall();
   }
 
-  gameOver(): void {
-    // A wipe in attract mode starts another game on a new seed at once: nobody is there to read the title.
+  /**
+   * A wipe, in a fight or out of one (#1069): the game goes on. The Lanterns carry the company to the
+   * nearest chapel (game/chapel.ts), where the first in the party order wakes at the next morning and
+   * the rest lie as they fell; the log says so, and the chapel's menu opens as stepping in opens it.
+   * Nothing is saved and nothing is lost but the fight, the night and the walk back. The fight's
+   * groups stand where they were.
+   */
+  fall(): void {
+    // A wipe in attract mode starts another game on a new seed at once: nobody is there to watch the chapel.
     if (this.attracting && this.pilot) { this.attract(); return; }
     // A wipe ends the pilot's run: it gives the helm back, and says why (epic #713, Decided 10).
     if (this.pilot?.on) this.pilot.stop(this, ['The company has fallen.']);
-    this.screens = [new TitleScreen(hasSave(this.store), 'The party has fallen. Caldera goes on without them.')];
+    const s = this.world.state;
+    this.fell = { mapId: s.mapId, x: s.x, y: s.y, minutes: s.minutes };
+    const lines = wakeAtChapel(this.world);
+    this.screens = [new ExploreScreen()];
+    // The chapel's room shows the two lines, as a visit shows what the step in said.
+    this.actionFrom = this.said;
+    for (const l of lines) this.say(l);
+    this.enterCell();
   }
 
   /** Monsters the viewport should draw at a cell; a group under the ice is drawn under it. */
