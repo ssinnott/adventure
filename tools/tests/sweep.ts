@@ -8,7 +8,7 @@ import { MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { NORTH, EAST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
-import { atlasOf, pairsOf, plan, shard, shardsFor, type Plan, type View } from '../kit/sweep.ts';
+import { PAIRS_PER_SHARD, atlasOf, pairsOf, plan, shard, shardsFor, type Plan, type View } from '../kit/sweep.ts';
 import { ok } from './lib.ts';
 
 /** A fixture's plan, all four ways from every open square. */
@@ -52,7 +52,12 @@ export function sweep(): void {
   const t = Date.now(), all = plan(atlasOf(buildMaps()), MAP_DEFS.map((d) => ({ id: d.id, all: true }))), seconds = (Date.now() - t) / 1000;
   const keptAll = all.views.length - all.skipped, besideSkipped = all.views.filter((v) => v.win < 0 && v.beside).length;
   ok(all.maps === MAP_DEFS.length && keptAll > 0 && besideSkipped === 0 && all.windows <= keptAll && all.refs.every((r, k) => all.views[r].win === k),
-    `the plan of every map four ways: ${all.views.length} views of ${all.maps} maps, ${all.skipped} skipped (${(100 * all.skipped / all.views.length).toFixed(1)}%), ${keptAll} kept in ${all.windows} windows, ${all.beside} with a wall beside the party; ${pairsOf(all)} pairs to paint (${shardsFor(all)} shard), ${pairsOf(all, true)} in the audit (${shardsFor(all, true)} shards); planned in ${seconds.toFixed(1)} s`);
+    `the plan of every map four ways: ${all.views.length} views of ${all.maps} maps, ${all.skipped} skipped (${(100 * all.skipped / all.views.length).toFixed(1)}%), ${keptAll} kept in ${all.windows} windows, ${all.beside} with a wall beside the party; ${pairsOf(all)} pairs to paint (${shardsFor(all)} shard${shardsFor(all) === 1 ? '' : 's'}), ${pairsOf(all, true)} in the audit (${shardsFor(all, true)} shards); planned in ${seconds.toFixed(1)} s`);
+  // A shard paints about PAIRS_PER_SHARD pairs at most, which sets its seconds (#848): the plan and the
+  // audit each in the shards they call for, the most any of them paints.
+  const pairsIn = (vs: readonly View[], audit: boolean): number => (audit ? 2 * vs.length : new Set(vs.filter((v) => v.win >= 0).map((v) => v.win)).size + vs.filter((v) => v.win >= 0 && v.beside).length);
+  const most = [false, true].map((audit) => { const n = shardsFor(all, audit); return Math.max(...Array.from({ length: n }, (_, i) => pairsIn(shard(all, i + 1, n), audit))); });
+  ok(most.every((m) => m <= PAIRS_PER_SHARD * 1.02), `a shard paints about ${PAIRS_PER_SHARD} pairs at most: the most of the plan's ${shardsFor(all)} shards ${most[0]}, of the audit's ${shardsFor(all, true)} ${most[1]}`);
   const torn: string[] = [];
   for (const n of [1, 2, 3, 7, shardsFor(all, true)]) {
     const seen = new Map<View, number>();

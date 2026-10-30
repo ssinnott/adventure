@@ -325,9 +325,10 @@ the road up to the last area named and checks every chapter on it, as a chapter 
 through those before it. `FULLRUN=shelf` repeats the shelf's walkthrough play tick for tick. The
 suite runs only when named (`ASKED`, `tools/test.ts`, held so by the runner's own check): a bare
 `node tools/test.ts` does not run it, but `npm test` names it last, so `npm test` runs the shelf's full
-run (about 10 to 25 s; it repeats walkthrough:shelf:pilot's play) and so does the tests job.
+run (about 10 to 25 s; it repeats walkthrough:shelf:pilot's play) and so does CI's `runner` job.
 
-In CI the tests job's `npm test` is the shelf's gate, with no step of its own (10 s on CI). The
+In CI the `runner` job's `node tools/test.ts fullrun`, after the runner's own check, is the shelf's
+gate (17 s on CI; #848 took it out of the tests' shards). The
 `fullrun` job runs only when the workflow is started by hand (`workflow_dispatch`), never on a pull
 request: its `fullrun` input is the FULLRUN (`all` unless changed) and it has sixty minutes; its lines
 go into the run's summary. It is a report, not a gate, until the pilot finishes those chapters. The
@@ -492,7 +493,7 @@ not the finish.
 | `src/app/input.ts` | `drainTyped`: typed keys applied to a word, `Input`'s text mode and a headless game's alike (#721); `Game.input.typed` is where they are typed, by the keyboard or the pilot |
 | `tools/kit/headless.ts` (`tools/tests/lib.ts` until #984) | `headlessGame(seed, party)`: a new game under Node, with the premade company or the one given (#723); `headlessLoad(save)`: a game under Node loaded from a save's text as F9 loads one (#723); its input drains its typed keys as `Input` does, so the pilot types under Node as in the browser (#721) |
 | `tools/tests/fullrun.ts` | the suite `fullrun` (#723): the one quest's chapters played on one Game by the pilot, the omniscient run from the save point beside a chapter the fair pilot loses, the notes; `reach` (the road FULLRUN reaches), `SEED`, `TICK_CAP` and `BUDGET`; run only when named (`ASKED`, `tools/test.ts`) |
-| `.github/workflows/checks.yml` | the `fullrun` job, run by hand with its `fullrun` input; the tests job runs the shelf's full run through `npm test` (#723) |
+| `.github/workflows/checks.yml` | the `fullrun` job, run by hand with its `fullrun` input; the `runner` job runs the shelf's full run, as `npm test` does (#723, #848) |
 | `package.json` | `npm test`: the suites, the runner's own check, then the shelf's full run (#723) |
 | `tools/smoke/flows.ts` | the pilot in the browser, the smoke's `pilot` part: P, T, an arrow and the band (#716), and thirty seconds of its play at 1x (#723) |
 | `src/app/pilot/route.ts` | the navigator (#717): `Goal` (with the reason or the why line its brain gives it), `routeOn` (the keys over one map), `routeLengths` (the length of the route to every square, in one search), `routeNearest` (the nearest of a set of squares, the search stopped there), each round the squares found shut it is given and through a group only where no way round is seen (#723), `routeMaps` (the exits from map to map, and the crossings told whose fare the gold over the reserve pays, `edges`, #721; no way in to an enclave whose floor is over the company's level and over the map's own, so the way up from a deeper level stays open, #845), the brain `route` and `unroute` (what it kept of a goal, forgotten); it reads a cell by `passableCell` (`src/game/map.ts`) and the groups as the automap marks them (`markedGroups`, `src/ui/frame.ts`) |

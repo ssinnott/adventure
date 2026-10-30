@@ -27,10 +27,14 @@
 //   node tools/test.ts --areas a,b      only for those areas, as TEST_AREAS=a,b does (#955)
 //   node tools/test.ts --jobs [N]       the runs in processes of their own, N at a time, as many as
 //                                       the cores (two at least) where N is left out (#954): the dear
-//                                       (DEAR, or TEST_DEAR=a,b) each alone and the rest packed into
-//                                       one; with --jobs 1 every run alone, one after another
+//                                       (DEAR, or TEST_DEAR=a,b=12.5) each alone and the rest packed
+//                                       into one; with --jobs 1 every run alone, one after another
 //   node tools/test.ts --shuffle [seed] the runs in an order shuffled by the seed, a new one where
 //                                       none is given, which the run prints to play it again
+//   node tools/test.ts --shard i/n      shard i of n, as TEST_SHARD=i/n does (#848): the runs planned
+//                                       and narrowed, dealt n ways by DEAR's seconds before any
+//                                       shuffle, so that every shard deals alike and each run lands
+//                                       in one; the tests job runs a shard a job
 // By default a suite prints its name as it starts, then its failures and its owed lines; what else it
 // prints waits for --list or its first failure; every suite ends with a line of its seconds and its
 // count, and the run with a table of them, the slowest first, and a line of its wall before its last
@@ -39,8 +43,9 @@
 // row of their seconds and counts summed, with how many and the slowest (#1033). Under --jobs a
 // run's lines are held and print whole at its turn in the run's order, so that it prints what one
 // process prints but the seconds. A run narrowed to areas says which and why before the table; with
-// none given everything runs. Where GITHUB_STEP_SUMMARY is set, that line and the table go into it
-// too.
+// none given everything runs. A shard says which, its runs and its seconds by DEAR's beside the
+// others' there too. Where GITHUB_STEP_SUMMARY is set, those lines and the table go into it under
+// the command, a shard's named.
 import { readdirSync, existsSync, appendFileSync, readFileSync } from 'node:fs';
 import { fork } from 'node:child_process';
 import { randomInt } from 'node:crypto';
@@ -65,12 +70,38 @@ const FIRST = ['maps', 'movement', 'monsters', 'combat', 'harness', 'party', 'tr
 /** The suites that run only when named, each taking minutes: the pilot's survival sweep and its full run (#723). */
 const ASKED = ['survival', 'fullrun'];
 /**
- * The runs over three seconds in the tests job's table of 23 October and the gate's areas timed on
- * e3d6a66a (#954), the dearest first, the harness as a process of one worker: under --jobs each is a
- * process of its own, started in this order once the rest, packed into one process, has started.
+ * The runs over three seconds in the tests job's table of 30 October (run 41053120691, the head of
+ * #1088), the dearest first, each with its seconds there, the harness as a process of one worker: under
+ * --jobs each is a process of its own, started in this order once the rest, packed into one process,
+ * has started; under --shard the seconds deal the plan (`deal`). TEST_DEAR=a,b=12.5 replaces it, a run
+ * given no seconds weighing three, the least a dear run weighs there.
  */
-const DEAR = process.env.TEST_DEAR ? process.env.TEST_DEAR.split(',') : ['labels', 'row', 'harness', 'gate:kilns', 'gate:ashfall', 'gate:rimewater', 'gate:whitespine', 'gate:saltreach',
-  'quests:goals', 'gate:cairnmoor', 'gate:glasswold', 'gate:sunderwood', 'gate:wrackholm', 'gate:hearth', 'walkthrough:shelf:pilot', 'gate:shelf', 'scaffold', 'pilot', 'gate:thornmark'];
+const DEAR: ReadonlyMap<string, number> = new Map(process.env.TEST_DEAR ? process.env.TEST_DEAR.split(',').map((d): [string, number] => {
+  const [run, secs] = d.split('=');
+  if (secs !== undefined && !/^\d+(\.\d+)?$/.test(secs)) { console.error(`TEST_DEAR takes runs with commas between, each given its seconds as run=12.5 or none, not '${d}'.`); process.exit(2); }
+  return [run, secs === undefined ? 3 : Number(secs)];
+}) : [['labels', 119.9], ['row', 98.7], ['gate:ashfall', 69.4], ['gate:kilns', 59.1], ['harness', 56.7], ['gate:rimewater', 53.8], ['gate:saltreach', 42.9],
+  ['gate:whitespine', 40.1], ['quests:goals', 39.4], ['walkthrough:shelf:pilot', 34.6], ['gate:cairnmoor', 32.7], ['gate:glasswold', 32.6], ['gate:wrackholm', 31.1],
+  ['gate:sunderwood', 29.6], ['gate:hearth', 24.5], ['gate:shelf', 14.3], ['pilot', 13.3], ['scaffold', 12.3], ['gate:thornmark', 9.3], ['sweep', 7.7], ['order', 4.0],
+  ['rifts', 3.7], ['people', 3.4], ['weather', 3.4]]);
+/** What a run DEAR does not name weighs in the deal: the mean of the rest in that table, 52.9 s over 457 runs. */
+const REST = 0.1;
+/**
+ * The plan dealt n ways (#848): each run by its seconds in DEAR, or REST's, the dearest first and the
+ * alike in the plan's order, onto the shard that holds the fewest seconds so far, the first of a tie.
+ * One plan deals alike in every shard, so each run lands in one; a shard keeps its runs in the plan's
+ * order, and under --jobs its dear each alone and its share of the rest packed into one process.
+ */
+const deal = (plan: readonly string[], n: number): { runs: string[]; secs: number }[] => {
+  const shards = Array.from({ length: n }, () => ({ holds: new Set<string>(), secs: 0 }));
+  const weighed = plan.map((run, k) => ({ run, k, secs: DEAR.get(run) ?? REST })).sort((a, b) => b.secs - a.secs || a.k - b.k);
+  for (const w of weighed) {
+    const s = shards.reduce((a, b) => (b.secs < a.secs ? b : a));
+    s.holds.add(w.run);
+    s.secs += w.secs;
+  }
+  return shards.map((s) => ({ runs: plan.filter((r) => s.holds.has(r)), secs: s.secs }));
+};
 
 type Suite = (part?: string) => void | Promise<void>;
 /**
@@ -99,11 +130,15 @@ const counted = (flag: string, bare: () => number): number | undefined => {
 const job = value('--job'), narrowing = value('--narrow');
 const jobs = counted('--jobs', () => Math.max(2, availableParallelism())), seed = counted('--shuffle', () => randomInt(1, 0x7fffffff));
 if (jobs !== undefined && jobs < 1) { console.error('--jobs takes how many processes run at a time, one at least.'); process.exit(2); }
+// The shard asked (#848): --shard i/n, or TEST_SHARD; one malformed, or out of its count, stops the run.
+const sharding = args.includes('--shard') ? value('--shard') ?? '' : process.env.TEST_SHARD || undefined;
+const shardOf = /^(\d+)\/(\d+)$/.exec(sharding ?? ''), shard = shardOf ? { i: Number(shardOf[1]), n: Number(shardOf[2]) } : undefined;
+if (sharding !== undefined && !(shard && shard.i >= 1 && shard.i <= shard.n)) { console.error(`--shard takes i/n, shard i of n with 1 <= i <= n, as TEST_SHARD does, not '${sharding}'.`); process.exit(2); }
 const since = value('--since') ?? (process.env.TEST_SINCE || undefined), named = value('--areas') ?? (process.env.TEST_AREAS || undefined);
 // A flag the runner does not know, or a count that is no whole number (`--jobs=4`, `--jobs -1`), would
 // be taken for a suite's name and run nothing: it stops the run instead.
 const stray = args.filter((a) => a.startsWith('-'));
-if (stray.length) { console.error(`No flag is named ${stray.join(', ')}: the flags are --list, --dir, --walks, --since, --areas, --jobs [N] and --shuffle [seed].`); process.exit(2); }
+if (stray.length) { console.error(`No flag is named ${stray.join(', ')}: the flags are --list, --dir, --walks, --since, --areas, --jobs [N], --shuffle [seed] and --shard i/n.`); process.exit(2); }
 const wanted = args;
 
 const found = dir ? readdirSync(dir).filter((f) => f.endsWith('.ts') && f !== 'lib.ts').map((f) => f.slice(0, -3)) : [];
@@ -335,6 +370,13 @@ if (job !== undefined) {
     if (!parts) { if (whole || unnamed.has(name)) runs.push(name); continue; }
     runs.push(...parts.map((p) => `${name}:${p}`).filter((r) => whole || wanted.includes(r)));
   }
+  // A shard keeps its share of the plan, dealt before any shuffle, so that every shard deals alike (#848).
+  let dealt = '';
+  if (shard) {
+    const shards = deal(runs, shard.n), mine = shards[shard.i - 1];
+    dealt = `Shard ${shard.i} of ${shard.n}: ${mine.runs.length} of the plan's ${many(runs.length, 'run')}, ${mine.secs.toFixed(1)} s by DEAR's seconds (the shards ${shards.map((s) => s.secs.toFixed(1)).join(', ')})`;
+    runs.splice(0, runs.length, ...mine.runs);
+  }
   if (seed !== undefined) {
     const rng = makeRng(seed);
     for (let i = runs.length - 1; i > 0; i--) { const j = rng.int(0, i); [runs[i], runs[j]] = [runs[j], runs[i]]; }
@@ -382,10 +424,10 @@ if (job !== undefined) {
   } else {
     // The jobs: every run alone under --jobs 1; else the dear each alone, started in DEAR's order once
     // the rest, packed into one process in the run's order, has started.
-    const queue = jobs === 1 ? runs.map((r) => [r]) : [runs.filter((r) => !DEAR.includes(r)), ...DEAR.filter((r) => runs.includes(r)).map((r) => [r])].filter((j) => j.length);
+    const queue = jobs === 1 ? runs.map((r) => [r]) : [runs.filter((r) => !DEAR.has(r)), ...[...DEAR.keys()].filter((r) => runs.includes(r)).map((r) => [r])].filter((j) => j.length);
     const slots = Math.min(jobs, queue.length), areas = narrowed();
-    // The harness's workers take the cores over the jobs (TEST_CORES, tools/harness.ts); a child reads no diff and no areas but its parent's.
-    const env = { ...process.env, TEST_CORES: String(Math.max(1, Math.floor(cores / Math.max(1, slots)))), TEST_SINCE: '', TEST_AREAS: '' };
+    // The harness's workers take the cores over the jobs (TEST_CORES, tools/harness.ts); a child reads no diff, no areas and no shard but its parent's.
+    const env = { ...process.env, TEST_CORES: String(Math.max(1, Math.floor(cores / Math.max(1, slots)))), TEST_SINCE: '', TEST_AREAS: '', TEST_SHARD: '' };
     const argv = [...(dir && dirArg !== undefined ? ['--dir', fileURLToPath(dir)] : []), ...(walksDir && walksArg !== undefined ? ['--walks', fileURLToPath(walksDir)] : []),
       ...(LIST ? ['--list'] : []), ...(areas ? ['--narrow', areas.join(',')] : [])];
     const settle = new Map<string, (o: Outcome) => void>();
@@ -459,9 +501,9 @@ if (job !== undefined) {
   // Once a suite has started worker threads (harness's, #854), a piped stdout can be left writing
   // behind the suites: the exit waits for what is written to drain, the code set should it never come.
   process.exitCode = failures ? 1 : 0;
-  const said = summary(failures, owing, rowsOf(ran), wall);
+  const said = summary(failures, owing, rowsOf(ran), wall), before = [reached, dealt].filter(Boolean).map((l) => `${l}.\n\n`).join('');
   if (process.env.GITHUB_STEP_SUMMARY) {
-    appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### node tools/test.ts ${process.argv.slice(2).join(' ')}\n\n${reached ? `${reached}.\n\n` : ''}\`\`\`\n${said}\n\`\`\`\n\n`);
+    appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### ${shard ? `Shard ${shard.i} of ${shard.n}: ` : ''}node tools/test.ts ${process.argv.slice(2).join(' ')}\n\n${before}\`\`\`\n${said}\n\`\`\`\n\n`);
   }
-  process.stdout.write('\n' + (reached ? `${reached}.\n\n` : '') + said + '\n', () => process.exit(failures ? 1 : 0));
+  process.stdout.write('\n' + before + said + '\n', () => process.exit(failures ? 1 : 0));
 }

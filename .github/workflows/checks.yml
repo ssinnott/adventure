@@ -1,12 +1,13 @@
-# The checks every pull request must pass before it merges: the typecheck, the tests and the smoke
-# test, each its own job so the pull request shows each, and the smoke's crack sweep beside them in
-# the plan job and the sweep job's shards (#953). Main has no branch protection (the owner,
-# 18 October 2026): the orchestrating session merges one pull request at a time, each up to date
-# with main and green on all five, the sweep skipped only where the plan sweeps no map
-# (docs/EXPANSION.md §8.3). No path filters: a pull request that touches only docs must still
-# report, or it waits on checks that never come. The contact sheet's job and the lanes' job, last,
-# are not among the five: the first attaches pictures for the owner and the second says which lanes
-# the files fall in, and neither is required. Nor is the pilot's full run (`fullrun`,
+# The checks every pull request must pass before it merges, each job ending inside three minutes on
+# a pull request that sweeps no map (#848): the typecheck; the tests in two shards and the runner's
+# own check with the shelf's full run beside them; the smoke test but its `silhouettes` part, and that
+# part; and the smoke's crack sweep in the plan job and the sweep job's shards (#953). Main has no
+# branch protection (the owner, 18 October 2026): the orchestrating session merges one pull request
+# at a time, each up to date with main and green on all of them, the sweep skipped only where the
+# plan sweeps no map (docs/EXPANSION.md §8.3). No path filters: a pull request that touches only docs
+# must still report, or it waits on checks that never come. The contact sheet's job and the lanes'
+# job, last, are not among them: the first attaches pictures for the owner and the second says
+# which lanes the files fall in, and neither is required. Nor is the pilot's full run (`fullrun`,
 # docs/PILOT.md), which runs only when started by hand: a report, not a gate.
 name: Checks
 
@@ -45,17 +46,22 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
 
+  # The suites in two shards, a job each (#848): every run of the plan in one of them, the plan dealt
+  # by the seconds of the dear (DEAR, tools/test.ts --shard), so each holds about half the work. In
+  # one job the suites' 889 s of work took 229 s on its four cores, past three minutes; a shard holds
+  # about 445 s. Each runs its runs in parallel, the dear a process each and the rest one, as many at
+  # a time as the job has cores, which it prints (tools/test.ts --jobs, #954). The cap is the
+  # runner's budget, not a check (#873).
+  # A pull request runs the gate only for the areas its files reach (TEST_SINCE,
+  # tools/changed.ts, #955) and every other suite whole, the walkthroughs for those areas or,
+  # where more than a comment changed, all; any other event runs everything, in shards alike.
   tests:
     runs-on: ubuntu-latest
-    # The suites took 6 to 8.5 minutes in one process on the heads measured, the runner's spread about
-    # two (#873); since #954 they run in parallel, the dear runs a process each and the rest one, as many
-    # at a time as the job has cores, which it prints (npm test, tools/test.ts --jobs). The cap is the
-    # runner's budget, not a check, and comes down when three runs show room (#873). The aim stays under
-    # three minutes (EXPANSION §8.3).
-    # A pull request runs the gate only for the areas its files reach (TEST_SINCE,
-    # tools/changed.ts, #955) and every other suite whole, the walkthroughs for those areas or,
-    # where more than a comment changed, all; any other event runs everything.
     timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ['1/2', '2/2']
     steps:
       # A pull request is checked out as its merge into the base: the commit before is the base.
       - uses: actions/checkout@v4
@@ -68,22 +74,37 @@ jobs:
       - run: npm ci
       # The cores the runner shares its jobs among (#954); its line of the wall names them too.
       - run: nproc
-      # npm test ends with the pilot's full run on the shelf (tools/tests/fullrun.ts, FULLRUN unset): about ten seconds.
-      # The runner says which areas ran and why, and writes that and its table of seconds into the
-      # run's summary.
-      - if: github.event_name != 'schedule'
-        run: npm test
+      # The runner says which areas ran and why and which shard this is, and writes those lines and
+      # its table of seconds into the run's summary under the shard's name. The nightly plays each
+      # shard's runs in an order of its own (#954) and prints its seed first and last: a suite that
+      # passes only after another fails by name, and `--shuffle <seed>` with the shard plays it again.
+      - run: node tools/test.ts --jobs --shard ${{ matrix.shard }}${{ github.event_name == 'schedule' && ' --shuffle' || '' }}
         env:
           TEST_SINCE: ${{ github.event_name == 'pull_request' && 'HEAD^1' || '' }}
-      # The nightly plays the runs in an order of its own (#954) and prints its seed first and last:
-      # a suite that passes only after another fails by name, and `--shuffle <seed>` plays it again.
-      - if: github.event_name == 'schedule'
-        run: node tools/test.ts --jobs --shuffle && node tools/tests/runner/check.ts && node tools/test.ts fullrun
 
+  # What `npm test` runs after the suites, beside the shards so it costs the wall nothing (#848): the
+  # runner's own check (tools/tests/runner/check.ts), its runs side by side on the cores, and the
+  # pilot's full run on the shelf (tools/tests/fullrun.ts, FULLRUN unset), on every event.
+  runner:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: node tools/tests/runner/check.ts && node tools/test.ts fullrun
+
+  # The smoke but two parts: the four-way crack sweep, which the sweep job runs, and `silhouettes`, a
+  # job of its own beside this one (#848: 112 s of the 171 s `npm run smoke` took here on #1088);
+  # the run holds that the jobs between them run every part once. The Chromium install took up to
+  # 694 s (#953).
   smoke:
     runs-on: ubuntu-latest
-    # The smoke but the four-way crack sweep, which the sweep job runs: 118 to 167 s of `npm run smoke`
-    # in the jobs that swept nothing, the Chromium install up to 694 s (#953).
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
@@ -95,11 +116,12 @@ jobs:
       # Headless runs need only Chromium's headless shell. It is not cached: with the shell cached,
       # its system libraries alone took as long to install as shell and libraries together (19 s).
       - run: npx playwright install --with-deps --only-shell chromium
-      # Everything but the crack sweep's four ways: the plan and sweep jobs run them beside this one.
+      # Everything but the crack sweep's four ways, which the plan and sweep jobs run beside this one,
+      # and the silhouettes, which their own job runs.
       - run: npm run smoke
         env:
           SMOKE_SHOT: smoke.png
-          SMOKE_PART: rest
+          SMOKE_PART: rest,-silhouettes
           # On the nightly and a run started by hand the one-way sweeps here (the cellar, Helmstow,
           # its keep and the ground's samples, which no map holds yet) take the audit too, as the
           # sweep's shards do.
@@ -111,10 +133,28 @@ jobs:
           path: smoke.png
           if-no-files-found: ignore
 
+  # The smoke's `silhouettes` part alone (tools/smoke/art.ts): every monster drawn at combat size
+  # alone, three, six and twelve abreast through its idle motion, held to one piece of ink, to the
+  # view and to its span; 112 s of the smoke's 171 on #1088, so a job of its own beside it (#848).
+  silhouettes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps --only-shell chromium
+      - run: npm run smoke
+        env:
+          SMOKE_PART: silhouettes
+
   # The crack sweep's plan (tools/sweep.ts, tools/kit/sweep.ts): the maps a pull request changes
   # (tools/changed.ts), every map on the nightly and a run started by hand, which is the sweep a
-  # release gets, with the audit, and the shards they call for, one for each 60,000 pairs of paints
-  # (about four minutes), none when no map is swept. A pull request is checked out as its merge into
+  # release gets, with the audit, and the shards they call for, one for each 30,000 pairs of paints
+  # (about 100 s, #848), none when no map is swept. A pull request is checked out as its merge into
   # the base: the commit before is the base. It needs Node alone, as the lanes job does, so the
   # sweep starts in seconds.
   plan:

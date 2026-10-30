@@ -365,7 +365,7 @@ Its decisions: decisions.md.
   the two judge differently, a skipped view whose flat band paints and a window whose views differ.
   A pull request that changes the painters of a face, a floor or a ceiling (`src/ui/view/`)
   or how a cell is drawn (`src/game/ink.ts`) starts the Checks workflow by hand on its branch
-  before it merges, so that the audit's fourteen shards judge the rule the skip stands on.
+  before it merges, so that the audit's shards judge the rule the skip stands on.
 - **Restraint.** The share of wall faces dressed, per kind of map and per map, stays near its level
   after #9, under caps set above it so an honest new map seldom fails by chance; a new kind of
   dressing comes with its rate (`DRESSING_RATES` in `src/ui/view/model.ts`, checked in
@@ -587,17 +587,17 @@ Every decision but an area's goes in decisions.md, a list under its issue and th
 ### 8.3 Pull requests
 
 - A `pull_request` workflow runs the typecheck, the tests, the smoke test and the smoke's crack
-  sweep, in jobs of its own (`plan` and `sweep`, #953); all five gate, the sweep skipped only where
-  the plan sweeps no map. The smoke test and the sweep need Playwright (a pinned dev dependency)
-  and Chromium on the runner; the workflow is `.github/workflows/checks.yml` (#27).
-- A pull request's tests job runs the gate only for the areas its diff reaches and every other suite
+  sweep in jobs of their own, each ending inside three minutes (#848; SYSTEMS names them); all gate,
+  the sweep skipped only where the plan sweeps no map. The smoke test and the sweep need Playwright
+  (a pinned dev dependency) and Chromium on the runner; the workflow is
+  `.github/workflows/checks.yml` (#27).
+- A pull request's tests run the gate only for the areas its diff reaches and every other suite
   whole; the walkthroughs run for those areas and, where more than a comment changed, for all
   (#955). Everything runs on main: `.github/workflows/pages.yml`'s `npm test` on every push, a CI
   cycle after the merge and before the deploy; the Checks workflow every day at 03:17 UTC
   (`schedule:`); and a run started by hand, a release's. A flag spelt in two areas, or a crossing
   that lands on another area's map, the gate's narrowing cannot see until A7 and A9: those runs
   catch it.
-- The aim is under three minutes; the order of the cure is #848's.
 - Main has no branch protection, by the owner's word of 18 October 2026: "We are not doing branch
   protection." Nothing in the plan needs a GitHub setting. Two green branches that are red together
   are kept from merging by a procedure, now the only safeguard: the orchestrating session merges one

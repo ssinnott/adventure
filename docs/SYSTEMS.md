@@ -168,6 +168,11 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   fail; EXPANSION §5 says what they hold. Each suite's header says what it holds and `--list` prints
   every `ok` line; the runner's flags are `tools/test.ts`'s header. A walkthrough's scenes, each its
   own walk, run alone (`node tools/test.ts walkthrough:kilns:n4`).
+- **CI:** `.github/workflows/checks.yml` runs those parts as jobs side by side, each ending inside
+  three minutes on a pull request that sweeps no map (#848): `typecheck`; `tests`, the suites in two
+  shards (`--shard`, the plan dealt by the seconds in `DEAR`); `runner`, the runner's own check and
+  the shelf's full run; `smoke`, the smoke but its `silhouettes` part, which a job of that name runs;
+  and the crack sweep's `plan` and `sweep`, a job to each shard of `PAIRS_PER_SHARD` pairs.
 - **The tools:** each tool's usage is its header (`tools/sheet.ts`, `tools/gate.ts` and the rest).
 - **Each area:** its doc in `docs/areas/`, with its decisions and its plan beside it.
 - **The history:** [archive/SLICE-history.md](archive/SLICE-history.md), the slice's doc whole: its

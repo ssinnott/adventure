@@ -5,6 +5,7 @@
 // and runs the parts of tools/smoke/ one after another, each in its frame (boot.ts): a part that fails a
 // check reports it, one that throws is `FAIL: <part> threw` and the others still report.
 import { randomInt } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { createServer } from './server.ts';
 import { open } from './kit/browser.ts';
 import { shardAsked, sweepAsked } from './sweep.ts';
@@ -31,15 +32,23 @@ const PARTS: Part[] = [title, explore, kept, thornmark, inn, coach, trainer, scr
 // sweeps what changed since that ref; SMOKE_SWEEP=all or <id>,<id> names the maps instead (CI's plan
 // job passes the maps on, tools/sweep.ts). SMOKE_PART=rest runs every part but the four-way sweep and
 // SMOKE_PART=sweep that sweep alone, both when unset (the `cracks` part then sweeping the maps asked
-// all four ways); SMOKE_PART=<part> or <part>,<part> runs those parts alone, in the run's order.
+// all four ways); SMOKE_PART=<part> or <part>,<part> runs those parts alone, in the run's order; a part
+// with a - before it is left out (#848: CI's smoke job runs rest,-silhouettes and the silhouettes job
+// that part, and the run holds the jobs checks.yml gives to run every part once).
 // SMOKE_SHARD=i/n sweeps the plan's i-th shard of n (tools/kit/sweep.ts); SMOKE_SWEEP_AUDIT=1 judges
 // every view the old way as well.
 const SWEEP = await sweepAsked();
 const PART = process.env.SMOKE_PART ?? '';
-const named = PART === '' || PART === 'rest' ? [] : PART.split(',');
-const unknown = named.filter((n) => !PARTS.some((p) => p.name === n));
-if (unknown.length) throw new Error(`SMOKE_PART must be rest, sweep or parts of the smoke (${PARTS.map((p) => p.name).join(', ')}), not '${unknown.join(',')}'`);
-const parts = named.length ? PARTS.filter((p) => named.includes(p.name)) : PARTS.filter((p) => p !== sweep);
+/** The parts a SMOKE_PART asks for, in the run's order; it throws on a part the smoke has not, or rest beside a part named. */
+const partsFor = (asked: string): Part[] => {
+  const words = asked.split(',').filter(Boolean), out = words.filter((w) => w.startsWith('-')).map((w) => w.slice(1)), named = words.filter((w) => w !== 'rest' && !w.startsWith('-'));
+  const unknown = [...named, ...out].filter((n) => !PARTS.some((p) => p.name === n));
+  if (unknown.length || (named.length && words.includes('rest'))) throw new Error(`SMOKE_PART must be rest, sweep or parts of the smoke (${PARTS.map((p) => p.name).join(', ')}), each it leaves out with a - before it, not '${asked}'`);
+  return (named.length ? PARTS.filter((p) => named.includes(p.name)) : PARTS.filter((p) => p !== sweep)).filter((p) => !out.includes(p.name));
+};
+const parts = partsFor(PART);
+// The smoke's jobs in CI: each SMOKE_PART checks.yml sets, the smoke job's, the silhouettes job's and the sweep's.
+const JOBS = [...readFileSync(new URL('../.github/workflows/checks.yml', import.meta.url), 'utf8').matchAll(/^ +SMOKE_PART: (\S+)$/gm)].map((m) => m[1]);
 
 const server = createServer();
 await new Promise<void>((r) => server.listen(0, () => r()));
@@ -48,7 +57,11 @@ const port = (server.address() as { port: number }).port;
 const { browser, page, errors } = await open(port, { seed: SEED });
 let bad = 0;
 const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : '  FAIL: ') + msg); if (!cond) bad++; };
-const run: Run = { page, seed: SEED, ok, errors, sweep: { maps: SWEEP, four: PART === 'rest' ? [] : SWEEP, shard: shardAsked(), audit: process.env.SMOKE_SWEEP_AUDIT === '1' } };
+// The split (#848): CI's smoke jobs between them run every part once, none in two jobs or in none.
+const runIn = new Map(PARTS.map((p) => [p.name, JOBS.filter((j) => partsFor(j).includes(p))]));
+const split = [...runIn].filter(([, js]) => js.length !== 1).map(([n, js]) => `${n} in ${js.length ? js.join(' and ') : 'none'}`);
+ok(JOBS.length > 0 && !split.length, `CI's smoke jobs run every part once: ${JOBS.join('; ')}${split.length ? ' -> ' + split.join(', ') : ''}`);
+const run: Run = { page, seed: SEED, ok, errors, sweep: { maps: SWEEP, four: PART.split(',').includes('rest') ? [] : SWEEP, shard: shardAsked(), audit: process.env.SMOKE_SWEEP_AUDIT === '1' } };
 
 const secs: string[] = [];
 for (const part of parts) {

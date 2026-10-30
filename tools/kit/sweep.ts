@@ -52,8 +52,12 @@ export interface Plan {
   readonly refs: readonly number[];
 }
 
-/** The pairs of paints a shard makes in about four minutes on CI's runner, the view with its hills or the flat window over both backdrops: it sets how many shards a plan calls for. */
-export const PAIRS_PER_SHARD = 60_000;
+/**
+ * The pairs of paints a shard makes in about 100 s on CI's runner, the view with its hills or the flat
+ * window over both backdrops: it sets how many shards a plan calls for. One shard painted 52,232 pairs in
+ * 160.6 s on #1088 (run 41053120691), about 3 ms a pair, so a shard's job ends inside three minutes (#848).
+ */
+export const PAIRS_PER_SHARD = 30_000;
 
 const FOUR: readonly Facing[] = [0, 1, 2, 3];
 
