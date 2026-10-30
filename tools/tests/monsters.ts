@@ -63,7 +63,7 @@ export function monsters(): void {
   // dungeon a level at a time; read off the saved minutes, so a save written with the box dead keeps
   // it so. A group with an `until` is in no box: a den's brood and a Rift's keep their own rule.
   {
-    const fresh = (to: string, x: number, y: number): World => { const r = makeRng(3), w = new World(TABLES, buildMaps(), defaultParty(TABLES, r), r); w.travel(to, x, y, 2); return w; };
+    const maps = buildMaps(), fresh = (to: string, x: number, y: number): World => { const r = makeRng(3), w = new World(TABLES, maps, defaultParty(TABLES, r), r); w.travel(to, x, y, 2); return w; };
     const live = (w: World, ids: readonly string[]): string[] => w.liveGroups().map((g) => g.def.id).filter((id) => ids.includes(id)).sort();
     const boxed = (w: World, zone: string): string[] => w.map.encounters.filter((e) => w.map.zoneAt(e.x, e.y)?.id === zone).map((e) => e.id);
     const held = (w: World, ids: readonly string[]): string[] => ids.filter((id) => w.map.encounters.find((e) => e.id === id)!.until).sort();
@@ -91,7 +91,7 @@ export function monsters(): void {
     t.ensureMapState('grove2').groups.g2_warden.dead = t.state.minutes;
     t.killGroups(rift); t.advance(2880);
     ok(!live(t, ['tm_hounds', 'tm_elders']).length, `and once the Warden is dead the Rift's hounds and elders stay dead (back: ${live(t, all).join(' ') || 'none'})`);
-    const start = buildMaps().deep_mines.def.start, m = fresh('deep_mines', start.x, start.y), upper = m.map.encounters.map((e) => e.id), s = m.maps.deep_mines2.def.start;
+    const start = maps.deep_mines.def.start, m = fresh('deep_mines', start.x, start.y), upper = m.map.encounters.map((e) => e.id), s = m.maps.deep_mines2.def.start;
     m.killGroups(upper); m.advance(2880);
     ok(upper.length === 2 && !live(m, upper).length, `the deep mines' first level cleared whole stays empty (${upper.join(' ')})`);
     m.travel('deep_mines2', s.x, s.y, s.facing); m.killGroups(['dm2_beetles']); m.advance(1440);
