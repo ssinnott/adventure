@@ -4,8 +4,8 @@
 // from here.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
-import { defaultParty, createCharacter, createParty, xpForLevel, levelUp, equip, weaponOf, hasTrait, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../../src/game/party.ts';
-import type { Character, Party, ClassId, RaceId, Stats } from '../../src/game/party.ts';
+import { defaultParty, createCharacter, createParty, xpForLevel, levelUp, equip, weaponOf, hasTrait, PRESTIGE_LEVELS, prestigeOf, takePrestige, CLASSES } from '../../src/game/party.ts';
+import type { Character, Party, ClassId, RaceId } from '../../src/game/party.ts';
 import { linesOf, TIER_LEVELS } from '../../src/game/mastery.ts';
 import type { Tier, Tiers } from '../../src/game/mastery.ts';
 import { blowsOf } from '../../src/game/combat.ts';
@@ -267,18 +267,18 @@ export function companyAt(level: number, seed: number, rules: Readonly<Rules> = 
 
 /**
  * The four newer classes' company (#854): a barbarian, a monk and a paladin in front; a bard, a
- * druid and a sorcerer behind. Each of the four takes a premade member's place and raises, on its own
- * class's stats and of a people that suits it (the barbarian Bram's, the monk Wren's, the bard
- * Ottilie's, the druid Maren's); the paladin and the sorcerer are the premade's Idris and Cassian, so
- * the two companies differ by the four alone.
+ * druid and a sorcerer behind. Each of the four takes a premade member's place (the barbarian Bram's,
+ * the monk Wren's, the bard Ottilie's, the druid Maren's), of a people that suits it and on its
+ * class's stats, as every member stands (`ClassDef.stats`, DESIGN §5); the paladin and the sorcerer
+ * are the premade's Idris and Cassian, so the two companies differ by the four alone.
  */
-export const NEWER: readonly (readonly [name: string, race: RaceId, cls: ClassId, raised: Partial<Stats>])[] = [
-  ['Rook', 'dwarf', 'barbarian', { might: 15, endurance: 14, accuracy: 12 }],
-  ['Hollis', 'tidefolk', 'monk', { accuracy: 14, speed: 13, might: 11 }],
-  ['Idris', 'orcblood', 'paladin', { might: 13, personality: 13, endurance: 12 }],
-  ['Aveline', 'gnome', 'bard', { personality: 15, speed: 13, accuracy: 12 }],
-  ['Sable', 'human', 'druid', { personality: 15, endurance: 12 }],
-  ['Cassian', 'human', 'sorcerer', { intellect: 16, luck: 11, speed: 11 }],
+export const NEWER: readonly (readonly [name: string, race: RaceId, cls: ClassId])[] = [
+  ['Rook', 'dwarf', 'barbarian'],
+  ['Hollis', 'tidefolk', 'monk'],
+  ['Idris', 'orcblood', 'paladin'],
+  ['Aveline', 'gnome', 'bard'],
+  ['Sable', 'human', 'druid'],
+  ['Cassian', 'human', 'sorcerer'],
 ];
 
 /**
@@ -291,7 +291,7 @@ export function newerCompany(level: number, seed: number, rules: Readonly<Rules>
   let p = companies.get(key);
   if (!p) {
     const rng = makeRng(seed);
-    p = train(createParty(NEWER.map(([name, race, cls, raised]) => createCharacter(HARNESS, name, race, cls, raised, rng))), level, rng, rules);
+    p = train(createParty(NEWER.map(([name, race, cls]) => createCharacter(HARNESS, name, race, cls, CLASSES[cls].stats, rng))), level, rng, rules);
     companies.set(key, p);
   }
   return structuredClone(p);

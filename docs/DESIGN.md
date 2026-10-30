@@ -313,6 +313,10 @@ country, band 26 to 28.
   might (Cairnmoor) and the Vigil Robe personality (Hearth Isle). They and the four elemental weapons
   beside them (§6) are off the gear ladder and in no shop, two to an area, one of each pair in the
   area's first locked chest (#861 to #864).
+- **Stats are fixed** by class and people: each class starts on a line of its own over 10
+  (`ClassDef.stats`, `src/game/party/tables.ts`) and its people's lean goes on top (Races), so a
+  pairing always starts the same, mustered by hand, premade or drawn. Nothing is rolled. Decided by
+  the owner, 30 October 2026.
 - **Secondary skills,** three to a guild, taught to its members for a price (§8):
   *Cartographer, Pathfinder, Mountaineer, Swimmer, Linguist, Merchant, Lockpick, Danger Sense,
   Perception, Arms Master, Spirit Sense, Navigator.* Built with #538: Linguist, the first, a list on
@@ -616,6 +620,27 @@ Decided by the owner's delegate for #892, each the owner's to overturn:
    stand. The elemental weapons' lead of 1.5 to 2.5 by `hits()` at their bands (10 to 15% of a
    blow) is a found weapon's edge, optional power the gate does not measure (J2): a rung is worth 1
    and a d6 3.5. Restating the eight is four area pull requests for a rule no player sees.
+
+Fixed stats (the owner, 30 October 2026): each class's line and its people's lean, and no roll.
+
+Decided by the builder, each the owner's to overturn:
+
+1. The lines are the ones the checks measure, so no figure of the gate or the harness moves: the
+   premade six's for their classes and the newer company's for the barbarian, the monk, the bard
+   and the druid (`NEWER`, `tools/kit/company.ts`, which now reads them from the table). Over 10:
+   the knight and the barbarian Might 15, Endurance 14 and Accuracy 12; the paladin Might 13,
+   Personality 13 and Endurance 12; the ranger Accuracy 14, Speed 13 and Intellect 11; the monk
+   Accuracy 14, Speed 13 and Might 11; the thief Speed 15, Luck 13 and Accuracy 12; the cleric and
+   the druid Personality 15 and Endurance 12; the bard Personality 15, Speed 13 and Accuracy 12;
+   the sorcerer Intellect 16, Luck 11 and Speed 11. A line sits under the old roll's mean of 13 a
+   stat, where the gate's company always stood: a company made by hand now starts where the road was
+   measured.
+2. The screen keeps its stats step, the member's line with its people's share shown before it
+   joins: Space takes it, Esc goes back to the class, and R, the reroll, is gone.
+3. The drawn company (`randomParty`) takes its classes' lines as the screen does. A seed draws the
+   classes and the names it drew; from the second member on its peoples differ, as the roll's
+   draws are gone.
+4. A save keeps the stats it holds: a company rolled before stands as it was rolled.
 
 ---
 

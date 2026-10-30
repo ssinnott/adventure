@@ -2,7 +2,8 @@
 // a kill pays.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, SPELLS, MAP_DEFS, TABLES } from '../../src/content/index.ts';
-import { defaultParty, createCharacter, CLASSES, xpForLevel, levelUp, equip, armorClass, canTrain, canTrainAt, spellTierAt, trainPrice, killPay, MAX_LEVEL, useItem, addCondition, hasCondition, randomParty, STATS } from '../../src/game/party.ts';
+import { defaultParty, createCharacter, CLASSES, xpForLevel, levelUp, equip, armorClass, canTrain, canTrainAt, spellTierAt, trainPrice, killPay, MAX_LEVEL, useItem, addCondition, hasCondition, randomParty, STATS, RACES, BASE_STATS } from '../../src/game/party.ts';
+import type { Character } from '../../src/game/party.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import { CURVE, trainerCeiling } from '../../src/content/progression.ts';
 import { startCombat, currentTurn, partyAct, monsterAct, aliveMonsters, victoryLine } from '../../src/game/combat.ts';
@@ -19,10 +20,14 @@ export function party(): void {
   ok(p.members[5].spells.includes('spark') && p.members[5].spells.includes('light'), 'the sorcerer knows the tier-1 spells');
   ok(p.members[5].equipment.weapon === 'sling' && p.members[5].pack.includes('dagger'), 'the sorcerer starts with a sling in hand and the dagger packed');
   ok(!p.members[5].spells.includes('sleep'), 'but not tier 2');
-  // The company drawn from a seed alone (#979), pinned as the creation screen's module drew it.
+  // The company drawn from a seed alone (#979), pinned since its stats became its classes' (DESIGN §5).
   const drawn = randomParty(TABLES, 77).members.map((m) => `${m.name} ${m.race} ${m.cls} ${m.hp} ${STATS.map((k) => m.stats[k]).join('/')}`).join(', ');
-  ok(drawn === 'Sable elf knight 13 11/13/11/14/13/10/10, Aveline human monk 11 15/13/12/13/13/14/11, Bram dwarf paladin 12 14/13/13/17/12/14/12, Wren gnome thief 9 12/12/13/14/15/14/15, Piran gnome druid 8 11/11/11/12/11/13/14, Tamsin tidefolk sorcerer 8 14/12/15/16/13/12/10',
+  ok(drawn === 'Sable elf knight 13 13/13/10/13/14/10/10, Aveline tidefolk monk 10 11/9/10/12/14/15/9, Bram elf paladin 10 11/13/13/11/12/10/10, Wren human thief 8 10/10/10/10/12/15/13, Piran human druid 8 10/10/15/12/10/10/10, Tamsin human sorcerer 6 10/16/10/10/10/11/11',
     `a seed draws the company it always drew, its names, peoples, classes, hit points and stats (77: ${drawn})`);
+  // Nothing is rolled: a member stands on its class's stats with its people's mods on top.
+  const line = (m: Character): number[] => STATS.map((k) => (CLASSES[m.cls].stats[k] ?? BASE_STATS[k]) + (RACES[m.race].mods[k] ?? 0));
+  const off = [p, ...[...Array(40).keys()].map((n) => randomParty(TABLES, n + 1))].flatMap((q) => q.members).filter((m) => STATS.some((k, i) => m.stats[k] !== line(m)[i]));
+  ok(!off.length, `the premade six and forty drawn companies stand on their classes' stats and their peoples' mods (${off.map((m) => `${m.name} the ${m.race} ${m.cls}`).join(', ') || 'all do'})`);
   // The mender rule: 191's first six have no mender and 25901's first twelve none, so each draws again;
   // 5, 11, 20 and 38 each have one mender alone, a paladin, a druid, a cleric and a bard.
   const mended = [191, 25901, 5, 11, 20, 38].map((n) => randomParty(TABLES, n).members.map((m) => m.cls).join(' ')).join(', ');

@@ -93,13 +93,15 @@ export function docs(): void {
     if (!design.includes(from)) throw new Error(`docs/DESIGN.md no longer says ${from}: the copy wants a new line to change`);
     return { ...tree, texts: new Map(tree.texts).set('docs/DESIGN.md', design.replace(from, to)) };
   };
-  // Where each lane's own part grows: at the start of the line after a heading or a title, at
-  // the end of the largest state's first line, or in a comment line put after a header's first.
+  // Where each lane's own part grows: at the start of the line after a heading or a title (the
+  // design lane's largest section's, wherever that stands), at the end of the largest state's first
+  // line, or in a comment line put after a header's first.
   const state = [...tree.texts.keys()].filter((f) => /^docs\/areas\/[^/]+\.md$/.test(f))
     .reduce((a, b) => (Buffer.byteLength(tree.texts.get(b)!) > Buffer.byteLength(tree.texts.get(a)!) ? b : a));
+  const written = firstRead('design', tree).largest!;
   const GROW: Readonly<Record<Lane, [string, string]>> = {
     systems: ['docs/DESIGN.md', '## 6. Combat\n'], area: [state, ''], creatures: ['docs/ROSTER.md', '# Roster\n'],
-    interiors: ['src/ui/interiors/shops.ts', '//'], quality: ['tools/test.ts', '//'], design: ['docs/DESIGN.md', "### The bounds' eight\n"],
+    interiors: ['src/ui/interiors/shops.ts', '//'], quality: ['tools/test.ts', '//'], design: [written.path, `## ${written.of}\n`],
   };
   const grownBy = (lane: Lane, by: number): Tree => {
     const [p, after] = GROW[lane], t = tree.texts.get(p)!, k = Math.max(0, by);
