@@ -1452,6 +1452,10 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
   spells, a trainer's members, its Expert's and a Master's, a shop's Buy and Sell lists) opens on
   the row it left, held to the rows it has now, so where that row has gone the cursor is on the one
   after it. A menu a choice opens anew starts at its top.
+- **The order:** on the sheet X asks with whom the member changes places, chosen by a digit or by
+  the arrows round the cards and Space, and Esc or X again asks no more (`changePlaces`,
+  `src/game/party/order.ts`). Only the two places change, across the rows and the fallen too; it
+  costs no time, is not offered in a fight and the save keeps it.
 - **Monsters:** front-facing paintings: 160 kinds, drawn by 28 family modules in `src/ui/monsters/`
   that each register the kinds they draw. A drawing breathes in a slow bob and flashes white when
   it is hit; there is no attack frame and no death frame, and a monster that dies is no longer
