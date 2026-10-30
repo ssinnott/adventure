@@ -180,6 +180,13 @@ export function layers(): void {
   ok(stale.failures.join() === 'KNOWN: src/game/a.ts > src/ui/gone.ts (X) no longer crosses: the row goes', `a row that no longer crosses fails: ${stale.failures.join('; ')}`);
   const loop = judge(fixture, { X: ['src/game/a.ts > src/content/b.ts', 'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts'] }, X);
   ok(loop.failures.join() === 'cycle: src/content/b.ts, src/game/a.ts import each other as they load; no KNOWN row holds it', `a cycle no row holds fails, by its files: ${loop.failures.join('; ')}`);
+  // A row under a key that is no issue of the plan fails by its key, which no type holds now.
+  const unkeyed = judge(fixture, { Y: [
+    'src/game/a.ts > src/content/b.ts', 'cycle: src/content/b.ts src/game/a.ts',
+    'src/content/areas/x/maps/m.ts > src/content/areas/y/maps/n.ts',
+  ] }, X);
+  ok(unkeyed.failures.join() === "KNOWN: Y is no issue of #848's plan",
+    `a row under no issue of the plan fails, by its key: ${unkeyed.failures.join('; ')}`);
   // An area's steps.ts is the chain its walkthrough plays (#1033): a walkthrough or a steps.ts takes its
   // own area's and any other's, as it takes the kit; a steps.ts takes no walkthrough; nothing in src takes one.
   const chains = graph(['src/content/areas/x/walkthrough.ts', 'src/content/areas/x/steps.ts', 'src/content/areas/y/steps.ts', 'src/content/areas/y/walkthrough.ts', 'src/content/areas/y/maps/n.ts', 'tools/kit/k.ts'], (f) => ({

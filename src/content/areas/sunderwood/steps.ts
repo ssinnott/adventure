@@ -73,7 +73,10 @@ const BRIDGE: Step = { name: 'over the bridge', play: eastToTheBridge };
 const DOWN: Step = { name: 'down to the wall', play: downToTheWall };
 const READ: Step = { name: 'the papers read', play: toTheReader };
 
-/** In order: over the bridge, down to the wall, the papers read, and Vask answered no the next morning. */
+/**
+ * In order: over the bridge, down to the wall, the papers read and, the next morning, Vask
+ * answered no.
+ */
 export const STEPS: readonly Step[] = [BRIDGE, DOWN, READ, { name: 'Vask, no', play: vaskRefused() }];
 
 /** A step at 16, the walk's level the Watch first is played at. */
