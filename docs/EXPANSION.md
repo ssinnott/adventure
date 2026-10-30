@@ -80,7 +80,7 @@ Added:
   box that faces no built box is open to a walker exactly where a row of its area's `openOnNothing`
   says, with the box it faces and why that is unbuilt; the box built there meets the seam rule, and
   its pull request deletes the row. That is the bounds' border check (#828) in embryo. A row of
-  either stands in its area's `checks.ts` (§8.2).
+  either stands in `src/content/areas/<area>/checks.ts` (§8.2).
 
 Its decisions: decisions.md.
 
@@ -97,7 +97,7 @@ each area:
 - every monster's level (a new field on `MonsterDef`) sits in its map's band, give or take two,
   rising from the floor near the area's way in to the band's top at the far end;
 - chest and drop items sit in the band's price window, so a band 1–4 cellar holds no plate; an
-  artifact, which no window holds, is excepted by its mark alone (#847, below).
+  artifact, which no window holds, is excepted by its mark alone (#847's list).
 
 A map whose floor is over its area's band is a later area's country reached from it, as the
 Dead-Drop's stair under the Tide Ship is, and pays nothing there. The deepest levels, which the road
@@ -124,25 +124,24 @@ on the Stair's ground and groups, it is won 95.2% at 30, its guardian 57% at 30 
 fights 10.71 to a rest at 30 and 8.49 at 28, 74% of the floor's day; Saltreach's clear, band, pools
 and day are as they were without it; and it holds no step.
 
-A kill pays each member by the monster's level against theirs: ×0.1 at three or more under, ×0.4
-at two under, ×0.7 at one under, ×1 at their level, ×1.15 at one over, ×1.3 at two over, and ×1.5
-at three or more over. Simulated from Saltreach on, that kept companies that clear anything from
-65% of each area to all of it within about a level of the road, where fixed xp left a full clear
-nearly four levels over by the Glasswold. Each town's trainers teach to its band's top plus one, and
-never past the cap (Hearth Isle's camp teaches to 32, #739, call 4). Gold and loot stay fixed, so a
-full clear still pays, in gear, gold and secrets.
+A kill pays each member by the monster's level against theirs, its xp times `KILL_PAY`'s multiple
+for the gap (`src/game/party/tables.ts`). Simulated from Saltreach on, that kept companies that
+clear anything from 65% of each area to all of it within about a level of the road, where fixed xp
+left a full clear nearly four levels over by the Glasswold. Each town's trainers teach to its band's
+top plus one, and never past the cap (Hearth Isle's camp teaches to 32, #739, call 4). Gold and loot
+stay fixed, so a full clear still pays, in gear, gold and secrets.
 
 So an area may give more than its ask (#634): paid by level, a lead does not build up, for the next
 area takes it back. What the curve holds is the lead itself: a company of six entering an area at
 its floor and clearing three quarters of it, paid by level, leaves it no more than a level over the
-next floor. Two built areas pass that line and each holds its lead in its `checks.ts` (`overRoad`,
-`tools/tests/curve.ts`), at the level it leaves as built so that neither grows unnoticed: the Kilns
-at 19.5, their bosses paying the line's, and Ashfall at 27.4, for the Stone, the rungs, the quests,
-the sentries and the country behind the road. Decided by the owner's delegate, 16 October 2026
-(#738): accepted as built, the Wold taking the lead back and leaving a company at 27.9, a tenth
-under the Hearth's floor. Walked in road order, Act III ends 0.8 over the road at three quarters
-cleared and 1.4 at a full clear; Act IV ends 0.6 and 1.3 over, Act II's own areas 0.5 to 0.8 and 1.2
-to 1.6.
+next floor. Two built areas pass that line and each holds its lead in
+`src/content/areas/<area>/checks.ts` (`overRoad`, `tools/tests/curve.ts`), at the level it leaves as
+built so that neither grows unnoticed: the Kilns at 19.5, their bosses paying the line's, and
+Ashfall at 27.4, for the Stone, the rungs, the quests, the sentries and the country behind the road.
+Decided by the owner's delegate, 16 October 2026 (#738): accepted as built, the Wold taking the lead
+back and leaving a company at 27.9, a tenth under the Hearth's floor. Walked in road order, Act III
+ends 0.8 over the road at three quarters cleared and 1.4 at a full clear; Act IV ends 0.6 and 1.3
+over, Act II's own areas 0.5 to 0.8 and 1.2 to 1.6.
 
 Its first rows are the slice's own figures from its doc (`docs/archive/SLICE-history.md`): level 2
 from the Foreland and the cellar, level 4 with Brandy Hole, level 9 from one clear of everything,
@@ -152,21 +151,20 @@ three quarters of it should reach 10, where a clear of everything reaches 9. The
 since: summed at ×1, one clear of Act I is worth 19,957 xp a member, level 12; paid by level in road
 order (#159), 15,292, level 10 and three quarters of the way to 11, and a sweep of the Grove at 10
 pays about 1,000, so seven tenths of one more reaches Thornhold's 11. Act II's three rows came
-before their maps, each owed to the issue that builds its area (#159), and Act III's three the same
-way (#535): the Kilns 16–18, Cairnmoor 18–20 and Rimewater 20–22, their windows rising 500 a band to
-3,500, 4,000 and 4,500. Act IV's three are in the same way (#542): the Whitespine 22–24, Ashfall
-24–26 and the Glasswold 26–28, their windows to 5,000, 5,500 and 6,000.
+before their maps, each owed to the issue that builds its area (#159), and Act III's and Act IV's
+three the same way (#535, #542); each row's band and price window are in `CURVE` alone.
 
-The gear ladder (`GEAR`, `tools/kit/company.ts`, made from each area's rungs in its `checks.ts`) is
-what a company has in hand by a level, and the harness and the gate dress their companies by it. Act
-I's: Mottram's by 3, the Downs' finds by 5, Thornmark's Armoury by 8, its chests' plus by 9 and the
-Deepthorn's +2s by 10. Act II's (#399): Saltmouth's armourer by 11, Saltreach's and Wrackholm's
-boxes' plus by 13, Lantern Watch's stores by 14 and the Sunder's plus by 16. Act III's (#535):
-Anvilhall's forge by 17, the Kilns' and Cairnmoor's boxes' plus by 19, Rime Lodge's furrier by 21
-and Rimewater's plus by 22. Act IV's, one step (#542): Cinderport's armourer by 25. Act V's, the
-last (#746): the Hand's steel by 28, found on Hearth Isle and never sold. Each rung betters the last
-for every class, each find and ware inside its area's window; past the top, gear grows only in the
-harness's what-ifs, the bounds' artifacts among them (`--artifacts`, #847).
+The gear ladder (`GEAR`, `tools/kit/company.ts`, made from each area's rungs in
+`src/content/areas/<area>/checks.ts`) is what a company has in hand by a level, and the harness and
+the gate dress their companies by it. Act I's: Mottram's by 3, the Downs' finds by 5, Thornmark's
+Armoury by 8, its chests' plus by 9 and the Deepthorn's +2s by 10. Act II's (#399): Saltmouth's
+armourer by 11, Saltreach's and Wrackholm's boxes' plus by 13, Lantern Watch's stores by 14 and the
+Sunder's plus by 16. Act III's (#535): Anvilhall's forge by 17, the Kilns' and Cairnmoor's boxes'
+plus by 19, Rime Lodge's furrier by 21 and Rimewater's plus by 22. Act IV's, one step (#542):
+Cinderport's armourer by 25. Act V's, the last (#746): the Hand's steel by 28, found on Hearth Isle
+and never sold. Each rung betters the last for every class, each find and ware inside its area's
+window; past the top, gear grows only in the harness's what-ifs, the bounds' artifacts among them
+(`--artifacts`, #847).
 
 Nor does the gate's company learn a secondary skill (DESIGN.md §5): Arms Master's first round and
 the two senses go unmeasured, so a company that buys one is stronger than the gate measured it, the
@@ -178,15 +176,15 @@ The gate, checked with the bot of `tools/kit/fight.ts` (`gateTurn`). Each figure
 below is its **aim**, and each has a **limit** beyond it (#273): inside its aim a
 figure passes; between its aim and its limit it passes, and the check lists it as off
 its aim (under `--list`, #895); past its limit it fails, and only then is it owed.
-The limits, weighed by the pilot on every box of the Downs and left as they were
-until the owner's own play says otherwise (#47, docs/areas/shelf.md §8): 80% won at the floor, 90%
-two under, the road walked 65% of the time, a boss 20% to 80% at its floor and 75% two above or at
-the cap, 4 to 10 fights to a rest and the warning's nearest groups ten points under the median.
+Each figure's aim and limit are `GATE`'s (`tools/kit/rules/gate.ts`), the limits weighed by the
+pilot on every box of the Downs and left as they were until the owner's own play says otherwise
+(#47, docs/areas/shelf.md §8).
 
-- **At the floor, through.** A company at each map's own floor wins nine in ten of that map's
-  fights, and of the area's, each fought at its map's floor; each zone's road is walked at the
-  zone's floor, resting where the road lets it (an inn, a camp), eight times in ten.
-- **Well under, back.** Two levels under the floor, it wins no more than one fight in four: over
+- **At the floor, through.** A company at each map's own floor wins `GATE.through`'s share of
+  that map's fights, and of the area's, each fought at its map's floor; each zone's road is walked
+  at the zone's floor, resting where the road lets it (an inn, a camp), as often as `GATE.road`
+  asks.
+- **Well under, back.** Two levels under the floor, it wins no more than `GATE.back` lets it: over
   each map whose floor is the area's, and over the area, where a zone map's groups count two under
   its own floor and a town's or dungeon's two under the area's (the owner, on #40 and #209). That is
   Act I's figure: from Saltreach's floor, 10, two under is judged by the day (below, #851).
@@ -196,10 +194,10 @@ the cap, 4 to 10 fights to a rest and the warning's nearest groups ten points un
   company stands above it; and a map of nothing but its boss is judged on the boss's odds, with no
   floor of fights to pool and no day. Where the rise from the floor to two above is too short for
   both odds, the floor binds and the second stands inside its limit, short of its aim: the Stair's
-  Catcher, 57% at 30 and 80% at 32 on the gate's seeds, against an aim of 90% and a limit of 75%
-  (#752, #796; docs/areas/hearth.md §8).
+  Catcher, 57% at 30 and 80% at 32 on the gate's seeds (#752, #796; docs/areas/hearth.md §8).
   A boss set off the line is sized on these odds against the gate's bot, by its box's gate
-  (`offLine` on its def in its area's `monsters.ts`, which `tools/tests/harness.ts` reads).
+  (`offLine` on its def in `src/content/areas/<area>/monsters.ts`, which `tools/tests/harness.ts`
+  reads).
 - **Six or seven fights to a rest.** A company can fight six or seven standard encounters at its own
   level between rests to level 10, and a fight more every four levels after as its power grows
   (twelve at 32, never fifteen). Its spell points count as much as its hit points: it rests once it
@@ -244,39 +242,39 @@ the cap, 4 to 10 fights to a rest and the warning's nearest groups ten points un
   it (MONSTERS §4.4).
 
 The checks' company keeps up with the party behind what-ifs (#854), off in every default: #865
-weighed the tiers and the bots' three and kept them off (J2, above). Under `Rules.tiers`
-(`--tiers`) `companyAt` takes its tiers after its
-prestiges: Expert at 13 and Master at 25 on each line its class takes, a fighter's arms, a caster's
-magic and a hybrid's both. `Rules.bot` (`--bot bless,sleep,drink`) hands the bots their options,
-the thrifty one's in the harness's fights and the gate's in its own. Beside the premade six stands
-a company of the four newer classes, `newerCompany`: a barbarian, a monk and a paladin in front, a
-bard, a druid and a sorcerer behind, trained, dressed, prestiged and tiered as the six are. The
-harness suite holds it to the line at 12, 20, 28 and 32 against each role's standard encounter, on
-100 seeds: its fights to a rest inside `GATE.perRest`'s limit and its fights from fresh won at the
-floor's limit, 80%; `--company newer` plays it by hand. The gate judges one company, the premade
-six: a second would double its fights in the slowest of CI's jobs. On 17 October 2026 the newer
-company stands inside every limit and wins every fight from fresh, off its aim on five lines: the
-archer at 12 (9.5 to a rest, 7 asked), the controller at 28 (12.1 of 11) and the controller, the
-armoured and the elite at 32 (13.6, 13.2 and 13.4 of 12). Since #946 the what-ifs are a value,
-`Rules`, passed to each call that reads one, down to the fight, the bots' answers among them
-(`Rules.answer`); `RULES`, play's, is frozen and sets none, so no suite leaves one set for the next.
+weighed the tiers and the bots' three and kept them off (J2, above). Under `Rules.tiers` (`--tiers`)
+`companyAt` takes its tiers after its prestiges: Expert at 13 and Master at 25 on each line its
+class takes, a fighter's arms, a caster's magic and a hybrid's both. `Rules.bot`
+(`--bot bless,sleep,drink`) hands the bots their options, the thrifty one's in the harness's fights
+and the gate's in its own. Beside the premade six stands a company of the four newer classes,
+`newerCompany`: a barbarian, a monk and a paladin in front, a bard, a druid and a sorcerer behind,
+trained, dressed, prestiged and tiered as the six are. The harness suite holds it to the line at 12,
+20, 28 and 32 against each role's standard encounter, on 100 seeds: its fights to a rest inside
+`GATE.perRest`'s limit and its fights from fresh won at the floor's limit, `GATE.through`'s;
+`--company newer` plays it by hand. The gate judges one company, the premade six: a second would
+double its fights in the slowest of CI's jobs. On 17 October 2026 the newer company stands inside
+every limit and wins every fight from fresh, off its aim on five lines: the archer at 12 (9.5 to a
+rest, 7 asked), the controller at 28 (12.1 of 11) and the controller, the armoured and the elite at
+32 (13.6, 13.2 and 13.4 of 12). Since #946 the what-ifs are a value, `Rules`, passed to each call
+that reads one, down to the fight, the bots' answers among them (`Rules.answer`); `RULES`, play's,
+is frozen and sets none, so no suite leaves one set for the next.
 
 From 10 two under is judged by the day, not the fight. From 10 the damage spells roll their full
 dice and every group is sized for the day (docs/MONSTERS.md §4.4), so a fight from full health
 measures nothing there: on main at `dbb9d247` the gate's company won every fight two under every
 sampled floor from 10, and nearly every fight eight under from 18, while Thornmark's cliff stood
 (100% at 5, 24% at 3). The day still slopes: two under, a company got 43% to 87% of the fights to a
-rest it got at the floor, about 62% the median. So a company two under a floor rests after at most
-two thirds of the fights the floor's aim gives (the aim), and never gets as many as the aim itself
-(the limit): `GATE.backDay` in `tools/tests/gate.ts`. It is judged over each map two under is asked
-of alone, at its own floor less two, and over the area, its groups pooled at the area's floor less
-two: 100 seeds, dealt, a boss left out as from the floor's day. On 17 October 2026 the gate judges
-81 maps' days and 10 areas', at 29% to 109% of their floors' aims (the median 62%). It lists 29 maps
-and three areas off their aim, the soft ones: seven each of Ashfall's and the Glasswold's, six of
-Cairnmoor's. One map was past its limit, owed to #865: `cairnfield_m8`, whose two groups were fought
-9.29 to a rest two under against the floor's 8.5. The 86 two-under figures owed to #18 went (#851).
-On 18 October #865 re-sized its crag group, two ravens and two tor trolls where eight ravens stood:
-two under it fights 5.52 to a rest (64.9%), and 7.60 at its floor (8.5 asked). No row is owed.
+rest it got at the floor, about 62% the median. So a company two under a floor rests after fewer
+fights than the floor's aim gives, its share held by `GATE.backDay`'s aim and limit
+(`tools/kit/rules/gate.ts`). It is judged over each map two under is asked of alone, at its own
+floor less two, and over the area, its groups pooled at the area's floor less two: 100 seeds, dealt,
+a boss left out as from the floor's day. On 17 October 2026 the gate judges 81 maps' days and 10
+areas', at 29% to 109% of their floors' aims (the median 62%). It lists 29 maps and three areas off
+their aim, the soft ones: seven each of Ashfall's and the Glasswold's, six of Cairnmoor's. One map
+was past its limit, owed to #865: `cairnfield_m8`, whose two groups were fought 9.29 to a rest two
+under against the floor's 8.5. The 86 two-under figures owed to #18 went (#851). On 18 October #865
+re-sized its crag group, two ravens and two tor trolls where eight ravens stood: two under it fights
+5.52 to a rest (64.9%), and 7.60 at its floor (8.5 asked). No row is owed.
 
 Its decisions: decisions.md.
 
@@ -319,8 +317,8 @@ to place and worth the walk.
   roads and coast carry on across the edge.
 - **The road** needs no skill, tier or item: skills and boats open shortcuts off it (§2.2).
 - **Story locks.** Every flag that closes something (an exit, a gate, a door, a service) is in
-  `content/locks.ts` with its reason; the list keeps to §2.3's count, and no lock stands between
-  areas. Every hand-in takes its item at the first meeting.
+  `LOCKS` (`content/locks.ts`) with its reason, inside the counts beside it, and no lock stands
+  between areas. Every hand-in takes its item at the first meeting.
 
 ### 5.5 Saves
 
@@ -392,10 +390,10 @@ secret found and never told, restraint), reads the text and the code.
 
 ### 5.8 The one quest
 
-- **Joined from chapters.** Each area writes its chapter of the quest (`areas/<area>/chapter.ts`:
-  its entries and its goals), and `content/index.ts` joins them in road order into one quest, with
-  the goals furthest along first, as the log tries them. No area edits another's chapter, so one
-  quest is not one file that everyone edits.
+- **Joined from chapters.** Each area writes its chapter of the quest
+  (`src/content/areas/<area>/chapter.ts`: its entries and its goals), and `content/index.ts` joins
+  them in road order into one quest, with the goals furthest along first, as the log tries them. No
+  area edits another's chapter, so one quest is not one file that everyone edits.
 - **The road's own test.** The walkthrough plays the chapters in order, each step at the curve's
   level, checking that the goal names a built place, the level sits in its band and the step is
   finished. An area's walkthrough is its chapter in scenes, each its own walk, run alone
@@ -429,21 +427,21 @@ secret found and never told, restraint), reads the text and the code.
 
 | Lane | Touches | At once |
 |---|---|---|
-| Systems | `src/game/`, `src/ui/` outside the art modules, the kits (`src/ui/paint/`, `src/ui/monsters/kit/`, `src/ui/interiors/kit/`), the save format, the shape of the registries | one |
-| Area | `src/content/areas/<area>/`, `docs/areas/<area>.md` and its folder, `docs/areas/<area>/` | one per area in flight |
-| Creatures | `src/ui/monsters/<family>.ts` | one per family |
-| Interiors | `src/ui/interiors/<area>/` | one per area |
-| Quality | `tools/`, CI, this contract | one |
+| Systems | `src/game`, `src/ui` outside the art modules, the three kits, the save format, the registries | one |
+| Area | an area's maps, monsters, items and quests, and its doc | one per area in flight |
+| Creatures | the monster drawings: `src/ui/monsters` outside its kit/ | one per family |
+| Interiors | the businesses' rooms: `src/ui/interiors` outside its kit/ | one per area |
+| Quality | `tools/`, CI and the content contract (EXPANSION §5) | one |
 
 A content session that needs a change to a system stops and asks for one, or opens a systems pull
 request first; it never edits shared files on the side.
 
 The imports keep layers as the files keep lanes: `src/lib` under `src/game` under `src/content`
-under `src/ui` under `src/app` (and its entry, `src/main.ts`), the
-tools taking anything and `tools/kit/` only `src`, the walkthroughs and the suites `src` and
-`tools/kit/` and not each other or the tools, no area another's files but its `public.ts` and no
-cycle among `src`'s runtime imports; `tools/tests/layers.ts` holds it, today's crossings the rows of
-its `KNOWN`, which only ever go (#900).
+under `src/ui` under `src/app` (and its entry, `src/main.ts`), the tools taking anything and
+`tools/kit/` only `src`, the walkthroughs and the suites `src` and `tools/kit/` and not each other
+or the tools, no area another's files but its `src/content/areas/<area>/public.ts` and no cycle
+among `src`'s runtime imports; `tools/tests/layers.ts` holds it, today's crossings the rows of its
+`KNOWN`, which only ever go (#900).
 
 The lanes are read as code, not by eye (#899): `node tools/lanes.ts <base>` lists the lanes the
 files changed since `<base>` fall in, each with its files, by the table of docs/ISSUES.md §2 (which
@@ -456,20 +454,21 @@ report and the reading of the diff are `tools/kit/lanes.ts`, the kit's first fil
 `tools/tests/lanes.ts` holds.
 
 The kit holds what the walkthroughs and the suites take, as #984 filled it: the fight once
-(`fight.ts`: `playOut`, `ROUND_CAP`, the gate's bot, its fight, its win rate and their memo), the
-premade company and its ladder (`company.ts`), the test monster's line (`line.ts`, its two tables in
-`line.json`, which `node tools/harness.ts --calibrate --write` writes), the harness's library
-(`harness.ts`), the headless game (`headless.ts`), the rules the suites share (`rules/`, a module a
-suite) and the libraries of `checks`, `grounds`, `ways`, `shipped`, `changed` and `scaffold`.
-`tools/gate.ts` and `tools/harness.ts` are command lines over it and import nothing of each other;
-`roadPlace` is `src/game/atlas.ts`'s, beside `areaBand`.
+(`tools/kit/fight.ts`: `playOut`, `ROUND_CAP`, the gate's bot, its fight, its win rate and their
+memo), the premade company and its ladder (`tools/kit/company.ts`), the test monster's line
+(`tools/kit/line.ts`, its two tables in `tools/kit/line.json`, which
+`node tools/harness.ts --calibrate --write` writes), the harness's library (`tools/kit/harness.ts`),
+the headless game (`tools/kit/headless.ts`), the rules the suites share (`tools/kit/rules/`, a
+module a suite) and the libraries of `checks`, `grounds`, `ways`, `shipped`, `changed` and
+`scaffold`. `tools/gate.ts` and `tools/harness.ts` are command lines over it and import nothing of
+each other; `roadPlace` is `src/game/atlas.ts`'s, beside `areaBand`.
 
-#985 put the walk in it: `walk.ts`, the walk the walkthroughs and three suites take and, once, the
-helpers the walkthroughs wrote each for itself (meeting, answering, searching, opening a chest,
-reading a quest's page, setting the clock), and `grid.ts` beside it, the floods and tests over a
-map's squares (`reach`, `shut`, `reached`, `spread`, `paces`, `apartFrom`, a box's `row` and `col`)
-and `ALL`. The chain a later chapter replays (`STEPS`, `FARM_FIRST`, Saltreach's `inOrder` and
-`saltmouthFirst`) stays in its walkthrough, H8's: the kit takes no walkthrough.
+#985 put the walk in it: `tools/kit/walk.ts`, the walk the walkthroughs and three suites take and,
+once, the helpers the walkthroughs wrote each for itself (meeting, answering, searching, opening a
+chest, reading a quest's page, setting the clock), and `tools/kit/grid.ts` beside it, the floods and
+tests over a map's squares (`reach`, `shut`, `reached`, `spread`, `paces`, `apartFrom`, a box's
+`row` and `col`) and `ALL`. The chain a later chapter replays (`STEPS`, `FARM_FIRST`, Saltreach's
+`inOrder` and `saltmouthFirst`) stays in its walkthrough, H8's: the kit takes no walkthrough.
 
 The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; it, the monsters' kit
 (`src/ui/monsters/kit/`) and the rooms' (`src/ui/interiors/kit/`) are the systems lane's, as
@@ -478,7 +477,7 @@ not in a sweep, and a helper a third family or a third scene wants goes into the
 request of its own, not into a copy in a third file: the rule of three.
 
 The tools that open the game in Chromium (the smoke, the sheet, the gallery, the interiors, the
-world map and `shot.ts`) start it in one place, `tools/kit/browser.ts` (#986), which imports
+world map and `tools/shot.ts`) start it in one place, `tools/kit/browser.ts` (#986), which imports
 Playwright by name as the pinned dependency it is (§8.3), launches it once with its fallback and
 opens the game on a page, its errors gathered and, for the smoke and the sheet, its `Math.random`
 pinned. The sheet, the gallery, the interiors and the world map read their command lines strictly by
@@ -504,12 +503,12 @@ Its decisions: decisions.md.
 3. **Author**: landmarks, features, groups, the secret, the ways in and out; dress the terrain. An
    exit lands on a named anchor of the map it leads to, `at: 'from_cairns'`, never on its squares:
    that map holds its anchors after its `start`, which is one, each named for the way in (#993).
-4. **Check**: a box declares the flags it sets in its area's declaration (`flags.ts`), each with a
+4. **Check**: a box declares the flags it sets in `src/content/areas/<area>/flags.ts`, each with a
    few words on what holding it means, and records them with its other ids: `node tools/shipped.ts`
-   records the box's ids in its area's `shipped.json` and no other file, and on a new area's first
-   map makes that file (§5.5); the typecheck refuses a flag no area declares and one two declare,
-   and the shipped suite a flag declared and not recorded or recorded and not declared (#995); then
-   `npm run check`, then the contact sheet.
+   records the box's ids in `src/content/areas/<area>/shipped.json` and no other file, and on a new
+   area's first map makes that file (§5.5); the typecheck refuses a flag no area declares and one
+   two declare, and the shipped suite a flag declared and not recorded or recorded and not declared
+   (#995); then `npm run check`, then the contact sheet.
 5. **Review**: a pull request, CI green, the owner's look at the sheet, merge.
 
 A monster or an interior goes the same way: a brief, the drawing, the gallery or interiors render,
@@ -518,45 +517,50 @@ family's `SPRITES`: the drawer, the span the smoke test prints and any part draw
 area's monsters and index, and its sheet draws that family alone (#915).
 
 An area's dungeons may exit only to its own region's maps, or to the outdoors once its zone is laid,
-so its zone map lands with or before its first dungeon (`tools/tests/weather.ts:125` holds it).
+so its zone map lands with or before its first dungeon (`tools/tests/weather.ts` holds it by the
+maps' regions).
 
-**A new area starts in `AREAS`** (`src/content/index.ts`), from its first commit: its folder, its line
-there and its `MAPS` in `AreaMaps` beside it (each map declared with its id, `MapDef<'cairns'>`, so
-that `MapId` names it, #994), its `flags.ts` declaring `FLAGS = {}`, its `flags: FLAGS` and its line
-in `Declared` (so that `Flag` names what it sets, #995), its row in the atlas's `areas` charted as
-the plan charts an area (`src/content/atlas.ts`: made of zones, reached from the start, its step and
-its band rising on the road of levels, which the atlas suite and the curve read) and its row in
-`CURVE`, with `MAPS` empty and `chapter: undefined` until its first map (the typecheck reads
-`chapter` on every area) and what its clear falls short of owed in its `checks.ts` (`owes.curve`)
-until it pays. Its monsters, rooms and items are merged from the start, so nothing waits in a list
-of its own ahead of its area (the `AHEAD` lists and `PLANNED` are gone, #897), and the suites take
-what is built: an area with no map is asked for no chapter, walkthrough, claim of what is new or
-step of the one quest, and once it has a map each zone it charts holds a step; a monster or a room
-no map places yet is owed in `owes.unplaced`. What the suites hold of an area is the area's: what
-describes one zone, group, monster or exit is a field of it (`AtlasZone.road`, `reach` and
-`maxGroup`, `EncounterDef.boss`, `MonsterDef.offLine`, `Exit.crosses`), and what is the area's own
-and no part of the game, what it owes, its rungs of the ladder, its lead over the road, its seams as
-built and its edges open on nothing, is a row in its `checks.ts` (`AreaChecks`), which nothing in
-the game imports and the suites find as the runner finds a walkthrough; a field `AreaChecks` has not
-stops the run with its name. A seam is the area's of the first box its key names (`a|b` or `a/b`),
-an edge the area's whose box it is. Each suite reads those alone. Every area's have moved, the
-Foreland's first (#897), the rest by one script in a window with no area pull request open (#968)
-and the last two tables' by the same script (#969), which dropped the emptied tables and the second
-reads beside them; so a box adds its rows to its own folder only.
+**A new area starts in `AREAS`** (`src/content/index.ts`), from its first commit: its folder, its
+line there and its `MAPS` in `AreaMaps` beside it (each map declared with its id,
+`MapDef<'cairns'>`, so that `MapId` names it, #994), its `src/content/areas/<area>/flags.ts`
+declaring `FLAGS = {}`, its `flags: FLAGS` and its line in `Declared` (so that `Flag` names what it
+sets, #995), its row in the atlas's `areas` charted as the plan charts an area
+(`src/content/atlas.ts`: made of zones, reached from the start, its step and its band rising on the
+road of levels, which the atlas suite and the curve read) and its row in `CURVE`, with `MAPS` empty
+and `chapter: undefined` until its first map (the typecheck reads `chapter` on every area) and what
+its clear falls short of owed in `src/content/areas/<area>/checks.ts` (`owes.curve`) until it pays.
+Its monsters, rooms and items are merged from the start, so nothing waits in a list of its own ahead
+of its area (the `AHEAD` lists and `PLANNED` are gone, #897), and the suites take what is built: an
+area with no map is asked for no chapter, walkthrough, claim of what is new or step of the one
+quest, and once it has a map each zone it charts holds a step; a monster or a room no map places yet
+is owed in `owes.unplaced`. What the suites hold of an area is the area's: what describes one zone,
+group, monster or exit is a field of it (`AtlasZone.road`, `reach` and `maxGroup`,
+`EncounterDef.boss`, `MonsterDef.offLine`, `Exit.crosses`), and what is the area's own and no part
+of the game, what it owes, its rungs of the ladder, its lead over the road, its seams as built and
+its edges open on nothing, is a row in `src/content/areas/<area>/checks.ts` (`AreaChecks`), which
+nothing in the game imports and the suites find as the runner finds a walkthrough; a field
+`AreaChecks` has not stops the run with its name. A seam is the area's of the first box its key
+names (`a|b` or `a/b`), an edge the area's whose box it is. Each suite reads those alone. Every
+area's have moved, the Foreland's first (#897), the rest by one script in a window with no area pull
+request open (#968) and the last two tables' by the same script (#969), which dropped the emptied
+tables and the second reads beside them; so a box adds its rows to its own folder only.
 
-**An area's `public.ts` is the one file of it another area imports** (#992), which the layers suite
-holds (§8.1). It declares the flags and exits the others take, imported back by the files they stood
-in, and re-exports the area's `items.ts`, where every item is a const of its own by the name of its
-id (`export const plate = A('plate', …)`, `halberd+1` as `halberdPlus1`): another area takes an item
-by its name, never by its id from a table. It re-exports nothing else but the area's flags as
-declared (`FLAGS`, from `flags.ts`, which imports nothing, #995). What it re-exports, everyone
-who takes anything of the area loads, and the areas take one another both ways (Ashfall and the
-Glasswold, Hearth Isle and the Foreland, the Kilns and the Whitespine): with every `items.ts`
-re-exported, a map re-exported for its flags closes a loop of six files, every `chapter.ts` one of
-eleven and every `guilds.ts` one of six, and the layers suite refuses a loop. So a walkthrough takes
-another area's chapter from `THE_QUEST.chapters` by its id. Every area has one; a new area has one
-once another takes something from it, and a flag another area needs that `public.ts` lacks is one
-line there, added by the box that needs it and said in its pull request.
+**An area's `src/content/areas/<area>/public.ts` is the one file of it another area imports**
+(#992), which the layers suite holds (§8.1). It declares the flags and exits the others take,
+imported back by the files they stood in, and re-exports `src/content/areas/<area>/items.ts`, where
+every item is a const of its own by the name of its id (`export const plate = A('plate', …)`,
+`halberd+1` as `halberdPlus1`): another area takes an item by its name, never by its id from a
+table. It re-exports nothing else but the area's flags as declared (`FLAGS`, from
+`src/content/areas/<area>/flags.ts`, which imports nothing, #995). What it re-exports, everyone who
+takes anything of the area loads, and the areas take one another both ways (Ashfall and the
+Glasswold, Hearth Isle and the Foreland, the Kilns and the Whitespine): with every
+`src/content/areas/<area>/items.ts` re-exported, a map re-exported for its flags closes a loop of
+six files, every `src/content/areas/<area>/chapter.ts` one of eleven and every
+`src/content/areas/<area>/guilds.ts` one of six, and the layers suite refuses a loop. So a
+walkthrough takes another area's chapter from `THE_QUEST.chapters` by its id. Every area has one; a
+new area has one once another takes something from it, and a flag another area needs that
+`src/content/areas/<area>/public.ts` lacks is one line there, added by the box that needs it and
+said in its pull request.
 
 **The area's doc is three files** (#1011). `docs/areas/<area>.md` is its current state, 250 lines at
 most, which a session reads first: its ids, where it is (§1), what it is for (§2), what is built, a
@@ -583,23 +587,24 @@ Every decision but an area's goes in decisions.md, a list under its issue and th
   sweep, in jobs of its own (`plan` and `sweep`, #953); all five gate, the sweep skipped only where
   the plan sweeps no map. The smoke test and the sweep need Playwright (a pinned dev dependency)
   and Chromium on the runner; the workflow is `.github/workflows/checks.yml` (#27).
-- A pull request's tests job runs the gate only for the areas its diff reaches and every other
-  suite whole; the walkthroughs run for those areas and, where more than a comment changed, for all
-  (#955). Everything runs on main: `pages.yml`'s `npm test` on every push, a CI cycle after the
-  merge and before the deploy; the Checks workflow every day at 03:17 UTC (`schedule:`); and a run
-  started by hand, a release's. A flag spelt in two areas, or a crossing that lands on another
-  area's map, the gate's narrowing cannot see until `A7` and `A9`: those runs catch it.
-- The aim is under three minutes; the cure, in this order (#848): the gate for a diff's areas,
-  then parallel suites, then the sweep's shards.
+- A pull request's tests job runs the gate only for the areas its diff reaches and every other suite
+  whole; the walkthroughs run for those areas and, where more than a comment changed, for all
+  (#955). Everything runs on main: `.github/workflows/pages.yml`'s `npm test` on every push, a CI
+  cycle after the merge and before the deploy; the Checks workflow every day at 03:17 UTC
+  (`schedule:`); and a run started by hand, a release's. A flag spelt in two areas, or a crossing
+  that lands on another area's map, the gate's narrowing cannot see until A7 and A9: those runs
+  catch it.
+- The aim is under three minutes; the order of the cure is #848's.
 - Main has no branch protection, by the owner's word of 18 October 2026: "We are not doing branch
   protection." Nothing in the plan needs a GitHub setting. Two green branches that are red together
   are kept from merging by a procedure, now the only safeguard: the orchestrating session merges one
   pull request at a time, brings each branch up to date with main first and waits for CI to be green
   on that new head. A branch whose checks ran on an older base is not merged on them. As a pull
   request's tests run only what its diff reaches (#955), the session reads the latest run of
-  `pages.yml` on main and the latest nightly before it merges (`gh run list --workflow
-  pages.yml -L 1`, `gh run list --workflow checks.yml --event schedule -L 1`); a red one stops the
-  merges until it is mended.
+  `.github/workflows/pages.yml` on main and the latest nightly before it merges
+  (`gh run list --workflow pages.yml -L 1`,
+  `gh run list --workflow checks.yml --event schedule -L 1`); a red one stops the merges until it is
+  mended.
 - Small pull requests: a zone map, a dungeon level, a monster family, a town's interiors; not an
   area at once.
 - Deploy from a tag once an area has been played, rather than on every push, so players never get

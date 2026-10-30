@@ -19,7 +19,7 @@ the enclave's stayed through the naming pass (§10, NAMES §3).
 
 ## 1. Where it is
 
-The third step on the road of levels (DESIGN §9), band 10–12, the first of Act II: three zones of
+The third step on the road of levels (DESIGN §4, §9), the first of Act II: three zones of
 the atlas (`src/content/areas/saltreach/atlas.ts`). The Upper Water, band 10–11, is C3, B3, C2, B2
 and A3, the Long Water out of the rim past Rietum. The Delta, band 10–12, is D5, C5, C4, B5, B6,
 B4, A4, A5 and A6, the fen with the Tide Stone's plinth and the Drowned Temples. The Saltings, band
@@ -32,7 +32,7 @@ Wytgat (13–14), stand off the grid, each entered from a map.
 - **East: Kestrel Edge,** the Foreland's cliff. The Salt Road comes down it in the Foreland's D4 and
   into C5 by D5's shore, open from the start, the only way over. C2 holds the Downs' turf on the
   Edge's top, walked to from the Downs alone.
-- **South: the Scarp,** with the Glasswold (26–28) above it. Its stair's foot is in C7's notch,
+- **South: the Scarp,** with the Glasswold above it. Its stair's foot is in C7's notch,
   Act IV's way down, open from the start.
 - **South-east: the sea,** Sylmeer, with Wrackholm beyond it. The smugglers' boat to the isle and
   the ferry to Kilnhaven leave Saltmouth's quay (`src/content/crossings.ts`), each sold there and
@@ -157,11 +157,11 @@ gleaners. New here (`novel`): the long bodies and the toads, two new families, a
   Compact's, its deed on the isle. Wytgat, the enclave, is counted in no clear: 1,104 xp a member
   and 921 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.9% of its 48 groups'
-  fights (aim 90%); two under, its groups pooled at 8 manage 2.85 fights to a rest, 43.8% of the
-  floor's 6.5 (aim at most 66.7%). Each zone's road is walked every time, the Upper Water's and the
-  Delta's at 10 and the Saltings' at 11. The Choirmaster is won 48% at 11 and 100% at 13. Wytgat is
-  judged at its own band and out of these: every fight won at 13, and two under, at 11, 4.61 fights
-  to a rest, 63.6% of the floor's 7.25.
+  fights (`GATE.through`'s aim); two under, its groups pooled at 8 manage 2.85 fights to a rest,
+  43.8% of the floor's 6.5 (at most: `GATE.backDay`'s aim). Each zone's road is walked every time,
+  the Upper Water's and the Delta's at 10 and the Saltings' at 11. The Choirmaster is won 48% at 11
+  and 100% at 13. Wytgat is judged at its own band and out of these: every fight won at 13, and two
+  under, at 11, 4.61 fights to a rest, 63.6% of the floor's 7.25.
 - **Fights to a rest** (aim 5.5 to 7.5 at 10, 5.75 to 7.75 at 11): C5 7.02 and its Rift 6.39, C4
   6.70, C3 7.12, B5 7.11 and its Rifts 4.75 each, B6 6.96, the temples' two levels 7.18 and 7.49,
   C6 7.26, C7 6.00, B3 7.09, B4 7.10, C2 6.47, B2 5.76, A3 5.89, A4 6.82, A5 6.84, A6 7.18, B7 7.41

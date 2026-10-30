@@ -32,12 +32,16 @@ see what would collide. An issue can be in more than one.
 
 | Label | Touches |
 |---|---|
-| `lane: systems` | `src/game/`, `src/ui/` outside the art modules, the kits (`src/ui/paint/`, `src/ui/monsters/kit/`, `src/ui/interiors/kit/`), the save format, the shape of the registries |
+| `lane: systems` | `src/game`, `src/ui` outside the art modules, the three kits, the save format, the registries |
 | `lane: area` | an area's maps, monsters, items and quests, and its doc |
-| `lane: creatures` | the monster drawings, `src/ui/monsters/` outside its `kit/` |
-| `lane: interiors` | the businesses' rooms, `src/ui/interiors/` outside its `kit/` |
+| `lane: creatures` | the monster drawings: `src/ui/monsters` outside its kit/ |
+| `lane: interiors` | the businesses' rooms: `src/ui/interiors` outside its kit/ |
 | `lane: quality` | `tools/`, CI and the content contract (EXPANSION §5) |
-| `lane: design` | `docs/`: settling questions, and writing the answers into DESIGN, STORY, MONSTERS or EXPANSION |
+| `lane: design` | settling questions in `docs/`: DESIGN, STORY, MONSTERS, EXPANSION |
+
+Each row is its label's description in `.github/labels.json`, word for word, as
+`tools/tests/docs.ts` holds; the three kits are `src/ui/paint/`, `src/ui/monsters/kit/` and
+`src/ui/interiors/kit/`.
 
 **Status:**
 
@@ -126,7 +130,8 @@ where it has one.
 
 **The voice** is the docs': terse, British spelling, no Oxford comma. Point at the design by
 section (DESIGN §8, EXPANSION §5.2) and at code by path and line (`tools/smoke.ts:162`). Lines
-drift, so say what is there as well, and it can be found again.
+drift, so say what is there as well, and it can be found again. A line cite is for an issue: the
+docs name none, as `tools/tests/docs.ts` holds.
 
 ## 6. Filing one
 

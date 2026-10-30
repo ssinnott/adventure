@@ -19,7 +19,7 @@ the stair's foot `dead_drop_stair` and below it the Dead-Drop's three levels, `d
 
 ## 1. Where it is
 
-The fourth step on the road of levels (DESIGN §9), band 12–14, the middle of Act II and the
+The fourth step on the road of levels (DESIGN §4, §9), the middle of Act II and the
 smallest area on it: one zone of the atlas (`src/content/areas/wrackholm/atlas.ts`), a heather moor
 with a rocky east end out in Sylmeer. Two boxes of the grid (EXPANSION §8.2; docs/areas/shelf.md
 §1) hold the isle: E6, the moor and the landing, band 12–13, and F6, the east rocks, 13–14. Three
@@ -147,10 +147,10 @@ underfoot and the wreck, the Tide Ship's site.
   14.3, +0.3 over the next floor 14. The enclave and the lair, counted in no clear, give 4,146 xp a
   member and 1,368 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.3% of its 25 groups'
-  fights (aim 90%); two under, its groups pooled at 10 manage 3.58 fights to a rest, 51.1% of the
-  floor's 7 (aim at most 66.7%). The road is walked every time at 12. The bosses at their floors
-  and two above: the Great Devilfish 66% and 99%, the Warden of the Tide 66% and 100%; Old Nick 57%
-  at 30 and 81% at 32.
+  fights (`GATE.through`'s aim); two under, its groups pooled at 10 manage 3.58 fights to a rest,
+  51.1% of the floor's 7 (at most: `GATE.backDay`'s aim). The road is walked every time at 12. The
+  bosses at their floors and two above: the Great Devilfish 66% and 99%, the Warden of the Tide 66%
+  and 100%; Old Nick 57% at 30 and 81% at 32.
 - **Fights to a rest** (aim 6 to 8 at 12, 6.25 to 8.25 at 13): E6 7.20, Kelp Hole's two levels
   6.83 and 6.19, F6 8.02, the Tide Ship's three decks 5.72, 7.36 and 6.77 and the Rift 7.24; the
   Brokenback 7.48 at 14 (aim 6.5 to 8.5). Three figures are off their aim, inside the limits: the
