@@ -21,6 +21,7 @@ import type { ItemDef } from '../game/items.ts';
 import { readText } from '../game/people.ts';
 import { spell } from '../game/spells.ts';
 import { CLASSES, RACES, TRAITS, STATS, armorClass, attackBonus, equip, useItem, templePrice, isDown, hasCondition, xpForLevel, canTrain, trainPrice, MAX_LEVEL, className, resists, statOf, borne } from '../game/party.ts';
+import { changePlaces } from '../game/party/order.ts';
 import { nightCost, stay, buyRations, RATIONS, RATIONS_PRICE, cure, donate, DONATION, sell, joined, payFee, hallOffers, learnSpell, mayTrain, train } from '../game/services.ts';
 import { castOnAlly } from '../game/combat.ts';
 import { castExplore } from '../game/wilds.ts';
@@ -237,21 +238,32 @@ export function pickMember(g: Host, text: string, then: (i: number) => void, fil
   g.push(new ChoiceScreen(text, names, then, '', g.party.members.map((m) => !filter(m))));
 }
 
-/** Character sheet with equip and use. */
+/** Character sheet with equip and use, and X to swap the member's place with another's (#1066). */
 export class SheetScreen implements Screen {
   readonly overlay = true;
   /** The item list's cursor; the sheet's digits are its own, and name a member. */
   private readonly menu = new ListMenu();
+  /**
+   * While X's swap is asked (DESIGN §11), the mark on the cards: whom the member changes places
+   * with, by the arrows round the company and Space, or at once by a digit; null, none asked.
+   */
+  private swap: ListMenu | null = null;
   private who: number;
   constructor(who: number) { this.who = who; }
   /** The item the cursor is on. */
   get sel(): number { return this.menu.sel; }
   set sel(row: number) { this.menu.sel = row; }
+  /** The place of the member the sheet shows. */
+  get shown(): number { return this.who; }
+  /** Whether a swap is asked: the place the mark is on, or null. */
+  get swapping(): number | null { return this.swap?.sel ?? null; }
   update(g: Host, a: Action | null): void {
     if (!a) return;
+    if (this.swap) { this.swapKey(g, a, this.swap); return; }
     const c = g.party.members[this.who];
     const items = this.items(g);
     if (is(a, 'cancel')) { g.pop(); return; }
+    if (is(a, 'swap')) { this.swap = new ListMenu(); this.swap.sel = this.who; return; }
     if (is(a, 'left')) { this.who = (this.who + 5) % 6; this.sel = 0; g.selected = this.who; return; }
     if (is(a, 'right')) { this.who = (this.who + 1) % 6; this.sel = 0; g.selected = this.who; return; }
     if (/^n[1-6]$/.test(a)) { this.who = Number(a[1]) - 1; this.sel = 0; g.selected = this.who; return; }
@@ -273,6 +285,21 @@ export class SheetScreen implements Screen {
       else g.say(`${d.name}: nothing to do with it here.`);
       if (this.sel >= this.items(g).length) this.sel = Math.max(0, this.items(g).length - 1);
     }
+  }
+  /**
+   * A key while the swap is asked: Esc, or X again, asks no more; a member chosen changes places
+   * with the sheet's (`changePlaces`), and the sheet and the member chosen to open it each follow
+   * their member to the new place. No time passes.
+   */
+  private swapKey(g: Host, a: Action, swap: ListMenu): void {
+    if (is(a, 'cancel', 'swap')) { this.swap = null; return; }
+    const rows = { n: g.party.members.length, across: true, digits: 'act' as const };
+    if (swap.press(a, rows) !== 'chosen') return;
+    this.swap = null;
+    const i = this.who, j = swap.sel;
+    for (const l of changePlaces(g.party, i, j)) g.say(l);
+    this.who = j;
+    if (g.selected === i || g.selected === j) g.selected = i + j - g.selected;
   }
   private items(g: Host): { id: string; from: 'pack' | 'bag' }[] {
     const c = g.party.members[this.who];
@@ -300,8 +327,11 @@ export class SheetScreen implements Screen {
     drawText(ctx, 'ITEMS (SPACE: EQUIP OR USE)', 340, 36, { size: 1, color: TEXT_DIM });
     if (!items.length) drawText(ctx, 'nothing carried', 340, 50, { size: 1, color: TEXT_DIM });
     else menu(ctx, items.slice(0, SHEET_ITEMS).map((it) => `${item(g.tables.items, it.id).name}${it.from === 'bag' ? ' (bag)' : ''}`), 340, SHEET_ITEMS_Y, this.sel);
-    drawText(ctx, '< > OR 1-6 SWITCH   ESC CLOSE', hint.x, hint.y, { size: 1, color: TEXT_DIM, align: 'right' });
-    drawPartyCards(g.tables.items, ctx, g.party, this.who, frame);
+    const keys = this.swap ? SWAP_HINT : SHEET_HINT;
+    drawText(ctx, keys, hint.x, hint.y, { size: 1, color: TEXT_DIM, align: 'right' });
+    // While a swap is asked the card picked out is the mark's, as a fight's member list picks out
+    // its cursor's.
+    drawPartyCards(g.tables.items, ctx, g.party, this.swap ? this.swap.sel : this.who, frame);
   }
 }
 
@@ -344,6 +374,10 @@ export const artifactLines = (tables: Tables, c: Character): string[] => borne(t
 export const SHEET_FOOT = 274;
 /** The sheet's item list: its first row's y and the most rows it shows, a menu's step apart. */
 export const SHEET_ITEMS_Y = 50, SHEET_ITEMS = 16;
+/** The sheet's keys, on its last line. */
+export const SHEET_HINT = '< > OR 1-6 SWITCH   X SWAP   ESC CLOSE';
+/** The keys in their place while X's swap asks with whom (#1066). */
+export const SWAP_HINT = 'SWAP WITH: < > SPACE OR 1-6   ESC BACK';
 /**
  * The highest the SPELLS line is drawn: just under the item list's last row (y 200), since a caster's
  * spells run on past the column into the list's (#847). Where main drew it for a member with least.
