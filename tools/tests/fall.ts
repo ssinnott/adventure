@@ -13,6 +13,7 @@ import { nearestChapel, wakeAtChapel } from '../../src/game/chapel.ts';
 import { World } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { defaultParty } from '../../src/game/party.ts';
+import { changePlaces } from '../../src/game/party/order.ts';
 import { makeRng } from '../../src/game/rng.ts';
 import { serialize } from '../../src/game/save.ts';
 import type { MapDef } from '../../src/game/mapdef.ts';
@@ -139,6 +140,14 @@ export function fall(): void {
   drive(run, [null]);
   ok(!p.on && p.why[0] === 'The company has fallen.' && p.band()?.lines[0] === 'The company has fallen.' && run.world.state.mapId === 'saltmouth' && stoppedAt(run).where === fellIn,
     `with the pilot at the helm, a wipe in Wrackholm stops it on "${p.why[0]}" over the Telhus, and the run says it fell in ${stoppedAt(run).where}`);
+
+  // The first in the party order is the player's to choose (#1066): after the sheet's swap, the one now first wakes.
+  const swapped = headlessGame(4), [was0, , was2] = swapped.party.members;
+  changePlaces(swapped.party, 0, 2);
+  for (const c of swapped.party.members) { c.conditions = ['dead']; c.hp = -1; }
+  const swapLines = wakeAtChapel(swapped.world);
+  ok(swapped.party.members[0] === was2 && was2.hp === 1 && !was2.conditions.length && was0.hp === -1 && was0.conditions.join() === 'dead' && swapLines[1].startsWith(`${was2.name} wakes`),
+    `after ${was0.name} and ${was2.name} change places, ${was2.name}, first now, wakes and ${was0.name} lies as fallen ("${swapLines[1]}")`);
 
   // A company of one wakes alone, and the log says nothing of the rest.
   const solo = headlessGame(4);
