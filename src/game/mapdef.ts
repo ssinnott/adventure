@@ -364,6 +364,12 @@ export interface MapDef<Id extends string = string, Off extends string = never> 
   bare?: boolean;
   /** Landmarks drawn tall over their building squares and seen from far off (`Landmark`). */
   landmarks?: readonly Landmark[];
+  /**
+   * The outdoors': a square of each building drawn as a house, in plaster and timber under a roof as a
+   * town's are (#1072); every other building outdoors is the stone of its palette. A town's buildings
+   * are all houses, so a town marks none (tools/tests/art.ts).
+   */
+  houses?: readonly { x: number; y: number }[];
   /** Party level the content is tuned for; shown on the map sign. */
   band?: [number, number];
   /**

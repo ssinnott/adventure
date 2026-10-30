@@ -102,6 +102,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[], grid?: WorldG
     return l ? { ...e, to: OUTDOORS, tx: e.tx + l.x, ty: e.ty + l.y } : e;
   };
   const exits: Exit<MapId | typeof OUTDOORS>[] = [], features: Feature[] = [], encounters: EncounterDef[] = [], gates: Gate[] = [], landmarks: Landmark[] = [];
+  const houses: { x: number; y: number }[] = [];
   const legend: Record<string, Partial<Cell>> = {};
   const enter = new Map<string, Record<string, string>>();
   const used = new Set<string>(), groups = new Set<string>();
@@ -127,6 +128,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[], grid?: WorldG
       features.push(place(f.kind === 'rift' ? lead(f) : f));
     }
     for (const m of l.def.landmarks ?? []) landmarks.push(place(m));
+    for (const h of l.def.houses ?? []) houses.push(place(h));
     for (const e of l.def.encounters ?? []) {
       if (groups.has(e.id)) throw new Error(`${l.def.id}: group id '${e.id}' is another zone's too, and the outdoors keeps one record of both`);
       groups.add(e.id);
@@ -150,7 +152,7 @@ export function layOutdoors(atlas: Atlas, defs: readonly MapDef[], grid?: WorldG
     ...(grid ? { looks } : {}),
     legend,
     start: { ...first.def.start, x: first.def.start.x + first.x, y: first.def.start.y + first.y },
-    exits, features, encounters, gates, zones, landmarks,
+    exits, features, encounters, gates, zones, landmarks, houses,
   };
   const out: PlayedDef[] = [];
   for (const d of defs) {

@@ -1,6 +1,7 @@
 // The crack sweep's plan (tools/kit/sweep.ts, #953): on fixture maps, the views it skips and those it
-// keeps, as the painter stands them; alike windows as one and a door told from a wall; its shards a
-// partition of it; and the plan of every map, its figures printed.
+// keeps, as the painter stands them; alike windows as one; a door and a town's gate told from a
+// wall and a marked house from a building (#1071, #1072); its shards a partition of it; and the
+// plan of every map, its figures printed.
 import { GameMap, VOID_CH } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/mapdef.ts';
 import { MAP_DEFS } from '../../src/content/index.ts';
@@ -35,6 +36,17 @@ export function sweep(): void {
   const corridor = planOf({ id: 'sweep_corridor', kind: 'dungeon', bare: true, rows: ['#' .repeat(22), '#' .repeat(13) + 'D' + '#'.repeat(8), '#' + '.'.repeat(20) + '#', '#'.repeat(22), '#'.repeat(22)] });
   const [a, b, c] = [5, 6, 9].map((x) => viewAt(corridor, x, 2, EAST));
   ok(a.win >= 0 && a.win === b.win && c.win >= 0 && c.win !== a.win, `two alike windows are one, and a door is told from a wall (east from 5,2 and 6,2 window ${a.win} and ${b.win}; from 9,2, the door in sight, window ${c.win})`);
+  // The same corridor in a town, a gate where the door stood (#1071): from 9,2 the gate is in the
+  // window and makes it another, not a wall's. And two buildings outdoors alike but for the mark
+  // of a house (#1072), the first marked: east from 3,2 and 25,2 each stands in the window alone.
+  const gated = planOf({ id: 'sweep_gate', kind: 'town', bare: true, exits: [{ x: 13, y: 1, to: 'harrow', tx: 0, ty: 0 }],
+    rows: ['#'.repeat(22), '#'.repeat(13) + '=' + '#'.repeat(8), '#' + ','.repeat(20) + '#', '#'.repeat(22), '#'.repeat(22)] });
+  const [ga, gb, gc] = [5, 6, 9].map((x) => viewAt(gated, x, 2, EAST));
+  const farms = planOf({ id: 'sweep_farm', kind: 'outdoor', bare: true, houses: [{ x: 5, y: 1 }],
+    rows: ['#'.repeat(46), '#' + 'B'.repeat(21) + '#' + 'B'.repeat(22) + '#', '#' + ','.repeat(44) + '#', '#'.repeat(46), '#'.repeat(46)] });
+  const [fa, fb] = [3, 25].map((x) => viewAt(farms, x, 2, EAST));
+  ok(ga.win >= 0 && ga.win === gb.win && gc.win >= 0 && gc.win !== ga.win && fa.win >= 0 && fb.win >= 0 && fa.win !== fb.win,
+    `a town's gate is told from a wall and a marked house from a building (east from 5,2 and 6,2 window ${ga.win} and ${gb.win}; from 9,2, the gate in sight, window ${gc.win}; the marked farm's ${fa.win}, the other's ${fb.win})`);
 
   // The plan of every map four ways, as SMOKE_SWEEP=all asks it, and its shards.
   const t = Date.now(), all = plan(atlasOf(buildMaps()), MAP_DEFS.map((d) => ({ id: d.id, all: true }))), seconds = (Date.now() - t) / 1000;
