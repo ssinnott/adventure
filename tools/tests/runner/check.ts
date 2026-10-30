@@ -1,7 +1,7 @@
 // The runner's own check: tools/test.ts run in a child process against ./fixture/, ./stuck/,
 // ./leaves/ and ./narrow/, folders the real run never reads, so the owed lines and failures here
-// stay out of its output; in one process and under --jobs (#954). ./walks/ holds the areas of a
-// walkthrough's scenes (#1018), run with --walks.
+// stay out of its output; in one process, under --jobs (#954) and in shards (#848). ./walks/ holds
+// the areas of a walkthrough's scenes (#1018), run with --walks.
 //   node tools/tests/runner/check.ts
 import { execFileSync, spawn } from 'node:child_process';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -21,10 +21,10 @@ const waiting: (() => void)[] = [];
  * The runner on `dir` (its suites' folder, or the folder flags whole: `['--walks', walks]`), started
  * once a core is free (#954: every run below starts at once, and each is read where it is checked);
  * `TEST_LIST=1` among the args sets it for the run, else it is unset there, whatever it is here, and so
- * are TEST_SINCE, TEST_AREAS, TEST_DEAR and GITHUB_STEP_SUMMARY but as `set` gives them.
+ * are TEST_SINCE, TEST_AREAS, TEST_DEAR, TEST_SHARD and GITHUB_STEP_SUMMARY but as `set` gives them.
  */
 const runWith = (set: Record<string, string>, dir: string | string[], ...args: string[]): Promise<Run> => new Promise((resolve) => {
-  const env = { ...process.env, TEST_LIST: args.includes('TEST_LIST=1') ? '1' : '', TEST_SINCE: '', TEST_AREAS: '', TEST_DEAR: '', GITHUB_STEP_SUMMARY: '', ...set };
+  const env = { ...process.env, TEST_LIST: args.includes('TEST_LIST=1') ? '1' : '', TEST_SINCE: '', TEST_AREAS: '', TEST_DEAR: '', TEST_SHARD: '', GITHUB_STEP_SUMMARY: '', ...set };
   const go = (): void => {
     free--;
     const child = spawn(process.execPath, [runner, ...(typeof dir === 'string' ? ['--dir', dir] : dir), ...args.filter((a) => a !== 'TEST_LIST=1')], { env });
@@ -47,7 +47,7 @@ mkdirSync(join(unloadable, 'bad'));
 writeFileSync(join(unloadable, 'bad', 'walkthrough.ts'), "export const scenes = [{ name: 'one', play: () => {} }];\nthrow new Error('the file throws as it loads');\n");
 
 console.log('\nrunner');
-const narrow = folder('narrow'), step = join(tmpdir(), `runner-check-${process.pid}.md`);
+const narrow = folder('narrow'), step = join(tmpdir(), `runner-check-${process.pid}.md`), shardStep = join(tmpdir(), `runner-check-${process.pid}-shard.md`);
 let clean = true;
 try { clean = !execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim(); } catch { clean = false; }
 // Every run, started together.
@@ -65,6 +65,18 @@ const started = {
   both: runWith({}, ['--dir', fixture, '--walks', walks], 'owing', 'walkthrough:whole'), nope: walk('walkthrough:fx:nope'), noScenes: walk('walkthrough:whole:x'),
   nosuch: run('nosuch'), noPart: runIn(narrow, 'gate:nosuch'), noParts: run('slow:x'),
   unloaded: runWith({}, ['--walks', unloadable], 'walkthrough:bad:one'),
+  // The fixture dealt two, three and seven ways by the seconds TEST_DEAR gives (#848): two ways, the second
+  // under --jobs 2; three, each shard shuffled by a seed of its own; seven, the last by TEST_SHARD and the first
+  // writing the run's summary. Then the gate's parts narrowed to two areas, dealt two ways, and four shards refused.
+  ways: [2, 3, 7].map((n) => Array.from({ length: n }, (_, k) => {
+    const i = k + 1, set = { TEST_DEAR: 'slow=5,later=3,holds=2', ...(n === 7 && i === 7 ? { TEST_SHARD: '7/7' } : {}), ...(n === 7 && i === 1 ? { GITHUB_STEP_SUMMARY: shardStep } : {}) };
+    return runWith(set, fixture, ...(n === 2 && i === 2 ? ['--jobs', '2'] : []), ...(n === 3 ? ['--shuffle', String(i)] : []), ...(n === 7 && i === 7 ? [] : ['--shard', `${i}/${n}`]));
+  })),
+  narrowedWays: [runIn(narrow, '--areas', 'shelf,thornmark', '--shard', '1/2'), runIn(narrow, '--areas', 'shelf,thornmark', '--jobs', '2', '--shard', '2/2')],
+  badShards: [run('--shard', '3/2'), run('--shard', '0/2'), runWith({ TEST_SHARD: '1/2/3' }, fixture), run('--shard')],
+  // Two shards each shuffled by a seed of its own, four times over, the fixture's runs weighing alike by
+  // the real DEAR, which names none of them: only a plan dealt before the shuffle holds every run once.
+  seeded: [[1, 2], [3, 4], [5, 6], [7, 8]].map(([a, b]) => [run('--shard', '1/2', '--shuffle', String(a)), run('--shard', '2/2', '--shuffle', String(b))]),
 };
 const owing = await started.owing;
 ok(owing.status === 0, 'a run with only owed lines passes');
@@ -197,6 +209,30 @@ ok(runsOf(dealt.out).join(' ') !== order.join(' ') && [...runsOf(dealt.out)].sor
   `--shuffle 2 runs every suite in an order of its own, the same twice (${runsOf(dealt.out).join(' ')})`);
 ok(dealt.out.includes('\nShuffled by seed 2: --shuffle 2 plays this order again.\n') && dealt.out.includes(', shuffled by seed 2.\n'), 'a shuffled run prints its seed first and last');
 ok(!!replayed && runsOf(replayed.out).join(' ') === runsOf(drawn.out).join(' ') && shape(replayed.out) === shape(drawn.out), `--shuffle given no seed prints the one it drew, which plays the same order again (${seed})`);
+
+// Shards (#848): --shard i/n, or TEST_SHARD, keeps shard i of the plan dealt n ways, the dear by their
+// seconds, the dearest first, onto the shard that holds the fewest so far, and a run DEAR does not name
+// by REST's: n shards hold every run once, whatever each shuffles or how many processes it runs.
+const ways = await Promise.all(started.ways.map((w) => Promise.all(w)));
+const dealtLine = (out: string): string | undefined => /^Shard \d+ of \d+: .+$/m.exec(out)?.[0];
+const uncovered = ways.filter((w) => { const held = w.flatMap((r) => runsOf(r.out)); return held.length !== order.length || [...held].sort().join(' ') !== order.join(' '); });
+ok(!uncovered.length && ways.every((w) => w.every((r, k) => r.status === (runsOf(r.out).some((n) => n !== 'owing' && n !== 'slow') ? 1 : 0) && dealtLine(r.out)?.startsWith(`Shard ${k + 1} of ${w.length}: `))),
+  `two, three and seven shards hold every run once, each saying which it is and failing only where a run of its own fails (${ways.map((w) => w.map((r) => runsOf(r.out).join('+') || 'none').join(' | ')).join('; ')})`);
+ok(ways[0].map((r) => runsOf(r.out).join(' ')).join(' | ') === 'owing slow unnamed | holds later rejects' && dealtLine(ways[0][0].out) === "Shard 1 of 2: 3 of the plan's 6 runs, 5.2 s by DEAR's seconds (the shards 5.2, 5.1)."
+  && ways[1].map((r) => [...runsOf(r.out)].sort().join(' ')).join(' | ') === 'slow | later | holds owing rejects unnamed' && ways[2][6].out.trimEnd().endsWith('ALL OK') && !runsOf(ways[2][6].out).length,
+  `the dear are dealt by their seconds, the dearest first, onto the lightest shard, and the rest by REST's after them; a shard with nothing dealt passes (${ways[0].map((r) => dealtLine(r.out)).join(' ')})`);
+let shardSaid = '';
+try { shardSaid = readFileSync(shardStep, 'utf8'); rmSync(shardStep); } catch { /* not written */ }
+ok(shardSaid.startsWith(`### Shard 1 of 7: node tools/test.ts --dir ${fixture} --shard 1/7\n`) && shardSaid.includes("\nShard 1 of 7: 1 of the plan's 6 runs, 5.0 s by DEAR's seconds") && shardSaid.includes("Each suite's seconds"),
+  "a shard writes its line and its table into the run's summary under its name");
+const narrowedWays = await Promise.all(started.narrowedWays), twoAsked = /\nAsked for shelf, thornmark: the gate and the walkthroughs ran for 2 of \d+ areas\.\n/;
+ok(narrowedWays.every((r) => r.status === 0 && twoAsked.test(r.out)) && narrowedWays.flatMap((r) => runsOf(r.out)).sort().join(' ') === 'gate:fixed gate:shelf gate:thornmark',
+  `narrowed to two areas, two shards hold the narrowed runs once, each saying what the run was narrowed to (${narrowedWays.map((r) => runsOf(r.out).join('+')).join(' | ')})`);
+const badShards = await Promise.all(started.badShards), forms = ['3/2', '0/2', '1/2/3', ''].map((s) => `--shard takes i/n, shard i of n with 1 <= i <= n, as TEST_SHARD does, not '${s}'.`);
+ok(badShards.every((r, k) => r.status === 2 && r.out.trim() === forms[k]), `a shard malformed or out of its count stops the run, naming the form, exit 2 (${badShards.map((r) => r.status).join(', ')})`);
+const seeded = await Promise.all(started.seeded.map((p) => Promise.all(p)));
+ok(seeded.every((p) => p.flatMap((r) => runsOf(r.out)).sort().join(' ') === order.join(' ')),
+  `two shards each shuffled by a seed of its own hold every run once, the plan dealt before the shuffle (${seeded.map((p) => p.map((r) => runsOf(r.out).join('+')).join(' | ')).join('; ')})`);
 
 // A walkthrough's scenes (#1018), on ./walks/: fx's three, in their order and not their names', each a
 // run of its own with its line and its row in the table, then whole's walkthrough of one function.
