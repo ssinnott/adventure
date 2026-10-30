@@ -538,7 +538,7 @@ Decided by the builder for #1026, each the owner's to overturn:
    files' headers hold.
 2. **DESIGN beside §1:** systems §5's Races and Classes and prestiges, §6, §7, §11 and §13; area §4
    and its act; interiors §11; quality §13; creatures and design none. All of §5 put the systems
-   lane at 112,571 bytes, so §5 is cut by sub-heading: Stats, skills, mastery waits for a question.
+   lane over 112,000 bytes, so §5 is cut by sub-heading: Stats, skills, mastery waits for a question.
 3. **EXPANSION is read whole:** since #1048 it is its §3 to §5 and §8 alone, held at 46,000 bytes;
    the quality lane's §5 is in it and counted once.
 4. **The interiors lane reads the header of every .ts file of `src/ui/interiors/`, its kit's too:**
@@ -548,7 +548,7 @@ Decided by the builder for #1026, each the owner's to overturn:
    (the Kilns', no longer the Hearth's), its act at Act I's; the design lane's doc at the largest
    `##` section of DESIGN, STORY and MONSTERS (DESIGN §9).
 6. **The creatures lane's family is ROSTER's families with its head;** a family's row there names
-   its defs. It reads all of MONSTERS §1 to §4.3, as the issue says, 2,799 bytes under the budget:
+   its defs. It reads all of MONSTERS §1 to §4.3, as the issue says, about 2,800 bytes under budget:
    MONSTERS §3.3 (18,477 bytes) is the sub-heading to cut first when it goes over.
 7. **A file read in part counts its head,** the lines before its first `##`, as the issue counted
    DESIGN §1 "2,464 with the title"; a header is all the comment lines a file opens on.
