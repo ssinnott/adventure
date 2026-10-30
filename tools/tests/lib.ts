@@ -58,13 +58,16 @@ export const owed = (cond: boolean, msg: string, whose: string): void => {
 };
 export const owedCount = (): ReadonlyMap<string, number> => owing;
 
-/** A suite as it ran: its seconds and its counts of checks held, failed and owed (#895). */
-export interface Ran { name: string; secs: number; held: number; failed: number; owed: number }
+/**
+ * A suite as it ran: its seconds and its counts of checks held, failed and owed (#895); a
+ * walkthrough's scenes run as one say how many and the slowest (`note`, #1033).
+ */
+export interface Ran { name: string; secs: number; held: number; failed: number; owed: number; note?: string }
 
 /** A suite's line, `maps   4.1 s  7,410 ok`, its name padded to `width`. */
 export const ranLine = (r: Ran, width = 0): string =>
   `${r.name.padEnd(width)}  ${r.secs.toFixed(1).padStart(5)} s  ${r.held.toLocaleString('en-GB')} ok` +
-  (r.failed ? `, ${r.failed} failed` : '') + (r.owed ? `, ${r.owed} owed` : '');
+  (r.failed ? `, ${r.failed} failed` : '') + (r.owed ? `, ${r.owed} owed` : '') + (r.note ? ` (${r.note})` : '');
 
 /**
  * The end of a run: the suites' lines, the slowest first, the line of the run's wall (#954), then the

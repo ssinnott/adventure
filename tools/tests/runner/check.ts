@@ -61,6 +61,7 @@ const started = {
   died: runIn(folder('stuck'), '--jobs', '1'), diedPacked: runIn(folder('stuck'), '--jobs', '2'), leftAlone: runWith({ TEST_DEAR: 'leaves,next' }, folder('leaves'), '--jobs', '2'),
   dealt: run('--shuffle', '2'), again: run('--shuffle', '2'), drawn: run('--shuffle'),
   walked: walk('--list'), scene: walk('walkthrough:fx:three', '--list'), dearScene: runWith({ TEST_DEAR: 'walkthrough:fx:three' }, ['--walks', walks], '--jobs', '2', '--list'),
+  quiet: walk(), quietJobs: runWith({ TEST_DEAR: 'walkthrough:fx:three' }, ['--walks', walks], '--jobs', '2'),
   both: runWith({}, ['--dir', fixture, '--walks', walks], 'owing', 'walkthrough:whole'), nope: walk('walkthrough:fx:nope'), noScenes: walk('walkthrough:whole:x'),
   nosuch: run('nosuch'), noPart: runIn(narrow, 'gate:nosuch'), noParts: run('slow:x'),
   unloaded: runWith({}, ['--walks', unloadable], 'walkthrough:bad:one'),
@@ -221,6 +222,18 @@ ok(runsOf(scene.out).join(' ') === 'walkthrough:fx:three' && section(scene.out, 
   `a scene named runs alone and prints what it printed in the whole: everyGoalWalked reads what the scenes say, not who ran before (${runsOf(scene.out).join(' ')})`);
 const dearScene = await started.dearScene;
 ok(dearScene.status === walked.status && shape(dearScene.out) === shape(walked.out) && /^4 runs in 2 processes/m.test(dearScene.out), 'a scene may be the dear run: alone in its process, it prints what one process prints');
+// Quiet, a walkthrough's scenes run one after another print as its one run (#1033): its name,
+// a scene by name only where it fails or owes, with its lines and its own line, then one line of
+// them summed with how many and the slowest, which is its one row in the table; --jobs prints
+// the same.
+const quiet = await started.quiet, quietJobs = await started.quietJobs;
+const quietRows = quiet.out.slice(quiet.out.indexOf("Each suite's seconds")).split('\n').filter((l) => l.startsWith('  ')).map((l) => l.trim().split(' ')[0]).sort();
+const summed = /^walkthrough:fx +\d+\.\d s {2}17 ok, 2 failed \(3 scenes; the slowest, (one|n4|three), \d+\.\d s\)$/m;
+const unnoted = (out: string): string => shape(out).replace(/\(3 scenes; the slowest, [a-z0-9]+, \d+\.\d s\)/g, '(3 scenes)');
+ok(quiet.status === 1 && runsOf(quiet.out).join(' ') === 'walkthrough:fx:n4 walkthrough:fx:three walkthrough:fx walkthrough:whole' && !quiet.out.includes('walkthrough:fx:one')
+  && quiet.out.includes('\nwalkthrough:fx\nwalkthrough:fx:n4\n') && summed.test(quiet.out) && quietRows.join(' ') === 'walkthrough:fx walkthrough:whole',
+  `quiet, a walkthrough's scenes print as its one run: its name, the two that fail by name with their lines, then one line and one row of the three (${runsOf(quiet.out).join(' ')}; rows ${quietRows.join(' ')})`);
+ok(quietJobs.status === quiet.status && unnoted(quietJobs.out) === unnoted(quiet.out), `and under --jobs 2, a scene the dear run, the same (exit ${quietJobs.status})`);
 ok(runsOf((await started.both).out).join(' ') === 'owing walkthrough:whole', '--dir and --walks together give the suites of the one and the walkthroughs of the other');
 // A name no run has stops the run before it starts, naming those there are, where it ran nothing and passed.
 const refusals: [Run, string][] = [[await started.nope, 'No run is named walkthrough:fx:nope: the scenes of walkthrough:fx are one, n4, three.'],

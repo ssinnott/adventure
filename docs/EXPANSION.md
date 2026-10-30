@@ -469,7 +469,7 @@ each other; `roadPlace` is `src/game/atlas.ts`'s, beside `areaBand`.
 #985 put the walk in it: `tools/kit/walk.ts`, the walk the walkthroughs and three suites take and,
 once, the helpers the walkthroughs wrote each for itself, and `tools/kit/grid.ts` beside it, the
 floods and tests over a map's squares and `ALL`. The chain a later chapter replays (`STEPS`,
-`FARM_FIRST`, Saltreach's `inOrder` and `saltmouthFirst`) stays in its walkthrough, H8's: the kit
+`FARM_FIRST`, Saltreach's `inOrder` and `saltmouthFirst`) moves to its steps.ts in H8: the kit
 takes no walkthrough.
 
 The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; it, the monsters' kit
