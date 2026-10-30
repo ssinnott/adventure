@@ -242,7 +242,7 @@ adds armour: in the harness, armour that keeps up makes monsters hit harder, and
 | Knight | a second attack each turn | while the knight stands, the front row gains +2 to-hit | a third attack each turn |
 | Thief | a second attack each turn with a light weapon (dagger, short sword, sling), and Sneak Attack, a blow on a foe in its first round before its turn, grows by 2 every two levels | once a fight, drops from sight for a round: no foe can single the thief out, and its blows that round are sneak attacks | a third attack each turn with a light weapon |
 | Barbarian | a second attack each turn | Rage starts below three quarters of hit points, and the barbarian dies only at −30 | a third attack each turn |
-| Monk | two strikes a turn with a staff or bare hands | a strike that fells a foe carries on to the next, once more at most for each, and can strike from the back row | a third strike each turn |
+| Monk | two strikes a turn with a staff or bare hands | strikes from the back row, and a strike that fells a foe carries on to the next, to twice its strikes a turn | a third strike each turn |
 | Paladin | rank 1, and a second attack each turn | rank 2, and Holy Strike rises to +6, on the dead only | rank 3, and a third attack each turn |
 | Ranger | rank 1, and two shots a turn with a bow | rank 2; Marksman rises to +4, and the weather no longer spoils the ranger's shots | rank 3, and three shots a turn |
 | Bard | rank 1; Inspiring Song adds +1 damage as well | rank 2; while the bard stands, the company can't be put to sleep or paralysed | rank 3; the song rises to +2 to-hit and +2 damage |

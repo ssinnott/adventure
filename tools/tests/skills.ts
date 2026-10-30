@@ -298,24 +298,27 @@ function armsMaster(): void {
  * The Windwalker's follow-through (#1070, in place of acting first): a blow of a monk of the second
  * prestige that fells its foe is not spent while a foe it can reach stands, and it strikes again at
  * the next, at most once more for each of the turn's own blows, from the back row as well; the log
- * marks each blow that carries on with FOLLOW_LINE, after the death. A miss, a blow that fells
- * nothing, a felling blow with no foe left and a Stillwater's carry nothing on. One turn of the
- * monk's, played by a generator that always hits (or always misses) at its dice's top, against wolves
- * of 1 hit point (or of 1,000).
+ * marks each blow that carries on with FOLLOW_LINE, after the death. The Ascendant keeps it; a blow
+ * that takes its foe to 0 exactly fells it; a blow the harness's what-if adds is one of the turn's
+ * own. A miss, a blow that fells nothing, a felling blow with no foe left, a Stillwater's and
+ * another class's carry nothing on. One turn of the member's, played by a generator that always
+ * hits (or always misses) at its dice's top, against wolves of 1 hit point (or of 1,000).
  */
 function followThrough(): void {
   const sure = (hit: boolean): RngInstance => ({ ...makeRng(1), chance: () => hit, int: (_a: number, z: number) => z, range: (_a: number, z: number) => z });
-  const turn = (prestiges: number, weapon: string | null, wolves: number, hp: number, hit: boolean, slot: number): string => {
+  let dealt = 0;
+  const turn = (prestiges: number, weapon: string | null, wolves: number, hp: number, hit: boolean, slot: number, cls: ClassId = 'monk', more = 0): string => {
     const rng = makeRng(23), p = defaultParty(TABLES, rng), mk = p.members[slot];
-    mk.cls = 'monk';
+    mk.cls = cls;
     for (let n = 0; n < prestiges; n++) takePrestige(mk);
     mk.equipment.weapon = weapon;
     const wolf = { ...monster(TABLES.monsters, 'wolf'), hp };
-    const s = startCombat(TABLES, p, [{ id: 'g', monsters: Array.from({ length: wolves }, () => wolf) }], rng);
+    const s = startCombat(TABLES, p, [{ id: 'g', monsters: Array.from({ length: wolves }, () => wolf) }], rng, more ? { edge: () => ({ blows: 1 + more, damage: 0, ac: 0 }) } : {});
     s.turn = s.order.findIndex((r) => r.side === 'party' && r.i === slot);
     const at = s.log.length, acted = partyAct(s, p, sure(hit), { type: 'attack', target: aliveMonsters(s)[0] });
     const mine = s.log.slice(at).filter((l) => l.startsWith(`${mk.name} `));
     const fell = mine.filter((l) => l.includes(' dies.')).length, on = mine.filter((l) => l.endsWith(` dies. ${FOLLOW_LINE}`)).length;
+    dealt = Number(/ for (\d+)\./.exec(mine[0] ?? '')?.[1] ?? 0);
     return `${acted ? '' : 'refused, '}${mine.length} blow${mine.length === 1 ? '' : 's'}, ${fell} fell, ${on} carried on`;
   };
   const back = turn(2, null, 6, 1, true, 3), steel = turn(2, 'shortsword', 6, 1, true, 0), missed = turn(2, null, 6, 1, false, 0);
@@ -326,6 +329,15 @@ function followThrough(): void {
   ok(tough === '2 blows, 0 fell, 0 carried on', `nor a blow that fells nothing, on wolves of 1,000 (${tough})`);
   ok(last === '1 blow, 1 fell, 0 carried on', `nor one that fells the last foe (${last})`);
   ok(still === '2 blows, 2 fell, 0 carried on', `nor a Stillwater's, a monk of the first prestige (${still})`);
+  // The rule's other edges: the third prestige, a fall to 0 exactly, the what-if and the classes.
+  const ascendant = turn(3, null, 9, 1, true, 0), edged = turn(2, null, 9, 1, true, 0, 'monk', 1);
+  turn(2, null, 1, 1000, true, 0);
+  const blow = dealt, exact = turn(2, null, 6, blow, true, 0);
+  const others = (Object.keys(CLASSES) as ClassId[]).filter((k) => k !== 'monk').map((k) => `${k} ${turn(2, null, 6, 1, true, 0, k)}`);
+  ok(ascendant === '6 blows, 6 fell, 3 carried on', `an Ascendant keeps it: three blows on nine wolves of 1 (${ascendant})`);
+  ok(exact === '4 blows, 4 fell, 2 carried on', `a blow that takes its foe to 0 exactly fells it and carries on: two blows of ${blow} on wolves of ${blow} (${exact})`);
+  ok(edged === '6 blows, 6 fell, 3 carried on', `a blow the harness's what-if adds is one of the turn's own: two blows and one more on nine wolves of 1 (${edged})`);
+  ok(others.every((o) => o.endsWith(' 0 carried on')), `nor another class's at its second prestige (${others.join('; ')})`);
 }
 
 /** The Foreland's ridge, a step east of 30,2, and its water, a step south of 12,28 (tools/tests/movement.ts): what a company can cross, as the world answers a step. */
