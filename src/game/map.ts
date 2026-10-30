@@ -129,6 +129,8 @@ export class GameMap {
   private readonly zonePalettes: readonly MapPalette[];
   /** The squares the map places a banner on, as y * width + x. */
   private readonly banners: ReadonlySet<number>;
+  /** The squares the map marks a house's (`MapDef.houses`), as y * width + x. */
+  private readonly houses: ReadonlySet<number>;
   readonly landmarks: readonly Landmark[];
 
   constructor(def: PlayedDef) {
@@ -159,6 +161,7 @@ export class GameMap {
     this.palette = { ...DEFAULT_PALETTES[def.kind], ...(def.palette ?? {}) };
     this.zonePalettes = this.zones.map((z) => ({ ...this.palette, ...(z.palette ?? {}) }));
     this.banners = new Set((def.banners ?? []).map((b) => b.y * this.width + b.x));
+    this.houses = new Set((def.houses ?? []).map((h) => h.y * this.width + h.x));
     this.landmarks = def.landmarks ?? [];
     for (const e of this.encounters) if (e.monsters.length > 12) throw new Error(`map ${def.id}: encounter ${e.id} has more than 12 monsters`);
   }
@@ -173,6 +176,8 @@ export class GameMap {
 
   /** Whether the map places a banner on x,y (`MapDef.banners`). */
   bannerAt(x: number, y: number): boolean { return this.inBounds(x, y) && this.banners.has(y * this.width + x); }
+  /** Whether the map marks x,y a house's square (`MapDef.houses`): the building it stands in is drawn as a house. */
+  markedHouse(x: number, y: number): boolean { return this.inBounds(x, y) && this.houses.has(y * this.width + x); }
   landmarkAt(x: number, y: number): Landmark | undefined { return this.landmarks.find((l) => l.x === x && l.y === y); }
 
   /** The zone a cell lies in, on the outdoors; undefined anywhere else. */

@@ -23,8 +23,7 @@ import type { GameMap } from '../../src/game/map.ts';
 import type { Cell } from '../../src/game/mapdef.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { VIEW_DEPTH, VIEW_LATERAL, isSolidWall, viewCell } from '../../src/game/world.ts';
-import { drawnCell } from '../../src/game/ink.ts';
-import { isHouse, standsAt, wallDressing } from '../../src/ui/viewport.ts';
+import { drawnAt, isGateway, looksHouse, standsAt, wallDressing } from '../../src/ui/viewport.ts';
 
 /** A map to sweep: all four ways from every open square, or one way, (x + y) % 4, as the floors are. */
 export interface Sweep { readonly id: string; readonly all: boolean }
@@ -87,21 +86,22 @@ export function layFlat(m: GameMap): () => void {
   return () => { Reflect.deleteProperty(m, 'at'); };
 }
 
-/** What stands on a square of the window, as the faces are painted from it: the void, or a face's kind, door, house, style, dressing and what hangs on it. */
+/** What stands on a square of the window, as the faces are painted from it: the void, or a face's kind, door, house or gate, style, dressing and what hangs on it. */
 function token(m: GameMap, x: number, y: number): string {
-  const raw = drawnCell(m, x, y), c = raw.look ?? raw;
+  const c = drawnAt(m, x, y);
   if (c.solid === 'void') return 'v';
   const hangs = m.featuresAt(x, y).filter((q) => q.kind !== 'event').map((q) => q.kind).join('+');
-  return `${c.solid}:${c.door}:${m.kind === 'town' && isHouse(m, x, y) ? 'h' : ''}:${m.paletteAt(x, y).wallStyle}:${wallDressing(m, x, y) ?? ''}:${hangs}`;
+  return `${c.solid}:${c.door}:${looksHouse(m, x, y) ? 'h' : isGateway(m, x, y) ? 'g' : ''}:${m.paletteAt(x, y).wallStyle}:${wallDressing(m, x, y) ?? ''}:${hangs}`;
 }
 
 /**
- * Of every square of a map laid flat, whether it is drawn as a face (`isSolidWall` of the drawn cell),
- * which `solidAt` asks before it stands a square: so a square that is not is passed over without it.
+ * Of every square of a map laid flat, whether it is drawn as a face (`isSolidWall` of the cell as the
+ * scene draws it, `drawnAt`), which `solidAt` asks before it stands a square: so a square that is not is
+ * passed over without it.
  */
 function facesOf(m: GameMap): Uint8Array {
   const g = new Uint8Array(m.width * m.height);
-  for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) { const c = drawnCell(m, x, y); g[y * m.width + x] = isSolidWall(c.look ?? c) ? 1 : 0; }
+  for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) g[y * m.width + x] = isSolidWall(drawnAt(m, x, y)) ? 1 : 0;
   return g;
 }
 

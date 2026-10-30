@@ -1,4 +1,5 @@
-// The Foreland: the starting coast. Helmstow at the north, the Lodestone on a track outside its
+// The Foreland: the starting coast. Helmstow at the north, its gate in the middle of its south wall and
+// the harbour postern in the same wall to the east of it (#1071), the Lodestone on a track outside its
 // south gate, the Ellerby farm to the south-east, woods to the west, marsh and the sea at the
 // south, the caves at Brandy Hole in the south-west cliffs and the pass east to Thornmark, open,
 // where a Warden checkpoint warns every company that goes through. Difficulty band 1-5.
@@ -54,9 +55,9 @@ export const SHELF: MapDef<'shelf'> = {
   },
   rows: [
     'MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM',
-    'M,,,,,,,,,,,,,BBBBB,,,,,,,,,,,,M',
-    'M,,T,,,,,,,,,,BBBBB,,,,,T,,,,,,M',
-    'M,,,,,T,,,,,,,BB=B=,,,,,,,,T,,,M',
+    'M,,,,,,,,,,,BBBBBBBBB,,,,,,,,,,M',
+    'M,,T,,,,,,,,BBBBBBBBB,,,T,,,,,,M',
+    'M,,,,,T,,,,,BBBB=B=BB,,,,,,T,,,M',
     'M,,,,,,,,,,,,,,,=====,,,,,,,,,,M',
     'M,,,,TT,,,,,,,,,=,,,,,,TT,,,,,,M',
     'M,,,TTT,,,,,,,,,=,,,,,TTTT,,,,,M',
@@ -225,4 +226,6 @@ export const SHELF: MapDef<'shelf'> = {
     { id: 'cliff_smugglers', x: 5, y: 26, monsters: ['smuggler', 'smuggler', 'smuggler', 'smuggler_bowman'], aware: 5, respawn: RESPAWN.twoDays },
     { id: 'coast_bandits', x: 20, y: 27, monsters: ['bandit', 'bandit', 'bandit', 'bandit_archer', 'bandit_archer'], aware: 5, respawn: RESPAWN.twoDays },
   ],
+  // Ellerby's farmhouse (#1072): plaster and timber under a roof, where Helmstow's wall is stone.
+  houses: [{ x: 25, y: 20 }],
 };

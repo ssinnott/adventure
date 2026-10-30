@@ -5,7 +5,7 @@
 // bow bends away from the man who holds it (#57).
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
-import { wallDressing, isSolidWall, isHouse, isTent, tentOf, DRESSINGS, DRESSING_RATES } from '../../src/ui/viewport.ts';
+import { wallDressing, isSolidWall, isHouse, isTent, tentOf, DRESSINGS, DRESSING_RATES, looksHouse, isGateway, drawnAt } from '../../src/ui/viewport.ts';
 import { drawnCell } from '../../src/game/ink.ts';
 import { hash } from '../../src/ui/brush.ts';
 import { FACING_DX, FACING_DY } from '../../src/game/types.ts';
@@ -185,6 +185,48 @@ export async function art(): Promise<void> {
   const block = (wallStyle: 'stone' | 'tent'): GameMap => camp('outdoor', wallStyle, Array(8).fill('########'));
   const dressedIn = (m: GameMap): number => m.cells.filter((_, i) => wallDressing(m, i % m.width, Math.floor(i / m.width)) !== null).length;
   ok(dressedIn(block('stone')) > 0 && dressedIn(block('tent')) === 0, `felt carries no dressing, where the same walls in stone do (${dressedIn(block('stone'))} of 64 dressed in stone, ${dressedIn(block('tent'))} in felt)`);
+
+  // A house outdoors (#1072): a building its map marks a house is drawn as a town's are, plaster and
+  // timber under its roof (the compositor roofs a house and nothing else), its door and every square of
+  // it; any other building outdoors is stone, or felt under felt; a town marks none, its buildings being
+  // houses all. Ellerby's farmhouse was the stone of Helmstow's wall, and nothing held it otherwise.
+  const farm = (houses?: { x: number; y: number }[], wallStyle: 'stone' | 'tent' = 'stone'): GameMap => new GameMap({
+    id: 'fx_farm', name: 'Farm', kind: 'outdoor', start: { x: 0, y: 0, facing: 0 }, palette: { wallStyle }, houses,
+    rows: [',,,,,,,', ',BBB,B,', ',DBB,B,', ',,,,,,,'],
+  });
+  const marked = farm([{ x: 2, y: 1 }]), feltFarm = farm([{ x: 2, y: 1 }], 'tent');
+  ok(looksHouse(marked, 1, 2) && looksHouse(marked, 3, 2) && !looksHouse(marked, 5, 1) && !looksHouse(farm(), 2, 1)
+    && !isTent(feltFarm, 2, 1) && isTent(feltFarm, 5, 1), 'outdoors, a building its map marks a house is drawn as one, door and all, and is no tent under felt; a building beside it, or one unmarked, is not');
+  const marks = MAP_DEFS.flatMap((d) => (d.houses ?? []).map((h) => ({ d, ...h })));
+  const misplaced = marks.filter(({ d, x, y }) => d.kind !== 'outdoor' || new GameMap(d).at(x, y).solid !== 'building').map(({ d, x, y }) => `${d.id} ${x},${y}`);
+  const played = maps.find((m) => m.kind === 'outdoor' && m.zones.length)!;
+  const unroofed = marks.filter(({ d, x, y }) => { const z = played.zones.find((q) => q.id === d.id); return !z || !looksHouse(played, x + z.x, y + z.y); }).map(({ d, x, y }) => `${d.id} ${x},${y}`);
+  const housed = played.cells.filter((_, i) => looksHouse(played, i % played.width, Math.floor(i / played.width))).length;
+  ok(marks.length > 0 && !misplaced.length && !unroofed.length, `every house an outdoor map marks is a building's square, drawn as a house under its roof on the outdoors as played (${marks.length} marked, ${housed} squares drawn as a house)${misplaced.length ? ' -> no building outdoors: ' + misplaced.join(', ') : ''}${unroofed.length ? ' -> not drawn as a house: ' + unroofed.join(', ') : ''}`);
+
+  // A town's gate (#1071) is set in the side of its wall: every way between a town and the land or
+  // another town through a wall (an exit square, no door, with a wall or a building beside it and open
+  // ground too: not a passage behind a secret door) is a gate as the view draws one: walled at both ends
+  // along the wall, past its own squares, open before and walled behind. Helmstow's harbour postern stood
+  // on the Foreland at the corner of the town's wall (18,3), with open ground on one side of it, and
+  // nothing held it otherwise.
+  const gated = (kind: 'outdoor' | 'town' | 'dungeon', rows: string[], at: [number, number][]): GameMap => new GameMap({
+    id: 'fx_gate', name: 'Gate', kind, start: { x: 0, y: 0, facing: 0 }, rows, exits: at.map(([x, y]) => ({ x, y, to: 'harrow' as const, tx: 0, ty: 0 })),
+  });
+  const box = gated('outdoor', [',,,,,,,', ',BBBBB,', ',BB=B=,', ',,,,,,,'], [[3, 2], [5, 2]]);
+  const walls = ['#######', '#,,,,,#', '##==#D#'], pair = gated('town', walls, [[2, 2], [3, 2], [5, 2]]);
+  ok(isGateway(box, 3, 2) && !isGateway(box, 5, 2) && isGateway(pair, 2, 2) && isGateway(pair, 3, 2) && !isGateway(pair, 5, 2) && !isGateway(gated('dungeon', walls, [[2, 2], [3, 2]]), 2, 2)
+    && isSolidWall(drawnAt(box, 3, 2)) && !isSolidWall(drawnAt(box, 5, 2)),
+    'a way through a wall is a gate, drawn as the wall with a gate in it, where it is walled at both ends, two squares wide or one; not at the wall\'s corner, not a door and not a dungeon\'s');
+  const kindOf = new Map(maps.map((m) => [m.id, m.kind]));
+  const hard = (m: GameMap, x: number, y: number): boolean => m.at(x, y).solid === 'wall' || m.at(x, y).solid === 'building';
+  const open = (m: GameMap, x: number, y: number): boolean => m.inBounds(x, y) && m.at(x, y).solid === 'none' && m.at(x, y).door === 'none';
+  const round = (m: GameMap, x: number, y: number, is: (m: GameMap, x: number, y: number) => boolean): boolean => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => is(m, x + dx, y + dy));
+  const ways = maps.flatMap((m) => m.exits.filter((e) => (m.kind === 'town' || kindOf.get(e.to) === 'town') && open(m, e.x, e.y)
+    && round(m, e.x, e.y, hard) && round(m, e.x, e.y, open)).map((e) => ({ m, e })));
+  const where = ({ m, e }: { m: GameMap; e: { x: number; y: number } }): string => { const z = m.zoneAt(e.x, e.y); return z ? `${z.id} ${e.x - z.x},${e.y - z.y}` : `${m.id} ${e.x},${e.y}`; };
+  const cornered = ways.filter(({ m, e }) => !isGateway(m, e.x, e.y)).map(where);
+  ok(ways.length > 0 && !cornered.length, `every way through a town's wall is a gate set in its side, not at its end or corner (${ways.length} squares on ${new Set(ways.map(({ m }) => m.id)).size} maps)${cornered.length ? ' -> not a gate: ' + cornered.join(', ') : ''}`);
 
   // A secret door outdoors or underground set among mountain, rock or trees is drawn as they are, so a sett or a
   // cave is found and never seen; in a wall, or in a town, it stays a door, and a door the map shows
