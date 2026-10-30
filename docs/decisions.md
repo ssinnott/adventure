@@ -623,8 +623,8 @@ Decided by the builder for #972, each the owner's to overturn:
 3. **A row of `ENTRY` fails when it names no export,** as a row of the layers' `KNOWN` does when it
    crosses no more; the kits' rows stand though two let nothing through today, `export *` taking
    their files whole.
-4. **`NARROW` and `LISTED` get no row:** exported for the typecheck alone, they pass as the content's
-   index is taken whole by the tools' `import()` of it.
+4. **`NARROW` and `LISTED` get no row:** exported for the typecheck alone, they pass as the
+   content's index is taken whole by the tools' `import()` of it.
 5. **Six the check would pass are deleted as #848 named them:** `celEllipse`, `figure`, `head` and
    `sword`, in the monsters' kit since K8, and `prestigeBar` and `MAX_SPELL_TIER`, in party's own
    files, which `export *` takes whole; nothing uses them.
@@ -637,6 +637,10 @@ Decided by the builder for #972, each the owner's to overturn:
 9. **The pilot meets once:** `for (const f of stood) meet(…)` is `if (stood.length) meet(…)`, as
    `meet` sets a key in a set and a map; and the weather suite still builds its second world,
    unbound, since building it draws what building the first drew.
+10. **The smoke's seeded shot is not byte-identical, on one tree either:** the ground under the fog
+    drifts with the frame the page has reached when it is taken; every monster and room and the
+    Foreland's and Thornmark's maps draw the same PNG on the base and the head, and the title and
+    the first view hash the same at set frames.
 
 ## EXPANSION §8.2 The recipe for a zone map
 

@@ -36,7 +36,7 @@ taking content, the UI or the app, nothing in the UI the app, no area another's 
 it; a new crossing fails, and so does a row that no longer crosses. Beside it the `unused` suite
 (`tools/tests/unused.ts`, #972) holds every export of `src/` outside `src/lib/` to an importer or to
 an entry point its `ENTRY` lists with why: a family's `draw`, a walkthrough's `scenes`, an area's
-`CHECKS` and its `src/content/areas/<area>/public.ts`, and the three kits.
+`CHECKS`, its `src/content/areas/<area>/public.ts` and the three kits.
 
 ## The outdoors as one map
 

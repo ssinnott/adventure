@@ -105,7 +105,10 @@ export class World {
 
   /** The sky as the party last saw it, for the log; null underground or before the first look. Not saved. */
   sky: SkyState | null = null;
-  /** The weather's memo, kept in world/sky.ts; the smoke and the kept suite pin a sky through it (`w['cached']`), so it is not private. */
+  /**
+   * The weather's memo, kept in world/sky.ts; the smoke and the kept suite pin a sky through it
+   * (`w['cached']`), so it is not private.
+   */
   get cached(): Reading | null { return cached.get(this) ?? null; }
   set cached(c: Reading | null) { if (c) cached.set(this, c); else cached.delete(this); }
   /** The last line crossed between zone maps, and when: a step straight back over it says no more. Not saved. */
