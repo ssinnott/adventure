@@ -42,6 +42,8 @@ export const castRows = (tables: Tables, party: Party, c: Character): { label: s
 });
 
 export class CombatScreen implements Screen {
+  /** Its backdrop is the view, painted whole over the view's rect (`render`), so exploring beneath leaves it undrawn. */
+  readonly paintsView = true;
   /** Both delays count as none: the combat tests set it, as a pilot's `instant` does (app/pilot/pilot.ts). */
   static instant = false;
   /** The bot plays the company's turns and leaves the fight at its end, until a key takes it back (#713). */

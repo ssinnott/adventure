@@ -6,7 +6,7 @@ import type { Rng } from '../lib/engine/rng.ts';
 import { makeRng } from '../game/rng.ts';
 import { World } from '../game/world.ts';
 import { signSays } from '../game/inscriptions.ts';
-import type { WorldState } from '../game/world.ts';
+import type { WorldState, LiveGroup } from '../game/world.ts';
 import { groupDrawn } from '../game/world.ts';
 import { defaultParty, randomParty } from '../game/party.ts';
 import { meet, answer, answerLabel, asked, barred, heard } from '../game/people.ts';
@@ -473,8 +473,8 @@ export class Game implements Host {
   }
 
   /** Monsters the viewport should draw at a cell; a group under the ice is drawn under it. */
-  monstersAt = (x: number, y: number): ViewMonster[] | null => {
-    const g = this.world.groupAt(x, y);
+  monstersAt = (x: number, y: number): ViewMonster[] | null => this.monstersOf(this.world.groupAt(x, y));
+  monstersOf = (g: LiveGroup | undefined): ViewMonster[] | null => {
     if (!g) return null;
     return groupDrawn(g.def.monsters).map((id) => { const d = monster(this.tables.monsters, id); return { id, sprite: d.sprite, tint: d.tint, size: d.size, ...(g.def.under ? { under: g.def.under } : {}) }; });
   };
