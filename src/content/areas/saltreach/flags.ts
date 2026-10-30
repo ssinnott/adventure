@@ -2,6 +2,7 @@
 // given on by public.ts. `Flag` is made of every declaration (src/content/index.ts), which refuses a flag
 // two declare, and the shipped suite holds them to the record (shipped.json).
 export const FLAGS = {
+  b3_hiltje_met: 'Hiltje, the withy-cutter, met',
   c3_saw_stone: 'The Stone seen from C3',
   compact_cask: "The Compact's cask taken",
   meridian_read: 'The Meridian journal read',

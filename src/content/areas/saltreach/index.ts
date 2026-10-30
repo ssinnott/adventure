@@ -25,6 +25,8 @@ import { DELTA_A6 } from './maps/delta_a6.ts';
 import { SALTINGS_B7 } from './maps/saltings_b7.ts';
 import { SALTINGS_D6 } from './maps/saltings_d6.ts';
 import { WYTGAT } from './maps/wytgat.ts';
+import { SJONGWIERDE } from './maps/sjongwierde.ts';
+import { SJONGWIERDE2 } from './maps/sjongwierde2.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ITEMS } from './items.ts';
 import { QUESTS } from './quests.ts';
@@ -33,7 +35,7 @@ import { GUILDS } from './guilds.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { CHAPTER } from './chapter.ts';
 
-export const MAPS = [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4, UPPERWATER_C3, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, DROWNED_TEMPLES, DROWNED_TEMPLES2, SALTINGS_C6, SALTMOUTH, SALTINGS_C7, UPPERWATER_B3, DELTA_B4, UPPERWATER_C2, UPPERWATER_B2, UPPERWATER_A3, DELTA_A4, DELTA_A5, DELTA_A6, SALTINGS_B7, SALTINGS_D6, WYTGAT] as const;
+export const MAPS = [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4, UPPERWATER_C3, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, DROWNED_TEMPLES, DROWNED_TEMPLES2, SALTINGS_C6, SALTMOUTH, SALTINGS_C7, UPPERWATER_B3, DELTA_B4, UPPERWATER_C2, UPPERWATER_B2, UPPERWATER_A3, DELTA_A4, DELTA_A5, DELTA_A6, SALTINGS_B7, SALTINGS_D6, WYTGAT, SJONGWIERDE, SJONGWIERDE2] as const;
 export { FLAGS };
 
 export const AREA = {
@@ -43,7 +45,8 @@ export const AREA = {
   // willows, west of Rietum and down to the fen's north end; and the bounds (#830), the upper valley over
   // Rietum and its head under the rim, then the rim's foot behind the willows and the hills over the heronry,
   // then the fen's west shore and the fen under the rim, then the Scarp's foot west of the pans and the
-  // plate's old place off Saltmouth; and Wytgat, the enclave in the Scarp's foot (#845), at 13-14.
+  // plate's old place off Saltmouth; and Wytgat, the enclave in the Scarp's foot (#845), at 13-14, and
+  // Sjongwierde, the Telstok's lair in A5's drowned mound, its two levels at the cap's 30-32 (#847).
   maps: MAPS,
   flags: FLAGS,
   monsters: MONSTERS,

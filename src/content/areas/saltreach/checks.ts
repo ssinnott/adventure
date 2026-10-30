@@ -19,7 +19,4 @@ export const CHECKS = {
     { seam: 'upperwater_b3/delta_b4', walk: '12-13 15', water: '13 15', why: 'the stream steps a square east at the line, and B3\'s trees end a square after B4\'s' },
     { seam: 'delta_b4|delta_c4', walk: '8', water: '8', why: 'the shore steps a square at the line, B4\'s shallows against C4\'s sand' },
   ],
-  // What is drawn before the map that places it (tools/tests/maps.ts): the Old Chanter waits for its lair, the
-  // drowned mound of A5 that #830's lair pull request builds. It leaves this row once a group there holds it.
-  owes: { unplaced: { old_chanter: '#830' } },
 } satisfies AreaChecks;
