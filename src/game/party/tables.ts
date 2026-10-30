@@ -3,8 +3,8 @@
 // their levels, prices and pools, the conditions and those a ward may keep off, the shapes of a
 // member and a company (`Character`, `Party`), what a member is called and its spell rank, and the
 // small sums a member and a level are made of (`bonus`, `xpForLevel`, the caps, what a tier is
-// worth, a kill's pay and the creation screen's names). It takes types alone, so it loads nothing:
-// the other parts and party.ts take their shapes and figures from here.
+// worth, a crit's chance, a kill's pay and the creation screen's names). It takes types alone, so it
+// loads nothing: the other parts and party.ts take their shapes and figures from here.
 import type { ItemDef } from '../items.ts';
 import type { SpellList, Element } from '../spells.ts';
 import type { SkillId } from '../skills.ts';
@@ -33,7 +33,7 @@ export interface ClassDef {
   /** The stat SP scales from; none for non-casters. */
   spStat?: Stat;
   spells?: SpellList;
-  /** Base to-hit and the martial multiplier on levelling attack bonus. */
+  /** What the class adds to every to-hit, beside half the level (`attackBonus`). */
   attack: number;
   /** The stats it starts on, over BASE_STATS's 10; its people's mods go on top, so a pairing always starts the same (DESIGN §5). */
   stats: Partial<Stats>;
@@ -216,6 +216,16 @@ export const RANK_STEP = 0.15;
 export const TIER_ARMS: Readonly<Record<Tier, number>> = { expert: 1, master: 2 };
 /** The rank steps a tier in magic adds to a member's spells (DESIGN §7 Ranks): its costs and the rest are untouched. */
 export const TIER_STEPS: Readonly<Record<Tier, number>> = { expert: 1, master: 2 };
+
+/**
+ * A critical blow (DESIGN §6, #1114): a member's weapon blow that lands crits, for double, at
+ * CRIT_BASE and CRIT_PER_LUCK for each point of Luck over 10, never under CRIT_FLOOR, and a fighter's
+ * CRIT_STEP more at each of CRIT_LEVELS (party.ts `critChance`). Built off: until CRITS_ON (#1117) no
+ * blow crits, nor draws for one, so no figure moves.
+ */
+export const CRITS_ON = false;
+export const CRIT_BASE = 0.05, CRIT_PER_LUCK = 0.02, CRIT_FLOOR = 0.01, CRIT_STEP = 0.05;
+export const CRIT_LEVELS: readonly [number, number] = [15, 23];
 
 /**
  * What a kill pays a member, as a share of the monster's xp, by the monster's level against theirs

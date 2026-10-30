@@ -47,8 +47,9 @@ export interface ItemDef {
   resist?: readonly Element[];
   /**
    * Stats it raises while it is borne, by the rule of `resist` (`statOf`). Might, accuracy, speed and
-   * personality are read in a fight; endurance, intellect and luck have no live effect (DESIGN §5). It
-   * never touches `Character.stats`, so a save holds no raise.
+   * personality are read in a fight, and luck a crit's chance once crits are on (#1117); endurance and
+   * intellect have no live effect (DESIGN §5). It never touches `Character.stats`, so a save holds no
+   * raise.
    */
   stat?: Partial<Record<Stat, number>>;
   /** The element a weapon's blows carry: an added die of it on each blow that lands (`ELEMENT_DIE`, DESIGN §6). */
