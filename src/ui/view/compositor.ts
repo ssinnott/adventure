@@ -7,9 +7,10 @@
 //
 // Everything is vector, textured procedurally (stone courses, timber frames, flagstones, tufts of
 // grass) with a stable hash so the same wall always has the same darker block. The static scene
-// is cached in two offscreen canvases keyed by the world state, the sky and everything in front of
-// it, so a lightning bolt can be drawn between them; monsters, the light flicker and the weather
-// (rain, snow, fog, the flash of a strike) are drawn over it every frame.
+// is painted into two offscreen canvases, the sky and everything in front of it, so a lightning bolt
+// can be drawn between them, and kept with the other facings of the square (kept.ts, #1073); monsters,
+// the light flicker and the weather (rain, snow, fog, the flash of a strike) are drawn over it every
+// frame.
 //
 // The weather and the time of year also reach into the cached scene: an overcast sky greys the
 // light, fog and driving rain or snow swallow far faces into the haze, rain darkens the ground and
@@ -46,6 +47,7 @@ import { GROUND, groundColor } from './ground/index.ts';
 import { drawVoidFront, drawVoidSide, drawFrontFace, drawLighthouseFlank, LAMP_REACH, drawLamp, drawFlame, drawSideFace } from './walls.ts';
 import { drawRoof, drawChimney } from './roofs.ts';
 import { inTent, tentView, drawTentRoof } from './tents.ts';
+import { Scenes } from './kept.ts';
 
 const DEPTH = VIEW_DEPTH;
 const LATERAL = VIEW_LATERAL;
@@ -54,19 +56,19 @@ export const LANDMARK_REACH = 40;
 
 /** A figure the viewport draws for a group: the monster, its sprite, tint and size. `under` draws it under the ice. */
 export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; under?: 'ice'; }
-interface Scene {
-  key: string;
-  /** Everything but the sky, which shows through where nothing was painted. */
-  canvas: HTMLCanvasElement;
-  /** The sky, sun, moon, stars and clouds, behind it. */
-  sky: HTMLCanvasElement;
-  flames: Flame[];
-}
-let scene: Scene | null = null;
+/**
+ * The scenes kept (kept.ts): each everything but the sky, which shows through where nothing was
+ * painted, and the sky, sun, moon, stars and clouds behind it, with the flames it left alight.
+ */
+const scenes = new Scenes<HTMLCanvasElement>(() => document.createElement('canvas'));
 /** The flames the scene last painted left alight, the array itself: the paint's result, kept as the scene is (#1029). */
 let painted: Flame[] = [];
-/** The flames the last scene painted left alight. */
+/** The flames the last scene painted left alight, or the kept scene drawn again since for another facing. */
 export function paintedFlames(): readonly Flame[] { return painted; }
+/** Every kept scene dropped, so the next frame paints afresh: what the smoke holds the kept ones to. */
+export function dropScenes(): void { scenes.drop(); }
+/** How many scenes the view keeps now, and the canvases and bytes it holds. */
+export function keptScenes(): ReturnType<Scenes<HTMLCanvasElement>['held']> { return scenes.held(); }
 
 /**
  * The first-person view at `r`. `weather` draws the rain, snow, fog and lightning over it; a fight
@@ -76,15 +78,15 @@ export function drawViewport(
   ctx: CanvasRenderingContext2D, world: World, r: ViewRect,
   monstersAt: (x: number, y: number) => readonly ViewMonster[] | null, frame: number, weather = true,
 ): void {
-  // The minute and the weather seed pin down the weather, so they key the scene with the place.
-  const key = [world.state.mapId, world.state.x, world.state.y, world.state.facing, world.sight, world.state.minutes, world.state.weatherSeed, world.state.light > 0 ? 1 : 0, Object.keys(world.mapState.doors).length, Object.keys(world.party.flags).length, world.map.landmarks.map((l) => (l.lit && world.party.flags[l.lit] ? 1 : 0)).join(''), world.stones, world.hearth.ending ?? '', r.w, r.h].join('|');
-  if (!scene || scene.key !== key) {
-    const canvas = scene?.canvas ?? document.createElement('canvas'), sky = scene?.sky ?? document.createElement('canvas');
-    canvas.width = sky.width = r.w; canvas.height = sky.height = r.h;
+  // The scene drawn last while nothing it reads has changed, another facing of the square kept, or
+  // painted now (kept.ts). The minute and the weather seed pin down the weather, so they key it with the place.
+  const { scene, had } = scenes.scene(world, r, (canvas, sky) => {
     // Each torch's point is read back as the scene is painted (see `pixel`).
     paintScene(canvas.getContext('2d', { willReadFrequently: true })!, sky.getContext('2d')!, world, { x: 0, y: 0, w: r.w, h: r.h });
-    scene = { key, canvas, sky, flames: painted };
-  }
+    return painted;
+  });
+  // A facing drawn again is the scene a paint now would be, its flames with it.
+  if (had === 'kept') painted = scene.flames;
   ctx.save(); ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
   // The sky, a lightning bolt in it, then the scene in front with the sky showing through.
   const wx = world.underSky ? world.weather : null;

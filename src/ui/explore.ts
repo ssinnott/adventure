@@ -1,10 +1,11 @@
 // Exploration, the spine of the game: `ExploreScreen`, at the foot of the stack while a game plays,
 // takes a press to a step, a turn, Space at what is here or ahead, a search, a rest or a menu, and
-// draws the view with the frame about it, its hint naming what Space would meet (`featureLabel`).
+// draws the view with the frame about it, its hint naming what Space would meet (`featureLabel`), the
+// map's groups found once a frame for both; beneath a fight, which paints the view whole, the frame alone.
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
-import type { World } from '../game/world.ts';
+import type { World, LiveGroup } from '../game/world.ts';
 import { allDown } from '../game/party.ts';
 import type { Feature } from '../game/mapdef.ts';
 import { monster } from '../game/monsters.ts';
@@ -62,13 +63,17 @@ export class ExploreScreen implements Screen {
   }
 
   render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
-    drawViewport(ctx, g.world, LAYOUT.view, g.monstersAt, frame);
+    // The map's live groups found once a frame, for every square of the view and the hint (#1073).
+    const live = g.world.liveGroups(), groupAt = (x: number, y: number): LiveGroup | undefined => live.find((q) => q.state.x === x && q.state.y === y);
+    // A fight paints the view whole as its backdrop, over the view and the hint (`paintsView`).
+    const shown = !g.screens.some((s) => s.paintsView);
+    if (shown) drawViewport(ctx, g.world, LAYOUT.view, (x, y) => g.monstersOf(groupAt(x, y)), frame);
     const ahead = g.world.map.ahead(g.world.state.x, g.world.state.y, g.world.state.facing);
     const f = g.world.featureHere();
-    const grp = g.world.groupAt(ahead.x, ahead.y);
+    const grp = groupAt(ahead.x, ahead.y);
     const hint = grp ? `${monster(g.tables.monsters, grp.def.monsters[0]).plural}: Space to attack` : f ? `${featureLabel(f)}: Space` : '';
     // The pilot's band takes the top of the view while it is up.
-    if (hint && !g.bandUp) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: HINT, align: 'center' });
+    if (hint && shown && !g.bandUp) drawText(ctx, hint, LAYOUT.view.x + LAYOUT.view.w / 2, LAYOUT.view.y + 6, { size: 1, color: HINT, align: 'center' });
     drawStatus(ctx, g.world);
     drawAutomap(ctx, g.world, frame);
     drawPartyCards(g.tables.items, ctx, g.party, -1, frame);
