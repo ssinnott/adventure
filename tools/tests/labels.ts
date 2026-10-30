@@ -69,18 +69,49 @@ export function labelFaults(monsters: readonly LabelMonster[], width: number = V
 }
 
 export function labels(): void {
-  // Every group on the maps as played alone and in every fight of up to three of a map's groups, each
-  // fight that seats apart once (tools/kit/fights.ts). The outdoors as played, since a group follows
-  // the party over a zone's edge (docs/SYSTEMS.md).
+  // Every group on the maps as played alone and in every fight of up to three of a map's groups,
+  // each fight that seats apart once (tools/kit/fights.ts). The outdoors as played, since a group
+  // follows the party over a zone's edge (docs/SYSTEMS.md).
+  // Five faults kept to name and the rest counted: a fault in every fight still names itself.
   const bad: string[] = [];
-  let fights = 0, faulty = 0;
+  let fights = 0, faulty = 0, many = 0;
   for (const { map, groups, seated } of seatedFights(PLAYED_DEFS, seat)) {
     fights++;
     const faults = labelFaults(seated);
     if (faults.length) faulty++;
-    for (const f of faults) bad.push(`${map} ${groups.map((g) => g.id).join('+')}: ${f}`);
+    for (const f of faults) if (many++ < 5) bad.push(`${map} ${groups.map((g) => g.id).join('+')}: ${f}`);
   }
-  ok(bad.length === 0, `every group on the maps as played, alone and in ${fights} fights of up to three, names each kind with its count and labels inside the view, above the monsters${bad.length ? ` -> ${faulty} fights with ${bad.length} faults: ${bad.slice(0, 5).join('; ')}` : ''}`);
+  ok(many === 0, `every group on the maps as played, alone and in ${fights} fights of up to three, names each kind with its count and labels inside the view, above the monsters${many ? ` -> ${faulty} fights with ${many} faults: ${bad.join('; ')}` : ''}`);
+
+  // The kit gives each fight the plain loops meet, once: on every map but the outdoors, whose
+  // eleven million runs are why it exists, on the outdoors' first 60 groups and on maps made here
+  // of groups alike together and apart, one full alone, one full at the second and one empty.
+  type Made = { id: string; encounters: readonly { id: string; monsters: readonly string[]; back?: number }[] };
+  const plain = (ms: readonly LabelMonster[]): string => ms.map((m) => `${m.def.id}/${m.hp}/${m.group}/${m.band}/${m.back}/${m.fled}`).join(' ');
+  const loops = (ds: readonly Made[]): Set<string> => {
+    const out = new Set<string>();
+    for (const { encounters: es } of ds) for (let a = 0; a < es.length; a++) {
+      out.add(plain(seat([es[a]])));
+      for (let b = a + 1; b < es.length; b++) {
+        out.add(plain(seat([es[a], es[b]])));
+        for (let c = b + 1; c < es.length; c++) out.add(plain(seat([es[a], es[b], es[c]])));
+      }
+    }
+    return out;
+  };
+  const g = (monsters: string[], back?: number): Made['encounters'][number] => ({ id: 'made', monsters, ...(back === undefined ? {} : { back }) });
+  const g1 = g(['brigand']), g2 = g(['brigand', 'brigand']), g12 = g(new Array(12).fill('brigand')), g10 = g(new Array(10).fill('brigand')), g0 = g([]);
+  const g5 = g(['ogre', 'brigand_archer', 'brigand', 'brigand', 'brigand']), gb = g(['skeleton', 'skeleton', 'ashen_adept', 'ashen_adept', 'ashen_adept', 'ashen_adept'], 4);
+  const outdoors = PLAYED_DEFS.find((d) => d.id === 'caldera');
+  const sets: Made[][] = [PLAYED_DEFS.filter((d) => d !== outdoors).map((d) => ({ id: d.id, encounters: d.encounters ?? [] })), [{ id: 'caldera', encounters: (outdoors?.encounters ?? []).slice(0, 60) }],
+    ...[[g1, g1], [g1, g2, g1], [g1, g1, g1], [g12, g1, g2], [g10, g5, g1], [g1, g0, g1], [gb, g1, gb], []].map((es, i) => [{ id: `made${i}`, encounters: es }]), [{ id: 'one', encounters: [g1, g2] }, { id: 'two', encounters: [g2, g1, g1] }]];
+  let given = 0;
+  const lost = sets.flatMap((ds) => {
+    const want = loops(ds), got = [...seatedFights(ds, seat)].map((f) => plain(f.seated)), have = new Set(got);
+    given += got.length;
+    return got.length === have.size && have.size === want.size && [...want].every((k) => have.has(k)) ? [] : [`${ds.length > 2 ? `the ${ds.length} maps but the outdoors` : ds.map((d) => d.id).join('+')}: the loops ${want.size}, the kit ${got.length} (${have.size} apart)`];
+  });
+  ok(lost.length === 0 && outdoors !== undefined, `the kit's fights are the plain loops', each once: ${given} fights on ${sets.length} sets of maps, every map but the outdoors, its first 60 groups and maps made of groups alike, full and empty${lost.length ? ` -> ${lost.join('; ')}` : ''}`);
 
   // The Thornmark ogre's band, which the issue saw read "5 Ogres".
   const tmOgre = MAP_DEFS.flatMap((d) => d.encounters ?? []).find((e) => e.id === 'tm_ogre')!;

@@ -100,11 +100,12 @@ function hadTo(ms: readonly RowMonster[]): boolean {
 }
 
 export function row(): void {
-  // Every group on the maps as played, alone and in every fight of up to three of a map's groups, as
-  // the labels are checked, each fight that seats apart once (tools/kit/fights.ts); the outdoors as
-  // played, since a group follows the party over a zone's edge.
+  // Every group on the maps as played, alone and in every fight of up to three of a map's groups,
+  // as the labels are checked, each fight that seats apart once (tools/kit/fights.ts); the outdoors
+  // as played, since a group follows the party over a zone's edge.
+  // Five faults kept to name and the rest counted: a fault in every fight still names itself.
   const bad: string[] = [];
-  let fights = 0, kept = 0, fitted = 0, smaller = 0, least = 1;
+  let fights = 0, kept = 0, fitted = 0, smaller = 0, least = 1, many = 0;
   for (const { map, groups, seated: ms } of seatedFights(PLAYED_DEFS, seat)) {
     fights++;
     const seats = seatRow(ms, V.w, V.h), was = before(ms);
@@ -116,9 +117,9 @@ export function row(): void {
       if (seats.every((s, i) => Math.abs(s.x - was[i].x) < EPS && Math.abs(s.h - was[i].h) < EPS)) kept++;
       else faults.push('fitted as the row stood before, and moved');
     }
-    for (const f of faults) bad.push(`${map} ${groups.map((g) => `${g.monsters.join(',')}/${g.back ?? 0}`).join('|')}: ${f}`);
+    for (const f of faults) if (many++ < 5) bad.push(`${map} ${groups.map((g) => `${g.monsters.join(',')}/${g.back ?? 0}`).join('|')}: ${f}`);
   }
-  ok(bad.length === 0 && kept === fitted, `every fight the maps can start, ${fights} of them, stands inside the view with no neighbour over more than a third of the next; the ${fitted} that fitted as the row stood before stand as they did, and ${smaller} too wide for the view are drawn smaller, down to ${least.toFixed(2)}${bad.length ? ` -> ${bad.length} faults: ${bad.slice(0, 5).join('; ')}` : ''}`);
+  ok(many === 0 && kept === fitted, `every fight the maps can start, ${fights} of them, stands inside the view with no neighbour over more than a third of the next; the ${fitted} that fitted as the row stood before stand as they did, and ${smaller} too wide for the view are drawn smaller, down to ${least.toFixed(2)}${many ? ` -> ${many} faults: ${bad.join('; ')}` : ''}`);
 
   // The worst the cap allows, with every kind drawn, those ahead of their maps too: twelve of a kind
   // and every count under it, three groups of four of the widest and of the tallest, the widest four
