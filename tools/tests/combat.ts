@@ -1212,11 +1212,12 @@ function botOpts(): void {
       return [...out, s.outcome].join('\n');
     };
     // Main's fight, pinned: each bot's turns, outcome and digest with the options absent, as main played
-    // it at e74bffb0 before the options came.
+    // it at e74bffb0 before the options came; pinned again when #1070 marked the thief's sneak attacks in
+    // the log, its marks taken out the digests main's (3e52eed053fa and 06399b5beb17), turn for turn.
     const MAIN = {
-      written: [46, '3e52eed053fa132689b29bb5288762395a2a481ff145edfea3baf3f580c08120'],
-      seen: [46, '3e52eed053fa132689b29bb5288762395a2a481ff145edfea3baf3f580c08120'],
-      thrifty: [52, '06399b5beb1712ab1609de73231bb8172a74473ff4188343203af1de8a927709'],
+      written: [46, '9922b0b4122b45b581ad2946ddc39aa05b984e269c99561c69bd6a3fb008724f'],
+      seen: [46, '9922b0b4122b45b581ad2946ddc39aa05b984e269c99561c69bd6a3fb008724f'],
+      thrifty: [52, '6b64eae28851604f9f0e42baf864e47dcd604bfcad45748841ed2928899119f2'],
     } as const;
     for (const bot of ['written', 'seen', 'thrifty'] as const) {
       const absent = turns(bot), off = turns(bot, OFF), on = turns(bot, ON), lines = absent.split('\n'), digest = createHash('sha256').update(absent).digest('hex');
