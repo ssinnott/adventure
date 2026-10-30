@@ -1,13 +1,14 @@
 // The groups (#1008, cut from game/world.ts): the monster groups that roam a map, which live, come
-// back, step toward the party, meet it, ask it and are fought; which of them stand in sight and the
-// looks said on first meeting (`sightings`); how a group is drawn while exploring (`groupDrawn`);
-// the beasts an Archdruid's company is left alone by; a flight's step back and the step out of a
-// business.
+// back (none to a box cleared whole, #1068), step toward the party, meet it, ask it and are fought;
+// which of them stand in sight and the looks said on first meeting (`sightings`); how a group is
+// drawn while exploring (`groupDrawn`); the beasts an Archdruid's company is left alone by; a
+// flight's step back and the step out of a business.
 //
 // Functions of the world, each called by World's member of the same name; World is a type here
 // alone, so nothing here loads game/world.ts. It takes the view's rule from sight.ts, the one edge
 // among the parts.
 import type { EncounterDef, Choice } from '../mapdef.ts';
+import type { GameMap } from '../map.ts';
 import type { Facing } from '../types.ts';
 import { FACING_DX, FACING_DY, turnBack, manhattan } from '../types.ts';
 import { isDown, prestigeOf } from '../party.ts';
@@ -30,10 +31,42 @@ export function groupDrawn(monsters: readonly string[]): string[] {
 }
 
 /**
- * Live groups on the current map: a killed one back once its respawn is up and its `until` does
- * not hold, none out of its hours or before its `after`, and none that leaves once its `until`
- * holds (#747). Every reader of a standing group comes here: the viewport, the sight, the square,
- * the steps, the fight and the rest.
+ * Each map's boxes (#1068), found once, as `densOf` finds the dens: a box is the groups of one zone
+ * map on the outdoors (the one its written square lies in) and of the map anywhere else, a dungeon a
+ * level at a time. A group with an `until` follows its own story (a den's brood, a Rift's) and is in
+ * none: it neither keeps a box from being cleared nor is kept from coming back by one.
+ */
+const boxes = new WeakMap<GameMap, Map<EncounterDef, EncounterDef[]>>();
+function boxOf(map: GameMap, def: EncounterDef): EncounterDef[] | undefined {
+  let of = boxes.get(map);
+  if (!of) {
+    const by = new Map<string, EncounterDef[]>();
+    of = new Map();
+    for (const e of map.encounters) {
+      if (e.until) continue;
+      const key = map.zoneAt(e.x, e.y)?.id ?? '', box = by.get(key) ?? [];
+      by.set(key, box); box.push(e); of.set(e, box);
+    }
+    boxes.set(map, of);
+  }
+  return of.get(def);
+}
+
+/**
+ * Whether a group's box is cleared whole: every group of it dead at once, but one answered without
+ * a fight, which stands aside for good (`standsAside`). Read off the saved minutes each time it is
+ * asked, so nothing new is saved and an old save's dead box stays dead.
+ */
+function cleared(world: World, def: EncounterDef): boolean {
+  const box = boxOf(world.map, def), groups = world.mapState.groups;
+  return !!box && box.every((e) => (groups[e.id]?.dead ?? -1) >= 0 || world.standsAside(e));
+}
+
+/**
+ * Live groups on the current map: a killed one back once its respawn is up, its `until` does not
+ * hold and its box is not cleared whole (`cleared`, #1068), none out of its hours or before its
+ * `after`, and none that leaves once its `until` holds (#747). Every reader of a standing group
+ * comes here: the viewport, the sight, the square, the steps, the fight and the rest.
  */
 export function liveGroups(world: World): LiveGroup[] {
   const out: LiveGroup[] = [];
@@ -46,7 +79,7 @@ export function liveGroups(world: World): LiveGroup[] {
     // The leave rule: gone, standing or killed, and its record left as it was, so not killed.
     if (def.leaves && world.ended(def)) continue;
     if (st.dead >= 0) {
-      if (def.respawn && world.state.minutes - st.dead >= def.respawn && !world.ended(def)) { st.dead = -1; st.x = def.x; st.y = def.y; }
+      if (def.respawn && world.state.minutes - st.dead >= def.respawn && !world.ended(def) && !cleared(world, def)) { st.dead = -1; st.x = def.x; st.y = def.y; }
       else continue;
     }
     if ((def.when || def.after) && !world.walks(def, def.x, def.y)) continue;
