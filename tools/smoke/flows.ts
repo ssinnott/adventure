@@ -131,6 +131,35 @@ export async function kept({ page, ok }: Run): Promise<void> {
     const R2 = { x: 9, y: 4, w: 384, h: 256 }, sized = (): string => { x.fillStyle = '#000'; x.fillRect(0, 0, 640, 360); V.drawViewport(x, w, R2, g.monstersAt, 40); return hash(R2); };
     sized(); now(40); const resized = sized() === afresh(40, R2);
     const held4 = V.keptScenes();
+    // Every square a paint reads lies within the reach the kept scenes read back (`READ_REACH`):
+    // the map's readers watched while three places are painted at each facing, each view's second
+    // paint (the first makes the map's memos of its gates and buildings, worked out once a map).
+    const K = await load<typeof import('../../src/ui/view/kept.ts')>('/src/ui/view/kept.ts');
+    const MP = Object.getPrototypeOf(w.map) as Record<string, (...a: number[]) => unknown>;
+    const readers = ['at', 'blocksView', 'overtops', 'landmarkAt', 'featuresAt', 'paletteAt'].filter((k) => typeof MP[k] === 'function');
+    const own = readers.map((k) => MP[k]);
+    let reach = 0, watch = false;
+    readers.forEach((k, i) => {
+      MP[k] = function (this: unknown, ...a: number[]): unknown {
+        if (watch) reach = Math.max(reach, Math.abs(a[0] - w.state.x), Math.abs(a[1] - w.state.y));
+        return own[i].apply(this, a);
+      };
+    });
+    const sc = document.createElement('canvas'), sk = document.createElement('canvas');
+    sc.width = sk.width = R.w; sc.height = sk.height = R.h;
+    const scx = sc.getContext('2d', { willReadFrequently: true })!, skx = sk.getContext('2d')!, flat = { x: 0, y: 0, w: R.w, h: R.h };
+    for (const [id, px, py] of [['shelf', 16, 8], ['harrow', 7, 12], ['mill', 1, 1]] as const) for (const f of [0, 1, 2, 3] as const) {
+      w.travel(id, px, py, f); V.paintScene(scx, skx, w, flat);
+      watch = true; V.paintScene(scx, skx, w, flat); watch = false;
+    }
+    readers.forEach((k, i) => { MP[k] = own[i]; });
+    // A facing drawn again leaves paintedFlames() the flames a paint of it leaves: at Harrow by
+    // night, a door's lantern faced, turned from and turned back to.
+    w.travel('harrow', 7, 12, 0); w.state.minutes = day + 11 * 60; clear();
+    const flamesOf = (): string => V.paintedFlames().map((fl) => `${fl.x},${fl.y}`).join(' ');
+    now(40); const lit = flamesOf(); turn('turnLeft'); now(40); turn('turnRight'); now(40);
+    const again = flamesOf(); afresh(40);
+    const flames = { lit, again, fresh: flamesOf(), n: V.paintedFlames().length };
     hush(); (g.log as string[]).push(...said);
     // A fight: exploring beneath it draws its frame alone, as the frame's parts draw it over magenta, and the
     // fight's backdrop leaves no magenta in the view.
@@ -151,7 +180,7 @@ export async function kept({ page, ok }: Run): Promise<void> {
     w.travel(w.state.mapId, q.state.x, q.state.y + 2, 0); w.state.minutes = day; clear();
     const atRest = time(() => g.render(sx)), turning = time((i) => { w.state.facing = (i & 1 ? 1 : 0); g.render(sx); });
     w.travel(place.id, place.x, place.y, place.f as Facing); w.state.minutes = minutes; w['cached'] = null;
-    return { rest, ticks, out, slainAt, door, town, resized, held4, beneath: beneath === frameAlone, left, whole, ms: [atRest, turning, inFight], R: R.w * R.h };
+    return { rest, ticks, out, slainAt, door, town, resized, held4, reach, readReach: K.READ_REACH, flames, beneath: beneath === frameAlone, left, whole, ms: [atRest, turning, inFight], R: R.w * R.h };
   });
   if ('missing' in r) { ok(false, `the kept scenes: ${r.missing}`); return; }
   ok(r.rest.every(Boolean) && r.ticks > 1, `exploring before a group, each of 8 frames drawn through the kept scene and one lookup of the groups is the frame painted afresh with the groups asked square by square, the flames and figures moving (${r.ticks} of 4 frames differ)`);
@@ -160,6 +189,10 @@ export async function kept({ page, ok }: Run): Promise<void> {
   ok(!!r.door, `a dungeon's secret door was faced and found (${r.door || 'none'})`);
   ok(r.town && r.resized, `another map, and the view at another size, draw the frames painted afresh (${r.town}, ${r.resized})`);
   ok(r.held4.scenes >= 1 && r.held4.scenes <= 4 && r.held4.bytes <= 4 * 2 * r.R * 4, `the view keeps ${r.held4.scenes} scenes in ${r.held4.canvases} canvases, ${r.held4.bytes} bytes, four at most`);
+  ok(r.reach > 0 && r.reach <= r.readReach,
+    `every square a paint reads lies within the reach the kept scenes read back (the farthest ${r.reach} from the party, the reach ${r.readReach})`);
+  ok(r.flames.lit !== '' && r.flames.again === r.flames.lit && r.flames.again === r.flames.fresh,
+    `a facing drawn again leaves paintedFlames() the flames a paint of it leaves (Harrow by night: ${r.flames.n} flame${r.flames.n === 1 ? '' : 's'})`);
   ok(r.beneath && r.left > 0 && r.whole === 0, `under a fight exploring draws its frame alone, the view left to the fight (${r.left} of ${r.R} pixels magenta beneath), whose backdrop paints it whole (${r.whole} left)`);
   ok(r.ms.every(Number.isFinite), `Game.render's 200 frames, each flushed: ${r.ms[0].toFixed(1)} ms exploring at rest before a group, ${r.ms[1].toFixed(1)} ms turning back and forth, ${r.ms[2].toFixed(1)} ms in a fight`);
 }

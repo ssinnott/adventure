@@ -93,6 +93,9 @@ function places(): void {
   const R2 = { x: 9, y: 4, w: 384, h: 256 }, n = paints(), other = at(g, R2), again = at(g, R2), home = at(g, R);
   ok(other === 'painted' && again === 'last' && home === 'painted' && paints() === n + 2 && placeKey(w, R2) !== placeKey(w, R),
     `a rect of another size (the window resized) paints a scene of its own and drops the other's, and back again paints anew (${other}, ${again}, ${home})`);
+  const tall = { ...R, h: R.h - 14 }, wide = { ...R, w: R.w - 8 }, n2 = paints(), byHeight = at(g, tall), byWidth = at(g, wide), home2 = at(g, R);
+  ok(byHeight === 'painted' && byWidth === 'painted' && home2 === 'painted' && paints() === n2 + 3,
+    `a rect of another height alone, then of another width alone, each paints a scene of its own, and back again paints anew (${byHeight}, ${byWidth}, ${home2})`);
   const g2 = headlessGame(4), s2 = store();
   s2.at(g2); const before = placeKey(g2.world, R);
   const fresh = headlessGame(4); fresh.world.travel(g2.world.state.mapId, g2.world.state.x, g2.world.state.y, g2.world.state.facing);
