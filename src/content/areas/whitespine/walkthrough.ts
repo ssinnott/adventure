@@ -79,12 +79,19 @@ const J11 = mapDef('monksvale_j11');
 const person = (name: string): Person => J11.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
 const VALE = ATLAS.zones.find((z) => z.id === 'monksvale')!;
 
-/** The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run builds once (#1018). */
+/**
+ * The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run
+ * builds once (#1018), its doors its own and its other cells frozen. Its zones, groups and ways
+ * out are every walk's in the run, so a scene writes nothing on it: a write would reach the scenes
+ * after it in one process, which --jobs 1 hides.
+ */
 const outdoors = (): GameMap => ownMaps()[OUTDOORS];
 /**
- * What the range's scenes share of the old body's one walk: the outdoors as built and the boxes' places on
- * it, the trails walked, the people and groups of the Stair's head and the toll put before its fight, worked
- * out once a run, at the first scene that asks.
+ * What the range's scenes share of the old body's one walk: the outdoors as built and the boxes'
+ * places on it, the trails walked, the people and groups of the Stair's head and the toll put
+ * before its fight, worked out once a run, at the first scene that asks. The scenes after it read
+ * the same parts, one copy of the outdoors among them, so a scene writes nothing on them: a write
+ * would reach the scenes after it in one process, which --jobs 1 hides.
  */
 function rangeParts() {
   const out = outdoors();

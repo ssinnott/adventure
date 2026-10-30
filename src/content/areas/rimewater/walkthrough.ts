@@ -117,9 +117,18 @@ const person = (def: typeof M9, name: string): Person => def.features!.find((f) 
 const TOWN = mapDef('rime_lodge');
 const L10 = mapDef('longmere_l10'), L11 = mapDef('longmere_l11');
 
-/** The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run builds once (#1018). */
+/**
+ * The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run
+ * builds once (#1018), its doors its own and its other cells frozen. Its zones, groups and ways
+ * out are every walk's in the run, so a scene writes nothing on it: a write would reach the scenes
+ * after it in one process, which --jobs 1 hides.
+ */
 const outdoors = (): GameMap => ownMaps()[OUTDOORS];
-/** The world's grid (`worldGrid`), worked out once a run where a milestone is first counted: nothing writes it. */
+/**
+ * The world's grid (`worldGrid`), worked out once a run where a milestone is first counted: about
+ * 0.7 s. The scenes after it read the same one, and no freeze holds its typed arrays: a scene
+ * writes nothing on it.
+ */
 let GRID: ReturnType<typeof worldGrid> | undefined;
 const theGrid = (): ReturnType<typeof worldGrid> => (GRID ??= worldGrid(ATLAS, MAP_DEFS));
 /** A person of a map met by name where they stand, and what they say: the old body's `spoken`, on a scene's walk. */
@@ -142,8 +151,11 @@ const walkers = (w: Walk, ok: (cond: boolean, msg: string) => void) => {
   return { searched, walkedIn };
 };
 /**
- * What the road's scenes share of the old body's one walk: the outdoors as built, the boxes' places on it
- * and the milestones' count along the roads, worked out once a run, at the first scene that asks.
+ * What the road's scenes share of the old body's one walk: the outdoors as built, the boxes'
+ * places on it and the milestones' count along the roads, worked out once a run, at the first
+ * scene that asks. The scenes after it read the same parts, one copy of the outdoors among them,
+ * so a scene writes nothing on them: a write would reach the scenes after it in one process,
+ * which --jobs 1 hides.
  */
 function roadParts() {
   const out = outdoors();
