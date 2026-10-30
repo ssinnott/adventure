@@ -517,8 +517,8 @@ Decided by the builder for #1070, each the owner's to overturn:
    main's +4 and the Tumbler's 2 more every two levels past 10. Measured, a sneak attack in every
    round took a boss off its aim at any value that kept the thief's late blow (the tallymaster at
    27, at 70% before, to 71% at +1), and the ruling's +2 took 23 of the gate's lines off their aim
-   and 4 past their limits; this keeps every line where it stood, and the harness within a sixth of
-   a fight.
+   and 4 past their limits; this takes no line off its aim, three come back into theirs, and the
+   harness stays within a sixth of a fight.
 2. The mark follows the hit's own sentence and comes before a death: "... for 7. Sneak attack.
    Giant Rat dies." The log's readers keep the hit's head.
 3. "The company strikes first." follows the fight's "... attack!" and comes before the weather's
