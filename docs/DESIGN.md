@@ -1453,7 +1453,7 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
   the row it left, held to the rows it has now, so where that row has gone the cursor is on the one
   after it. A menu a choice opens anew starts at its top.
 - **The order:** on the sheet X asks with whom the member changes places, chosen by a digit or by
-  the arrows round the cards and Space, and Esc keeps them (`changePlaces`,
+  the arrows round the cards and Space, and Esc or X again asks no more (`changePlaces`,
   `src/game/party/order.ts`). Only the two places change, across the rows and the fallen too; it
   costs no time, is not offered in a fight and the save keeps it.
 - **Monsters:** front-facing paintings: 160 kinds, drawn by 28 family modules in `src/ui/monsters/`

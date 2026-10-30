@@ -1,10 +1,10 @@
 // The company's order (#1066, DESIGN §11): on the sheet X asks with whom the member changes places,
 // a digit or the arrows round the company and Space choose, and Esc or X again ask no more. Driven
 // by the keys in a Game on Harrow: two members across the rows and two of one row, the same member
-// twice, the first and the last by the arrows round, a cancel, a member dead and one unconscious,
-// the order after a save and a load, the sheet not offered in a fight and the pilot, which never
-// asks. Each swap is held by `faults`, which names what a swap may get wrong; then each mutant of a
-// swap fails by the name it earns.
+// twice, the first and the last by the arrows round, a cancel, the later place first, a member dead
+// and one unconscious, the order after a save and a load, the sheet not offered in a fight and the
+// pilot, which never asks and, handed a swap asked, asks no more. Each swap is held by `faults`,
+// which names what a swap may get wrong; then each mutant of a swap fails by the name it earns.
 import { Game } from '../../src/app/game.ts';
 import { Pilot } from '../../src/app/pilot/pilot.ts';
 import { SheetScreen, SHEET_HINT, SWAP_HINT } from '../../src/ui/screens.ts';
@@ -119,7 +119,7 @@ export function order(): void {
   ok(edge.every((e) => e >= 340), `the sheet's keys, and the swap's in their place, end right of `
     + `the item list's edge at 340 (from ${edge.join(' and ')}, at ${y})`);
 
-  // Two members across the rows: the second's sheet, X, and 5.
+  // Two members across the rows: the second's sheet, X and 5.
   drive(g, ['inventory', 'n2', 'swap']);
   ok(sheet(g)?.swapping === 1 && sheet(g)?.shown === 1,
     `X on the second's sheet asks with whom, the mark on their own card (${sheet(g)?.swapping})`);
@@ -150,6 +150,12 @@ export function order(): void {
   ok(!esc.f.length && !again.f.length && !esc.said && !again.said && sheet(g)?.swapping === null
     && sheet(g)?.shown === 4, `X, the mark moved, then Esc or X again: nobody moves and the sheet `
     + `stays (${[...esc.f, ...again.f].join(', ') || names(g)})`);
+  // The member shown after the other: the sixth's sheet, X and 2.
+  drive(g, ['n6']);
+  const later = swapBy(g, ['swap', 'n2'], 5, 1);
+  ok(!later.f.length && sheet(g)?.shown === 1 && g.selected === 1
+    && later.said === lines(later.was, 5, 1), `the sixth's sheet, X and 2: the later place `
+    + `first, across the rows (${why(later)})`);
   drive(g, ['cancel']);
   const closed = g.top.constructor.name;
   ok(closed === 'ExploreScreen', `and Esc then closes the sheet (${closed})`);
@@ -201,6 +207,22 @@ export function order(): void {
   const pressed = keys.filter(Boolean).length;
   ok(!keys.includes('swap') && names(p) === six, `the pilot, handed a new game for 1,500 ticks, `
     + `never presses X and leaves the order (${opened} sheets opened, ${pressed} keys)`);
+
+  // Handed the sheet with a swap asked, as a viewer's X and then P leave it while the pilot wears
+  // what it bought: it asks no more, wears it and closes the sheet, the order as it was.
+  const h = headlessGame(4), helm = new Pilot({ instant: true });
+  h.pilot = helm;
+  helm.toggle(h);
+  for (let t = 0; t < 3000 && !(sheet(h) && /takes the/.test(helm.why[0])); t++) drive(h, [null]);
+  const wearing = helm.why[0], standing = names(h);
+  helm.toggle(h);
+  drive(h, ['swap']);
+  const open = sheet(h)?.swapping ?? null;
+  helm.toggle(h);
+  for (let t = 0; t < 120 && sheet(h); t++) drive(h, [null]);
+  ok(open !== null && !sheet(h) && helm.on && names(h) === standing, `the pilot, handed the sheet `
+    + `with a swap asked as it wears what it bought, asks no more, wears it and closes the sheet `
+    + `(${wearing} ${sheet(h) ? 'Still on the sheet.' : h.top.constructor.name})`);
 
   // Each mutant of a swap of the first and the last, as the arrows choose them, fails by its name.
   for (const [what, name, swap] of MUTANTS) {

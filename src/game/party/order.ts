@@ -2,7 +2,7 @@
 // place is the member's index in `Party.members`, so the order is the array's and a save keeps it
 // with no field of its own; the first `FRONT_ROW` stand in the front row, as the fights, the bots
 // and the cards read it. Only the two places change: each member keeps all they are and carry, the
-// company its purse, bag and flags, and no time passes.
+// company its purse, bag and flags; no time passes.
 import { FRONT_ROW } from '../combat/state.ts';
 import type { Party } from './tables.ts';
 
