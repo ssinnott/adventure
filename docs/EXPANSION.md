@@ -166,7 +166,7 @@ and never sold. Each rung betters the last for every class, each find and ware i
 window; past the top, gear grows only in the harness's what-ifs, the bounds' artifacts among them
 (`--artifacts`, #847).
 
-Nor does the gate's company learn a secondary skill (DESIGN.md §5): Arms Master's first round and
+Nor does the gate's company learn a secondary skill (DESIGN.md §5): Arms Master's rounds and
 the two senses go unmeasured, so a company that buys one is stronger than the gate measured it, the
 safe side. Decided by the owner's delegate for #18 (#856), the owner's to overturn. It is born to
 three that touch no fight: its elf and gnome to Perception, its ranger to Pathfinder and its thief

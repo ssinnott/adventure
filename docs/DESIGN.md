@@ -240,7 +240,7 @@ adds armour: in the harness, armour that keeps up makes monsters hit harder, and
 | Class | First | Second | Third |
 |---|---|---|---|
 | Knight | a second attack each turn | while the knight stands, the front row gains +2 to-hit | a third attack each turn |
-| Thief | a second attack each turn with a light weapon (dagger, short sword, sling), and Sneak Attack grows by 2 every two levels | once a fight, drops from sight for a round: no foe can single the thief out, and its blows that round are sneak attacks | a third attack each turn with a light weapon |
+| Thief | a second attack each turn with a light weapon (dagger, short sword, sling), and Sneak Attack, a blow on a foe in its first round before its turn, grows by 2 every two levels | once a fight, drops from sight for a round: no foe can single the thief out, and its blows that round are sneak attacks | a third attack each turn with a light weapon |
 | Barbarian | a second attack each turn | Rage starts below three quarters of hit points, and the barbarian dies only at −30 | a third attack each turn |
 | Monk | two strikes a turn with a staff or bare hands | always acts first in a round, and can strike from the back row | a third strike each turn |
 | Paladin | rank 1, and a second attack each turn | rank 2, and Holy Strike rises to +6, on the dead only | rank 3, and a third attack each turn |
@@ -330,8 +330,8 @@ country, band 26 to 28.
     automap, through walls and dark.
   - *Danger Sense* (the Wardens'): a roaming group aware of the company is marked on the automap,
     though a hill or a wall hides it.
-  - *Arms Master* (the Wardens'): the company strikes first; in a fight's first round every standing
-    member acts before any monster (§6).
+  - *Arms Master* (the Wardens'): the company strikes first; in every round every standing member
+    acts before any monster, and the fight's start says so (§6).
 
   Built with #857, so that every hall teaches its guild's three and all twelve are built:
   - *Cartographer* (the Cartographers'): the automap fills a square further than the company sees,
@@ -496,6 +496,36 @@ Decided by the builder for #856, each the owner's to overturn:
 12. The pilot's talk is unchanged: its way out leaves a hall's two levels and its skill rule a
     person's. The skills test holds both.
 
+Striking first (#1070): Arms Master's rounds and the thief's Sneak Attack.
+
+Decided by the owner's delegate for #1070, each the owner's to overturn:
+
+1. Acting first is a mechanic already: a fifth to a quarter of a fight at level 10 in Arms Master's
+   first-round form, and nothing from 16. The company does not act first; the thief does, by speed.
+   Sneak Attack is the thief's whole late blow. What was wrong is that no line showed any of it.
+2. Arms Master acts in every round: its name, id, price and text stay; while one stands the company
+   acts before the monsters in every round, in its own speed order, and the log says "The company
+   strikes first." once, at the fight's start. It takes the first round out of the 5 for #18 above.
+3. Sneak Attack is a blow on a foe before it acts, and the log marks it as a second sentence:
+   "Ottilie hits Giant Rat for 7. Sneak attack." The ruling made it +2, and 1 more every two levels
+   past 10 with the Tumbler, on a blow before the foe's turn in any round; as built, the builder's 1.
+
+Decided by the builder for #1070, each the owner's to overturn:
+
+1. Sneak Attack is a blow on a foe in its first round, before its turn: the fight's first round, or
+   the round it is called in; and every blow of the Nightjar's vanished round, as before. It keeps
+   main's +4 and the Tumbler's 2 more every two levels past 10. Measured, a sneak attack in every
+   round took a boss off its aim at any value that kept the thief's late blow (the tallymaster at
+   27, at 70% before, to 71% at +1), and the ruling's +2 took 23 of the gate's lines off their aim
+   and 4 past their limits; this keeps every line where it stood, and the harness within a sixth of
+   a fight.
+2. The mark follows the hit's own sentence and comes before a death: "... for 7. Sneak attack.
+   Giant Rat dies." The log's readers keep the hit's head.
+3. "The company strikes first." follows the fight's "... attack!" and comes before the weather's
+   note.
+4. `sneaks` reads the trait, the round and the order, and the damage and the mark both read it, so
+   that they never disagree; nothing in it, or in `strikesFirst`, draws on the generator.
+
 The secondary skills of #857, Cartographer, Pathfinder, Lockpick, Merchant and Navigator:
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
@@ -584,9 +614,8 @@ Decided by the owner's delegate for #892, each the owner's to overturn:
 - **Trigger:** monsters move on the grid in real time relative to your steps (they advance one
   square per party step when aware). Combat begins when a group is adjacent or within ranged
   line.
-- **Turn order** by Speed, party and monsters interleaved. One action per character. In a fight's
-  first round, while an Arms Master stands, every standing member acts before any monster (§5,
-  #856).
+- **Turn order** by Speed, party and monsters interleaved. One action per character. While an Arms
+  Master stands, every standing member acts before any monster, in every round (§5, #856, #1070).
 - **Rows:** front three take and deal melee; back three need reach, ranged, or spells. Swap costs
   a turn.
 - **Encounter cap:** a single fight is at most 12 monsters in at most 3 groups. Bigger threats
