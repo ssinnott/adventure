@@ -56,7 +56,7 @@ export interface TraitDef {
 
 /** What the numeric traits are worth; combat/perks.ts, combat/casting.ts and armorClass read these. */
 export const STALWART_AC = 2, WEAPON_MASTER_DMG = 1, HOLY_STRIKE_DMG = 3, MARKSMAN_DMG = 2, HEALING_HANDS = 3,
-  SPELLFIRE_DMG = 2, SNEAK_ATTACK_DMG = 4, RAGE_DMG = 3, DIE_HARD_AT = -20, INSPIRE_HIT = 1;
+  SPELLFIRE_DMG = 2, SNEAK_ATTACK_DMG = 2, RAGE_DMG = 3, DIE_HARD_AT = -20, INSPIRE_HIT = 1;
 
 export const TRAITS: Record<TraitId, TraitDef> = {
   stalwart:      { id: 'stalwart', name: 'Stalwart', text: `+${STALWART_AC} AC.` },
@@ -69,7 +69,7 @@ export const TRAITS: Record<TraitId, TraitDef> = {
   faith:         { id: 'faith', name: 'Faith', text: 'Immune to curses.', immune: ['cursed'] },
   spellfire:     { id: 'spellfire', name: 'Spellfire', text: `Damage spells deal +${SPELLFIRE_DMG} to each foe.` },
   iron_will:     { id: 'iron_will', name: 'Iron Will', text: 'Immune to sleep.', immune: ['asleep'] },
-  sneak_attack:  { id: 'sneak_attack', name: 'Sneak Attack', text: `+${SNEAK_ATTACK_DMG} damage in a fight's first round.` },
+  sneak_attack:  { id: 'sneak_attack', name: 'Sneak Attack', text: `+${SNEAK_ATTACK_DMG} damage to a foe that has not yet acted this round; the Tumbler adds 1 more every two levels past 10.` },
   rage:          { id: 'rage', name: 'Rage', text: `+${RAGE_DMG} melee damage while below half hp.` },
   die_hard:      { id: 'die_hard', name: 'Die Hard', text: `Dies only at ${DIE_HARD_AT} hp, not -10.` },
   unarmoured:    { id: 'unarmoured', name: 'Unarmoured Defence', text: 'In a robe or less, no shield: +1 AC, +1 more every two levels.' },

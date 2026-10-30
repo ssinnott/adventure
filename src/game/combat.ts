@@ -16,8 +16,8 @@ import type { Party } from './party.ts';
 import type { Tables } from './tables.ts';
 import { FRONT_ROW, MAX_MONSTERS, HASTE_SPEED, describe, toHit, roll, standing, frontStands, aliveMonsters, HOLD_BREAKS } from './combat/state.ts';
 import type { MonsterInst, TurnRef, PartyAction, Loot, CombatState, CombatOpts, CombatGroup } from './combat/state.ts';
-import { STONE_LINE, FIRST_LINE, victoryLine } from './combat/lines.ts';
-import { blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow, strikesFirst } from './combat/perks.ts';
+import { STONE_LINE, FIRST_LINE, SNEAK_LINE, victoryLine } from './combat/lines.ts';
+import { blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow, strikesFirst, sneaks } from './combat/perks.ts';
 import { hurtMonster, elemental, castSpell } from './combat/casting.ts';
 import {
   canReach, waits, monsterAc, monsterHit, guard, castable, struck, monsterCast, sweep, regenerate, dim, calledBy, canCall, clocked, beat, call,
@@ -155,11 +155,12 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
         if (!standing(m)) { const left = aliveMonsters(s).filter((i) => canReach(s, c, i)); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
         const hit = rng.chance(toHit(attackBonus(s.tables.items, c) + buffHit(s, party, t.i) - (w.ranged && !weatherproof(c) ? s.rangedPenalty : 0), monsterAc(s, m)));
         if (hit) {
-          // An elemental weapon adds a die of its element to the steel, which lands as ever.
-          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
+          // An elemental weapon adds a die of its element to the steel, which lands as ever; a sneak
+          // attack (`sneaks`, read before the blow lands) is marked after the hit's own sentence.
+          const sneak = sneaks(s, c, m), dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
             + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
           hurtMonster(s, m, dmg);
-          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
+          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
         } else s.log.push(`${c.name} misses ${m.def.name}.`);
       }
       break;

@@ -1,8 +1,10 @@
 // The class traits.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { ITEMS, MONSTERS, TABLES } from '../../src/content/index.ts';
-import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, HOLY_STRIKE_DMG, DIE_HARD_AT, INSPIRE_HIT, armorClass, addCondition, hasCondition } from '../../src/game/party.ts';
-import { startCombat, castOnAlly, buffHit, traitDamage } from '../../src/game/combat.ts';
+import { defaultParty, createCharacter, CLASSES, TRAITS, hasTrait, damage, STALWART_AC, HOLY_STRIKE_DMG, DIE_HARD_AT, INSPIRE_HIT, SNEAK_ATTACK_DMG, armorClass, addCondition, hasCondition } from '../../src/game/party.ts';
+import { startCombat, castOnAlly, buffHit, traitDamage, partyAct, currentTurn, monsterAct, SNEAK_GROWTH } from '../../src/game/combat.ts';
+import { sneaks } from '../../src/game/combat/perks.ts';
+import { SNEAK_LINE } from '../../src/game/combat/lines.ts';
 import { spell } from '../../src/game/spells.ts';
 import { ok } from './lib.ts';
 
@@ -37,8 +39,43 @@ export function traits(): void {
   const rat = s.monsters[0];
   const bow = ITEMS.shortbow, sword = ITEMS.longsword;
   ok(traitDamage(s, mk('ranger'), bow, rat) > 0 && traitDamage(s, mk('ranger'), sword, rat) === 0, 'Marksman adds only to ranged attacks');
-  ok(traitDamage(s, mk('thief'), sword, rat) > 0, 'Sneak Attack adds in the first round');
-  s.round = 2; ok(traitDamage(s, mk('thief'), sword, rat) === 0, 'and not after');
+  // Sneak Attack (#1070): a blow on a foe whose turn this round has not yet come, or that has no place
+  // in the order (called this round), in any round; nothing on one that has acted.
+  const thief = mk('thief'), ratAt = s.order.findIndex((r) => r.side === 'monster' && r.i === 0), sneak = (): number => traitDamage(s, thief, sword, rat);
+  s.turn = ratAt;
+  ok(sneak() === SNEAK_ATTACK_DMG && sneaks(s, thief, rat) && !sneaks(s, mk('cleric'), rat), `Sneak Attack adds ${SNEAK_ATTACK_DMG} to a blow on a foe whose turn has not yet come, and a class without the trait does not sneak`);
+  s.turn = ratAt + 1;
+  ok(sneak() === 0 && !sneaks(s, thief, rat), 'and nothing to one on a foe that has acted');
+  const called = { ...rat };
+  s.monsters.push(called);
+  ok(traitDamage(s, thief, sword, called) === SNEAK_ATTACK_DMG && sneaks(s, thief, called), 'a foe called this round, with no place in the order, takes it');
+  s.monsters.pop();
+  s.round = 2; s.turn = ratAt;
+  ok(sneak() === SNEAK_ATTACK_DMG, 'and in the second round a foe before its turn takes it, as in the first');
+  s.turn = ratAt + 1;
+  ok(sneak() === 0 && !sneaks(s, thief, rat), 'and one after its turn does not');
+  ok(TRAITS.sneak_attack.text.startsWith(`+${SNEAK_ATTACK_DMG} damage to a foe that has not yet acted this round;`) && TRAITS.sneak_attack.text.includes(` adds ${SNEAK_GROWTH} more every two levels past 10.`),
+    `the trait says what the resolver plays ("${TRAITS.sneak_attack.text}")`);
+  {
+    // In play the log marks it, a sentence after the hit's own and before a death: a thief at speed 50
+    // against a harmless rat of speed 0 strikes before its turn, against one of speed 100 after it.
+    const blows = (speed: number, hp: number): string[] => [1, 2, 3, 4, 5, 6].flatMap((seed) => {
+      const p = defaultParty(TABLES, makeRng(seed));
+      p.members = p.members.filter((c) => c.cls === 'thief');
+      p.members[0].stats.speed = 50;
+      const f = startCombat(TABLES, p, [{ id: 'r', monsters: [{ ...MONSTERS.rat, id: 'test_rat', hp, ac: 0, attack: -50, dice: 1, sides: 1, speed }] }], makeRng(seed));
+      if (currentTurn(f, p, makeRng(seed))?.side === 'monster') monsterAct(f, p, makeRng(seed));
+      partyAct(f, p, makeRng(seed + 10), { type: 'attack', target: 0 });
+      return f.log.filter((l) => l.startsWith(`${p.members[0].name} hits `));
+    });
+    const before = blows(0, 999), after = blows(100, 999), fell = blows(0, 1);
+    // The hit's head as the log's readers take it (tools/tests/mastery.ts, gear.ts and combat.ts).
+    const name = MONSTERS.rat.name, head = (l: string): string => (/^\w+ hits .+? for \d+\./.exec(l) ?? [''])[0];
+    ok(before.length > 0 && before.every((l) => l === `${head(l)} ${SNEAK_LINE}`) && after.length > 0 && after.every((l) => l === head(l)) && fell.length > 0 && fell.every((l) => l === `${head(l)} ${SNEAK_LINE} ${name} dies.`),
+      `a thief's hit on a foe before its turn is marked after the hit's own sentence, before a death, and one after its turn is not ("${before[0]}" / "${fell[0]}" / "${after[0]}")`);
+    ok([...before, ...fell].every((l) => / hits .* for (\d+)\./.exec(l)?.[1] === /for (\d+)\.$/.exec(head(l))?.[1] && new RegExp(` hits ${name} for (\\d+)`).test(l) && / (hits|misses|casts) /.test(l)),
+      'and a marked line reads as the log\'s readers read a hit: its head and its damage stand');
+  }
   const bb = mk('barbarian'); ok(traitDamage(s, bb, sword, rat) === 0, 'a healthy barbarian does not rage');
   bb.hp = 1; ok(traitDamage(s, bb, sword, rat) > 0, 'a wounded one does');
   // Holy Strike: the dead and nothing else, whatever else shrugs off sleep.
