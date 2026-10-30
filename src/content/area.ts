@@ -144,8 +144,11 @@ export type Mechanic =
   | `encounter:${Exclude<keyof EncounterDef, 'id' | 'x' | 'y' | 'monsters'>}`;
 
 /**
- * An area's end-to-end test, in src/content/areas/<area>/walkthrough.ts as `walkthrough`: it plays the
- * one quest's chapters up to its own, and its own, and checks each step with `ok`. tools/test.ts finds and runs it, and
- * awaits it if it is async; nothing in the game imports it, so it stays out of the build.
+ * An area's end-to-end test is its walkthrough, src/content/areas/<area>/walkthrough.ts, as `scenes` (#1033):
+ * each a walk of its own, from a new game or from a start that says its level, flags and bag, that plays
+ * the one quest's chapters up to its own, or the area as built, and checks each step with `ok`. The chain
+ * its chapter plays is the area's steps.ts, which a later area's walkthrough replays. `Walkthrough` is the
+ * one run a module without `scenes` exports instead. tools/test.ts finds and runs either, and awaits it if
+ * it is async; nothing in the game imports it, so it stays out of the build.
  */
 export type Walkthrough = (ok: (cond: boolean, msg: string) => void) => void | Promise<void>;
