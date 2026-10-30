@@ -1,7 +1,7 @@
 // The walls (#1028): a wall's front and side faces in stone or a house's plaster and timber, the void's
 // faces cut out of the scene, the dressing on a wall and a door's lantern and sign, a door and its seam,
-// the lighthouse's flank, and the lamps and the torches' flames drawn every frame. A tent's felt is
-// tents.ts and a house's roof roofs.ts.
+// a town's gate (#1071), the lighthouse's flank, and the lamps and the torches' flames drawn every frame.
+// A tent's felt is tents.ts and a house's roof roofs.ts.
 
 import type { Cell, MapPalette } from '../../game/mapdef.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
@@ -9,7 +9,7 @@ import { LIGHTHOUSE_HEIGHT, LIGHTHOUSE_BANDS } from '../scenery.ts';
 import { hash } from '../paint/brush.ts';
 import { fog, unhazed, LIT, outlineRect, quad, line, addPoly } from './common.ts';
 import type { Flame, Paint, Front } from './common.ts';
-import { isHouse, wallDressing, building } from './model.ts';
+import { looksHouse, isGateway, wallDressing, building } from './model.ts';
 import { TENT_WALL, drawFeltFront, drawFlap } from './tents.ts';
 
 /** The wall a face is drawn for (#1029): its cell and its square, how deep it stands, its seed, and whether it is a tent's felt. */
@@ -58,11 +58,12 @@ export function drawFrontFace(p: Paint, wall: Wall, x0: number, x1: number, u: n
   const { map, horizon } = p, { cell, mx, my, d, seed, tent } = wall;
   const top = tent ? horizon + TENT_WALL * u : horizon - u, bottom = horizon + u, front: Front = { x0, x1, top, bottom, joinL, joinR };
   const isDoor = cell.door === 'door' || cell.door === 'locked';
-  const house = map.kind === 'town' && isHouse(map, mx, my), pal = map.paletteAt(mx, my), felt = !house && pal.wallStyle === 'tent';
+  const house = looksHouse(map, mx, my), pal = map.paletteAt(mx, my), felt = !house && pal.wallStyle === 'tent';
   if (house) drawHouseFront(p, front, d, seed, building(map, mx, my).seed);
   else if (felt) drawFeltFront(p, pal, front, d);
   else drawStoneFront(p, pal, front, d, seed, map.kind === 'outdoor', across);
-  if (isDoor && pal.wallStyle === 'smooth') drawSeam(p, x0, x1, u, pal.wall, d);
+  if (!felt && isGateway(map, mx, my)) drawGate(p, x0, x1, u, pal, d, seed);
+  else if (isDoor && pal.wallStyle === 'smooth') drawSeam(p, x0, x1, u, pal.wall, d);
   else if (isDoor && felt) drawFlap(p, x0, x1, top, bottom, pal, d);
   else if (isDoor) drawDoor(p, x0, x1, u, pal.door, d, cell.door === 'locked', map.kind === 'town');
   drawWallDecor(p, mx, my, front, d, seed, house, isDoor);
@@ -341,7 +342,7 @@ function drawHouseFront(p: Paint, front: Front, d: number, seed: number, bseed: 
  */
 export function drawSideFace(p: Paint, wall: Wall, near: Edge, far: Edge, onRight: boolean, joins: Joins, ahead: number): void {
   const { ctx, map, horizon, dark, haze } = p, { mx, my, d, seed, tent } = wall, { joinNear, joinFar, openFar } = joins;
-  const house = map.kind === 'town' && isHouse(map, mx, my), pal = map.paletteAt(mx, my);
+  const house = looksHouse(map, mx, my), pal = map.paletteAt(mx, my);
   const bseed = house ? building(map, mx, my).seed : 0;
   const baseCol = house ? shade('#d8c8a8', 0.8 * (1 + (hash(bseed, 1) - 0.5) * 0.15)) : pal.wallDark;
   const shadeSide = onRight ? 0.85 : 0.75;
@@ -471,5 +472,60 @@ function drawDoor(p: Paint, xl: number, xr: number, u: number, color: string, d:
   } else if (dw > 10) {
     ctx.strokeStyle = iron; ctx.lineWidth = Math.max(1, u * 0.02);
     ctx.beginPath(); ctx.arc(x + dw * 0.72, y + dh * 0.55, Math.max(1.5, u * 0.04), 0, Math.PI * 2); ctx.stroke();
+  }
+}
+
+/**
+ * A town's gate (#1071): the wall's own stone turned in a round arch on jambs over two leaves of the
+ * town's door timber weathered grey, planked and strapped in iron as a door is and met in the middle; a
+ * cart's width, and nearly the wall's height. In a smooth wall, only its seam, as a door's is.
+ */
+function drawGate(p: Paint, xl: number, xr: number, u: number, pal: MapPalette, d: number, seed: number): void {
+  const { ctx, horizon } = p;
+  const w = xr - xl, r = w * 0.34, cx = (xl + xr) / 2, foot = horizon + u, spring = foot - u * 1.02;
+  const arch = (rad: number): void => { ctx.beginPath(); ctx.moveTo(cx - rad, foot); ctx.lineTo(cx - rad, spring); ctx.arc(cx, spring, rad, Math.PI, 0); ctx.lineTo(cx + rad, foot); };
+  if (pal.wallStyle === 'smooth') {
+    ctx.strokeStyle = fog(unhazed(p), shade(pal.wall, 0.7), d); ctx.lineWidth = 1; ctx.lineCap = 'butt';
+    arch(r); ctx.moveTo(cx, foot); ctx.lineTo(cx, spring - r); ctx.stroke();
+    return;
+  }
+  // The ring of voussoirs over the jambs' stones, each a little lighter or darker, the keystone lightest.
+  const t = Math.max(1, u * 0.13), n = r > 12 ? 9 : r > 6 ? 5 : 1, outline = 'rgba(0,0,0,0.45)';
+  const stone = (k: number): string => fog(p, shade(pal.wall, k), d);
+  ctx.lineWidth = 1; ctx.strokeStyle = outline;
+  for (let i = 0; i < n; i++) {
+    const a0 = Math.PI * (1 + i / n), a1 = Math.PI * (1 + (i + 1) / n);
+    ctx.beginPath(); ctx.arc(cx, spring, r + t, a0, a1); ctx.arc(cx, spring, r, a1, a0, true); ctx.closePath();
+    ctx.fillStyle = stone(i === (n - 1) / 2 ? 1.14 : 0.94 + 0.12 * hash(seed, i, 7)); ctx.fill(); ctx.stroke();
+  }
+  for (const s of [-1, 1]) for (let k = 0; k < 3; k++) {
+    const y0 = Math.round(spring + (foot - spring) * k / 3), y1 = Math.round(spring + (foot - spring) * (k + 1) / 3);
+    const x0 = Math.round(s < 0 ? cx - r - t : cx + r), x1 = Math.round(s < 0 ? cx - r : cx + r + t);
+    if (x1 - x0 < 1 || y1 - y0 < 1) continue;
+    ctx.fillStyle = stone(0.94 + 0.12 * hash(seed, k, s + 9)); ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+    ctx.strokeRect(x0 + 0.5, y0 + 0.5, x1 - x0 - 1, y1 - y0 - 1);
+  }
+  // The leaves under the arch: the town's door timber weathered grey, its planks, the seam where they
+  // meet, two iron straps with their studs and a ring each.
+  const oak = mix(pal.door, '#6a645c', 0.6);
+  const wood = fog(unhazed(p), oak, d), dark = fog(unhazed(p), shade(oak, 0.62), d), iron = fog(unhazed(p), '#5a5a64', d);
+  arch(r); ctx.closePath(); ctx.fillStyle = wood; ctx.fill();
+  ctx.save(); ctx.clip();
+  ctx.fillStyle = dark;
+  const planks = r > 8 ? 8 : 4;
+  for (let i = 1; i < planks; i++) ctx.fillRect(Math.round(cx - r + (2 * r * i) / planks), Math.round(spring - r), 1, Math.round(foot - spring + r));
+  ctx.fillRect(Math.round(cx) - 1, Math.round(spring - r), Math.max(1, Math.round(u * 0.03)) + 1, Math.round(foot - spring + r));
+  ctx.fillStyle = iron;
+  for (const k of [0.22, 0.7]) {
+    const by = Math.round(foot - (foot - spring) * k), bh = Math.max(1, Math.round(u * 0.06));
+    ctx.fillRect(Math.round(cx - r), by, Math.round(2 * r), bh);
+    if (r > 10) { ctx.fillStyle = fog(unhazed(p), '#a0a0a8', d); for (let i = 0; i < 8; i++) ctx.fillRect(Math.round(cx - r + (2 * r * (i + 0.5)) / 8), by + Math.floor(bh / 2), 1, 1); ctx.fillStyle = iron; }
+  }
+  ctx.restore();
+  arch(r); ctx.strokeStyle = 'rgba(0,0,0,0.6)'; ctx.stroke();
+  if (r > 10) {
+    ctx.strokeStyle = iron; ctx.lineWidth = Math.max(1, u * 0.025);
+    for (const s of [-1, 1]) { ctx.beginPath(); ctx.arc(cx + s * r * 0.22, foot - (foot - spring) * 0.46, Math.max(1.5, u * 0.05), 0, Math.PI * 2); ctx.stroke(); }
+    ctx.lineWidth = 1;
   }
 }
