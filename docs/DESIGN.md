@@ -603,8 +603,8 @@ Decided by the owner's delegate for #892, each the owner's to overturn:
   rounds ends it in play. The harness's fifteen (`ROUND_CAP`, `tools/kit/fight.ts`) is its own
   measure of a slog: a fight still going at fifteen is broken off there, not won. Decided by the
   owner's delegate, 16 October 2026 (#18, #808).
-- **Respawn:** a killed group is back as written after its `respawn` (`RESPAWN`), and none is once
-  its box (a zone map, else the map) lies dead whole, bar a group held `until` (`liveGroups`).
+- **Respawn:** a killed group is back as written after its `respawn` (`RESPAWN`), but none once its
+  box (a zone map, else the map) lies dead whole, bar any held `until` or answered (`liveGroups`).
 - **An elemental weapon** adds 1d6 of its element to each blow that lands (`ELEMENT_DIE`, #855):
   nothing to a monster immune to it, half to one that resists it, half again to one weak to it, as a
   spell's (`elementDamage`); the steel lands as ever, so no blow is nothing. Its fire stops a mender

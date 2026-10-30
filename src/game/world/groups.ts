@@ -65,7 +65,7 @@ function cleared(world: World, def: EncounterDef): boolean {
 /**
  * Live groups on the current map: a killed one back once its respawn is up, its `until` does not
  * hold and its box is not cleared whole (`cleared`, #1068), none out of its hours or before its
- * `after`, and none that leaves once its `until` holds (#747). Every reader of a standing group
+ * `after` and none that leaves once its `until` holds (#747). Every reader of a standing group
  * comes here: the viewport, the sight, the square, the steps, the fight and the rest.
  */
 export function liveGroups(world: World): LiveGroup[] {
