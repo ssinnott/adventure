@@ -93,7 +93,7 @@ export const explore: Brain = (g, k, p) => {
   for (const s of p.shut) if (!flagsAt.has(s)) flagsAt.set(s, flags);
   const pref = p.prefer && g.world.locate(p.prefer, 0, 0).mapId === here ? p.prefer : null;
   const area = pref ?? zone ?? here, name = nameOf(g, area), level = companyLevel(k.party) + 1;
-  // Within a line the world map's "The Foreland" is "the Foreland".
+  // Within a line, the world map's "The Foreland" is "the Foreland".
   const within = name.replace(/^The /, 'the ');
   // A zone's box as the world map draws it (`zoneAt`), and its band as Known gives it.
   const hard = (z: string | undefined): boolean => { const b = z && z !== pref ? k.band(z) : undefined; return !!b && b[0] > level; };
