@@ -55,6 +55,115 @@ export async function explore({ page, seed, ok }: Run): Promise<void> {
   ok(screen2 === 'CombatScreen' && combatColours > 20, `a fight opens and paints (${screen2}, ${combatColours} colours)`);
 }
 
+// What the view keeps between frames (#1073): each frame exploring draws through its kept scenes and
+// its one lookup of the groups is the frame the view paints afresh with the groups asked square by
+// square (`V.dropScenes`, the game's `monstersAt`), at rest and after a turn and back, a step, an hour,
+// another weather, a door found, a group slain, a tick, another map and another size; a fight's
+// backdrop paints the view whole, which exploring beneath it leaves undrawn; and the milliseconds of
+// 200 frames at rest, turning and in a fight (no bound: runners vary).
+export async function kept({ page, ok }: Run): Promise<void> {
+  const r = await page.evaluate(async () => {
+    const load: Load = (p) => import(p);
+    const V = await load<typeof import('../../src/ui/viewport.ts')>('/src/ui/viewport.ts'), F = await load<typeof import('../../src/ui/frame.ts')>('/src/ui/frame.ts');
+    const g = window.__game!.game!, w = g.world, R: { x: number; y: number; w: number; h: number } = F.LAYOUT.view, explore = g.screens[0];
+    const c = document.createElement('canvas'); c.width = 640; c.height = 360;
+    const x = c.getContext('2d', { willReadFrequently: true })!;
+    const hash = (rr: { x: number; y: number; w: number; h: number } = R): string => {
+      const d = x.getImageData(rr.x, rr.y, rr.w, rr.h).data;
+      let h = 0x811c9dc5;
+      for (let i = 0; i < d.length; i++) h = Math.imul(h ^ d[i], 0x01000193);
+      return (h >>> 0).toString(16);
+    };
+    // A frame as exploring draws it, and the view painted afresh with the groups asked square by square
+    // and its frame over it: the view's rect below the hint's band, the message log emptied meanwhile.
+    // A turn or a step may say a line (the sky, a sighting), which the log would draw over the view.
+    const below = { ...R, y: R.y + 16, h: R.h - 16 }, said = [...g.log], hush = (): void => { (g.log as string[]).length = 0; };
+    const now = (frame: number): string => { hush(); x.fillStyle = '#000'; x.fillRect(0, 0, 640, 360); explore.render(g, x, frame); return hash(below); };
+    const afresh = (frame: number, rr = R): string => {
+      V.dropScenes(); x.fillStyle = '#000'; x.fillRect(0, 0, 640, 360); V.drawViewport(x, w, rr, g.monstersAt, frame);
+      if (rr !== R) return hash(rr);
+      F.drawViewportFrame(x); return hash(below);
+    };
+    const turn = (a: 'turnLeft' | 'turnRight'): void => { g.update(a); while (g.screens.length > 1) g.pop(); };
+    const out: Record<string, { same: boolean; moved: boolean; note: string }> = {};
+    /** A frame before `change`, then after it under a facing turned from and back: kept, afresh and moved. */
+    const held = (name: string, change: () => void, frame = 40): void => {
+      const before = now(frame); turn('turnLeft'); now(frame); turn('turnRight'); now(frame);
+      change(); while (g.screens.length > 1) g.pop();
+      turn('turnLeft'); now(frame); turn('turnRight');
+      const kept = now(frame), fresh = afresh(frame);
+      out[name] = { same: kept === fresh, moved: kept !== before, note: `${w.state.mapId} ${w.state.x},${w.state.y} f${w.state.facing}; ${kept === fresh ? 'as' : 'not as'} afresh, ${kept !== before ? 'moved' : 'unmoved'}` };
+    };
+    // On the outdoors, two squares before a group, facing it, by day under a clear sky.
+    const minutes = w.state.minutes, place = { id: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing };
+    const day = Math.floor(minutes / 1440) * 1440 + 12 * 60;
+    const clear = (): void => { w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0.2, windDir: 0.5, storm: 0, temp: 14, cover: 0, wet: 0 } }; };
+    w.travel('shelf', 16, 8, 2);
+    const q = w.liveGroups().find((l) => w.map.at(l.state.x, l.state.y + 2).solid === 'none' && w.map.at(l.state.x, l.state.y + 1).solid === 'none');
+    if (!q) return { missing: 'no group outdoors with two open squares south of it' };
+    w.travel(w.state.mapId, q.state.x, q.state.y + 2, 0); w.state.minutes = day; clear();
+    const rest = [0, 1, 2, 3, 4, 5, 6, 7].map((f) => now(40 + f * 9) === afresh(40 + f * 9));
+    const ticks = new Set([0, 1, 2, 3].map((f) => now(40 + f * 9))).size;
+    held('a turn and back', () => {});
+    held('a step', () => { g.update('forward'); });
+    held('an hour on', () => { w.state.minutes += 60; clear(); });
+    held('another weather pinned at the minute', () => { w['cached'] = { ...w['cached']!, weather: { ...w.weather, cloud: 0.9, fog: 0.7, precip: 0.6, wet: 0.8 } }; });
+    w.travel(w.state.mapId, q.state.x, q.state.y + 2, 0); w.state.minutes = day; clear();
+    const figures = now(40);
+    held('a group slain', () => { w.mapState.groups[q.def.id].dead = w.state.minutes; });
+    const slainAt = now(40) !== figures && now(40) === afresh(40);
+    w.mapState.groups[q.def.id].dead = -1;
+    // A secret door in a dungeon, faced and found as a search finds one.
+    let door = '';
+    for (const id of Object.keys(w.maps)) {
+      const m = w.maps[id];
+      if (door || m.kind !== 'dungeon') continue;
+      for (let i = 0; i < m.cells.length && !door; i++) {
+        const dx = i % m.width, dy = Math.floor(i / m.width), b = m.at(dx, dy + 1);
+        if (m.cells[i].door !== 'secret' || b.solid !== 'none' || b.door !== 'none') continue;
+        w.travel(id, dx, dy + 1, 0); door = `${id} ${dx},${dy}`;
+        held('a secret door found', () => { const cell = w.map.at(dx, dy); cell.door = 'door'; w.mapState.doors[`${dx},${dy}`] = 'door'; });
+        w.map.at(dx, dy).door = 'secret'; delete w.mapState.doors[`${dx},${dy}`];
+      }
+    }
+    w.travel(w.state.mapId === 'harrow' ? 'shelf' : 'harrow', 7, 12, 0); w.state.minutes = day; clear();
+    const town = now(40) === afresh(40);
+    const R2 = { x: 9, y: 4, w: 384, h: 256 }, sized = (): string => { x.fillStyle = '#000'; x.fillRect(0, 0, 640, 360); V.drawViewport(x, w, R2, g.monstersAt, 40); return hash(R2); };
+    sized(); now(40); const resized = sized() === afresh(40, R2);
+    const held4 = V.keptScenes();
+    hush(); (g.log as string[]).push(...said);
+    // A fight: exploring beneath it draws its frame alone, as the frame's parts draw it over magenta, and the
+    // fight's backdrop leaves no magenta in the view.
+    w.travel('shelf', 16, 8, 2); w.state.minutes = day; clear();
+    g.fight([w.map.encounters.find((e) => w.mapState.groups[e.id])!.id]);
+    const fight = g.top, all = { x: 0, y: 0, w: 640, h: 360 };
+    const magenta = (): number => { const d = x.getImageData(R.x, R.y, R.w, R.h).data; let n = 0; for (let i = 0; i < d.length; i += 4) if (d[i] === 255 && d[i + 1] === 0 && d[i + 2] === 255) n++; return n; };
+    const pink = (): void => { x.fillStyle = '#ff00ff'; x.fillRect(0, 0, 640, 360); };
+    pink(); explore.render(g, x, 40); const beneath = hash(all), left = magenta();
+    pink(); F.drawStatus(x, w); F.drawAutomap(x, w, 40); F.drawPartyCards(g.tables.items, x, g.party, -1, 40); F.drawLog(x, g.log); F.drawViewportFrame(x); F.drawPurse(x, g.party);
+    const frameAlone = hash(all);
+    pink(); explore.render(g, x, 40); fight.render(g, x, 40); const whole = magenta();
+    // The milliseconds, each frame flushed, of Game.render: at rest, turning back and forth, in the fight.
+    const stage = document.getElementById('stage') as HTMLCanvasElement, sx = stage.getContext('2d')!;
+    const time = (fn: (i: number) => void): number => { const t = performance.now(); for (let i = 0; i < 200; i++) { fn(i); sx.getImageData(0, 0, 1, 1); } return performance.now() - t; };
+    const inFight = time(() => g.render(sx));
+    while (g.screens.length > 1) g.pop();
+    w.travel(w.state.mapId, q.state.x, q.state.y + 2, 0); w.state.minutes = day; clear();
+    const atRest = time(() => g.render(sx)), turning = time((i) => { w.state.facing = (i & 1 ? 1 : 0); g.render(sx); });
+    w.travel(place.id, place.x, place.y, place.f as Facing); w.state.minutes = minutes; w['cached'] = null;
+    return { rest, ticks, out, slainAt, door, town, resized, held4, beneath: beneath === frameAlone, left, whole, ms: [atRest, turning, inFight], R: R.w * R.h };
+  });
+  if ('missing' in r) { ok(false, `the kept scenes: ${r.missing}`); return; }
+  ok(r.rest.every(Boolean) && r.ticks > 1, `exploring before a group, each of 8 frames drawn through the kept scene and one lookup of the groups is the frame painted afresh with the groups asked square by square, the flames and figures moving (${r.ticks} of 4 frames differ)`);
+  for (const [name, h] of Object.entries(r.out)) ok(h.same && h.moved === (name !== 'a turn and back'), `${name}: the frame after it, through a facing turned from and back, is the frame painted afresh${name === 'a turn and back' ? ' and the frame before' : ', and it moved'} (${h.note})`);
+  ok(r.slainAt, `a group slain is gone from the next frame, which is the frame painted afresh`);
+  ok(!!r.door, `a dungeon's secret door was faced and found (${r.door || 'none'})`);
+  ok(r.town && r.resized, `another map, and the view at another size, draw the frames painted afresh (${r.town}, ${r.resized})`);
+  ok(r.held4.scenes >= 1 && r.held4.scenes <= 4 && r.held4.bytes <= 4 * 2 * r.R * 4, `the view keeps ${r.held4.scenes} scenes in ${r.held4.canvases} canvases, ${r.held4.bytes} bytes, four at most`);
+  ok(r.beneath && r.left > 0 && r.whole === 0, `under a fight exploring draws its frame alone, the view left to the fight (${r.left} of ${r.R} pixels magenta beneath), whose backdrop paints it whole (${r.whole} left)`);
+  ok(r.ms.every(Number.isFinite), `Game.render's 200 frames, each flushed: ${r.ms[0].toFixed(1)} ms exploring at rest before a group, ${r.ms[1].toFixed(1)} ms turning back and forth, ${r.ms[2].toFixed(1)} ms in a fight`);
+}
+
 // Thornmark: the second region's sprites (ogre, wraith, the big wolves) and a town paint too.
 export async function thornmark({ page, ok }: Run): Promise<void> {
   await page.evaluate(() => { const g = window.__game!.game!; g.world.travel('thornmark', 6, 8, 3); g.enterCell(); });

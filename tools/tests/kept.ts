@@ -8,7 +8,8 @@
 // canvases with them. What is painted needs a canvas: the smoke holds the kept frames to fresh ones
 // (tools/smoke/flows.ts, `kept`).
 import type { Game } from '../../src/app/game.ts';
-import type { Feature, MapKey } from '../../src/game/mapdef.ts';
+import type { Feature } from '../../src/game/mapdef.ts';
+import type { MapKey } from '../../src/game/keys.ts';
 import { Scenes, placeKey, KEPT_MAX, READ_REACH } from '../../src/ui/view/kept.ts';
 import type { Sized, Had } from '../../src/ui/view/kept.ts';
 import type { ViewRect } from '../../src/ui/view/common.ts';
