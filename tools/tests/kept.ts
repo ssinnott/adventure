@@ -80,6 +80,7 @@ function places(): void {
       `${name} paints the scene anew and drops the square's other facings: the turn from it paints, and the turn back keeps the new (${now}, ${left}, ${back})`);
   };
   after('a step', () => drive(g, ['forward']));
+  after('a square moved to by hand at the same minute', () => w.travel(w.state.mapId, w.state.x, w.state.y - 1, w.state.facing));
   after('a minute on (a search, ten)', () => drive(g, ['search']));
   after('an hour on', () => { w.state.minutes += 60; });
   after('the weather (another seed)', () => { w.state.weatherSeed = (w.state.weatherSeed ?? 0) + 1; });
