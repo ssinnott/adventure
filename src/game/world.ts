@@ -375,10 +375,14 @@ export class World {
     this.reveal();
   }
 
+  /** Town Portal's town: the last town visited, Helmstow (the maps' first town) before any. */
+  portalTown(): string {
+    return this.state.lastTown && this.maps[this.state.lastTown] ? this.state.lastTown : Object.values(this.maps).find((m) => m.kind === 'town')!.id;
+  }
+
   /** Town Portal: back to the start cell of the last town visited (Helmstow before any). */
   townPortal(): string {
-    const id = this.state.lastTown && this.maps[this.state.lastTown] ? this.state.lastTown : Object.values(this.maps).find((m) => m.kind === 'town')!.id;
-    const m = this.maps[id];
+    const id = this.portalTown(), m = this.maps[id];
     this.travel(id, m.def.start.x, m.def.start.y, m.def.start.facing);
     this.state.truce = 0; this.state.truceGroups = [];
     return m.name;

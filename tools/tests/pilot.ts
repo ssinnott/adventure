@@ -508,9 +508,9 @@ function helm(): void {
 
   for (const c of g.party.members) c.conditions.push('dead');
   drive(g, ['forward']);
-  const fallen = p.band();
-  ok(top(g) === 'TitleScreen' && !p.on && p.why[0] === 'The company has fallen.' && fallen?.lines[0] === 'The company has fallen.' && fallen.tag === '',
-    `a wipe gives the helm back, and the band says why over the title (${top(g)}: ${fallen?.lines.join(' / ')})`);
+  const fallen = p.band(), woke = g.world.state;
+  ok(top(g) === 'ChoiceScreen' && woke.mapId === 'harrow' && woke.x === 11 && woke.y === 4 && !p.on && p.why[0] === 'The company has fallen.' && fallen?.lines[0] === 'The company has fallen.' && fallen.tag === '',
+    `a wipe gives the helm back, and the band says why over the chapel the Lanterns carried the company to (${top(g)} at ${woke.mapId} ${woke.x},${woke.y}: ${fallen?.lines.join(' / ')})`);
   drive(g, ['down']);
   ok(p.band() === null, 'the next key takes that band down');
   const manual = piloted(), m = manual.pilot!;
@@ -683,7 +683,7 @@ function attract(): void {
   const wiped = attracted();
   wiped.push(new RiddleScreen(wiped, 'A statue', 'What walks on four legs?', () => undefined));
   const typed = wiped.input!.textMode;
-  wiped.gameOver();
+  wiped.fall();
   ok(typed && wiped.attracting && wiped.pilot!.on && top(wiped) === 'ExploreScreen' && wiped.screens.length === 1 && !wiped.input!.textMode, 'a riddle open when a wipe falls: the next game starts with the text mode off');
 
   // P is the pilot's, and main.ts takes it before the game sees it: it pauses the show, says so and what the next key does, and starts it again; any other key leaves.
