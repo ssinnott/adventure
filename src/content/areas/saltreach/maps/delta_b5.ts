@@ -15,9 +15,9 @@ import { RESPAWN } from '../../../../game/keys.ts';
 const GROVE_STONE_SEEN: When = { seen: 'grove2:g2_stone' };
 
 /** The north Rift gone quiet: its warden fallen, or the Tide Stone home (#191). */
-export const RIFT_N_CLOSED: When = [{ slain: 'b5_rift_n:b5_rift_n_warden' }, STONE_HOME];
+const RIFT_N_CLOSED: When = [{ slain: 'b5_rift_n:b5_rift_n_warden' }, STONE_HOME];
 /** The south Rift gone quiet, likewise. */
-export const RIFT_S_CLOSED: When = [{ slain: 'b5_rift_s:b5_rift_s_warden' }, STONE_HOME];
+const RIFT_S_CLOSED: When = [{ slain: 'b5_rift_s:b5_rift_s_warden' }, STONE_HOME];
 
 /** The brine Rift on the hummock north of the boards (#165): two tide elders at the tear's heart. */
 export const B5_RIFT_N: Rift<'b5_rift_n'> = rift({

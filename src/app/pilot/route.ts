@@ -127,7 +127,7 @@ export function routeNearest(k: Known, map: string, x: number, y: number, facing
 }
 
 /** A way from a map to another: an exit seen, or a crossing told (#721), whose square is its seller's and whose `crossing` is the route's name. */
-export interface Edge { exit: Exit<string>; crossing?: string }
+interface Edge { exit: Exit<string>; crossing?: string }
 
 /**
  * A map's ways out as the navigator knows them: the exits Known gives, then the crossings told on it
@@ -137,7 +137,7 @@ export interface Edge { exit: Exit<string>; crossing?: string }
  * whatever its goal, and leaves the way up from a deeper level open, so a pilot handed the helm
  * inside is never stranded.
  */
-export function edges(k: Known, map: string): Edge[] {
+function edges(k: Known, map: string): Edge[] {
   const cash = spare(k.party), told = k.offers().filter((o) => o.map === map && o.fare <= cash);
   const floor = Math.max(companyLevel(k.party), k.enclave(map)?.[0] ?? 0);
   const open = (to: string): boolean => (k.enclave(to)?.[0] ?? 0) <= floor;

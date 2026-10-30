@@ -11,9 +11,9 @@ import type { Tables } from './tables.ts';
 export type { MonsterSprite };
 
 /** What a monster is (docs/MONSTERS.md §2), which says what works on it; KINDS has what each sets. */
-export type MonsterKind = 'beast' | 'person' | 'dead' | 'rift' | 'machine';
+type MonsterKind = 'beast' | 'person' | 'dead' | 'rift' | 'machine';
 
-export interface KindDef {
+interface KindDef {
   /** Conditions and elements the whole kind shrugs off. */
   immune: readonly (Condition | Element)[];
   /** Elements that do it half (`elementMult`). */
@@ -136,7 +136,7 @@ export function monsterImmune(d: MonsterDef, k: Condition): boolean {
 }
 
 /** What resisting an element leaves of a spell's damage or a blow's die, and what a weakness adds to it. */
-export const RESIST = 0.5, WEAK = 1.5;
+const RESIST = 0.5, WEAK = 1.5;
 
 /**
  * What an element does to it, as a share of a spell's damage or a blow's die: none where its kind

@@ -31,7 +31,7 @@ const MONSTER_DELAY = 22;
 const BOT_DELAY = 22;
 
 /** What a member may cast in a fight: the spells they know, then each artifact's they bear (#847), whatever they know. */
-export function castable(tables: Tables, c: Character): { id: string; from?: string }[] {
+function castable(tables: Tables, c: Character): { id: string; from?: string }[] {
   const { items } = tables, arts = borne(items, c).filter((id) => item(items, id).casts && spell(tables.spells, item(items, id).casts!.spell).context !== 'explore').map((id) => ({ id: item(items, id).casts!.spell, from: id }));
   return [...c.spells.filter((x) => spell(tables.spells, x).context !== 'explore').map((id) => ({ id })), ...arts];
 }

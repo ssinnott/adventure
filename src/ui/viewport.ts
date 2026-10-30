@@ -8,16 +8,13 @@
 // gives it (#1030). view/model.ts is what the Node suites and the sweep's plan take, with no canvas,
 // view/kept.ts the scenes the view keeps between frames (#1073) and view/common.ts what every part takes.
 
-export { VIEW_W, VIEW_H, paintOn } from './view/common.ts';
+export { paintOn } from './view/common.ts';
 export type { ViewRect, Flame } from './view/common.ts';
-export { murkOf, washes, heatherBloom, iceColor, cropColor, fieldAt, standsAt, hedgeColor, isHouse, DRESSINGS, DRESSING_RATES, wallDressing, isTent, tentOf, drawnAt, isGateway, looksHouse } from './view/model.ts';
-export type { Field, Dressing } from './view/model.ts';
-export { drawSkyBand, DUSK, drawDusk } from './view/sky.ts';
-export type { SkyOpts } from './view/sky.ts';
+export { washes, heatherBloom, iceColor, cropColor, fieldAt, standsAt, hedgeColor, isHouse, DRESSINGS, DRESSING_RATES, wallDressing, isTent, tentOf, drawnAt, isGateway, looksHouse } from './view/model.ts';
+export { drawDusk } from './view/sky.ts';
 export { drawWeather } from './view/weather.ts';
 export { GROUND, SNOW_HOLD } from './view/ground/index.ts';
 export { hillBody } from './view/ground/hills.ts';
-export { LANDMARK_REACH, paintedFlames, drawViewport, paintScene, dropScenes, keptScenes } from './view/compositor.ts';
-export { KEPT_MAX } from './view/kept.ts';
+export { paintedFlames, drawViewport, paintScene, dropScenes, keptScenes } from './view/compositor.ts';
 export type { ViewMonster } from './view/compositor.ts';
 export { isSolidWall } from '../game/world.ts';

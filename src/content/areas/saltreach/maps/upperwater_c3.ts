@@ -11,7 +11,7 @@ import type { QuestCond } from '../../../../game/quests.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Night-Light (#56's 21): Nynke's light handed over, to the priest or to Tobin. */
-export const LIGHT_TAKEN: QuestCond = { flag: 'q_nightlight_taken' };
+const LIGHT_TAKEN: QuestCond = { flag: 'q_nightlight_taken' };
 /** The Tide Stone set back on its plinth (#191): the light in her jar goes out. */
 const STONE_HOME: QuestCond = { flag: 'q_tide_home' };
 /** What brings the glass people to her window ends: the light gone from it, or gone out. */

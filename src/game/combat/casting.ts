@@ -109,7 +109,7 @@ export function castSpell(s: CombatState, party: Party, rng: RngInstance, c: Cha
 }
 
 /** The sorcerer's third rank (DESIGN §5): its damage spells pass a monster's resistance to their element, never an immunity. */
-export const pierces = (c: Character): boolean => c.cls === 'sorcerer' && spellRank(c) >= 3;
+const pierces = (c: Character): boolean => c.cls === 'sorcerer' && spellRank(c) >= 3;
 
 /**
  * A healing or curing spell on the whole party, shared by combat and exploration: each member not dead

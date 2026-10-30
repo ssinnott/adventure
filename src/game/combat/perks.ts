@@ -14,7 +14,7 @@ import { FRONT_ROW, BLESS_HIT, HASTE_HIT } from './state.ts';
 import type { MonsterInst, CombatState } from './state.ts';
 
 /** The blows each prestige adds a turn: a second at the first and a third at the third. */
-export const PRESTIGE_BLOWS: Partial<Record<ClassId, readonly [number, number, number]>> = {
+const PRESTIGE_BLOWS: Partial<Record<ClassId, readonly [number, number, number]>> = {
   knight: [1, 0, 1], barbarian: [1, 0, 1], monk: [1, 0, 1], paladin: [1, 0, 1], ranger: [1, 0, 1], thief: [1, 0, 1],
 };
 /**
@@ -22,7 +22,8 @@ export const PRESTIGE_BLOWS: Partial<Record<ClassId, readonly [number, number, n
  * risen, Holy Strike risen, the thief's sneak attack growing by 2 every two levels past 10, the round
  * it drops from sight, and the bard's song at its first and third.
  */
-export const BANNER_HIT = 2, MARKSMAN_MORE = 2, HOLY_STRIKE_RISEN = 6, SNEAK_GROWTH = 2, VANISH_ROUND = 2, SONG_DMG = 1, SONG_RISEN = 2;
+export const BANNER_HIT = 2, MARKSMAN_MORE = 2, HOLY_STRIKE_RISEN = 6, SNEAK_GROWTH = 2, VANISH_ROUND = 2;
+const SONG_DMG = 1, SONG_RISEN = 2;
 /** The share of its hit points a barbarian's Rage starts below: half, three quarters at its second prestige. */
 export const rageBelow = (c: Character): number => (c.cls === 'barbarian' && prestigeOf(c) >= 2 ? 0.75 : 0.5);
 

@@ -80,7 +80,7 @@ export function attackBonus(items: Items, c: Character): number {
 }
 
 /** Whether race, class or a ward borne (`ItemDef.ward`, #847) keeps the condition off entirely. */
-export function immuneTo(items: Items, c: Character, k: Condition): boolean {
+function immuneTo(items: Items, c: Character, k: Condition): boolean {
   return !!RACES[c.race].resist?.includes(k) || CLASSES[c.cls].traits.some((t) => TRAITS[t].immune?.includes(k)) || borne(items, c).some((id) => item(items, id).ward === k);
 }
 /**

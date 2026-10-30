@@ -6,7 +6,8 @@ import { shade, rgba, mix } from '../../../lib/art/palettes.ts';
 import { rnd, line, smudge, fillPoly, skyFill, stones } from '../kit.ts';
 
 /** Tar, the boards it is laid on, the ore's red, the port's grey stone and its iron, hemp and the sea's light in a room. */
-export const TAR = '#2c2624', BOARD = '#6a625a', ORE = '#8a4630', GRANITE = '#6a6c70', IRON = '#3a3a40', HEMP = '#c8b080', SEA_POOL = '#b4cce0';
+export const TAR = '#2c2624', ORE = '#8a4630', IRON = '#3a3a40', HEMP = '#c8b080', SEA_POOL = '#b4cce0';
+const GRANITE = '#6a6c70';
 
 /** A wall of the port's rubble: grey stones of all sizes in pale lime mortar. */
 export function rubble(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, rows: number, seed: number, base = GRANITE): void {

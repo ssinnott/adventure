@@ -9,7 +9,8 @@ import { K } from '../props.ts';
 import { glossPoly, glossEllipse } from '../../monsters/gloss.ts';
 
 /** The logs, the moss in their joints, the snow, the keepers' iron and the pelts (brown bear, ice bear and lynx), and the lodge's grey blankets with their red stripe. */
-export const LOG = '#6a5442', CHINK = '#8e8a6a', SNOW = '#eef2f6', IRON = '#34323a';
+export const LOG = '#6a5442', SNOW = '#eef2f6', IRON = '#34323a';
+const CHINK = '#8e8a6a';
 export const BEAR = '#5c4433', WHITE_BEAR = '#d8d2c4', LYNX = '#bcae90', WOOL = '#77736a', STRIPE = '#9a3426';
 
 /**

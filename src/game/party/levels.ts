@@ -23,15 +23,6 @@ export function prestigePools(c: Pick<Character, 'cls' | 'prestige' | 'level'>):
   return { hp: hp * levels, sp: CLASSES[c.cls].spStat ? sp * levels : 0 };
 }
 
-/**
- * Why a member may not take its next prestige, or '' if it may: three taken already, or short of its
- * level. The price, and the third's quest, are the trainer's to ask.
- */
-export function prestigeBar(c: Pick<Character, 'cls' | 'prestige' | 'level'>): string {
-  const n = prestigeOf(c);
-  if (n >= 3) return 'done';
-  return c.level < PRESTIGE_LEVELS[n] ? `level ${PRESTIGE_LEVELS[n]}` : '';
-}
 
 /** Take the next prestige: its title, and its hit points and spell points for every level from its own. */
 export function takePrestige(c: Character): void {

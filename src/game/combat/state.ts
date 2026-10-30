@@ -37,7 +37,7 @@ export type PartyAction =
   | { type: 'use'; itemId: string; target: number }
   | { type: 'flee' };
 
-export type Outcome = 'ongoing' | 'victory' | 'defeat' | 'fled';
+type Outcome = 'ongoing' | 'victory' | 'defeat' | 'fled';
 
 /**
  * `xp` is what the kills were worth before the split, each by the monster's level against a
@@ -114,7 +114,7 @@ export interface Edge { blows: number; damage: number; ac: number }
  * that fights from under the ice, reaching one square: the front row over it, never the back. `clock`
  * is the Core's (`Clock`).
  */
-export interface Ranks { back?: number; leader?: string; under?: 'ice'; clock?: Clock }
+interface Ranks { back?: number; leader?: string; under?: 'ice'; clock?: Clock }
 
 /**
  * The Core's clock (docs/MONSTERS.md §9.3, #748): while a monster the `panel` names stands, the

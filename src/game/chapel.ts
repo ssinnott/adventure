@@ -11,7 +11,7 @@ import type { World } from './world.ts';
  * Where the Lanterns carry a fallen company: a chapel's square and its name, the menu that opens there
  * (`chapel`); or, with no chapel standing, Town Portal's town, at its start and facing as it does.
  */
-export interface Haven { mapId: string; x: number; y: number; facing?: Facing; name: string; chapel: boolean }
+interface Haven { mapId: string; x: number; y: number; facing?: Facing; name: string; chapel: boolean }
 
 /**
  * A square's place on the road: the order of its area, the area of the zone it lies in outdoors, else

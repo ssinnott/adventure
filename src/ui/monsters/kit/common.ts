@@ -7,7 +7,6 @@
 import type { MonsterSprite } from '../../../game/monsters.ts';
 import { shade } from '../../../lib/art/palettes.ts';
 import { pathEllipse } from '../../../lib/art/shapes.ts';
-import { celBall, celCapsule, celPoly, celTaper, band, outlinePath, tones } from '../../../lib/art/shading.ts';
 import { makeBrush } from '../../paint/brush.ts';
 import { INK } from '../../paint/ink.ts';
 
@@ -47,19 +46,6 @@ export function paintFor(tint: string, tone: number, frame: number): Paint {
   return { base: shade(tint, tone), dark: shade(tint, tone * 0.72), light: shade(tint, tone * 1.15), amber: shade('#ffd070', Math.max(0.6, tone)), tone, frame, breathe: Math.sin(frame / 14) };
 }
 
-/** Outline + base + a hand-placed shadow half for an ellipse (the helpers have no ellipse). */
-export function celEllipse(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx: number, ry: number, hex: string, rot = 0): void {
-  pathEllipse(ctx, cx, cy, rx, ry, rot);
-  outlinePath(ctx, B);
-  const t = tones(B, hex);
-  ctx.fillStyle = B.col(t.base); ctx.fill();
-  if (B.override) return;
-  ctx.save(); ctx.clip();
-  ctx.fillStyle = t.sh; ctx.fillRect(cx - rx - 2, cy + ry * 0.25, rx * 2 + 4, ry); ctx.fillRect(cx + rx * 0.45, cy - ry - 2, rx, ry * 2 + 4);
-  if (Math.min(rx, ry) >= 6) { ctx.fillStyle = t.hi; pathEllipse(ctx, cx - rx * 0.35, cy - ry * 0.4, rx * 0.35, ry * 0.25); ctx.fill(); }
-  ctx.restore();
-}
-
 /**
  * An eye: the iris, then a pupil and a catchlight. A pupil drawn as a square of rounded pixels is
  * right at two or three px across, which is all an eye used to get, and reads as a black block
@@ -90,37 +76,4 @@ export function groundShadow(ctx: CanvasRenderingContext2D, x: number, y: number
   ctx.fillStyle = 'rgba(0,0,0,0.35)'; ctx.fill();
 }
 
-/** Shared humanoid frame: legs, boots, torso, arms; the callers add gear and head. */
-export function figure(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, cloth: string, trouser: string, skin: string, boots: string, br: number): { shoulder: number; hip: number; w: number } {
-  const w = h * 0.42, hip = y - h * 0.48, shoulder = y - h * 0.74 + br * 0.5;
-  // Legs and boots.
-  for (const s of [-1, 1]) {
-    celTaper(ctx, B, x + s * w * 0.2, hip, x + s * w * 0.26, y - h * 0.1, h * 0.075, h * 0.06, trouser, 0.15);
-    celPoly(ctx, B, [x + s * w * 0.26 - h * 0.07, y - h * 0.12, x + s * w * 0.26 + h * 0.07, y - h * 0.12, x + s * w * 0.26 + h * 0.09, y, x + s * w * 0.26 - h * 0.08, y], boots, 0.35, 0.2);
-  }
-  // Torso.
-  celPoly(ctx, B, [x - w * 0.5, shoulder, x + w * 0.5, shoulder, x + w * 0.42, hip + h * 0.04, x - w * 0.42, hip + h * 0.04], cloth, 0.35, 0.3);
-  // Arms: upper and lower, hands.
-  for (const s of [-1, 1]) {
-    const ex = x + s * w * 0.72, ey = shoulder + h * 0.16;
-    celTaper(ctx, B, x + s * w * 0.48, shoulder + h * 0.02, ex, ey, h * 0.055, h * 0.045, cloth, 0.15);
-    celTaper(ctx, B, ex, ey, x + s * w * 0.6, ey + h * 0.16, h * 0.045, h * 0.04, cloth, 0.15);
-    celBall(ctx, B, x + s * w * 0.6, ey + h * 0.18, h * 0.045, skin, false);
-  }
-  return { shoulder, hip, w };
-}
-
-export function head(ctx: CanvasRenderingContext2D, x: number, y: number, r: number, skin: string, hair: string | null): void {
-  celCapsule(ctx, B, x, y + r * 0.9, x, y + r * 1.3, r * 0.4, skin, 0);
-  celBall(ctx, B, x, y, r, skin);
-  if (hair) celPoly(ctx, B, [x - r - 0.5, y - r * 0.2, x - r * 0.8, y - r * 0.9, x, y - r - 1, x + r * 0.8, y - r * 0.9, x + r + 0.5, y - r * 0.2, x + r * 0.6, y - r * 0.35, x - r * 0.6, y - r * 0.35], hair, 0.35, 0.25);
-  eye(ctx, x - r * 0.38, y - r * 0.05, r * 0.16, '#f4f0e8'); eye(ctx, x + r * 0.38, y - r * 0.05, r * 0.16, '#f4f0e8');
-  ctx.fillStyle = B.col('#3a2a24'); ctx.fillRect(Math.round(x - r * 0.25), Math.round(y + r * 0.4), Math.max(1, Math.round(r * 0.5)), 1);
-}
-
-export function sword(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, h: number): void {
-  const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy), nx = -dy / len, ny = dx / len;
-  celPoly(ctx, B, [x0 + nx * h * 0.02, y0 + ny * h * 0.02, x1 + nx * h * 0.005, y1 + ny * h * 0.005, x1 - nx * h * 0.005, y1 - ny * h * 0.005, x0 - nx * h * 0.02, y0 - ny * h * 0.02], '#c0c4cc', 0.4, 0.4);
-  band(ctx, B, x0 - h * 0.035, y0 - h * 0.012, h * 0.07, h * 0.024, '#7a5f2a');
-}
 

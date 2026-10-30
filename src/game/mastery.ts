@@ -47,7 +47,7 @@ export const tierOf = (c: Pick<Character, 'tiers'>, line: Line): Tier | undefine
 export const teachesExpert = (maxLevel: number): boolean => maxLevel >= EXPERT_FROM;
 
 /** One line of a tier's menu: a member, the line and tier, the price, and why not, if not. */
-export interface TierOffer { who: number; line: Line; tier: Tier; price: number; bar: string }
+interface TierOffer { who: number; line: Line; tier: Tier; price: number; bar: string }
 
 /**
  * Why a member may not take a tier, or '' if it may: not of the line, the tier or a higher one taken,

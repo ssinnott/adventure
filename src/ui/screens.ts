@@ -233,7 +233,7 @@ export class ChoiceScreen implements Screen {
 }
 
 /** Ask which party member; -1 on cancel. */
-export function pickMember(g: Host, text: string, then: (i: number) => void, filter: (c: Character) => boolean = () => true): void {
+function pickMember(g: Host, text: string, then: (i: number) => void, filter: (c: Character) => boolean = () => true): void {
   const names = g.party.members.map((m, i) => `${i + 1}. ${m.name}  ${m.hp}/${m.maxHp}`);
   g.push(new ChoiceScreen(text, names, then, '', g.party.members.map((m) => !filter(m))));
 }
@@ -382,7 +382,7 @@ export const SWAP_HINT = 'SWAP WITH: < > SPACE OR 1-6   ESC BACK';
  * The highest the SPELLS line is drawn: just under the item list's last row (y 200), since a caster's
  * spells run on past the column into the list's (#847). Where main drew it for a member with least.
  */
-export const SPELLS_TOP = 208;
+const SPELLS_TOP = 208;
 /**
  * The sheet's column under the portrait (#847): each line, its colour and the y it is drawn at. Hit
  * points and armour share a line, and an artifact with a slot says its power on its slot's, so the
@@ -485,7 +485,7 @@ export class SpellScreen implements Screen {
 type Business = Extract<Feature, { kind: 'inn' | 'temple' | 'shop' | 'guild' | 'trainer' }> | (Extract<Feature, { kind: 'npc' }> & { interior: Interior });
 
 /** One line of a business's first menu, and the screen it opens. */
-export interface BusinessEntry { label: string; open: () => Screen }
+interface BusinessEntry { label: string; open: () => Screen }
 
 /** What each kind of business trades in, as its first menu names it (the pilot's quartermaster picks it there, #719). */
 export const TRADE: Record<Exclude<Business['kind'], 'npc'>, string> = { inn: 'A room and rations', temple: 'The chapel', shop: 'Buy and sell', guild: 'Study spells', trainer: 'Train' };
@@ -765,4 +765,3 @@ function trainer(g: Host, f: Extract<Feature, { kind: 'trainer' }>): Screen {
   }, f.name, [...can.map((x) => !x), false]);
 }
 
-export { lineHeight };

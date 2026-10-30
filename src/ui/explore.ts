@@ -83,7 +83,7 @@ export class ExploreScreen implements Screen {
   }
 }
 
-export function featureLabel(f: Feature): string {
+function featureLabel(f: Feature): string {
   switch (f.kind) {
     case 'inn': case 'temple': case 'shop': case 'guild': case 'trainer': case 'npc': return f.name;
     case 'chest': return 'A chest';

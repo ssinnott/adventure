@@ -17,13 +17,13 @@ import type { Rift } from '../../../rifts/index.ts';
  * condition (the ledger given him and Saltreach set foot in), so the pass and the hold never both
  * hold him. Until #156 sets it, the last row holds strangers whatever the company has done.
  */
-export const HALE_TAKEN = { flag: 'q_hale_taken' } as const;
+const HALE_TAKEN = { flag: 'q_hale_taken' } as const;
 
 /** Hale freed: his meeting, once the hold's crew is down. #191 and Act III key on it. */
-export const HALE_FREED: When = { flag: 'q_hale_freed' };
+const HALE_FREED: When = { flag: 'q_hale_freed' };
 
 /** The forward hold's tear gone quiet: its Warden fallen. */
-export const TIDE_RIFT_CLOSED: When = { slain: 'tide_ship_rift:tide_ship_rift_warden' };
+const TIDE_RIFT_CLOSED: When = { slain: 'tide_ship_rift:tide_ship_rift_warden' };
 
 /**
  * The Tide Stone's Rift (#165), stood up round it in the forward hold: a Tide Elder and the brinelings

@@ -23,10 +23,10 @@ export type SiteIcon =
 export type LinkKind = 'road' | 'enter' | 'stairs' | 'sea' | 'deep' | 'coach';
 
 /** A closed outline in world cells. `rough` is how far, in cells, the land's edge may wander from it. */
-export interface Outline { pts: readonly Pt[]; rough?: number }
+interface Outline { pts: readonly Pt[]; rough?: number }
 
 /** A line of high or broken ground: a range's crest line and how wide it stands. */
-export interface Ridge {
+interface Ridge {
   pts: readonly Pt[];
   /** Cells across the range itself. */
   width: number;
@@ -43,7 +43,7 @@ export interface Ridge {
 export interface River { name?: string; pts: readonly Pt[]; width?: readonly [number, number] }
 
 /** Land of one kind inside an outline: a wood, a fen, fields. Later patches lie over earlier ones. */
-export interface Patch { t: WorldTerrain; pts: readonly Pt[]; rough?: number }
+interface Patch { t: WorldTerrain; pts: readonly Pt[]; rough?: number }
 
 /** A road across planned country. */
 export interface Trail { pts: readonly Pt[] }

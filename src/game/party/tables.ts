@@ -203,8 +203,6 @@ export function xpForLevel(level: number): number { return Math.floor(100 * Math
  * plus one (EXPANSION §5.2), so what a company can reach is set by the towns built, not by this.
  */
 export const MAX_LEVEL = 32;
-/** Spell tiers unlock at levels 1, 2, 4, 6 and 8, then 15 and 23, between the prestiges (DESIGN §7); seven tiers exist. */
-export const MAX_SPELL_TIER = 7;
 /** The levels tiers 6 and 7 come at; a hybrid's come two levels later (HYBRID_LAG). */
 export const LATE_TIERS: readonly [number, number] = [15, 23];
 export const HYBRID_LAG = 2;

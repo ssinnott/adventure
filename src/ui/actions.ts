@@ -29,7 +29,7 @@ export const KEYS: Record<string, Action[]> = {
 };
 
 /** The alias table, so screens can ask "was this press an 'up'?" for a key that is also 'forward'. */
-export function aliases(a: Action): Action[] {
+function aliases(a: Action): Action[] {
   for (const list of Object.values(KEYS)) if (list[0] === a) return list;
   return [a];
 }

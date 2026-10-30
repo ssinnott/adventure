@@ -57,7 +57,7 @@ export function hillBody(p: Paint, base: string, d: number, l: number, seed: num
  * Rising ground: a round-shouldered mound on the square, lit on its crest, running on into the next
  * hill beside it. What it hides from lower ground (`hillOver`, game/world.ts) the scene leaves undrawn.
  */
-export function drawHill(p: Paint, base: string, d: number, l: number, seed: number, hillL: boolean, hillR: boolean): void {
+function drawHill(p: Paint, base: string, d: number, l: number, seed: number, hillL: boolean, hillR: boolean): void {
   const { ctx, h, env } = p;
   const { lx, ly, rx, top, c1, c2 } = hillBody(p, base, d, l, seed, hillL, hillR);
   // Tufts on the crest, buried by a deep snow: grass, which stands above the outline.

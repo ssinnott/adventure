@@ -6,10 +6,10 @@ import type { Action } from './actions.ts';
 import { is } from './actions.ts';
 
 /** What a key did to a list: moved its cursor or chose the row the cursor is on; null, nothing. */
-export type Pressed = 'moved' | 'chosen' | null;
+type Pressed = 'moved' | 'chosen' | null;
 
 /** A list as a key finds it: its rows now and what its keys do. */
-export interface Rows {
+interface Rows {
   /** How many rows it has. */
   readonly n: number;
   /** Whether a row is barred: drawn dim, the cursor may stand on it as on any, but nothing chooses it. */

@@ -55,7 +55,7 @@ export const CROPS: readonly Ramp[] = [
 export function cropColor(crop: number, day: number): string { return rampColor(CROPS[crop % CROPS.length], day); }
 
 /** A field of the farmland: which one it is, its crop, and whether its rows run east and west. */
-export interface Field { id: number; crop: number; rowsEW: boolean; }
+interface Field { id: number; crop: number; rowsEW: boolean; }
 /**
  * The field a farm square lies in. Fields are three squares long in bands two deep, staggered band
  * to band, so the patchwork spans squares as the world map's does and no two maps differ.
@@ -185,7 +185,7 @@ export const DRESSINGS = {
  * What hangs on, grows on, or is scratched into a wall. A door's lantern and sign are its
  * furniture, not dressing.
  */
-export type Dressing = (typeof DRESSINGS)[keyof typeof DRESSINGS][number];
+type Dressing = (typeof DRESSINGS)[keyof typeof DRESSINGS][number];
 /**
  * The share of a dressed wall each kind takes, among the kinds of its wall; each wall's add up to 1
  * at most, and what is left is bare. Nearly half of a dressed stone wall is a sconce, so dungeons

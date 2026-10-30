@@ -7,7 +7,7 @@
 import type { Chapter } from '../../../game/quests.ts';
 
 /** The Stone home with the captain's table opened: the papers carried, and the Wall begun on it. */
-export const WRACK_DONE = { flag: 'q_tide_home', seen: 'tide_ship2:ts2_table' } as const;
+const WRACK_DONE = { flag: 'q_tide_home', seen: 'tide_ship2:ts2_table' } as const;
 
 export const CHAPTER: Chapter = {
   // Begun on landing: only Kitto's boat reaches the isle, so a company still in the Delta keeps the

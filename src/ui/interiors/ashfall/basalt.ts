@@ -11,8 +11,10 @@ import { K } from '../props.ts';
 import { glossPoly, glossEllipse } from '../../monsters/gloss.ts';
 
 /** The basalt, its lime and the limewash, the ash, the vines' stems and leaves, the port's timber and iron, the coast's red-brown clay (the Ash Husk's cup's), its red slip and the ash glaze. */
-export const BASALT = '#4a484e', LIME = '#b8b2a2', WASH = '#cfc8b6', ASH = '#9a958c', STEM = '#3a4626', LEAF = '#4e6e34';
-export const TIMBER = '#5a4434', IRON = '#34323a', CLAY = '#5c4636', SLIP = '#a04a2c', GLAZE = '#6e7c62';
+export const BASALT = '#4a484e', WASH = '#cfc8b6', ASH = '#9a958c';
+const LIME = '#b8b2a2', STEM = '#3a4626', LEAF = '#4e6e34';
+export const TIMBER = '#5a4434', IRON = '#34323a', CLAY = '#5c4636', SLIP = '#a04a2c';
+const GLAZE = '#6e7c62';
 
 /** A wall of the port's basalt: dark blocks, a long one to a short, in pale lime. */
 export function basaltWall(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, rows: number, seed: number, base = BASALT): void {

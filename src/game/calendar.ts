@@ -4,15 +4,16 @@
 // here reads the world, it maps a minute on the world clock to a date and a light level.
 
 export const MINUTES_PER_DAY = 1440;
-export const DAYS_PER_MONTH = 15;
+const DAYS_PER_MONTH = 15;
 export const MONTHS = ['Thaw', 'Sowing', 'Longlight', 'Harvest', 'Leafturn', 'Mistfall', 'Frost', 'Longnight'] as const;
 export const DAYS_PER_YEAR = DAYS_PER_MONTH * MONTHS.length;
 
 export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
-export const SEASONS: readonly Season[] = ['spring', 'summer', 'autumn', 'winter'];
+const SEASONS: readonly Season[] = ['spring', 'summer', 'autumn', 'winter'];
 
 /** Game day 1 is the 1st of Mistfall (day 75 of the year, counting from 0) in the year 1016. */
-export const EPOCH_DAY = 5 * DAYS_PER_MONTH, EPOCH_YEAR = 1016;
+export const EPOCH_DAY = 5 * DAYS_PER_MONTH;
+const EPOCH_YEAR = 1016;
 /** Day of the year of the longest day; the shortest falls half a year on, in Frost. */
 export const MIDSUMMER = 45;
 

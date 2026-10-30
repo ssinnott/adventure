@@ -7,7 +7,7 @@ import type { WorldState, MapState } from './world.ts';
 import type { Party } from './party.ts';
 
 /** A save as it was written at some version: the shape SaveData had then. */
-export interface OldSave { version: number; savedAt: number; rng: number; world: WorldState; party: Party }
+interface OldSave { version: number; savedAt: number; rng: number; world: WorldState; party: Party }
 
 export type Upgrade = (data: OldSave) => OldSave;
 

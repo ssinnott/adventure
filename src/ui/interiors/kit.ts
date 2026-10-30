@@ -3,4 +3,4 @@
 // scene takes the kits' paths when it is next edited.
 export * from './kit/stage.ts';
 export { INK } from '../paint/ink.ts';
-export { smudge, drawFlame } from '../paint/flame.ts';
+export { smudge } from '../paint/flame.ts';

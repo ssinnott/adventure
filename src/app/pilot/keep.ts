@@ -60,9 +60,9 @@ function tired(p: Party): 'hp' | 'sp' | null {
 }
 
 /** Under this share of their hit points, one standing makes the pilot rest where it stands (#723), where the harness's rule waits for a quarter (`REST_AT`). */
-export const REST_HP = 0.75;
+const REST_HP = 0.75;
 /** Under this share of their spell points, a caster makes the pilot rest where it stands (#723), where the harness's rule pools the company's. */
-export const REST_SP = 0.5;
+const REST_SP = 0.5;
 /** A member whose spells are its fight: a calling of 'caster' (a cleric, a sorcerer, a druid), as the prestiges have it. */
 export const caster = (c: Character): boolean => PRESTIGES[c.cls].calling === 'caster' && c.maxSp > 0;
 /**
@@ -78,15 +78,15 @@ export function weary(p: Party): { c: Character; why: 'hp' | 'sp' } | undefined 
   return dry ? { c: dry, why: 'sp' } : undefined;
 }
 /** Under this share of their hit points, one not dead is mended between fights by a spell, where a member has it and the spell points (#723). */
-export const MEND_AT = 0.7;
+const MEND_AT = 0.7;
 /** A mending spell to cast off the fight: who casts it, its row in their list off the fight, and on whom (a member's row; -1 for the whole company). */
-export interface Mend { who: number; spell: string; row: number; target: number }
+interface Mend { who: number; spell: string; row: number; target: number }
 /**
  * The mending to cast now, or undefined: the one not dead or stone with the least share of their hit
  * points, under MEND_AT, mended by the member standing and awake with the most spell points who has a
  * mending spell off the fight and the points for it, one for a member before one for the company (#723).
  */
-export function mendable(spells: Tables['spells'], p: Party): Mend | undefined {
+function mendable(spells: Tables['spells'], p: Party): Mend | undefined {
   const target = p.members.map((c, i) => ({ c, i })).filter(({ c }) => !fallen(c) && c.hp < c.maxHp * MEND_AT).sort((a, b) => a.c.hp / a.c.maxHp - b.c.hp / b.c.maxHp)[0];
   if (!target) return undefined;
   let best: Mend | undefined, most = -1;

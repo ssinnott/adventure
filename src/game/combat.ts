@@ -26,21 +26,21 @@ import {
 
 // The old path: what this file exported of the parts before, given on, so no importer changed.
 export type {
-  MonsterInst, TurnRef, PartyAction, Outcome, Loot, CombatState, CombatOpts, Edge, Ranks, Clock, CombatGroup, Fighters,
+  MonsterInst, TurnRef, PartyAction, CombatState, CombatOpts, Edge, Clock, CombatGroup, Fighters,
 } from './combat/state.ts';
 export {
-  asGroup, FRONT_ROW, MAX_MONSTERS, MAX_GROUPS, BLESS_HIT, HASTE_HIT, HASTE_SPEED, WARD_AC, toHit, standing, frontStands, isLeader,
+  asGroup, FRONT_ROW, MAX_MONSTERS, MAX_GROUPS, BLESS_HIT, WARD_AC, toHit, frontStands, isLeader,
   aliveMonsters, ROOTS_CHANCE, HOLD_BREAKS, SLUMBER_CHANCE,
 } from './combat/state.ts';
 export {
-  BREAK_LINE, ROUT_LINE, GLOVE_LINE, STONE_LINE, GLASS_WORD, RITE_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, DIM_LINE, THREAD_LINE, STAND_LINE,
+  BREAK_LINE, ROUT_LINE, GLOVE_LINE, STONE_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, DIM_LINE, THREAD_LINE, STAND_LINE,
   SWEEP_LINE, shareRange, victoryLine,
 } from './combat/lines.ts';
 export {
-  PRESTIGE_BLOWS, BANNER_HIT, MARKSMAN_MORE, HOLY_STRIKE_RISEN, SNEAK_GROWTH, VANISH_ROUND, SONG_DMG, SONG_RISEN, rageBelow, blowsOf,
+  BANNER_HIT, MARKSMAN_MORE, HOLY_STRIKE_RISEN, SNEAK_GROWTH, VANISH_ROUND, rageBelow, blowsOf,
   sneakDamage, vanished, songWards, buffHit, songDamage, traitDamage, canAttackFromRow,
 } from './combat/perks.ts';
-export { pierces, castOnParty, castOnAlly } from './combat/casting.ts';
+export { castOnParty, castOnAlly } from './combat/casting.ts';
 export { canReach, monsterAc, monsterHit, seenMult, sweptRow, canCall, panelStands, meetCalled } from './combat/foes.ts';
 export { GLOVE_FLAG } from './keys.ts';
 

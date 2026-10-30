@@ -20,7 +20,7 @@ type Inn = Extract<Feature, { kind: 'inn' }>;
 type Hall = Extract<Feature, { kind: 'guild' }>;
 
 /** What a service did: whether it was done, the gold that changed hands and what the screen says (empty where it says nothing). */
-export interface Served { done: boolean; paid: number; line: string }
+interface Served { done: boolean; paid: number; line: string }
 
 const SHORT = 'Not enough gold.';
 /** A service refused: nothing changes, and this is said. */
@@ -115,7 +115,7 @@ export function payFee(party: Pick<Party, 'gold' | 'flags'>, hall: Hall): Served
 }
 
 /** A spell a hall offers: to whom (their place in the company), which and for how much. */
-export interface Offer { who: number; id: string; price: number }
+interface Offer { who: number; id: string; price: number }
 
 /** What a hall offers, member by member: each of its classes' spells to its tier (the second unless it says) that the member lacks, at `spellPrice`. */
 export function hallOffers(spells: Tables['spells'], party: Pick<Party, 'members'>, hall: Hall): Offer[] {

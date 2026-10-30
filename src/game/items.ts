@@ -15,7 +15,7 @@ import type { SkillId } from './skills.ts';
 import { skilled } from './skills.ts';
 import type { Items } from './tables.ts';
 
-export type ItemSlot = 'weapon' | 'armor' | 'shield' | 'none';
+type ItemSlot = 'weapon' | 'armor' | 'shield' | 'none';
 
 export interface ItemDef {
   id: string;

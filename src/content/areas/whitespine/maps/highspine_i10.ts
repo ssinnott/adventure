@@ -22,7 +22,7 @@ import { STAIR_TOP } from '../public.ts';
  * or in something from below in place of gold, and the giants stand aside for that company; refused,
  * and the fight is his and theirs. The Toll (#56's 47, #506) answers it for the caravan.
  */
-export const TOLL: Choice = {
+const TOLL: Choice = {
   ask: 'The king holds out his hand from the seat. "Toll. We have taken it since we were set here, and nobody has come to say stop."',
   answers: [
     { label: 'Pay the toll.', price: 1500, sets: 'toll_paid', says: ['He counts it twice into his palm. The giants step off the Stair, and stand aside.'] },
