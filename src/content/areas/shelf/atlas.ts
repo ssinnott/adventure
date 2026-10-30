@@ -21,7 +21,7 @@ export const PLACES: readonly AtlasPlace[] = [
 ];
 
 export const SITES: readonly AtlasSite[] = [
-  // I. The Foreland, from its map: Helmstow's walls at 14-18,1-3, the Ellerby farm, the Brandy
+  // I. The Foreland, from its map: Helmstow's walls at 12-20,1-3, the Ellerby farm, the Brandy
   // Hole cliffs.
   { name: 'Helmstow', icon: 'city', map: 'shelf', at: [16.5, 2.4], label: 'right' },
   { name: 'Lodestone', icon: 'stone', map: 'shelf', at: [21.5, 4], label: 'none' },

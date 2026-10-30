@@ -37,7 +37,7 @@ import { hash } from '../paint/brush.ts';
 import { hearthBearing, hearthLook } from '../../game/stones.ts';
 import { unit, CLEAR, paintOn, floorPt, pixel, addPoly } from './common.ts';
 import type { ViewRect, Flame, Env, View } from './common.ts';
-import { murkOf, toPair, drawnAt, standsAt, isHouse, building, tentOf } from './model.ts';
+import { murkOf, toPair, drawnAt, standsAt, looksHouse, building, tentOf } from './model.ts';
 import { cast, drawSkyBand } from './sky.ts';
 import type { SkyOpts } from './sky.ts';
 import { drawWeather, strike, drawBolt } from './weather.ts';
@@ -207,7 +207,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   order.sort((a, b) => Math.abs(b) - Math.abs(a));
   // A door outdoors among mountain, rock or trees is drawn as they are (drawnCell), and the void as
   // its look, the ground the world map paints there (#829).
-  const drawn = (x: number, y: number): Cell => drawnAt(map, x, y);
+  const eye = { x: px, y: py }, drawn = (x: number, y: number): Cell => drawnAt(map, x, y, eye);
   const { behind, solidAt, houseAt, tentAt } = standsAt(map, px, py, f, backdrop);
   const voidAt = (d: number, l: number): boolean => drawn(...toPair(cellAt(px, py, f, d, l))).solid === 'void';
   const boxAt = (d: number, l: number): boolean => solidAt(d, l) && !tentAt(d, l);
@@ -305,7 +305,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         drawLandmark(map.landmarkAt(c.x, c.y)!, cx + l * 2 * u, horizon + u, u);
       } else if (isSolidWall(cell)) {
         // A house's chimney stands on the roof behind its slopes, so it goes down before them.
-        const b = map.kind === 'town' && isHouse(map, c.x, c.y) ? building(map, c.x, c.y) : null;
+        const b = looksHouse(map, c.x, c.y) ? building(map, c.x, c.y) : null;
         if (b && d > 0 && b.chimney === c.y * map.width + c.x) drawChimney(p, at, d, l);
         if (b) drawRoof(p, at, d, l, houseAt, b.seed, true);
         // A wall's faces are hidden by the wall beside them and join its faces; a tent's by its own
