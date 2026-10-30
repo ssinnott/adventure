@@ -90,15 +90,15 @@ buys them has an easier road than measured, and the owner's own play is the judg
 The world's end is drawn as the atlas paints it, the sea running on and the rim standing (#829,
 built in #849). The owner has filed the land the maps lie open to as an epic, #828, with eight area
 issues (#830 to #837); #845 to #847 (the bounds' enclave and artifacts) and #848 (the code's
-reorganisation, its sub-issues filed as they are taken up) go with it. All of these, and the finishing touches #889 to #893, are approved and unparked at the owner's
-word of 18 October 2026 and are being built in the order their epics hold: the eight areas,
-two in flight, Saltreach first and the Foreland last, with the reorganisation beside them, its
-moves that touch every area landing in two short windows between area pull requests. Of the
-touches, #889, #890 and #893 are merged (#903, #894 and #948) and #891 and #892 are closed, their
-rulings standing (#901). The enclave's rules are built (#845), and six areas place an enclave: the
-Kilns, the Glasswold, Cairnmoor, Rimewater, Wrackholm and Ashfall. The bounds' artifacts are
-#846's: #847 has built their mark and their five kinds of power, and seven lie in the lairs their
-areas built; the Telstok waits in Saltreach's items for its lair (#830). The reach stays post-v1.
+reorganisation, its sub-issues filed as they are taken up) go with it. All of these, and the
+finishing touches #889 to #893, were approved and unparked at the owner's word of 18 October 2026.
+The eight areas are built (#830 to #837), Saltreach's lair the last of them, and the reorganisation
+goes on beside them (#848). Of the touches, #889, #890 and #893 are merged (#903, #894 and #948)
+and #891 and #892 are closed, their rulings standing (#901). The enclave's rules are built (#845),
+and seven areas place an enclave: the Kilns, the Glasswold, Cairnmoor, Rimewater, Wrackholm,
+Ashfall and Saltreach. The bounds' artifacts are #846's: #847 has built their mark and their five
+kinds of power, and all eight lie in the lairs their areas built (#830 to #837). The reach stays
+post-v1.
 
 The owner's own playthrough of M3 is what remains before v1 is called done; the tracker holds no
 issue for it.

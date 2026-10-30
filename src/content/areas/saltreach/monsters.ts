@@ -41,11 +41,12 @@ export const MONSTERS: readonly MonsterDef[] = [
   { id: 'leech', name: 'Leech', plural: 'Leeches', sprite: 'leech', kind: 'beast', look: 'Black, and as long as your arm.', level: 10, hp: 87, ac: 16, attack: 7, dice: 2, sides: 6, bonus: 3, speed: 12, xp: 393, gold: [0, 0], drain: 'hp', tint: '#26282a', size: 0.45 },
   // the Delta, alone (#224), a brute on MONSTERS §4.4's line at 12: it carries disease
   { id: 'bull_toad', name: 'Bull Toad', plural: 'Bull Toads', sprite: 'bull_toad', kind: 'beast', look: 'It could swallow Ottilie whole.', level: 12, hp: 278, ac: 16, attack: 9, dice: 3, sides: 7, bonus: 6, speed: 8, xp: 947, gold: [0, 0], inflict: { cond: 'diseased', chance: 0.15 }, tint: '#5a3e26', size: 1.35 },
-  // the bounds' lair (#830), drawn and defined before the lair that places it: A5's drowned mound, where it
-  // keeps the Telstok. The first of the chanters, the lair's boss at 32 (MONSTERS §13): dead, so sleep and
-  // nature do nothing to it and holy is half again (its kind); it blesses itself each round it can, as the
-  // Choirmaster does, and its hits curse (0.2), as the Cairn King's. Its numbers are the line's boss at 32 as
-  // tools/kit/line.ts gives it today, and provisional: the lair's pull request sets them from the harness's
-  // line at the cap (MONSTERS §4.1, §4.2, §13). It is owed in checks.ts until that lair places it
-  { id: 'old_chanter', name: 'The Old Chanter', plural: 'Old Chanters', sprite: 'old_chanter', kind: 'dead', look: 'The first of the chanters, and it still sings the old song.', level: 32, hp: 2100, ac: 29, attack: 20, dice: 34, sides: 8, bonus: 41, speed: 13, xp: 20373, gold: [0, 0], inflict: { cond: 'cursed', chance: 0.2 }, cast: { spells: ['bless'], chance: 1 }, tint: '#3e5448', size: 1.35 },
+  // the bounds' lair (#830): Sjongwierde's undercroft under A5's drowned mound, where it keeps the Telstok.
+  // The first of the chanters, the lair's boss at 32 (MONSTERS §13): dead, so sleep and nature do nothing
+  // to it and holy is half again (its kind); it blesses itself each round it can, as the Choirmaster does,
+  // and its hits curse (0.2), as the Cairn King's. Drawn on the line's boss at 32 (2,100 hit points, attack
+  // 20, 34d8+41) it was won 65% at 30 and 75% at 32 at the gate; set by the lair's gate (#830's decision
+  // 54), its armour, pace, blessing and curse kept, it is won 61% at 30 and 93% at 32 (66% and 92% over
+  // 400 seeds), and keeps the line's xp at 32
+  { id: 'old_chanter', name: 'The Old Chanter', plural: 'Old Chanters', sprite: 'old_chanter', kind: 'dead', look: 'The first of the chanters, and it still sings the old song.', level: 32, hp: 2150, ac: 29, attack: 25, dice: 25, sides: 8, bonus: 41, speed: 13, xp: 20373, gold: [0, 0], inflict: { cond: 'cursed', chance: 0.2 }, cast: { spells: ['bless'], chance: 1 }, offLine: 'Sjongwierde\'s boss, its hit points, its attack and its blow set by its gate at the lair\'s floor and two above, its blessing and its curse as drawn (#830)', tint: '#3e5448', size: 1.35 },
 ];

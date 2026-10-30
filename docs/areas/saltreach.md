@@ -4,18 +4,20 @@ Saltreach's doc is three files (EXPANSION §8.2, #1027), and this, its current s
 Its decisions, the old §9 whole, are `docs/areas/saltreach/decisions.md`, appended to and never
 rewritten. Its plan is `docs/areas/saltreach/plan.md`: the old §4 (the boxes' briefs, §4.1 to
 §4.11), §11 (what was cut) and §12 (the bounds, §12.1 to §12.11, the enclave and the lair in
-§12.10) whole, and Wytgat's brief since (§12.12), then under "Moved from the state" the lines of the
-old header, §1, §3 and §5 to §8 that this file does not keep, each under the heading it had, among
-them §1's zone table, edges and the river's course, §3's atlas rows and boxes as built, §5's entries
-and its As built, §6's table of #56's four, each quest as built, the halls' ranks and the Telstok's
-brief, §7's roster and novelty and §8's shares box by box. §2 and §10 stand here whole. The figures
-are main's at `2ef2d315` (24 October 2026), as the suites print them, and Wytgat's and B7's with the
-enclave built (#830).
+§12.10) whole, and the briefs since, Wytgat's (§12.12) and Sjongwierde's (§12.13), then under
+"Moved from the state" the lines of the old header, §1, §3 and §5 to §8 that this file does not
+keep, each under the heading it had, among them §1's zone table, edges and the river's course, §3's
+atlas rows and boxes as built, §5's entries and its As built, §6's table of #56's four, each quest
+as built, the halls' ranks and the Telstok's brief, §7's roster and novelty and §8's shares box by
+box. §2 and §10 stand here whole. The figures are main's at `2ef2d315` (24 October 2026), as the
+suites print them, Wytgat's and B7's with the enclave built and the lair's and A5's with the lair
+built (#830).
 
 Its ids: the area `saltreach`; its zones `upperwater`, `delta` and `saltings`, each box named for
 its zone and square (`delta_c5`); the town `saltmouth`; the temples `drowned_temples` (with
-`drowned_temples2`); the Rifts `c5_rift`, `b5_rift_n` and `b5_rift_s`; the enclave `wytgat`. All but
-the enclave's stayed through the naming pass (§10, NAMES §3).
+`drowned_temples2`); the Rifts `c5_rift`, `b5_rift_n` and `b5_rift_s`; the enclave `wytgat`; the
+lair `sjongwierde` (with `sjongwierde2`). All but the enclave's and the lair's stayed through the
+naming pass (§10, NAMES §3).
 
 ## 1. Where it is
 
@@ -25,8 +27,8 @@ and A3, the Long Water out of the rim past Rietum. The Delta, band 10–12, is D
 B4, A4, A5 and A6, the fen with the Tide Stone's plinth and the Drowned Temples. The Saltings, band
 11–12, are C6, C7, B7 and D6, Saltmouth's box, the pans and the Scarp's foot. Eighteen boxes of the
 grid (EXPANSION §8.2; docs/areas/shelf.md §1), in the A to D columns from row 2 to row 7; C2, B2,
-A3, A4, A5, A6, B7 and D6 are the bounds' (#830). The town, the temples, the Rifts and the enclave,
-Wytgat (13–14), stand off the grid, each entered from a map.
+A3, A4, A5, A6, B7 and D6 are the bounds' (#830). The town, the temples, the Rifts, the enclave
+(Wytgat, 13–14) and the lair (Sjongwierde, 30–32) stand off the grid, each entered from a map.
 
 - **North: the rim,** with the upper valley under it, C2 and B2.
 - **East: Kestrel Edge,** the Foreland's cliff. The Salt Road comes down it in the Foreland's D4 and
@@ -62,10 +64,10 @@ day on the Saltings' ground (#162, #151's call 3).
 
 ## 3. What is built
 
-Twenty-five maps (`src/content/areas/saltreach/maps/`, each Rift in its box's file), a row each: its
-id and name, kind, size and band; what is there, with its groups (the gate's count); and its
-secret, a door at the squares given, with the hint that finds it (the map's `secrets`). Nineteen
-maps have one; D5, the three Rifts and the temples' two levels have none.
+Twenty-seven maps (`src/content/areas/saltreach/maps/`, each Rift in its box's file), a row each:
+its id and name, kind, size and band; what is there, with its groups (the gate's count); and its
+secret, a door at the squares given, with the hint that finds it (the map's `secrets`). Twenty
+maps have one; D5, the three Rifts, the temples' two levels and the lair's first have none.
 
 | Map | Kind, size, band | What is there | Secret, and its hint |
 |---|---|---|---|
@@ -83,17 +85,19 @@ maps have one; D5, the three Rifts and the temples' two levels have none.
 | `saltings_c6`, C6 | outdoor, 32×32, 11–12 | Saltmouth's box: the Salt Road's last reach and its milestone to the land gate, the coach yard, the barge quay with the crews' crate, the Compact's warehouse and its clerk, the sea wall and the shore path under it, a camp, the fen west of the road with a shrine, a cairn, a wierde and an eel-catcher's hut, and the pans' first walls; the bargemen on the quay by day, the smugglers under the sea wall by night and salt crabs at the pans; three groups | 28,19, the smugglers' stair in the sea wall's dry end, its cache by a sea door barred from within: a rope hanging down the wall with nothing on it at 28,18 (`c6_rope`) |
 | `saltmouth`, Saltmouth | town, 16×16, 10–12 | the free port behind C6's land gate: the Tide Table, the Telhus, the Seawall Armoury, the Quay Chandlery, the Sail Loft, Pender's Locks, the Keel (the Compact's hall) and the Cartographers' Map Room; the four first prestiges taught in the street, the shop, the quay and at the steps; Jory Tallis at his house front; Kitto's boat to Wrackholm and Dunstan's ferry to Kilnhaven; no group | 14,4, the Keel's cellar way, one way only, out onto the sand under C6's sea wall: sawdust trodden out along the Keel's end wall at 14,5 (`sm_sawdust`) |
 | `saltings_c7`, C7 | outdoor, 32×32, 11–12 | the salt pans: six walled pans walked in lanes, the last marsh with the drowned god's shrine, the salters' huts, a cairn under the Scarp, the night crew's skiff and the Scarp across the south with the stair's foot in a notch; by night a star where none should be (24); salt crabs in the pans and bull toads in the marsh; two groups | 30,5, the one pan with no sluice, the salter's hoard in it, reached by the crabs' hole under its east wall: the crust trodden to grey mud at that wall's foot at 31,5 (`c7_trodden`) |
-| `upperwater_b3`, B3 | outdoor, 32×32, 10–11 | the willows behind Rietum: the Long Water down through the willows, the diep carried on west under its pollards with a plank bridge, the willows' quay with a barge lying up, the boathouse, the ford and the carr; Hiltje cutting withies, a shrine and a cairn; the quay's crew and a bull toad in the carr; two groups | 11,16, the boathouse's back room: the green worn off its back wall at a hand's height at 11,17 (`b3_wall`) |
+| `upperwater_b3`, B3 | outdoor, 32×32, 10–11 | the willows behind Rietum: the Long Water down through the willows, the diep carried on west under its pollards with a plank bridge, the willows' quay with a barge lying up, the boathouse, the ford and the carr; Hiltje cutting withies, with the Telstok's rumour at every meeting after her first, a shrine and a cairn; the quay's crew and a bull toad in the carr; two groups | 11,16, the boathouse's back room: the green worn off its back wall at a hand's height at 11,17 (`b3_wall`) |
 | `delta_b4`, B4 | outdoor, 32×32, 10–11 | the willows' end: the river under the heronry and out into the broad water, the drowned god's statue with his name cut off its plinth, the dyke-wrights' flood-store in the hill's side, the strand, C4's ford and the fen's north end; the heronry's brood and its keepers (`b4_heronry`) and a bull toad; three groups | 2,12, the flood-store: martins nesting where the hill's facing is laid looser at 2,13 (`b4_bank`) |
 | `upperwater_c2`, C2 | outdoor, 32×32, 10–11 | the upper valley, the bounds' first: the hill pasture over Rietum between the rim and the Edge, the Hand's watch at its fire, Jelle with Rietum's sheep, a tarn, the shepherds' cairn and the walled cleft; east of the face the Downs' turf on the Edge's top, open to D2, with a boundary stone and a shepherd of the Downs; the watch and the toads at the tarn; two groups | 17,12, the cleft in the Edge's foot walled with dry stone: the lichen rubbed off the walling in a line at 17,13 (`c2_walling`) |
 | `upperwater_b2`, B2 | outdoor, 32×32, 10–11 | the valley's head under the rim: a spring and its trough, a bull toad and an eel in the mire, a cairn and a beehive hut with no door; one group | 19,21, the hut's cell: wrens going in and out low on one side at 19,22 (`b2_hut`) |
 | `upperwater_a3`, A3 | outdoor, 32×32, 10–11 | the rim's foot behind the willows: a corner of hill and grass, a bull toad and a heron, a cairn and a well-house walled into the rim's foot; one group | 25,27, the well-house: a willow hung with rags at its walling at 26,27 (`a3_willow`) |
 | `delta_a4`, A4 | outdoor, 32×32, 10–11 | the hills over the heronry, open to B4: a woman of stone with a riddle, a dry valley with a shrine at its mouth, a cairn, the reed-cutters' camp, herons fishing the fen's corner and a bull toad and a leech in its pools; two groups | 12,18, a still in a walled cave at the dry valley's head: the reek of peat smoke and malt at 13,18 (`a4_reek`) |
-| `delta_a5`, A5 | outdoor, 32×32, 10–11 | the fen's west shore, open to B5: an old dyke let go, a wildfowler in his punt, a shrine, a camp, a cairn, leeches and an eel in the pools, a bull toad where the dyke gives out and the drowned mound left bare for the lair's door; two groups | 21,15, a sluice-house walled up in the dyke: clear water running out under its foot at 22,15 (`a5_water`) |
+| `delta_a5`, A5 | outdoor, 32×32, 10–11 | the fen's west shore, open to B5: an old dyke let go, a wildfowler in his punt, a shrine, a camp, a cairn, leeches and an eel in the pools, a bull toad where the dyke gives out and the drowned mound, the stair in its crown at 26,23 the door into Sjongwierde; two groups | 21,15, a sluice-house walled up in the dyke: clear water running out under its foot at 22,15 (`a5_water`) |
 | `delta_a6`, A6 | outdoor, 32×32, 11–12 | the fen under the rim, open to B6: the temples' bell heard over the fen, a priest of stone with a riddle, a cairn, a camp, two drowned men walked out into the fen and two bull toads; two groups | 18,10, an anchorite's cell walled into the rim's foot: a slit that looks east to the temples at 19,10 (`a6_slit`) |
 | `saltings_b7`, B7 | outdoor, 32×32, 11–12 | the Scarp's foot west of the pans: the last marsh and the salters' grass, a salt-carter with word of a fire under the Scarp, a camp, a cairn, a shrine, salt crabs on the grass and the Hand's smugglers at their fire under the rock, and the cut into Wytgat in the Scarp's foot; two groups | 9,16, a salters' bothy walled up in the Scarp's foot: a fan of dead white grass pointing at its door at 9,15 (`b7_fan`) |
 | `saltings_d6`, D6 | outdoor, 32×32, 11–12 | the plate's old place, two pieces of land in the sea off Saltmouth: on the spit the old harbour light's footing with two bull toads, on the shore a cairn of ballast stones and a wreck's ribs; one group | 11,4, the light-keeper's store walled up in the footing: each wave booming hollow under it at 11,3 (`d6_boom`) |
 | `wytgat`, Wytgat | dungeon, 16×16, 13–14 | the enclave, the salters' old rock-salt working behind B7's cut: the Hand's watch at its brazier, the gallery of the chained rows and its overseers, the strongroom's keepers and the Hand's strongbox with the Brine Needle, a stiletto whose blows carry lightning; the store of brine glass; three groups | 13,8, the salters' last gallery and their strongbox: lamp soot drawn into one crack at 13,7 (`wy_draught`) |
+| `sjongwierde`, Sjongwierde | dungeon, 16×16, 30–32 | the lair, down the stair in A5's drowned mound: the church its folk built on its top, silted to the knee, with the singers' benches in its west bay and the chancel at its end; no group | none |
+| `sjongwierde2`, the Undercroft | dungeon, 16×16, 30–32 | the mound's heart, its dead on shelves in the clay; the Old Chanter (boss) singing on the steps to its floor, the one way on, and the Telstok on the stone by its place; one group | 10,12, the hollow of the jars that carried the song, 500 gold, an Elixir and a Sapphire Vial: steps coming back a beat late and hollow at 9,12 (`sw2_echo`) |
 
 Its content is `src/content/areas/saltreach/`: the maps, then a file each for its flags, monsters,
 items, chapter, side quests and guild quests, its rooms, its part of the world (the atlas), its rows
@@ -135,16 +139,17 @@ its first rank's What the Crews Carry (100 gold and 360 xp) and The Watcher on W
 and 480 xp), the boat at half fare to a Runner and Ruan's choice once the Factor's rung is paid
 (`q_compact_wardens`, `q_compact_over`).
 
-**The Telstok** (#846), the bounds' artifact, is not built: its lair, a drowned mound of two levels
-with its door on A5, is #830's last pull request (plan, §6 and §12.10). The Old Chanter who keeps
-it is drawn and defined, and owed to the lair in `checks.ts` until a group there holds it.
+**The Telstok** (#846), the bounds' artifact, lies in its lair, Sjongwierde, the drowned mound of
+two levels down the stair in A5's crown (plan, §12.13): on the stone by the Old Chanter's place in
+the undercroft, one in the world and sold nowhere. Hiltje in B3's withy beds says its rumour at
+every meeting after her first (`b3_hiltje_met`): words only, in no quest and on no map.
 
 ## 7. Encounters, and what is new
 
 MONSTERS §6.1's roster, in its monsters file: the Fen Eel and the Leech, the Grey Heron, the Fen
 Toad and the Bull Toad, the Bargeman and the Barge Master, the Salt Crab, the Brineling, the Drowned
-Man, the Drowned Chanter and the Choirmaster, with MONSTERS §13's Old Chanter, the lair's guardian,
-drawn before its lair; the Rifts' tide elders are Wrackholm's Tide Elder; C6 and B7 place
+Man, the Drowned Chanter and the Choirmaster, with MONSTERS §13's Old Chanter, the lair's guardian
+in Sjongwierde's undercroft; the Rifts' tide elders are Wrackholm's Tide Elder; C6 and B7 place
 Wrackholm's smugglers and bowmen, and Wytgat those with Wrackholm's overseers and the Sunder's
 gleaners. New here (`novel`): the long bodies and the toads, two new families, and salt underfoot.
 
@@ -154,14 +159,16 @@ gleaners. New here (`novel`): the long bodies and the toads, two new families, a
   and 8,410 gold of 5,040; a company entering at the floor and clearing three quarters leaves at
   12.9, +0.9 over the next floor 12. It counts the Hermit of the Point's 500 gold, Wrackholm's quest
   paid by Tallis at Saltmouth, and the Watcher on Wrackholm's 80 xp a member and 150 gold, the
-  Compact's, its deed on the isle. Wytgat, the enclave, is counted in no clear: 1,104 xp a member
-  and 921 gold.
+  Compact's, its deed on the isle. Wytgat, the enclave, and Sjongwierde, the lair, are counted in no
+  clear: 1,104 xp a member and 921 gold, and 3,396 and 500.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.9% of its 48 groups'
   fights (`GATE.through`'s aim); two under, its groups pooled at 8 manage 2.85 fights to a rest,
   43.8% of the floor's 6.5 (at most: `GATE.backDay`'s aim). Each zone's road is walked every time,
   the Upper Water's and the Delta's at 10 and the Saltings' at 11. The Choirmaster is won 48% at 11
   and 100% at 13. Wytgat is judged at its own band and out of these: every fight won at 13, and two
-  under, at 11, 4.61 fights to a rest, 63.6% of the floor's 7.25.
+  under, at 11, 4.61 fights to a rest, 63.6% of the floor's 7.25. So is the lair: the Old Chanter,
+  its one group, is won 61% at 30 and 93% at 32, inside both aims, its numbers set by that gate
+  (plan, §12.13).
 - **Fights to a rest** (aim 5.5 to 7.5 at 10, 5.75 to 7.75 at 11): C5 7.02 and its Rift 6.39, C4
   6.70, C3 7.12, B5 7.11 and its Rifts 4.75 each, B6 6.96, the temples' two levels 7.18 and 7.49,
   C6 7.26, C7 6.00, B3 7.09, B4 7.10, C2 6.47, B2 5.76, A3 5.89, A4 6.82, A5 6.84, A6 7.18, B7 7.41
@@ -170,11 +177,13 @@ gleaners. New here (`novel`): the long bodies and the toads, two new families, a
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, C3 98.7%, B5 95.6%, B6
   96.3% and C6 93.7%; within 12 in the country, D5 100%, C5 97.9%, C4 97.8%, C7 99.0%, B3 96.7%
   (its furthest square 20), B4 97.6%, A5 97.0%, B7 98.5% and C2, B2, A3, A4, A6 and D6 100%; within
-  7, the Rifts 96.8%, 100% and 98.5% and the town, the temples and Wytgat 100%.
+  7, the Rifts 96.8%, 100% and 98.5% and the town, the temples, Wytgat and the lair's two levels
+  100%.
 - **The ladder:** rung 11 is Saltreach's (`gear`, in its checks): Saltmouth's armourer's seven
   wares; by 13 the same with a plus from Saltreach's and Wrackholm's finds (Wrackholm's checks).
   The dearest find, the Sharkskin Coat +1 at 1,250 gold, sits in the window, 2,000; Wytgat's, the
-  Brine Needle at 1,150, in the enclave's, Wrackholm's 2,500.
+  Brine Needle at 1,150, in the enclave's, Wrackholm's 2,500. No window holds a find of the lair's:
+  the Elixir and the Sapphire Vial are consumables and the Telstok an artifact.
 
 ## 10. Names
 
@@ -201,6 +210,7 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
   | Smugglers' Cove (Wrackholm) | Kelp Hole | a sea cave with kelp on its rocks, in the sailors' English that named Brandy Hole and Wrackholm | Otter Hole |
   | the enclave, unnamed (#830) | Wytgat | the white hole (*wyt* white, *gat* a hole): the salters' rock-salt working in the Scarp's foot, white under its soot | Saltgat, the salt hole, a sixth *salt*; Wythol, the white hollow, beside Sjonghol |
   | the enclave's reward (#830) | the Brine Needle | a stiletto of brine glass, in the salters' English, as the Brine Shard is | the Glass Needle; the Green Needle |
+  | the lair, unnamed (#830) | Sjongwierde | the song mound (*sjong* song, *wierde* a mound above the flood): the drowned mound where the priest sang and never counted | Diepwierde, the deep mound, which says only that it drowned; Prysterwierde, the priest's mound, which tells what is left to be found |
 
 - **Kept:** Saltreach and Saltmouth, the Crown's names for the area and the free port, which the
   story leans on; the Saltings, the salters' English for their marsh, since three names with *salt*
@@ -216,15 +226,11 @@ the salt pans), as Harrow ran through the Foreland's (NAMES §3). Filed as #152.
 
 ## Open and owed
 
-- **Owed, not started:** the bounds' lair (#830), a drowned mound of two levels at 30–32, its door
-  on A5, the Telstok's (#846, #847); its guardian, the Old Chanter, is drawn. It adds its brief to
-  the plan, its decisions to `docs/areas/saltreach/decisions.md` and a row to §3 here (EXPANSION
-  §8.2). The enclave, Wytgat, is built (plan, §12.12).
-- **Owed to a check:** two, both the lair's (#830). The Old Chanter's place is its checks' one
-  `owes` row (`unplaced`), and the Telstok's is `tools/tests/items.ts`'s; each fails once the lair
-  holds it, and its row goes then. The curve, the gate, density and the ladder hold Saltreach with
-  nothing owed.
+- **Owed, not started:** nothing. The bounds are built: the eight boxes; the enclave, Wytgat (plan,
+  §12.12); and the lair, Sjongwierde, with the Old Chanter and the Telstok in it (plan, §12.13).
+- **Owed to a check:** nothing. Its checks hold no `owes` row and the items suite owes the Telstok
+  no more; the curve, the gate, density and the ladder hold Saltreach with nothing owed.
 - **Watched, not moved:** B5's two Rifts, 4.75 fights to a rest each, and the choir's 82.7% won sit
   between their aims and their limits. What the owner finds by hand goes here; none yet.
 - **Cut:** A2, A7 and C1 (plan, §11).
-- **What is next:** the lair (plan, §12.10).
+- **What is next:** nothing of #830's: the lair was its last box.
