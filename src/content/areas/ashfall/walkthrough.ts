@@ -636,7 +636,7 @@ function theRoad(): Scene[] {
       // From the road on the ash, the vultures turning over the grave's hills; under the hills by the
       // road, the Riders' camp; over the crest, the glare off the Glass; where the grass begins, the
       // Riders' cairn.
-      const nearRoad = (id: string, ch: string): boolean => { const f = E10.features!.find((x) => 'id' in x && x.id === id)!; return beside(e10, f.x, f.y, wasteRoad) && out.at(e10.x + f.x, e10.y + f.y).ch === ch; };
+      const nearRoad = (id: string, ch: string): boolean => { const f = featureOn(E10, id); return beside(e10, f.x, f.y, wasteRoad) && out.at(e10.x + f.x, e10.y + f.y).ch === ch; };
       const fire = E10.features!.find((f) => f.kind === 'camp')!;
       ok(nearRoad('e10_circle', 'a') && nearRoad('e10_glare', '^') && nearRoad('e10_mark', 's') && beside(e10, fire.x, fire.y, wasteRoad) && out.at(e10.x + fire.x - 1, e10.y + fire.y).ch === '^',
         'by the road the vultures seen turning over the hills, a camp under them, the glare from the crest and the Riders\' cairn where the grass begins');
@@ -1722,7 +1722,7 @@ function stairFoot(ok: (cond: boolean, msg: string) => void): void {
   const g10 = out.zones.find((z) => z.id === 'cindercoast_g10')!;
   const onH10 = (x: number, y: number): boolean => x >= h10.x && x < h10.x + h10.w && y >= h10.y && y < h10.y + h10.h;
   const walk = (x: number, y: number): boolean => onH10(x, y) && out.passable(x, y) === 'ok';
-  const feature = (id: string): Feature => H10.features!.find((f) => 'id' in f && f.id === id)!;
+  const feature = (id: string): Feature => featureOn(H10, id);
   const beside = (f: { x: number; y: number }, set: Set<number>): boolean => [[1, 0], [-1, 0], [0, 1], [0, -1]].some(([dx, dy]) => set.has(square(out, h10, f.x + dx, f.y + dy)));
 
   // Down the Stair from I10's 0,20 onto H10's 31,20, the box's way in: a company under Cindercoast's floor
@@ -2026,7 +2026,7 @@ function sideQuests(): Scene[] {
       // at the rock, she asks. Left, she gives the grey part that came up and the springs stay warm; broken,
       // the stoker is fought and stays down, the pools, the things in them and the vent are cold, and told
       // so she pays; and a company that broke it before it met her owns to it. Each way 1,500 xp, 250 a member.
-      const KEEPER = npc('cindercoast_h10', 'The bathhouse keeper'), STOKER = mapOf('cindercoast_h10').encounters!.find((g) => g.id === 'h10_stoker')!;
+      const KEEPER = npc('cindercoast_h10', 'The bathhouse keeper'), STOKER = groupOn('cindercoast_h10', 'h10_stoker');
       ok(!STOKER.respawn && !!STOKER.slainText && STOKER.roams === false, 'the stoker at the rock is the springs\' fight: broken, it stays down');
       const warm = (w: Walk, hot: boolean): boolean => (['h10_pools', 'h10_things', 'h10_vent'] as const).every((id) => there(w, 'cindercoast_h10', ev('cindercoast_h10', id)) === hot)
         && (['h10_pools_cold', 'h10_vent_cold'] as const).every((id) => there(w, 'cindercoast_h10', ev('cindercoast_h10', id)) === !hot);
@@ -2312,7 +2312,7 @@ function theBounds(): Scene[] {
         && second.met.join() === last.id && waded.met.join() === last.id && second.seen.has(key(5, 7)) && waded.seen.has(key(5, 7))
         && !second.seen.has(key(4, 11)) && !waded.seen.has(key(4, 11)) && !waded.seen.has(key(8, 13)) && done.seen.has(key(8, 13)),
         'a company on foot or any way else meets the flue walker first and cannot pass it down the flue; with it down it comes up to the bright plate and to the inspector, and cannot pass it to the furnace and the stokers\' locker');
-      const feat = (id: string): Feature => BD.features!.find((f) => 'id' in f && f.id === id)!;
+      const feat = (id: string): Feature => featureOn(BD, id);
       // The secret: the one plate of the flue's wall knocked bright, the search there and the clerks' room behind it.
       // Walked, waded, climbed or floated, it is never reached but through the plate.
       ok(plate.hint === 'bd_bright' && feat('bd_bright').x === plate.x && feat('bd_bright').y === plate.y + 1 && done.seen.size === 55 && !done.seen.has(key(5, 5)) && !done.seen.has(key(4, 4)),
