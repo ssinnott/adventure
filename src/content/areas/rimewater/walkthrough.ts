@@ -107,15 +107,15 @@ function captain(w: Walk): void {
     `the fourth night fought, the Wardens' ask is paid at the taking, and a company that found the cages is made a Captain (${said.join(' ').replace(/\n+/g, ' ')})`);
 }
 
-const M9 = MAP_DEFS.find((d) => d.id === 'longmere_m9')!;
-const L9 = MAP_DEFS.find((d) => d.id === 'longmere_l9')!;
-const [M10, M11, N9] = ['longmere_m10', 'longmere_m11', 'longmere_n9'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+const M9 = mapDef('longmere_m9');
+const L9 = mapDef('longmere_l9');
+const [M10, M11, N9] = ['longmere_m10', 'longmere_m11', 'longmere_n9'].map((id) => mapDef(id));
 const LOCH = ATLAS.zones.find((z) => z.id === 'longmere')!;
-const K9 = MAP_DEFS.find((d) => d.id === 'coldmere_k9')!;
+const K9 = mapDef('coldmere_k9');
 const FUAR = ATLAS.zones.find((z) => z.id === 'coldmere')!;
 const person = (def: typeof M9, name: string): Person => def.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
-const TOWN = MAP_DEFS.find((d) => d.id === 'rime_lodge')!;
-const L10 = MAP_DEFS.find((d) => d.id === 'longmere_l10')!, L11 = MAP_DEFS.find((d) => d.id === 'longmere_l11')!;
+const TOWN = mapDef('rime_lodge');
+const L10 = mapDef('longmere_l10'), L11 = mapDef('longmere_l11');
 
 /** The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run builds once (#1018). */
 const outdoors = (): GameMap => ownMaps()[OUTDOORS];
@@ -151,7 +151,7 @@ function roadParts() {
   const [px, py] = ATLAS.links.find((l) => l.from === 'coldmere' && l.to === 'monksvale')!.a!;
   const units = (n: number): number => Math.max(1, Math.round(n / 13));
   const counted = (z: typeof m9, def: typeof M9, id: string, ahead: { name: string; at: readonly [number, number] } = { name: 'THE PASS', at: [px, py] }): { says: boolean; toLodge: number; toPass: number } => {
-    const stone = def.features!.find((f) => f.kind === 'event' && f.id === id)!;
+    const stone = featureOn(def, id, 'event');
     const [sx, sy] = [z.x + stone.x, z.y + stone.y];
     const fromStone = paces(out, sx, sy, corner(out, drove(out, grid)));
     const toLodge = (fromStone.get((m9.y + GATE.y) * out.width + m9.x + GATE.x + 1) ?? Infinity) + 1;
@@ -330,7 +330,7 @@ function theRoad(): Scene[] {
       // The four nights: a stay at the inn each, by the rule its screen serves, and the morning after the night's
       // arrivals in the yard outside its door; the hole's fight, up on M9's ice, comes on the fourth only.
       const inn = ofKind(TOWN, 'inn')[0], night = nightCost(inn, w.party);
-      const hole = M9.encounters!.find((e) => e.id === 'm9_night_4')!, girl = person(M9, 'A girl out of the hole');
+      const hole = groupOn(M9, 'm9_night_4'), girl = person(M9, 'A girl out of the hole');
       const risen = (): boolean => { w.world.travel('longmere_m9', hole.x, hole.y - 1); return w.world.walks(hole, m9.x + hole.x, m9.y + hole.y); };
       ok(inn.interior === 'rime_inn' && JSON.stringify(inn.nights) === JSON.stringify(NIGHTS), `${inn.name} counts the nights, ${NIGHTS.join(', ')}`);
       for (const [i, flag] of NIGHTS.entries()) {
@@ -406,7 +406,7 @@ function theRoad(): Scene[] {
       // walked (#166): at its floor the name alone, two under the rest in its own words, three under the
       // harsher and the way back east still open.
       const w = newWalk(ok, { level: 20 }), { out, units, counted, l10 } = parts();
-      const K10 = MAP_DEFS.find((d) => d.id === 'coldmere_k10')!, k10 = out.zones.find((z) => z.id === 'coldmere_k10')!;
+      const K10 = mapDef('coldmere_k10'), k10 = out.zones.find((z) => z.id === 'coldmere_k10')!;
       const pass = (level: number): string[] => {
         for (const m of w.party.members) m.level = level;
         w.world.travel('longmere_l10', 0, 3, WEST);
@@ -532,7 +532,7 @@ function theRoad(): Scene[] {
       // The box's groups, each won at its floor: the lynxes in the shore's pines, the pike under the arm's
       // ice and over the tower's cap by night, and the bears in pairs on the far shore, the hardest.
       for (const g of K9.encounters!.filter((e) => e.under)) ok(g.under === 'ice' && out.at(k9.x + g.x, k9.y + g.y).terrain === 'ice', `${g.id} lives under the loch's ice`);
-      const byNight = K9.encounters!.find((e) => e.id === 'k9_pike_tower')!;
+      const byNight = groupOn(K9, 'k9_pike_tower');
       ok(JSON.stringify(byNight.when) === JSON.stringify({ hours: 'night' }) && out.at(k9.x + byNight.x - 1, k9.y + byNight.y).ch === 'B', 'the pike over the tower\'s cap come by night only');
       for (const g of K9.encounters!) fight(w, `coldmere_k9:${g.id}`);
 
@@ -723,7 +723,7 @@ function theRoad(): Scene[] {
  * neither prize is reached but through its door.
  */
 function fuarBehind(): Scene[] {
-  const [J9, K11] = ['coldmere_j9', 'coldmere_k11'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [J9, K11] = ['coldmere_j9', 'coldmere_k11'].map((id) => mapDef(id));
   const VALE = ATLAS.zones.find((z) => z.id === 'monksvale')!;
   /** The outdoors as built, and the four boxes' places on it. */
   const places = () => {
@@ -813,7 +813,7 @@ function fuarBehind(): Scene[] {
  * row, found from the path, with the bay's two named pieces.
  */
 function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
-  const [B1, B2] = ['sleepers_bay', 'sleepers_bay2'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [B1, B2] = ['sleepers_bay', 'sleepers_bay2'].map((id) => mapDef(id));
   const k9 = outdoors().zones.find((z) => z.id === K9.id)!;
   w.level = 20;
 
@@ -839,7 +839,7 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const inner = B1.features!.find((f) => f.kind === 'event' && f.id === 'sb1_door'), voice = B1.features!.find((f) => f.kind === 'event' && f.id === 'sb1_voice');
   ok(inner?.kind === 'event' && inner.text.endsWith('at a girl\'s shoulder: THE BLOOD OPENS THE DOOR.') && voice?.kind === 'event' && voice.text.includes('"Captain?"'),
     'on the door\'s inside, at a girl\'s shoulder, THE BLOOD OPENS THE DOOR, and in the wall a voice asks its one word');
-  const crews = B1.encounters!.filter((g) => g.id.startsWith('sb1_knockers')), first = B1.encounters!.find((g) => g.id === 'sb1_keeper')!;
+  const crews = B1.encounters!.filter((g) => g.id.startsWith('sb1_knockers')), first = groupOn(B1, 'sb1_keeper');
   ok(crews.length === 2 && crews.every((g) => g.monsters.includes('tallyman') && g.monsters.includes('knocker') && !!g.respawn) && first.monsters.join() === 'bay_keeper',
     'the tallymen\'s crews that did not come up, on both ways down, and the first keeper alone at the stair\'s foot');
   for (const g of B1.encounters!) fight(w, `${B1.id}:${g.id}`);
@@ -862,7 +862,7 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   for (const g of rows) fight(w, `${B2.id}:${g.id}`);
   const bag = w.party.bag.length;
   fight(w, `${B2.id}:sb2_matron`);
-  const matron = B2.encounters!.find((g) => g.id === 'sb2_matron')!;
+  const matron = groupOn(B2, 'sb2_matron');
   ok(matron.monsters.join() === 'matron' && !matron.respawn && !!matron.slainText?.endsWith('The sleepers sleep on.') && w.party.bag.slice(bag).includes('matron_cap'),
     'the Matron in the last row falls and never comes back, the sleepers sleep on, and she leaves her cap');
 
@@ -948,7 +948,7 @@ function sideQuests(): Scene[] {
       // The One Who Went Back Down (#56's 41), at 21: the man at the hole tells a stranger nothing; shown
       // Hale's token he goes home on the coach, and read the clerk's book he stays at the lodge to tell it.
       const MAN = npc('longmere_m9', 'A man at the hole'), WITNESS = npc('rime_lodge', 'A man from the hole');
-      const clerk = MAP_DEFS.find((d) => d.id === 'tide_ship2')!.features!.find((f) => f.kind === 'chest' && f.id === 'ts2_clerk')!;
+      const clerk = featureOn('tide_ship2', 'ts2_clerk', 'chest');
       for (const [how, sets, entry] of [['Hale\'s token', 'q_wentback_home', 'home'], ['the clerk\'s book', 'q_wentback_witness', 'witness']] as const) {
         const w = walkAt(ok, 21);
         const first = hear(w, 'longmere_m9', MAN), again = hear(w, 'longmere_m9', MAN);
@@ -970,7 +970,7 @@ function sideQuests(): Scene[] {
       // over the pike at the tower's cap and not by day; its words read by a reader; the sleeper in the
       // hall wakes at it, the healer's sleeps on; the lodge woman goes out to Fuar, or stays.
       const WOMAN = npc('rime_lodge', 'A lodge woman'), AT_HEARTH = npc('coldmere_k9', 'A lodge woman');
-      const BELL = K9.features!.find((f) => f.kind === 'sign' && f.id === 'k9_bell')!;
+      const BELL = featureOn(K9, 'k9_bell', 'sign');
       for (const [bed, sets, entry] of [['q_coach_hall', 'q_icebell_out', 'out'], ['q_coach_temple', 'q_icebell_stay', 'stay']] as const) {
         const w = walkAt(ok, 21);
         ok(hear(w, 'rime_lodge', WOMAN).includes('The tower still stands') && !w.party.flags.q_icebell && !page(w, 'icebell'), `${entry}: before the coach's sleeper has a bed the lodge woman speaks of the tower, and asks nothing`);
@@ -1005,7 +1005,7 @@ function sideQuests(): Scene[] {
     // it ends at the glacier's edge, and the old marks there, read, put the reach on the world map.
     { name: 'sky', play: (ok) => {
       const GOING = npc('rime_lodge', 'A guide', 0), ON_ICE = npc('longmere_m9', 'A guide'), BROUGHT = npc('rime_lodge', 'A guide', 1);
-      const MARKS = M9.features!.find((f) => f.kind === 'sign' && f.id === 'm9_marks')!;
+      const MARKS = featureOn(M9, 'm9_marks', 'sign');
       const w = walkAt(ok, 22);
       ok(there(w, 'rime_lodge', GOING) && !there(w, 'longmere_m9', ON_ICE) && !there(w, 'rime_lodge', BROUGHT) && !shows(w, 'longmere_m9', 'm9_guide_cairn'),
         'the guide is at the lodge\'s gate before she goes up, and at the glacier\'s foot is neither guide nor cairn');
@@ -1125,8 +1125,8 @@ function theSleepers(): Scene[] {
  * rumour at her second meeting and not her first.
  */
 function theBounds(): Scene[] {
-  const K12 = MAP_DEFS.find((d) => d.id === 'coldmere_k12')!;
-  const L12 = MAP_DEFS.find((d) => d.id === 'longmere_l12')!;
+  const K12 = mapDef('coldmere_k12');
+  const L12 = mapDef('longmere_l12');
   return [
     { name: 'k12', play: (ok) => {
       // South of the pass, on: south from K11's 8,31 onto K12's 8,0 under the pines, walked, in Loch Fuar still.
@@ -1164,7 +1164,7 @@ function theBounds(): Scene[] {
       const told = meet(hunter, w.party, heard(w.world, hunter)).text;
       ok(told.includes('white skin') && told.includes('Four cats'), `the bear-hunter: two white bears on a kill in the pines, and four cats waiting on it (${told.replace(/\n+/g, ' ')})`);
       listen(w);
-      const brother = K12.features!.find((f): f is Extract<Feature, { kind: 'statue' }> => f.kind === 'statue' && f.id === 'k12_brother')!;
+      const brother = featureOn(K12, 'k12_brother', 'statue');
       w.world.travel(K12.id, brother.x, brother.y);
       ok(!answerRiddle(w.world, w.party, brother, 'gong').right && answerRiddle(w.world, w.party, brother, 'Bell').right, 'the brother of stone\'s riddle is answered bell, which has a tongue and calls the brothers in, and not gong');
       for (const id of ['k12_kill', 'k12_cats', 'k12_spur', 'k12_rim']) see(w, `${K12.id}:${id}`);
@@ -1234,7 +1234,7 @@ function theBounds(): Scene[] {
       // fire, 8 squares or more from the bears; the spring that does not freeze, which gives +1 intellect to
       // each of the company; the cairn, the rim and the bears' den-mouth.
       const strip = reach(out, l12, [L12.start.x, L12.start.y], {}, [4, 6]);
-      const bears = L12.encounters!.find((g) => g.id === 'l12_bears')!, camp12 = L12.features!.find((f) => f.kind === 'camp')!;
+      const bears = groupOn(L12, 'l12_bears'), camp12 = L12.features!.find((f) => f.kind === 'camp')!;
       ok(strip.size === 79 && L12.features!.filter((f) => f.kind !== 'chest' && !('id' in f && f.id === 'l12_store')).every((f) => strip.has(square(out, l12, f.x, f.y))) && strip.has(square(out, l12, bears.x, bears.y)),
         `the strip of pines (${strip.size} squares, the cave's door among them) is walked from the way in to every point and to the bears' square, and no further`);
       ok(Math.abs(camp12.x - bears.x) + Math.abs(camp12.y - bears.y) >= 8, 'the gatherers\' fire is 8 squares or more from the bears, who do not roam');
@@ -1271,7 +1271,7 @@ function theBounds(): Scene[] {
       // door says its band and how it feels, as a border's line: the warning at 19, harder at 20 and its band
       // alone at 22; inside, its sign gives its band over L12's.
       const w = newWalk(ok, { level: 20 }), out = outdoors(), l12 = zone(out, L12.id);
-      const CF = MAP_DEFS.find((d) => d.id === 'creag_fionn')!, cave = L12.exits!.find((e) => e.to === CF.id)!;
+      const CF = mapDef('creag_fionn'), cave = exitTo(L12, CF.id);
       ok(cave.x === 11 && cave.y === 4 && cave.tx === CF.start.x && cave.ty === CF.start.y && cave.tf === CF.start.facing,
         'the cave into Creag Fionn is the rim\'s face at L12\'s 11,4, and arrives at the enclave\'s start, 7,1, facing in');
       const levels = w.party.members.map((m) => m.level);
@@ -1291,7 +1291,7 @@ function theBounds(): Scene[] {
       // from the way in meets the eagles first, and with them gone the trolls before the hoard, which lies
       // past them; the hall and the hint are not.
       w.level = 22;
-      const groups = CF.encounters!, eagles = groups.find((g) => g.id === 'cf_eagles')!, trolls = groups.find((g) => g.id === 'cf_trolls')!;
+      const groups = CF.encounters!, eagles = groupOn(CF, 'cf_eagles'), trolls = groupOn(CF, 'cf_trolls');
       ok(groups.length === 2 && eagles.monsters.join() === 'spine_eagle,spine_eagle,spine_eagle,spine_eagle' && trolls.monsters.join() === 'snow_troll,snow_troll'
         && eagles.respawn === RESPAWN.day && trolls.respawn === RESPAWN.twoDays && groups.every((g) => g.roams === false && !g.slainText), 'four spine eagles in the neck and two snow trolls in the passage to the cave\'s back, and no guardian');
       const hold = new GameMap(CF), [wall] = CF.secrets!;
@@ -1357,7 +1357,7 @@ function theBounds(): Scene[] {
     // at 28 and its band alone at 30; inside, its sign gives the cap's band, and so does the Infirmary's.
     { name: 'spittal', play: (ok) => {
       const w = newWalk(ok, { level: 20 }), out = outdoors(), k12 = zone(out, K12.id);
-      const SP = MAP_DEFS.find((d) => d.id === 'spittal')!, SP2 = MAP_DEFS.find((d) => d.id === 'spittal2')!, lairDoor = K12.exits!.find((e) => e.to === SP.id)!;
+      const SP = mapDef('spittal'), SP2 = mapDef('spittal2'), lairDoor = exitTo(K12, SP.id);
       ok(lairDoor.x === 2 && lairDoor.y === 15 && lairDoor.tx === SP.start.x && lairDoor.ty === SP.start.y && lairDoor.tf === SP.start.facing && SP.exits![0].to === K12.id && SP.exits![0].tx === 2 && SP.exits![0].ty === 14,
         'the door into the Spittal is the rim\'s face at K12\'s 2,15, and arrives at the lair\'s start, 7,1, facing in; its way out leads back onto 2,14');
       const was = w.party.members.map((m) => m.level);
@@ -1388,7 +1388,7 @@ function theBounds(): Scene[] {
       // The guardian: the Infirmarer, a boss that never comes back, in the one way into the ward. Walked,
       // waded, climbed or floated, with it standing (its square and those a step from it shut, where its
       // fight starts) nothing past it is reached: not the ward, the stirring sheet, the cold room or the locker.
-      const infirmarer = SP2.encounters!.find((g) => g.id === 'sp2_infirmarer')!, [sheetWall] = SP2.secrets!, ward = new GameMap(SP2);
+      const infirmarer = groupOn(SP2, 'sp2_infirmarer'), [sheetWall] = SP2.secrets!, ward = new GameMap(SP2);
       const flood = (live: readonly { x: number; y: number }[]): Set<string> => {
         const seen = new Set<string>(), todo: [number, number][] = [[SP2.start.x, SP2.start.y]];
         while (todo.length) {
@@ -1400,7 +1400,7 @@ function theBounds(): Scene[] {
         return seen;
       };
       const standing = flood([infirmarer]), gone = flood([]);
-      const locker = SP2.features!.find((f) => f.kind === 'chest' && f.id === 'sp2_locker')!, packs = SP2.features!.find((f) => f.kind === 'chest' && f.id === 'sp2_packs')!;
+      const locker = featureOn(SP2, 'sp2_locker', 'chest'), packs = featureOn(SP2, 'sp2_packs', 'chest');
       ok(SP2.encounters!.length === 1 && infirmarer.monsters.join() === 'infirmarer' && !!infirmarer.boss && !infirmarer.respawn && infirmarer.roams === false && !!infirmarer.slainText
         && standing.has('5,3') && !['6,8', '9,9', `${locker.x},${locker.y}`].some((k) => standing.has(k)) && ['6,8', '9,9', `${locker.x},${locker.y}`].every((k) => gone.has(k)),
         `the Infirmarer, the one group of the lair, stands in the one way into the ward: with it standing, none of the Infirmary's ${standing.size} squares walked, waded, climbed or floated reaches the ward, the stirring sheet or the locker; with it gone, ${gone.size} do`);
@@ -1434,7 +1434,7 @@ function theBounds(): Scene[] {
       // The rumour (#846): the lodge-keeper at Rime Lodge says nothing of the grey robe at her first meeting,
       // and at every meeting after it speaks of the one who came up in it: words only, which set nothing, in
       // no quest, and inside the say box.
-      const keeper = MAP_DEFS.find((d) => d.id === 'rime_lodge')!.features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A lodge-keeper')!;
+      const keeper = mapDef('rime_lodge').features!.find((f): f is Person => f.kind === 'npc' && f.name === 'A lodge-keeper')!;
       const words = keeper.says!.find((s) => s.lines.some((l) => l.includes('grey robe')))!;
       delete w.party.flags.rl_keeper_met;
       w.world.travel('rime_lodge', keeper.x, keeper.y);

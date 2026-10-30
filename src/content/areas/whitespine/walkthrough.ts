@@ -75,7 +75,7 @@ import { NEST_CELL } from './maps/highspine_i11.ts';
 import { CHAPTER } from './chapter.ts';
 import { STEPS, POINT_FIRST, HIGHCELL_LATE, TOLL_REFUSED, overThePass, parley, KING } from './steps.ts';
 
-const J11 = MAP_DEFS.find((d) => d.id === 'monksvale_j11')!;
+const J11 = mapDef('monksvale_j11');
 const person = (name: string): Person => J11.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
 const VALE = ATLAS.zones.find((z) => z.id === 'monksvale')!;
 
@@ -91,14 +91,14 @@ function rangeParts() {
   const j11 = out.zones.find((z) => z.id === 'monksvale_j11')!, k10 = out.zones.find((z) => z.id === 'coldmere_k10')!;
   const j10 = out.zones.find((z) => z.id === 'monksvale_j10')!;
   const onJ11 = (x: number, y: number): boolean => x >= j11.x && x < j11.x + j11.w && y >= j11.y && y < j11.y + j11.h;
-  const I11 = MAP_DEFS.find((d) => d.id === 'highspine_i11')!, i11 = out.zones.find((z) => z.id === 'highspine_i11')!;
+  const I11 = mapDef('highspine_i11'), i11 = out.zones.find((z) => z.id === 'highspine_i11')!;
   const SPINE = ATLAS.zones.find((z) => z.id === 'highspine')!;
-  const I10 = MAP_DEFS.find((d) => d.id === 'highspine_i10')!, i10 = out.zones.find((z) => z.id === 'highspine_i10')!;
+  const I10 = mapDef('highspine_i10'), i10 = out.zones.find((z) => z.id === 'highspine_i10')!;
   const onI10 = (x: number, y: number): boolean => x >= i10.x && x < i10.x + i10.w && y >= i10.y && y < i10.y + i10.h;
   const walked10 = spread(out, i10.x + 27, i10.y + 31, (x, y) => onI10(x, y) && out.passable(x, y) === 'ok');
   const who10 = (name: string): Person => I10.features!.find((f) => f.kind === 'npc' && f.name === name) as Person;
   const [master, girl, champion] = [who10('A caravan-master'), who10('A girl'), who10('Edric, the old champion')];
-  const king = I10.encounters!.find((g) => g.id === 'i10_king')!, stair = I10.encounters!.find((g) => g.id === 'i10_stair')!;
+  const king = groupOn(I10, 'i10_king'), stair = groupOn(I10, 'i10_stair');
   const parley = (v: Walk, label: string): string => {
     v.world.travel('highspine_i10', king.x + 2, king.y, WEST);
     const r = v.world.move('forward'), c = v.world.question(king.id), a = c?.answers.find((x) => x.label === label);
@@ -107,13 +107,13 @@ function rangeParts() {
     listen(v);
     return said;
   };
-  const I9 = MAP_DEFS.find((d) => d.id === 'sheerpoint_i9')!, i9 = out.zones.find((z) => z.id === 'sheerpoint_i9')!;
+  const I9 = mapDef('sheerpoint_i9'), i9 = out.zones.find((z) => z.id === 'sheerpoint_i9')!;
   const POINT = ATLAS.zones.find((z) => z.id === 'sheerpoint')!;
-  const I8 = MAP_DEFS.find((d) => d.id === 'sheerpoint_i8')!, i8 = out.zones.find((z) => z.id === 'sheerpoint_i8')!;
+  const I8 = mapDef('sheerpoint_i8'), i8 = out.zones.find((z) => z.id === 'sheerpoint_i8')!;
   const onI8 = (x: number, y: number): boolean => x >= i8.x && x < i8.x + i8.w && y >= i8.y && y < i8.y + i8.h;
   const at8 = (f: { x: number; y: number }): number => (i8.y + f.y) * out.width + i8.x + f.x;
   const walked8 = spread(out, i8.x + 20, i8.y + 31, (x, y) => onI8(x, y) && out.passable(x, y) === 'ok');
-  const ev8 = (id: string): { x: number; y: number } => I8.features!.find((f) => f.kind === 'event' && f.id === id)!;
+  const ev8 = (id: string): { x: number; y: number } => featureOn(I8, id, 'event');
   const water = (x: number, y: number): boolean => ['W', '~'].includes(out.at(i8.x + x, i8.y + y).ch);
   return { out, j11, k10, j10, onJ11, I11, i11, SPINE, I10, i10, onI10, walked10, who10, master, girl, champion, king, stair, parley, I9, i9, POINT, I8, i8, onI8, at8, walked8, ev8, water };
 }
@@ -144,7 +144,7 @@ function range(): Scene[] {
       ok(due.join(' / ') === 'Monks\' Vale.', `at 22, the vale named, no more (${due.join(' / ')})`);
       ok(two.join(' / ') === `Monks' Vale. ${VALE.crossing?.harder}`, `at 20, the rest in the range's own words (${two.join(' / ')})`);
       ok(low.join(' / ') === `Monks' Vale. ${VALE.crossing?.warning}`, `at 19, the harsher words, and the way back over the pass open (${low.join(' / ')})`);
-      const K10 = MAP_DEFS.find((d) => d.id === 'coldmere_k10')!, J10 = MAP_DEFS.find((d) => d.id === 'monksvale_j10')!;
+      const K10 = mapDef('coldmere_k10'), J10 = mapDef('monksvale_j10');
       ok(J11.exits?.length === 1 && J11.exits[0] === GATE && !(K10.exits ?? []).length && !(J10.exits ?? []).length,
         'nothing is taken over the pass: the vale\'s only way out but its edges is Highcell\'s gate, and K10 and J10 have none');
       // Back over the pass: straight back within the hour, nothing said.
@@ -254,7 +254,7 @@ function range(): Scene[] {
       const onI11 = (x: number, y: number): boolean => x >= i11.x && x < i11.x + i11.w && y >= i11.y && y < i11.y + i11.h;
       const walked = spread(out, i11.x + 31, i11.y + 10, (x, y) => onI11(x, y) && out.passable(x, y) === 'ok');
       const peak = ATLAS.sites.find((s) => s.name === 'Peak Stone')!;
-      const stone = I11.features!.find((f) => f.kind === 'event' && f.id === 'i11_stone')!;
+      const stone = featureOn(I11, 'i11_stone', 'event');
       ok(i11.x + stone.x === Math.floor(peak.at[0]) && i11.y + stone.y === Math.floor(peak.at[1]) && !peak.planned && walked.has(square(out, i11, stone.x, stone.y)),
         'the Peak Stone stands at the atlas\'s site, 28,0, built, and the crest path reaches it from the crossing');
       ok(road(out, i11.x + 27, i11.y) && walked.has(square(out, i11, ({ x: 27, y: 0 }).x, ({ x: 27, y: 0 }).y)) && road(out, i11.x + 27, i11.y - 1),
@@ -278,16 +278,16 @@ function range(): Scene[] {
       see(w, 'highspine_i11:i11_shadow');
       see(w, 'highspine_i11:i11_nest');
       const nest = I11.features!.find((f) => f.kind === 'chest' && f.id === 'i11_nest_bones');
-      const nesting = I11.encounters!.find((g) => g.id === 'i11_eagles_nest')!;
+      const nesting = groupOn(I11, 'i11_eagles_nest');
       ok(nest?.kind === 'chest' && nest.items.includes('lantern_badge') && nest.items.includes('grey_part') && walked.has(square(out, i11, nest.x, nest.y)) && Math.abs(nesting.x - nest.x) + Math.abs(nesting.y - nest.y) <= 2 && nesting.monsters.every((m) => m === 'spine_eagle'),
         'in the nest above the Stone, with the eagles at it, a Lantern\'s badge and a smooth grey part');
 
       // The lookout over Ashfall at the Sheer's top, Fire Mountain seen; Ashfall's ground at its foot is
       // reached by a climb down it and no other way.
-      const lookout = I11.features!.find((f) => f.kind === 'event' && f.id === 'i11_lookout')!;
+      const lookout = featureOn(I11, 'i11_lookout', 'event');
       ok(lookout.kind === 'event' && lookout.text.includes('Fire Mountain') && walked.has(square(out, i11, lookout.x, lookout.y)) && out.at(i11.x + lookout.x - 1, i11.y + lookout.y).ch === '|', 'the lookout at the Sheer\'s top, Fire Mountain seen over Ashfall');
       see(w, 'highspine_i11:i11_lookout');
-      const under = I11.features!.find((f) => f.kind === 'event' && f.id === 'i11_ash')!;
+      const under = featureOn(I11, 'i11_ash', 'event');
       ok(!walked.has(square(out, i11, under.x, under.y)) && spread(out, i11.x + 31, i11.y + 10, (x, y) => onI11(x, y) && out.passable(x, y, { climb: true }) === 'ok').has(square(out, i11, under.x, under.y)),
         'under the Sheer, Ashfall\'s grey pines are reached by a climb down it, and no other way');
 
@@ -424,7 +424,7 @@ function range(): Scene[] {
       see(w, 'highspine_i10:i10_smoke');
       see(w, 'highspine_i10:i10_rope');
       const [chimney] = I10.secrets!;
-      const ledge = I10.features!.find((f) => f.kind === 'event' && f.id === 'i10_ledge')!;
+      const ledge = featureOn(I10, 'i10_ledge', 'event');
       const watch = ATLAS.sites.find((s) => s.name === 'Stairwatch')!;
       const sealedLedge = new Set<number>(), go = [[i10.x + chimney.x, i10.y + chimney.y - 1]];
       while (go.length) {
@@ -494,7 +494,7 @@ function range(): Scene[] {
       // Up the trail the wind off the sea warm over the crest, the giants' cairn, the snow gone off the
       // rocks, the masons' sledge, and at the end the Hearth over the sea, its heat on the face, and the
       // causeway running out to it; beside the trail the cairns to steer by in cloud.
-      const ev9 = (id: string): { x: number; y: number } => I9.features!.find((f) => f.kind === 'event' && f.id === id)!;
+      const ev9 = (id: string): { x: number; y: number } => featureOn(I9, id, 'event');
       const upTrail = ['i9_wind', 'i9_giants', 'i9_thaw', 'i9_sledge', 'i9_hearth', 'i9_causeway'];
       ok(upTrail.every((id) => trail9.has(square(out, i9, (ev9(id)).x, (ev9(id)).y))) && upTrail.every((id, i) => i === 0 || ev9(id).y < ev9(upTrail[i - 1]).y),
         'on the trail north, in order: the warm wind, the giants\' cairn, the snow gone off the rocks, the sledge, the Hearth and the causeway');
@@ -506,7 +506,7 @@ function range(): Scene[] {
       // The box's groups, each won at its floor: the eagles over the pines by the way in, the snow trolls
       // lying in the gully where the snow is trodden to ice, and on the trail's end the Ashen masons, the
       // Hand's people, who never break.
-      const masons = I9.encounters!.find((g) => g.id === 'i9_masons')!;
+      const masons = groupOn(I9, 'i9_masons');
       ok(MONSTER_DEFS.ashen_mason.kind === 'person' && !!MONSTER_DEFS.ashen_mason.steady && masons.monsters.every((m) => m === 'ashen_mason') && trail9.has(square(out, i9, masons.x, masons.y)) && masons.y < ev9('i9_sledge').y,
         'on the trail\'s end, past their sledge, the Ashen masons, people who never break');
       see(w, 'sheerpoint_i9:i9_trodden');
@@ -599,7 +599,7 @@ function range(): Scene[] {
       // The box's groups, each won at its floor: the eagles over the tip at the track's foot, the masons at
       // the causeway's root, and on its end the second group with their foreman, the box's hardest, who
       // stand at their work; by night a snow troll come down to the shore. The Hand never breaks.
-      const g8 = (id: string) => I8.encounters!.find((g) => g.id === id)!;
+      const g8 = (id: string) => groupOn(I8, id);
       const [masons8, foreman8, troll8] = ['i8_masons', 'i8_foreman', 'i8_troll'].map(g8);
       ok(masons8.x === 17 && masons8.y === 7 && foreman8.x === 17 && foreman8.y === 2 && foreman8.monsters.length > masons8.monsters.length && [...masons8.monsters, ...foreman8.monsters].every((m) => m === 'ashen_mason')
         && foreman8.leader === 'ashen_mason' && foreman8.roams === false && !!MONSTER_DEFS.ashen_mason.steady,
@@ -612,7 +612,7 @@ function range(): Scene[] {
       // the bay: by the lodge's fire until the company comes into the range, then by Highcell's gate until
       // it reaches the Point, then at the camp on the shingle; never two at once, nor before the lodge.
       const { I8, at8, walked8, water } = parts();
-      const LODGE = MAP_DEFS.find((d) => d.id === 'rime_lodge')!;
+      const LODGE = mapDef('rime_lodge');
       const wenna = (d: MapDef): Person => d.features!.find((f) => f.kind === 'npc' && f.name === 'The girl out of the hole') as Person;
       const byLodge = wenna(LODGE), byGate = wenna(J11), byCamp = wenna(I8);
       const v = newWalk(ok);
@@ -632,7 +632,7 @@ function range(): Scene[] {
       // The night (#730): the fire's rest counts it with her there and not before. Rested at, she is gone;
       // one of the company shouting, the boat going out along the stones from nowhere seen, and her knot on
       // the first stone. A rest at the fire before the lodge is the usual rest and sets nothing.
-      const knot = I8.features!.find((f) => f.kind === 'event' && f.id === 'i8_knot')!;
+      const knot = featureOn(I8, 'i8_knot', 'event');
       const early = newWalk(ok);
       early.world.travel('sheerpoint_i8', camp8!.x, camp8!.y);
       const usual = restAndWake(early.world, early.party);
@@ -840,8 +840,8 @@ function spineBehind(): Scene[] {
 type Chest = Extract<Feature, { kind: 'chest' }>;
 type Happening = Extract<Feature, { kind: 'event' }>;
 /** J12's chest, or its event, by id. */
-const hollowChest = (id: string): Chest => mapOf('monksvale_j12').features!.find((f): f is Chest => f.kind === 'chest' && f.id === id)!;
-const hollowEvent = (id: string): Happening => mapOf('monksvale_j12').features!.find((f): f is Happening => f.kind === 'event' && f.id === id)!;
+const hollowChest = (id: string): Chest => featureOn('monksvale_j12', id, 'chest');
+const hollowEvent = (id: string): Happening => featureOn('monksvale_j12', id, 'event');
 
 /**
  * The iron-bound chest on the real map (#863), pressed on in a game of its own with the company dressed each way: a
@@ -1011,7 +1011,7 @@ function thirdPrestiges(): Scene[] {
         { how: 'The Vigil', cls: 'monk', slot: 3, map: 'monksvale_j11', who: 'Oswin, the summit\'s hermit', groups: ['j11_vigil'], asked: VIGIL_ASKED, held: VIGIL_KEPT, quest: 'vigil', goal: /Keep the vigil/, dawn: 'You sat it out', entries: ['asked', 'night', 'kept'] },
       ] as const;
       for (const n of nights) {
-        const w = company(n.slot, n.cls), p = npc(n.map, n.who), gs = n.groups.map((id) => mapOf(n.map).encounters!.find((e) => e.id === id)!);
+        const w = company(n.slot, n.cls), p = npc(n.map, n.who), gs = n.groups.map((id) => groupOn(n.map, id));
         const sent = seeking(w, n.slot);
         ok(sent === `Find ${n.who} in ${mapOf(n.map).name}.`, `${n.how}: at ${LEVEL} with the second, ${w.party.members[n.slot].name} is sent to the trainer (${sent})`);
         until(w, 12);
@@ -1071,13 +1071,13 @@ function thirdPrestiges(): Scene[] {
         && offers(hereward.teaches!, w.party, w.world.state)[0]?.bar === 'the quest first' && /Go down the Dead-Drop/.test(log(w, 'whose_hand')?.goal ?? ''),
         `Whose Hand: his own words first, then his ask, once, which begins it and ends the seeking, and the menu waits on it (${log(w, 'whose_hand')?.goal})`);
       const won = (id: string): void => { for (const g of mapOf(id).encounters ?? []) if (w.world.walks(g, g.x, g.y) && !w.world.ended(g)) fight(w, `${id}:${g.id}`); };
-      const way = (from: string, to: string) => mapOf(from).exits!.find((e) => e.to === to)!;
+      const way = (from: string, to: string) => exitTo(from, to);
       const foot = way('dead_drop_stair', 'dead_drop');
       walkThrough(w, 'dead_drop_stair', foot.x, foot.y + 1, NORTH, 'dead_drop', 1);
       won('dead_drop');
       for (const [from, to] of [['dead_drop', 'dead_drop2'], ['dead_drop2', 'dead_drop3']]) { const e = way(from, to); walkThrough(w, from, e.x, e.y - 1, SOUTH, to, 1); if (to !== 'dead_drop3') won(to); }
-      const C = mapOf('dead_drop3'), desk = C.encounters!.find((g) => g.id === 'dd3_tallymaster')!, writes = C.features!.find((f) => f.kind === 'event' && f.id === 'dd3_writes')!;
-      const tray = C.features!.find((f) => f.kind === 'chest' && f.id === 'dd3_orders')!;
+      const C = mapOf('dead_drop3'), desk = groupOn(C, 'dd3_tallymaster'), writes = featureOn(C, 'dd3_writes', 'event');
+      const tray = featureOn(C, 'dd3_orders', 'chest');
       see(w, `${C.id}:dd3_writes`);
       const besideWrites = w.world.adjacentGroups().length;
       w.world.travel(C.id, tray.x, tray.y);
@@ -1114,7 +1114,7 @@ function thirdPrestiges(): Scene[] {
  * stood a hand off its own worn place, every niche full and the last cut with a count a reader reads.
  */
 function highcell(w: Walk, ok: (cond: boolean, msg: string) => void): void {
-  const [L1, L2] = ['monastery', 'monastery2'].map((id) => MAP_DEFS.find((d) => d.id === id)!);
+  const [L1, L2] = ['monastery', 'monastery2'].map((id) => mapDef(id));
   const def = (id: string) => MONSTERS.find((m) => m.id === id)!;
   w.level = 23;
 
@@ -1181,14 +1181,14 @@ function highcell(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   ok(w.world.state.x === L2.start.x && w.world.state.y === L2.start.y && w.world.state.facing === SOUTH, `the night stair comes down into the lower house (${here(w)})`);
   see(w, 'monastery2:hc2_stair');
   see(w, 'monastery2:hc2_chapter');
-  const chapter = L2.encounters!.find((g) => g.id === 'hc2_chapter')!;
+  const chapter = groupOn(L2, 'hc2_chapter');
   ok(chapter.monsters.join() === 'brother,brother,bell_ringer,bell_ringer' && !!chapter.respawn && !!def('bell_ringer').ranged && def('bell_ringer').inflict?.cond === 'paralysed'
     && ['brother', 'bell_ringer', 'abbot'].every((m) => def(m).kind === 'machine'), 'the chapter house: brothers in front of two bell-ringers, whose bells hold from the back; machines all');
   fight(w, 'monastery2:hc2_chapter');
 
   // The Abbot on its seat, won at the house's floor: it never comes back, and its robe falls open.
   fight(w, 'monastery2:hc2_abbot');
-  const abbot = L2.encounters!.find((g) => g.id === 'hc2_abbot')!;
+  const abbot = groupOn(L2, 'hc2_abbot');
   ok(abbot.monsters.join() === 'abbot' && !abbot.respawn && !!abbot.slainText?.includes('its robe falls open'), 'the Abbot, alone on its seat, falls and never comes back, and its robe falls open as it falls');
 
   // The secret: the seat stands a hand off the hollows its feet have worn in the floor; searched behind
@@ -1456,7 +1456,7 @@ function theBounds(ok: (cond: boolean, msg: string) => void): void {
 
   // The hills and pines, walked from the way in to every point and to both groups' squares, and no further.
   const start = J8.start, walked = steps(j8, [start.x, start.y], {}, [2, 18]);
-  const eagles = J8.encounters!.find((g) => g.id === 'j8_eagles')!, trolls = J8.encounters!.find((g) => g.id === 'j8_trolls')!;
+  const eagles = groupOn(J8, 'j8_eagles'), trolls = groupOn(J8, 'j8_trolls');
   ok(J8.band![0] === 22 && start.x === 0 && start.y === 19 && !(J8.exits ?? []).length && walked.size === 89
     && J8.features!.filter((f) => f.kind !== 'chest' && !('id' in f && f.id === 'j8_house')).every((f) => walked.has(sq(j8, f.x, f.y))) && walked.has(sq(j8, eagles.x, eagles.y)) && walked.has(sq(j8, trolls.x, trolls.y)),
     `the hills and pines (${walked.size} squares) are walked from the way in on I8's side to every point and to both groups' squares, and no further; nothing is taken out of the box`);

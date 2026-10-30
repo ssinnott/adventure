@@ -5,7 +5,7 @@
 // that they call (`overThePass`, `parley`, `KING`). The Whitespine's walkthrough plays them, and a later
 // chapter's walkthrough or steps.ts replays them by this file, never by the walkthrough; nothing in the
 // game imports it.
-import { walkThrough, see, fight, listen, written, atLevel, mapOf } from '../../../../tools/kit/walk.ts';
+import { walkThrough, see, fight, listen, written, atLevel, mapOf, groupOn, featureOn } from '../../../../tools/kit/walk.ts';
 import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { SOUTH, EAST, WEST } from '../../../game/types.ts';
 import { answer } from '../../../game/people.ts';
@@ -18,7 +18,7 @@ import { STAIR_TOP } from './public.ts';
 import { CHAPTER } from './chapter.ts';
 
 /** The king on the Stair's head, whose toll is put before his fight. */
-export const KING = mapOf('highspine_i10').encounters!.find((g) => g.id === 'i10_king')!;
+export const KING = groupOn('highspine_i10', 'i10_king');
 
 /**
  * Over the pass from K10 onto J10's road, and down it across J10's corner onto J11's road at its foot,
@@ -46,7 +46,7 @@ const TO_THE_GATE: Step = { name: 'over the pass to Highcell', play: (w) => {
 const HIGHCELL: Step = { name: 'Highcell', play: (w) => {
   walkThrough(w, 'monksvale_j11', GATE.x, GATE.y - 1, SOUTH, 'monastery', 1);
   see(w, 'monastery:hc1_cells');
-  const board = mapOf('monastery').features!.find((f) => f.kind === 'sign' && f.id === 'hc1_board')!;
+  const board = featureOn('monastery', 'hc1_board', 'sign');
   const reader = w.party.members[4], skills = reader.skills;
   reader.skills = ['linguist'];
   w.world.travel('monastery', board.x, board.y);
