@@ -119,6 +119,9 @@ const L10 = mapDef('longmere_l10'), L11 = mapDef('longmere_l11');
 
 /** The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run builds once (#1018). */
 const outdoors = (): GameMap => ownMaps()[OUTDOORS];
+/** The world's grid (`worldGrid`), worked out once a run where a milestone is first counted: nothing writes it. */
+let GRID: ReturnType<typeof worldGrid> | undefined;
+const theGrid = (): ReturnType<typeof worldGrid> => (GRID ??= worldGrid(ATLAS, MAP_DEFS));
 /** A person of a map met by name where they stand, and what they say: the old body's `spoken`, on a scene's walk. */
 const speaker = (w: Walk) => (def: typeof M9, name: string): string => { const p = person(def, name); w.world.travel(def.id, p.x, p.y); return meet(p, w.party, heard(w.world, p)).text; };
 /** A search at a square that walks into what it opens, and a box's edge walked into the next: on a scene's walk, by its `ok`. */
@@ -147,13 +150,12 @@ function roadParts() {
   const m9 = out.zones.find((z) => z.id === 'longmere_m9')!, n8 = out.zones.find((z) => z.id === 'cairnfield_n8')!;
   const l9 = out.zones.find((z) => z.id === 'longmere_l9')!;
   const onM9 = on(m9), onL9 = on(l9);
-  const grid = worldGrid(ATLAS, MAP_DEFS);
   const [px, py] = ATLAS.links.find((l) => l.from === 'coldmere' && l.to === 'monksvale')!.a!;
   const units = (n: number): number => Math.max(1, Math.round(n / 13));
   const counted = (z: typeof m9, def: typeof M9, id: string, ahead: { name: string; at: readonly [number, number] } = { name: 'THE PASS', at: [px, py] }): { says: boolean; toLodge: number; toPass: number } => {
     const stone = featureOn(def, id, 'event');
     const [sx, sy] = [z.x + stone.x, z.y + stone.y];
-    const fromStone = paces(out, sx, sy, corner(out, drove(out, grid)));
+    const fromStone = paces(out, sx, sy, corner(out, drove(out, theGrid())));
     const toLodge = (fromStone.get((m9.y + GATE.y) * out.width + m9.x + GATE.x + 1) ?? Infinity) + 1;
     const end = [...fromStone].map(([k, n]) => ({ n, left: Math.abs(k % out.width - ahead.at[0]) + Math.abs(Math.floor(k / out.width) - ahead.at[1]) }))
       .reduce((a, b) => (b.left < a.left || (b.left === a.left && b.n < a.n) ? b : a));
