@@ -596,6 +596,12 @@ Decided by the owner's delegate for #892, each the owner's to overturn:
 - **The death line** is −10 hit points at every level: a member at 0 or below is unconscious and
   dies at −10. Die Hard dies at −20 and an Ironhide at −30 (`deathAt`,
   `src/game/party/conditions.ts`). Decided by the owner's delegate, 16 October 2026 (#18, #808).
+- **A wipe** is not the end: with every member down, in a fight or out of one, the Lanterns carry
+  the company to the nearest chapel standing by the road of levels (the area it fell in, else the
+  nearest behind it, else ahead; Town Portal's town if none stands). The first in the party order
+  wakes there at the next morning on 1 hit point, every condition lifted, for nothing; the rest lie
+  as they fell, for the chapel to raise at its price. Nothing is taken and nothing is saved
+  (`nearestChapel`, `src/game/chapel.ts`). Decided by the owner's delegate, 30 October 2026 (#1069).
 - **Flee** is always an option and a chance, not a promise: the faster the party is than what it
   flees, the likelier, from 15% to 90%; a failed flight costs the round (`flee`,
   `src/game/combat.ts`). The cost is where you end up.
