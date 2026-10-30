@@ -24,14 +24,19 @@ in `docs/areas/`. Cut from the slice's doc by #1023, which keeps that doc whole 
 - **`tools/`** is the tools, each one's usage in its header; `tools/kit/` is what they share with
   the suites and the walkthroughs (the headless game, the fight, the company, the line and the
   rules, #984); `tools/tests/` holds the suites, a file each, which `tools/test.ts` finds.
-- **`types/`** is typed with the rest: `tsc -p tsconfig.json` runs over `src/`, `tools/` and it.
+- **`types/`** is typed with the rest: `tsc -p tsconfig.json` runs over `src/`, `tools/` and it,
+  with `noUnusedLocals` and `noUnusedParameters`, the engine's rig stack left out (`tsconfig.json`
+  says why, #972).
 
 The `layers` suite (`tools/tests/layers.ts`, EXPANSION §8.1, #900) reads the runtime imports of
 `src/` and `tools/` and holds them to the layers: no cycle among `src`'s, nothing in `src/game`
 taking content, the UI or the app, nothing in the UI the app, no area another's files but its
 `src/content/areas/<area>/public.ts` (#992) and the walkthroughs and the suites taking `src` and
 `tools/kit/` alone. Today's crossings are the rows of its `KNOWN`, each under the issue that clears
-it; a new crossing fails, and so does a row that no longer crosses.
+it; a new crossing fails, and so does a row that no longer crosses. Beside it the `unused` suite
+(`tools/tests/unused.ts`, #972) holds every export of `src/` outside `src/lib/` to an importer or to
+an entry point its `ENTRY` lists with why: a family's `draw`, a walkthrough's `scenes`, an area's
+`CHECKS` and its `src/content/areas/<area>/public.ts`, and the three kits.
 
 ## The outdoors as one map
 

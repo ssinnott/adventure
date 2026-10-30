@@ -443,19 +443,19 @@ under `src/ui` under `src/app` (and its entry, `src/main.ts`), the tools taking 
 `tools/kit/` only `src`, the walkthroughs and the suites `src` and `tools/kit/` and not each other
 or the tools, no area another's files but its `src/content/areas/<area>/public.ts` and no cycle
 among `src`'s runtime imports; `tools/tests/layers.ts` holds it, today's crossings the rows of its
-`KNOWN`, which only ever go (#900).
+`KNOWN`, which only ever go (#900). An export is imported or an entry point
+`tools/tests/unused.ts` lists (#972).
 
 The lanes are read as code, not by eye (#899): `node tools/lanes.ts <base>` lists the lanes the
 files changed since `<base>` fall in, each with its files, by the table of docs/ISSUES.md §2 (which
 adds a design lane, `docs/`, to the rows above), and the checks' `lanes` job writes the same into a
 pull request's summary beside the lane labels its event carries: a line for each lane a file falls
 in that the labels lack, one for each label no file falls under and one where no lane label is on
-yet. It tells and never gates. A file no lane holds (the vendored `src/lib/`, or a kind of file the
-table lacks) is listed outside every lane. The command line is `tools/lanes.ts`; the table, the
-report and the reading of the diff are `tools/kit/lanes.ts`, the kit's first file, which
-`tools/tests/lanes.ts` holds.
+yet. It tells, never gates. A file no lane holds (the vendored `src/lib/` or a kind of file the
+table lacks) is listed outside every lane. The table, the report and the reading of the diff are
+`tools/kit/lanes.ts`, the kit's first file, which `tools/tests/lanes.ts` holds.
 
-The kit holds what the walkthroughs and the suites take, as #984 filled it: the fight once
+The kit holds what the walkthroughs and the suites take (#984): the fight once
 (`tools/kit/fight.ts`: `playOut`, `ROUND_CAP`, the gate's bot, its fight, its win rate and their
 memo), the premade company and its ladder (`tools/kit/company.ts`), the test monster's line
 (`tools/kit/line.ts`, its two tables in `tools/kit/line.json`, which
@@ -466,7 +466,7 @@ module a suite) and the libraries of `checks`, `grounds`, `ways`, `shipped`, `ch
 each other; `roadPlace` is `src/game/atlas.ts`'s, beside `areaBand`.
 
 #985 put the walk in it: `tools/kit/walk.ts`, the walk the walkthroughs and three suites take and,
-once, the helpers the walkthroughs wrote each for itself, and `tools/kit/grid.ts` beside it, the
+once, the helpers each walkthrough wrote for itself, and `tools/kit/grid.ts`, the
 floods and tests over a map's squares and `ALL`. The chain a later chapter replays (`STEPS`,
 `FARM_FIRST`, Saltreach's `inOrder` and `saltmouthFirst`) moves to its steps.ts in H8: the kit
 takes no walkthrough.
@@ -475,10 +475,10 @@ The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; i
 (`src/ui/monsters/kit/`) and the rooms' (`src/ui/interiors/kit/`) are the systems lane's, as
 `tools/kit/` is quality's (#983). A family or a scene takes a kit's helper when it is next edited,
 not in a sweep, and a helper a third family or a third scene wants goes into the kit by a small pull
-request of its own, not into a copy in a third file: the rule of three.
+request of its own, not a copy in a third file: the rule of three.
 
 The tools that open the game in Chromium (the smoke, the sheet, the gallery, the interiors, the
-world map and `tools/shot.ts`) start it in one place, `tools/kit/browser.ts` (#986), which imports
+world map and `tools/shot.ts`) start it in `tools/kit/browser.ts` alone (#986), which imports
 Playwright by name as the pinned dependency it is (§8.3), launches it once with its fallback and
 opens the game on a page, its errors gathered and, for the smoke and the sheet, its `Math.random`
 pinned. The sheet, the gallery, the interiors and the world map read their command lines strictly by

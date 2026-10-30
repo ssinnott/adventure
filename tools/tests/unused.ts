@@ -1,11 +1,12 @@
 // The exports (#972, part of #848): every export of src/ outside src/lib/ is imported or is an entry
-// point, which ENTRY names with its reason (EXPANSION §8.1); `noUnusedLocals` holds a file's locals and
-// cannot see an export. An export is imported by name (an `import { … }`, in types too, or an
-// `export { … } from`, which counts for the file it names), by a module taken whole (`import * as`,
-// `export *`, an `import()` as it runs) or as a name a tool reads off a module it loads in the page by
-// a literal path (`V.washes` after tools/kit/browser.ts's `load('/src/ui/viewport.ts')`), which no
-// import names. An export nothing takes fails by its file and name, and so does a row of ENTRY that
-// names no export. The files are read by the lexer of tools/kit/graph.ts, not the compiler.
+// point, which ENTRY names with its reason (EXPANSION §8.1), as `noUnusedLocals` and
+// `noUnusedParameters` (tsconfig.json) hold a file's locals and parameters and cannot see an export.
+// An export is imported by name (an `import { … }`, in types too, or an `export { … } from`, which
+// counts for the file it names), by a module taken whole (`import * as`, `export *`, an `import()` as
+// it runs) or as a name a tool reads off a module it loads in the page by a literal path (`V.washes`
+// after tools/kit/browser.ts's `load('/src/ui/viewport.ts')`), which no import names. An export
+// nothing takes fails by its file and name, and so does a row of ENTRY that names no export. The
+// files are read by the lexer of tools/kit/graph.ts, not the compiler.
 import { readdirSync, readFileSync } from 'node:fs';
 import { posix } from 'node:path';
 import { fileURLToPath } from 'node:url';
