@@ -9,15 +9,17 @@ import { monster, monsterSpells } from './monsters.ts';
 import { spell } from './spells.ts';
 import { item, ELEMENT_DIE, chargesLeft } from './items.ts';
 import {
-  attackBonus, weaponOf, isDown, canAct, damage, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay, armsBonus, prestigeOf,
+  attackBonus, weaponOf, isDown, canAct, damage, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay, armsBonus,
   statOf, borne, useItem,
 } from './party.ts';
 import type { Party } from './party.ts';
 import type { Tables } from './tables.ts';
 import { FRONT_ROW, MAX_MONSTERS, HASTE_SPEED, describe, toHit, roll, standing, frontStands, aliveMonsters, HOLD_BREAKS } from './combat/state.ts';
 import type { MonsterInst, TurnRef, PartyAction, Loot, CombatState, CombatOpts, CombatGroup } from './combat/state.ts';
-import { STONE_LINE, FIRST_LINE, SNEAK_LINE, victoryLine } from './combat/lines.ts';
-import { blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow, strikesFirst, sneaks } from './combat/perks.ts';
+import { STONE_LINE, FIRST_LINE, SNEAK_LINE, FOLLOW_LINE, victoryLine } from './combat/lines.ts';
+import {
+  blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow, strikesFirst, sneaks, followsThrough,
+} from './combat/perks.ts';
 import { hurtMonster, elemental, castSpell } from './combat/casting.ts';
 import {
   canReach, waits, monsterAc, monsterHit, guard, castable, struck, monsterCast, sweep, regenerate, dim, calledBy, canCall, clocked, beat, call,
@@ -85,10 +87,10 @@ function newRound(s: CombatState, party: Party, rng: RngInstance): void {
   const haste = s.haste > 0 ? HASTE_SPEED : 0;
   party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: statOf(s.tables.items, c, 'speed') + haste + rng.range(0, 4) }); });
   s.monsters.forEach((m, i) => { if (standing(m)) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
-  // A monk of the second prestige always acts first in a round; while an Arms Master stands
-  // (`strikesFirst`; #856, #1070), every member acts before any monster, in every round.
+  // While an Arms Master stands (`strikesFirst`; #856, #1070), every member acts before any monster,
+  // in every round. No member acts first of the rest: a Windwalker takes its speed's place (#1070).
   const armsMaster = strikesFirst(party);
-  const first = (r: TurnRef): number => (r.side !== 'party' ? 0 : party.members[r.i].cls === 'monk' && prestigeOf(party.members[r.i]) >= 2 ? 2 : armsMaster ? 1 : 0);
+  const first = (r: TurnRef): number => (r.side === 'party' && armsMaster ? 1 : 0);
   refs.sort((a, b) => first(b.ref) - first(a.ref) || b.speed - a.speed);
   s.order = refs.map((r) => r.ref);
   s.turn = 0;
@@ -149,7 +151,8 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       let m = s.monsters[action.target];
       if (!m || !canAttackFromRow(s.tables.items, c, t.i) || !canReach(s, c, action.target)) return false;
       const w = weaponOf(s.tables.items, c), edge = s.edge?.(c, s);
-      const blows = blowsOf(s.tables.items, c) + (edge ? edge.blows - 1 : 0), song = songDamage(party);
+      const own = blowsOf(s.tables.items, c) + (edge ? edge.blows - 1 : 0), song = songDamage(party), carries = followsThrough(c);
+      let blows = own;
       for (let blow = 0; blow < blows; blow++) {
         // A later blow falls on the weakest foe still standing, once the first's has fallen.
         if (!standing(m)) { const left = aliveMonsters(s).filter((i) => canReach(s, c, i)); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
@@ -160,7 +163,11 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
           const sneak = sneaks(s, c, m), dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
             + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
           hurtMonster(m, dmg);
-          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
+          // The Windwalker's follow-through (`followsThrough`, #1070): a blow that fells its foe is not
+          // spent while a foe it can reach stands, at most once more for each of the turn's own blows.
+          const on = carries && m.hp <= 0 && blows < 2 * own && aliveMonsters(s).some((i) => canReach(s, c, i));
+          if (on) blows++;
+          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : '') + (on ? ` ${FOLLOW_LINE}` : ''));
         } else s.log.push(`${c.name} misses ${m.def.name}.`);
       }
       break;
