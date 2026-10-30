@@ -358,6 +358,36 @@
         "14,4"
       ]
     },
+    "sjongwierde": {
+      "size": "16x16",
+      "used": [
+        "sw_boards",
+        "sw_chancel",
+        "sw_crown",
+        "sw_nave",
+        "sw_stair"
+      ],
+      "groups": [],
+      "doors": []
+    },
+    "sjongwierde2": {
+      "size": "16x16",
+      "used": [
+        "sw2_dead",
+        "sw2_floor",
+        "sw2_foot",
+        "sw2_gifts",
+        "sw2_jars",
+        "sw2_steps",
+        "sw2_stone"
+      ],
+      "groups": [
+        "sw2_chanter"
+      ],
+      "doors": [
+        "10,12"
+      ]
+    },
     "wytgat": {
       "size": "16x16",
       "used": [
@@ -455,6 +485,7 @@
     }
   },
   "flags": [
+    "b3_hiltje_met",
     "c3_saw_stone",
     "compact_cask",
     "meridian_read",

@@ -939,3 +939,57 @@ Decided by the builder for #830, each the owner's to overturn:
     to the fixture lair's id alone; with Wytgat it reads `wytgat,fx_lair`, and the assertion is now
     `ids(now.enclaves) === ids([...was.enclaves, LAIR])`, the same on main before it, a
     generalisation and no weakening.
+51. **The lair is Sjongwierde,** the song mound in the Tidefolk's tongue (*sjong* song, *wierde* a
+    mound above the flood): the mound where the priest of the rumour sang, a compound in the area's
+    tongue as Stienwierde and Sjonghol are (NAMES §3); it tells a company nothing outright.
+    Its two levels are `sjongwierde`, the church under the mound, and `sjongwierde2`, the
+    Undercroft; their features' and group's ids begin `sw_` and `sw2_`.
+52. **Its door is the stair in the drowned mound's crown, A5's 26,23,** the hills square A5 left
+    bare on the way along row 23 (§12.6), drawn as stone; the way back sets a company down on 25,23
+    facing back along the mound. It is the one square of A5 that changes, and A5 still stands 535
+    squares, since the crown was hills and walked before; nothing stands within four squares of it,
+    the nearest the bull toad at 25,28, six away, and it is no edge square, so no seam or row moves.
+    Its plates are at 34,151 and 34,155, two and six squares south of the door, as the
+    Randzeche's two stand south of its adit on P5.
+53. **Two levels, the first holding no group, chest or secret,** so that nothing in the lair is had
+    without the Old Chanter's fight: the church is its looks and the way down, as the Spittal's
+    first level is. The owner may want a group there; none of the area's kinds stands at 30, and a
+    group of the cap's from another area's roster would be a new choice.
+54. **The Old Chanter's numbers are set by the lair's gate,** as the Grave Drake's, Old Nick's and
+    the Steiger's were: drawn on the line's boss at 32 (2,100 hit points, attack 20, 34d8+41) it is
+    won 65% at 30 and 75% at 32, under the aim at 32. Of 1,731 rows searched, the drawn attack and
+    21 give none inside both aims over 400 seeds; 2,150 hit points, attack 25 and 25d8+41, its
+    armour, pace, blessing and curse kept, is won 61% at 30 and 93% at 32 at the gate's seeds and
+    66% and 92% over 400, the most central of the four rows inside both at both. Its fights end
+    inside the cap: of the gate's 100 at 30, 61 won, 34 lost and 5 broken off, and let run 63 won.
+    Off the line, its row carries its own `offLine` word, and it keeps the line's 20,373 xp.
+55. **The Telstok lies alone on the stone by the Old Chanter's place,** at 7,10, a step past the
+    steps it stands on, since it is drawn holding the staff and lies down there when it falls (its
+    `slainText`): a chest with no gold, as Grim's Axe lies on its bier. One in the world and sold
+    nowhere; the walkthrough asserts that no other chest, cairn, statue or shop holds it and no
+    monster drops it.
+56. **The secret is the hollow of the jars behind the singing floor's east wall,** at 10,12, found
+    from the steps that come back a beat late and hollow at 9,12, a hint no box of the area uses:
+    500 gold, an Elixir and a Sapphire Vial, the dearest healing and spell points sold, as the other
+    lairs' are. It lies past the Old Chanter, and no walker, wader, climber or floater reaches it
+    but through the wall.
+57. **The rumour is Hiltje's,** DESIGN §9's two lines, at every meeting after her first: her
+    greeting and her word on the god, then the two. Her herons' line gives way to them there, since
+    her three lines and the two would take 16 lines of the say box's 14; as it is, 12. Her first
+    meeting sets `b3_hiltje_met`, declared in Saltreach's `flags.ts`; the lines set nothing and say
+    nothing of the Old Chanter, so they hold whether it stands or has fallen. A company from an old
+    save that met her hears her first words again, and the rumour at the meeting after.
+58. **New here:** the lair itself (#845, #846), the area's one place at the cap, its guardian the
+    Old Chanter (drawn by #1045) and the area's artifact, a staff whose blows carry holy (#847).
+59. **The walkthrough walks the lair in `theBounds`,** last: the door's words at 10, 28 and 30 and
+    the signs; the first level's looks and nothing more; the Old Chanter on the one way on, nothing
+    past it reached while it stands, won at 30; the Telstok one in the world; the hollow found from
+    the wall and shut but through it; the way out onto A5's 25,23; and Hiltje's first meeting
+    without the lines and the next with them. A5's check that the mound was left bare is kept in
+    the door's: the stone with its hills about it, walked to along row 23, nothing within four
+    squares, on the mound or on its way from 20,23.
+60. **The owed rows go,** since the lair places both: `old_chanter` from the `owes` of Saltreach's
+    `checks.ts` (a monster no map places is owed in `owes.unplaced` until one does, EXPANSION §8.2),
+    which owes nothing now, and `telstok` from `UNPLACED` in `tools/tests/items.ts`, the one
+    shared-test line, as the owner's delegate ruled on #830 and #967 did for Grim's Axe. The items
+    suite finds the Telstok one in the world, in its lair, and the runner ends with nothing owed.

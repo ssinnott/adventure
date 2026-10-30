@@ -94,7 +94,7 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Salt Crab (`salt_crab`) | spider | beast | 11 | 127 | 19 | +7 | 3d7+3 | 8 | 578 | 0 | *White with salt, and it glitters when it moves.* | shrugs off sleep |
 | Leech (`leech`) | longbodies | beast | 10 | 87 | 16 | +7 | 2d6+3 | 12 | 393 | 0 | *Black, and as long as your arm.* | its hits heal it |
 | Bull Toad (`bull_toad`) | toads | beast | 12 | 278 | 16 | +9 | 3d7+6 | 8 | 947 | 0 | *It could swallow Ottilie whole.* | diseases, 0.15 a hit |
-| The Old Chanter (`old_chanter`) | skeleton | dead | 32 | 2100 | 29 | +20 | 34d8+41 | 13 | 20373 | 0 | *The first of the chanters, and it still sings the old song.* | curses, 0.2 a hit; casts Bless, every turn |
+| The Old Chanter (`old_chanter`) | skeleton | dead | 32 | 2150 | 29 | +25 | 25d8+41 | 13 | 20373 | 0 | *The first of the chanters, and it still sings the old song.* | curses, 0.2 a hit; casts Bless, every turn |
 
 ## Wrackholm (`wrackholm`)
 

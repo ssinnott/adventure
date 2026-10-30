@@ -80,7 +80,7 @@ const BUILT: Readonly<Record<string, { area: string; hand: string; classes: read
  * as that issue's while it waits and failed once it is placed, so its entry is dropped. The table only
  * shrinks, as the areas' owed places do (`Owes.unplaced`): an artifact comes into it only as it is defined.
  */
-const UNPLACED: Readonly<Record<string, string>> = { telstok: '#830' };
+const UNPLACED: Readonly<Record<string, string>> = {};
 /** The content's artifacts, and each one's twin without the mark: what the mark alone changes. */
 const ARTS = Object.values(ITEMS).filter((d) => d.artifact);
 const TWINS = Object.fromEntries(ARTS.map((d) => [d.id, { ...d, id: `test_${d.id}_twin`, artifact: undefined } satisfies ItemDef])) as Record<string, ItemDef>;
