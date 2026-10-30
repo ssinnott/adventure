@@ -436,6 +436,9 @@ secret found and never told, restraint), reads the text and the code.
 A content session that needs a change to a system stops and asks for one, or opens a systems pull
 request first; it never edits shared files on the side.
 
+Each lane's first read is CLAUDE.md's: `FIRST_READ` in `tools/kit/docs.ts`, which the `docs` suite
+holds under 25,000 tokens.
+
 The imports keep layers as the files keep lanes: `src/lib` under `src/game` under `src/content`
 under `src/ui` under `src/app` (and its entry, `src/main.ts`), the tools taking anything and
 `tools/kit/` only `src`, the walkthroughs and the suites `src` and `tools/kit/` and not each other
@@ -464,11 +467,10 @@ module a suite) and the libraries of `checks`, `grounds`, `ways`, `shipped`, `ch
 each other; `roadPlace` is `src/game/atlas.ts`'s, beside `areaBand`.
 
 #985 put the walk in it: `tools/kit/walk.ts`, the walk the walkthroughs and three suites take and,
-once, the helpers the walkthroughs wrote each for itself (meeting, answering, searching, opening a
-chest, reading a quest's page, setting the clock), and `tools/kit/grid.ts` beside it, the floods and
-tests over a map's squares (`reach`, `shut`, `reached`, `spread`, `paces`, `apartFrom`, a box's
-`row` and `col`) and `ALL`. The chain a later chapter replays (`STEPS`, `FARM_FIRST`, Saltreach's
-`inOrder` and `saltmouthFirst`) stays in its walkthrough, H8's: the kit takes no walkthrough.
+once, the helpers the walkthroughs wrote each for itself, and `tools/kit/grid.ts` beside it, the
+floods and tests over a map's squares and `ALL`. The chain a later chapter replays (`STEPS`,
+`FARM_FIRST`, Saltreach's `inOrder` and `saltmouthFirst`) stays in its walkthrough, H8's: the kit
+takes no walkthrough.
 
 The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; it, the monsters' kit
 (`src/ui/monsters/kit/`) and the rooms' (`src/ui/interiors/kit/`) are the systems lane's, as
