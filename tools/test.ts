@@ -34,10 +34,13 @@
 // By default a suite prints its name as it starts, then its failures and its owed lines; what else it
 // prints waits for --list or its first failure; every suite ends with a line of its seconds and its
 // count, and the run with a table of them, the slowest first, and a line of its wall before its last
-// line. Under --jobs a run's lines are held and print whole at its turn in the run's order, so that it
-// prints what one process prints but the seconds. A run narrowed to areas says which and why before
-// the table; with none given everything runs. Where GITHUB_STEP_SUMMARY is set, that line and the
-// table go into it too.
+// line. A walkthrough's scenes that run one after another print, but under --list, as its one run:
+// its name as the first starts, a scene by name only where it fails or owes, then one line and one
+// row of their seconds and counts summed, with how many and the slowest (#1033). Under --jobs a
+// run's lines are held and print whole at its turn in the run's order, so that it prints what one
+// process prints but the seconds. A run narrowed to areas says which and why before the table; with
+// none given everything runs. Where GITHUB_STEP_SUMMARY is set, that line and the table go into it
+// too.
 import { readdirSync, existsSync, appendFileSync, readFileSync } from 'node:fs';
 import { fork } from 'node:child_process';
 import { randomInt } from 'node:crypto';
@@ -164,8 +167,25 @@ const load = async (run: string): Promise<() => void | Promise<void>> => {
 };
 
 const log = console.log;
+/**
+ * The name of a scene that waits to print it (#1033): quiet, a scene among its walkthrough's prints
+ * its name only once it prints a line (`say`), and one that prints none shows in their line alone.
+ */
+let pending: string | undefined;
+/** A line printed, after the name of the scene that waits. */
+const say = (...a: unknown[]): void => { if (pending !== undefined) { log(pending); pending = undefined; } log(...a); };
 /** `k` of a thing, as '1 run', '4 cores', '3 processes'. */
 const many = (k: number, one: string): string => `${k} ${one}${k === 1 ? '' : one.endsWith('s') ? 'es' : 's'}`;
+/** The walkthrough a run is a scene of, `walkthrough:<area>` of `walkthrough:<area>:<scene>`. */
+const sceneOf = (run: string | undefined): string | undefined => (run === undefined ? undefined : /^(walkthrough:[^:]+):[^:]+$/.exec(run)?.[1]);
+/**
+ * A walkthrough's scenes run one after another as its one run: their seconds and counts summed,
+ * how many and the slowest.
+ */
+const asOne = (name: string, rs: readonly Ran[]): Ran => {
+  const slow = rs.reduce((a, b) => (b.secs > a.secs ? b : a)), sum = (k: 'secs' | 'held' | 'failed' | 'owed'): number => rs.reduce((n, r) => n + r[k], 0);
+  return { name, secs: sum('secs'), held: sum('held'), failed: sum('failed'), owed: sum('owed'), note: `${rs.length} scenes; the slowest, ${slow.name.slice(name.length + 1)}, ${slow.secs.toFixed(1)} s` };
+};
 const owedSoFar = (): number => [...owedCount().values()].reduce((n, k) => n + k, 0);
 /** The lines the suite in flight printed itself and holds back, without --list: they print should it fail, or the run die in it. */
 const aside: unknown[][] = [];
@@ -185,6 +205,8 @@ const hold = (on: boolean): void => {
   process.stderr.write = on ? into(2) : writes.err;
 };
 process.on('exit', () => {
+  // A run that exits inside a scene whose name waits names it, with what it held under it.
+  if (pending !== undefined) { log(pending); pending = undefined; }
   for (const a of aside.splice(0)) log(...a);
   // A child that dies inside a run writes out what the run wrote, for its parent to print under it.
   const held = caught;
@@ -198,8 +220,8 @@ async function runOne(run: string): Promise<{ ran: Ran; owing: [string, number][
   let failing = false;
   if (!LIST) console.log = (...a: unknown[]) => {
     const kind = typeof a[0] === 'string' ? /^ {2}(FAIL|owed): /.exec(a[0])?.[1] : undefined;
-    if (kind === 'FAIL' && !failing) { failing = true; for (const b of aside.splice(0)) log(...b); }
-    if (failing || kind) log(...a); else aside.push(a);
+    if (kind === 'FAIL' && !failing) { failing = true; for (const b of aside.splice(0)) say(...b); }
+    if (failing || kind) say(...a); else aside.push(a);
   };
   const t0 = performance.now(), held = heldCount(), failed = failureCount(), owed = owedSoFar(), before = tables(), was = new Map(owedCount());
   try { await (await load(run))(); } catch (e) { fail('threw ' + (e instanceof Error ? e.stack : String(e))); }
@@ -318,6 +340,21 @@ if (job !== undefined) {
     for (let i = runs.length - 1; i > 0; i--) { const j = rng.int(0, i); [runs[i], runs[j]] = [runs[j], runs[i]]; }
   }
 
+  /**
+   * Quiet, run i's walkthrough where run i is among its scenes run one after another, which print
+   * as its one run (#1033); undefined under --list and for any other run.
+   */
+  const among = (i: number): string | undefined => {
+    const w = sceneOf(runs[i]);
+    return !LIST && w !== undefined && (sceneOf(runs[i - 1]) === w || sceneOf(runs[i + 1]) === w) ? w : undefined;
+  };
+  /** The first of the runs run i is among. */
+  const firstOf = (i: number): number => { const w = among(i); let j = i; while (j > 0 && sceneOf(runs[j - 1]) === w) j--; return j; };
+  /** The table's rows: each run, a walkthrough's scenes that printed as its one run as one row. */
+  const rowsOf = (all: readonly Ran[]): Ran[] => all.flatMap((r, i) => {
+    const w = among(i);
+    return w === undefined ? [r] : sceneOf(runs[i + 1]) === w ? [] : [asOne(w, all.slice(firstOf(i), i + 1))];
+  });
   const width = Math.max(0, ...runs.map((r) => r.length)), cores = availableParallelism();
   const ran: Ran[] = [];
   let failures: number, owing: ReadonlyMap<string, number>, how: string;
@@ -325,13 +362,19 @@ if (job !== undefined) {
   if (!LIST) log('');
   if (seed !== undefined) log(`Shuffled by seed ${seed}: --shuffle ${seed} plays this order again.`);
   if (jobs === undefined) {
-    for (const run of runs) {
+    for (const [i, run] of runs.entries()) {
       // The name prints as the suite starts, so a run that dies inside it (a crash, an await that never
-      // settles, the tests job's timeout) names it last.
-      log((LIST ? '\n' : '') + run);
+      // settles, the tests job's timeout) names it last. Quiet, a scene among its walkthrough's
+      // waits to print its name till it prints a line (`say`); the walkthrough's prints as the
+      // first starts.
+      const w = among(i);
+      if (w !== undefined && firstOf(i) === i) log(w);
+      if (w === undefined) log((LIST ? '\n' : '') + run); else pending = run;
       const r = await runOne(run);
       ran.push(r.ran);
-      log(ranLine(r.ran, width));
+      if (pending === undefined) log(ranLine(r.ran, width));
+      pending = undefined;
+      if (w !== undefined && sceneOf(runs[i + 1]) !== w) log(ranLine(asOne(w, ran.slice(firstOf(i))), width));
     }
     failures = failureCount();
     owing = owedCount();
@@ -389,15 +432,21 @@ if (job !== undefined) {
     let next = 0;
     const pool = Promise.all(Array.from({ length: slots }, async () => { while (next < queue.length) await start(queue[next++]); }));
     const together = new Map<string, number>();
-    for (const run of runs) {
+    for (const [i, run] of runs.entries()) {
       // The name prints at the run's turn, so a run that dies, or a tests job that times out, waiting on it names it last.
-      log((LIST ? '\n' : '') + run);
+      // Quiet, a scene among its walkthrough's prints only where it printed a line, failed or owes.
+      const w = among(i);
+      if (w !== undefined && firstOf(i) === i) log(w);
+      if (w === undefined) log((LIST ? '\n' : '') + run);
       const o = await outcomes.get(run)!;
+      const shown = w === undefined || o.out.some(([, s]) => s.length > 0) || o.died !== undefined || o.ran.failed > 0 || o.ran.owed > 0;
+      if (w !== undefined && shown) log(run);
       for (const [fd, s] of o.out) (fd === 2 ? process.stderr : process.stdout).write(s);
       if (o.died) log(`  FAIL: ${run} ${o.died}`);
       ran.push(o.ran);
-      for (const [w, k] of o.owing) together.set(w, (together.get(w) ?? 0) + k);
-      log(ranLine(o.ran, width));
+      for (const [who, k] of o.owing) together.set(who, (together.get(who) ?? 0) + k);
+      if (shown) log(ranLine(o.ran, width));
+      if (w !== undefined && sceneOf(runs[i + 1]) !== w) log(ranLine(asOne(w, ran.slice(firstOf(i))), width));
     }
     await pool;
     failures = failureCount() + ran.reduce((n, r) => n + r.failed, 0);
@@ -410,7 +459,7 @@ if (job !== undefined) {
   // Once a suite has started worker threads (harness's, #854), a piped stdout can be left writing
   // behind the suites: the exit waits for what is written to drain, the code set should it never come.
   process.exitCode = failures ? 1 : 0;
-  const said = summary(failures, owing, ran, wall);
+  const said = summary(failures, owing, rowsOf(ran), wall);
   if (process.env.GITHUB_STEP_SUMMARY) {
     appendFileSync(process.env.GITHUB_STEP_SUMMARY, `### node tools/test.ts ${process.argv.slice(2).join(' ')}\n\n${reached ? `${reached}.\n\n` : ''}\`\`\`\n${said}\n\`\`\`\n\n`);
   }
