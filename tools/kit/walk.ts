@@ -61,25 +61,27 @@ export interface Step { name: string; play: (w: Walk) => void; }
 /**
  * Where a walk starts and what it brings (#1018), each part left out as a new game has it: where the
  * company stands (a map, and a square and a facing on it, the map's start where they are left out),
- * the level of every member (with the experience it takes, as `walkAt` sets it), the flags set and
- * the generator's seed (4).
+ * the level of every member (with the experience it takes, as `walkAt` sets it), the flags set, the
+ * items put in its bag (what an earlier scene found) and the generator's seed (4).
  */
 export interface Start {
   at?: { map: string; x?: number; y?: number; facing?: Facing };
   level?: number;
   flags?: Readonly<Partial<Record<Flag, number>>>;
+  bag?: readonly string[];
   seed?: number;
 }
 
 /**
- * A new game being walked, from `start` where one is given: the flags set, then the level, then the
- * company taken to its place. The log is read there, so that the walk hears nothing of its start.
- * `newWalk(ok)` is a new game at the gate, its company at level 1.
+ * A new game being walked, from `start` where one is given: the flags set and the bag filled, then
+ * the level, then the company taken to its place. The log is read there, so that the walk hears
+ * nothing of its start. `newWalk(ok)` is a new game at the gate, its company at level 1.
  */
 export function newWalk(ok: Ok, start: Start = {}): Walk {
   const rng = makeRng(start.seed ?? 4), party = defaultParty(TABLES, rng);
   const world = new World(TABLES, ownMaps(), party, rng);
   Object.assign(party.flags, start.flags);
+  party.bag.push(...(start.bag ?? []));
   if (start.level !== undefined) for (const m of party.members) { m.level = start.level; m.xp = xpForLevel(start.level); }
   if (start.at) {
     const { map, x, y, facing } = start.at, d = mapDef(map);
@@ -91,10 +93,11 @@ export function newWalk(ok: Ok, start: Start = {}): Walk {
 /**
  * The maps as played, built once for the run (a build is about 30 to 50 ms, a walk's copy about one).
  * `buildMaps()` shares the defs with MAP_DEFS (the features, groups, ways out and zones as written,
- * which nothing in play writes) and gives each map its cells; of those, play writes only a locked or
- * secret door's (World's search and unlock, and a save's doors put back). So a walk's copy of a map
- * has its own array of cells and its own door cells, and shares the rest, frozen: a walk that wrote one
- * would throw, not leak into the next.
+ * which nothing in play writes) and gives each map its cells and its palettes; of those, play
+ * writes only a locked or secret door's cell (World's search and unlock, and a save's doors put
+ * back). So a walk's copy of a map has its own array of cells and its own door cells, and shares
+ * the other cells and the palettes, frozen: a walk that wrote one would throw, not leak into the
+ * next.
  */
 let BUILT: { maps: Record<string, GameMap>; doors: Map<string, number[]> } | undefined;
 export function ownMaps(): Record<string, GameMap> {
@@ -103,6 +106,7 @@ export function ownMaps(): Record<string, GameMap> {
     for (const m of Object.values(maps)) {
       const at: number[] = [];
       m.cells.forEach((c, i) => { if (c.door === 'locked' || c.door === 'secret') at.push(i); else Object.freeze(c); });
+      for (const p of [m.palette, ...(m as unknown as { zonePalettes: readonly object[] }).zonePalettes]) Object.freeze(p);
       doors.set(m.id, at);
     }
     BUILT = { maps, doors };
@@ -495,8 +499,15 @@ export const page = (w: Walk, id: string): PageView | undefined => questLog(TABL
 /** The quest `id`'s goal as the log shows it now. */
 export const goal = (w: Walk, id: string): string => page(w, id)?.goal ?? '(no goal)';
 
-/** Chapter `c`'s goal whose words begin with `start`. */
-export const goalOf = (c: Chapter, start: string): string => c.goals.find((g) => g.text.startsWith(start))!.text;
+/**
+ * Chapter `c`'s goal whose words begin with `start`; where none does it throws, naming the words
+ * and the chapter's goals that begin nearest them.
+ */
+export function goalOf(c: Chapter, start: string): string {
+  const g = c.goals.find((x) => x.text.startsWith(start));
+  if (!g) throw new Error(`no goal of ${c.id} begins "${start}": the nearest begin ${nearest(start, c.goals.map((x) => x.text.slice(0, start.length))).map((x) => `"${x}"`).join(', ')}`);
+  return g.text;
+}
 
 /** The entries written on chapter `c`'s page, by id. */
 export const written = (w: Walk, c: Chapter): string[] => (quest(w)?.pages.find((p) => p.def === c)?.entries ?? []).map((e) => e.id);

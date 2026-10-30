@@ -3,7 +3,7 @@
 // plays a step of the Foreland's chapter and opens a secret on its own maps, which a new walk reads
 // shut; the second throws, naming a map that is not there; the third reads the maps as built and holds
 // the goals to what the scenes say they walk, failing the goals no scene says.
-import { newWalk, playChapter, meetWho, mapDef, everyGoalWalked, goalOf, quest, here, same } from '../../../../kit/walk.ts';
+import { newWalk, playChapter, meetWho, mapDef, everyGoalWalked, goalOf, quest, here, same, keys } from '../../../../kit/walk.ts';
 import type { Scene, Start } from '../../../../kit/walk.ts';
 import { THE_QUEST, TABLES } from '../../../../../src/content/index.ts';
 import { buildMaps } from '../../../../../src/content/maps.ts';
@@ -17,7 +17,7 @@ import type { Facing } from '../../../../../src/game/types.ts';
 const FORELAND = THE_QUEST.chapters.find((c) => c.id === 'ashcombe')!;
 /** The Foreland's goal once Vask has hired, which the first scene's step walks. */
 const GULLWICK = goalOf(FORELAND, 'Ashcombe is past Gullwick');
-const START: Start = { at: { map: 'keep', x: 3, y: 3, facing: EAST }, level: 3, flags: { q_ashcombe: 1 } };
+const START: Start = { at: { map: 'keep', x: 3, y: 3, facing: EAST }, level: 3, flags: { q_ashcombe: 1 }, bag: ['key_iron'] };
 
 /** The first secret door of the maps as built, and an open square facing it to search from. */
 export function secret(): { map: string; x: number; y: number; from: { x: number; y: number; facing: Facing } } {
@@ -40,7 +40,7 @@ export const scenes: readonly Scene[] = [
     const w = newWalk(ok, START);
     ok(here(w) === 'keep 3,3' && w.world.state.facing === EAST, `a walk starts at its start's place (${here(w)}, facing ${w.world.state.facing})`);
     ok(w.level === 3 && w.party.members.every((m) => m.level === 3 && m.xp === xpForLevel(3)), `a walk starts at its start's level (${w.party.members.map((m) => m.level).join(',')})`);
-    ok(w.party.flags.q_ashcombe === 1 && quest(w)?.goal === GULLWICK && !w.news.length, `a walk starts with its start's flags, hired and told nothing (${quest(w)?.goal})`);
+    ok(w.party.flags.q_ashcombe === 1 && keys(w) === keys(plain) + 1 && quest(w)?.goal === GULLWICK && !w.news.length, `a walk starts with its start's flags and bag, hired and told nothing (${quest(w)?.goal})`);
     playChapter(w, FORELAND, [{ name: 'to Gullwick', play: (x) => meetWho(x, 'q_wenna') }], 'the fixture');
     const s = secret();
     w.world.travel(s.map, s.from.x, s.from.y, s.from.facing);

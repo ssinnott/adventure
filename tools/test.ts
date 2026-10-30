@@ -8,7 +8,9 @@
 // walkthrough that exports `scenes` (tools/kit/walk.ts, #1018) runs as its scenes in their order,
 // each a run named `walkthrough:<area>:<scene>`; one that exports only `walkthrough` is one run, as a
 // suite is. The plan reads each walkthrough's text, and imports the file where it exports `scenes`,
-// for their names. A name no run has stops the run before it starts, naming those there are (exit 2).
+// for their names. A name no run has stops the run before it starts, naming those there are
+// (exit 2); a scene of a walkthrough whose scenes it cannot name runs that walkthrough whole, to
+// fail by name.
 //   node tools/test.ts                  run everything but the suites run only when named (ASKED)
 //   node tools/test.ts maps combat      run selected suites
 //   node tools/test.ts walkthrough:shelf  run one area's walkthrough
@@ -242,6 +244,12 @@ if (job !== undefined) {
     } catch { return undefined; }
   };
   /**
+   * The walkthroughs whose text exports `scenes` but whose scenes the plan cannot name: the file
+   * will not load, or a name is one no run can have. A scene of one asked for runs it whole, to
+   * fail by name.
+   */
+  const unnamed = new Set<string>();
+  /**
    * A walkthrough's scenes by name where its file exports `scenes` (read from its text first, then the
    * file imported), each a name the runner can run alone (`misnamed`); else undefined, and it runs whole.
    */
@@ -250,8 +258,10 @@ if (job !== undefined) {
     try {
       if (!/^export const scenes\b/m.test(readFileSync(file, 'utf8'))) return undefined;
       const scenes = scenesIn(area, (await import(file.href)) as { scenes?: unknown }), { misnamed } = await import('./kit/walk.ts');
-      return misnamed(scenes).length ? undefined : scenes.map((s) => s.name);
-    } catch { return undefined; }
+      if (!misnamed(scenes).length) return scenes.map((s) => s.name);
+    } catch { /* it fails by name in its run */ }
+    unnamed.add(`walkthrough:${area}`);
+    return undefined;
   };
   /** A run's parts: a walkthrough's scenes, or a suite's parts. */
   const partsOfRun = (name: string): Promise<string[] | undefined> => (name.startsWith('walkthrough:') ? scenesOf(name.slice('walkthrough:'.length)) : partsOf(name));
@@ -262,7 +272,7 @@ if (job !== undefined) {
     const [name, part] = split(w), kind = name.startsWith('walkthrough:') ? 'scenes' : 'parts';
     if (!suites.has(name)) { refused.push(`No run is named ${w}: the suites are ${[...suites.keys()].join(', ')}.`); continue; }
     const parts = part === undefined ? undefined : await partsOfRun(name);
-    if (part !== undefined && !parts) refused.push(`No run is named ${w}: ${name} has no ${kind}.`);
+    if (part !== undefined && !parts) { if (!unnamed.has(name)) refused.push(`No run is named ${w}: ${name} has no ${kind}.`); }
     else if (part !== undefined && !parts!.includes(part)) refused.push(`No run is named ${w}: the ${kind} of ${name} are ${parts!.join(', ')}.`);
   }
   if (refused.length) { console.error(refused.join('\n')); process.exit(2); }
@@ -300,7 +310,7 @@ if (job !== undefined) {
     const area = name.startsWith('walkthrough:') ? name.slice('walkthrough:'.length) : undefined;
     if (area !== undefined && !asked(area) && !walks.includes(area)) continue;
     const whole = !wanted.length || wanted.includes(name), parts = await partsOfRun(name);
-    if (!parts) { if (whole) runs.push(name); continue; }
+    if (!parts) { if (whole || unnamed.has(name)) runs.push(name); continue; }
     runs.push(...parts.map((p) => `${name}:${p}`).filter((r) => whole || wanted.includes(r)));
   }
   if (seed !== undefined) {

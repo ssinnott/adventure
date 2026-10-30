@@ -4,7 +4,7 @@
 // walkthrough's scenes (#1018), run with --walks.
 //   node tools/tests/runner/check.ts
 import { execFileSync, spawn } from 'node:child_process';
-import { readFileSync, rmSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { availableParallelism, tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -41,6 +41,10 @@ const run = (...args: string[]): Promise<Run> => runIn(fixture, ...args);
 /** The runner on the walkthroughs of ./walks/'s areas, and no suites (#1018). */
 const walks = fileURLToPath(new URL('./walks', import.meta.url));
 const walk = (...args: string[]): Promise<Run> => runWith({}, ['--walks', walks], ...args);
+// A walkthrough of scenes whose file throws as it loads (#1018): written here, taken away after.
+const unloadable = mkdtempSync(join(tmpdir(), 'runner-walks-'));
+mkdirSync(join(unloadable, 'bad'));
+writeFileSync(join(unloadable, 'bad', 'walkthrough.ts'), "export const scenes = [{ name: 'one', play: () => {} }];\nthrow new Error('the file throws as it loads');\n");
 
 console.log('\nrunner');
 const narrow = folder('narrow'), step = join(tmpdir(), `runner-check-${process.pid}.md`);
@@ -59,6 +63,7 @@ const started = {
   walked: walk('--list'), scene: walk('walkthrough:fx:three', '--list'), dearScene: runWith({ TEST_DEAR: 'walkthrough:fx:three' }, ['--walks', walks], '--jobs', '2', '--list'),
   both: runWith({}, ['--dir', fixture, '--walks', walks], 'owing', 'walkthrough:whole'), nope: walk('walkthrough:fx:nope'), noScenes: walk('walkthrough:whole:x'),
   nosuch: run('nosuch'), noPart: runIn(narrow, 'gate:nosuch'), noParts: run('slow:x'),
+  unloaded: runWith({}, ['--walks', unloadable], 'walkthrough:bad:one'),
 };
 const owing = await started.owing;
 ok(owing.status === 0, 'a run with only owed lines passes');
@@ -202,7 +207,7 @@ const fxTable = walked.out.slice(walked.out.indexOf("Each suite's seconds"));
 ok(wRuns.join(' ') === Object.keys(fxCounts).join(' ') && Object.entries(fxCounts).every(([n, c]) => new RegExp(`^${n} +\\d+\\.\\d s {2}${c}$`, 'm').test(walked.out) && fxTable.includes(`  ${n} `)),
   `a walkthrough of scenes runs as its scenes in their order, each with its line of seconds and counts and its row; one of a function runs whole (${wRuns.join(' ')})`);
 const one = section(walked.out, 'walkthrough:fx:one'), n4 = section(walked.out, 'walkthrough:fx:n4'), three = section(walked.out, 'walkthrough:fx:three');
-ok(['a walk given no start is a new game', "a walk starts at its start's place (keep 3,3, facing 1)", "a walk starts at its start's level (3,", "a walk starts with its start's flags, hired"].every((s) => one.includes(`  ok:   ${s}`)) && !one.includes('FAIL'),
+ok(['a walk given no start is a new game', "a walk starts at its start's place (keep 3,3, facing 1)", "a walk starts at its start's level (3,", "a walk starts with its start's flags and bag, hired"].every((s) => one.includes(`  ok:   ${s}`)) && !one.includes('FAIL'),
   'a walk given no start is a new game, and one given a start stands at its place, at its level, with its flags');
 ok(/\n {2}FAIL: scene n4 threw Error: no map is named nowhere: the nearest are .+\n(?: {4}at .+\n)* {4}at mapDef /.test(n4) && !walked.out.includes('goes on past a map that is not there'),
   'a scene that throws fails by name with its stack, and the rest of it never plays: here mapDef, naming the map that is not there');
@@ -223,6 +228,10 @@ const refusals: [Run, string][] = [[await started.nope, 'No run is named walkthr
   [await started.noPart, `No run is named gate:nosuch: the parts of gate are fixed, ${AREAS.map((a) => a.id).join(', ')}.`], [await started.noParts, 'No run is named slow:x: slow has no parts.']];
 const unrefused = refusals.filter(([r, said]) => r.status !== 2 || r.out.trim() !== said).map(([r, said]) => `${said.slice('No run is named '.length, said.indexOf(': '))} (exit ${r.status})`);
 ok(!unrefused.length, `a scene, a suite or a part no run has stops the run, naming the runs there are, exit 2${unrefused.length ? ` -> not ${unrefused.join(', ')}` : ''}`);
+const unloaded = await started.unloaded;
+rmSync(unloadable, { recursive: true, force: true });
+ok(unloaded.status === 1 && runsOf(unloaded.out).join(' ') === 'walkthrough:bad' && unloaded.out.includes('\n  FAIL: threw Error: the file throws as it loads'),
+  `a scene of a walkthrough whose file will not load runs it whole and fails by name; it is not refused (exit ${unloaded.status}: ${runsOf(unloaded.out).join(' ')})`);
 // Played whole by the kit, as where the plan cannot name its scenes: in order, a throw stopping none, and
 // names the runner cannot run alone failing the walkthrough before any scene plays.
 const { playScenes } = await import('../../kit/walk.ts'), { scenes: fx } = await import('./walks/fx/walkthrough.ts');
@@ -234,6 +243,40 @@ ok(marks.every((m, i) => m >= 0 && (i === 0 || m > marks[i - 1])) && heard.lengt
 heard.length = 0;
 await playScenes(hear, [{ name: 'Upper', play: () => hear(true, 'played') }, { name: 'a:b', play: () => hear(true, 'played') }, { name: 'twice', play: () => hear(true, 'played') }, { name: 'twice', play: () => hear(true, 'played') }]);
 ok(heard.join('|') === "FAIL: a scene's name is lower case, holds no colon and comes once: not Upper, a:b, twice", `names the runner cannot run alone fail the walkthrough before a scene plays (${heard.join('|')})`);
+
+// What no run of ./walks/ reaches (#1018): a scene held to the goals it says it walks, one that
+// fails a check stopping none, the lookups throwing by name, featureOn keeping to its kind and
+// fight's memo keyed on the seeds and the cap (the mill's warden at 2 is won 55% of 100 seeds
+// capped, 50% of ten capped and 60% of ten uncapped).
+heard.length = 0;
+const claimed = fx[0].walks![0] as string;
+await playScenes(hear, [{ name: 'liar', walks: [claimed], play: (o) => o(false, 'a check fails') }, { name: 'next', play: (o) => o(true, 'the next scene plays') }]);
+ok(heard.join('|') === `FAIL: a check fails|FAIL: scene liar says it walks what none of its plays came to: "${claimed}"|ok: the next scene plays`,
+  `a scene is held to the goals it says it walks, and one that fails a check stops none (${heard.length} lines)`);
+const { groupOn, featureOn, exitTo, mapDef } = await import('../../kit/walk.ts');
+const threw = (f: () => unknown): string => { try { f(); return 'nothing thrown'; } catch (e) { return e instanceof Error ? e.message : String(e); } };
+const way = mapDef('greywater2').exits![0];
+const unfound = [threw(() => groupOn('mill', 'm_wardn')), threw(() => featureOn('greywater2', 'gw2_ledger', 'npc')), threw(() => exitTo('greywater2', 'nowhere'))];
+ok(groupOn('mill', 'm_warden').id === 'm_warden' && featureOn('greywater2', 'gw2_ledger', 'chest').kind === 'chest' && exitTo('greywater2', way.to) === way
+  && unfound[0].startsWith('no group is named m_wardn on mill: the nearest are m_warden') && unfound[1].startsWith('no npc is named gw2_ledger on greywater2')
+  && unfound[2].startsWith('no way out of greywater2 leads to nowhere: the nearest are '), `groupOn, featureOn and exitTo find what is there, of its kind, and throw naming what is not (${unfound.join(' | ')})`);
+const { rate, winRate, gateOpts } = await import('../../kit/fight.ts');
+const warden = groupOn('mill', 'm_warden'), asks = [[100, 15], [10, 15], [10, Infinity]] as const;
+const memo = asks.map(([s, c]) => rate(warden, 2, s, c)), worked = asks.map(([s, c]) => winRate(2, warden, s, c, gateOpts(warden)));
+ok(memo.join() === worked.join() && new Set(worked).size === 3, `fight's memo keys on the seeds and the cap: one group at one level asked three ways is three rates, each winRate's (${memo.join(', ')})`);
+
+// A walk's palettes are shared with every other walk's copy, frozen as its cells are (#1018).
+const { newWalk } = await import('../../kit/walk.ts');
+let painted = 'nothing thrown';
+try { (newWalk(hear).world.maps.keep.palette as unknown as Record<string, unknown>).probe = 1; } catch (e) { painted = e instanceof Error ? e.message : String(e); }
+ok(painted.startsWith('Cannot add property probe') && !('probe' in newWalk(hear).world.maps.keep.palette), `a walk's palette is frozen: a write throws and the next walk reads none (${painted})`);
+
+// goalOf names the words given and the chapter's goals nearest them where none begins so (#1018).
+const { goalOf } = await import('../../kit/walk.ts');
+const foreland = AREAS.find((a) => a.id === 'shelf')!.chapter!;
+let typo = 'nothing thrown';
+try { goalOf(foreland, 'Ashcombe is past Gullwik'); } catch (e) { typo = e instanceof Error ? e.message : String(e); }
+ok(typo.startsWith(`no goal of ${foreland.id} begins "Ashcombe is past Gullwik": the nearest begin "Ashcombe is past Gullwic", `), `goalOf throws naming the words and the chapter's goals nearest them (${typo})`);
 
 console.log('\n' + summary(failureCount(), new Map()));
 process.exit(failureCount() ? 1 : 0);
