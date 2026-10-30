@@ -201,8 +201,7 @@ function sideQuests(): Scene[] {
       w.ok(hear(w, 'thornhold', TEGEN()).startsWith('"He walked?'), "Tegen's after-lines are the walk's");
     } },
     { name: 'coin-fight', play: (ok) => { // A Coin Not From Caldera: Leofwin whistles up his band, and it is fought.
-      const w = newWalk(ok);
-      w.level = 5;
+      const w = newWalk(ok, { level: 5 });
       answerTo(w, 'thornhold', TEGEN(), { label: 'We\'ll find him.' });
       w.ok(!shows(w, 'thornmark', 'tm_deserters'), 'before the whistle, Leofwin\'s band is not there');
       answerTo(w, 'thornmark', LEOFWIN(), { label: 'You\'ll answer at the Scarth.' });
@@ -284,8 +283,7 @@ function sideQuests(): Scene[] {
       reads(w, 'four', ['keyne', 'meva', 'lie'], ['truth'], 'the lie told');
     } },
     { name: 'ogre-killed', play: (ok) => { // The Ogre's Boy (#544): Kerra asks her brother home; the ogre puts its bargain first, and is refused and killed.
-      const w = newWalk(ok);
-      w.level = 7;
+      const w = newWalk(ok, { level: 7 });
       w.ok(!there(w, 'thornhold', PASCO()), 'before the tower, Pasco is not home');
       w.ok(hear(w, 'thornhold', KERRA()).startsWith('A girl with a basket') && w.news.at(-1) === 'New quest: The Ogre\'s Boy.', `Kerra asks her brother home, and The Ogre's Boy begins (${w.news.at(-1)})`);
       w.ok(parley(w, 'thornmark:tm_ogre', 'Kill it.').startsWith('The boy drops the bucket') && !!w.world.question('tm_ogre'), 'refused, the ogre is fought, and would ask again');
@@ -294,8 +292,7 @@ function sideQuests(): Scene[] {
       reads(w, 'ogre', ['kerra', 'slain'], ['kept'], 'the ogre killed');
     } },
     { name: 'ogre-kept', play: (ok) => { // The Ogre's Boy: the bargain kept, the ogre keeps the tower and stands aside, until the company goes back with swords.
-      const w = newWalk(ok);
-      w.level = 7;
+      const w = newWalk(ok, { level: 7 });
       hear(w, 'thornhold', KERRA());
       const ogre = groupOn('thornmark', 'tm_ogre');
       w.ok(parley(w, 'thornmark:tm_ogre', 'Let it keep the tower.').startsWith('The ogre grunts') && !w.world.question('tm_ogre') && w.world.standsAside(ogre) && !w.world.adjacentGroups().length && shows(w, 'thornmark', 'tm_ogre'),
@@ -376,8 +373,7 @@ function sideQuests(): Scene[] {
       w.ok(hear(w, 'deepthorn_i3', GODRIC()).startsWith('"Word came.'), "Godric's after-lines are the gate shut's");
     } },
     { name: 'hunters-kept', play: (ok) => { // The Hunters' Bargain: the lodge's secret kept, and the blazed oak shown.
-      const w = newWalk(ok);
-      w.level = 8;
+      const w = newWalk(ok, { level: 8 });
       fight(w, 'deepthorn_i3:lodge_brambles');
       const said = answerTo(w, 'deepthorn_i3', GODRIC(), { label: 'We\'ll hold it.' });
       w.ok(said.includes('blazed with three notches'), 'kept, Godric shows the hunters\' mark');
@@ -504,14 +500,12 @@ function sideQuests(): Scene[] {
       w.ok(w.party.bag.includes('hale_token') && !there(w, 'thornhold', WYSTAN()) && !there(w, 'thornhold', WYSTAN_DOOR()), 'let ride, he gives Hale\'s token and is gone from Thornhold');
     } },
     { name: 'sergeant-no-token', play: (ok) => { // Hale's Sergeant: Hale freed with no token, and his words name none.
-      const w = newWalk(ok, { flags: { q_hale_taken: 1 } });
-      w.level = 14;
+      const w = newWalk(ok, { level: 14, flags: { q_hale_taken: 1 } });
       fight(w, 'tide_ship3:ts3_crew');
       w.ok(!hear(w, 'tide_ship3', HALE()).includes('Wystan') && !!w.party.flags.q_hale_freed && !w.party.flags.q_sergeant_hale, 'with no token carried, Hale is freed and names none');
     } },
     { name: 'eldest', play: (ok) => { // The Eldest (#218): awake whichever the company does first, beaten once, and its bough.
-      const w = newWalk(ok);
-      w.level = 8;
+      const w = newWalk(ok, { level: 8 });
       fight(w, 'grove2:g2_warden');
       w.ok(shows(w, 'deepthorn_j5', 'j5_eldest') && !shows(w, 'deepthorn_j5', 'j5_heartwood'), 'the tear closed, the old wood sleeps but the Eldest stands at the tip');
       fight(w, 'deepthorn_j5:j5_eldest');
@@ -531,8 +525,7 @@ function sideQuests(): Scene[] {
     } },
     { name: 'merryn-first', play: (ok) => { // And Merryn met first, with the Rift closed.
       const HERMIT = who('deepthorn_j4', 15, 21, 'a hermit'), MERRYN = who('wrackholm_f6', 26, 13, 'Merryn');
-      const v = newWalk(ok);
-      v.level = 8;
+      const v = newWalk(ok, { level: 8 });
       fight(v, 'grove2:g2_warden');
       hear(v, 'wrackholm_f6', MERRYN);
       const first = hear(v, 'deepthorn_j4', HERMIT), then = hear(v, 'deepthorn_j4', HERMIT);
