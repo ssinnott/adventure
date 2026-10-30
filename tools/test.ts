@@ -70,22 +70,21 @@ const FIRST = ['maps', 'movement', 'monsters', 'combat', 'harness', 'party', 'tr
 /** The suites that run only when named, each taking minutes: the pilot's survival sweep and its full run (#723). */
 const ASKED = ['survival', 'fullrun'];
 /**
- * The runs over three seconds in the tests job's table of 30 October (run 41053120691, the head of
- * #1088), the dearest first, each with its seconds there, the harness as a process of one worker: under
- * --jobs each is a process of its own, started in this order once the rest, packed into one process,
- * has started; under --shard the seconds deal the plan (`deal`). TEST_DEAR=a,b=12.5 replaces it, a run
- * given no seconds weighing three, the least a dear run weighs there.
+ * The runs over three seconds in the tests job's table of 30 October (run 41102456119, the last
+ * head of #1092, #1091 in), the dearest first, each with its seconds there, the harness as a process
+ * of one worker: under --jobs each is a process of its own, started in this order once the rest,
+ * packed into one process, has started; under --shard the seconds deal the plan (`deal`).
+ * TEST_DEAR=a,b=12.5 replaces it, a run given no seconds weighing three, the least a dear run weighs.
  */
 const DEAR: ReadonlyMap<string, number> = new Map(process.env.TEST_DEAR ? process.env.TEST_DEAR.split(',').map((d): [string, number] => {
   const [run, secs] = d.split('=');
   if (secs !== undefined && !/^\d+(\.\d+)?$/.test(secs)) { console.error(`TEST_DEAR takes runs with commas between, each given its seconds as run=12.5 or none, not '${d}'.`); process.exit(2); }
   return [run, secs === undefined ? 3 : Number(secs)];
-}) : [['labels', 119.9], ['row', 98.7], ['gate:ashfall', 69.4], ['gate:kilns', 59.1], ['harness', 56.7], ['gate:rimewater', 53.8], ['gate:saltreach', 42.9],
-  ['gate:whitespine', 40.1], ['quests:goals', 39.4], ['walkthrough:shelf:pilot', 34.6], ['gate:cairnmoor', 32.7], ['gate:glasswold', 32.6], ['gate:wrackholm', 31.1],
-  ['gate:sunderwood', 29.6], ['gate:hearth', 24.5], ['gate:shelf', 14.3], ['pilot', 13.3], ['scaffold', 12.3], ['gate:thornmark', 9.3], ['sweep', 7.7], ['order', 4.0],
-  ['rifts', 3.7], ['people', 3.4], ['weather', 3.4]]);
-/** What a run DEAR does not name weighs in the deal: the mean of the rest in that table, 52.9 s over 457 runs. */
-const REST = 0.1;
+}) : [['row', 61.2], ['harness', 44.6], ['quests:goals', 34.4], ['gate:ashfall', 32.4], ['walkthrough:shelf:pilot', 27.0], ['gate:rimewater', 26.5], ['gate:kilns', 25.4],
+  ['gate:cairnmoor', 20.2], ['gate:wrackholm', 19.2], ['gate:saltreach', 18.9], ['gate:glasswold', 18.6], ['gate:whitespine', 17.2], ['labels', 13.4], ['gate:hearth', 13.0],
+  ['gate:sunderwood', 10.3], ['pilot', 9.7], ['scaffold', 9.6], ['gate:shelf', 9.0], ['sweep', 7.4], ['gate:thornmark', 4.8], ['order', 3.3]]);
+/** What a run DEAR does not name weighs in the deal: the mean of the rest in that table, 55.1 s over 460 runs. */
+const REST = 0.12;
 /**
  * The plan dealt n ways (#848): each run by its seconds in DEAR, or REST's, the dearest first and the
  * alike in the plan's order, onto the shard that holds the fewest seconds so far, the first of a tie.
