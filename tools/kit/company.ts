@@ -4,7 +4,7 @@
 // from here.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
-import { defaultParty, createCharacter, createParty, xpForLevel, levelUp, equip, weaponOf, bonus, hasTrait, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../../src/game/party.ts';
+import { defaultParty, createCharacter, createParty, xpForLevel, levelUp, equip, weaponOf, hasTrait, PRESTIGE_LEVELS, prestigeOf, takePrestige } from '../../src/game/party.ts';
 import type { Character, Party, ClassId, RaceId, Stats } from '../../src/game/party.ts';
 import { linesOf, TIER_LEVELS } from '../../src/game/mastery.ts';
 import type { Tier, Tiers } from '../../src/game/mastery.ts';

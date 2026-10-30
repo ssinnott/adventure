@@ -188,7 +188,7 @@ export function zoneEdges(atlas: Atlas, defs: readonly MapDef[]): ZoneEdge[] {
 }
 
 /** One step on the road of levels. */
-export interface Step { order: number; id: string; name: string; band?: readonly [number, number]; built: boolean }
+interface Step { order: number; id: string; name: string; band?: readonly [number, number]; built: boolean }
 
 /** The progression, first step first: every area, and every place that is a step of its own. */
 export function progression(atlas: Atlas, defs: readonly MapDef[]): Step[] {

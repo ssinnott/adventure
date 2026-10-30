@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { FONT_CHARS, measureText } from '../../src/lib/engine/text.ts';
 import { defaultParty, attackBonus, armsBonus, tierSteps, rankMult, spellHeal, levelUp, xpForLevel, trainPrice, CLASSES, RANK_STEP, NAME_MAX } from '../../src/game/party.ts';
-import type { Party, Character, ClassId } from '../../src/game/party.ts';
+import type { Party, ClassId } from '../../src/game/party.ts';
 import { World } from '../../src/game/world.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { serialize, deserialize, SAVE_VERSION } from '../../src/game/save.ts';
@@ -212,7 +212,7 @@ function loft(): void {
   ok(first[0] === TRADE.trainer && row === 1 && first.at(-1) === 'Leave' && ask === '"Arms, or magic?" (5000 gold.)' && lines.join() === 'At arms,In magic,Leave',
     `at the Sail Loft the first menu has "${EXPERT_ENTRY}" after the trade, which asks the line first (${first.join(' / ')}; ${ask} ${lines.join(' / ')})`);
   ok(who === '"Who would be Expert?" (5000 gold.)' && arms.length === 7 && arms[knight] === `${k.name}\t2000g` && arms[caster] === `${d.name}\tnot theirs`
-      && arms.slice(0, 6).filter((r, i) => i !== knight && i !== caster).every((r) => r.endsWith('\tlevel 13') || r.endsWith('\tnot theirs')) && arms[6] === 'Leave',
+      && arms.slice(0, 6).filter((_r, i) => i !== knight && i !== caster).every((r) => r.endsWith('\tlevel 13') || r.endsWith('\tnot theirs')) && arms[6] === 'Leave',
     `then each member with the price or why not (${arms.slice(0, 6).map((r) => r.replace('\t', ' ')).join('; ')})`);
   ok(gold1 === 3000 && tierOf(k, 'arms') === 'expert' && told === `${k.name} is Expert at arms now.` && after[knight] === `${k.name}\ttaken` && purse === '"Arms, or magic?" (3000 gold.)'
       && magic[caster] === `${d.name}\t2000g` && gold2 === 1000 && tierOf(d, 'magic') === 'expert' && told2 === `${d.name} is Expert in magic now.`
@@ -393,7 +393,7 @@ function talked(): void {
 function pilot(): void {
   const g = headlessGame(4), p = g.party, rng = makeRng(8);
   for (const id of Object.keys(g.maps)) g.world.ensureMapState(id).explored.fill(-1);
-  const knight = p.members.findIndex((m) => linesOf(m.cls).join() === 'arms'), ready = p.members.findIndex((m, i) => i !== knight);
+  const knight = p.members.findIndex((m) => linesOf(m.cls).join() === 'arms'), ready = p.members.findIndex((_m, i) => i !== knight);
   p.members[knight].xp = xpForLevel(13); levelUp(TABLES.spells, p.members[knight], rng);
   p.members[ready].xp = xpForLevel(12); levelUp(TABLES.spells, p.members[ready], rng); p.members[ready].xp = xpForLevel(13);
   for (const m of p.members) { m.hp = m.maxHp; m.sp = m.maxSp; }

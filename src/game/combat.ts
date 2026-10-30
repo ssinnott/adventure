@@ -28,21 +28,21 @@ import {
 
 // The old path: what this file exported of the parts before, given on, so no importer changed.
 export type {
-  MonsterInst, TurnRef, PartyAction, Outcome, Loot, CombatState, CombatOpts, Edge, Ranks, Clock, CombatGroup, Fighters,
+  MonsterInst, TurnRef, PartyAction, CombatState, CombatOpts, Edge, Clock, CombatGroup, Fighters,
 } from './combat/state.ts';
 export {
-  asGroup, FRONT_ROW, MAX_MONSTERS, MAX_GROUPS, BLESS_HIT, HASTE_HIT, HASTE_SPEED, WARD_AC, toHit, standing, frontStands, isLeader,
+  asGroup, FRONT_ROW, MAX_MONSTERS, MAX_GROUPS, BLESS_HIT, WARD_AC, toHit, frontStands, isLeader,
   aliveMonsters, ROOTS_CHANCE, HOLD_BREAKS, SLUMBER_CHANCE,
 } from './combat/state.ts';
 export {
-  BREAK_LINE, ROUT_LINE, GLOVE_LINE, STONE_LINE, GLASS_WORD, RITE_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, DIM_LINE, THREAD_LINE, STAND_LINE,
+  BREAK_LINE, ROUT_LINE, GLOVE_LINE, STONE_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, DIM_LINE, THREAD_LINE, STAND_LINE,
   SWEEP_LINE, shareRange, victoryLine,
 } from './combat/lines.ts';
 export {
-  PRESTIGE_BLOWS, BANNER_HIT, MARKSMAN_MORE, HOLY_STRIKE_RISEN, SNEAK_GROWTH, VANISH_ROUND, SONG_DMG, SONG_RISEN, rageBelow, blowsOf,
+  BANNER_HIT, MARKSMAN_MORE, HOLY_STRIKE_RISEN, SNEAK_GROWTH, VANISH_ROUND, rageBelow, blowsOf,
   sneakDamage, vanished, songWards, buffHit, songDamage, traitDamage, canAttackFromRow,
 } from './combat/perks.ts';
-export { pierces, castOnParty, castOnAlly } from './combat/casting.ts';
+export { castOnParty, castOnAlly } from './combat/casting.ts';
 export { canReach, monsterAc, monsterHit, seenMult, sweptRow, canCall, panelStands, meetCalled } from './combat/foes.ts';
 export { GLOVE_FLAG } from './keys.ts';
 
@@ -162,7 +162,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
           // attack (`sneaks`, read before the blow lands) is marked after the hit's own sentence.
           const sneak = sneaks(s, c, m), dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
             + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
-          hurtMonster(s, m, dmg);
+          hurtMonster(m, dmg);
           // The Windwalker's follow-through (`followsThrough`, #1070): a blow that fells its foe is not
           // spent while a foe it can reach stands, at most once more for each of the turn's own blows.
           const on = carries && m.hp <= 0 && blows < 2 * own && aliveMonsters(s).some((i) => canReach(s, c, i));

@@ -1590,7 +1590,7 @@ function theBounds(): Scene[] {
   return [
     { name: 'd7', play: (ok) => {
       const w = newWalk(ok), out = outdoors();
-      const [d7, e7, d8, e8, c7, c8, e6] = [D7.id, E7.id, 'wold_d8', 'wold_e8', 'saltings_c7', 'wold_c8', 'wrackholm_e6'].map((id) => out.zones.find((z) => z.id === id)!);
+      const [d7, e7, d8, e8, c7, c8] = [D7.id, E7.id, 'wold_d8', 'wold_e8', 'saltings_c7', 'wold_c8'].map((id) => out.zones.find((z) => z.id === id)!);
       const step = stepper(w);
       w.level = 26;
       ok(!!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_d7 104,190') && !!WOLD.maps?.some((m) => `${m.map} ${m.at.join(',')}` === 'wold_e7 136,190')

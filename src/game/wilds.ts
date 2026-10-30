@@ -29,7 +29,7 @@ export interface Gift { gold?: number; items?: string[]; stat?: import('./party.
 export interface Night { after?: When; sets: Flag; says?: readonly string[] }
 
 /** The features this module plays. */
-export type Wild = Extract<Feature, { kind: 'shrine' | 'fountain' | 'cairn' | 'statue' | 'camp' }>;
+type Wild = Extract<Feature, { kind: 'shrine' | 'fountain' | 'cairn' | 'statue' | 'camp' }>;
 
 /** What a feature gives when it is used: a chest's, cairn's or den's gold and items, a shrine's stat or resistance, a statue's gift. */
 export function giftOf(f: Feature): Gift | undefined {
@@ -121,7 +121,7 @@ export function answerRiddle(world: World, party: Party, f: Extract<Wild, { kind
 }
 
 /** Whether the party stands at a camp. */
-export const atCamp = (world: World): boolean => world.map.featuresAt(world.state.x, world.state.y).some((f) => f.kind === 'camp');
+const atCamp = (world: World): boolean => world.map.featuresAt(world.state.x, world.state.y).some((f) => f.kind === 'camp');
 
 /**
  * Why the party may not rest here, or '' if it may. Nowhere with a group within two squares; at a
@@ -150,7 +150,7 @@ const MORNING = 'The party rests. Morning comes.';
  * yet due keeps the later ones back, so they come in order. None at a camp that counts none, with every
  * night set or with the next not yet due, nor off a camp.
  */
-export function campNight(world: World, party: Party): Night | undefined {
+function campNight(world: World, party: Party): Night | undefined {
   const camp = world.map.featuresAt(world.state.x, world.state.y).find((f): f is Extract<Feature, { kind: 'camp' }> => f.kind === 'camp' && !!f.nights);
   const night = camp?.nights?.find((n) => !party.flags[n.sets]);
   if (!camp || !night || !world.walks(night, camp.x, camp.y)) return undefined;
@@ -177,7 +177,7 @@ export function drinkWell(party: Pick<Party, 'members'>, f: Extract<Feature, { k
 }
 
 /** What an exploration spell did: its lines, and whether it moved the party, which the game answers by meeting what stands there (`Game.enterCell`). */
-export interface Explored { lines: string[]; moved: boolean }
+interface Explored { lines: string[]; moved: boolean }
 
 /**
  * An exploration spell cast by a member of the company (#978, out of `Game`): the spell points paid and

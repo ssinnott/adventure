@@ -4,7 +4,7 @@
 import type { RiftTemplate } from '../../game/rifts.ts';
 
 /** Two rings of corridor round the heart, the inner one shut by a door. */
-export const RING: RiftTemplate = { id: 'ring', rows: [
+const RING: RiftTemplate = { id: 'ring', rows: [
   '############',
   '#<....?....#',
   '#.########.#',
@@ -20,7 +20,7 @@ export const RING: RiftTemplate = { id: 'ring', rows: [
 ] };
 
 /** One corridor, wound inward to the heart. */
-export const SPIRAL: RiftTemplate = { id: 'spiral', rows: [
+const SPIRAL: RiftTemplate = { id: 'spiral', rows: [
   '############',
   '#<...1....?#',
   '##########.#',
@@ -36,7 +36,7 @@ export const SPIRAL: RiftTemplate = { id: 'spiral', rows: [
 ] };
 
 /** Four corner rooms on a cross, the heart at its middle. */
-export const CROSS: RiftTemplate = { id: 'cross', rows: [
+const CROSS: RiftTemplate = { id: 'cross', rows: [
   '############',
   '#?.1#?.#.2?#',
   '#...#..#...#',
@@ -52,7 +52,7 @@ export const CROSS: RiftTemplate = { id: 'cross', rows: [
 ] };
 
 /** A pillared hall, and the heart in a room below it. */
-export const HALL: RiftTemplate = { id: 'hall', rows: [
+const HALL: RiftTemplate = { id: 'hall', rows: [
   '############',
   '#<..?......#',
   '#.o..o..o..#',
@@ -68,7 +68,7 @@ export const HALL: RiftTemplate = { id: 'hall', rows: [
 ] };
 
 /** Small rooms opening one into the next. */
-export const CELLS: RiftTemplate = { id: 'cells', rows: [
+const CELLS: RiftTemplate = { id: 'cells', rows: [
   '############',
   '#<.#?.#..#?#',
   '#..D..D.1D.#',
@@ -84,7 +84,7 @@ export const CELLS: RiftTemplate = { id: 'cells', rows: [
 ] };
 
 /** Two ways round, through either side door, to the heart. */
-export const FORK: RiftTemplate = { id: 'fork', rows: [
+const FORK: RiftTemplate = { id: 'fork', rows: [
   '############',
   '#?...<....?#',
   '#.########.#',
@@ -100,7 +100,7 @@ export const FORK: RiftTemplate = { id: 'fork', rows: [
 ] };
 
 /** Long galleries switching back and forth. */
-export const GALLERY: RiftTemplate = { id: 'gallery', rows: [
+const GALLERY: RiftTemplate = { id: 'gallery', rows: [
   '############',
   '#<....1...?#',
   '########.###',
@@ -116,7 +116,7 @@ export const GALLERY: RiftTemplate = { id: 'gallery', rows: [
 ] };
 
 /** Broken rooms and a breach in them. */
-export const BREACH: RiftTemplate = { id: 'breach', rows: [
+const BREACH: RiftTemplate = { id: 'breach', rows: [
   '############',
   '#<..?..##..#',
   '#.####.##.1#',

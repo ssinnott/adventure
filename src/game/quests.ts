@@ -52,7 +52,7 @@ export type When = QuestCond | readonly QuestCond[];
  * A journal entry, written once `when` holds. Once written it must stay written, so `when` has to
  * stay true: an item alone does not, since the hand-in takes it, so pair it with the done flag.
  */
-export interface QuestEntry { id: string; when: When; text: string; }
+interface QuestEntry { id: string; when: When; text: string; }
 
 /** What to do next. Goals are tried in order and the first that holds is shown: furthest along first. */
 export interface QuestGoal {

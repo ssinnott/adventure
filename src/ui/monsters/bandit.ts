@@ -14,10 +14,10 @@ import type { MonsterSprite } from '../../game/monsters.ts';
 import type { MonsterDrawer, Paint, Sprite } from './common.ts';
 import { B, eye, groundShadow, stroke } from './common.ts';
 import { blob, glossBall, glossEllipse, glossPoly, glow, patch, softLine } from './gloss.ts';
-import type { Crease, Part } from './gloss.ts';
+import type { Part } from './gloss.ts';
 import { mix, rgba, shade } from '../../lib/art/palettes.ts';
 import type { Arm, Pt, Rig } from './figure.ts';
-import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, headRing, legs, makeRig, ring, torsoCreases, torsoPts, trunkW, tube } from './figure.ts';
+import { armParts, beltPart, blade, elbowCrease, FAR, hand, headNeck, legs, makeRig, ring, torsoCreases, torsoPts, trunkW, tube } from './figure.ts';
 import { band } from '../../lib/art/shading.ts';
 
 /** One kind's drawing: the call `draw` makes once it has looked the kind up. */

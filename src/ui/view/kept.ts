@@ -42,19 +42,19 @@ export function placeKey(world: World, r: ViewRect): string {
  * laid anew is another cell) and each feature among them, with whether it is there now (a feature
  * comes and goes by its hours, its flags, the items carried, what is seen and slain).
  */
-export interface Reads {
+interface Reads {
   map: GameMap; landmarks: readonly Landmark[]; weather: Weather | null; tables: Tables;
   cells: readonly (Cell | null)[]; features: readonly Feature[]; there: readonly boolean[];
 }
 
-export function readsOf(world: World): Reads {
+function readsOf(world: World): Reads {
   const map = world.map, { x: px, y: py } = world.state, cells: (Cell | null)[] = [];
   for (let y = py - READ_REACH; y <= py + READ_REACH; y++) for (let x = px - READ_REACH; x <= px + READ_REACH; x++) cells.push(map.inBounds(x, y) ? map.at(x, y) : null);
   const features = map.features.filter((f) => Math.abs(f.x - px) <= READ_REACH && Math.abs(f.y - py) <= READ_REACH);
   return { map, landmarks: map.landmarks, weather: world.underSky ? world.weather : null, tables: world.tables, cells, features, there: features.map((f) => world.present(f)) };
 }
 
-export function sameReads(a: Reads, b: Reads): boolean {
+function sameReads(a: Reads, b: Reads): boolean {
   if (a.map !== b.map || a.landmarks !== b.landmarks || a.weather !== b.weather || a.tables !== b.tables) return false;
   if (a.cells.length !== b.cells.length || a.features.length !== b.features.length) return false;
   for (let i = 0; i < a.cells.length; i++) if (a.cells[i] !== b.cells[i]) return false;
@@ -66,7 +66,7 @@ export function sameReads(a: Reads, b: Reads): boolean {
 export interface Sized { width: number; height: number }
 
 /** One scene: its facing, everything but the sky and the sky behind it, the flames it left alight and what else its paint read. */
-export interface Scene<C extends Sized> { facing: Facing; canvas: C; sky: C; flames: Flame[]; reads: Reads }
+interface Scene<C extends Sized> { facing: Facing; canvas: C; sky: C; flames: Flame[]; reads: Reads }
 
 /** How a scene was had: the one drawn last, another facing of the square kept, or painted now. */
 export type Had = 'last' | 'kept' | 'painted';

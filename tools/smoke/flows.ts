@@ -823,7 +823,7 @@ export async function waymark({ page, ok }: Run): Promise<void> {
     const set = w.setMark(), at = { ...w.state.mark };
     w.travel('shelf', 16, 12, 0);
     cassian.spells.push('waymark'); cassian.sp = cassian.maxSp = 99; cassian.conditions = [];
-    g.push(new S.SpellScreen('explore'));
+    g.push(new S.SpellScreen());
     // The casters are listed without the others; a digit is still the member's place: 6 is Cassian, whatever his row.
     const row = g.party.members.filter((m, i) => i < 5 && m.spells.length && !m.conditions.includes('dead') && !m.conditions.includes('asleep')).length;
     g.top.update(g, 'n6');

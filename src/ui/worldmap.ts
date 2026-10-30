@@ -690,11 +690,6 @@ function smoke(ctx: CanvasRenderingContext2D, x: number, y: number, n: number, g
   ctx.fillStyle = rgba('#5a524c', 0.5);
   for (let i = 0; i < n; i++) { ctx.beginPath(); ctx.arc(x + i * 1.6, y - i * 3.2, 1.6 + i * grow, 0, Math.PI * 2); ctx.fill(); }
 }
-function anchor(ctx: CanvasRenderingContext2D, x: number, y: number): void {
-  ctx.strokeStyle = INK; ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.arc(x, y - 3, 3, 0.15 * Math.PI, 0.85 * Math.PI); ctx.moveTo(x, y - 9); ctx.lineTo(x, y); ctx.moveTo(x - 2.5, y - 7); ctx.lineTo(x + 2.5, y - 7); ctx.stroke();
-  ctx.beginPath(); ctx.arc(x, y - 9.5, 1.2, 0, Math.PI * 2); ctx.stroke();
-}
 
 const STONE = '#ddd2b8', STONE_D = '#a8997c', RED = '#a8392a', GREEN = '#3f7a3a', WOOD = '#8a6038';
 
@@ -1080,7 +1075,7 @@ function paintScale(ctx: CanvasRenderingContext2D): void {
 // ---------------------------------------------------------------- the zone overlay
 
 /** Step numbers the way the old games numbered their maps' quarters. */
-export function roman(n: number): string {
+function roman(n: number): string {
   let s = '';
   for (const [v, t] of [[10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I']] as const) while (n >= v) { s += t; n -= v; }
   return s;
@@ -1399,9 +1394,6 @@ function paintedNow(): Painted {
   return advance(Infinity)!;
 }
 
-/** The painted cloth alone, drawn once. */
-export function worldArt(): HTMLCanvasElement { return paintedNow().cloth; }
-
 /**
  * The Hearth burns over the painted sea: a warm pool on the water and a column, flickering less for
  * each Stone restored, and as the ending left it once one is taken, as the title's (game/stones.ts). Cloth coordinates.
@@ -1480,7 +1472,7 @@ function drawLocator(ctx: CanvasRenderingContext2D, thumb: HTMLCanvasElement, vx
 
 // ---------------------------------------------------------------- the screen
 
-export type WorldMapMode = 'art' | 'zones';
+type WorldMapMode = 'art' | 'zones';
 
 /** Where a map is on the cloth: its plate, else its middle if the atlas lays it, else its home map's middle (`mapPlace`). */
 function mapOnCloth(mapId: string): [number, number] | undefined {

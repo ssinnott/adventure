@@ -3,12 +3,11 @@
 // new game.
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
-import { is } from './actions.ts';
 import { ListMenu } from './menu.ts';
 import { drawText, drawTextOutlined } from '../lib/engine/text.ts';
 import { menu, paragraph } from './draw.ts';
 import { freshSeed } from '../lib/engine/rng.ts';
-import { INK, BRASS, TEXT_DIM, TEXT } from './palette.ts';
+import { INK, BRASS, TEXT } from './palette.ts';
 import { CreateScreen } from './create.ts';
 import { drawDusk } from './viewport.ts';
 import { drawFrameBackground } from './frame.ts';

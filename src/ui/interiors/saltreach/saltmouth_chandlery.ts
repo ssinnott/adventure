@@ -3,8 +3,8 @@
 // for sale, and the quay through the great door.
 import { shade, rgba, mix } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
-import { STAGE_W, STAGE_H, rnd, beam, planks, floorboards, skyFill, line, smudge, fillPoly, slab, pool, contact, DAY_POOL } from '../kit.ts';
-import { K, counter, shelf, lantern, barrel, kegEnd, sack, crate, jar } from '../props.ts';
+import { STAGE_W, STAGE_H, rnd, beam, planks, floorboards, skyFill, line, smudge, fillPoly, pool, contact, DAY_POOL } from '../kit.ts';
+import { K, counter, lantern, barrel, kegEnd, sack, crate, jar } from '../props.ts';
 import { glossPoly, glossEllipse, glossBall } from '../../monsters/gloss.ts';
 
 const BOARD = '#6a5a48', GREEN = '#4a6a5e', TAR = '#2e2622', HEMP = '#c8b080', BRASS = '#c8a048';

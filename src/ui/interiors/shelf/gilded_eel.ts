@@ -35,7 +35,7 @@ function harbour(x: number, y: number, w: number, h: number, daylight: number) {
 function net(ctx: CanvasRenderingContext2D, x0: number, x1: number, y: number, drop: number, seed: number): void {
   const n = 3, span = (x1 - x0) / n;
   for (let k = 0; k < n; k++) {
-    const a = x0 + k * span, b = a + span;
+    const a = x0 + k * span;
     const sag = (u: number): number => y + Math.sin(u * Math.PI) * drop;
     // The mesh: diagonals between the pegs and the sagging lower edge.
     for (let i = 0; i <= 8; i++) {

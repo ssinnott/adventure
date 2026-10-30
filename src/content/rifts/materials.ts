@@ -3,7 +3,7 @@
 // body left to tear, so no Rift wears it, and none comes after it.
 import type { RiftMaterial } from '../../game/rifts.ts';
 
-export const EMBER: RiftMaterial = {
+const EMBER: RiftMaterial = {
   id: 'ember', name: 'The Ember Rift',
   palette: { wall: '#8a5a44', wallDark: '#5a3426', floor: '#4a3028', ceiling: '#3a2018', door: '#6a4a3a', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#c05a3a' },
   enter: 'Heat, and an orange light with no lamp to make it.',
@@ -20,7 +20,7 @@ export const EMBER: RiftMaterial = {
   ],
 };
 
-export const BRINE: RiftMaterial = {
+const BRINE: RiftMaterial = {
   id: 'brine', name: 'The Brine Rift',
   palette: { wall: '#4a8a7a', wallDark: '#2a5a50', floor: '#2e4a46', ceiling: '#1e3434', door: '#3a5a50', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#3aa08a' },
   enter: 'Wet air, and a green light that moves like water.',
@@ -37,7 +37,7 @@ export const BRINE: RiftMaterial = {
   ],
 };
 
-export const GLASS: RiftMaterial = {
+const GLASS: RiftMaterial = {
   id: 'glass', name: 'The Glass Rift',
   palette: { wall: '#2e2c36', wallDark: '#18161e', floor: '#3a3a42', ceiling: '#121016', door: '#4a4440', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#e0e0ea' },
   enter: 'Dead wood, black glass, and a white light inside it.',

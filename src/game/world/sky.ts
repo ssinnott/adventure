@@ -18,7 +18,8 @@ import { hearthWord } from '../stones.ts';
 import type { World } from '../world.ts';
 
 /** Fog as the almanac reads it, and snow lying as it does. */
-export const FOG = 0.35, SNOW_LYING = 0.15;
+export const FOG = 0.35;
+const SNOW_LYING = 0.15;
 
 /**
  * Whether a time to walk holds at a minute, under a sky (null underground, where there is none).

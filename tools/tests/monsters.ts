@@ -14,7 +14,7 @@ import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { MINUTES_PER_DAY, dateAt } from '../../src/game/calendar.ts';
 import { findWeather } from '../../src/game/weather.ts';
 import { serialize, deserialize } from '../../src/game/save.ts';
-import { CLIMATES, MONSTERS, TABLES } from '../../src/content/index.ts';
+import { MONSTERS, TABLES } from '../../src/content/index.ts';
 import { restRefused } from '../../src/game/wilds.ts';
 import { NORTH } from '../../src/game/types.ts';
 import { newWalk, gone } from '../kit/walk.ts';

@@ -19,7 +19,7 @@ import type { Items, Tables } from './tables.ts';
 export type SkillId = 'linguist' | 'mountaineer' | 'swimmer' | 'perception' | 'spirit_sense' | 'danger_sense' | 'arms_master'
   | 'cartographer' | 'pathfinder' | 'lockpick' | 'merchant' | 'navigator';
 
-export interface SkillDef {
+interface SkillDef {
   id: SkillId;
   name: string;
   /** What it does, in a line: the note under it on the menu that teaches it. */
@@ -95,7 +95,7 @@ export const taughtBy = (guild: GuildId): SkillId[] => Object.values(SKILLS).fil
 export const mayLearn = (tables: Tables, id: SkillId, party: Party): boolean => rankOf(tables, SKILLS[id].guild, party) > 0;
 
 /** One line of the menu's second level: a member, the skill, its price, and why not, if not. */
-export interface SkillOffer { who: number; skill: SkillId; price: number; bar: string }
+interface SkillOffer { who: number; skill: SkillId; price: number; bar: string }
 
 /** Why a member may not learn a skill, or '' if it may: learnt already, born to it, or the gold short. */
 export function skillBar(id: SkillId, c: Character, party: Party): string {

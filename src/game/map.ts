@@ -47,7 +47,7 @@ export function landExits<T extends readonly MapDef[]>(defs: T): T {
   return defs;
 }
 
-export const DEFAULT_PALETTES: Record<MapKind, MapPalette> = {
+const DEFAULT_PALETTES: Record<MapKind, MapPalette> = {
   town:    { wall: '#e0cfa8', wallDark: '#a8906a', floor: '#a89068', ceiling: '#000000', door: '#6b4426', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#a83a2a' },
   dungeon: { wall: '#8a8492', wallDark: '#5c5866', floor: '#4a4650', ceiling: '#3a3640', door: '#6b4426', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#3a5aa0' },
   outdoor: { wall: '#9a9080', wallDark: '#6a6254', floor: '#4c9a3a', ceiling: '#000000', door: '#6b4426', wallStyle: 'stone', ceilingStyle: 'vault', banner: '#a83a2a' },
@@ -236,7 +236,7 @@ export class GameMap {
   }
 }
 
-export type PassResult = 'ok' | 'wall' | 'blocked' | 'mountain' | 'water' | 'deep' | 'chasm' | 'tide' | 'locked' | 'unlock' | 'void';
+type PassResult = 'ok' | 'wall' | 'blocked' | 'mountain' | 'water' | 'deep' | 'chasm' | 'tide' | 'locked' | 'unlock' | 'void';
 /** What a party can cross: a swimmer, a mountaineer, iron keys, the tide and a float (`passable`). */
 export interface Can { swim?: boolean; climb?: boolean; keys?: number; tide?: Tide; float?: boolean }
 

@@ -69,7 +69,7 @@ export function mustRest(p: Party): 'dead' | 'hp' | 'sp' | null {
  * What a monster does that a bot answers, and that a player learns only by seeing it done; and what
  * it is proof against of the company's sleep (#853): Slumber (`sleepless`) or the roots (`unheld`).
  */
-export type Trait = 'sweep' | 'breath' | 'drain' | 'calls' | 'leader' | 'sleepless' | 'unheld';
+type Trait = 'sweep' | 'breath' | 'drain' | 'calls' | 'leader' | 'sleepless' | 'unheld';
 
 /**
  * What a bot knows of a monster: whether it may count on the trait. Where it may not, it plays as if
@@ -231,7 +231,7 @@ export const PLAYED: Readonly<BotOpts> = { bless: true, sleep: true, drink: true
  * say, and one under it plays as the bots did before them, so Act I, tuned by the owner's own play,
  * plays as it was made.
  */
-export const FIRST_PAST_ACT_I = 11;
+const FIRST_PAST_ACT_I = 11;
 /** The options member `c` plays by: `opts` from FIRST_PAST_ACT_I on, none under it. */
 export const optsFor = (c: Character, opts: Readonly<BotOpts>): Readonly<BotOpts> => (c.level >= FIRST_PAST_ACT_I ? opts : {});
 /**
@@ -363,10 +363,7 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
  * who came into it down is no sign), and as many foes standing as members. The game's bot then flees
  * (`botTurn` with any reading but `asWritten`).
  */
-export function beaten(s: CombatState, p: Party): boolean {
+function beaten(s: CombatState, p: Party): boolean {
   const down = p.members.filter(isDown).length;
   return down > (s.downAtStart ?? 0) && aliveMonsters(s).length >= p.members.length - down;
 }
-
-/** The bot's turn for member `i`, as the gate plays it: `botTurn`, the action not wanted. */
-export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number): void { botTurn(s, p, rng, i); }

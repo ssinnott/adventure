@@ -92,7 +92,7 @@ export class CreateScreen implements Screen {
     this.setText(g, true);
   }
 
-  render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
+  render(_g: Host, ctx: CanvasRenderingContext2D, frame: number): void {
     ctx.fillStyle = INK; ctx.fillRect(0, 0, 640, 360);
     panel(ctx, 16, 16, 608, 328);
     drawText(ctx, 'THE CHARTER', 32, 28, { size: 2, color: BRASS });

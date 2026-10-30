@@ -9,14 +9,13 @@ import { B, paintFor } from './monsters/common.ts';
 import type { MonsterDrawer, Sprite } from './monsters/common.ts';
 import { SPRITES } from './monsters/index.ts';
 
-export { groundShadow } from './monsters/common.ts';
 
 /** A table of every sprite kind, read off what its family registers for it. */
 const byKind = <T>(pick: (s: Sprite) => T): Readonly<Record<MonsterSprite, T>> =>
   Object.fromEntries(Object.entries(SPRITES).map(([kind, s]) => [kind, pick(s)])) as Record<MonsterSprite, T>;
 
 /** Which family module's drawer draws each sprite kind, as the family registers it (./monsters/index.ts). */
-export const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = byKind((s) => s.draw);
+const FAMILY: Readonly<Record<MonsterSprite, MonsterDrawer>> = byKind((s) => s.draw);
 
 /**
  * How far each kind's drawing reaches left and right of its centre, as shares of the height it is

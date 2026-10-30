@@ -138,7 +138,7 @@ export interface Novelty {
  * that shoots, shrugs off a condition or inflicts a condition, a field an encounter uses. The list
  * grows with the systems.
  */
-export type Mechanic =
+type Mechanic =
   | `feature:${Feature['kind']}` | `door:${Exclude<Door, 'none'>}` | 'sign:read' | 'sign:marks'
   | 'monster:ranged' | 'monster:missile' | `immune:${Condition}` | `inflict:${NonNullable<MonsterDef['inflict']>['cond']}`
   | `encounter:${Exclude<keyof EncounterDef, 'id' | 'x' | 'y' | 'monsters'>}`;

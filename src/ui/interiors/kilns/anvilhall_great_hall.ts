@@ -4,7 +4,7 @@
 // cut down through the hill lets the sky in.
 import { shade, rgba } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
-import { STAGE_W, rnd, block, flagstones, line, smudge, fillPoly, path, ink, slab, pool, contact, clipRect } from '../kit.ts';
+import { STAGE_W, rnd, flagstones, line, smudge, fillPoly, path, ink, slab, pool, contact, clipRect } from '../kit.ts';
 import { K, banner } from '../props.ts';
 import { glossPoly, glossBall } from '../../monsters/gloss.ts';
 import { IRON, RED, BLACK, ashlar, verse, hammerPick } from './hold.ts';

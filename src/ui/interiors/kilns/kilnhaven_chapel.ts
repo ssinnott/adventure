@@ -14,7 +14,6 @@ const FLOOR = 210, LIME = '#e0dbd0', GOLD = '#c8a048', SEA_CLOTH = '#3a5262';
 const EAVE = 62, RIDGE = 4;
 
 /** The back wall's top at x, under the roof's pitch. */
-const pitch = (x: number): number => EAVE - (EAVE - RIDGE) * (1 - Math.abs(x - 200) / 200);
 
 /** The roof over the gable: tarred boards under the rafters, the tie beam across and the king post up from it. */
 function roof(ctx: CanvasRenderingContext2D): void {

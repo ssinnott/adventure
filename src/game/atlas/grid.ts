@@ -362,7 +362,7 @@ class Heap {
  * ways from it; a box cut by the world's edge to under half a box is a strip of rim, unlettered, and
  * the rest are lettered by column (A, B...) and row (1, 2...). Every outdoor map is one box.
  */
-export interface Box { name: string; x: number; y: number; w: number; h: number }
+interface Box { name: string; x: number; y: number; w: number; h: number }
 
 /** One way's cuts: where each lettered column or row starts in world cells, and how many cells it spans. */
 function cuts(corner: number, square: number, extent: number): { at: number; len: number }[] {
@@ -377,13 +377,13 @@ function cuts(corner: number, square: number, extent: number): { at: number; len
 }
 
 /** A column or a row of the grid: its name (a letter or a number), where it starts and how many cells it spans. */
-export interface Cut { name: string; at: number; len: number }
+interface Cut { name: string; at: number; len: number }
 
 /** A column's letters: A to Z, then AA on. */
 const colName = (k: number): string => (k >= 26 ? colName(Math.floor(k / 26) - 1) : '') + String.fromCharCode(65 + (k % 26));
 
 /** What the grid is cut from: the world's size, a box's side and where A1's corner falls. */
-export type Grid = Pick<Atlas, 'width' | 'height' | 'square' | 'corner'>;
+type Grid = Pick<Atlas, 'width' | 'height' | 'square' | 'corner'>;
 
 /** The grid's columns and rows as cut to the world, A and 1 first. */
 export function gridCuts(atlas: Grid): { cols: Cut[]; rows: Cut[] } {

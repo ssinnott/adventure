@@ -42,7 +42,7 @@
 import { pathToFileURL } from 'node:url';
 import fs from 'node:fs';
 import { isMainThread } from 'node:worker_threads';
-import { CLASSES, className, hasCondition, bonus, RANK_STEP, borne } from '../src/game/party.ts';
+import { CLASSES, className, hasCondition, RANK_STEP, borne } from '../src/game/party.ts';
 import type { Character, Party } from '../src/game/party.ts';
 import { LINES, TIER_LEVELS, TIER_NAMES, LINE_NAMES } from '../src/game/mastery.ts';
 import type { Tiers } from '../src/game/mastery.ts';
@@ -57,8 +57,8 @@ import { LINE_FILE, lineJson, ROLES, ROLE_IDS, LEVELS, HP, DAMAGE, xpFor, line, 
 import type { Role } from './kit/line.ts';
 import { ANSWER, REST_AT, type BotAnswer } from '../src/game/bot.ts';
 import { ROUND_CAP, winRate, gateOpts } from './kit/fight.ts';
-import { type Rules, writeRefusal, PROMOTIONS, PRESTIGES, GEAR_TOP, artifactIds, NEWER, fielded, ladder, HARNESS } from './kit/company.ts';
-import { fightsPerRest, CAP, thrifty, spent, type Encounter, type Outcome, play, outcomeOf, fight, measure, type Why, day, days, bossFloor, longest, WORST, slowest, type Point, calibrate, refit, type Cell, fieldedAt, type Job, onCores, cellsOnCores } from './kit/harness.ts';
+import { type Rules, writeRefusal, PROMOTIONS, PRESTIGES, GEAR_TOP, artifactIds, NEWER, fielded, HARNESS } from './kit/company.ts';
+import { fightsPerRest, CAP, thrifty, type Encounter, type Outcome, play, outcomeOf, measure, type Why, day, days, bossFloor, longest, WORST, slowest, type Point, type Cell, fieldedAt, type Job, onCores, cellsOnCores } from './kit/harness.ts';
 
 // ---- the command line ------------------------------------------------------------------------
 

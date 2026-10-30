@@ -11,8 +11,15 @@
     "lib": ["es2022", "dom"],
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*.ts", "tools/**/*.ts", "types/**/*.d.ts"]
+  "include": ["src/**/*.ts", "tools/**/*.ts", "types/**/*.d.ts"],
+  // The engine's rig stack, which nothing here imports: rigParts.ts has a parameter the unused
+  // flags refuse (drawLimbSegs' capAtA), rig.ts imports it and animation.ts rig.ts. src/lib/ is
+  // vendored and never edited here (DESIGN §13): the fix is game-engine's, and the three come
+  // back in with it (#972).
+  "exclude": ["src/lib/art/animation.ts", "src/lib/art/rig.ts", "src/lib/art/rigParts.ts"]
 }

@@ -7,7 +7,6 @@ export const PANEL_EDGE = '#4a3f52';
 export const BRASS = '#c9a34a';
 export const BRASS_DARK = '#7a5f2a';
 export const PARCHMENT = '#e8dcc0';
-export const PARCHMENT_DIM = '#9a8f78';
 export const TEXT = '#e8dcc0';
 export const TEXT_DIM = '#8f8677';
 export const RED = '#c6453c';
@@ -39,5 +38,4 @@ export const AUTOMAP_WASH = 0.55;
 export const AUTOMAP_FADE = 0.5;
 /** The wood the frame is carved from, and its brass fittings. */
 export const WOOD = '#4a2e1c';
-export const WOOD_LIGHT = '#6a4430';
 export const WOOD_DARK = '#2e1a10';

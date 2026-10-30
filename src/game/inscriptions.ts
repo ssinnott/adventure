@@ -14,9 +14,9 @@ import type { WorldState } from './world.ts';
 import { skilled } from './skills.ts';
 import type { Items } from './tables.ts';
 
-export type Sign = Extract<Feature, { kind: 'sign' }>;
+type Sign = Extract<Feature, { kind: 'sign' }>;
 /** A sign with a reading: an inscription in Kiln-script. */
-export type Inscription = Extract<Sign, { read: string }>;
+type Inscription = Extract<Sign, { read: string }>;
 
 export const isInscription = (f: Feature): f is Inscription => f.kind === 'sign' && f.read !== undefined;
 

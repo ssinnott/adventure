@@ -38,14 +38,14 @@ import { liveGroups, groupsInSight, meet, sightings, groupAt, moveMonsters, adja
 export { MINUTES_PER_DAY };
 // What the parts have, from the path it always had (#1008).
 export { seen, VIEW_DEPTH, VIEW_LATERAL, viewCell, isSolidWall, lineOfSight, hillOver, hillHiding } from './world/sight.ts';
-export { FOG, SNOW_LYING, hoursHold, regionOf } from './world/sky.ts';
+export { FOG, hoursHold, regionOf } from './world/sky.ts';
 export { DRAWN_MAX, groupDrawn, AWARE } from './world/groups.ts';
 
 export const START_MINUTES = 7 * 60;
 /** The weather seed of a save made before there was weather. */
 export const LEGACY_WEATHER_SEED = 0x5ca1d;
 
-export interface GroupState { x: number; y: number; /** Minute the group was killed, or -1 while alive. */ dead: number; }
+interface GroupState { x: number; y: number; /** Minute the group was killed, or -1 while alive. */ dead: number; }
 
 export interface MapState {
   /** A bit per cell, set once seen, 32 cells to a number (see `seen`), so the whole outdoors saves small. */
@@ -105,9 +105,12 @@ export class World {
 
   /** The sky as the party last saw it, for the log; null underground or before the first look. Not saved. */
   sky: SkyState | null = null;
-  /** The weather's memo, kept in world/sky.ts; private, the smoke pins a sky through it. */
-  private get cached(): Reading | null { return cached.get(this) ?? null; }
-  private set cached(c: Reading | null) { if (c) cached.set(this, c); else cached.delete(this); }
+  /**
+   * The weather's memo, kept in world/sky.ts; the smoke and the kept suite pin a sky through it
+   * (`w['cached']`), so it is not private.
+   */
+  get cached(): Reading | null { return cached.get(this) ?? null; }
+  set cached(c: Reading | null) { if (c) cached.set(this, c); else cached.delete(this); }
   /** The last line crossed between zone maps, and when: a step straight back over it says no more. Not saved. */
   private lastCross?: { from: string; to: string; at: number };
 
@@ -563,7 +566,8 @@ const TIDE_TEXT: Record<Tide, string> = {
 };
 
 /** The steps Walk on Water and Levitate last (DESIGN §7): a shortcut over a little water or a drop, never a road. */
-export const WALK_STEPS = 12, FLOAT_STEPS = 6;
+export const WALK_STEPS = 12;
+const FLOAT_STEPS = 6;
 /** What the log says as each ends, and as a step would leave the party over the drop with the float spent. */
 export const WALK_ENDS = 'The water no longer bears you.', FLOAT_ENDS = 'Your feet find the ground.', FLOAT_FAILS = 'You would fall before the far side.';
 
@@ -583,7 +587,7 @@ const BLOCK_TEXT: Record<string, string> = {
  * What the log says at the world's end, by what it is drawn as (#829): the sea, a mountain no one
  * climbs, or land with no way on. The bare void says the world ends.
  */
-export function worldsEnd(c: Cell): string {
+function worldsEnd(c: Cell): string {
   const look = c.look;
   if (!look) return BLOCK_TEXT.void;
   if (look.terrain === 'deep' || look.terrain === 'water') return BLOCK_TEXT.deep;

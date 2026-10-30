@@ -4,7 +4,7 @@
 // at the glass by night.
 import { shade, rgba, mix } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
-import { STAGE_W, STAGE_H, rnd, block, flagstones, skyFill, line, fillPoly, path, ink, smudge, contact, slab, pool, flame } from '../kit.ts';
+import { STAGE_W, rnd, block, flagstones, skyFill, line, fillPoly, path, ink, smudge, contact, slab, pool, flame } from '../kit.ts';
 import { K, staff, sword } from '../props.ts';
 import { glossPoly, glossEllipse, glossBall } from '../../monsters/gloss.ts';
 

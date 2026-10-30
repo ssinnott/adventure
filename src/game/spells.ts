@@ -6,7 +6,7 @@ import type { Tables } from './tables.ts';
 
 export type SpellList = 'cleric' | 'sorcerer' | 'druid';
 export type SpellTarget = 'self' | 'ally' | 'party' | 'enemy' | 'group' | 'all';
-export type SpellContext = 'combat' | 'explore' | 'any';
+type SpellContext = 'combat' | 'explore' | 'any';
 /** What a damage spell is made of, which a monster may resist, be immune to or be weak to (DESIGN §7). */
 export type Element = 'fire' | 'cold' | 'lightning' | 'nature' | 'holy';
 export const ELEMENTS: readonly Element[] = ['fire', 'cold', 'lightning', 'nature', 'holy'];

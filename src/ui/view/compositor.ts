@@ -52,7 +52,7 @@ import { Scenes } from './kept.ts';
 const DEPTH = VIEW_DEPTH;
 const LATERAL = VIEW_LATERAL;
 /** How many squares off a landmark stands over the land: a lighthouse seen from across the bay. */
-export const LANDMARK_REACH = 40;
+const LANDMARK_REACH = 40;
 
 /** A figure the viewport draws for a group: the monster, its sprite, tint and size. `under` draws it under the ice. */
 export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; under?: 'ice'; }

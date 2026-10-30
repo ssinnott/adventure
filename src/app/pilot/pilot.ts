@@ -26,7 +26,7 @@ import { talk, untalk } from './talk.ts';
 export type Tempo = 1 | 2 | 4;
 /** What a fled square is kept against (#723): the members' levels and the flags set. */
 const gains = (p: Party): string => `${p.members.reduce((t, m) => t + m.level, 0)}|${Object.keys(p.flags).length}`;
-export interface PilotOpts { instant?: boolean; omniscient?: boolean }
+interface PilotOpts { instant?: boolean; omniscient?: boolean }
 /**
  * A brain: the key it would press now, or null to leave the turn to the next. A brain returns null
  * unless the screen it works on is on top: route and explore only on the ExploreScreen; talk and keep

@@ -3,12 +3,12 @@
 // Expression follows the character's state (well, hurt, down, dead).
 import type { Character, RaceId, ClassId } from '../game/party.ts';
 import { isDown, hasCondition } from '../game/party.ts';
-import { celBall, celPoly, celRect, band, celCapsule, outlinePath, tones } from '../lib/art/shading.ts';
+import { celBall, celPoly, celRect, band, outlinePath, tones } from '../lib/art/shading.ts';
 import { shade, mix } from '../lib/art/palettes.ts';
 import { pathEllipse } from '../lib/art/shapes.ts';
 import { makeBrush, hashStr } from './brush.ts';
 
-export const PORTRAIT_W = 36, PORTRAIT_H = 46;
+const PORTRAIT_W = 36, PORTRAIT_H = 46;
 
 type Mood = 'well' | 'hurt' | 'down' | 'dead';
 
@@ -188,4 +188,3 @@ export function drawPortraitLarge(ctx: CanvasRenderingContext2D, c: Character, x
   ctx.restore();
 }
 
-export { celCapsule };

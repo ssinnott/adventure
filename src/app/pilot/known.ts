@@ -21,7 +21,7 @@ import { optionParts } from '../../ui/draw.ts';
 import { ATLAS, ITEMS, MAP_DEFS } from '../../content/index.ts';
 
 /** A cell as the automap inks it, its legend letter gone: a secret door is a wall and no more. */
-export type Inked = Omit<Cell, 'ch'>;
+type Inked = Omit<Cell, 'ch'>;
 
 export interface Known {
   /** The automap's bit: whether the party has seen the square (`MapState.explored`). */

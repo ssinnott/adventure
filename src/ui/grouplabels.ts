@@ -20,15 +20,16 @@ const stands = (m: LabelMonster): boolean => m.hp > 0 && !m.fled;
 export interface LabelLine { text: string; x: number; y: number; group: number }
 
 /** The margin inside the view at either side. */
-export const LABEL_PAD = 6;
+const LABEL_PAD = 6;
 /** The space between two groups' labels on a row: wide against the ", " between kinds. */
-export const LABEL_GAP = 24;
+const LABEL_GAP = 24;
 /** A row's height. */
 export const LABEL_ROW = 10;
 /** How far below the view's top the first row is painted. */
 export const LABEL_TOP = 6;
 /** How far behind its front the back rank stands, in px up the view, and how much smaller it is drawn. */
-export const BACK_RISE = 14, BACK_SCALE = 0.8;
+const BACK_RISE = 14;
+export const BACK_SCALE = 0.8;
 
 /**
  * A monster drawn larger than this is a tall boss (MONSTERS.md §4.3). It stands on the third rank,
@@ -63,10 +64,10 @@ export const seatOf = (m: LabelMonster, viewH: number, size = 1): number => seat
 export const crown = (size: number, h: number): number => (size > TALL ? h * TALL_REACH : h);
 
 /** A proper name, "The Eldest": a name beginning with "The". A lone one is not counted. */
-export const isProperName = (name: string): boolean => /^The /.test(name);
+const isProperName = (name: string): boolean => /^The /.test(name);
 
 /** A group's kinds among the living, in the order they stand, each with its count, but for a lone proper name. */
-export function groupParts(monsters: readonly LabelMonster[], group: number): string[] {
+function groupParts(monsters: readonly LabelMonster[], group: number): string[] {
   const counts = new Map<string, { n: number; name: string; plural: string }>();
   for (const m of monsters) {
     if (m.group !== group || !stands(m)) continue;

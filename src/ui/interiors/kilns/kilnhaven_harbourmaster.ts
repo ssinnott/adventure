@@ -4,7 +4,7 @@
 // the pigeonholes of old papers, the board of sailings and the glass on its tripod.
 import { shade, rgba } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
-import { STAGE_W, STAGE_H, rnd, plaster, beam, planks, floorboards, line, fillPoly, ink, slab, pool, contact, inkRect } from '../kit.ts';
+import { STAGE_W, STAGE_H, rnd, plaster, beam, planks, floorboards, line, fillPoly, slab, pool, contact, inkRect } from '../kit.ts';
 import { K, lantern, counter } from '../props.ts';
 import { glossPoly, glossEllipse, glossBall } from '../../monsters/gloss.ts';
 import { drawText } from '../../../lib/engine/text.ts';

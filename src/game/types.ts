@@ -12,5 +12,4 @@ export function turnRight(f: Facing): Facing { return ((f + 1) & 3) as Facing; }
 export function turnLeft(f: Facing): Facing { return ((f + 3) & 3) as Facing; }
 export function turnBack(f: Facing): Facing { return ((f + 2) & 3) as Facing; }
 
-export interface Vec { x: number; y: number; }
 export const manhattan = (ax: number, ay: number, bx: number, by: number): number => Math.abs(ax - bx) + Math.abs(ay - by);

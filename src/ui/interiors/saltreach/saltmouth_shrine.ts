@@ -3,7 +3,7 @@
 // by shells. The god only counts now; the walls are scored with it and the shells are laid in rows.
 import { shade, rgba, mix } from '../../../lib/art/palettes.ts';
 import type { Scene, Stage } from '../kit.ts';
-import { STAGE_W, STAGE_H, rnd, stones, flagstones, line, smudge, fillPoly, slab, pool, contact } from '../kit.ts';
+import { STAGE_W, rnd, stones, flagstones, line, smudge, fillPoly, slab, pool, contact } from '../kit.ts';
 import { K, shelf, jar, bottle, herbs } from '../props.ts';
 import { glossPoly, glossEllipse, glossBall } from '../../monsters/gloss.ts';
 

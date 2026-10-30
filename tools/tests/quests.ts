@@ -254,7 +254,6 @@ function goals(): void {
   // Each way in starts the quest with a goal; each entry can be written; each goal can be the one
   // shown (not hidden behind an earlier one); and an entry keyed to an item outlasts the hand-in.
   const handedIn = new Set(MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => f.kind === 'npc' ? handIns(f).map((q) => q.item) : [])));
-  const company = fresh().party;
   // Whether a shop buys an item, asked of a company with a Merchant standing, whom a shop pays most (#857).
   const merchant = fresh().party;
   merchant.members[5].skills = ['merchant'];

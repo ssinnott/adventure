@@ -66,7 +66,7 @@ export function optionParts(opt: string): { label: string; value: string; note: 
   const [label, value = '', note = ''] = opt.split('\t');
   return { label, value, note };
 }
-export function flatOption(opt: string): string { return opt.split('\t').filter(Boolean).join('  '); }
+function flatOption(opt: string): string { return opt.split('\t').filter(Boolean).join('  '); }
 
 /** `text` cut to `width` px, ending '..' when it had to be cut. */
 export function fit(text: string, width: number, size = 1): string {

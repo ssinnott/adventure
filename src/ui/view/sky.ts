@@ -134,7 +134,7 @@ export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOp
 }
 
 /** The view the title and the endings' pages (ui/title.ts, ui/ending.ts) share. */
-export const DUSK = { x: 8, y: 8, w: 624, h: 344 };
+const DUSK = { x: 8, y: 8, w: 624, h: 344 };
 
 /**
  * Dusk over the inland sea, looking west at the Hearth: a column of light on the horizon that

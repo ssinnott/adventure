@@ -60,7 +60,6 @@ import { CHAPTER } from './chapter.ts';
 import { STEPS, HEAD_FIRST, crew } from './steps.ts';
 import { MONSTERS } from './monsters.ts';
 import { QUESTS } from '../../index.ts';
-import { take } from '../../../game/guilds.ts';
 import type { Party } from '../../../game/party.ts';
 import { RESPAWN } from '../../../game/keys.ts';
 
@@ -115,7 +114,7 @@ function theRoad(): Scene[] {
   return [
     { name: 'n7', play: (ok) => {
       const w = newWalk(ok);
-      const { out, n7, n8, onN7, grid, count } = moorParts();
+      const { out, n7, n8, onN7, count } = moorParts();
 
       // The crossing: down N6's drove road over the border and onto the moor. Two levels under its
       // floor the moor's own words, in snow; at the floor its name and nothing more.
@@ -948,7 +947,7 @@ function theBounds(): Scene[] {
     { name: 'p7', play: (ok) => {
       // The hills under the rim (P7): east from O7's 31,4 onto P7's 0,4, walked, nothing said.
       const w = newWalk(ok, { level: 18 }), out = outdoors();
-      const p7 = zone(out, P7.id), p8 = zone(out, P8.id), o7 = zone(out, 'highmoor_o7'), o8 = zone(out, 'highmoor_o8'), p6 = zone(out, 'kilnsheart_p6');
+      const p7 = zone(out, P7.id), o7 = zone(out, 'highmoor_o7'), p6 = zone(out, 'kilnsheart_p6');
       w.world.state.minutes = Math.floor(w.world.state.minutes / MINUTES_PER_DAY) * MINUTES_PER_DAY + 12 * 60;
       w.world.travel('highmoor_o7', 31, 4, EAST);
       const east = w.world.move('forward');
@@ -1002,7 +1001,7 @@ function theBounds(): Scene[] {
       // The ledge under the rim (P8): south from P7's 1,31 onto its 1,0, and east from O8's 31,10 onto
       // its 0,10, both walked, the same moor.
       const w = newWalk(ok, { level: 18 }), out = outdoors();
-      const p7 = zone(out, P7.id), p8 = zone(out, P8.id), o7 = zone(out, 'highmoor_o7'), o8 = zone(out, 'highmoor_o8'), p6 = zone(out, 'kilnsheart_p6');
+      const p8 = zone(out, P8.id), o8 = zone(out, 'highmoor_o8');
       walkThrough(w, P7.id, 1, 31, SOUTH, P8.id, 2);
       w.world.travel('highmoor_o8', 31, 10, EAST);
       const ledge = w.world.move('forward');

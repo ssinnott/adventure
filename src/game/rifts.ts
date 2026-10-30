@@ -45,7 +45,7 @@ export interface RiftMaterial {
 }
 
 /** An area's table for a Rift: the groups put in its slots, the warden at its heart, and how soon the groups come back. */
-export interface RiftTable {
+interface RiftTable {
   groups: readonly (readonly string[])[];
   warden?: readonly string[];
   /** The warden's group is a boss (`EncounterDef.boss`), which the gate judges as one (#968). */

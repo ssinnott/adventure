@@ -26,10 +26,10 @@ export function questOrder(log: readonly QuestView[]): QuestView[] {
   return [...log.filter((v) => !v.done), ...log.filter((v) => v.done)];
 }
 
-export interface PageRow { text: string; color: string; y: number; }
+interface PageRow { text: string; color: string; y: number; }
 
 /** One sheet of the log: its rows, the rule under the goal at `rule`, and the page of the quest it shows. */
-export interface Sheet { rows: PageRow[]; rule: number; page: number; }
+interface Sheet { rows: PageRow[]; rule: number; page: number; }
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 

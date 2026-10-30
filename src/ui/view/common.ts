@@ -21,7 +21,6 @@ import type { Tide } from '../../game/calendar.ts';
 import { rampColor } from './model.ts';
 import type { Ramp } from './model.ts';
 
-export const VIEW_W = 400, VIEW_H = 268;
 const NEAR = 0.9;
 
 export interface ViewRect { x: number; y: number; w: number; h: number; }
@@ -51,7 +50,7 @@ export interface Paint {
 /** Where a frame is drawn: the part of a Paint the figures over a finished scene take (`drawViewport`). */
 export type View = Pick<Paint, 'ctx' | 'cx' | 'horizon' | 'h'>;
 /** The light a frame is painted in and what the world says is there, as `paintOn` takes them. */
-export type Light = Pick<Paint, 'dark' | 'haze' | 'daylight' | 'gloom' | 'env' | 'present'>;
+type Light = Pick<Paint, 'dark' | 'haze' | 'daylight' | 'gloom' | 'env' | 'present'>;
 /** A clear day: not dark, no haze, full daylight, the clear `env` and every feature there. */
 const DAY: Light = { dark: false, haze: null, daylight: 1, gloom: 1, env: CLEAR, present: () => true };
 /**
@@ -63,7 +62,7 @@ export function paintOn(ctx: CanvasRenderingContext2D, r: ViewRect, map: GameMap
 }
 
 /** What the fog reads of a frame: whether it is dark, its haze and the murk in its `env`. */
-export type Air = Pick<Paint, 'dark' | 'haze' | 'env'>;
+type Air = Pick<Paint, 'dark' | 'haze' | 'env'>;
 /** The frame's air without its haze: a door, its seam and a sconce's iron darken with the night and never fade into the haze. */
 export const unhazed = (a: Air): Air => ({ dark: a.dark, haze: null, env: a.env });
 /** Neither darkened nor hazed: a window lit at night, and a dungeon's ceiling. */

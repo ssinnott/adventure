@@ -12,7 +12,7 @@ import { STONE_HOME } from './drowned_temples.ts';
 import { RESPAWN } from '../../../../game/keys.ts';
 
 /** The Rift on the islet gone quiet: its warden fallen, or the Tide Stone home (#191). */
-export const RIFT_CLOSED: When = [{ slain: 'c5_rift:c5_rift_warden' }, STONE_HOME];
+const RIFT_CLOSED: When = [{ slain: 'c5_rift:c5_rift_warden' }, STONE_HOME];
 
 /** The brine Rift off the causeway (#165): brinelings in its rooms, and a tide elder at the tear's heart. */
 export const C5_RIFT: Rift<'c5_rift'> = rift({

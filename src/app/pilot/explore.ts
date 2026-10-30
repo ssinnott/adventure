@@ -17,7 +17,7 @@ import type { Goal } from './route.ts';
 
 interface Square { x: number; y: number }
 /** A wall to search, and the facing from the square before it that faces it. */
-export interface Suspect { x: number; y: number; facing: Facing }
+interface Suspect { x: number; y: number; facing: Facing }
 
 const SIDES: readonly Facing[] = [NORTH, EAST, SOUTH, WEST];
 const at = (q: Square): string => `${q.x},${q.y}`;
