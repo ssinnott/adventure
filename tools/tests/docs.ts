@@ -1,8 +1,15 @@
 // The docs check (tools/kit/docs.ts, #1025): every live doc holds every rule, and the table of what is
 // not ours holds no row that resolves or that no doc names. Copies made from the real docs, with a
 // path made up, a name made up, a line cite added, a band changed and a lane's words changed in each
-// table that carries them, are each refused by the rule that holds it, and by no other.
-import { CITES_ASKED, LEFT_OUT, NOT_OURS, RULES, areaOf, readDocs, readTree, resolves, road, spans, unneeded, type Doc, type Tree } from '../kit/docs.ts';
+// table that carries them, are each refused by the rule that holds it, and by no other. Each lane's
+// first read (#1026) is printed and held under the budget; copies with a section grown past it, a
+// heading renamed, CLAUDE.md naming a file more or one less, EXPANSION a byte over its most and a
+// "Decided by" list in it are refused as well.
+import {
+  BUDGET, CITES_ASKED, EXPANSION_MOST, LEFT_OUT, NOT_OURS, RULES, areaOf, firstRead, listed, readDocs, readTree, resolves,
+  road, spans, unneeded, type Doc, type Tree,
+} from '../kit/docs.ts';
+import { LANES } from '../kit/lanes.ts';
 import { ok } from './lib.ts';
 
 export function docs(): void {
@@ -38,10 +45,11 @@ export function docs(): void {
     if (!d.text.includes(from)) throw new Error(`${p} no longer says ${from}: the copy wants a new line to change`);
     return { path: p, text: d.text.replace(from, to) };
   };
-  const only = (d: Doc, rule: string, ...want: string[]): boolean => {
-    const got = Object.keys(RULES).flatMap((r) => said(d, r).map((f) => `${r} ${f}`));
+  const onlyIn = (t: Tree, d: Doc, rule: string, ...want: string[]): boolean => {
+    const got = Object.keys(RULES).flatMap((r) => said(d, r, t).map((f) => `${r} ${f}`));
     return got.length === want.length && want.every((w) => got.some((g) => g.startsWith(`${rule} `) && g.includes(w)));
   };
+  const only = (d: Doc, rule: string, ...want: string[]): boolean => onlyIn(tree, d, rule, ...want);
   ok(only(copy('docs/DESIGN.md', '`src/content/atlas.ts`', '`src/content/atlases.ts`'), 'paths', '`src/content/atlases.ts` names no tracked file or folder')
     && only(copy('docs/DESIGN.md', '`src/content/atlas.ts`', "`import './src/content/atlases.ts'`"), 'paths', '`src/content/atlases.ts` names no tracked file or folder'),
     'a copy of DESIGN.md with a path made up is refused, the path named, quoted in a phrase as well');
@@ -62,6 +70,38 @@ export function docs(): void {
     && only(copy('docs/ISSUES.md', '| `lane: design` |', '| `lane: designs` |'), 'lanes', 'no lane of .github/labels.json', 'has no row for lane: design')
     && !said(copy('docs/EXPANSION.md', '| one per family |', '| two per family |'), 'lanes').length,
   'a copy of ISSUES.md or EXPANSION.md with a lane\'s words changed is refused, and one with a lane renamed; EXPANSION\'s "At once" column is its own');
+
+  // Each lane's first read, its files and what of each, at the budget or under; a copy with a section
+  // grown by one byte past what its lane has to spare is refused, the lane named, and one with a
+  // heading FIRST_READ names renamed, the heading named. The texts a first read takes are the tree's.
+  const n = (x: number): string => x.toLocaleString('en-GB');
+  for (const lane of LANES) {
+    const r = firstRead(lane, tree);
+    ok(r.bytes <= BUDGET && !r.lacks.length,
+      `${lane}: its first read is ${n(r.bytes)} bytes, ${n(Math.ceil(r.bytes / 4))} tokens of ${n(BUDGET / 4)}: ${listed(r)}${r.lacks.length ? '; ' + r.lacks.join('; ') : ''}`);
+  }
+  const claude = doc('CLAUDE.md'), design = tree.texts.get('docs/DESIGN.md')!;
+  const withDesign = (from: string, to: string): Tree => {
+    if (!design.includes(from)) throw new Error(`docs/DESIGN.md no longer says ${from}: the copy wants a new line to change`);
+    return { ...tree, texts: new Map(tree.texts).set('docs/DESIGN.md', design.replace(from, to)) };
+  };
+  const room = BUDGET - firstRead('systems', tree).bytes;
+  const grown = (by: number): Tree => withDesign('## 6. Combat\n', `## 6. Combat\n${'a'.repeat(by - 1)}\n`);
+  ok(!said(claude, 'budget', grown(room)).length && onlyIn(grown(room + 1), claude, 'budget', `the systems lane's first read is ${n(BUDGET + 1)} bytes, over`),
+    `a copy of DESIGN.md with §6 grown by the ${n(room)} bytes the systems lane has to spare passes, and one a byte longer is refused, the lane named`);
+  ok(onlyIn(withDesign('### Races\n', '### The races\n'), claude, 'budget', "the systems lane's first read (FIRST_READ): `docs/DESIGN.md` has no heading `### Races`"),
+    'and one with a heading FIRST_READ names renamed, the heading named');
+
+  // CLAUDE.md names the first reads' files and no other; EXPANSION is at its most or under, with no
+  // "Decided by" list (a decision goes to docs/decisions.md).
+  ok(only(copy('CLAUDE.md', '`docs/SYSTEMS.md`', '`docs/SYSTEMS.md` and `docs/PILOT.md`'), 'reading', "names `docs/PILOT.md`, which no lane's first read holds")
+    && only(copy('CLAUDE.md', '`docs/SYSTEMS.md`', 'SYSTEMS'), 'reading', "FIRST_READ's `docs/SYSTEMS.md` (systems) is not named"),
+  'a copy of CLAUDE.md naming a file FIRST_READ lacks is refused, the file named, and one lacking a file of FIRST_READ');
+  const spare = EXPANSION_MOST - Buffer.byteLength(doc('docs/EXPANSION.md').text);
+  const longer = (by: number): Doc => copy('docs/EXPANSION.md', 'Its decisions: decisions.md.', `Its decisions: decisions.md. ${'a'.repeat(by - 1)}`);
+  ok(!said(longer(spare), 'expansion').length && only(longer(spare + 1), 'expansion', `docs/EXPANSION.md is ${n(EXPANSION_MOST + 1)} bytes, over ${n(EXPANSION_MOST)}`)
+    && only(copy('docs/EXPANSION.md', 'Its decisions: decisions.md.', "Decided by the builder for #1026, each the owner's to overturn:"), 'expansion', 'EXPANSION holds a "Decided by" list'),
+  `a copy of EXPANSION.md grown by its ${n(spare)} bytes to spare passes, one a byte longer is refused, and one with a "Decided by" list`);
 
   // The table only shrinks: a row whose word comes to resolve goes, and so does one no doc names.
   const built: Tree = { ...tree, files: new Set([...tree.files, 'dist/index.js']), folders: new Set([...tree.folders, 'dist']) };
