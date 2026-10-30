@@ -1,11 +1,10 @@
-// The party's tables (#1020, cut from game/party.ts): the stats, the peoples, the classes and their
-// traits with what the numeric ones are worth, the prestiges with their levels, prices and pools,
-// the conditions and those a ward may keep off, the shapes of a member and a company (`Character`,
-// `Party`), what a member is called and its spell rank, and the small sums a member and a level are
-// made of (`bonus`, `xpForLevel`, the caps, what a tier is worth, a kill's pay, the creation
-// screen's names and its roll). It takes types alone, so it loads nothing: the other parts and
-// party.ts take their shapes and figures from here.
-import type { RngInstance } from '../../lib/engine/rng.ts';
+// The party's tables (#1020, cut from game/party.ts): the stats, the peoples, the classes with the
+// stats each starts on and their traits with what the numeric ones are worth, the prestiges with
+// their levels, prices and pools, the conditions and those a ward may keep off, the shapes of a
+// member and a company (`Character`, `Party`), what a member is called and its spell rank, and the
+// small sums a member and a level are made of (`bonus`, `xpForLevel`, the caps, what a tier is
+// worth, a kill's pay and the creation screen's names). It takes types alone, so it loads nothing:
+// the other parts and party.ts take their shapes and figures from here.
 import type { ItemDef } from '../items.ts';
 import type { SpellList, Element } from '../spells.ts';
 import type { SkillId } from '../skills.ts';
@@ -36,6 +35,8 @@ export interface ClassDef {
   spells?: SpellList;
   /** Base to-hit and the martial multiplier on levelling attack bonus. */
   attack: number;
+  /** The stats it starts on, over BASE_STATS's 10; its people's mods go on top, so a pairing always starts the same (DESIGN §5). */
+  stats: Partial<Stats>;
   /** Starting kit. */
   kit: readonly string[];
   /** Passive traits, always on. */
@@ -88,16 +89,16 @@ export const RACES: Record<RaceId, RaceDef> = {
 };
 
 export const CLASSES: Record<ClassId, ClassDef> = {
-  knight:   { id: 'knight', name: 'Knight', hpDie: 10, spDie: 0, attack: 3, kit: ['longsword', 'scale', 'buckler'], traits: ['stalwart', 'weapon_master'], blurb: 'The wall. Best weapons and armour.' },
-  paladin:  { id: 'paladin', name: 'Paladin', hpDie: 8, spDie: 3, spStat: 'personality', spells: 'cleric', attack: 2, kit: ['mace', 'leather', 'buckler'], traits: ['holy_strike', 'divine_health'], blurb: 'Fights and heals a little.' },
-  ranger:   { id: 'ranger', name: 'Ranger', hpDie: 8, spDie: 2, spStat: 'intellect', spells: 'druid', attack: 2, kit: ['shortsword', 'leather', 'shortbow'], traits: ['marksman', 'keen_eyes'], blurb: 'Bows and a little druid magic. Pathfinder.' },
-  cleric:   { id: 'cleric', name: 'Cleric', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['mace', 'robe'], traits: ['healing_hands', 'faith'], blurb: 'Heals, cures, protects.' },
-  sorcerer: { id: 'sorcerer', name: 'Sorcerer', hpDie: 4, spDie: 8, spStat: 'intellect', spells: 'sorcerer', attack: 0, kit: ['dagger', 'robe', 'sling'], traits: ['spellfire', 'iron_will'], blurb: 'Damage and the spells that open the map.' },
-  thief:    { id: 'thief', name: 'Thief', hpDie: 6, spDie: 0, attack: 2, kit: ['shortsword', 'leather', 'sling'], traits: ['sneak_attack', 'keen_eyes'], blurb: 'Locks, traps, and hitting first.' },
-  barbarian: { id: 'barbarian', name: 'Barbarian', hpDie: 12, spDie: 0, attack: 3, kit: ['axe', 'leather'], traits: ['rage', 'die_hard'], blurb: 'Most hp of all. Big weapons, light armour.' },
-  monk:     { id: 'monk', name: 'Monk', hpDie: 8, spDie: 0, attack: 3, kit: ['staff', 'robe'], traits: ['unarmoured', 'stillness'], blurb: 'Staff and robe, no steel. Quick.' },
-  bard:     { id: 'bard', name: 'Bard', hpDie: 6, spDie: 4, spStat: 'personality', spells: 'cleric', attack: 1, kit: ['shortsword', 'leather', 'sling'], traits: ['inspire'], blurb: 'A blade, a song, and some healing.' },
-  druid:    { id: 'druid', name: 'Druid', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'druid', attack: 1, kit: ['staff', 'leather'], traits: ['natures_ward', 'healing_hands'], blurb: 'Thorn, storm and mending. Wears leather.' },
+  knight:   { id: 'knight', name: 'Knight', hpDie: 10, spDie: 0, attack: 3, stats: { might: 15, endurance: 14, accuracy: 12 }, kit: ['longsword', 'scale', 'buckler'], traits: ['stalwart', 'weapon_master'], blurb: 'The wall. Best weapons and armour.' },
+  paladin:  { id: 'paladin', name: 'Paladin', hpDie: 8, spDie: 3, spStat: 'personality', spells: 'cleric', attack: 2, stats: { might: 13, personality: 13, endurance: 12 }, kit: ['mace', 'leather', 'buckler'], traits: ['holy_strike', 'divine_health'], blurb: 'Fights and heals a little.' },
+  ranger:   { id: 'ranger', name: 'Ranger', hpDie: 8, spDie: 2, spStat: 'intellect', spells: 'druid', attack: 2, stats: { accuracy: 14, speed: 13, intellect: 11 }, kit: ['shortsword', 'leather', 'shortbow'], traits: ['marksman', 'keen_eyes'], blurb: 'Bows and a little druid magic. Pathfinder.' },
+  cleric:   { id: 'cleric', name: 'Cleric', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'cleric', attack: 1, stats: { personality: 15, endurance: 12 }, kit: ['mace', 'robe'], traits: ['healing_hands', 'faith'], blurb: 'Heals, cures, protects.' },
+  sorcerer: { id: 'sorcerer', name: 'Sorcerer', hpDie: 4, spDie: 8, spStat: 'intellect', spells: 'sorcerer', attack: 0, stats: { intellect: 16, luck: 11, speed: 11 }, kit: ['dagger', 'robe', 'sling'], traits: ['spellfire', 'iron_will'], blurb: 'Damage and the spells that open the map.' },
+  thief:    { id: 'thief', name: 'Thief', hpDie: 6, spDie: 0, attack: 2, stats: { speed: 15, luck: 13, accuracy: 12 }, kit: ['shortsword', 'leather', 'sling'], traits: ['sneak_attack', 'keen_eyes'], blurb: 'Locks, traps, and hitting first.' },
+  barbarian: { id: 'barbarian', name: 'Barbarian', hpDie: 12, spDie: 0, attack: 3, stats: { might: 15, endurance: 14, accuracy: 12 }, kit: ['axe', 'leather'], traits: ['rage', 'die_hard'], blurb: 'Most hp of all. Big weapons, light armour.' },
+  monk:     { id: 'monk', name: 'Monk', hpDie: 8, spDie: 0, attack: 3, stats: { accuracy: 14, speed: 13, might: 11 }, kit: ['staff', 'robe'], traits: ['unarmoured', 'stillness'], blurb: 'Staff and robe, no steel. Quick.' },
+  bard:     { id: 'bard', name: 'Bard', hpDie: 6, spDie: 4, spStat: 'personality', spells: 'cleric', attack: 1, stats: { personality: 15, speed: 13, accuracy: 12 }, kit: ['shortsword', 'leather', 'sling'], traits: ['inspire'], blurb: 'A blade, a song, and some healing.' },
+  druid:    { id: 'druid', name: 'Druid', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'druid', attack: 1, stats: { personality: 15, endurance: 12 }, kit: ['staff', 'leather'], traits: ['natures_ward', 'healing_hands'], blurb: 'Thorn, storm and mending. Wears leather.' },
 };
 
 /**
@@ -191,6 +192,7 @@ export interface Party {
   spent?: Record<string, number>;
 }
 
+/** What every stat starts at, under a class's own (`ClassDef.stats`) and its people's mods. */
 export const BASE_STATS: Stats = { might: 10, intellect: 10, personality: 10, endurance: 10, accuracy: 10, speed: 10, luck: 10 };
 
 /** Stat bonus in the +/-4 range that the tables use. */
@@ -232,10 +234,3 @@ export const IRONHIDE_AT = -30;
 
 /** The names the creation screen offers, of which a company drawn at random takes six. */
 export const SUGGESTED = ['Bram', 'Idris', 'Wren', 'Ottilie', 'Maren', 'Cassian', 'Tamsin', 'Hollis', 'Aveline', 'Rook', 'Sable', 'Piran'];
-
-/** A member's stats as the creation screen rolls them: 8 and two d4 each. */
-export function rollStats(rng: RngInstance): Stats {
-  const s = {} as Stats;
-  for (const k of STATS) s[k] = 8 + rng.int(1, 4) + rng.int(1, 4);
-  return s;
-}

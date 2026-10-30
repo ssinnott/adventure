@@ -1,16 +1,14 @@
-// Party creation: six characters, each named, raced, classed and rolled, or the premade company
-// for players who want to be walking in thirty seconds.
+// Party creation: six characters, each named, raced and classed, its stats its class's and its
+// people's (DESIGN §5), or the premade company for players who want to be walking in thirty seconds.
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
 import { ListMenu } from './menu.ts';
 import { drawText } from '../lib/engine/text.ts';
-import { makeRng } from '../lib/engine/rng.ts';
-import type { RngInstance } from '../lib/engine/rng.ts';
 import { panel, menu, paragraph } from './draw.ts';
 import { INK, BRASS, TEXT, TEXT_DIM, YELLOW, GREEN } from './palette.ts';
-import { RACES, CLASSES, TRAITS, STATS, createCharacter, createParty, defaultParty, bonus, NAME_MAX, rollStats, SUGGESTED } from '../game/party.ts';
-import type { Character, RaceId, ClassId, Stats } from '../game/party.ts';
+import { RACES, CLASSES, TRAITS, STATS, BASE_STATS, createCharacter, createParty, defaultParty, bonus, NAME_MAX, SUGGESTED } from '../game/party.ts';
+import type { Character, RaceId, ClassId } from '../game/party.ts';
 
 type Step = 'intro' | 'name' | 'race' | 'class' | 'stats' | 'review';
 
@@ -27,14 +25,10 @@ export class CreateScreen implements Screen {
   private name = '';
   private race: RaceId = 'human';
   private cls: ClassId = 'knight';
-  private stats: Stats;
   private members: Character[] = [];
-  private rng: RngInstance;
   private seed: number;
   constructor(seed: number) {
     this.seed = seed;
-    this.rng = makeRng(seed);
-    this.stats = rollStats(this.rng);
   }
 
   private setText(g: Host, on: boolean): void { if (g.input) g.input.textMode = on; }
@@ -65,10 +59,9 @@ export class CreateScreen implements Screen {
         else if (is(a, 'cancel')) { this.step = 'race'; this.sel = RACE_IDS.indexOf(this.race); }
         break;
       case 'stats':
-        if (is(a, 'rest')) this.stats = rollStats(this.rng);
-        else if (is(a, 'cancel')) { this.step = 'class'; this.sel = CLASS_IDS.indexOf(this.cls); }
+        if (is(a, 'cancel')) { this.step = 'class'; this.sel = CLASS_IDS.indexOf(this.cls); }
         else if (is(a, 'interact')) {
-          this.members.push(createCharacter(g.tables, this.name.trim(), this.race, this.cls, this.stats, this.rng));
+          this.members.push(createCharacter(g.tables, this.name.trim(), this.race, this.cls, CLASSES[this.cls].stats, g.rng));
           this.slot++;
           if (this.slot >= 6) { this.step = 'review'; this.sel = 0; }
           else this.beginSlot(g);
@@ -86,7 +79,7 @@ export class CreateScreen implements Screen {
   }
 
   private beginSlot(g: Host): void {
-    this.step = 'name'; this.name = ''; this.stats = rollStats(this.rng);
+    this.step = 'name'; this.name = '';
     // Suggest a spread of classes so a first party is not six knights.
     this.cls = CLASS_IDS[this.slot % CLASS_IDS.length]; this.race = RACE_IDS[this.slot % RACE_IDS.length];
     this.setText(g, true);
@@ -132,7 +125,7 @@ export class CreateScreen implements Screen {
         drawText(ctx, `${this.name.toUpperCase()}, ${RACES[this.race].name.toUpperCase()} ${CLASSES[this.cls].name.toUpperCase()}  -  STATS`, x, y, { size: 1, color: BRASS }); y += 14;
         for (const s of STATS) {
           const mod = RACES[this.race].mods[s] ?? 0;
-          const v = this.stats[s] + mod;
+          const v = (CLASSES[this.cls].stats[s] ?? BASE_STATS[s]) + mod;
           drawText(ctx, s.toUpperCase(), x, y, { size: 1, color: TEXT_DIM });
           drawText(ctx, String(v), x + 90, y, { size: 1, color: v >= 14 ? GREEN : v <= 9 ? YELLOW : TEXT, align: 'right' });
           if (mod) drawText(ctx, `(${mod > 0 ? '+' : ''}${mod} ${RACES[this.race].name})`, x + 100, y, { size: 1, color: TEXT_DIM });
@@ -140,7 +133,7 @@ export class CreateScreen implements Screen {
           y += 11;
         }
         y += 6;
-        drawText(ctx, 'R  REROLL      SPACE  ACCEPT      ESC  BACK', x, y, { size: 1, color: TEXT_DIM });
+        drawText(ctx, 'SPACE  ACCEPT      ESC  BACK', x, y, { size: 1, color: TEXT_DIM });
         break;
       }
       case 'review':

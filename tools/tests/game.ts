@@ -13,6 +13,7 @@ import { MONSTERS, TABLES } from '../../src/content/index.ts';
 import type { Feature } from '../../src/game/mapdef.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { startCombat, currentTurn, monsterAct, partyAct, meetCalled } from '../../src/game/combat.ts';
+import { STATS, CLASSES, RACES, BASE_STATS } from '../../src/game/party.ts';
 
 /** The screen on top, by its class. */
 const top = (g: Game): string => g.top.constructor.name;
@@ -25,6 +26,14 @@ export function game(): void {
   ok(top(t) === 'CreateScreen', 'New Game on the title opens the company screen');
   drive(t, ['interact']);
   ok(top(t) === 'ExploreScreen' && t.world.state.mapId === 'harrow', 'the premade company on that screen starts the game exploring Harrow');
+  // Mustered by hand, each member on its class's stats and its people's mods (DESIGN §5): the class one
+  // below the screen's suggestion, and R on the stats step, which once rolled them, rolling nothing.
+  const own = new Game(TABLES, null);
+  drive(own, ['interact', 'down', 'interact', ...[0, 1, 2, 3, 4, 5].flatMap(() => ['interact', 'interact', 'down', 'interact', 'rest', 'interact'] as const), 'interact']);
+  const pairs = own.party.members.map((m) => `${m.race} ${m.cls}`).join(', ');
+  const off = own.party.members.filter((m) => STATS.some((k) => m.stats[k] !== (CLASSES[m.cls].stats[k] ?? BASE_STATS[k]) + (RACES[m.race].mods[k] ?? 0)));
+  ok(top(own) === 'ExploreScreen' && pairs === 'human paladin, dwarf ranger, elf cleric, gnome sorcerer, tidefolk thief, orcblood barbarian' && !off.length,
+    `a company mustered by hand stands on its classes' stats and its peoples' mods, R rolling nothing (${pairs}; ${off.map((m) => m.name).join(', ') || 'none off'})`);
 
   const g = headlessGame(4);
   ok(top(g) === 'ExploreScreen' && g.world.state.mapId === 'harrow', `a headless game at seed 4 is exploring ${g.world.state.mapId}`);

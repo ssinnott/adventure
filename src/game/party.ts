@@ -17,7 +17,7 @@ import type { Element } from './spells.ts';
 import { hasSkill } from './skills.ts';
 import type { Items, Tables } from './tables.ts';
 import {
-  STATS, STALWART_AC, HEALING_HANDS, TRAITS, RACES, CLASSES, BASE_STATS, bonus, RANK_STEP, robeLike, SUGGESTED, rollStats,
+  STATS, STALWART_AC, HEALING_HANDS, TRAITS, RACES, CLASSES, BASE_STATS, bonus, RANK_STEP, robeLike, SUGGESTED,
 } from './party/tables.ts';
 import type { Stat, Stats, RaceId, ClassId, Condition, Character, Party } from './party/tables.ts';
 import { isDown, hasCondition, hasTrait, removeCondition, deathAt, heal, countItem } from './party/conditions.ts';
@@ -31,6 +31,10 @@ export * from './party/order.ts';
 /** The flag a party holds once it has paid a spell hall's fee to study: in game/keys.ts with the save's other keys. */
 export { guildFlag } from './keys.ts';
 
+/**
+ * A member at level 1: its stats `base` over BASE_STATS's 10 and its people's mods on top, where a
+ * member the game makes takes its class's (`ClassDef.stats`, DESIGN §5) and a test any it likes.
+ */
 export function createCharacter(tables: Tables, name: string, race: RaceId, cls: ClassId, base: Partial<Stats>, rng: RngInstance): Character {
   const stats = { ...BASE_STATS, ...base };
   for (const s of STATS) stats[s] += RACES[race].mods[s] ?? 0;
@@ -218,17 +222,13 @@ export function partyCan(p: Party): { swim: boolean; climb: boolean; keys: numbe
   };
 }
 
-/** The six that come with a new game: one of each class, so every system is exercised in the slice. */
+/** The six that come with a new game: one of each class, so every system is exercised in the slice, each on its class's stats. */
 export function defaultParty(tables: Tables, rng: RngInstance): Party {
-  const m = [
-    createCharacter(tables, 'Bram', 'human', 'knight', { might: 15, endurance: 14, accuracy: 12 }, rng),
-    createCharacter(tables, 'Idris', 'orcblood', 'paladin', { might: 13, personality: 13, endurance: 12 }, rng),
-    createCharacter(tables, 'Wren', 'elf', 'ranger', { accuracy: 14, speed: 13, intellect: 11 }, rng),
-    createCharacter(tables, 'Ottilie', 'gnome', 'thief', { speed: 15, luck: 13, accuracy: 12 }, rng),
-    createCharacter(tables, 'Maren', 'tidefolk', 'cleric', { personality: 15, endurance: 12 }, rng),
-    createCharacter(tables, 'Cassian', 'human', 'sorcerer', { intellect: 16, luck: 11, speed: 11 }, rng),
+  const six: readonly (readonly [name: string, race: RaceId, cls: ClassId])[] = [
+    ['Bram', 'human', 'knight'], ['Idris', 'orcblood', 'paladin'], ['Wren', 'elf', 'ranger'],
+    ['Ottilie', 'gnome', 'thief'], ['Maren', 'tidefolk', 'cleric'], ['Cassian', 'human', 'sorcerer'],
   ];
-  return createParty(m);
+  return createParty(six.map(([name, race, cls]) => createCharacter(tables, name, race, cls, CLASSES[cls].stats, rng)));
 }
 
 /** The classes that mend in a fight: a company drawn at random has one at least. */
@@ -239,8 +239,9 @@ const CLASS_IDS = Object.keys(CLASSES) as ClassId[];
 
 /**
  * A company drawn from a seed alone, as P on the title musters one (epic #713, Decided 11): six of
- * the ten classes, one of them a mender, each with a people and a name drawn and its stats rolled as
- * the creation screen rolls them, the hardiest in the front row. Only the seed makes it, so a seed replays.
+ * the ten classes, one of them a mender, each with a people and a name drawn and on its class's
+ * stats, as the creation screen makes a member, the hardiest in the front row. Only the seed makes
+ * it, so a seed replays.
  */
 export function randomParty(tables: Tables, seed: number): Party {
   const rng = makeRng(seed);
@@ -249,5 +250,5 @@ export function randomParty(tables: Tables, seed: number): Party {
   while (!classes.some((c) => MENDERS.includes(c))) classes = draw(CLASS_IDS);
   classes.sort((a, b) => CLASSES[b].hpDie - CLASSES[a].hpDie);
   const names = draw(SUGGESTED);
-  return createParty(classes.map((cls, i) => createCharacter(tables, names[i], RACE_IDS[rng.int(0, RACE_IDS.length - 1)], cls, rollStats(rng), rng)));
+  return createParty(classes.map((cls, i) => createCharacter(tables, names[i], RACE_IDS[rng.int(0, RACE_IDS.length - 1)], cls, CLASSES[cls].stats, rng)));
 }
