@@ -68,5 +68,5 @@ export function wakeAtChapel(w: World): [string, string] {
   first.conditions = [];
   if (first.hp <= 0) first.hp = 1;
   const where = to.chapel ? `the ${to.name.replace(/^The /, '')}` : to.name.replace(/^The /, 'the ');
-  return [`The Lanterns carried you to ${where}.`, `${first.name} wakes at dawn.${rest.length ? ' The rest lie as they fell.' : ''}`];
+  return [`The Lanterns found you on the road and carried you to ${where}.`, `${first.name} wakes at dawn.${rest.length ? ' The rest lie as they fell.' : ''}`];
 }

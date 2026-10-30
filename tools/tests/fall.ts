@@ -11,6 +11,7 @@ import { TABLES, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps, PLAYED_DEFS } from '../../src/content/maps.ts';
 import { nearestChapel, wakeAtChapel } from '../../src/game/chapel.ts';
 import { World } from '../../src/game/world.ts';
+import { AWARE } from '../../src/game/world/groups.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { changePlaces } from '../../src/game/party/order.ts';
@@ -64,6 +65,18 @@ export function fall(): void {
     for (const f of flags) delete g.party.flags[f];
   }
   ok(!wrong.length, `a wipe in each of ${ROAD.length} places wakes in the chapel ruling 2 names, standing there, its after and its until held${wrong.length ? ': ' + wrong.join('; ') : ''}`);
+  // No group comes on a company carried in on one hit point: none that roams sees a chapel's square
+  // (`aware`, Manhattan), and none stands beside one. So a wipe at a chapel's door cannot loop.
+  const near: string[] = [];
+  for (const [id, m] of Object.entries(w.maps)) for (const t of m.features) {
+    if (t.kind !== 'temple') continue;
+    w.travel(id, t.x, t.y);
+    for (const q of w.liveGroups()) {
+      const d = Math.abs(q.state.x - t.x) + Math.abs(q.state.y - t.y);
+      if (d <= 1 || (q.def.roams !== false && d <= (q.def.aware ?? AWARE))) near.push(`${q.def.id} by the ${t.name.replace(/^The /, '')}`);
+    }
+  }
+  ok(!near.length, `no group comes on a company carried in: none that roams sees a chapel, and none stands beside one${near.length ? ': ' + near.join(', ') : ''}`);
 
   // Where no chapel stands, Town Portal's town: the last town stood in, at its start.
   // (A map shares its def's features, so the maps with no temple are built from copies of the defs.)
@@ -86,6 +99,7 @@ export function fall(): void {
   f.world.travel('grove1', start('grove1').x, start('grove1').y);
   const group = f.world.map.encounters[0].id;
   f.world.advance(5 * 60);
+  f.world.state.truce = 4; f.world.state.truceGroups = ['g1_truce'];
   f.fight([group]);
   const fighting = top(f), [first, ...rest] = f.party.members;
   first.conditions = ['dead', 'poisoned']; first.hp = -14;
@@ -99,17 +113,18 @@ export function fall(): void {
   drive(f, ['interact']);
   CombatScreen.instant = instant;
   const st = f.world.state, room = f.screens.find((s) => s.constructor.name === 'InteriorScreen') as InteriorScreen | undefined;
-  const lines = ['The Lanterns carried you to the Lantern Chapterhouse.', `${first.name} wakes at dawn. The rest lie as they fell.`];
+  const lines = ['The Lanterns found you on the road and carried you to the Lantern Chapterhouse.', `${first.name} wakes at dawn. The rest lie as they fell.`];
   ok(fighting === 'CombatScreen' && outcome === 'defeat' && f.screens.map((s) => s.constructor.name).join() === 'ExploreScreen,InteriorScreen,ChoiceScreen' && st.mapId === 'thornhold' && st.x === 11 && st.y === 4,
     `a wipe in the Grove's first fight (${group}, lost in ${ticks} ticks) wakes the company in Thornhold's Lantern Chapterhouse, its interior open under its menu (${f.screens.map((s) => s.constructor.name).join(', ')} at ${st.mapId} ${st.x},${st.y})`);
   ok(first.hp === 1 && first.conditions.length === 0 && JSON.stringify(rest) === was.rest,
     `the first in the party order wakes on 1 hit point, every condition lifted (${first.name}: ${first.hp} hp, ${first.conditions.join(', ') || 'well'}); the rest lie as they fell, unconscious, stoned and dead, their spell points spent`);
   ok(f.party.gold === was.gold && JSON.stringify(f.party.bag) === was.bag && JSON.stringify(f.party.flags) === was.flags && JSON.stringify(st.maps.grove1.groups[group] ?? null) === was.group,
     `nothing is taken: the gold (${f.party.gold}), the bag and the flags are as they were; the fight's group stands where it stood, alive (${was.group})`);
-  ok(st.minutes === nextSeven(was.minutes) && st.minutes > was.minutes, `the clock moves to the next 07:00 (day ${Math.floor(was.minutes / 1440)} ${was.minutes % 1440} minutes to day ${Math.floor(st.minutes / 1440)} ${st.minutes % 1440})`);
+  ok(st.minutes === nextSeven(was.minutes) && st.minutes > was.minutes && st.truce === 0 && !st.truceGroups.length,
+    `the clock moves to the next 07:00 (day ${Math.floor(was.minutes / 1440)} ${was.minutes % 1440} minutes to day ${Math.floor(st.minutes / 1440)} ${st.minutes % 1440}), and the truce is over, as Town Portal ends it`);
   const said = f.log.slice(-2), rows = said.map((l) => logLines(l).length);
-  ok(said.join('|') === lines.join('|') && rows.every((r) => r === 1) && !!room && room.roomLog(f).join('|') === lines.join('|'),
-    `the log says two lines, each a row of the log's box (${rows.join(', ')}), and the chapel's room shows them: "${said.join('" "')}"`);
+  ok(said.join('|') === lines.join('|') && rows.join() === '2,1' && !!room && room.roomLog(f).join('|') === lines.join('|'),
+    `the log says two lines in three rows of the log's box, the most an event takes (${rows.join(', ')}), and the chapel's room shows them: "${said.join('" "')}"`);
   // The first menu is the one stepping in opens: Derwa keeps the Chapterhouse, so the chapel's own list is its first row.
   const opened = (f.top as ChoiceScreen).options;
   drive(f, ['interact']);
@@ -122,13 +137,21 @@ export function fall(): void {
   ok(bs.mapId === 'thornhold' && bs.x === 11 && bs.y === 4 && bs.minutes === st.minutes && back.party.members[0].hp === 1 && JSON.stringify(back.party.members.slice(1)) === was.rest && top(back) === 'ExploreScreen',
     `a save made at the chapel loads there, the first on 1 hit point and the rest as they fell (${bs.mapId} ${bs.x},${bs.y})`);
 
+  // A second wipe at the chapel's door: carried in again the next morning, and it fell there.
+  while (f.screens.length > 1) f.pop();
+  const twice = f.world.state.minutes;
+  first.conditions = ['dead']; first.hp = -1;
+  drive(f, ['forward']);
+  ok(f.fell?.mapId === 'thornhold' && f.fell.minutes === twice && f.world.state.mapId === 'thornhold' && f.world.state.minutes === nextSeven(twice) && first.hp === 1,
+    `a second wipe at the chapel's door wakes there again the next morning, and the run's where is the chapel's (${f.fell?.mapId} ${f.fell?.x},${f.fell?.y})`);
+
   // All down between fights, on the isle: the same, at the Lantern's Tent, which stands out of doors.
   const isle = headlessGame(4), [one] = isle.party.members;
   isle.world.travel('hearthisle_h6', start('hearthisle_h6').x, start('hearthisle_h6').y);
   for (const c of isle.party.members) { c.conditions = ['dead']; c.hp = -2; }
   drive(isle, ['forward']);
   const is = isle.world.state;
-  ok(top(isle) === 'ChoiceScreen' && isle.screens.some((s) => s.constructor.name === 'InteriorScreen') && is.mapId === 'caldera' && is.x === 248 && is.y === 173 && one.hp === 1 && isle.log.at(-2) === 'The Lanterns carried you to the Lantern\'s Tent.',
+  ok(top(isle) === 'ChoiceScreen' && isle.screens.some((s) => s.constructor.name === 'InteriorScreen') && is.mapId === 'caldera' && is.x === 248 && is.y === 173 && one.hp === 1 && isle.log.at(-2) === 'The Lanterns found you on the road and carried you to the Lantern\'s Tent.',
     `all down between fights on Hearth Isle, a step wakes the company at the Lantern's Tent, its menu open (${top(isle)} at ${is.mapId} ${is.x},${is.y})`);
 
   // The pilot stops on its line as ever, and a run's where is where the company fell, not the chapel.
@@ -140,6 +163,14 @@ export function fall(): void {
   drive(run, [null]);
   ok(!p.on && p.why[0] === 'The company has fallen.' && p.band()?.lines[0] === 'The company has fallen.' && run.world.state.mapId === 'saltmouth' && stoppedAt(run).where === fellIn,
     `with the pilot at the helm, a wipe in Wrackholm stops it on "${p.why[0]}" over the Telhus, and the run says it fell in ${stoppedAt(run).where}`);
+  // The run goes on from the chapel and stops again for another reason: its where is the new one.
+  while (run.screens.length > 1) run.pop();
+  for (const c of run.party.members) { c.conditions = []; c.hp = c.maxHp; }
+  p.toggle(run);
+  p.stop(run, ['Lost: no way on that I can see.']);
+  const now = run.world.state, next = stoppedAt(run);
+  ok(next.where === `${run.maps[now.mapId].name} ${now.x},${now.y}` && next.minutes === now.minutes,
+    `a run that goes on after the wipe and stops again says where it stopped then (${next.where}), not where it fell`);
 
   // The first in the party order is the player's to choose (#1066): after the sheet's swap, the one now first wakes.
   const swapped = headlessGame(4), [was0, , was2] = swapped.party.members;
