@@ -60,7 +60,8 @@ export interface Host {
   loadGame(): true | string;
   saveGame(): void;
   attract(): void;
-  gameOver(): void;
+  /** A wipe: the Lanterns carry the company to the nearest chapel (#1069). */
+  fall(): void;
   enterCell(): void;
   interact(f: Feature, stepped?: boolean): void;
   parley(id: string): void;
