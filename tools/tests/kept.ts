@@ -88,6 +88,7 @@ function places(): void {
   after('a light up', () => { w.state.light = 30; });
   after('another map (Harrow)', () => w.travel('harrow', 7, 12, w.state.facing));
   after('the dungeon (the mill)', () => w.travel('mill', 1, 1, w.state.facing));
+  after('another map at the same square and minute (Greywater\'s first level)', () => w.travel('greywater1', w.state.x, w.state.y, w.state.facing));
   const R2 = { x: 9, y: 4, w: 384, h: 256 }, n = paints(), other = at(g, R2), again = at(g, R2), home = at(g, R);
   ok(other === 'painted' && again === 'last' && home === 'painted' && paints() === n + 2 && placeKey(w, R2) !== placeKey(w, R),
     `a rect of another size (the window resized) paints a scene of its own and drops the other's, and back again paints anew (${other}, ${again}, ${home})`);
