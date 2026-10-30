@@ -502,6 +502,8 @@ function trainer(c: ChoiceScreen, p: Party, pilot: Pilot): Action | null {
  */
 function wear(g: Game, k: Known, p: Pilot, s: SheetScreen, mem: Keep): Action {
   const party = k.party;
+  // A swap asked and left open (#1066), as a viewer's X and then P leave one: asked no more.
+  if (s.swapping !== null) return 'cancel';
   for (let b = mem.bought[0]; b; b = mem.bought[0]) {
     const c = party.members[b.who], at = party.bag.indexOf(b.id);
     if (!c || at < 0) { mem.bought.shift(); continue; }

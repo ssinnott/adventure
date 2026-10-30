@@ -4,8 +4,9 @@
 // (`useItem`), what the clock's passing does to what is borne (`passClock`), whether the company
 // swims or climbs, and the premade and the drawn company (`randomParty`): what reads the items, the
 // calendar or the skills. Its parts are in game/party/ (#1020), held to the same rule, and it gives
-// on all they hold: the tables, the conditions and the levels. Pure data and pure functions; the
-// rng is passed in so tests can pin it, and the item and spell tables are handed in (#973, #974).
+// on all they hold: the tables, the conditions, the levels and the order (#1066). Pure data and
+// pure functions; the rng is passed in so tests can pin it, and the item and spell tables are
+// handed in (#973, #974).
 import { makeRng } from '../lib/engine/rng.ts';
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { item, REGEN_PART } from './items.ts';
@@ -26,6 +27,7 @@ import { rankMult, armsBonus, createParty } from './party/levels.ts';
 export * from './party/tables.ts';
 export * from './party/conditions.ts';
 export * from './party/levels.ts';
+export * from './party/order.ts';
 /** The flag a party holds once it has paid a spell hall's fee to study: in game/keys.ts with the save's other keys. */
 export { guildFlag } from './keys.ts';
 
