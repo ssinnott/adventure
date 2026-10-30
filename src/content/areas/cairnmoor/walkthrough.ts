@@ -72,9 +72,18 @@ const O7 = mapDef('highmoor_o7');
 const WATCHER = O7.features!.find((f) => f.kind === 'npc' && f.name === 'The Watcher') as Person;
 const PIPER = O7.features!.find((f) => f.kind === 'npc' && f.name === 'The piper') as Person;
 
-/** The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run builds once (#1018). */
+/**
+ * The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run
+ * builds once (#1018), its doors its own and its other cells frozen. Its zones, groups and ways
+ * out are every walk's in the run, so a scene writes nothing on it: a write would reach the scenes
+ * after it in one process, which --jobs 1 hides.
+ */
 const outdoors = (): GameMap => ownMaps()[OUTDOORS];
-/** The world's grid (`worldGrid`), worked out once a run where a scene first reads it: about 0.7 s, and nothing writes it. */
+/**
+ * The world's grid (`worldGrid`), worked out once a run where a scene first reads it: about 0.7 s.
+ * The scenes after it read the same one, and no freeze holds its typed arrays: a scene writes
+ * nothing on it.
+ */
 let GRID: ReturnType<typeof worldGrid> | undefined;
 const theGrid = (): ReturnType<typeof worldGrid> => (GRID ??= worldGrid(ATLAS, MAP_DEFS));
 

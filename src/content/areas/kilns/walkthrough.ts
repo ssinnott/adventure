@@ -162,7 +162,12 @@ const CRANE = person('Wystan Crane'), GERDA = person('Gerda'), KONRAD = person('
 const FORGE_SHOP = ofKind(TOWN, 'shop').find((f) => f.interior === 'anvilhall_forge')!;
 /** What a person says to a walk's company now, met as the game meets them. */
 const says = (w: Walk, p: Person): string => meet(p, w.party, heard(w.world, p)).text;
-/** The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run builds once (#1018). */
+/**
+ * The outdoors as built, for a scene to read its squares and zones: a copy of the maps the run
+ * builds once (#1018), its doors its own and its other cells frozen. Its zones, groups and ways
+ * out are every walk's in the run, so a scene writes nothing on it: a write would reach the scenes
+ * after it in one process, which --jobs 1 hides.
+ */
 const outdoors = (): GameMap => ownMaps()[OUTDOORS];
 /** A road square of `out`, or a corner walked where a road turns on a diagonal: how the milestones count. */
 const roadish = (out: GameMap) => (x: number, y: number): boolean => out.at(x, y).ch === '=' || (out.passable(x, y) === 'ok' && [-1, 1].some((d) => out.at(x + d, y).ch === '=') && [-1, 1].some((d) => out.at(x, y + d).ch === '='));
