@@ -207,7 +207,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   order.sort((a, b) => Math.abs(b) - Math.abs(a));
   // A door outdoors among mountain, rock or trees is drawn as they are (drawnCell), and the void as
   // its look, the ground the world map paints there (#829).
-  const drawn = (x: number, y: number): Cell => drawnAt(map, x, y);
+  const eye = { x: px, y: py }, drawn = (x: number, y: number): Cell => drawnAt(map, x, y, eye);
   const { behind, solidAt, houseAt, tentAt } = standsAt(map, px, py, f, backdrop);
   const voidAt = (d: number, l: number): boolean => drawn(...toPair(cellAt(px, py, f, d, l))).solid === 'void';
   const boxAt = (d: number, l: number): boolean => solidAt(d, l) && !tentAt(d, l);

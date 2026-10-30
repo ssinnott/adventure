@@ -476,9 +476,9 @@ function drawDoor(p: Paint, xl: number, xr: number, u: number, color: string, d:
 }
 
 /**
- * A town's gate (#1071): the wall's own stone turned in a round arch on jambs over two timber leaves,
- * planked and strapped in iron as a door is and met in the middle; a cart's width, and nearly the
- * wall's height. In a smooth wall, only its seam, as a door's is.
+ * A town's gate (#1071): the wall's own stone turned in a round arch on jambs over two leaves of the
+ * town's door timber weathered grey, planked and strapped in iron as a door is and met in the middle; a
+ * cart's width, and nearly the wall's height. In a smooth wall, only its seam, as a door's is.
  */
 function drawGate(p: Paint, xl: number, xr: number, u: number, pal: MapPalette, d: number, seed: number): void {
   const { ctx, horizon } = p;
@@ -505,8 +505,10 @@ function drawGate(p: Paint, xl: number, xr: number, u: number, pal: MapPalette, 
     ctx.fillStyle = stone(0.94 + 0.12 * hash(seed, k, s + 9)); ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
     ctx.strokeRect(x0 + 0.5, y0 + 0.5, x1 - x0 - 1, y1 - y0 - 1);
   }
-  // The leaves under the arch: planks, the seam where they meet, two iron straps with their studs and a ring each.
-  const wood = fog(unhazed(p), pal.door, d), dark = fog(unhazed(p), shade(pal.door, 0.62), d), iron = fog(unhazed(p), '#5a5a64', d);
+  // The leaves under the arch: the town's door timber weathered grey, its planks, the seam where they
+  // meet, two iron straps with their studs and a ring each.
+  const oak = mix(pal.door, '#6a645c', 0.6);
+  const wood = fog(unhazed(p), oak, d), dark = fog(unhazed(p), shade(oak, 0.62), d), iron = fog(unhazed(p), '#5a5a64', d);
   arch(r); ctx.closePath(); ctx.fillStyle = wood; ctx.fill();
   ctx.save(); ctx.clip();
   ctx.fillStyle = dark;

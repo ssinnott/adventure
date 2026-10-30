@@ -69,11 +69,13 @@ export function toPair(p: { x: number; y: number }): [number, number] { return [
 
 /**
  * A cell as the scene draws it: a door outdoors among mountain, rock or trees as they are, the void as
- * its look (#829), and a town's gate as a face of the wall it is set in, which carries the gate (#1071).
+ * its look (#829), and a town's gate as a face of the wall it is set in, which carries the gate (#1071),
+ * but the open way it is to an eye standing in it.
  */
-export function drawnAt(map: GameMap, x: number, y: number): Cell {
+export function drawnAt(map: GameMap, x: number, y: number, eye?: { x: number; y: number }): Cell {
   const c = drawnCell(map, x, y);
-  return c.solid === 'none' && c.door === 'none' && isGateway(map, x, y) ? { ...c, solid: 'wall' } : c.look ?? c;
+  const gate = c.solid === 'none' && c.door === 'none' && !(eye && eye.x === x && eye.y === y) && isGateway(map, x, y);
+  return gate ? { ...c, solid: 'wall' } : c.look ?? c;
 }
 
 const gateways = new WeakMap<GameMap, ReadonlySet<number>>();
@@ -128,11 +130,11 @@ export function standsAt(map: GameMap, px: number, py: number, f: Facing, backdr
   behind: (d: number, l: number) => { x: number; y: number } | undefined; solidAt: (d: number, l: number) => boolean;
   houseAt: (d: number, l: number) => boolean; tentAt: (d: number, l: number) => boolean;
 } {
-  const sq = (d: number, l: number): [number, number] => toPair(cellAt(px, py, f, d, l));
+  const sq = (d: number, l: number): [number, number] => toPair(cellAt(px, py, f, d, l)), eye = { x: px, y: py };
   const behind = (d: number, l: number): { x: number; y: number } | undefined => hillOver(map, px, py, f, d, l);
   return {
     behind,
-    solidAt: (d, l) => !behind(d, l) && isSolidWall(drawnAt(map, ...sq(d, l))),
+    solidAt: (d, l) => !behind(d, l) && isSolidWall(drawnAt(map, ...sq(d, l), eye)),
     houseAt: (d, l) => !behind(d, l) && isHouse(map, ...sq(d, l)),
     tentAt: (d, l) => !backdrop && !behind(d, l) && isTent(map, ...sq(d, l)),
   };
