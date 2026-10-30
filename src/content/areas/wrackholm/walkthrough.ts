@@ -35,7 +35,7 @@
 // by the road, where Wat has words with the board in the loft and without; and Tam left feeding the
 // beast and his mother told, or the beast slain before she is met and Tam home on the steps.
 //
-// And the bounds (#835), the three strands round the isle, in a walk of their own (`theBounds`), last.
+// And the bounds (#835), the three strands round the isle, each box in a walk of its own (`theBounds`), last.
 import { newWalk, see, fight, listen, walkThrough, playChapter, ending, everyGoalWalked, goalFromBegun, quest, said, hear, answerTo, goal, written, reads, there, here, open, search, holding, keys, xpOf, thiefDown, same, clock, who, stock, shows, alive, key, press, chest, mapDef, groupOn, featureOn, exitTo, ownMaps } from '../../../../tools/kit/walk.ts';
 import { zone, square, ALL, reach, each, row, col, apartFrom } from '../../../../tools/kit/grid.ts';
 import type { Walk, Scene } from '../../../../tools/kit/walk.ts';
@@ -497,6 +497,8 @@ function ashore(): Scene[] {
       see(w, `${foot.id}:dd_door`);
       drop(w);
     } },
+    { name: 'vaults', play: (ok) => vaults(newWalk(ok, { level: 26, flags: { q_hale_freed: 1, q_hale_taken: 1 } })) },
+    { name: 'counting-house', play: (ok) => countingHouse(newWalk(ok, { level: 27, flags: { q_hale_freed: 1, q_hale_taken: 1 } })) },
     { name: 'factor', play: (ok) => {
       const w = newWalk(ok, { level: 14, flags: { q_hale_freed: 1, q_hale_taken: 1, q_writer_seen: 1 }, bag: ['compact_orders'] });
       factor(w);
@@ -614,7 +616,7 @@ function factor(w: Walk): void {
  * in or the drop, even by a light, the first group round the corner; the cargo left at the drop, the rails, a
  * post, the shards stacked by size and the counting floor; every group won at 26, the hold keeper at 27 the
  * farthest; a loader's parts and the Compact's coin; and the rails' way down to the vaults (VAULT_STAIR), its
- * line said at its head the once, and the vaults below it.
+ * line said at its head the once; the vaults below it are a scene of their own.
  */
 function drop(w: Walk): void {
   const D = DEAD_DROP, foot = DEAD_DROP_STAIR, level = w.level, way = exitTo(foot, D.id);
@@ -658,7 +660,6 @@ function drop(w: Walk): void {
     && head?.kind === 'event' && !!head.once && head.x === VAULT_STAIR.x && head.y === VAULT_STAIR.y - 1,
     'the rails go on down to the vaults (VAULT_STAIR), and the line at their head is said the once');
   see(w, `${D.id}:dd_down`);
-  vaults(w);
   w.level = level;
 }
 
@@ -670,7 +671,7 @@ function drop(w: Walk): void {
  * word of what it is; every group won at 27, loaders, keepers and the knockers at 28 the hardest; a keeper's parts,
  * the named piece and the Compact's coin; the hoist's chains, a search where they go into the wall and the cage up
  * to the drop's crates; and the steps down to the writer's room (WRITER_STAIR), their line said at their head the
- * once, and the counting house below them.
+ * once; the counting house below them is a scene of its own.
  */
 function vaults(w: Walk): void {
   const V = DEAD_DROP2, D = DEAD_DROP, level = w.level, map = new GameMap(V);
@@ -738,7 +739,6 @@ function vaults(w: Walk): void {
     && head?.kind === 'event' && !!head.once && head.x === WRITER_STAIR.x && head.y === WRITER_STAIR.y - 1,
     'the steps go on down to the writer\'s room (WRITER_STAIR), and the line at their head is said the once');
   see(w, `${V.id}:dd2_down`);
-  countingHouse(w);
   w.level = level;
 }
 
