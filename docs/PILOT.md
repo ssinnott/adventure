@@ -325,7 +325,7 @@ the road up to the last area named and checks every chapter on it, as a chapter 
 through those before it. `FULLRUN=shelf` repeats the shelf's walkthrough play tick for tick. The
 suite runs only when named (`ASKED`, `tools/test.ts`, held so by the runner's own check): a bare
 `node tools/test.ts` does not run it, but `npm test` names it last, so `npm test` runs the shelf's full
-run (about 10 to 25 s; it repeats walkthrough:shelf's play) and so does the tests job.
+run (about 10 to 25 s; it repeats walkthrough:shelf:pilot's play) and so does the tests job.
 
 In CI the tests job's `npm test` is the shelf's gate, with no step of its own (10 s on CI). The
 `fullrun` job runs only when the workflow is started by hand (`workflow_dispatch`), never on a pull

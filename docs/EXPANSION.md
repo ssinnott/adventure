@@ -468,7 +468,8 @@ once, the helpers the walkthroughs wrote each for itself (meeting, answering, se
 chest, reading a quest's page, setting the clock), and `tools/kit/grid.ts` beside it, the floods and
 tests over a map's squares (`reach`, `shut`, `reached`, `spread`, `paces`, `apartFrom`, a box's
 `row` and `col`) and `ALL`. The chain a later chapter replays (`STEPS`, `FARM_FIRST`, Saltreach's
-`inOrder` and `saltmouthFirst`) stays in its walkthrough, H8's: the kit takes no walkthrough.
+`inOrder` and `saltmouthFirst`) moves to its area's steps.ts as H8 (#1033) cuts each
+walkthrough: the kit takes no walkthrough.
 
 The paint kit, `src/ui/paint/`, is what every drawing in `src/ui` paints with; it, the monsters' kit
 (`src/ui/monsters/kit/`) and the rooms' (`src/ui/interiors/kit/`) are the systems lane's, as

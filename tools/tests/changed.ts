@@ -27,12 +27,13 @@ function reaches(): void {
   const inert = reach([axe], { [axe]: ["import { P } from '../../../game/items.ts';", '  // a word', ''] });
   ok(!inert.all && reach([axe], { [axe]: null }).all?.why.startsWith('deleted') === true, 'an import, a comment or a blank changed reaches no further, and a table deleted reaches every area');
   // 1 and 3: an area's file reaches its area, and the areas whose files import it, in turn, as far
-  // as the areas' own files go.
-  const walk = 'src/content/areas/shelf/walkthrough.ts';
+  // as the areas' own files go: here the Foreland's chain, its steps.ts, which the later chapters'
+  // walkthroughs take (#1033).
+  const walk = 'src/content/areas/shelf/steps.ts';
   const by = [...g.edges].filter(([f, to]) => to.has(walk) && f.startsWith('src/content/areas/') && !f.startsWith('src/content/areas/shelf/')).map(([f]) => f.split('/')[3]);
   const walked = reach([walk]);
-  ok(by.includes('thornmark') && !walked.all && walked.areas.get('shelf') === walk && by.every((a) => walked.areas.get(a) === 'imports shelf/walkthrough.ts'),
-    `the Foreland's walkthrough reaches the Foreland and each area whose files import it (${describeReach(walked)})`);
+  ok(by.includes('thornmark') && !walked.all && walked.areas.get('shelf') === walk && by.every((a) => walked.areas.get(a) === 'imports shelf/steps.ts'),
+    `the Foreland's steps.ts reaches the Foreland and each area whose files import it (${describeReach(walked)})`);
   // 3, past the imports: a line of a map changed reaches also every other walkthrough, as they read
   // other areas' maps by id and by scan, which no import shows; a comment changed, none.
   const anvil = 'src/content/areas/kilns/maps/anvil_stone.ts';
