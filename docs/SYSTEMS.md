@@ -158,7 +158,8 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   file's header and runs the tool; the `codemap` suite names the rows of a stale map.
 - **The checks:** `npm run check` runs the typecheck, the suites and the smoke test, each able to
   fail; EXPANSION §5 says what they hold. Each suite's header says what it holds and `--list` prints
-  every `ok` line; the runner's flags are `tools/test.ts`'s header.
+  every `ok` line; the runner's flags are `tools/test.ts`'s header. A walkthrough's scenes, each its
+  own walk, run alone (`node tools/test.ts walkthrough:kilns:n4`).
 - **The tools:** each tool's usage is its header (`tools/sheet.ts`, `tools/gate.ts` and the rest).
 - **Each area:** its doc in `docs/areas/`, with its decisions and its plan beside it.
 - **The history:** [archive/SLICE-history.md](archive/SLICE-history.md), the slice's doc whole: its

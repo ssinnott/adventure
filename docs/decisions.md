@@ -336,6 +336,51 @@ Decided by the builder for #914, each the owner's to overturn:
 3. **A list a file has nothing in is left out** at its top; a played map keeps its four keys as
    before, and an area's part of the outdoors the lists it has ids in.
 
+## EXPANSION §5.8 The one quest
+
+Decided by the builder for #1018, each the owner's to overturn:
+
+1. **The plan learns a walkthrough's scenes by importing its file** where its text exports `scenes`,
+   as it reads a suite's `parts()`: a scan cannot read a name a helper builds. None exports them
+   today, so the plan reads twelve texts; cut, the twelve cost it about 1.0 s (the kit 0.86 s).
+2. **A walkthrough named whole runs as its scenes, each a run of its own,** in their order, as the
+   gate's parts do. A name is lower-case letters, digits, hyphens and underscores, once; one that is
+   not makes the walkthrough one run, which fails naming it before any scene plays.
+3. **A module that exports only `walkthrough` plays as one scene named for its area,** through
+   `playScenes`: it prints what it printed, and a throw reads `FAIL: scene <area> threw`.
+4. **A name no run has stops the run before it starts, exit 2,** naming the suites, the parts or the
+   scenes as they are before the run narrows them; one that `--areas` or `--since` leaves out still
+   runs nothing, as before. A scene of a walkthrough whose scenes the plan cannot name (its file
+   will not load, or a name is one no run can have) runs the walkthrough whole, which fails saying
+   why.
+5. **`--walks <folder>` is `--dir`'s mirror:** either alone drops the other's own folder and both give
+   both; its areas are its folders in name order, and need not be in AREAS.
+6. **A scene says the goals it walks, a chapter standing for every goal of it:** of the twelve's 63
+   chapter plays, 6 meet every goal of their chapter (each of the Foreland's 13 meets 5 of its 8);
+   the rest come up across plays in other orders.
+7. **A scene is held to what it says by a failure alone,** silent when its plays came to each goal
+   it names, so that #1033's cuts print the 7,042 checks and no more.
+8. **A start sets the flags and fills the bag, then the level (as `walkAt` does), then the place,**
+   and the log is read there: a walk hears nothing of its start. The bag is what an earlier scene
+   found (the dry cut of Cairnmoor's needs the Cairns' mail in the Cairnfield's last section).
+9. **The maps are built once and each walk takes a copy:** its own array of cells and its own
+   locked and secret doors (the only cells play writes); the other cells and the palettes shared
+   and frozen, so that a write throws, and the defs' features, groups and ways out shared as
+   `buildMaps()` always shared them. A walk costs 3.1 ms against 21.3; a reset was refused, as two
+   walks alive at once share a map.
+10. **`fight` takes #984's memo and not its cap:** the cap moves the printed rate of 28 lines (12
+    groups and levels), though no check fails; the memo, keyed by the seeds and the cap as well,
+    works out 534 of the 652 fights and prints the same.
+11. **The lookups name the five ids nearest by edits** (`no map is named ironfells_n33: the nearest
+    are ironfells_n3, ironfells_m3, ...`); `exitTo` finds a way out by where it leads, as the
+    walkthroughs' finds do, and `mapOf` goes through `mapDef`. `goalOf` names the words it was
+    given and the chapter's goals that begin nearest them.
+12. **`DEAR` names runs as it did, a scene among them:** `walkthrough:shelf` stays until #1033 cuts
+    the Foreland and names `walkthrough:shelf:pilot`; the fixture shows a scene as the dear run.
+13. **The fixture walks one step of the Foreland's chapter,** to Hild at Gullwick: `playChapter`
+    reads only the one quest and this is its cheapest goal, so the runner's own check meets the
+    content there.
+
 ## EXPANSION §8.1 Lanes
 
 Decided by the builder for #900, each the owner's to overturn:
