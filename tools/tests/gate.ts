@@ -5,7 +5,9 @@
 // enclave (#845) is held to its own band, out of its area's pools and day and every zone's road; the
 // fixture lair beside Saltreach shows it before any area places one. Every margin is printed, each
 // figure against its aim and its limit: off its aim it is listed, past its limit it fails. A figure
-// past its limit the owners below are owed is reported, not failed, until it holds.
+// past its limit the owners below are owed is reported, not failed, until it holds. Each figure is
+// measured on 100 seeds, and on 400 or 1,600 where it lies near its limit (the seeds' ladder,
+// tools/kit/fight.ts, #848).
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
@@ -13,7 +15,7 @@ import { ATLAS, MAP_DEFS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import type { EncounterDef, Feature, MapDef } from '../../src/game/mapdef.ts';
 import { rest, MAX_LEVEL } from '../../src/game/party.ts';
-import { gateFight, gateOpts, winRate, rate, SEEDS } from '../kit/fight.ts';
+import { gateFight, gateOpts, winRate, rate, fights, seeded, spread, settle, SEED_LADDER, MARGIN, SEEDS, type Measure, type Settled } from '../kit/fight.ts';
 import { gateCompany } from '../kit/company.ts';
 import { days, fightsPerRest, mendBetween } from '../kit/harness.ts';
 import { mustRest, ANSWER } from '../../src/game/bot.ts';
@@ -34,14 +36,6 @@ export const judge = (missAim: number, missLimit: number): Judged => (missLimit 
 const atLeast = (t: number) => (v: number): number => t - v;
 const atMost = (t: number) => (v: number): number => v - t;
 const within = ([lo, hi]: readonly [number, number]) => (v: number): number => Math.max(lo - v, v - hi);
-
-/**
- * Seeds for fights to a rest: a day is a long run of fights, and over a hundred its mean moves by
- * a fifth of a fight with the seeds alone.
- */
-const DAYS = 300;
-/** Seeds for the day two under (backDay): a share of the floor's fights wants fewer than a day judged to a tenth. */
-const BACK_DAYS = 100;
 
 /**
  * An area's boss groups, those of its maps that say they are one (`EncounterDef.boss`), as the game
@@ -74,8 +68,18 @@ const nameOf = (id: string): string => {
  * when the figure came in, cairnfield_m8's (eight ravens and a tor troll, 9.29 fights to a rest two
  * under its floor, past the floor's own 8.5), went with #865: its crag group re-sized inside the floor's
  * own aims, two ravens and two tor trolls.
+ *
+ * Three came in with the seeds' ladder (#848), each passed on a hundred seeds by the draw and past its
+ * limit on 1,600, the ladder's top, which judges it: ember_stone at its floor, 82.5% won on 100 and
+ * 79.25% on 1,600 (at least 80%); kushdag's boss kd_foal_taker two above its floor, 81% and 73.8% (at
+ * least 75%); core's core_vask_thinned at the cap, 78% and 80.1% (at most 80%). Each is its area's to
+ * bring inside its limit, which drops its row.
  */
-export const OWED: Record<string, { whose: string; at: number }> = {};
+export const OWED: Record<string, { whose: string; at: number }> = {
+  'ember_stone: floor': { whose: 'ashfall', at: 0.7925 },
+  'kushdag:kd_foal_taker: above': { whose: 'glasswold', at: 0.738125 },
+  'core:core_vask_thinned: floor': { whose: 'hearth', at: 0.80125 },
+};
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
 
@@ -96,13 +100,54 @@ function check(key: string, v: number, aim: (v: number) => number, limit: (v: nu
   if (j === 'off') offAim.push(msg);
   if (!o) { ok(j !== 'past', j === 'past' ? `${msg}: past its limit` : msg); return; }
   owed(j !== 'past', msg, o.whose);
-  const slack = fights ? 0.1 : 0.01;
-  const held = limit(v) <= limit(o.at) + slack + 1e-9;
+  const held = heldMiss(o.at, limit, fights)(v) <= 1e-9;
   const redo = held ? '' : `; if the change is meant, re-record it in OWED: '${key}': { whose: '${o.whose}', at: ${fights ? v.toFixed(2) : v.toFixed(3).replace(/\.?0+$/, '')} }`;
   ok(held, `${key}: ${show(v)}, no more than ${fights ? 'a tenth of a fight' : 'a point'} further from its limit than the ${show(o.at)} it was owed at${redo}`);
 }
+/** How far an owed figure misses the line it is held to: no more than a point, or a tenth of a fight, further from its limit than the figure `at` it was owed at. */
+const heldMiss = (at: number, limit: (v: number) => number, fights: boolean) => (v: number): number => limit(v) - limit(at) - (fights ? 0.1 : 0.01);
+/** The figures the seeds' ladder's top leaves within its margin of a limit, listed at the end of the part. */
+const near: string[] = [];
+/** How a line says the seeds a figure was settled on, where it took more than SEEDS. */
+const onSeeds = (s: Settled<Measure>): string => (s.seeds > SEEDS ? `; settled on ${s.seeds.toLocaleString('en-GB')} seeds` : '');
+/**
+ * A figure settled on the seeds' ladder (#848), then checked: measured by `at` on SEEDS seeds and, while it
+ * lies within MARGIN standard errors of its limit, on more (`settle`, tools/kit/fight.ts); an owed one
+ * of the line OWED holds it to as well. Its line says the seeds where they are more than SEEDS; one the
+ * top leaves within the margin is judged on its top figure and listed at the end of the part.
+ */
+function judged<M extends Measure>(key: string, at: (n: number) => M, aim: (v: number) => number, limit: (v: number) => number, line: (m: Settled<M>) => string, fights = false): Settled<M> {
+  const o = OWED[key], s = settle(at, o ? [limit, heldMiss(o.at, limit, fights)] : [limit]), msg = line(s) + onSeeds(s);
+  if (s.near) near.push(msg);
+  check(key, s.value, aim, limit, msg, fights);
+  return s;
+}
 /** How a line reads its aim and its limit. */
 const aims = (aim: string, limit: string): string => `aim ${aim}, limit ${limit}`;
+
+/** A group at the level a figure fights it at. */
+type Cell = readonly [EncounterDef, number];
+/**
+ * The mean of cells' win rates on n seeds, summed as `pooled` and `areaPools` sum them, with its
+ * standard error from the seeds' spread: seed k's value the share of the cells' fights won on it, so a
+ * pooled figure settles as one figure (#848), and one group's error is sqrt(p(1-p)/n).
+ */
+const ratesAt = (cells: readonly Cell[], rules?: Parameters<typeof rate>[4]) => (n: number): Measure => {
+  const won = cells.map(([g, l]) => fights(g, l, n, ROUND_CAP, rules)), each = Array.from({ length: n }, (_, k) => won.reduce((t, w) => t + w[k], 0) / won.length);
+  return { value: cells.reduce((t, [g, l]) => t + rate(g, l, n, ROUND_CAP, rules), 0) / cells.length, se: spread(each, n) };
+};
+/**
+ * A company of `level`'s days to a rest against `groups`, dealt, on n seeds: their mean fights, harness's
+ * `days` to the last digit, its standard error from the days' spread, and the share broken off. Each day
+ * is walked once, so a count that grows walks only the days it has not.
+ */
+const dayAt = (level: number, groups: readonly EncounterDef[]): ((n: number) => Measure & { long: number }) => {
+  const walked = seeded((k) => days(level, groups, 1, k, true));
+  return (n) => {
+    const each = walked(n).slice(0, n), fought = each.map((d) => d.fights);
+    return { value: fought.reduce((t, f) => t + f, 0) / n, se: spread(fought, n), long: each.reduce((t, d) => t + d.why.long, 0) / n };
+  };
+};
 
 /**
  * The road behind's groups on an earlier act's maps, as the game names a group, 'map:id': each waits on
@@ -143,26 +188,41 @@ export function denReading(def: MapDef, den: Extract<Feature, { kind: 'den' }>, 
   return { line, fault: harder.length ? `brood harder than the keepers: ${harder.map((b) => b.id).join(', ')}` : '' };
 }
 const pooled = (groups: readonly EncounterDef[], level: number): number => groups.reduce((t, g) => t + rate(g, level), 0) / groups.length;
-const mean = (v: readonly number[]): number => v.reduce((t, x) => t + x, 0) / v.length;
 /**
- * An area's pools: every group of its maps fought at its own map's floor (through), and two levels
- * under a floor (back): a zone map's own, and for a town or dungeon the area's, as the owner ruled
- * on #209 and #40. The through is null where the area has no groups, and the back where no group has
- * a company two under (under level 1), or where `back` is not asked for: from `GATE.dayFrom` the area
- * two under is its day.
+ * An area's pools, each group at the level its pool fights it: every group of its maps at its own map's
+ * floor (through), and two levels under a floor (back): a zone map's own, and for a town or dungeon the
+ * area's, as the owner ruled on #209 and #40. No back where no group has a company two under (under
+ * level 1), or where `back` is not asked for: from `GATE.dayFrom` the area two under is its day.
  */
-export function areaPools(maps: readonly MapDef[], areaFloor: number, r: (g: EncounterDef, level: number) => number = rate, back = true): { through: number | null; back: number | null; groups: number; under: number } {
-  const at: number[] = [], low: number[] = [];
+function areaCells(maps: readonly MapDef[], areaFloor: number, back = true): { at: Cell[]; low: Cell[] } {
+  const at: Cell[] = [], low: Cell[] = [];
   for (const d of maps) {
     if (!d.encounters?.length || !d.band) continue;
     const under = (d.kind === 'outdoor' ? d.band[0] : areaFloor) - GATE.under;
-    for (const g of d.encounters) { at.push(r(g, d.band[0])); if (back && under >= 1) low.push(r(g, under)); }
+    for (const g of d.encounters) { at.push([g, d.band[0]]); if (back && under >= 1) low.push([g, under]); }
   }
+  return { at, low };
+}
+/** An area's pools (`areaCells`) as figures by `r`: the through null where the area has no groups, and the back where it has none two under. */
+export function areaPools(maps: readonly MapDef[], areaFloor: number, r: (g: EncounterDef, level: number) => number = rate, back = true): { through: number | null; back: number | null; groups: number; under: number } {
+  const { at, low } = areaCells(maps, areaFloor, back), mean = (cells: readonly Cell[]): number => cells.reduce((t, [g, l]) => t + r(g, l), 0) / cells.length;
   return { through: at.length ? mean(at) : null, back: low.length ? mean(low) : null, groups: at.length, under: low.length };
 }
 /** A zone's name in the check's lines, 'the Foreland' for 'The Foreland'. */
 const zoneName = (name: string): string => name.replace(/^The /, 'the ');
 const median = (v: readonly number[]): number => { const s = [...v].sort((a, b) => a - b), m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+/**
+ * The gap from a zone's median group to the least won of the groups nearest a way in, at `level` on n
+ * seeds, with its standard error from the seeds' spread: seed k's value the least group's fight less
+ * the median group's, or the two middle groups' mean (#848).
+ */
+const gapAt = (nearest: readonly EncounterDef[], all: readonly EncounterDef[], level: number) => (n: number): Measure & { mid: number } => {
+  const r = (g: EncounterDef): number => rate(g, level, n), least = Math.min(...nearest.map(r)), mid = median(all.map(r));
+  const order = [...all].sort((a, b) => r(a) - r(b)), m = order.length >> 1, mids = order.length % 2 ? [order[m]] : [order[m - 1], order[m]];
+  const low = fights(nearest.find((g) => r(g) === least)!, level, n), middle = mids.map((g) => fights(g, level, n));
+  const each = Array.from({ length: n }, (_, k) => low[k] - middle.reduce((t, w) => t + w[k], 0) / middle.length);
+  return { value: least - mid, se: spread(each, n), mid };
+};
 
 /**
  * A map at its floor through, two levels under it back (or n/a, where that is under level 1). Two
@@ -174,15 +234,15 @@ const median = (v: readonly number[]): number => { const s = [...v].sort((a, b) 
  */
 function margins(id: string, groups: readonly EncounterDef[], [floor]: readonly [number, number], judgeUnder = true, areaByDay = false): void {
   if (!groups.length) { console.log(`  n/a:  ${id} has no groups yet`); return; }
-  const at = pooled(groups, floor);
-  check(`${id}: floor`, at, atLeast(GATE.through.aim), atLeast(GATE.through.limit), `${id} at its floor, ${floor}: ${pc(at)} of fights won (${aims(pc(GATE.through.aim), pc(GATE.through.limit))})`);
+  judged(`${id}: floor`, ratesAt(groups.map((g) => [g, floor])), atLeast(GATE.through.aim), atLeast(GATE.through.limit),
+    (at) => `${id} at its floor, ${floor}: ${pc(at.value)} of fights won (${aims(pc(GATE.through.aim), pc(GATE.through.limit))})`);
   if (!judgeUnder && areaByDay) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: its floor is above its area's, so its groups count in the area's day, two under the area's floor`); return; }
   if (!judgeUnder) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: its floor is above its area's, so its groups count two under in the area's pool (a zone map's under its own floor, a town's or dungeon's under the area's), where they have a company`); return; }
   const low = floor - GATE.under;
   if (low < 1) { console.log(`  n/a:  ${id} ${GATE.under} under its floor: level ${low} is no company`); return; }
   if (floor >= GATE.dayFrom) return;
-  const under = pooled(groups, low);
-  check(`${id}: under`, under, atMost(GATE.back.aim), atMost(GATE.back.limit), `${id} ${GATE.under} under its floor, at ${low}: ${pc(under)} won (at most: ${aims(pc(GATE.back.aim), pc(GATE.back.limit))})`);
+  judged(`${id}: under`, ratesAt(groups.map((g) => [g, low])), atMost(GATE.back.aim), atMost(GATE.back.limit),
+    (under) => `${id} ${GATE.under} under its floor, at ${low}: ${pc(under.value)} won (at most: ${aims(pc(GATE.back.aim), pc(GATE.back.limit))})`);
 }
 
 /** A day two under a floor as a share of the floor's fights to a rest (harness's fightsPerRest). */
@@ -193,9 +253,10 @@ export const dayShare = (fights: number, floor: number): number => fights / figh
  * There a fight from full health is won from well under the floor; the day still slopes.
  */
 function underDay(key: string, groups: readonly EncounterDef[], floor: number, what: string): void {
-  const low = floor - GATE.under, day = days(low, groups, BACK_DAYS, 1, true), share = dayShare(day.fights, floor);
-  check(`${key}: under day`, share, atMost(GATE.backDay.aim), atMost(GATE.backDay.limit),
-    `${what}, at ${low}: ${day.fights.toFixed(2)} fights to a rest, ${pc(share)} of the floor's ${fightsPerRest(floor)} (at most: ${aims(pc(GATE.backDay.aim), pc(GATE.backDay.limit))})`);
+  const low = floor - GATE.under, day = dayAt(low, groups), per = fightsPerRest(floor);
+  const share = (n: number): Measure & { fights: number } => { const d = day(n); return { value: dayShare(d.value, floor), se: d.se / per, fights: d.value }; };
+  judged(`${key}: under day`, share, atMost(GATE.backDay.aim), atMost(GATE.backDay.limit),
+    (s) => `${what}, at ${low}: ${s.fights.toFixed(2)} fights to a rest, ${pc(s.value)} of the floor's ${per} (at most: ${aims(pc(GATE.backDay.aim), pc(GATE.backDay.limit))})`);
 }
 
 /** A map the gate judges: one with groups and a band. */
@@ -231,20 +292,23 @@ function judgeMap(d: Fought, areaFloor: number, bosses: readonly string[], own: 
   for (const b of bosses.filter((ref) => ref.startsWith(`${d.id}:`))) {
     const boss = groups.find((e) => `${d.id}:${e.id}` === b);
     if (!boss) continue;
-    const at = rate(boss, d.band[0]);
     // The sentries' lever (#752): Vask's own group with the clock let run (the bots take the called first) is
     // won a quarter to a third of the time, the plan's figure, which holds only on the sentries at 890 (`MonsterDef.offLine`).
+    // Settled on the seeds' ladder as a figure checked is (#848).
     if (b === 'core:core_vask') {
-      const run = winRate(d.band[0], boss, SEEDS, ROUND_CAP, gateOpts(boss), { answer: { ...ANSWER, clock: 'called' } });
-      ok(run >= 0.2 && run <= 0.45, `${b}: the clock let run at ${d.band[0]}: ${pc(run)} won (the plan's quarter to a third, on the sentries at 890: 20% to 45%)`);
+      const plan = within([0.2, 0.45]), run = settle(ratesAt([[boss, d.band[0]]], { answer: { ...ANSWER, clock: 'called' } }), [plan]);
+      const msg = `${b}: the clock let run at ${d.band[0]}: ${pc(run.value)} won (the plan's quarter to a third, on the sentries at 890: 20% to 45%)${onSeeds(run)}`;
+      if (run.near) near.push(msg);
+      ok(plan(run.value) <= 1e-9, msg);
     }
-    check(`${b}: floor`, at, within(GATE.boss.aim), within(GATE.boss.limit), `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at)} won (${aims(`${pc(GATE.boss.aim[0])} to ${pc(GATE.boss.aim[1])}`, `${pc(GATE.boss.limit[0])} to ${pc(GATE.boss.limit[1])}`)})`);
+    judged(`${b}: floor`, ratesAt([[boss, d.band[0]]]), within(GATE.boss.aim), within(GATE.boss.limit),
+      (at) => `${d.id}'s boss ${boss.id} at ${d.band[0]}: ${pc(at.value)} won (${aims(`${pc(GATE.boss.aim[0])} to ${pc(GATE.boss.aim[1])}`, `${pc(GATE.boss.limit[0])} to ${pc(GATE.boss.limit[1])}`)})`);
     // The company two above the floor, or at the cap where that is as high as it goes (a boss at 31 meets 32);
     // a boss at the cap itself is judged at its floor alone (#759).
     const top = Math.min(d.band[0] + GATE.under, MAX_LEVEL);
     if (top === d.band[0]) { console.log(`  n/a:  ${d.id}'s boss ${boss.id} above its floor: no company stands past the cap, ${MAX_LEVEL}`); continue; }
-    const above = rate(boss, top);
-    check(`${b}: above`, above, atLeast(GATE.bossAbove.aim), atLeast(GATE.bossAbove.limit), `${d.id}'s boss ${boss.id} at ${top}: ${pc(above)} won (${aims(pc(GATE.bossAbove.aim), pc(GATE.bossAbove.limit))})`);
+    judged(`${b}: above`, ratesAt([[boss, top]]), atLeast(GATE.bossAbove.aim), atLeast(GATE.bossAbove.limit),
+      (above) => `${d.id}'s boss ${boss.id} at ${top}: ${pc(above.value)} won (${aims(pc(GATE.bossAbove.aim), pc(GATE.bossAbove.limit))})`);
   }
   // Its dens: the keepers the camp's hardest fight, and its brood's number and pace.
   for (const f of d.features ?? []) if (f.kind === 'den') { const r = denReading(d, f, d.band[0]); ok(!r.fault, `${r.line}${r.fault ? ` (${r.fault})` : ''}`); }
@@ -253,27 +317,34 @@ function judgeMap(d: Fought, areaFloor: number, bosses: readonly string[], own: 
   // (the owner's decision on #40, 28 September).
   if (bossOnly) return;
   const daily = groups.filter((g) => !bosses.includes(`${d.id}:${g.id}`));
-  const day = days(d.band[0], daily, DAYS, 1, true), want = fightsPerRest(d.band[0]);
+  const want = fightsPerRest(d.band[0]);
   const around = (e: readonly [number, number]): [number, number] => [want - e[0], want + e[1]], range = ([lo, hi]: [number, number]): string => `${lo} to ${hi}`;
-  check(`${d.id}: rest`, day.fights, within(around(GATE.perRest.aim)), within(around(GATE.perRest.limit)), `${d.id} at ${d.band[0]}: ${day.fights.toFixed(2)} fights to a rest (${aims(range(around(GATE.perRest.aim)), range(around(GATE.perRest.limit)))}); ${pc(day.why.long)} of days end in a fight broken off`, true);
+  judged(`${d.id}: rest`, dayAt(d.band[0], daily), within(around(GATE.perRest.aim)), within(around(GATE.perRest.limit)),
+    (day) => `${d.id} at ${d.band[0]}: ${day.value.toFixed(2)} fights to a rest (${aims(range(around(GATE.perRest.aim)), range(around(GATE.perRest.limit)))}); ${pc(day.long)} of days end in a fight broken off`, true);
   // From dayFrom, two under the floor by the day, where two under is asked of the map alone.
   if (alone && d.band[0] >= GATE.dayFrom) underDay(d.id, daily, d.band[0], `${d.id} ${GATE.under} under its floor`);
 }
 
-/** The road from the way in: every fight won, mending between and resting whole where the company must. */
-function road(groups: readonly EncounterDef[], level: number): number {
-  let walked = 0;
-  for (let k = 1; k <= SEEDS; k++) {
+/**
+ * The road from the way in on n seeds: every fight won, mending between and resting whole where the
+ * company must. Seed k's walk is 1 or 0, each walked once (#848), so its error is a rate's.
+ */
+function road(groups: readonly EncounterDef[], level: number): (n: number) => Measure {
+  const walks = seeded((k) => {
     const p = gateCompany(level, k);
-    const won = groups.every((g, f) => {
+    return groups.every((g, f) => {
       if (!gateFight(p, g, k * 104729 + f, ROUND_CAP, gateOpts(g))) return false;
       mendBetween(p);
       if (mustRest(p)) for (const m of p.members) rest(m);
       return true;
-    });
-    if (won) walked++;
-  }
-  return walked / SEEDS;
+    }) ? 1 : 0;
+  });
+  return (n) => {
+    const w = walks(n);
+    let walked = 0;
+    for (let k = 0; k < n; k++) walked += w[k];
+    return { value: walked / n, se: spread(w, n) };
+  };
 }
 
 /**
@@ -294,6 +365,8 @@ export function gate(part?: string): void {
   else throw new Error(`the gate has no part named ${part}`);
   if (offAim.length) console.log(`\n  Off their aim, inside their limits (${offAim.length}):\n${offAim.map((l) => `    ${l}`).join('\n')}`);
   offAim.length = 0;
+  if (near.length) console.log(`\n  Within ${MARGIN} standard errors of a limit on the seeds' ladder's top, judged there (${near.length}):\n${near.map((l) => `    ${l}`).join('\n')}`);
+  near.length = 0;
   // An owed entry is the part's whose names its key starts with, an area's or, naming none, the fixed part's.
   const stale = Object.keys(OWED).filter((k) => !used.has(k) && ownerOf(k) === area?.id);
   ok(!stale.length, `every owed entry names a check that ran${stale.length ? ` (not: ${stale.join(', ')})` : ''}`);
@@ -330,6 +403,41 @@ function fixed(): void {
     ok(share((perRest * da) / 2) === 'aim' && share(pastAim) === 'off' && offAim.length === before + 1 && offAim[before] === listed && share(pastLimit) === 'past',
       `a day two under a floor is judged as a share of the floor's fights to a rest: ${pc(dayShare(pastAim, floor))} is off its aim of ${pc(da)}, listed and passed; ${pc(dayShare(pastLimit, floor))} is past its limit of ${pc(dl)}`);
     offAim.splice(before);
+  }
+  // The seeds' ladder (#848), on figures whose seeds are known: seed k won where the golden fraction of k is
+  // under p, a rate of p spread as a rate's seeds are, each seed counted as it is played and none past
+  // the top. Far from its limit a figure is judged on SEEDS seeds; nearer, a rung up, its margin
+  // narrowing as its error halves; at its limit, to the top and no further; each seed played once.
+  {
+    const top = SEED_LADDER[SEED_LADDER.length - 1];
+    let played = 0;
+    const drawn = (p: number): ((n: number) => Measure) => {
+      const won = seeded((k): number => { if (k > top) throw new Error(`seed ${k} played past the ladder's top`); played++; return (k * 0.6180339887498949) % 1 < p ? 1 : 0; });
+      return (n) => ({ value: won(n).slice(0, n).reduce((t, x) => t + x, 0) / n, se: spread(won(n), n) });
+    };
+    const settled = (p: number, limit: number): { seeds: number; near: boolean; played: number; value: number; threw: string } => {
+      played = 0;
+      try { const s = settle(drawn(p), [atLeast(limit)]); return { seeds: s.seeds, near: s.near, played, value: s.value, threw: '' }; } catch (e) { return { seeds: NaN, near: false, played, value: NaN, threw: String(e) }; }
+    };
+    const said = (s: ReturnType<typeof settled>): string => `${pc(s.value)} on ${s.seeds.toLocaleString('en-GB')} seeds, ${s.played.toLocaleString('en-GB')} played${s.near ? ', still near' : ''}${s.threw ? ` (${s.threw})` : ''}`;
+    const far = settled(0.97, 0.8), nearer = settled(0.88, 0.8), at = settled(0.805, 0.8), again = settled(0.805, 0.8);
+    ok(far.seeds === SEEDS && far.played === SEEDS && !far.near, `the seeds' ladder judges a figure far from its limit on its first ${SEEDS} seeds and plays no more (a rate of 97% against a limit of 80%: ${said(far)})`);
+    ok(nearer.seeds === SEED_LADDER[1] && nearer.played === SEED_LADDER[1] && !nearer.near, `one within ${MARGIN} standard errors of its limit is measured a rung up, where its margin has halved, playing only the seeds not yet played (88% against 80%: ${said(nearer)})`);
+    ok(at.seeds === top && at.near && at.played === top && !at.threw, `one at its limit climbs to the top and no further, judged there and said to be near (80.5% against 80%: ${said(at)})`);
+    ok(JSON.stringify(again) === JSON.stringify(at), `and the ladder is the same each time it is climbed (${said(again)})`);
+    // Through the check, the margin is read from the limit, not the aim; the fixtures' lines are not the content's to list.
+    const listed = offAim.length, nearBy = near.length;
+    const byLimit = judged('fixture: ladder', drawn(0.805), atLeast(0.95), atLeast(0.8), (s) => `the fixture at ${pc(s.value)}, near its limit and far from its aim`);
+    const byAim = judged('fixture: ladder', drawn(0.9), atLeast(0.9), atLeast(0.5), (s) => `the fixture at ${pc(s.value)}, at its aim and far from its limit`);
+    offAim.splice(listed); near.splice(nearBy);
+    ok(byLimit.seeds === top && byAim.seeds === SEEDS, `the check settles a figure against its limit, not its aim: near its limit on ${byLimit.seeds.toLocaleString('en-GB')} seeds, near its aim alone on ${byAim.seeds.toLocaleString('en-GB')}`);
+    // A group's fights and a day, climbed a rung, equal the figures flat on that many seeds to the last digit.
+    const captain: EncounterDef = { id: 'fx_captain', x: 0, y: 0, monsters: ['smuggler_captain'] };
+    const pair: EncounterDef = { id: 'fx_pair', x: 0, y: 0, monsters: ['brigand', 'brigand'] }, rats: EncounterDef = { id: 'fx_rats', x: 0, y: 0, monsters: ['rat', 'rat', 'rat'] };
+    const climbed = settle(ratesAt([[captain, 1]]), [atLeast(rate(captain, 1))], [SEEDS, 2 * SEEDS]), flat = winRate(1, captain, 2 * SEEDS, ROUND_CAP, gateOpts(captain));
+    const walk = dayAt(1, [pair, rats]), first = walk(SEEDS).value, twice = walk(2 * SEEDS).value, walked = days(1, [pair, rats], 2 * SEEDS, 1, true).fights;
+    ok(climbed.seeds === 2 * SEEDS && climbed.value === flat && first === days(1, [pair, rats], SEEDS, 1, true).fights && twice === walked,
+      `a figure climbed a rung equals it flat on as many seeds: a smuggler captain at 1 won ${pc(rate(captain, 1))} on ${SEEDS} seeds and ${pc(climbed.value)} on ${climbed.seeds}, flat ${pc(flat)}; a day ${first.toFixed(2)} on ${SEEDS} and ${twice.toFixed(2)} on ${2 * SEEDS}, flat ${walked.toFixed(2)}`);
   }
   // A group that waits on an `after` is no warning at the way in.
   {
@@ -405,16 +513,18 @@ function judgeArea(only: string): void {
     const name = nameOf(id);
     const lost = [...bosses, ...zones.flatMap((z) => z.road ?? [])].filter((ref) => !find(ref));
     ok(!lost.length, `${name}: its bosses and its roads are groups of its maps${lost.length ? ` (not: ${lost.join(', ')})` : ''}`);
-    const pools = areaPools(pooled, band[0], rate, band[0] < GATE.dayFrom);
-    if (pools.through === null) console.log(`  n/a:  ${name} has no groups yet`);
-    else check(`${name}: floor`, pools.through, atLeast(GATE.through.aim), atLeast(GATE.through.limit), `${name} at its maps' floors: ${pc(pools.through)} of its ${pools.groups} groups' fights won (${aims(pc(GATE.through.aim), pc(GATE.through.limit))})`);
+    const pools = areaCells(pooled, band[0], band[0] < GATE.dayFrom);
+    if (!pools.at.length) console.log(`  n/a:  ${name} has no groups yet`);
+    else judged(`${name}: floor`, ratesAt(pools.at), atLeast(GATE.through.aim), atLeast(GATE.through.limit),
+      (through) => `${name} at its maps' floors: ${pc(through.value)} of its ${pools.at.length} groups' fights won (${aims(pc(GATE.through.aim), pc(GATE.through.limit))})`);
     // From dayFrom, two under the area by the day: every group of its maps but a boss, dealt to a company
     // two under the area's floor.
     if (band[0] >= GATE.dayFrom) {
       if (!daily.length) console.log(`  n/a:  ${name} ${GATE.under} under its floor: it has no group but its bosses`);
       else underDay(name, daily, band[0], `${name} ${GATE.under} under its floor, its maps' groups pooled`);
-    } else if (pools.back === null) console.log(`  n/a:  ${name} ${GATE.under} under its maps' floors: no group has a company there`);
-    else check(`${name}: under`, pools.back, atMost(GATE.back.aim), atMost(GATE.back.limit), `${name} ${GATE.under} under its maps' floors (a town's or dungeon's, the area's ${band[0]}): ${pc(pools.back)} of ${pools.under} groups' fights won (at most: ${aims(pc(GATE.back.aim), pc(GATE.back.limit))})`);
+    } else if (!pools.low.length) console.log(`  n/a:  ${name} ${GATE.under} under its maps' floors: no group has a company there`);
+    else judged(`${name}: under`, ratesAt(pools.low), atMost(GATE.back.aim), atMost(GATE.back.limit),
+      (back) => `${name} ${GATE.under} under its maps' floors (a town's or dungeon's, the area's ${band[0]}): ${pc(back.value)} of ${pools.low.length} groups' fights won (at most: ${aims(pc(GATE.back.aim), pc(GATE.back.limit))})`);
 
     // Each zone: its road walked at its floor, and a warning, not a wall, at its way in.
     for (const z of zones) {
@@ -426,19 +536,19 @@ function judgeArea(only: string): void {
       ok(!astray.length, `${zn}: its road runs on its own maps${astray.length ? ` (not: ${astray.join(', ')})` : ''}`);
       const way = (refs ?? []).map(find);
       if (refs?.length && way.every((g) => g)) {
-        const walked = road(way as EncounterDef[], floor);
-        check(`${zn}: road`, walked, atLeast(GATE.road.aim), atLeast(GATE.road.limit), `${zn} at ${floor}: its road (${refs.join(', ')}) walked ${pc(walked)} of the time (${aims(pc(GATE.road.aim), pc(GATE.road.limit))})`);
+        judged(`${zn}: road`, road(way as EncounterDef[], floor), atLeast(GATE.road.aim), atLeast(GATE.road.limit),
+          (walked) => `${zn} at ${floor}: its road (${refs.join(', ')}) walked ${pc(walked.value)} of the time (${aims(pc(GATE.road.aim), pc(GATE.road.limit))})`);
       }
       // The two groups nearest its way in are among its gentlest, a point's grace below the median of
       // its own groups so that where most groups are always won one loss in a hundred is not a wall.
       // A group that comes only after a step is not there when a company first walks in.
       // A crossing's landing on any of its maps is a way in as well, held the same way (#164).
-      const level = floor - GATE.under >= 1 ? floor - GATE.under : floor;
-      const mid = median(maps.flatMap((d) => d.encounters!).map((g) => rate(g, level)));
+      const level = floor - GATE.under >= 1 ? floor - GATE.under : floor, all = maps.flatMap((d) => d.encounters!);
+      // Judged as the gap from the median to the least of the nearest, which settles as a figure (#848).
       const warn = (d: MapDef, from: { x: number; y: number }, key: string, what: string): void => {
-        const near = nearestWayIn(d.encounters!, stepsFrom(d, from));
-        const least = Math.min(...near.map((g) => rate(g, level)));
-        check(key, least, atLeast(mid - GATE.warning.aim), atLeast(mid - GATE.warning.limit), `${zn}: the groups nearest ${what}, ${near.map((g) => `${g.id} ${pc(rate(g, level))}`).join(' and ')}, are won at ${level} about as often as its median group or more (${pc(mid)}; less ${aims(pc(GATE.warning.aim), pc(GATE.warning.limit))})`);
+        const nearest = nearestWayIn(d.encounters!, stepsFrom(d, from));
+        judged(key, gapAt(nearest, all, level), atLeast(-GATE.warning.aim), atLeast(-GATE.warning.limit),
+          (gap) => `${zn}: the groups nearest ${what}, ${nearest.map((g) => `${g.id} ${pc(rate(g, level, gap.seeds))}`).join(' and ')}, are won at ${level} about as often as its median group or more (${pc(gap.mid)}; less ${aims(pc(GATE.warning.aim), pc(GATE.warning.limit))})`);
       };
       const first = fought.find((d) => d.id === z.maps![0].map);
       if (first?.encounters?.length) warn(first, first.start, `${zn}: warning`, 'its way in');
