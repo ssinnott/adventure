@@ -16,8 +16,8 @@ import type { Party } from './party.ts';
 import type { Tables } from './tables.ts';
 import { FRONT_ROW, MAX_MONSTERS, HASTE_SPEED, describe, toHit, roll, standing, frontStands, aliveMonsters, HOLD_BREAKS } from './combat/state.ts';
 import type { MonsterInst, TurnRef, PartyAction, Loot, CombatState, CombatOpts, CombatGroup } from './combat/state.ts';
-import { STONE_LINE, victoryLine } from './combat/lines.ts';
-import { blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow } from './combat/perks.ts';
+import { STONE_LINE, FIRST_LINE, victoryLine } from './combat/lines.ts';
+import { blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow, strikesFirst } from './combat/perks.ts';
 import { hurtMonster, elemental, castSpell } from './combat/casting.ts';
 import {
   canReach, waits, monsterAc, monsterHit, guard, castable, struck, monsterCast, sweep, regenerate, dim, calledBy, canCall, clocked, beat, call,
@@ -68,6 +68,7 @@ export function startCombat(tables: Tables, party: Party, groups: readonly Comba
     ...(opts.edge ? { edge: opts.edge } : {}),
   };
   s.log.push(describeGroups(s) + ' attack!');
+  if (strikesFirst(party)) s.log.push(FIRST_LINE);
   if (opts.note) s.log.push(opts.note);
   newRound(s, party, rng);
   return s;
@@ -84,10 +85,9 @@ function newRound(s: CombatState, party: Party, rng: RngInstance): void {
   const haste = s.haste > 0 ? HASTE_SPEED : 0;
   party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: statOf(s.tables.items, c, 'speed') + haste + rng.range(0, 4) }); });
   s.monsters.forEach((m, i) => { if (standing(m)) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
-  // A monk of the second prestige always acts first in a round; in the first, while an Arms Master
-  // stands (game/skills.ts; #856), every member acts before any monster. The skill is read off the
-  // member's list; nobody is born to it, and the skills test holds it to `hasSkill`'s answer.
-  const armsMaster = s.round === 1 && party.members.some((c) => !isDown(c) && (c.skills?.includes('arms_master') ?? false));
+  // A monk of the second prestige always acts first in a round; while an Arms Master stands
+  // (`strikesFirst`; #856, #1070), every member acts before any monster, in every round.
+  const armsMaster = strikesFirst(party);
   const first = (r: TurnRef): number => (r.side !== 'party' ? 0 : party.members[r.i].cls === 'monk' && prestigeOf(party.members[r.i]) >= 2 ? 2 : armsMaster ? 1 : 0);
   refs.sort((a, b) => first(b.ref) - first(a.ref) || b.speed - a.speed);
   s.order = refs.map((r) => r.ref);

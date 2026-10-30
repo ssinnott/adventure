@@ -1,8 +1,8 @@
 // The fight's words for the log (#1007, cut from game/combat.ts): what it says when people break or
 // beasts run, a call is answered, a monster mends or smoulders, the light dims, a row is swept, a
-// member turns to glass or a rite holds, the glove's line once a game and a won fight's, with the
-// least and the most share it paid. Words alone: nothing here takes the state, the party or the
-// rng.
+// member turns to glass or a rite holds, the glove's line once a game, the company's first strike
+// and a won fight's, with the least and the most share it paid. Words alone: nothing here takes the
+// state, the party or the rng.
 import type { Element } from '../spells.ts';
 import type { Character } from '../party.ts';
 import type { Loot } from './state.ts';
@@ -33,6 +33,8 @@ export const SMOULDER_LINE = (names: string, one: boolean): string => one ? `${n
 export const CALL_LINE = (caller: string, names: string, one: boolean): string => `${caller} calls, and ${names} ${one ? 'answers' : 'answer'}.`;
 /** The log's lines under the clock (`dim`): every third step of the light, and its last. */
 export const DIM_LINE = 'Through the roof, the light goes out a little.', THREAD_LINE = 'The light holds at a thread.';
+/** The log's line at a fight's start while an Arms Master stands (`strikesFirst`, #1070): said once. */
+export const FIRST_LINE = 'The company strikes first.';
 /** The log's line when those that obey stand down at the last leader's fall (`morale`). */
 export const STAND_LINE = (names: string, one: boolean): string => `${names} ${one ? 'stands' : 'stand'} down.`;
 /** The log's line for a sweep (`sweep`): an arm across a row or a breath of its element on one, and what it dealt, or its miss. */

@@ -1,8 +1,8 @@
 // The prestiges' perks in a fight (#1007, cut from game/combat.ts; DESIGN §5): the blows each
 // prestige adds, what the perks are worth, the barbarian's Rage, the thief's sneak attack and its
 // vanishing, the bard's song, the knight's banner, the ranger's shot the weather leaves alone, the
-// monk's blow from the back row and the damage the traits add to a blow. Nothing here draws on the
-// rng.
+// monk's blow from the back row, the damage the traits add to a blow and whether the company strikes
+// first. Nothing here draws on the rng.
 import { KINDS } from '../monsters.ts';
 import type { ItemDef } from '../items.ts';
 import {
@@ -74,6 +74,13 @@ export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: Monster
   if (hasTrait(c, 'sneak_attack') && (s.round === 1 || vanished(s, c))) n += sneakDamage(c);
   return n;
 }
+
+/**
+ * Whether the company strikes first (#856, #1070): while an Arms Master stands (game/skills.ts), every
+ * standing member acts before any monster, in every round. The skill is read off the member's list;
+ * nobody is born to it, and the skills test holds it to `hasSkill`'s answer.
+ */
+export const strikesFirst = (party: Party): boolean => party.members.some((c) => !isDown(c) && (c.skills?.includes('arms_master') ?? false));
 
 /** Whether the character in party slot `index` may strike with their weapon at all. */
 export function canAttackFromRow(items: Items, c: Character, index: number): boolean {
