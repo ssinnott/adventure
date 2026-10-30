@@ -110,7 +110,10 @@ const QUAYHAND = c3person('quay'), PRIEST = c3person('priest'), SMUGGLER = C3.fe
 const IN_ORDER = ['Go down off Kestrel Edge', 'Go up the spur to Rietum', 'Go west over the fen', 'Go south from the plinth', 'Go south through the Saltings', 'Take Kitto\'s boat'].map((g) => goalOf(CHAPTER, g));
 const FIRST = ['Before the boat', 'Take Kitto\'s boat'].map((g) => goalOf(CHAPTER, g));
 
-/** The chain from a new game, in order and Saltmouth first (its steps.ts), every goal of the chapter walked, and the plinth read both ways. */
+/**
+ * The chain from a new game, in order and Saltmouth first (its steps.ts), every goal of the chapter
+ * walked and the plinth read both ways.
+ */
 function theTideStone(): Scene[] {
   return [
     { name: 'chain', walks: IN_ORDER, play: (ok) => { inOrder(ok); } },

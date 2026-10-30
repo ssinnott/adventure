@@ -1,9 +1,10 @@
-// Wrackholm's chain (#1033): the steps of its chapter of the one quest, The Stone Carried Home, played on
-// from the landing where Saltreach's runs leave the company: in order (`STEPS`: by Kelp Hole's crates out
-// to the ship by night, the Stone and the captain's table, and home by the boat and the fen to the plinth),
-// and Saltmouth first, the temples not seen (`PAPERS_LAST`: the table left shut, the Stone home, then back
-// aboard for the papers). Wrackholm's walkthrough plays them, and a later chapter's walkthrough or
-// steps.ts replays them by this file, never by the walkthrough; nothing in the game imports it.
+// Wrackholm's chain (#1033): the steps of its chapter of the one quest, The Stone Carried Home,
+// played on from the landing where Saltreach's runs leave the company: in order (`STEPS`: by Kelp
+// Hole's crates out to the ship by night, the Stone and the captain's table, then home by the boat
+// and the fen to the plinth), and Saltmouth first, the temples not seen (`PAPERS_LAST`: the table
+// left shut, the Stone home, then back aboard for the papers). Wrackholm's walkthrough plays them,
+// and a later chapter's walkthrough or steps.ts replays them by this file, never by the
+// walkthrough; nothing in the game imports it.
 import { walkThrough, see, fight, listen, meetWho, open, clock, mapDef } from '../../../../tools/kit/walk.ts';
 import type { Step, Walk } from '../../../../tools/kit/walk.ts';
 import { take } from '../../../game/passage.ts';

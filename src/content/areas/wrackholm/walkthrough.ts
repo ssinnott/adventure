@@ -1281,7 +1281,7 @@ function theBounds(): Scene[] {
 
 /**
  * The scenes, in the old body's order: the chain and its goals, the side quests, the causeway seen, the
- * hollow's finds and its lock, the built maps ashore, and the bounds.
+ * hollow's finds and its lock, the built maps ashore and the bounds.
  */
 export const scenes: readonly Scene[] = [
   ...theStoneCarriedHome(),
