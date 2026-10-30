@@ -58,3 +58,15 @@ function typing(g: Game): Game {
 export function drive(g: Game, actions: readonly (Action | null)[], settle = 0): void {
   for (const a of [...actions, ...Array<null>(settle).fill(null)]) g.update(a ?? g.pilot?.next(g) ?? null);
 }
+
+/**
+ * Where and when a headless run stopped, as its lines say it: the zone outdoors, else the map, the
+ * square and the clock. After a wipe, where the company fell, not the chapel the Lanterns carried it
+ * to by the next morning (`Game.fell`, #1069), while the pilot's stop is the wipe's: a run that
+ * goes on after one says where it stopped next.
+ */
+export function stoppedAt(g: Game): { where: string; minutes: number } {
+  const fell = g.pilot?.why[0] === 'The company has fallen.' ? g.fell : null;
+  const at = fell ?? g.world.state, m = g.maps[at.mapId];
+  return { where: `${m?.zoneAt(at.x, at.y)?.name ?? m?.name ?? at.mapId} ${at.x},${at.y}`, minutes: at.minutes };
+}

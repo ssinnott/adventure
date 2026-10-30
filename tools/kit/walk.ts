@@ -34,7 +34,7 @@ import type { Person } from '../../src/game/people.ts';
 import { questLog, questMarks, questNews, holds } from '../../src/game/quests.ts';
 import type { Chapter, PageView, QuestCond, QuestView, When } from '../../src/game/quests.ts';
 import { Pilot } from '../../src/app/pilot/pilot.ts';
-import { headlessGame, drive } from './headless.ts';
+import { headlessGame, drive, stoppedAt } from './headless.ts';
 import { homeMap } from '../../src/game/atlas.ts';
 import { useShrine } from '../../src/game/wilds.ts';
 import type { EncounterDef, Feature, MapDef } from '../../src/game/mapdef.ts';
@@ -372,7 +372,7 @@ export function pilotRun(chapter: Chapter, { until = chapter.done, cap = 200_000
   const st = g.world.state, goal = questLog(TABLES, st, g.party).find((v) => v.def === THE_QUEST)?.goal ?? 'no goal shown', reached = at();
   const capped = reached || !p.on ? '' : over ? 'budget' : ticks >= cap ? 'ticks' : '';
   return { seed, reached, on: p.on, done: holds(chapter.done, st, g.party), capped, ticks, secs: ((performance.now() - t0) / 1000).toFixed(1),
-    where: `${g.world.zone?.name ?? g.maps[st.mapId]?.name ?? st.mapId} ${st.x},${st.y}`, level: companyLevel(g.party), goal, why: p.why[0] };
+    where: stoppedAt(g).where, level: companyLevel(g.party), goal, why: p.why[0] };
 }
 
 /**
