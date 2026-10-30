@@ -1514,7 +1514,9 @@ Decided by the owner's delegate for #18, each the owner's to overturn:
   `src/game/party/tables.ts` as rules, which no area adds to.
 - **Determinism:** combat and Rift generation are pure functions of (state, seed). This gives us
   replayable bug reports: the seed replays the game, a random company drawn from it as well
-  (`Game.newRandomGame`, `src/app/game.ts`).
+  (`Game.newRandomGame`, `src/app/game.ts`). The generator is the game's own, one to a `Game`
+  (`src/game/rng.ts`, the singleton's draws), until game-engine's `makeRng` gives up its state, an
+  upstream change: `src/lib` is not edited here.
 
 ---
 
