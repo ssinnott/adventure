@@ -15,7 +15,7 @@ the town `thornhold`, the Grove Roots `grove1` and the Cut Stone `grove2`.
 
 ## 1. Where it is
 
-The second step on the road of levels (DESIGN §9), band 5–10: two zones of the atlas
+The second step on the road of levels (DESIGN §4, §9): two zones of the atlas
 (`src/content/areas/thornmark/atlas.ts`). Thornmark, band 5–10, is its map, H2 on the grid of boxes
 32 squares a side (EXPANSION §8.2), Thornhold in its north-east and the Grove in its south-west. The
 Deepthorn, band 8–10, is six boxes south of it: H3 under the Grove; I3, I4 and I5 down the wood; J4
@@ -23,10 +23,10 @@ and J5, the Hoarhills' end and Penspern. The town and the dungeons stand off the
 from a map.
 
 - **North: the rim,** about nine squares deep, behind Thornhold.
-- **West: the ridge,** with the Scarth through it into the Foreland (1–5); south of the ridge's
+- **West: the ridge,** with the Scarth through it into the Foreland; south of the ridge's
   foot, the Wyke.
 - **East: the Hoarhills,** with the east road over them from the Thornmark map's east edge into
-  Sunderwood (14–16), open from the start: the only way between the two, since I3, I4 and J4 hold
+  Sunderwood, open from the start: the only way between the two, since I3, I4 and J4 hold
   the Eaves' land over the ridge and round its end with their forest drawn closed.
 - **South: the sea,** the Wyke and Sunder Bay meeting round Penspern, the Hearth Isle across the
   water to the south-west.
@@ -133,10 +133,10 @@ the tower, the barrow and the grove.
   and 9,355 gold of 8,400; a company entering at the floor and clearing three quarters leaves at
   10.2, the next floor 10.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.1% of its 75 groups'
-  fights (aim 90%); two under (a town's or dungeon's, the area's 5), 60.6%, off the aim of 25% and
-  inside the limit of 90%. The Thornmark map wins 100% at 5 and 22.2% at 3. The bosses at their
-  floors and two above: the Hand of Ash 63% and 100%, the Warden of the Cut 41% and 100%, the
-  Eldest 55% and 100%.
+  fights (`GATE.through`'s aim); two under (a town's or dungeon's, the area's 5), 60.6%, off
+  `GATE.back`'s aim and inside its limit. The Thornmark map wins 100% at 5 and 22.2% at 3. The
+  bosses at their floors and two above: the Hand of Ash 63% and 100%, the Warden of the Cut 41% and
+  100%, the Eldest 55% and 100%.
 - **Fights to a rest** (aim 5.5 to 7.5, limit 4 to 10): the Thornmark map 5.96, the Grove Roots
   5.95, the Cut Stone 6.70, H3 8.06, I3 7.47, I4 7.55, I5 7.31, J4 7.58 and J5 6.27. H3, I4 and J4
   are off their aim, and with the two under they are the gate's four.

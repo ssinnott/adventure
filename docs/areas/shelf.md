@@ -14,20 +14,20 @@ map are `shelf`, the Downs `downs`, the city `harrow`.
 
 ## 1. Where it is
 
-The first step on the road of levels (DESIGN §9), band 1–5: two zones of the atlas
-(`src/content/areas/shelf/atlas.ts`). The Foreland, band 1–5, is its map, G2 on the grid of boxes
-32 squares a side (EXPANSION §8.2), Helmstow in its north. Callow Downs, band 2–5, is eight boxes
-west and south of it: F2 and F3; E2 and E3; D2, D3 and D4; and E4, the bounds', the Downs' last
-shore (#837). The towns and the dungeons stand off the grid, each entered from a map.
+The first step on the road of levels (DESIGN §4, §9): two zones of the atlas
+(`src/content/areas/shelf/atlas.ts`). The Foreland, band 1–5, is its map, G2 on the grid of boxes 32
+squares a side (EXPANSION §8.2), Helmstow in its north. Callow Downs, band 2–5, is eight boxes west
+and south of it: F2 and F3; E2 and E3; D2, D3 and D4; and E4, the bounds', the Downs' last shore
+(#837). The towns and the dungeons stand off the grid, each entered from a map.
 
 - **North: the rim,** the mountains inside the world's edge, behind Helmstow's north wall. The maps
   of row 2 end in it, and its foothills, C1 to G1, are cut (plan, §11).
-- **East: the ridge, with the Scarth through it** into Thornmark (5–10), past Hale's checkpoint.
+- **East: the ridge, with the Scarth through it** into Thornmark, past Hale's checkpoint.
 - **South: the Wyke and the sea.** E3's south meets E4, a strand under a low cliff with Hag Hole's
   mouth in it, and E4's south Wrackholm's E5, all water. The Mewstone, in G4, is the Deepthorn's.
 - **West: Kestrel Edge,** the cliff over Sylmeer and Saltreach's Upper Water, held by D3 and D4. The
   west of D2, D3 and D4 and the south of D4 meet Saltreach's boxes.
-- **South-west: the Salt Road** down the Edge in D4 into the Delta (Saltreach, 10–12): the way into
+- **South-west: the Salt Road** down the Edge in D4 into the Delta (Saltreach): the way into
   Act II, open from the start, one road, lightly held (EXPANSION §2.2).
 
 Its one edge open on nothing is F3's east, at rows 0 and 1, onto G3, a crumb left unbuilt
@@ -132,9 +132,10 @@ area on the road, it claims nothing new (`novel`), and the novelty check asks no
   4,646 gold of 1,500; a company entering at the floor and clearing three quarters leaves at 5.3,
   the next floor 5. Hag Hole, the lair, is counted in no clear: 3,395 xp a member and 500 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.3% of its 81 groups'
-  fights (aim 90%); two under, 82.7% of 32 groups, listed and inside the limit of nine in ten. The
-  bosses at their floors and two above: the Rift Warden 55% and 100%, the smugglers' captain 50% and
-  100%, the Deacon 50% and 100%, the Berth's captain 44% and 100%; the Hag 66% at 30 and 91% at 32.
+  fights (`GATE.through`'s aim); two under, 82.7% of 32 groups, listed and inside `GATE.back`'s
+  limit. The bosses at their floors and two above: the Rift Warden 55% and 100%, the smugglers'
+  captain 50% and 100%, the Deacon 50% and 100%, the Berth's captain 44% and 100%; the Hag 66% at 30
+  and 91% at 32.
 - **Fights to a rest** (aim 5.5 to 7.5, limit 4 to 10): the Foreland map 4.55, Brandy Hole 4.09,
   the Seam 6.69, the cellar 7.41, F2 6.60, F3 7.07, E3 7.53, E2 6.93, D2 7.59, D3 8.21, D4 7.54 and
   the Berth 7.12, which wins 88.8% at its floor. Six are off their aim, of the gate's eight.

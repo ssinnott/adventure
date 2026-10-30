@@ -15,7 +15,7 @@ no business, so no rooms.
 
 ## 1. Where it is
 
-The first step of Act IV, Beyond the Sky, on the road of levels (DESIGN §9), band 22–24: three
+The first step of Act IV, Beyond the Sky, on the road of levels (DESIGN §4, §9): three
 zones of the atlas (`src/content/areas/whitespine/atlas.ts`) on the grid of boxes 32 squares a side
 (EXPANSION §8.2). Monks' Vale, band 22–23, is J11, J10 and J12; the High Spine, band 23–24, is I11,
 I10 and I12; Sheer Point, band 23–24, is I9, I8 and J8, the bounds' (#832). Highcell stands off the
@@ -126,10 +126,10 @@ brothers are machines in robes. It claims the giants, peaks and cliffs underfoot
   and 11,450 gold of 10,800; a company entering at the floor and clearing three quarters leaves at
   24.4, the next floor 24.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.5% of its 31 groups'
-  fights (aim 90%); two under, pooled at 20, 6.24 fights to a rest, 65.7% of the floor's 9.5. The
-  Abbot is won 66% at 23 and 93% at 25, the Stair-king 58% at 22 and 79% at 24; at I10's floor a
-  company wins 91.6% of its fights, the king counted. The roads of Monks' Vale, the High Spine and
-  Sheer Point are walked every time.
+  fights (`GATE.through`'s aim); two under, pooled at 20, 6.24 fights to a rest, 65.7% of the
+  floor's 9.5. The Abbot is won 66% at 23 and 93% at 25, the Stair-king 58% at 22 and 79% at 24; at
+  I10's floor a company wins 91.6% of its fights, the king counted. The roads of Monks' Vale, the
+  High Spine and Sheer Point are walked every time.
 - **Fights to a rest** (aim 8.5 to 10.5, limit 7 to 13): J11 8.69, Highcell's upper house 11.38,
   I11 10.12, I10 10.59, I9 9.43, I8 8.99, J10 9.72, I12 and J12 8.22 and J8 9.76; the lower house
   10.59 at 23, where a company wins 83% of its fights. Ten figures are off their aim, inside their

@@ -104,9 +104,9 @@ below: its crews leave the cargo at the stair's foot, which is why Act II's crew
 whose floor is over its area's band takes the place of the last area whose floor is at or under its
 own, so a floor of 26 stands at the Glasswold's place, past the Kilns. `dead_drop_stair` may hold a
 machine by the rule and holds none by its brief: it stays as built, one room with no group, its sign
-the warning. A company at 12–14 that walks on dies before it can wonder what it saw (DESIGN §14.4):
-a mystery, not a spoiler. A fixture that the stair's foot holds no group is the quality lane's to
-add, if the owner wants it.
+the warning. A company at Wrackholm's band that walks on dies before it can wonder what it saw
+(DESIGN §14.4): a mystery, not a spoiler. A fixture that the stair's foot holds no group is the
+quality lane's to add, if the owner wants it.
 
 ## 9. Names
 

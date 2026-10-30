@@ -16,7 +16,7 @@ levels `the_sunder` and `the_sunder2` and K3's Rift `k3_rift`.
 
 ## 1. Where it is
 
-The fifth step on the road of levels (DESIGN §9), band 14–16, the last of Act II: two zones of the
+The fifth step on the road of levels (DESIGN §4, §9), the last of Act II: two zones of the
 atlas (`src/content/areas/sunderwood/atlas.ts`). The Eaves, band 14–15, west of the Sunder, are
 five boxes: I2, J2, K2 and K3 along the east road and the gorge, with J3 under them. Lanternwood,
 band 15–16, east of it, is five: L2 and M2 along the east road; L3, L4 and K4, its depths. The
@@ -129,10 +129,10 @@ chasm underfoot; sleep inflicted (`inflict:asleep`); the falls.
   and 6,997 gold of 6,960; a company entering at the floor and clearing three quarters leaves at
   16.5, the next floor 16.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.7% of its 35 groups'
-  fights (aim 90%); two under, its maps' groups pooled at 12, a company manages 4.11 fights to a
-  rest, 54.8% of the floor's 7.5 (at most: aim 66.7%). The Warden of the Sunder is won 56% at 14
-  and 95% at 16, and the Sunder's floor, at 14, 85.3% of its fights, off the aim of 90% and inside
-  the limit of 80%: the gate's one.
+  fights (`GATE.through`'s aim); two under, its maps' groups pooled at 12, a company manages 4.11
+  fights to a rest, 54.8% of the floor's 7.5 (at most: `GATE.backDay`'s aim). The Warden of the
+  Sunder is won 56% at 14 and 95% at 16, and the Sunder's floor, at 14, 85.3% of its fights, off
+  `GATE.through`'s aim and inside its limit: the gate's one.
 - **Fights to a rest** (aim 6.5 to 8.5 at 14 and 6.75 to 8.75 at 15): I2 7.51, J2 7.76, K2 7.76,
   K3 8.05, the Rift 7.30, the Sunder 6.68 and its floor 7.74, J3 7.60, L2 8.20, M2 8.36, L3 7.77,
   L4 8.50 and K4 7.34, each inside its aim.
