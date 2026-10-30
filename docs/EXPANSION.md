@@ -266,8 +266,8 @@ sampled floor from 10, and nearly every fight eight under from 18, while Thornma
 rest it got at the floor, about 62% the median. So a company two under a floor rests after fewer
 fights than the floor's aim gives, its share held by `GATE.backDay`'s aim and limit
 (`tools/kit/rules/gate.ts`). It is judged over each map two under is asked of alone, at its own
-floor less two, and over the area, its groups pooled at the area's floor less two: 100 seeds, dealt,
-a boss left out as from the floor's day. On 17 October 2026 the gate judges 81 maps' days and 10
+floor less two, and over the area, its groups pooled at the area's floor less two: 100 seeds or more,
+dealt, no boss as from the floor's day. On 17 October 2026 the gate judges 81 maps' days and 10
 areas', at 29% to 109% of their floors' aims (the median 62%). It lists 29 maps and three areas off
 their aim, the soft ones: seven each of Ashfall's and the Glasswold's, six of Cairnmoor's. One map
 was past its limit, owed to #865: `cairnfield_m8`, whose two groups were fought 9.29 to a rest two
