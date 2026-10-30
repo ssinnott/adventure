@@ -39,22 +39,20 @@ export function traits(): void {
   const rat = s.monsters[0];
   const bow = ITEMS.shortbow, sword = ITEMS.longsword;
   ok(traitDamage(s, mk('ranger'), bow, rat) > 0 && traitDamage(s, mk('ranger'), sword, rat) === 0, 'Marksman adds only to ranged attacks');
-  // Sneak Attack (#1070): a blow on a foe whose turn this round has not yet come, or that has no place
-  // in the order (called this round), in any round; nothing on one that has acted.
+  // Sneak Attack (#1070): a blow on a foe in its first round, before its turn: the fight's first, its
+  // place in the order not yet come, or the round it is called in, with no place in the order.
   const thief = mk('thief'), ratAt = s.order.findIndex((r) => r.side === 'monster' && r.i === 0), sneak = (): number => traitDamage(s, thief, sword, rat);
   s.turn = ratAt;
-  ok(sneak() === SNEAK_ATTACK_DMG && sneaks(s, thief, rat) && !sneaks(s, mk('cleric'), rat), `Sneak Attack adds ${SNEAK_ATTACK_DMG} to a blow on a foe whose turn has not yet come, and a class without the trait does not sneak`);
+  ok(sneak() === SNEAK_ATTACK_DMG && sneaks(s, thief, rat) && !sneaks(s, mk('cleric'), rat), `Sneak Attack adds ${SNEAK_ATTACK_DMG} to a blow in the first round on a foe whose turn has not yet come, and a class without the trait does not sneak`);
   s.turn = ratAt + 1;
   ok(sneak() === 0 && !sneaks(s, thief, rat), 'and nothing to one on a foe that has acted');
+  s.round = 2; s.turn = ratAt;
+  ok(sneak() === 0 && !sneaks(s, thief, rat), 'nor in the second round, its first past, though its turn there has not yet come');
   const called = { ...rat };
   s.monsters.push(called);
-  ok(traitDamage(s, thief, sword, called) === SNEAK_ATTACK_DMG && sneaks(s, thief, called), 'a foe called this round, with no place in the order, takes it');
+  ok(traitDamage(s, thief, sword, called) === SNEAK_ATTACK_DMG && sneaks(s, thief, called), 'but a foe called in the second round, with no place in its order, takes it');
   s.monsters.pop();
-  s.round = 2; s.turn = ratAt;
-  ok(sneak() === SNEAK_ATTACK_DMG, 'and in the second round a foe before its turn takes it, as in the first');
-  s.turn = ratAt + 1;
-  ok(sneak() === 0 && !sneaks(s, thief, rat), 'and one after its turn does not');
-  ok(TRAITS.sneak_attack.text.startsWith(`+${SNEAK_ATTACK_DMG} damage to a foe that has not yet acted this round;`) && TRAITS.sneak_attack.text.includes(` adds ${SNEAK_GROWTH} more every two levels past 10.`),
+  ok(TRAITS.sneak_attack.text.startsWith(`+${SNEAK_ATTACK_DMG} damage to a foe in its first round, before its turn;`) && TRAITS.sneak_attack.text.includes(` adds ${SNEAK_GROWTH} more every two levels past 10.`),
     `the trait says what the resolver plays ("${TRAITS.sneak_attack.text}")`);
   {
     // In play the log marks it, a sentence after the hit's own and before a death: a thief at speed 50

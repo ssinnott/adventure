@@ -124,18 +124,19 @@ export function prestige(): void {
   ok(traitDamage(s2, bowRanger, item(TABLES.items, 'longbow'), dead) === MARKSMAN_DMG + MARKSMAN_MORE && traitDamage(s2, pal, item(TABLES.items, 'mace'), dead) === HOLY_STRIKE_RISEN && traitDamage(s2, member('paladin', 11), item(TABLES.items, 'mace'), dead) === HOLY_STRIKE_DMG,
     `a ranger of the second shoots +${MARKSMAN_DMG + MARKSMAN_MORE}, a paladin of the second strikes the dead +${HOLY_STRIKE_RISEN}, one of the first +${HOLY_STRIKE_DMG}`);
   ok(rageBelow(barb) === 0.75 && traitDamage(s2, barb, item(TABLES.items, 'axe'), dead) > 0 && rageBelow(member('barbarian', 11)) === 0.5, 'an Ironhide rages below three quarters');
-  // The Tumbler's growth (#1070): 1 more every two levels past 10, so 5 at 16, 9 at 24 and 13 at 32;
-  // at an odd level as at the even below it, and none before the prestige.
+  // The Tumbler's growth: 2 more every two levels past 10, so 10 at 16, 18 at 24 and 26 at 32; at an
+  // odd level as at the even below it, and none before the prestige.
   const sneakAt = [10, 11, 12, 16, 24, 25, 32].map((l) => sneakDamage(member('thief', l)));
-  ok(sneakAt.join() === '2,2,3,5,9,9,13' && sneakDamage(thief24) === SNEAK_ATTACK_DMG + 7 && sneakDamage(member('thief', 12, 0)) === SNEAK_ATTACK_DMG,
-    `a thief's sneak attack grows by 1 every two levels past 10 with the Tumbler: ${sneakAt.join(', ')} at 10, 11, 12, 16, 24, 25 and 32, and ${sneakDamage(member('thief', 12, 0))} at 12 without it`);
+  ok(sneakAt.join() === '4,4,6,10,18,18,26' && sneakDamage(thief24) === SNEAK_ATTACK_DMG + 14 && sneakDamage(member('thief', 12, 0)) === SNEAK_ATTACK_DMG,
+    `a thief's sneak attack grows by 2 every two levels past 10 with the Tumbler: ${sneakAt.join(', ')} at 10, 11, 12, 16, 24, 25 and 32, and ${sneakDamage(member('thief', 12, 0))} at 12 without it`);
   // The barbarian of the second dies only at -30.
   const ironhide = member('barbarian', 19);
   damage(TABLES.items, ironhide, ironhide.hp + 25);
   ok(deathAt(ironhide) === IRONHIDE_AT && !hasCondition(ironhide, 'dead') && deathAt(member('barbarian', 11)) === DIE_HARD_AT, `an Ironhide at -25 lives (${ironhide.hp}), and dies only at ${IRONHIDE_AT}`);
   // The thief of the second drops from sight in its round: no foe singles it out, and it sneak-attacks.
   const shadow = member('thief', 19), sx = startCombat(TABLES, company(shadow), [{ id: 'g', monsters: [foe('person')] }], makeRng(5));
-  // Past every turn of the round, so that the foe has acted: only the vanished thief's blow is one (#1070).
+  // In the second round, past every turn, so that the foe's first round is gone and it has acted: only
+  // the vanished thief's blow is one (#1070).
   sx.round = VANISH_ROUND; sx.turn = sx.order.length;
   const tumbler = member('thief', 11), dagger = item(TABLES.items, 'dagger');
   ok(vanished(sx, shadow) && traitDamage(sx, shadow, dagger, sx.monsters[0]) === sneakDamage(shadow) && !vanished(sx, tumbler) && traitDamage(sx, tumbler, dagger, sx.monsters[0]) === 0,

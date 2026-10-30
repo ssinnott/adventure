@@ -19,10 +19,10 @@ export const PRESTIGE_BLOWS: Partial<Record<ClassId, readonly [number, number, n
 };
 /**
  * What the perks are worth: the knight's banner on the front row's to-hit, the ranger's Marksman
- * risen, Holy Strike risen, the thief's sneak attack growing by 1 every two levels past 10 (#1070), the
- * round it drops from sight, and the bard's song at its first and third.
+ * risen, Holy Strike risen, the thief's sneak attack growing by 2 every two levels past 10, the round
+ * it drops from sight, and the bard's song at its first and third.
  */
-export const BANNER_HIT = 2, MARKSMAN_MORE = 2, HOLY_STRIKE_RISEN = 6, SNEAK_GROWTH = 1, VANISH_ROUND = 2, SONG_DMG = 1, SONG_RISEN = 2;
+export const BANNER_HIT = 2, MARKSMAN_MORE = 2, HOLY_STRIKE_RISEN = 6, SNEAK_GROWTH = 2, VANISH_ROUND = 2, SONG_DMG = 1, SONG_RISEN = 2;
 /** The share of its hit points a barbarian's Rage starts below: half, three quarters at its second prestige. */
 export const rageBelow = (c: Character): number => (c.cls === 'barbarian' && prestigeOf(c) >= 2 ? 0.75 : 0.5);
 
@@ -41,15 +41,16 @@ export const sneakDamage = (c: Character): number => SNEAK_ATTACK_DMG + (prestig
 /** The thief's second prestige: in VANISH_ROUND it is out of sight, no foe singles it out, and its blows are sneak attacks. */
 export const vanished = (s: CombatState, c: Character): boolean => c.cls === 'thief' && prestigeOf(c) >= 2 && s.round === VANISH_ROUND;
 /**
- * Whether a blow of `c`'s on `m` is a sneak attack (#1070): `c` has the trait, and `m`'s turn in the
- * round has not yet come (its place in the order is at or past the turn's), or it has no place in the
- * order (called this round), or `c` has vanished. Read off the order alone: nothing is drawn.
+ * Whether a blow of `c`'s on `m` is a sneak attack (#1070): `c` has the trait, and `m` is in its first
+ * round before its turn, the fight's first with its place in the order at or past the turn's, or the
+ * round it is called in, with no place in the order; or `c` has vanished. Read off the round and the
+ * order alone: nothing is drawn.
  */
 export function sneaks(s: CombatState, c: Character, m: MonsterInst): boolean {
   if (!hasTrait(c, 'sneak_attack')) return false;
   if (vanished(s, c)) return true;
   const i = s.monsters.indexOf(m), at = s.order.findIndex((r) => r.side === 'monster' && r.i === i);
-  return at < 0 || at >= s.turn;
+  return at < 0 || (s.round === 1 && at >= s.turn);
 }
 /** The bard standing who sings best: its prestiges, or -1 with none standing. */
 const singer = (party: Party): number => Math.max(-1, ...party.members.filter((m) => !isDown(m) && hasTrait(m, 'inspire')).map(prestigeOf));
