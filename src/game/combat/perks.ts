@@ -29,12 +29,13 @@ export const rageBelow = (c: Character): number => (c.cls === 'barbarian' && pre
 
 /**
  * Blows a turn with the weapon in hand: one, and a prestige's more where its weapon suits it, a
- * ranger's with a bow, a thief's with a light weapon, a monk's with a staff or bare hands.
+ * ranger's with a bow, short or long, a thief's with a light weapon or a short bow (#1115), a monk's
+ * with a staff or bare hands.
  */
 export function blowsOf(items: Items, c: Character): number {
   const more = PRESTIGE_BLOWS[c.cls], w = weaponOf(items, c);
   if (!more) return 1;
-  if ((c.cls === 'ranger' && w.kind !== 'bow') || (c.cls === 'thief' && w.kind !== 'light') || (c.cls === 'monk' && c.equipment.weapon && w.kind !== 'staff')) return 1;
+  if ((c.cls === 'ranger' && w.kind !== 'bow') || (c.cls === 'thief' && w.kind !== 'light' && !w.short) || (c.cls === 'monk' && c.equipment.weapon && w.kind !== 'staff')) return 1;
   return 1 + more.slice(0, prestigeOf(c)).reduce((a, b) => a + b, 0);
 }
 /** The thief's sneak attack: its own, and SNEAK_GROWTH more every two levels past 10 from its first prestige. */

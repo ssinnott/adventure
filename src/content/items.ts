@@ -47,7 +47,7 @@ export const ITEMS: readonly ItemDef[] = [
   W('longsword', 'Long Sword', 120, 1, 10, { bonus: 1, classes: MARTIAL }),
   W('axe', 'Hand Axe', 90, 1, 10, { classes: MARTIAL }),
   W('sling', 'Sling', 15, 1, 4, { kind: 'light', ranged: true }),
-  W('shortbow', 'Short Bow', 80, 1, 6, { kind: 'bow', ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] }),
+  W('shortbow', 'Short Bow', 80, 1, 6, { kind: 'bow', short: true, ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] }),
   A('robe', 'Robe', 10, 1),
   A('leather', 'Leather Armour', 60, 3, { classes: NO_CASTER_HEAVY }),
   A('scale', 'Scale Mail', 220, 5, { classes: MAIL }),
