@@ -47,7 +47,7 @@ import { square, ALL, reach } from '../../../../tools/kit/grid.ts';
 import { headlessGame, drive } from '../../../../tools/kit/headless.ts';
 import type { Walk, Scene } from '../../../../tools/kit/walk.ts';
 import { CHAPTER } from './chapter.ts';
-import { STEPS, inOrder, saltmouthFirst, atGroveStone, plinthRead, atPlinth, readPlinth, PLINTH_SHORT, PLINTH_CUT } from './steps.ts';
+import { inOrder, saltmouthFirst, atGroveStone, plinthRead, atPlinth, readPlinth, PLINTH_SHORT, PLINTH_CUT } from './steps.ts';
 import { EAST, NORTH, SOUTH, WEST } from '../../../game/types.ts';
 import { GameMap } from '../../../game/map.ts';
 import type { Feature, MapDef } from '../../../game/mapdef.ts';
@@ -78,10 +78,6 @@ import { measureText } from '../../../lib/engine/text.ts';
 import { meet, heard, answer } from '../../../game/people.ts';
 import type { Person } from '../../../game/people.ts';
 import { RESPAWN } from '../../../game/keys.ts';
-
-// The chain, for Sunderwood's walkthrough, which takes it from here until its own cut points it at
-// steps.ts (#1033).
-export { STEPS };
 
 const D5 = mapDef('delta_d5');
 const C5 = mapDef('delta_c5');
