@@ -135,8 +135,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   sky, the weather, the floors, the walls, the roofs and the tents), a model with no canvas and the
   common ground they all take, with `src/ui/viewport.ts` their barrel (#1028). Its painters take the
   frame's state as one `Paint`, made once at the top of each paint (#1029); its static scene is
-  cached in two canvases (the sky, and everything in front of it) and the weather and the year reach
-  into it.
+  painted into two canvases (the sky and everything in front of it) and kept for each facing of the
+  square, four at most, while all it read holds (`src/ui/view/kept.ts`, #1073); the weather and the
+  year reach into it.
 - **The grounds' looks**, `src/ui/view/ground/`: a module to each terrain exports its look (#1030),
   its colour through the year, how white snow makes it, whether rain darkens it or splashes on it,
   its tiles, what lies on it and what stands about it. `GROUND` in `src/ui/view/ground/index.ts`

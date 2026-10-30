@@ -69,7 +69,7 @@ export const TRAITS: Record<TraitId, TraitDef> = {
   faith:         { id: 'faith', name: 'Faith', text: 'Immune to curses.', immune: ['cursed'] },
   spellfire:     { id: 'spellfire', name: 'Spellfire', text: `Damage spells deal +${SPELLFIRE_DMG} to each foe.` },
   iron_will:     { id: 'iron_will', name: 'Iron Will', text: 'Immune to sleep.', immune: ['asleep'] },
-  sneak_attack:  { id: 'sneak_attack', name: 'Sneak Attack', text: `+${SNEAK_ATTACK_DMG} damage in a fight's first round.` },
+  sneak_attack:  { id: 'sneak_attack', name: 'Sneak Attack', text: `+${SNEAK_ATTACK_DMG} damage to a foe in its first round, before its turn; the Tumbler adds 2 more every two levels past 10.` },
   rage:          { id: 'rage', name: 'Rage', text: `+${RAGE_DMG} melee damage while below half hp.` },
   die_hard:      { id: 'die_hard', name: 'Die Hard', text: `Dies only at ${DIE_HARD_AT} hp, not -10.` },
   unarmoured:    { id: 'unarmoured', name: 'Unarmoured Defence', text: 'In a robe or less, no shield: +1 AC, +1 more every two levels.' },

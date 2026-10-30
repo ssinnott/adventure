@@ -3,7 +3,7 @@
 // (app/game.ts) implements; with `TextInput`, the keyboard's text mode as a screen takes it. The
 // screens are written against the host, so no file of src/ui names the app.
 import type { Rng } from '../lib/engine/rng.ts';
-import type { World } from '../game/world.ts';
+import type { World, LiveGroup } from '../game/world.ts';
 import type { Party } from '../game/party.ts';
 import type { Person } from '../game/people.ts';
 import type { Feature } from '../game/mapdef.ts';
@@ -18,6 +18,8 @@ export interface Screen {
   render(g: Host, ctx: CanvasRenderingContext2D, frame: number): void;
   /** Whether the frame (party cards, automap) is drawn beneath. */
   readonly overlay?: boolean;
+  /** Whether it paints the view's rect whole, as a fight's backdrop does, so a screen beneath leaves the view undrawn (#1073). */
+  readonly paintsView?: boolean;
 }
 
 /** The keyboard's text mode, as a screen that takes typed text uses it (app/input.ts's `Input`). */
@@ -72,4 +74,6 @@ export interface Host {
   afterCombat(groupIds: string[], outcome: 'victory' | 'defeat' | 'fled'): void;
   /** The monsters the viewport draws at a cell. */
   readonly monstersAt: (x: number, y: number) => ViewMonster[] | null;
+  /** The monsters the viewport draws for a live group, or none for no group: what `monstersAt` draws for the group at its cell. */
+  readonly monstersOf: (g: LiveGroup | undefined) => ViewMonster[] | null;
 }

@@ -16,8 +16,8 @@ import type { Party } from './party.ts';
 import type { Tables } from './tables.ts';
 import { FRONT_ROW, MAX_MONSTERS, HASTE_SPEED, describe, toHit, roll, standing, frontStands, aliveMonsters, HOLD_BREAKS } from './combat/state.ts';
 import type { MonsterInst, TurnRef, PartyAction, Loot, CombatState, CombatOpts, CombatGroup } from './combat/state.ts';
-import { STONE_LINE, victoryLine } from './combat/lines.ts';
-import { blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow } from './combat/perks.ts';
+import { STONE_LINE, FIRST_LINE, SNEAK_LINE, victoryLine } from './combat/lines.ts';
+import { blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow, strikesFirst, sneaks } from './combat/perks.ts';
 import { hurtMonster, elemental, castSpell } from './combat/casting.ts';
 import {
   canReach, waits, monsterAc, monsterHit, guard, castable, struck, monsterCast, sweep, regenerate, dim, calledBy, canCall, clocked, beat, call,
@@ -68,6 +68,7 @@ export function startCombat(tables: Tables, party: Party, groups: readonly Comba
     ...(opts.edge ? { edge: opts.edge } : {}),
   };
   s.log.push(describeGroups(s) + ' attack!');
+  if (strikesFirst(party)) s.log.push(FIRST_LINE);
   if (opts.note) s.log.push(opts.note);
   newRound(s, party, rng);
   return s;
@@ -84,10 +85,9 @@ function newRound(s: CombatState, party: Party, rng: RngInstance): void {
   const haste = s.haste > 0 ? HASTE_SPEED : 0;
   party.members.forEach((c, i) => { if (!isDown(c)) refs.push({ ref: { side: 'party', i }, speed: statOf(s.tables.items, c, 'speed') + haste + rng.range(0, 4) }); });
   s.monsters.forEach((m, i) => { if (standing(m)) refs.push({ ref: { side: 'monster', i }, speed: m.def.speed + rng.range(0, 4) }); });
-  // A monk of the second prestige always acts first in a round; in the first, while an Arms Master
-  // stands (game/skills.ts; #856), every member acts before any monster. The skill is read off the
-  // member's list; nobody is born to it, and the skills test holds it to `hasSkill`'s answer.
-  const armsMaster = s.round === 1 && party.members.some((c) => !isDown(c) && (c.skills?.includes('arms_master') ?? false));
+  // A monk of the second prestige always acts first in a round; while an Arms Master stands
+  // (`strikesFirst`; #856, #1070), every member acts before any monster, in every round.
+  const armsMaster = strikesFirst(party);
   const first = (r: TurnRef): number => (r.side !== 'party' ? 0 : party.members[r.i].cls === 'monk' && prestigeOf(party.members[r.i]) >= 2 ? 2 : armsMaster ? 1 : 0);
   refs.sort((a, b) => first(b.ref) - first(a.ref) || b.speed - a.speed);
   s.order = refs.map((r) => r.ref);
@@ -155,11 +155,12 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
         if (!standing(m)) { const left = aliveMonsters(s).filter((i) => canReach(s, c, i)); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
         const hit = rng.chance(toHit(attackBonus(s.tables.items, c) + buffHit(s, party, t.i) - (w.ranged && !weatherproof(c) ? s.rangedPenalty : 0), monsterAc(s, m)));
         if (hit) {
-          // An elemental weapon adds a die of its element to the steel, which lands as ever.
-          const dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
+          // An elemental weapon adds a die of its element to the steel, which lands as ever; a sneak
+          // attack (`sneaks`, read before the blow lands) is marked after the hit's own sentence.
+          const sneak = sneaks(s, c, m), dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
             + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
           hurtMonster(s, m, dmg);
-          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
+          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : ''));
         } else s.log.push(`${c.name} misses ${m.def.name}.`);
       }
       break;

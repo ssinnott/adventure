@@ -24,6 +24,7 @@ import type { ItemDef } from '../../src/game/items.ts';
 import type { Person } from '../../src/game/people.ts';
 import { startCombat, currentTurn } from '../../src/game/combat.ts';
 import type { TurnRef } from '../../src/game/combat.ts';
+import { FIRST_LINE } from '../../src/game/combat/lines.ts';
 import type { Screen } from '../../src/ui/screen.ts';
 import { ChoiceScreen, skillMenu, skillsLines, SHEET_COL_W } from '../../src/ui/screens.ts';
 import { talk } from '../../src/app/pilot/talk.ts';
@@ -247,11 +248,12 @@ export function skills(): void {
 }
 
 /**
- * Arms Master (#856): in the first round every standing member acts before any monster while an Arms
- * Master stands, and from the second the round goes by speed again. A company of each people and of
- * each class, every member slowed to a speed of -100 against three wolves, so that without the skill
- * every wolf acts first: with it learnt by a member standing the six come first; unlearnt, or with its
- * learner down, the wolves do. `newRound` reads the list itself, so this holds it to `hasSkill`.
+ * Arms Master (#856, #1070): while an Arms Master stands every standing member acts before any monster,
+ * in every round, and the fight's start says so once. A company of each people and of each class,
+ * every member slowed to a speed of -100 against three wolves, so that without the skill every wolf
+ * acts first: with it learnt by a member standing the six come first in the first round and in the
+ * second, and the log says FIRST_LINE once; unlearnt, or with its learner down, the wolves do and the
+ * log does not say it. `newRound` reads the list itself, so this holds it to `hasSkill`.
  */
 function armsMaster(): void {
   const sides = (order: readonly TurnRef[]): string => order.map((r) => (r.side === 'party' ? 'p' : 'm')).join('');
@@ -263,14 +265,15 @@ function armsMaster(): void {
     if (how === 'down') p.members[0].conditions.push('dead');
     const s = startCombat(TABLES, p, [{ id: 'g', monsters: ['wolf', 'wolf', 'wolf'] }], rng), one = sides(s.order);
     const strikes = p.members.some((m) => !isDown(m) && hasSkill(m, 'arms_master'));
-    // The next round: past every turn of the first, who acts first.
+    // The next round: past every turn of the first, its order, and how often the log has said it.
     s.turn = s.order.length;
-    const next = currentTurn(s, p, rng)?.side;
-    seen.add(`${how} ${one}, then ${next}`);
+    const next = currentTurn(s, p, rng)?.side, two = sides(s.order), said = s.log.filter((l) => l === FIRST_LINE).length;
+    seen.add(`${how} ${one} then ${two}, said ${said}`);
     const want = strikes ? 'ppppppmmm' : how === 'down' ? 'mmmppppp' : 'mmmpppppp';
-    return one === want && next === 'monster' && strikes === (how === 'learnt') ? '' : `${race} ${cls} ${how}: ${one}, then ${next}`;
+    return one === want && two === want && s.round === 2 && next === (strikes ? 'party' : 'monster') && said === (strikes ? 1 : 0) && strikes === (how === 'learnt') ? ''
+      : `${race} ${cls} ${how}: ${one} then ${two}, said ${said}`;
   })));
-  ok(answers.every((a) => !a), `with an Arms Master standing the company's first round comes before the wolves', and the second goes by speed; unlearnt or down, the wolves come first; for every people and class (${[...seen].join('; ')})${answers.some((a) => a) ? ' -> astray: ' + answers.filter((a) => a).slice(0, 6).join(', ') : ''}`);
+  ok(answers.every((a) => !a), `with an Arms Master standing the company comes before the wolves in the first round and in the second, and "${FIRST_LINE}" is said once, at the start; unlearnt or down, the wolves come first and it is not said; for every people and class (${[...seen].join('; ')})${answers.some((a) => a) ? ' -> astray: ' + answers.filter((a) => a).slice(0, 6).join(', ') : ''}`);
   // A monk of the second prestige acts first of all (#856's builder's 5): before an Arms Master's
   // company, and before the wolves without one. He is the slowest of the six, so only that rule puts him first.
   const monk = (master: boolean): string => {
