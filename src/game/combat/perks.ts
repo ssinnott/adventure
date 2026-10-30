@@ -1,8 +1,8 @@
 // The prestiges' perks in a fight (#1007, cut from game/combat.ts; DESIGN §5): the blows each
 // prestige adds, what the perks are worth, the barbarian's Rage, the thief's sneak attack and its
 // vanishing, the bard's song, the knight's banner, the ranger's shot the weather leaves alone, the
-// monk's blow from the back row and the damage the traits add to a blow. Nothing here draws on the
-// rng.
+// monk's blow from the back row, the damage the traits add to a blow, which blows are sneak attacks
+// and whether the company strikes first. Nothing here draws on the rng.
 import { KINDS } from '../monsters.ts';
 import type { ItemDef } from '../items.ts';
 import {
@@ -36,10 +36,22 @@ export function blowsOf(items: Items, c: Character): number {
   if ((c.cls === 'ranger' && w.kind !== 'bow') || (c.cls === 'thief' && w.kind !== 'light') || (c.cls === 'monk' && c.equipment.weapon && w.kind !== 'staff')) return 1;
   return 1 + more.slice(0, prestigeOf(c)).reduce((a, b) => a + b, 0);
 }
-/** The thief's sneak attack: its own, and 2 more every two levels past 10 from its first prestige. */
+/** The thief's sneak attack: its own, and SNEAK_GROWTH more every two levels past 10 from its first prestige. */
 export const sneakDamage = (c: Character): number => SNEAK_ATTACK_DMG + (prestigeOf(c) >= 1 ? SNEAK_GROWTH * Math.floor((c.level - 10) / 2) : 0);
 /** The thief's second prestige: in VANISH_ROUND it is out of sight, no foe singles it out, and its blows are sneak attacks. */
 export const vanished = (s: CombatState, c: Character): boolean => c.cls === 'thief' && prestigeOf(c) >= 2 && s.round === VANISH_ROUND;
+/**
+ * Whether a blow of `c`'s on `m` is a sneak attack (#1070): `c` has the trait, and `m` is in its first
+ * round before its turn, the fight's first with its place in the order at or past the turn's, or the
+ * round it is called in, with no place in the order; or `c` has vanished. Read off the round and the
+ * order alone: nothing is drawn.
+ */
+export function sneaks(s: CombatState, c: Character, m: MonsterInst): boolean {
+  if (!hasTrait(c, 'sneak_attack')) return false;
+  if (vanished(s, c)) return true;
+  const i = s.monsters.indexOf(m), at = s.order.findIndex((r) => r.side === 'monster' && r.i === i);
+  return at < 0 || (s.round === 1 && at >= s.turn);
+}
 /** The bard standing who sings best: its prestiges, or -1 with none standing. */
 const singer = (party: Party): number => Math.max(-1, ...party.members.filter((m) => !isDown(m) && hasTrait(m, 'inspire')).map(prestigeOf));
 /** Whether a standing bard of the second prestige keeps sleep and paralysis off the company. */
@@ -71,9 +83,16 @@ export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: Monster
     if (hasTrait(c, 'rage') && c.hp < c.maxHp * rageBelow(c)) n += RAGE_DMG;
   }
   if (hasTrait(c, 'holy_strike') && KINDS[m.def.kind].holy) n += c.cls === 'paladin' && prestigeOf(c) >= 2 ? HOLY_STRIKE_RISEN : HOLY_STRIKE_DMG;
-  if (hasTrait(c, 'sneak_attack') && (s.round === 1 || vanished(s, c))) n += sneakDamage(c);
+  if (sneaks(s, c, m)) n += sneakDamage(c);
   return n;
 }
+
+/**
+ * Whether the company strikes first (#856, #1070): while an Arms Master stands (game/skills.ts), every
+ * standing member acts before any monster, in every round. The skill is read off the member's list;
+ * nobody is born to it, and the skills test holds it to `hasSkill`'s answer.
+ */
+export const strikesFirst = (party: Party): boolean => party.members.some((c) => !isDown(c) && (c.skills?.includes('arms_master') ?? false));
 
 /** Whether the character in party slot `index` may strike with their weapon at all. */
 export function canAttackFromRow(items: Items, c: Character, index: number): boolean {
