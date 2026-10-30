@@ -72,7 +72,7 @@ while `attracting` (a line of main.ts), as the game takes no other touch. P and 
 taken before the game sees them: P pauses the show, saying so ("Paused. P plays on, any other key
 for the title."; a fight's hint reads "ANY KEY FOR THE TITLE") and starts it again, T sets its tempo.
 A stop of its own keeps its band up over the game, still attracting, and the next key wakes as any
-other. A wipe starts another game on a new seed at once (`Game.gameOver`), the title never shown.
+other. A wipe starts another game on a new seed at once (`Game.fall`), the title never shown.
 
 ## Fair: Known
 
@@ -503,7 +503,7 @@ not the finish.
 | `src/game/party.ts` | `randomParty`: the company drawn from a seed (#979) |
 | `src/ui/screens.ts` | `ChoiceScreen`'s `title`, `disabled` and its marks (#721): a group's refusal (`fight`, by `Game.parley`) and an ending's question (`ends`, by `Game.ask`, `endsIn` in `src/game/stones.ts`) |
 | `src/ui/title.ts` | `TitleScreen` and attract mode's idle: `IDLE_TICKS`, the ticks of nothing counted on the title (#722) |
-| `src/app/game.ts` | what the pilot leaves on the `Game`: `pilot`, `attracting`, `newRandomGame` (P on the title's and attract mode's start), `attract` and its wake in `update`, `band` (the band over the view: the pilot's, with attract mode's opening lines and the way out), the no-op `saveGame` and the wipe's restart in `gameOver` (#722); `instant` and `bandUp`, what the combat and explore screens ask of the pilot through the `Host` (#1022) |
+| `src/app/game.ts` | what the pilot leaves on the `Game`: `pilot`, `attracting`, `newRandomGame` (P on the title's and attract mode's start), `attract` and its wake in `update`, `band` (the band over the view: the pilot's, with attract mode's opening lines and the way out), the no-op `saveGame` and the wipe's restart in `fall` (#722), with `fell`, where a wipe fell, which a run reports (#1069); `instant` and `bandUp`, what the combat and explore screens ask of the pilot through the `Host` (#1022) |
 | `tools/tests/pilot.ts` | the suite `pilot` |
 
 No parameter property, enum or namespace may enter anything a `Game` imports:
@@ -540,7 +540,7 @@ Decided by delegate for #716, each the owner's to overturn:
 6. **A zone map's id names the outdoors it lies in, in one reckoning**: `seen`, `cell`, `features` and `exits` all take and give the outdoors' squares, as `g.world.state` has them while the party stands in the zone, which is what the navigator compares with; its features and exits are those in its box. A goal's square written in the zone's own reckoning goes through `World.locate` before it is compared.
 7. **`CombatScreen.instant` stays** beside the pilot's `instant`: the combat tests turn it on and off in the middle of a fight, which a pilot's readonly `instant` cannot do. Either makes the screen's delays count as none.
 8. **The corpus is forgotten on a new game or a load** (`Pilot.forget`, called by `Game.newGame` and `Game.loadGame`): a new company has heard nothing, and a loaded one has heard nothing either, as the corpus is never saved.
-9. **A stop of its own keeps the band up.** A wipe (`Game.gameOver`) calls `Pilot.stop`, which gives the helm back through `toggle` ("You take the helm.") and keeps "The company has fallen." in the band over the title until the next key (`Pilot.stopped`, cleared by `Game.update` and by P and T in `src/main.ts`); #721's stop at the ending's choice can do the same. When the viewer takes the helm, the band goes at once.
+9. **A stop of its own keeps the band up.** A wipe (`Game.fall`) calls `Pilot.stop`, which gives the helm back through `toggle` ("You take the helm.") and keeps "The company has fallen." in the band over the chapel the company wakes in (#1069) until the next key (`Pilot.stopped`, cleared by `Game.update` and by P and T in `src/main.ts`); #721's stop at the ending's choice can do the same. When the viewer takes the helm, the band goes at once.
 10. **`PILOT 2X`, not `2×`**: the font has no ×.
 11. **`Pilot.brains`**, the brains a pilot asks: `BRAINS`, unless a test names its own (#718's asks for route and explore alone).
 12. **`drawnCell` moves to `src/game/ink.ts`**, a file of its own rather than `src/game/map.ts`, which every content builder shares; `tools/tests/art.ts` and the smoke test's crack sweep import it from there.
