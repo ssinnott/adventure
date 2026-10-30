@@ -35,7 +35,6 @@ const KNOWN: Readonly<Partial<Record<Key, readonly string[]>>> = {
   H8: [
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/saltreach/walkthrough.ts',
     'src/content/areas/sunderwood/walkthrough.ts > src/content/areas/wrackholm/walkthrough.ts',
-    'src/content/areas/wrackholm/walkthrough.ts > src/content/areas/saltreach/walkthrough.ts',
   ],
 };
 
