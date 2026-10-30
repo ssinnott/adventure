@@ -74,6 +74,9 @@ const started = {
   })),
   narrowedWays: [runIn(narrow, '--areas', 'shelf,thornmark', '--shard', '1/2'), runIn(narrow, '--areas', 'shelf,thornmark', '--jobs', '2', '--shard', '2/2')],
   badShards: [run('--shard', '3/2'), run('--shard', '0/2'), runWith({ TEST_SHARD: '1/2/3' }, fixture), run('--shard')],
+  // Two shards each shuffled by a seed of its own, four times over, the fixture's runs weighing alike by
+  // the real DEAR, which names none of them: only a plan dealt before the shuffle holds every run once.
+  seeded: [[1, 2], [3, 4], [5, 6], [7, 8]].map(([a, b]) => [run('--shard', '1/2', '--shuffle', String(a)), run('--shard', '2/2', '--shuffle', String(b))]),
 };
 const owing = await started.owing;
 ok(owing.status === 0, 'a run with only owed lines passes');
@@ -227,6 +230,9 @@ ok(narrowedWays.every((r) => r.status === 0 && twoAsked.test(r.out)) && narrowed
   `narrowed to two areas, two shards hold the narrowed runs once, each saying what the run was narrowed to (${narrowedWays.map((r) => runsOf(r.out).join('+')).join(' | ')})`);
 const badShards = await Promise.all(started.badShards), forms = ['3/2', '0/2', '1/2/3', ''].map((s) => `--shard takes i/n, shard i of n with 1 <= i <= n, as TEST_SHARD does, not '${s}'.`);
 ok(badShards.every((r, k) => r.status === 2 && r.out.trim() === forms[k]), `a shard malformed or out of its count stops the run, naming the form, exit 2 (${badShards.map((r) => r.status).join(', ')})`);
+const seeded = await Promise.all(started.seeded.map((p) => Promise.all(p)));
+ok(seeded.every((p) => p.flatMap((r) => runsOf(r.out)).sort().join(' ') === order.join(' ')),
+  `two shards each shuffled by a seed of its own hold every run once, the plan dealt before the shuffle (${seeded.map((p) => p.map((r) => runsOf(r.out).join('+')).join(' | ')).join('; ')})`);
 
 // A walkthrough's scenes (#1018), on ./walks/: fx's three, in their order and not their names', each a
 // run of its own with its line and its row in the table, then whole's walkthrough of one function.

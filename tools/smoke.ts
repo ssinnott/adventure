@@ -47,8 +47,12 @@ const partsFor = (asked: string): Part[] => {
   return (named.length ? PARTS.filter((p) => named.includes(p.name)) : PARTS.filter((p) => p !== sweep)).filter((p) => !out.includes(p.name));
 };
 const parts = partsFor(PART);
-// The smoke's jobs in CI: each SMOKE_PART checks.yml sets, the smoke job's, the silhouettes job's and the sweep's.
-const JOBS = [...readFileSync(new URL('../.github/workflows/checks.yml', import.meta.url), 'utf8').matchAll(/^ +SMOKE_PART: (\S+)$/gm)].map((m) => m[1]);
+// The smoke's jobs in CI: each SMOKE_PART checks.yml sets, the smoke job's, the silhouettes job's and the
+// sweep's, and the jobs that run one only on a condition (an `if:` on the job or on the step that runs the
+// smoke), which the sweep's alone may.
+const CI = readFileSync(new URL('../.github/workflows/checks.yml', import.meta.url), 'utf8').split(/^(?= {2}[\w-]+:$)/m);
+const JOBS = CI.flatMap((job) => [...job.matchAll(/^ +SMOKE_PART: (\S+)$/gm)].map((m) => m[1]));
+const iffy = CI.filter((job) => { const [head, ...steps] = job.split(/^(?= +- )/m); return /^ +SMOKE_PART: (?!sweep$)\S+$/m.test(job) && (/^ +if: /m.test(head) || steps.some((s) => /^ +SMOKE_PART: /m.test(s) && /^ +(- )?if: /m.test(s))); }).map((job) => job.trim().split(':')[0]);
 
 const server = createServer();
 await new Promise<void>((r) => server.listen(0, () => r()));
@@ -60,7 +64,7 @@ const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : ' 
 // The split (#848): CI's smoke jobs between them run every part once, none in two jobs or in none.
 const runIn = new Map(PARTS.map((p) => [p.name, JOBS.filter((j) => partsFor(j).includes(p))]));
 const split = [...runIn].filter(([, js]) => js.length !== 1).map(([n, js]) => `${n} in ${js.length ? js.join(' and ') : 'none'}`);
-ok(JOBS.length > 0 && !split.length, `CI's smoke jobs run every part once: ${JOBS.join('; ')}${split.length ? ' -> ' + split.join(', ') : ''}`);
+ok(JOBS.length > 0 && !split.length && !iffy.length, `CI's smoke jobs run every part once: ${JOBS.join('; ')}${split.length ? ' -> ' + split.join(', ') : ''}${iffy.length ? ` -> ${iffy.join(', ')} only on a condition` : ''}`);
 const run: Run = { page, seed: SEED, ok, errors, sweep: { maps: SWEEP, four: PART.split(',').includes('rest') ? [] : SWEEP, shard: shardAsked(), audit: process.env.SMOKE_SWEEP_AUDIT === '1' } };
 
 const secs: string[] = [];
