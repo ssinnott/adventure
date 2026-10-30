@@ -487,10 +487,11 @@ export async function asked({ page, ok }: Run): Promise<void> {
   if (has) await press(page, 'Space');
   const letter = has ? await top() : { screen: 'no letter', text: '', title: '' };
   await press(page, 'Escape');
-  // On the sheet X, then another's digit: the two change places (#1066); X and the first's put them back.
-  const order = (): Promise<{ names: string[]; screen: string; at: number }> => page.evaluate(() => {
-    const g = window.__game!.game!;
-    return { names: g.party.members.map((m) => m.name), screen: g.top.constructor.name, at: g.selected };
+  // X on the sheet and another's digit swap the two (#1066); X and the first one's put them back.
+  type Order = { names: string[]; screen: string; at: number };
+  const order = (): Promise<Order> => page.evaluate(() => {
+    const g = window.__game!.game!, names = g.party.members.map((m) => m.name);
+    return { names, screen: g.top.constructor.name, at: g.selected };
   });
   const before = await order(), to = before.at === 5 ? 0 : 5;
   await press(page, 'KeyX');
@@ -504,7 +505,7 @@ export async function asked({ page, ok }: Run): Promise<void> {
     const load: Load = (p) => import(p);
     const g = window.__game!.game!, C = await load<typeof import('../../src/content/index.ts')>('/src/content/index.ts');
     const top = g.top.constructor.name;
-    // Whatever went wrong above, the rest of the run starts in the street, the company in its order.
+    // Whatever went wrong above, the rest of the run starts in the street, the company in order.
     while (g.screens.length > 1) g.pop();
     g.party.members.sort((a, b) => names.indexOf(a.name) - names.indexOf(b.name));
     if (g.party.bag.includes('fx_letter')) g.party.bag.splice(g.party.bag.indexOf('fx_letter'), 1);
