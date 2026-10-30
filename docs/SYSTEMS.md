@@ -157,7 +157,7 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - The Meridian journal opens The Lost Expedition in the quest log, and the Cartographers' Geographer
   in Saltmouth reads it (#181); vol. IV is Ashfall's, and no vol. II or III exists.
 - No audio. The engine's synth stack is vendored, unused.
-- What the checks owe prints as `owed`, with the issue that owes it.
+- What the checks owe prints as `owed`, with the issue or the area that owes it.
 
 ## Where the rest is
 

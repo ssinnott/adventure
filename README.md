@@ -78,14 +78,16 @@ with the Ice Caves and the Vault, #56's 62 and 63 and the artifacts they hold; t
 #846's) and the Stretch tier (docs/DESIGN.md §12). Neither is filed, and v1 ships without them.
 
 The gate judges a company two levels under a floor by its fights in Act I and, from Saltreach on,
-where it wins them all, by how far its day goes (#851). Nothing is owed: `cairnfield_m8`, the one
-map past its limit, was re-sized (#865). The gate's company takes what a level brings on the road
-and buys nothing optional, no tier, skill or found item, and its bot never blesses, sleeps, drinks or
-flees; the game's own bot, the auto-fight and the pilot's fights with it, blesses, sleeps and drinks
-from level 11 and flees a fight lost. A line made on the tiers and those three ended 13 to 47% of
-its days badly at 16 to 24, against an aim of a tenth, so the gate leaves them out: a company that
-buys them has an easier road than measured, and the owner's own play is the judge
-(docs/EXPANSION.md §5.2).
+where it wins them all, by how far its day goes (#851). Each figure stands on 100 seeds, or on 400
+or 1,600 near its limit (#848). Three that 100 seeds passed by chance are past it on 1,600 and owed:
+`ember_stone` at its floor and two bosses' odds, `kd_foal_taker`'s and `core_vask_thinned`'s.
+`cairnfield_m8`, past its limit before, was re-sized (#865). The gate's company takes what a level
+brings on the road and buys nothing optional, no tier, skill or found item, and its bot never
+blesses, sleeps, drinks or flees; the game's own bot, the auto-fight and the pilot's fights with it,
+blesses, sleeps and drinks from level 11 and flees a fight lost. A line made on the tiers and those
+three ended 13 to 47% of its days badly at 16 to 24, against an aim of a tenth, so the gate leaves
+them out: a company that buys them has an easier road than measured, and the owner's own play is the
+judge (docs/EXPANSION.md §5.2).
 
 The world's end is drawn as the atlas paints it, the sea running on and the rim standing (#829,
 built in #849). The owner has filed the land the maps lie open to as an epic, #828, with eight area
