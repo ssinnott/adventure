@@ -796,12 +796,18 @@ function theRoad(): Scene[] {
     { name: 'after-the-heart', play: (ok) => {
       // The old walk had won the seven sentries' groups by here, each with its box's groups and two of
       // them again on the road behind: they stand dead at the start, by hand, as they stood.
+      // heartBehind's last check counts them and passes on fewer: one left standing throws here.
       const w = newWalk(ok, { level: 25, flags: LIT_UP });
-      for (const at of ['emberwaste_e10:e10_sentries', 'emberwaste_f10:f10_sentries', 'emberwaste_f11:f11_sentries', 'firemount_g11:g11_sentry', 'meridian_camp:mc1_sentry', 'meridian_camp2:mc2_sentry', 'meridian_camp3:mc3_sentry']) {
+      const sentries = ['emberwaste_e10:e10_sentries', 'emberwaste_f10:f10_sentries',
+        'emberwaste_f11:f11_sentries', 'firemount_g11:g11_sentry', 'meridian_camp:mc1_sentry',
+        'meridian_camp2:mc2_sentry', 'meridian_camp3:mc3_sentry'];
+      for (const at of sentries) {
         const [map, id] = at.split(':'), g = groupOn(map, id);
         w.world.travel(map, g.x, g.y);
         w.world.killGroups([id]);
       }
+      const left = sentries.filter((at) => live(w, at));
+      if (left.length) throw new Error(`a sentry killed by hand stands: ${left.join(', ')}`);
       heartBehind(w, ok);
     } },
   ];
