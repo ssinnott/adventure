@@ -73,10 +73,12 @@ export function toPair(p: { x: number; y: number }): [number, number] { return [
  */
 export function drawnAt(map: GameMap, x: number, y: number): Cell {
   const c = drawnCell(map, x, y);
-  return isGateway(map, x, y) ? { ...c, solid: 'wall' } : c.look ?? c;
+  return c.solid === 'none' && c.door === 'none' && isGateway(map, x, y) ? { ...c, solid: 'wall' } : c.look ?? c;
 }
 
 const gateways = new WeakMap<GameMap, ReadonlySet<number>>();
+/** The map last asked and its gates, so a frame's many asks of one map skip the lookup. */
+let lastMap: GameMap | undefined, lastGates: ReadonlySet<number> = new Set();
 
 /**
  * A town's gate (#1071): a way through a wall, on a town's map or the outdoors (a dungeon's ways are
@@ -86,6 +88,7 @@ const gateways = new WeakMap<GameMap, ReadonlySet<number>>();
  * and the wall's mass behind. Found once a map, from its exits.
  */
 export function isGateway(map: GameMap, x: number, y: number): boolean {
+  if (map === lastMap) return map.inBounds(x, y) && lastGates.has(y * map.width + x);
   let found = gateways.get(map);
   if (!found) {
     const set = new Set<number>();
@@ -109,6 +112,7 @@ export function isGateway(map: GameMap, x: number, y: number): boolean {
     }
     gateways.set(map, found = set);
   }
+  lastMap = map; lastGates = found;
   return map.inBounds(x, y) && found.has(y * map.width + x);
 }
 
