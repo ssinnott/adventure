@@ -35,8 +35,8 @@ const PARTS: Part[] = [title, explore, kept, thornmark, inn, coach, trainer, scr
 // all four ways); SMOKE_PART=<part> or <part>,<part> runs those parts alone, in the run's order; a part
 // with a - before it is left out (#848: CI's smoke job runs rest,-silhouettes and the silhouettes job
 // that part, and the run holds the jobs checks.yml gives to run every part once).
-// SMOKE_SHARD=i/n sweeps the plan's i-th shard of n (tools/kit/sweep.ts); SMOKE_SWEEP_AUDIT=1 judges
-// every view the old way as well.
+// SMOKE_SHARD=i/n sweeps the plan's i-th shard of n (tools/kit/sweep.ts) and has `silhouettes` scan
+// every n-th monster from the i-th (#848); SMOKE_SWEEP_AUDIT=1 judges every view the old way as well.
 const SWEEP = await sweepAsked();
 const PART = process.env.SMOKE_PART ?? '';
 /** The parts a SMOKE_PART asks for, in the run's order; it throws on a part the smoke has not, or rest beside a part named. */
@@ -53,6 +53,12 @@ const parts = partsFor(PART);
 const CI = readFileSync(new URL('../.github/workflows/checks.yml', import.meta.url), 'utf8').split(/^(?= {2}[\w-]+:$)/m);
 const JOBS = CI.flatMap((job) => [...job.matchAll(/^ +SMOKE_PART: (\S+)$/gm)].map((m) => m[1]));
 const iffy = CI.filter((job) => { const [head, ...steps] = job.split(/^(?= +- )/m); return /^ +SMOKE_PART: (?!sweep$)\S+$/m.test(job) && (/^ +if: /m.test(head) || steps.some((s) => /^ +SMOKE_PART: /m.test(s) && /^ +(- )?if: /m.test(s))); }).map((job) => job.trim().split(':')[0]);
+// A part but the sweep that a job's matrix halves (SMOKE_SHARD, #848: the silhouettes) runs in every
+// shard of it, the matrix listing 1/n to n/n; the sweep's shards are the plan job's to list.
+const unhalved = CI.filter((job) => /^ +SMOKE_PART: (?!sweep$)\S+$/m.test(job) && /^ +SMOKE_SHARD: /m.test(job)).filter((job) => {
+  const list = (/^ +shard: \[([^\]]*)\]$/m.exec(job)?.[1] ?? '').split(',').map((s) => s.trim().replace(/^'|'$/g, ''));
+  return !/^ +SMOKE_SHARD: \$\{\{ matrix\.shard \}\}$/m.test(job) || !list.every((s, k) => s === `${k + 1}/${list.length}`);
+}).map((job) => job.trim().split(':')[0]);
 
 const server = createServer();
 await new Promise<void>((r) => server.listen(0, () => r()));
@@ -64,8 +70,9 @@ const ok = (cond: boolean, msg: string) => { console.log((cond ? '  ok:   ' : ' 
 // The split (#848): CI's smoke jobs between them run every part once, none in two jobs or in none.
 const runIn = new Map(PARTS.map((p) => [p.name, JOBS.filter((j) => partsFor(j).includes(p))]));
 const split = [...runIn].filter(([, js]) => js.length !== 1).map(([n, js]) => `${n} in ${js.length ? js.join(' and ') : 'none'}`);
-ok(JOBS.length > 0 && !split.length && !iffy.length, `CI's smoke jobs run every part once: ${JOBS.join('; ')}${split.length ? ' -> ' + split.join(', ') : ''}${iffy.length ? ` -> ${iffy.join(', ')} only on a condition` : ''}`);
-const run: Run = { page, seed: SEED, ok, errors, sweep: { maps: SWEEP, four: PART.split(',').includes('rest') ? [] : SWEEP, shard: shardAsked(), audit: process.env.SMOKE_SWEEP_AUDIT === '1' } };
+ok(JOBS.length > 0 && !split.length && !iffy.length && !unhalved.length, `CI's smoke jobs run every part once: ${JOBS.join('; ')}${split.length ? ' -> ' + split.join(', ') : ''}${iffy.length ? ` -> ${iffy.join(', ')} only on a condition` : ''}${unhalved.length ? ` -> ${unhalved.join(', ')} not in every shard its matrix halves it into` : ''}`);
+const shard = shardAsked();
+const run: Run = { page, seed: SEED, ok, errors, shard, sweep: { maps: SWEEP, four: PART.split(',').includes('rest') ? [] : SWEEP, shard, audit: process.env.SMOKE_SWEEP_AUDIT === '1' } };
 
 const secs: string[] = [];
 for (const part of parts) {

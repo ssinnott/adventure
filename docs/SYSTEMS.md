@@ -171,8 +171,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
 - **CI:** `.github/workflows/checks.yml` runs those parts as jobs side by side, each ending inside
   three minutes on a pull request that sweeps no map (#848): `typecheck`; `tests`, the suites in two
   shards (`--shard`, the plan dealt by the seconds in `DEAR`); `runner`, the runner's own check and
-  the shelf's full run; `smoke`, the smoke but the four-way sweep and `silhouettes`, a job of its
-  own; and the crack sweep's `plan` and `sweep`, a job to each shard of `PAIRS_PER_SHARD` pairs.
+  the shelf's full run; `smoke`, the smoke but the four-way sweep and `silhouettes`, two jobs of its
+  own, half the roster each; and the crack sweep's `plan` and `sweep`, a job to each shard of
+  `PAIRS_PER_SHARD` pairs.
 - **The tools:** each tool's usage is its header (`tools/sheet.ts`, `tools/gate.ts` and the rest).
 - **Each area:** its doc in `docs/areas/`, with its decisions and its plan beside it.
 - **The history:** [archive/SLICE-history.md](archive/SLICE-history.md), the slice's doc whole: its

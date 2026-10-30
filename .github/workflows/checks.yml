@@ -137,10 +137,16 @@ jobs:
 
   # The smoke's `silhouettes` part alone (tools/smoke/art.ts): every monster drawn at combat size
   # alone, three, six and twelve abreast through its idle motion, held to one piece of ink, to the
-  # view and to its span; 112 s of the smoke's 171 on #1088, so a job of its own beside it (#848).
+  # view and to its span; 112 s of the smoke's 171 on #1088, so jobs of its own beside it (#848), in
+  # halves of the roster (SMOKE_SHARD), every other monster each, since the whole took 156 s on one
+  # run of the measurement. The smoke holds that the matrix lists every half.
   silhouettes:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: ['1/2', '2/2']
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -152,6 +158,7 @@ jobs:
       - run: npm run smoke
         env:
           SMOKE_PART: silhouettes
+          SMOKE_SHARD: ${{ matrix.shard }}
 
   # The crack sweep's plan (tools/sweep.ts, tools/kit/sweep.ts): the maps a pull request changes
   # (tools/changed.ts), every map on the nightly and a run started by hand, which is the sweep a

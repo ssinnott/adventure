@@ -25,8 +25,12 @@ export type Kept = { __hob?: Feature; __bram?: { level: number; maxHp: number; h
 /** The crack sweep the run asks for: the maps SMOKE_SWEEP or SMOKE_BASE names, those this run sweeps all four ways, the shard and the audit. */
 export interface Sweep { maps: string[]; four: string[]; shard: { i: number; n: number }; audit: boolean }
 
-/** What a part is given: the page, the pinned seed, `ok`, the page's errors so far and the sweep asked. */
-export interface Run { page: Page; seed: number; ok: (cond: boolean, msg: string) => void; errors: string[]; sweep: Sweep }
+/**
+ * What a part is given: the page, the pinned seed, `ok`, the page's errors so far, the sweep asked and
+ * the shard SMOKE_SHARD names (1/1 unset), which the parts that shard read: the four-way sweep, through
+ * `sweep`, and the silhouettes (#848).
+ */
+export interface Run { page: Page; seed: number; ok: (cond: boolean, msg: string) => void; errors: string[]; sweep: Sweep; shard: { i: number; n: number } }
 
 /** A part, named by its function's name: `title` is the one that starts on the title screen and not in a game. */
 export type Part = (r: Run) => Promise<void>;

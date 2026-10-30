@@ -114,8 +114,12 @@ interface Silhouette {
   wide: [number, number]; need: [number, number]; past: number;
 }
 const SPAN_LOOSE = 0.05;
-export async function silhouettes({ page, ok }: Run): Promise<void> {
-  const { silhouettes, raised, seat, tall }: { silhouettes: Silhouette[]; raised: Silhouette[]; seat: number; tall: { size: number; reach: number } } = await page.evaluate(async () => {
+// Under SMOKE_SHARD=i/n it scans every n-th monster of the roster from the i-th, so that the halves' jobs
+// scan each once (#848); what holds of the roster whole, that a tall boss exists and that a kind declared
+// apart and drawn by no monster fails, each shard reads from the roster, and the fixtures run in each.
+export async function silhouettes({ page, ok, shard }: Run): Promise<void> {
+  const { silhouettes, raised, seat, tall, roster }: { silhouettes: Silhouette[]; raised: Silhouette[]; seat: number; tall: { size: number; reach: number };
+    roster: { count: number; sprites: string[]; towering: number } } = await page.evaluate(async ({ i, n }: { i: number; n: number }) => {
     const load: Load = (p) => import(p);
     const S = await load<typeof import('../../src/ui/sprites.ts')>('/src/ui/sprites.ts'), C = await load<typeof import('../../src/content/index.ts')>('/src/content/index.ts');
     const F = await load<typeof import('../../src/ui/frame.ts')>('/src/ui/frame.ts'), G = await load<typeof import('../../src/ui/grouplabels.ts')>('/src/ui/grouplabels.ts');
@@ -178,7 +182,7 @@ export async function silhouettes({ page, ok }: Run): Promise<void> {
       }
       return worst;
     };
-    const defs = Object.values(C.MONSTERS);
+    const all = Object.values(C.MONSTERS), defs = all.filter((_, k) => k % n === i - 1);
     const silhouettes = defs.map((def) => scan(def, (g, x, y, h, frame) => S.drawMonsterSprite(g, def.sprite, x, y, h, def.tint, 1, frame)));
     // The fixtures: a def with the top fifth of its ink moved up, as a crest or a raised wing might
     // be. Each has to fail for reaching above the view: the tallest def's moved a third of its height,
@@ -195,28 +199,30 @@ export async function silhouettes({ page, ok }: Run): Promise<void> {
       const band = Math.round(h * 0.2), up = Math.round(lift(h, top));
       g.drawImage(o, 0, top, o.width, band, 0, top - up, o.width, band);
     });
-    const tall = defs.reduce((a, b) => (b.size > a.size ? b : a)), small = defs.reduce((a, b) => (b.size < a.size ? b : a));
+    const tall = all.reduce((a, b) => (b.size > a.size ? b : a)), small = all.reduce((a, b) => (b.size < a.size ? b : a));
     const raised = [
       lifted(tall, `${tall.id}, its top fifth raised a third`, (h) => h / 3),
       // Its band's foot a height and 8 px above the view's top, which is row `padOf(h)` of the canvas.
       lifted(small, `${small.id}, its top fifth raised a height clear of the view`, (h, top) => top + Math.round(h * 0.2) - (padOf(h) - h - 8)),
     ];
-    return { silhouettes, raised, seat, tall: { size: G.TALL, reach: G.TALL_REACH } };
-  });
+    return { silhouettes, raised, seat, tall: { size: G.TALL, reach: G.TALL_REACH },
+      roster: { count: all.length, sprites: all.map((d) => d.sprite), towering: all.filter((d) => d.size > G.TALL).length } };
+  }, shard);
   const loose = silhouettes.filter((s) => { const k = DETACHED[s.sprite as MonsterSprite]; return s.clipped || s.pieces > (k?.pieces ?? 0) || s.share > (k?.share ?? 0); });
-  const unused = Object.keys(DETACHED).filter((k) => !silhouettes.some((s) => s.sprite === k && s.pieces > 0));
+  // A kind declared apart is the shard's that draws it, and one no monster of the roster draws is the first shard's.
+  const unused = Object.keys(DETACHED).filter((k) => (silhouettes.some((s) => s.sprite === k) || (shard.i === 1 && !roster.sprites.includes(k))) && !silhouettes.some((s) => s.sprite === k && s.pieces > 0));
   // A drawing held to its span, and the span a builder should write where it is not: the least that holds
   // it at every size, and no less than the most it reaches alone, three or six abreast.
   const spanFor = (s: Silhouette): number[] => [0, 1].map((k) => Math.ceil(Math.max(s.wide[k], s.need[k]) * 100 - 1e-6) / 100);
   const misspanned = silhouettes.filter((s) => s.past > SPAN_SLACK || [0, 1].some((k) => SPAN[s.sprite as MonsterSprite][k] - s.wide[k] > SPAN_LOOSE));
-  ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length} drawn; ${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped === 'top' ? 'reaches above the view' : s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
+  ok(loose.length === 0 && unused.length === 0, `every monster is one silhouette at combat size, but for the parts it declares apart (${silhouettes.length}${shard.n > 1 ? ` of the roster's ${roster.count}, shard ${shard.i}/${shard.n},` : ''} drawn;${Object.entries(DETACHED).map(([k, v]) => `${k}'s ${v!.what}`).join(', ')})${loose.map((s) => ` -> ${s.id} (${s.sprite}): ${s.clipped === 'top' ? 'reaches above the view' : s.clipped ? 'runs off the canvas' : `${s.pieces} pieces apart, ${(100 * s.share).toFixed(1)}% of its ink, worst at ${s.at}`}`).join('')}${unused.length ? ' -> declared but never apart: ' + unused.join(', ') : ''}`);
   const closest = silhouettes.reduce((a, b) => (b.room < a.room ? b : a));
   ok(closest.room >= 0, `every monster stands inside the view, its foot where a fight seats it, a first group's ${seat} px below the top (the closest, ${closest.id}, ${closest.room} px under the top)`);
   ok(misspanned.length === 0, `every monster's drawing stands within its span, which the fight's row is spaced by, give or take ${SPAN_SLACK} px alone, three, six and twelve abreast, and no span is more than ${SPAN_LOOSE} of a height wider than the drawing${misspanned.map((s) => ` -> ${s.id} reaches ${s.wide.map((w) => w.toFixed(2)).join(' and ')} of its height${s.past > SPAN_SLACK ? `, ${s.past.toFixed(1)} px past its span` : ''}: SPAN ${s.sprite}: [${spanFor(s).join(', ')}]`).join('')}`);
   // A tall boss's markers are painted over its crown at TALL_REACH of its height (ui/grouplabels.ts),
   // which tools/tests/labels.ts trusts: its ink must stand no higher.
   const towering = silhouettes.filter((s) => s.size > tall.size), over = towering.filter((s) => s.reach > tall.reach);
-  ok(towering.length > 0 && over.length === 0, `every tall boss's crown stands within ${tall.reach} of its height, under its markers (${towering.map((s) => `${s.id} ${s.reach.toFixed(3)}`).join(', ')})${over.length ? ' -> ' + over.map((s) => `${s.id} reaches ${s.reach.toFixed(3)}`).join(', ') : ''}`);
+  ok(roster.towering > 0 && over.length === 0, `every tall boss's crown stands within ${tall.reach} of its height, under its markers (${towering.map((s) => `${s.id} ${s.reach.toFixed(3)}`).join(', ')})${over.length ? ' -> ' + over.map((s) => `${s.id} reaches ${s.reach.toFixed(3)}`).join(', ') : ''}`);
   ok(raised.every((r) => r.clipped === 'top'), `a monster with a part raised a third of its height, or clear of the view, reaches above it, and fails (${raised.map((r) => `${r.id}: ${r.clipped === 'top' ? 'reaches above the view' : `${r.room} px under the top`}`).join('; ')})`);
 }
 
