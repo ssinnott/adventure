@@ -139,8 +139,9 @@ const crossing = (w: Walk) => (level: number, from: string, x: number, y: number
 /**
  * The road (#510 to #517), each box's section a scene of its own walk, started with the level and the
  * flags the sections before it left on the old body's one walk, as data; and in their order the walks
- * of their own it called (the Stair's foot, Cinderport and the Letter in Cipher) and the sections it
- * handed its walk on to (Old Cinder, the Ember Stone and the country behind the road), each from its start.
+ * of their own it called (the Stair's foot, Cinderport and the Letter in Cipher) and the sections
+ * it handed its walk on to (Old Cinder, the Ember Stone and the country behind the road), each from
+ * its start.
  */
 function theRoad(): Scene[] {
   // What the old body's one walk had set where each scene starts, read off the base (#1033): the
@@ -152,8 +153,8 @@ function theRoad(): Scene[] {
   return [
     { name: 'h10', play: stairFoot },
     { name: 'g10', play: (ok) => {
-    const w = newWalk(ok, { level: 24 });
-    const out = outdoors();
+      const w = newWalk(ok, { level: 24 });
+      const out = outdoors();
       const g10 = out.zones.find((z) => z.id === 'cindercoast_g10')!;
       const onG10 = (x: number, y: number): boolean => x >= g10.x && x < g10.x + g10.w && y >= g10.y && y < g10.y + g10.h;
       const walk = (x: number, y: number): boolean => onG10(x, y) && out.passable(x, y) === 'ok';
@@ -2203,8 +2204,8 @@ function theBounds(): Scene[] {
   const F12 = mapDef('emberwaste_f12');
   return [
     { name: 'f12', play: (ok) => {
-    const w = newWalk(ok, { level: 25 });
-    const out = outdoors();
+      const w = newWalk(ok, { level: 25 });
+      const out = outdoors();
       const f12 = zone(out, F12.id), f11 = zone(out, 'emberwaste_f11'), g12 = zone(out, 'firemount_g12');
       ok(!(F12.encounters ?? []).length && (F12.exits ?? []).map((e) => e.to).join() === `${BLACKDRAW.id},${GRIMS_HOWE.id}` && F12.start.x === 20 && F12.start.y === 0 && F12.start.facing === SOUTH,
         'F12 holds no group and nothing is taken out of it but its two ways, the flue\'s mouth into Blackdraw and the way under the dam into Grim\'s Howe; it starts at its north edge on the ash, facing south');
