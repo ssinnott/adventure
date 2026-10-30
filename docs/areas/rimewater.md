@@ -18,7 +18,7 @@ reach's dungeon `ice_caves`, planned.
 
 ## 1. Where it is
 
-The eighth step of the road of levels (DESIGN §9) and the last of Act III, band 20–22: three zones
+The eighth step of the road of levels (DESIGN §4, §9) and the last of Act III: three zones
 of the atlas (`src/content/areas/rimewater/atlas.ts`) on the grid of boxes 32 squares a side
 (EXPANSION §8.2), the J to O columns from row 9 to row 12. Loch Fada, band 20–21, is M9, L9, L10,
 L11, M10, M11, N9 and L12; Loch Fuar, band 21–22, is K9, K10, J9, K11 and K12. K12 and L12 are the
@@ -31,7 +31,7 @@ Spittal behind K12's door.
   from Cairnmoor's N8 by the notch onto M9, the only way between the two and open from the start.
 - **East: the glacier,** coming down from the rim into Glacier Foot, the reach (DESIGN §9), void
   until Phase 1.6. M9's east edge is the glacier's edge, where #56's 43 ends.
-- **South: the Whitespine** (22–24, Act IV). The high pass climbs out of K10 and leaves by its west
+- **South: the Whitespine** (Act IV). The high pass climbs out of K10 and leaves by its west
   edge for Monks' Vale, walked on across J10's corner to J11, open from the start.
 - **West: mountain,** I9 and the Whitespine's J column; no way through.
 
@@ -157,10 +157,10 @@ the keepers with the bay; the rest is on the road before it, or no kind the chec
   +1.0 over the next floor 22. The enclave and the lair are counted in no clear: 4,586 xp a member
   and 1,200 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 99.2% of its 51 groups'
-  fights (aim 90%); two under, its groups pooled at 18, 5.27 fights to a rest, 58.6% of the floor's
-  9. Every box wins every fight at 20, and the roads of Loch Fada and Loch Fuar are walked every
-  time. The bay at 21 wins 89.8%, the Matron deciding it: 59% at 21 and 92% at 23. Creag Fionn wins
-  every fight at 22; the Infirmarer is won 60% at 30 and 78% at 32.
+  fights (`GATE.through`'s aim); two under, its groups pooled at 18, 5.27 fights to a rest, 58.6% of
+  the floor's 9. Every box wins every fight at 20, and the roads of Loch Fada and Loch Fuar are
+  walked every time. The bay at 21 wins 89.8%, the Matron deciding it: 59% at 21 and 92% at 23.
+  Creag Fionn wins every fight at 22; the Infirmarer is won 60% at 30 and 78% at 32.
 - **Fights to a rest** (aim 8 to 10, limit 6.5 to 12.5): M9 9.55, L9 9.27, K9 8.54, K10 9.45, the
   stair 9.64, J9 8.81, K11 8.09, K12 9.31 and L12 8.09; L10 and M10 12.05 and L11, M11 and N9 11.06,
   past the aim; the bay 9.16 (aim 8.25 to 10.25) and Creag Fionn 9.76 (aim 8.5 to 10.5). The gate

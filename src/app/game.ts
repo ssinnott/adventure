@@ -1,8 +1,9 @@
 // The Game: owns the world, the party, the rng and a stack of screens, and dispatches one input
 // action per fixed step to the top screen. Screens are small objects with update/render, each in
 // ui/ and written against the Host (ui/screen.ts), which the Game implements (#1022).
-import { rng, freshSeed } from '../lib/engine/rng.ts';
+import { freshSeed } from '../lib/engine/rng.ts';
 import type { Rng } from '../lib/engine/rng.ts';
+import { makeRng } from '../game/rng.ts';
 import { World } from '../game/world.ts';
 import { signSays } from '../game/inscriptions.ts';
 import type { WorldState } from '../game/world.ts';
@@ -49,7 +50,8 @@ export const ATTRACT_HOLD = 60 * 3;
 export class Game implements Host {
   world!: World;
   party!: Party;
-  readonly rng: Rng = rng;
+  /** The Game's own generator (src/game/rng.ts, #1021): seeded by `newGame` and `loadGame`, its state saved, drawn on by no other Game. */
+  readonly rng: Rng = makeRng();
   /** The tables the game reads, handed in by the app (src/main.ts: content's), and on to its world and fights (#973). */
   readonly tables: Tables;
   readonly store: Store | null;
