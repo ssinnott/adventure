@@ -5,8 +5,8 @@
 //
 // view/compositor.ts draws the view and paints its scene from the parts: view/sky.ts, view/weather.ts,
 // view/floor.ts, view/walls.ts, view/roofs.ts and view/tents.ts, and each ground as its look in view/ground/
-// gives it (#1030). view/model.ts is what the Node suites and the sweep's plan take, with no canvas, and
-// view/common.ts what every part takes.
+// gives it (#1030). view/model.ts is what the Node suites and the sweep's plan take, with no canvas,
+// view/kept.ts the scenes the view keeps between frames (#1073) and view/common.ts what every part takes.
 
 export { VIEW_W, VIEW_H, paintOn } from './view/common.ts';
 export type { ViewRect, Flame } from './view/common.ts';
@@ -17,6 +17,7 @@ export type { SkyOpts } from './view/sky.ts';
 export { drawWeather } from './view/weather.ts';
 export { GROUND, SNOW_HOLD } from './view/ground/index.ts';
 export { hillBody } from './view/ground/hills.ts';
-export { LANDMARK_REACH, paintedFlames, drawViewport, paintScene } from './view/compositor.ts';
+export { LANDMARK_REACH, paintedFlames, drawViewport, paintScene, dropScenes, keptScenes } from './view/compositor.ts';
+export { KEPT_MAX } from './view/kept.ts';
 export type { ViewMonster } from './view/compositor.ts';
 export { isSolidWall } from '../game/world.ts';
