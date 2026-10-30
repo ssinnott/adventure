@@ -96,11 +96,12 @@ export const SEEDS = 100;
 const rates = new Map<string, number>();
 /**
  * A group's win rate at a level, in the weather its time to walk brings, keyed on its monsters, its
- * clock and that weather, each computed once: the maps and their areas share them.
+ * clock and that weather, each computed once: the maps and their areas share them. The gate's is over
+ * SEEDS seeds under ROUND_CAP; the walkthroughs' `fight` asks ten with no cap (tools/kit/walk.ts, #1018).
  */
-export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under' | 'clock'>, level: number): number {
-  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}/${g.clock ? JSON.stringify(g.clock) : ''}@${level}~${opts.rangedPenalty ?? 0}`;
+export function rate(g: Pick<EncounterDef, 'monsters' | 'back' | 'leader' | 'when' | 'under' | 'clock'>, level: number, seeds = SEEDS, cap = ROUND_CAP): number {
+  const opts = gateOpts(g), key = `${g.monsters.join(',')}/${g.back ?? 0}/${g.leader ?? ''}/${g.under ?? ''}/${g.clock ? JSON.stringify(g.clock) : ''}@${level}~${opts.rangedPenalty ?? 0}#${seeds}^${cap}`;
   let r = rates.get(key);
-  if (r === undefined) { r = winRate(level, g, SEEDS, ROUND_CAP, opts); rates.set(key, r); }
+  if (r === undefined) { r = winRate(level, g, seeds, cap, opts); rates.set(key, r); }
   return r;
 }
