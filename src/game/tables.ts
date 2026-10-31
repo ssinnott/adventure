@@ -16,6 +16,7 @@ import type { GuildDef, GuildId } from '../content/guilds.ts';
 import type { Wardstone } from '../content/stones.ts';
 import type { Ending, EndingId } from '../content/endings.ts';
 import type { MapId } from '../content/index.ts';
+import type { AreaLook } from '../content/area.ts';
 
 /** The items by id. */
 export type Items = Readonly<Record<string, ItemDef>>;
@@ -30,6 +31,8 @@ export interface Tables {
   readonly guildQuests: readonly GuildQuest[];
   readonly guilds: Readonly<Record<GuildId, GuildDef>>;
   readonly climates: Readonly<Record<RegionId, Climate>>;
+  /** Each region's look (#1097), which the view alone reads: its air over the sky. */
+  readonly looks: Readonly<Record<RegionId, AreaLook>>;
   readonly stones: readonly Wardstone[];
   readonly endings: Readonly<Record<EndingId, Ending>>;
   readonly atlas: Atlas;

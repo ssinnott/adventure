@@ -18,6 +18,7 @@ import { QUESTS } from './quests.ts';
 import { GUILDS } from './guilds.ts';
 import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
+import { LOOK } from './look.ts';
 
 export const MAPS = [THORNMARK, THORNHOLD, GROVE1, GROVE2, DEEPTHORN_H3, DEEPTHORN_I3, DEEPTHORN_I4, DEEPTHORN_I5, DEEPTHORN_J4, DEEPTHORN_J5] as const;
 export { FLAGS };
@@ -36,6 +37,7 @@ export const AREA = {
   // Over the pass: colder, with hard winters that keep their snow, and mist under the trees.
   climate: { summer: 17, winter: -4, daily: 5, damp: [0, 0.06], wettest: 80, fog: 0.5, lag: 5,
     fogText: 'Mist rises between the trees.', thunderText: 'Thunder rolls over the forest.' },
+  look: LOOK,
   interiors: ['green_man', 'lantern_chapterhouse', 'thornhold_armoury', 'lantern_hall', 'elders_yard', 'split_oak'] as const,
   novel: { families: ['ogre', 'wraith'], terrain: [], mechanics: ['encounter:slainText', 'encounter:choice'], landmarks: ['hold', 'tower', 'barrow', 'grove'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },

@@ -151,6 +151,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   holds them, a record over the terrains; the floors, the scene and the rain ask it and name no
   ground. In the view a new ground is a module there, its line in `src/ui/view/ground/index.ts` and
   its colour in `TERRAIN_COLORS` (the automap's): the typecheck names a terrain without either.
+- **A region's look**, `src/content/areas/<area>/look.ts` (`Area.look`, #1097), merged by region into
+  `Tables.looks`: its `air` casts the sky, the haze and the sun toward its colours by day, a fifth of
+  the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins
+  (`airOf`, `src/ui/view/sky.ts`). With none, as over the Foreland and Thornmark, the sky is as it was.
 - **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
   one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of
   `src/ui/scenery.ts`: a cairn, a chest, a camp's ring and fire, a shrine, a well, a statue, a

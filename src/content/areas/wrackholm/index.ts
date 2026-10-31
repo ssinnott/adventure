@@ -25,6 +25,7 @@ import { QUESTS } from './quests.ts';
 import { GUILDS } from './guilds.ts';
 import { MONSTERS, SPRITES } from './monsters.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
+import { LOOK } from './look.ts';
 
 export const MAPS = [WRACKHOLM_E6, SMUGGLERS_COVE, SMUGGLERS_COVE2, WRACKHOLM_F6, TIDE_SHIP, TIDE_SHIP2, TIDE_SHIP3, TIDE_RIFT.map, DEAD_DROP_STAIR, DEAD_DROP, DEAD_DROP2, DEAD_DROP3, WRACKHOLM_E5, WRACKHOLM_F5, WRACKHOLM_F7, BROKENBACK, NICKS_LOCKER] as const;
 export { FLAGS };
@@ -45,6 +46,7 @@ export const AREA = {
   // Out in the gulf: mild winters, cool summers, wind and spray, and fog off the water.
   climate: { summer: 16, winter: 4, daily: 3, damp: [0.02, 0.09], wettest: 300, fog: 0.9, lag: 3,
     fogText: 'Fog comes in over the heather.', thunderText: 'Thunder breaks over the gulf.' },
+  look: LOOK,
   interiors: [] as const,
   novel: { families: ['devilfish'], terrain: ['heather'], mechanics: [], landmarks: ['wreck'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },
