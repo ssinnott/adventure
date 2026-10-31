@@ -146,6 +146,9 @@ export const HIGHMOOR_O7: MapDef<'highmoor_o7'> = {
     { kind: 'event', x: 25, y: 24, id: 'o7_face', once: true, when: { hours: 'day' }, text: 'A tor of grey slabs piled on the hill. In the top slab, a face: brow, nose and a long shut mouth.' },
   ],
   secrets: [{ x: 9, y: 24, hint: 'o7_bare' }],
+  // Fionnlios drawn tall: its stones over the moor from far off, on the open ground of the camp inside the ring,
+  // where you walk in; near to, the ring's own stones, the rock squares round it, are what is drawn.
+  landmarks: [{ x: 6, y: 24, kind: 'ring' }],
   encounters: [
     // Ravens on the cairn; by night, round the ring, four bog lights with a moor hound running at
     // their front, the box's hardest group; bog bodies in the marsh at the tarn's head; and by night
