@@ -215,6 +215,9 @@ export const SHELF: MapDef<'shelf'> = {
       THORNHOLD,
     ] } },
   ],
+  // Helmstow drawn tall: its walls, towers and keep over the land from far off, on its site's own square in
+  // the wall's block, behind the gate at 16,3.
+  landmarks: [{ x: 16, y: 2, kind: 'city' }],
   encounters: [
     { id: 'road_rats', x: 16, y: 7, monsters: ['rat', 'rat', 'rat'], aware: 4, respawn: RESPAWN.day },
     { id: 'wood_wolves', x: 5, y: 8, monsters: ['wolf', 'wolf'], aware: 5, respawn: RESPAWN.day },
