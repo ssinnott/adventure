@@ -59,7 +59,7 @@ export const SLEEPERS_BAY2: MapDef<'sleepers_bay2'> = {
     { kind: 'sign', x: 3, y: 3, id: 'sb2_back', text: 'Over a door at the back, fine as a hair at its edges, marks in the old script.', read: 'COLD STORE. WAKE IN ORDER.' },
     // The secret: the locker behind the last row, four hundred years of pockets.
     { kind: 'event', x: 7, y: 1, id: 'sb2_locker', once: true, text: 'Grey drawers from floor to roof, a row\'s mark on each, and in them what the sleepers came with.' },
-    { kind: 'chest', x: 8, y: 1, id: 'sb2_locker_chest', gold: 1500, items: ['hunters_bow+1', 'plate+4'] },
+    { kind: 'chest', x: 8, y: 1, id: 'sb2_locker_chest', gold: 1500, items: ['hunters_bow+1', 'hunters_shortbow+1', 'hide_sling+1', 'plate+4'] },
   ],
   secrets: [{ x: 7, y: 2, hint: 'sb2_path' }],
   encounters: [

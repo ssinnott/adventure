@@ -9,6 +9,10 @@ import { chain } from '../shelf/public.ts';
 export const morningStar = W('morning_star', 'Morning Star', 700, 2, 6, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
 export const stiletto = W('stiletto', 'Stiletto', 700, 1, 8, { kind: 'light', bonus: 5 });
 export const hornBow = W('horn_bow', 'Horn Bow', 750, 1, 12, { kind: 'bow', bonus: 4, ranged: true, twoHanded: true, classes: MARTIAL });
+// The Horn Bow's short bow and sling (#1115): its die a size smaller and two, so a step and two behind it
+// by `hits`, at three quarters of its price (562.5, down to a whole 5) and half; a plus where it has one.
+export const hornShortbow = W('horn_shortbow', 'Horn Short Bow', 560, 1, 10, { kind: 'bow', short: true, bonus: 4, ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] });
+export const sharkskinSling = W('sharkskin_sling', 'Sharkskin Sling', 375, 1, 8, { kind: 'light', bonus: 4, ranged: true });
 export const longAxe = W('long_axe', 'Long Axe', 750, 2, 6, { bonus: 4, twoHanded: true, classes: MARTIAL });
 export const ironshodStaff = W('ironshod_staff', 'Ironshod Staff', 600, 1, 10, { kind: 'staff', bonus: 4, twoHanded: true });
 export const sharkskin = A('sharkskin', 'Sharkskin Coat', 1100, 9, { classes: NO_CASTER_HEAVY });
@@ -40,6 +44,8 @@ export const stilettoPlus1 = P(stiletto, 1);
 export const ironshodStaffPlus1 = P(ironshodStaff, 1);
 export const tidefolkRobePlus1 = P(tidefolkRobe, 1);
 export const hornBowPlus1 = P(hornBow, 1);
+export const hornShortbowPlus1 = P(hornShortbow, 1);
+export const sharkskinSlingPlus1 = P(sharkskinSling, 1);
 // C5's secret (#170): a shard from the barge drowned under the causeway, which the plinth does not take.
 // C4's hide (#171) holds another.
 export const brineShard: ItemDef = { id: 'brine_shard', name: 'Brine Shard', slot: 'none', price: 0 };
@@ -79,6 +85,8 @@ export const ITEMS: readonly ItemDef[] = [
   morningStar,
   stiletto,
   hornBow,
+  hornShortbow,
+  sharkskinSling,
   longAxe,
   ironshodStaff,
   sharkskin,
@@ -90,6 +98,8 @@ export const ITEMS: readonly ItemDef[] = [
   ironshodStaffPlus1,
   tidefolkRobePlus1,
   hornBowPlus1,
+  hornShortbowPlus1,
+  sharkskinSlingPlus1,
   brineShard,
   longswordPlus1,
   chainPlus1,
