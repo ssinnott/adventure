@@ -1,19 +1,24 @@
 // The combat screen: draws the fight over the viewport and turns menu input into PartyActions for
 // the resolver in game/combat.ts. Monster turns play out on a short timer so the log can be read. With
 // `auto` on, the game's bot (game/bot.ts) plays the company's turns on a timer of its own, by what the
-// fight has shown it, and presses Space at the end; any key takes the fight back.
+// fight has shown it, and presses Space at the end; any key takes the fight back. With the feats on
+// (#1113) a knight's, barbarian's, thief's or monk's Cast reads Feat, its list the feats and then any
+// artifact's spell it bears, and its card shows its stamina where a caster's shows spell points. Under
+// the list the feat the cursor is on says what it does, and Space on a feat barred says why.
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
 import { ListMenu } from './menu.ts';
-import { drawText } from '../lib/engine/text.ts';
-import { panel, menu } from './draw.ts';
+import { drawText, lineHeight } from '../lib/engine/text.ts';
+import { panel, menu, wrap } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect, logTail, COMBAT_LOG_LINES } from './frame.ts';
 import { drawMonsterSprite } from './sprites.ts';
 import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, meetCalled, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
 import type { CombatState, PartyAction, TurnRef } from '../game/combat.ts';
+import { FEATS, aimable, builds, featsOn, featsKnown, featsOf, staminaOf } from '../game/combat/feats.ts';
+import type { FeatDef } from '../game/combat/feats.ts';
 import { botTurn, asSeen, PLAYED } from '../game/bot.ts';
 import { spell, ELEMENTS } from '../game/spells.ts';
 import type { Element } from '../game/spells.ts';
@@ -25,7 +30,7 @@ import type { LabelLine } from './grouplabels.ts';
 import { seatRow } from './row.ts';
 import type { Tables } from '../game/tables.ts';
 
-type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'element' | 'item' | 'itemTarget' | 'done';
+type Mode = 'menu' | 'target' | 'spell' | 'spellTarget' | 'element' | 'item' | 'itemTarget' | 'feat' | 'featTarget' | 'done';
 const MONSTER_DELAY = 22;
 /** The frames the bot waits on a company's turn, or on the finished fight, before it acts (`auto`). */
 const BOT_DELAY = 22;
@@ -40,6 +45,47 @@ export const castRows = (tables: Tables, party: Party, c: Character): { label: s
   const left = e.from ? chargesLeft(tables.items, party, e.from) : 0;
   return { label: `${spell(tables.spells, e.id).name} (${e.from ? `${left} LEFT` : spell(tables.spells, e.id).sp})`, disabled: e.from ? left < 1 : spell(tables.spells, e.id).sp > c.sp };
 });
+/** What a member may use in a fight: the draughts and the like in its pack and the company's bag, each once, but food. */
+const usable = (tables: Tables, party: Party, who: number): string[] =>
+  [...new Set([...party.members[who].pack, ...party.bag].filter((id) => item(tables.items, id).use && !item(tables.items, id).use!.food))];
+/**
+ * The fight's commands for member `who`: Attack with its weapon, Cast, Use, Defend and Flee, each
+ * barred where it has nothing to do. With the feats on (#1113) one of the four that build stamina has
+ * Feat in Cast's place, which opens its feats and then any artifact's spell it bears.
+ */
+export function commandRows(tables: Tables, party: Party, s: CombatState, who: number): { label: string; key: string; disabled: boolean }[] {
+  const c = party.members[who], w = weaponOf(tables.items, c), spells = castable(tables, c);
+  return [
+    { label: `Attack (${w.name})`, key: 'attack', disabled: !canAttackFromRow(tables.items, c, who) },
+    featsOn(s) && builds(c) ? { label: 'Feat', key: 'feat', disabled: !featsKnown(c).length && !spells.length } : { label: 'Cast', key: 'cast', disabled: !spells.length },
+    { label: 'Use', key: 'use', disabled: !usable(tables, party, who).length },
+    { label: 'Defend', key: 'defend', disabled: false },
+    { label: 'Flee', key: 'flee', disabled: false },
+  ];
+}
+/** The fight's feat list (#1113): each feat member `who` has at its level, with its cost ("Rally (4)"), barred where it may not use it now; then its artifacts' spells, as the spell list has them. */
+export function featRows(tables: Tables, party: Party, s: CombatState, who: number): { label: string; disabled: boolean }[] {
+  const ready = featsOf(s, party, who);
+  return [...featsKnown(party.members[who]).map((f) => ({ label: `${f.name} (${f.cost})`, disabled: !ready.includes(f) })), ...castRows(tables, party, party.members[who])];
+}
+/** What the hint under the command menu says of the back row, and Space on a blow's feat barred by it says again (`featBar`). */
+const BACK_ROW = 'Back row: needs a ranged weapon';
+/** The lines the hint under the Feat list may take: the longest feat's words (Rally's) wrap to three at the panel's width. */
+const HINT_LINES = 3;
+/** The hint under the Feat list for the row the cursor is on: what its feat does (`FeatDef.text`), wrapped to the panel, three lines at most; none on an artifact's spell. */
+export function featHint(c: Character, row: number): string[] {
+  const f = featsKnown(c)[row];
+  return f ? wrap(f.text, LAYOUT.map.w - 16).slice(0, HINT_LINES) : [];
+}
+/**
+ * Why member `who` may not use feat `f` now, in the words Space on it says: a blow's from a row it cannot strike
+ * from, as the command menu says of Attack there, else too little stamina; none where it may, or where only a rule
+ * of its aim bars it (`FeatDef.aims`), as the command menu's barred rows are silent.
+ */
+export function featBar(tables: Tables, party: Party, s: CombatState, who: number, f: FeatDef): string {
+  if (f.target === 'blow' && !canAttackFromRow(tables.items, party.members[who], who)) return `${BACK_ROW}.`;
+  return (s.stamina?.[who] ?? 0) < f.cost ? 'Not enough stamina.' : '';
+}
 
 export class CombatScreen implements Screen {
   /** Its backdrop is the view, painted whole over the view's rect (`render`), so exploring beneath leaves it undrawn. */
@@ -63,6 +109,8 @@ export class CombatScreen implements Screen {
   /** The artifact the pending spell is cast from, if any (#847): a charge and no spell points. */
   private pendingFrom = '';
   private pendingItem = '';
+  /** The feat chosen, waiting on its target (#1113). */
+  private pendingFeat = '';
   /**
    * Whose turn it is as the last `update` left it, for `render` to read; unset until the first. `update` is the
    * only place the screen walks the turn on (`currentTurn` rolls a sleeper's waking and, at a round's end, the next
@@ -92,28 +140,13 @@ export class CombatScreen implements Screen {
     for (let i = 0; i < n; i++) { const a = Math.random() * Math.PI * 2, s = 1 + Math.random() * 2.5; this.sparks.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 1, life: 10 + Math.random() * 8, col }); }
   }
 
-  private options(g: Host, who: number): { label: string; key: string; disabled: boolean }[] {
-    const c = g.party.members[who];
-    const w = weaponOf(g.tables.items, c);
-    const spells = castable(g.tables, g.party.members[who]);
-    const items = this.usable(g, who);
-    return [
-      { label: `Attack (${w.name})`, key: 'attack', disabled: !canAttackFromRow(g.tables.items, c, who) },
-      { label: 'Cast', key: 'cast', disabled: !spells.length },
-      { label: 'Use', key: 'use', disabled: !items.length },
-      { label: 'Defend', key: 'defend', disabled: false },
-      { label: 'Flee', key: 'flee', disabled: false },
-    ];
-  }
-  /** What the member may aim at: a weapon what it reaches, a spell anyone still in the fight. */
+  private options(g: Host, who: number): { label: string; key: string; disabled: boolean }[] { return commandRows(g.tables, g.party, this.state, who); }
+  /** What the member may aim at: a weapon what it reaches, a feat the foes it may be aimed at (`aimable`), a spell anyone still in the fight. */
   private targets(g: Host, who: number): number[] {
-    const alive = aliveMonsters(this.state);
-    return this.mode === 'target' ? alive.filter((i) => canReach(this.state, g.party.members[who], i)) : alive;
+    const alive = aliveMonsters(this.state), c = g.party.members[who], f = this.mode === 'featTarget' ? FEATS.find((x) => x.id === this.pendingFeat) : undefined;
+    return this.mode === 'target' ? alive.filter((i) => canReach(this.state, c, i)) : f ? alive.filter((i) => aimable(this.state, c, f, i)) : alive;
   }
-  private usable(g: Host, who: number): string[] {
-    const c = g.party.members[who];
-    return [...new Set([...c.pack, ...g.party.bag].filter((id) => item(g.tables.items, id).use && !item(g.tables.items, id).use!.food))];
-  }
+  private usable(g: Host, who: number): string[] { return usable(g.tables, g.party, who); }
 
   /** The frames a delay counts: none while fights are played at once (`instant`, or the pilot's). */
   private wait(g: Host, n: number): number { return CombatScreen.instant || g.instant ? 0 : n; }
@@ -165,6 +198,7 @@ export class CombatScreen implements Screen {
           const o = opts[this.sel];
           if (o.key === 'attack') { this.mode = 'target'; this.sub = 0; }
           else if (o.key === 'cast') { this.mode = 'spell'; this.sub = 0; }
+          else if (o.key === 'feat') { this.mode = 'feat'; this.sub = 0; }
           else if (o.key === 'use') { this.mode = 'item'; this.sub = 0; }
           else if (o.key === 'defend') act({ type: 'defend' });
           else if (o.key === 'flee') act({ type: 'flee' });
@@ -195,6 +229,29 @@ export class CombatScreen implements Screen {
       case 'spellTarget': {
         if (is(a, 'cancel')) { this.mode = 'spell'; this.sub = 0; return; }
         if (this.list.press(a, { n: alive.length, across: true }) === 'chosen') cast(alive[this.sub]);
+        break;
+      }
+      case 'feat': {
+        // The feats it has (#1113), each barred where it may not use it now; past them its artifacts'
+        // spells, which go on as the spell list's do.
+        const rows = featRows(g.tables, g.party, s, who), known = featsKnown(g.party.members[who]);
+        if (is(a, 'cancel')) { this.mode = 'menu'; return; }
+        if (this.list.press(a, { n: rows.length, barred: (i) => rows[i].disabled }) === 'chosen') {
+          const f = known[this.sub];
+          if (!f) { this.mode = 'spell'; this.sub -= known.length; this.step(g, a); return; }
+          this.pendingFeat = f.id;
+          if (f.target === 'none') act({ type: 'feat', featId: f.id, target: 0 });
+          else { this.mode = 'featTarget'; this.sub = 0; }
+        } else if (is(a, 'interact') && known[this.sub]) {
+          // Space on a feat barred (the list took it for no choice) says why, as the spell list does for a spell it cannot cast.
+          const why = featBar(g.tables, g.party, s, who, known[this.sub]);
+          if (why) g.say(why);
+        }
+        break;
+      }
+      case 'featTarget': {
+        if (is(a, 'cancel')) { this.mode = 'feat'; this.sub = 0; return; }
+        if (this.list.press(a, { n: alive.length, across: true }) === 'chosen') act({ type: 'feat', featId: this.pendingFeat, target: alive[this.sub] });
         break;
       }
       case 'item': {
@@ -246,7 +303,7 @@ export class CombatScreen implements Screen {
     // Whose turn it is, as the last tick left it (`turn`); a fight drawn before its first tick, pushed in the tick
     // that opens it, shows the order's first.
     const t = this.turn === undefined ? s.order[s.turn] ?? null : this.turn;
-    const targeting = (this.mode === 'target' || this.mode === 'spellTarget') && t?.side === 'party';
+    const targeting = (this.mode === 'target' || this.mode === 'spellTarget' || this.mode === 'featTarget') && t?.side === 'party';
     const aimed = targeting && t ? this.targets(g, t.i)[this.sub] : -1;
     const row = seatRow(alive.map((mi) => s.monsters[mi]), v.w, v.h);
     // Painted from the back forward, so a tall boss on the third rank stands before its own and a
@@ -309,14 +366,20 @@ export class CombatScreen implements Screen {
       if (this.mode === 'menu') {
         const opts = this.options(g, t.i);
         menu(ctx, opts.map((o) => o.label), r.x + 8, y, this.sel, { disabled: opts.map((o) => o.disabled) });
-        if (!canAttackFromRow(g.tables.items, c, t.i)) drawText(ctx, 'BACK ROW: NEEDS A RANGED WEAPON', r.x + 8, r.y + r.h - 24, { size: 1, color: TEXT_DIM });
-      } else if (this.mode === 'target' || this.mode === 'spellTarget') {
+        if (!canAttackFromRow(g.tables.items, c, t.i)) drawText(ctx, BACK_ROW, r.x + 8, r.y + r.h - 24, { size: 1, color: TEXT_DIM });
+      } else if (this.mode === 'target' || this.mode === 'spellTarget' || this.mode === 'featTarget') {
         drawText(ctx, 'TARGET', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, this.targets(g, t.i).map((mi) => `${s.monsters[mi].def.name} ${s.monsters[mi].hp}/${s.monsters[mi].def.hp}`), r.x + 8, y, this.sub);
       } else if (this.mode === 'spell') {
         const rows = castRows(g.tables, g.party, c);
         drawText(ctx, `SPELL  (SP ${c.sp})`, r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, rows.map((x) => x.label), r.x + 8, y, this.sub, { disabled: rows.map((x) => x.disabled) });
+      } else if (this.mode === 'feat') {
+        const rows = featRows(g.tables, g.party, s, t.i);
+        drawText(ctx, `FEAT  (ST ${s.stamina?.[t.i] ?? 0})`, r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
+        y = menu(ctx, rows.map((x) => x.label), r.x + 8, y, this.sub, { disabled: rows.map((x) => x.disabled) });
+        // What the feat under the cursor does, in the dim of the back row's hint, under the list.
+        featHint(c, this.sub).forEach((l, i) => drawText(ctx, l, r.x + 8, y + 6 + i * lineHeight(1), { size: 1, color: TEXT_DIM }));
       } else if (this.mode === 'element') {
         drawText(ctx, 'AGAINST WHAT?', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, ELEMENTS.map((e) => e[0].toUpperCase() + e.slice(1)), r.x + 8, y, this.sub);
@@ -334,7 +397,7 @@ export class CombatScreen implements Screen {
       if (this.auto) hint('');
     }
     const who = t && t.side === 'party' ? t.i : this.mode === 'itemTarget' ? this.sub : -1;
-    drawPartyCards(g.tables.items, ctx, g.party, this.mode === 'itemTarget' ? this.sub : who, frame);
+    drawPartyCards(g.tables.items, ctx, g.party, this.mode === 'itemTarget' ? this.sub : who, frame, g.party.members.map((c, i) => staminaOf(s, c, i)));
     g.party.members.forEach((_, i) => { if (this.cardFlash[i] > 0) { const c = cardRect(i); ctx.fillStyle = `rgba(220,60,40,${0.06 * this.cardFlash[i]})`; ctx.fillRect(c.x, c.y, c.w, c.h); this.cardFlash[i]--; } });
   }
 }
