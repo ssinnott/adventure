@@ -228,6 +228,12 @@ export const CRIT_BASE = 0.05, CRIT_PER_LUCK = 0.02, CRIT_FLOOR = 0.01, CRIT_STE
 export const CRIT_LEVELS: readonly [number, number] = [15, 23];
 
 /**
+ * The feats on stamina (DESIGN §5, #1113; game/combat/feats.ts). Built off: until FEATS_ON (#1117) no
+ * stamina is built and no feat is offered, so no figure moves.
+ */
+export const FEATS_ON = false;
+
+/**
  * What a kill pays a member, as a share of the monster's xp, by the monster's level against theirs
  * (EXPANSION §5.2): a tenth at three or more under, up to half again at three or more over.
  */
