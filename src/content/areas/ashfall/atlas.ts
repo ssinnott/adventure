@@ -49,7 +49,7 @@ export const PLACES: readonly AtlasPlace[] = [
 export const SITES: readonly AtlasSite[] = [
   // X. Ashfall (docs/areas/ashfall.md §10: the coast's English, kept, and two new names).
   { name: 'Cinderport', icon: 'port', at: [206, 277], label: 'right' }, // on G9's shore over G10's gate at 6,2 (#511, #512)
-  { name: 'Fire Mountain', icon: 'volcano', at: [215, 326], label: 'none' }, // the cone's mouth on G11, 15,8 (#513)
+  { name: 'Fire Mountain', icon: 'volcano', map: 'firemount_g11', at: [15, 8], label: 'none' }, // the cone's mouth on G11, 15,8 (#513), world cell 215,326
   { name: 'Old Cinder', icon: 'ruin', at: [190, 318], label: 'below' }, // the crater's rim on F11, 22,0; the way down at its west lip, 19,4 (#514, #515)
   { name: 'Ember Stone', icon: 'stone', at: [176, 342], label: 'below' }, // the Stone on F11, 8,24, the way down inside it (#514, #516)
   { name: 'Scaldwell', icon: 'springs', at: [240, 300], label: 'below' }, // the Hot Springs: H10's pools at 8,14 (#510)
