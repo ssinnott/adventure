@@ -8,7 +8,7 @@ import { plate } from '../thornmark/public.ts';
 // Sold in the Watch's stores (#201): a step past Saltmouth's finds for every class, at 14.
 export const flail = W('flail', 'Flail', 1100, 2, 8, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
 export const wardensDirk = W('wardens_dirk', "Warden's Dirk", 1100, 1, 8, { kind: 'light', bonus: 7 });
-export const ironwoodBow = W('ironwood_bow', 'Ironwood Bow', 1200, 1, 12, { kind: 'bow', bonus: 6, ranged: true, twoHanded: true, classes: ['ranger'] });
+export const ironwoodBow = W('ironwood_bow', 'Ironwood Bow', 1200, 1, 12, { kind: 'bow', bonus: 6, ranged: true, twoHanded: true, classes: MARTIAL });
 export const greatAxe = W('great_axe', 'Great Axe', 1200, 2, 8, { bonus: 4, twoHanded: true, classes: MARTIAL });
 export const watchStaff = W('watch_staff', 'Watch Staff', 1000, 1, 10, { kind: 'staff', bonus: 6, twoHanded: true });
 export const lamellar = A('lamellar', 'Lamellar', 1600, 10, { classes: NO_CASTER_HEAVY });

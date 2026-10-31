@@ -9,7 +9,7 @@ import { plate } from '../thornmark/public.ts';
 // Sold at Rime Lodge's furrier (#487): a step past the Kilns' and Cairnmoor's finds for every class, at 21.
 export const iceAxe = W('ice_axe', 'Ice Axe', 1800, 2, 12, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
 export const skinningKnife = W('skinning_knife', 'Skinning Knife', 1800, 1, 8, { kind: 'light', bonus: 11 });
-export const huntersBow = W('hunters_bow', "Hunter's Bow", 1900, 1, 12, { kind: 'bow', bonus: 10, ranged: true, twoHanded: true, classes: ['ranger'] });
+export const huntersBow = W('hunters_bow', "Hunter's Bow", 1900, 1, 12, { kind: 'bow', bonus: 10, ranged: true, twoHanded: true, classes: MARTIAL });
 export const bearSpear = W('bear_spear', 'Bear Spear', 1900, 2, 12, { bonus: 4, twoHanded: true, classes: MARTIAL });
 export const guidesStaff = W('guides_staff', "Guide's Staff", 1600, 1, 10, { kind: 'staff', bonus: 10, twoHanded: true });
 export const bearskin = A('bearskin', 'Bearskin Coat', 2500, 12, { classes: NO_CASTER_HEAVY });

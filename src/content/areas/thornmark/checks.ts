@@ -9,6 +9,12 @@ export const CHECKS = {
     9: ['warhammer+1', 'rune_dagger+1', 'elfbow+1', 'grove_staff+1', 'greatsword+1', 'brigandine+1', 'brigandine+2', 'runed_robe+1'],
     10: ['warhammer+2', 'greatsword+2', 'elfbow+2', 'rune_dagger+2', 'runed_robe+2', 'brigandine+3', 'tower_shield+1', 'eldests_bough'],
   },
+  // Its ranged rungs (#1115): the Thornmark Bow's, with the short bow and the sling #1117 takes into `gear`.
+  ranged: {
+    8: ['elfbow', 'thornmark_shortbow', 'deerskin_sling'],
+    9: ['elfbow+1', 'thornmark_shortbow+1', 'deerskin_sling+1'],
+    10: ['elfbow+2', 'thornmark_shortbow+2', 'deerskin_sling+2'],
+  },
   // Its seams as built (tools/tests/outdoors.ts): each whose first box is its own.
   seamsAsBuilt: [
     { seam: 'thornmark/deepthorn_h3', walk: '3-7 9-14', water: '0-2', why: 'Thornmark\'s ring stands against the Deepthorn\'s water, sand and woods as mountains, with the elves\' road through a gap at 8' },

@@ -456,6 +456,8 @@
     "hearth_key",
     "keepers_log",
     "leather+1",
+    "leather_sling",
+    "leather_sling+1",
     "longbow",
     "longbow+1",
     "mace+1",
@@ -473,7 +475,9 @@
     "spear+1",
     "staff+1",
     "survey_wand",
-    "tenant_paper"
+    "tenant_paper",
+    "yew_shortbow",
+    "yew_shortbow+1"
   ],
   "monsters": [
     "ashen_acolyte",

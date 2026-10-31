@@ -141,6 +141,12 @@ export interface AreaChecks {
    * is whole on the last area on the road whose items it holds (tools/tests/ladder.ts).
    */
   gear?: Readonly<Record<number, readonly string[]>>;
+  /**
+   * Its ranged rungs (#1115): by the level of a rung of its `gear` that holds a long bow, that bow, the
+   * short bow a step behind it and the sling two (tools/tests/ladder.ts). The short bow and the sling
+   * are off the ladder until #1117 takes them into `gear`.
+   */
+  ranged?: Readonly<Record<number, readonly [long: string, short: string, sling: string]>>;
   /** How far over the next floor its clear leaves a company, held as built (tools/tests/curve.ts). */
   overRoad?: { level: number; why: string };
   /** Its seams as built (tools/tests/outdoors.ts): a seam is the area's of the first box its key names. */
