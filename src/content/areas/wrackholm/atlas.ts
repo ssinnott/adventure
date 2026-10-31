@@ -28,7 +28,7 @@ export const PLACES: readonly AtlasPlace[] = [
 export const SITES: readonly AtlasSite[] = [
   // IV. Wrackholm.
   { name: 'Kelp Hole', icon: 'cave', map: 'wrackholm_e6', at: [18.5, 12.5], label: 'left' },
-  { name: 'Tide Ship', icon: 'wreck', map: 'wrackholm_f6', at: [14.5, 30.5], label: 'right' }, // its anchorage off F6's shingle; the plates lie out in the sea
+  { name: 'Tide Ship', icon: 'wreck', map: 'wrackholm_f6', at: [15.5, 30.5], label: 'right' }, // its anchorage off F6's shingle, a square east of its middle (14.5), so its wreck's square, 16,30, is within a square of it (#1096); the plates lie out in the sea
 ];
 
 export const LINKS: readonly AtlasLink[] = [
