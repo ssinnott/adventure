@@ -12,7 +12,8 @@
 // them, which no area places; a placed Rift is a map.
 // --ground draws the samples of the ground underfoot (tools/grounds.ts), and so does a change that
 // draws every map or the samples, so a new ground is seen before any map holds it.
-// Each map from its arrivals and, outdoors, from each of its sites on the world map, by day and by
+// Each map from its arrivals and, outdoors, from each of its sites on the world map and from afar (8 to
+// 10 squares back from each landmark it places, where its near views cannot show it), by day and by
 // night, with its automap revealed whole and its crop of the world map; a dungeon once, lit, since
 // it has no day or night. Each monster as a strip of idle frames ending on the hit flash. Each
 // interior at noon and at night. The world is pinned (the seed as the smoke test pins it, high
@@ -25,7 +26,7 @@ import { changedFiles, changedMaps, changedMonsters, changedInteriors } from './
 import { AREAS, MAP_DEFS as PLACED, MONSTERS, INTERIORS, ATLAS, CLIMATES } from '../src/content/index.ts';
 import { RIFT_SAMPLES } from '../src/content/rifts/index.ts';
 import { GROUND_SAMPLES } from './kit/grounds.ts';
-import { waysOut, entrance } from './kit/ways.ts';
+import { waysOut, entrance, afar } from './kit/ways.ts';
 import { GameMap } from '../src/game/map.ts';
 import { mapAt } from '../src/game/atlas.ts';
 import type { MapDef } from '../src/game/mapdef.ts';
@@ -131,6 +132,11 @@ function planMap(id: string): MapPlan {
     if (s.map !== id || s.planned) continue;
     const v = siteView(m, s.name, s.at);
     if (v) views.push(v); else fail(`site '${s.name}' on ${id} has no open square within four`);
+  }
+  // Each landmark from afar, where the views near it cannot show it (within four squares a mountain's square shows its own drawing).
+  for (const l of m.landmarks) {
+    const v = afar(l, def.start, (x, y) => open(m, x, y));
+    if (v) views.push({ ...v, label: `the ${l.kind} from afar, ${v.x},${v.y} facing ${FACING_NAME[v.facing]}` });
   }
   // Its crop of the world map, in world cells, with `mark` ringed: outdoors, the zone with a
   // margin and the first view's square; a town or a dungeon, round the outdoor square it is
