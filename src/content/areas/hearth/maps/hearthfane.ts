@@ -125,7 +125,7 @@ export const HEARTHFANE: MapDef<'hearthfane'> = {
     },
     // The treasury, behind its door: the pilgrims' offerings, and the Hand's steel left among them.
     { kind: 'event', x: 13, y: 10, id: 'hf_treasury', once: true, text: 'The pilgrims\' offerings of four hundred years, in heaps. Among them, the Hand\'s own gear, laid down here and not taken up again: steel from below.' },
-    { kind: 'chest', x: 13, y: 11, id: 'hf_offerings', gold: 3000, items: ['grey_blade', 'grey_bow', 'grey_shortbow', 'grey_sling'] },
+    { kind: 'chest', x: 13, y: 11, id: 'hf_offerings', gold: 3000, items: ['grey_blade', 'grey_bow', 'grey_sling', 'grey_shortbow'] },
     // The court at the nave's head, open to the column; its arch, and the altar with the stair behind it.
     { kind: 'event', x: 8, y: 4, id: 'hf_court', once: true, text: 'The court, open to the sky, and the column coming down into it through the east arch. It is too bright to look at and too close to look away from.' },
     { kind: 'sign', x: 11, y: 3, text: 'The arch gives on the column\'s foot. The stone of the arch is glassed where the light has touched it, four hundred years of mornings.' },

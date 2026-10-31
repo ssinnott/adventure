@@ -163,7 +163,7 @@ crawlers, the Core's clock (`encounter:clock`) and the Hearth, its landmark.
 - **The ladder:** rung 28 is Hearth Isle's (`gear`, in its checks): the Hand's steel, nine pieces,
   found and never sold. The vigil cell's two finds, the Levin Mace and the Vigil Robe, are off it.
   Its ranged rung (`ranged`, #1115): the Grey Short Bow and the Grey Sling, a step and two behind the
-  Grey Bow, found beside it in the treasury's offerings, never sold, and off the gate's ladder until
+  Grey Bow, found beside it in the treasury's offerings, never sold and off the gate's ladder until
   #1117.
 
 ## 10. Names

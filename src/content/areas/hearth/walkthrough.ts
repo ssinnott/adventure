@@ -521,7 +521,7 @@ function theRoad(): Scene[] {
       ok(treasury() === 'moved' && w.world.state.x === 11 && w.world.state.y === 10, 'the treasury\'s door opens to the sacristan\'s key');
       see(w, 'hearthfane:hf_treasury');
       const hoard = TEMPLE.features!.find((f) => f.kind === 'chest' && f.id === 'hf_offerings');
-      ok(hoard?.kind === 'chest' && hoard.gold === 3000 && hoard.items.join() === 'grey_blade,grey_bow,grey_shortbow,grey_sling' && hoard.x === 13 && hoard.y === 11,
+      ok(hoard?.kind === 'chest' && hoard.gold === 3000 && hoard.items.join() === 'grey_blade,grey_bow,grey_sling,grey_shortbow' && hoard.x === 13 && hoard.y === 11,
         'in the treasury the pilgrims\' offerings, 3,000 gold, and the Hand\'s steel: a Grey Blade and a Grey Bow, with the bow\'s short bow and sling (#1115)');
       const selling = MAP_DEFS.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : [])));
       ok(!selling.includes('grey_shortbow') && !selling.includes('grey_sling'), 'no shop of any area sells the short bow or the sling: found beside the bow, as it is, and never sold');
