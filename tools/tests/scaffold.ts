@@ -2,17 +2,23 @@
 // atlas square and laid back into the atlas, is the atlas square for square. It pins that the Downs'
 // hills, farmland, forest and road come through, not how many of each, so the owner may repaint the
 // Downs. Then the Deepthorn's first box, for the light woods no map could hold before #210.
+// The texture (#1107): the same box textured and laid back differs from the atlas only where the
+// texture changed it, each square walked as before or a rock on stony ground in the open, none on an
+// edge, water or the coast, a road or a river, on a quarter of a run at most, and no more of its views
+// plain (#1108); it changes nothing on a box of water, of road, of grass on its edges alone or of grass
+// beside water; and over every built outdoor map it proposes nothing on a square the map names.
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { ATLAS, MAP_DEFS, AREAS } from '../../src/content/index.ts';
-import { worldGrid, MAP_TERRAIN } from '../../src/game/atlas.ts';
+import { worldGrid, MAP_TERRAIN, TI, isWater, mapAt } from '../../src/game/atlas.ts';
 import type { Atlas } from '../../src/game/atlas.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/mapdef.ts';
-import { cut, emit, layBack, mismatches, baseline, CHAR_OF, SIZE } from '../kit/scaffold.ts';
+import { cut, emit, layBack, mismatches, baseline, squareOf, texture, textured, over, CHAR_OF, SIZE, TEXTURE, TEXTURE_SHARE } from '../kit/scaffold.ts';
 import type { Draft } from '../kit/scaffold.ts';
+import { plainShare } from '../kit/rules/plain.ts';
 import { ok } from './lib.ts';
 
 /** The Downs' first zone map: the square west of the Foreland, on the grid the built maps sit on. */
@@ -69,6 +75,21 @@ function unbuilt(x: number, y: number): { atlas: Atlas; defs: readonly MapDef[] 
   };
 }
 
+/** How many of a draft's open squares are reached from its start, and how many it has. */
+function reach(def: MapDef): { seen: number; open: number } {
+  const m = new GameMap(def), seen = new Set<number>([def.start.y * SIZE + def.start.x]), q = [...seen];
+  for (let k = 0; k < q.length; k++) {
+    const x = q[k] % SIZE, y = (q[k] - x) / SIZE;
+    for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+      const n = ny * SIZE + nx;
+      if (nx >= 0 && ny >= 0 && nx < SIZE && ny < SIZE && !seen.has(n) && m.passable(nx, ny) === 'ok') { seen.add(n); q.push(n); }
+    }
+  }
+  let open = 0;
+  for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) if (m.passable(x, y) === 'ok') open++;
+  return { seen: seen.size, open };
+}
+
 export async function scaffold(): Promise<void> {
   ok(Object.entries(CHAR_OF).every(([t, ch]) => MAP_TERRAIN[ch!] === t), 'every character a draft writes is its terrain on the world map');
   const { atlas, defs } = unbuilt(AT[0], AT[1]);
@@ -100,20 +121,73 @@ export async function scaffold(): Promise<void> {
   ok(unroaded === (d.counts.road ?? 0), `nor with its road written as grass (${unroaded} squares differ)`);
 
   // It plays: the start is open ground and every open square is reached from it.
-  const m = new GameMap(def);
+  const m = new GameMap(def), reached = reach(def);
   ok(m.passable(def.start.x, def.start.y) === 'ok', `its start ${def.start.x},${def.start.y} is open ground`);
-  const seen = new Set<number>([def.start.y * SIZE + def.start.x]), q = [...seen];
-  for (let k = 0; k < q.length; k++) {
-    const x = q[k] % SIZE, y = (q[k] - x) / SIZE;
-    for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
-      const n = ny * SIZE + nx;
-      if (nx >= 0 && ny >= 0 && nx < SIZE && ny < SIZE && !seen.has(n) && m.passable(nx, ny) === 'ok') { seen.add(n); q.push(n); }
-    }
-  }
-  let open = 0;
-  for (let y = 0; y < SIZE; y++) for (let x = 0; x < SIZE; x++) if (m.passable(x, y) === 'ok') open++;
-  ok(seen.size === open, `every open square is reached from it (${seen.size} of ${open})`);
+  ok(reached.seen === reached.open, `every open square is reached from it (${reached.seen} of ${reached.open})`);
   ok(!def.encounters?.length && !def.exits?.length && !def.features?.length, 'it holds no groups, exits or features: those are the author\'s');
+
+  // The texture (#1107): the same box textured, as the tool writes it, laid back where it was cut.
+  const tx = textured(atlas, g0, d, AT[0], AT[1]), tdef = await written(tx, 'downs', AT[0], AT[1]), changes = tx.textured ?? [];
+  const laidT = layBack(atlas, defs, tdef, zone, AT), gt = worldGrid(laidT.atlas, laidT.defs), W = g0.width;
+  const changed = new Set(changes.map((c) => c.y * SIZE + c.x)), differ: number[] = [];
+  for (let j = 0; j < SIZE; j++) for (let i = 0; i < SIZE; i++) if (squareOf(g0, (AT[1] + j) * W + AT[0] + i) !== gt.terrain[(AT[1] + j) * W + AT[0] + i]) differ.push(j * SIZE + i);
+  const asCut = changes.every((c) => def.rows[c.y][c.x] === c.from && tdef.rows[c.y][c.x] === c.to) && tdef.rows.every((r, j) => [...r].every((ch, i) => changed.has(j * SIZE + i) || ch === def.rows[j][i]));
+  ok(changed.size > 0 && asCut && differ.length === changed.size && differ.every((s) => changed.has(s)), `textured, laid back it differs from the atlas on the ${changed.size} squares the texture changed and no others (${differ.length} differ)`);
+  // Walked as before, or a rock on a ground the table calls stony with open ground on all eight sides.
+  const eight = (x: number, y: number, f: (i: number, j: number) => boolean): boolean => [-1, 0, 1].some((dy) => [-1, 0, 1].some((dx) => (dx !== 0 || dy !== 0) && f(x + dx, y + dy)));
+  const fair = (bare: MapDef, after: MapDef): ((x: number, y: number) => boolean) => {
+    const bm = new GameMap(bare), am = new GameMap(after);
+    return (x, y) => bm.passable(x, y) === am.passable(x, y) || (am.at(x, y).solid === 'rock' && !!TEXTURE[MAP_TERRAIN[bare.rows[y][x]]]?.stony && !eight(x, y, (i, j) => am.passable(i, j) !== 'ok'));
+  };
+  const walked = fair(def, tdef), rocks = changes.filter((c) => c.to === CHAR_OF.rock).length;
+  ok(changes.every((c) => walked(c.x, c.y)), `each square is walked as the ground it replaces, or is a rock on stony ground in the open (${changes.length - rocks} and ${rocks})`);
+  const wetAt = (i: number, j: number): boolean => { const t = g0.terrain[(AT[1] + j) * W + AT[0] + i]; return isWater(t) || t === TI.tidal; };
+  const kept = (x: number, y: number): boolean => x > 0 && y > 0 && x < SIZE - 1 && y < SIZE - 1 && !wetAt(x, y) && !eight(x, y, wetAt) && !g0.road[(AT[1] + y) * W + AT[0] + x] && !g0.river[(AT[1] + y) * W + AT[0] + x];
+  ok(changes.every((c) => kept(c.x, c.y)), 'none is on an edge, water or the coast, a road or a river');
+  // A run is a ground's squares joined side by side in the bare draft.
+  const runOf = new Int32Array(SIZE * SIZE).fill(-1), runs: number[] = [];
+  for (let s = 0; s < SIZE * SIZE; s++) {
+    const ch = def.rows[Math.floor(s / SIZE)][s % SIZE];
+    if (runOf[s] >= 0 || !TEXTURE[MAP_TERRAIN[ch]]) continue;
+    const q = [s];
+    runOf[s] = runs.length;
+    for (let k = 0; k < q.length; k++) {
+      const x = q[k] % SIZE, y = (q[k] - x) / SIZE;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) if (nx >= 0 && ny >= 0 && nx < SIZE && ny < SIZE && runOf[ny * SIZE + nx] < 0 && def.rows[ny][nx] === ch) { runOf[ny * SIZE + nx] = runs.length; q.push(ny * SIZE + nx); }
+    }
+    runs.push(q.length);
+  }
+  const taken = runs.map(() => 0);
+  for (const c of changes) if (runOf[c.y * SIZE + c.x] >= 0) taken[runOf[c.y * SIZE + c.x]]++;
+  const most = Math.max(...taken.map((n, r) => n / runs[r]));
+  ok(changes.every((c) => runOf[c.y * SIZE + c.x] >= 0) && taken.every((n, r) => n <= runs[r] * TEXTURE_SHARE), `each in a run of a ground of the table, on a quarter of the run at most (${(100 * most).toFixed(0)}% at most, of ${runs.length} runs)`);
+  const tr = reach(tdef), bp = plainShare(def), tp = plainShare(tdef);
+  ok(tdef.start.x === def.start.x && tdef.start.y === def.start.y && tr.seen === tr.open, `its start is the bare draft's and every open square is reached from it (${tr.seen} of ${tr.open})`);
+  // #1108's measure: what the texture lays is ground of another look and the odd rock, so it never makes a view plain.
+  ok(tp.plain <= bp.plain, `and no more of its views are plain by #1108's measure (${tp.plain} of ${tp.views}; bare, ${bp.plain} of ${bp.views})`);
+
+  // Where the pass must change nothing: a box of water, of road, of grass on its edges alone (its
+  // seams) and of grass beside water at every square (the coast); and a box of grass alone it does.
+  const fixture = (f: (i: number, j: number) => string): string[] => Array.from({ length: SIZE }, (_, j) => Array.from({ length: SIZE }, (_, i) => f(i, j)).join(''));
+  const edge = (i: number, j: number): boolean => i === 0 || j === 0 || i === SIZE - 1 || j === SIZE - 1;
+  const still = [fixture(() => '~'), fixture(() => '='), fixture((i, j) => (edge(i, j) ? ',' : '=')), fixture((i) => (i % 2 ? '~' : ','))].map((rows) => texture(atlas, g0, rows, AT).changes.length);
+  ok(still.every((n) => n === 0), `on a box of water, of road, of grass on its edges alone or of grass beside water it changes nothing (${still.join(', ')})`);
+  const lawn = texture(atlas, g0, fixture(() => ','), AT).changes.length;
+  ok(lawn > 0 && lawn <= SIZE * SIZE * TEXTURE_SHARE, `and on a box of grass alone it lays patches, on a quarter of it at most (${lawn} of ${SIZE * SIZE})`);
+
+  // --over: the same pass over every built outdoor map, which proposes nothing on a square the map names.
+  const world = baseline(ATLAS, MAP_DEFS);
+  let proposed = 0, astray = 0;
+  for (const map of MAP_DEFS) {
+    const at = map.kind === 'outdoor' ? mapAt(ATLAS, map.id) : undefined;
+    if (!at) continue;
+    const named = new Set([map.start, ...Object.values(map.anchors ?? {}), ...(map.exits ?? []), ...(map.features ?? []), ...(map.secrets ?? []), ...(map.encounters ?? []),
+      ...(map.gates ?? []), ...(map.houses ?? []), ...(map.banners ?? []), ...(map.landmarks ?? [])].map((p) => `${p.x},${p.y}`));
+    const r = over(ATLAS, world, map, at), fairly = fair(map, { ...map, rows: r.rows }), w = Math.max(...map.rows.map((s) => s.length));
+    proposed += r.changes.length;
+    astray += r.changes.filter((c) => named.has(`${c.x},${c.y}`) || c.x <= 0 || c.y <= 0 || c.x >= w - 1 || c.y >= map.rows.length - 1 || !fairly(c.x, c.y)).length;
+  }
+  ok(proposed > 0 && astray === 0, `over the built outdoor maps it proposes ${proposed} squares, none on an edge or a square its map names, each walked as before or a rock in the open (${astray} astray)`);
 
   // It refuses what it cannot cut faithfully, and says why.
   const refused = (zone: string, x: number, y: number, why: RegExp, id?: string): boolean => { const r = cut(atlas, defs, g0, REGIONS, zone, x, y, id); return 'refused' in r && why.test(r.refused); };

@@ -1,9 +1,10 @@
 // The scaffold's library (#984): a draft map cut from the atlas at a square, laid back and written
 // out, which tools/scaffold.ts prints or writes and its suite holds. Moved here from that command
-// line, as #899 moved the lanes', so a suite may take it.
-import { worldGrid, mapAt, boxAt, box, TERRAINS, TI, MAP_TERRAIN } from '../../src/game/atlas.ts';
+// line, as #899 moved the lanes', so a suite may take it. And the texture (#1107), a second pass that
+// breaks a draft's long runs of one ground, or proposes as much for a built map.
+import { worldGrid, mapAt, boxAt, box, TERRAINS, TI, MAP_TERRAIN, fbm, lattice } from '../../src/game/atlas.ts';
 import type { Atlas, AtlasZone, WorldGrid, WorldTerrain, Pt } from '../../src/game/atlas.ts';
-import { GameMap } from '../../src/game/map.ts';
+import { GameMap, LEGEND, passableCell } from '../../src/game/map.ts';
 import type { MapDef } from '../../src/game/mapdef.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
@@ -46,6 +47,8 @@ export interface Draft {
   zones: Record<string, number>;
   /** What the author should know, one line each: the grid, the seams, the road's ends, the plates. */
   notes: string[];
+  /** The squares the texture changed, where it was laid (`textured`). */
+  textured?: readonly Change[];
 }
 
 /** The world laid out once: a draft cut from it, then laid back, is compared with it. */
@@ -202,8 +205,9 @@ export function emit(d: Draft, zoneId: string, x: number, y: number, mapImport: 
   const tally = (o: Record<string, number | undefined>): string => Object.entries(o).sort((a, b) => b[1]! - a[1]!).map(([k, n]) => `${k} ${n}`).join(', ');
   const facing = ['NORTH', 'EAST', 'SOUTH', 'WEST'][def.start.facing];
   const lines = [
-    `// A draft of ${def.name}, cut from the atlas at ${x},${y} by tools/scaffold.ts ${zoneId} ${x} ${y}. The`,
-    '// ground is the atlas\'s square for square; everything else is to be authored (EXPANSION §8.2).',
+    `// A draft of ${def.name}, cut from the atlas at ${x},${y} by tools/scaffold.ts ${zoneId} ${x} ${y}${d.textured ? ' --texture' : ''}. The`,
+    d.textured ? `// ground is the atlas's but on the ${d.textured.length} squares of its texture; everything else is to be authored (EXPANSION §8.2).`
+      : '// ground is the atlas\'s square for square; everything else is to be authored (EXPANSION §8.2).',
     `// Terrain: ${tally(d.counts)}.`,
     `// Zones in the cut: ${tally(d.zones)}.`,
     ...d.notes.map((n) => `// - ${n[0].toUpperCase()}${n.slice(1)}.`),
@@ -225,4 +229,130 @@ export function emit(d: Draft, zoneId: string, x: number, y: number, mapImport: 
     '',
   ];
   return lines.join('\n');
+}
+
+// ---------------------------------------------------------------- the texture (#1107)
+
+/**
+ * The texture's table: each ground the atlas lays in long runs, the grounds its patches are, each walked
+ * as it is, and whether it is stony, where the odd rock stands. Steppe and ash are: the built maps stand a
+ * rock beside them about as often as beside hills, beside grass less often and beside pine seldom.
+ */
+export const TEXTURE: Partial<Record<WorldTerrain, { patches: readonly WorldTerrain[]; stony?: true }>> = {
+  grass: { patches: ['dirt', 'heather'] }, steppe: { patches: ['dirt', 'sand'], stony: true },
+  ash: { patches: ['dirt'], stony: true }, pine: { patches: ['woods'] },
+};
+/** The most of a run of one ground the texture changes: a draft is a start, not a finished map. */
+export const TEXTURE_SHARE = 0.25;
+/**
+ * The noise's scale in squares and the level a patch lies over; the fewest and most squares to a patch;
+ * the scale its ground is picked at; a stony square's chance of a rock; the seed's offset from the atlas's.
+ */
+const PATCH = { scale: 3, over: 0.62, least: 3, most: 12, pick: 13, rock: 0.012, seed: 1107 };
+
+/** A square the texture changes, in the map's own squares, as map characters. */
+export interface Change { x: number; y: number; from: string; to: string }
+
+/** Whether a map character is walked on by everyone, as the game's legend has it. */
+const walkable = (ch: string | undefined): boolean => ch !== undefined && !!LEGEND[ch] && passableCell(LEGEND[ch]) === 'ok';
+/** Water, as the coast is the land beside it: the sea, the shallows (a river is) and the tide's flats. */
+const wet = (ch: string | undefined): boolean => ch !== undefined && ['sea', 'shallow', 'tidal'].includes(MAP_TERRAIN[ch]);
+
+/**
+ * The texture over a map's rows laid at world square `at`. In each run of a ground of the table, the
+ * squares of it joined side by side, patches of a second ground where the world's noise is highest, on a
+ * quarter of the run at most, each walked as the ground it replaces; then on a stony ground the odd rock,
+ * only where all eight squares about it are walked, so that it closes no way. It leaves alone the edge
+ * squares (the seams, #898), water and the coast beside it, the atlas's roads, trails and rivers
+ * (`WorldGrid.road`, `.river`) and the squares `keep` names. The noise is the world square's, so the
+ * drafts of two boxes agree where they meet; no region is asked, as the land past the zones has none.
+ */
+export function texture(atlas: Atlas, grid: WorldGrid, rows: readonly string[], at: Pt, keep: (x: number, y: number) => boolean = () => false): { rows: string[]; changes: Change[] } {
+  const H = rows.length, W = Math.max(...rows.map((r) => r.length)), seed = atlas.seed + PATCH.seed;
+  const cells = rows.map((r) => [...r]), ch = (x: number, y: number): string | undefined => cells[y]?.[x];
+  const free = (x: number, y: number): boolean => {
+    const wx = at[0] + x, wy = at[1] + y, k = wy * grid.width + wx;
+    if (x <= 0 || y <= 0 || x >= W - 1 || y >= H - 1 || keep(x, y)) return false;
+    if (wx >= 0 && wy >= 0 && wx < grid.width && wy < grid.height && (grid.river[k] || grid.road[k])) return false;
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (wet(ch(x + dx, y + dy))) return false;
+    return true;
+  };
+  const changes: Change[] = [], seen = new Uint8Array(W * H);
+  const set = (x: number, y: number, to: string): void => { changes.push({ x, y, from: cells[y][x], to }); cells[y][x] = to; };
+  for (let s0 = 0; s0 < W * H; s0++) {
+    const c0 = ch(s0 % W, Math.floor(s0 / W)), row = c0 === undefined ? undefined : TEXTURE[MAP_TERRAIN[c0]];
+    if (seen[s0] || !row) continue;
+    const run = [s0];
+    seen[s0] = 1;
+    for (let q = 0; q < run.length; q++) {
+      const x = run[q] % W, y = (run[q] - x) / W;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) {
+        if (nx >= 0 && nx < W && !seen[ny * W + nx] && ch(nx, ny) === c0) { seen[ny * W + nx] = 1; run.push(ny * W + nx); }
+      }
+    }
+    let room = Math.floor(run.length * TEXTURE_SHARE);
+    // The patches: where the noise is over its level, joined side by side, each grown from its peak by
+    // the highest square beside it to PATCH.most at most, so that none fills a view's window (7 by 5) and
+    // makes a plain view of its own; none under PATCH.least, a speck. The highest first while the run
+    // has room, each one ground, picked at its peak.
+    const level = new Map(run.map((s) => [s, fbm((at[0] + s % W) / PATCH.scale, (at[1] + Math.floor(s / W)) / PATCH.scale, seed, 2)]));
+    const by = (a: number, b: number): number => level.get(b)! - level.get(a)! || a - b;
+    const near = (s: number): number[] => [s - W, s + W, ...(s % W > 0 ? [s - 1] : []), ...(s % W < W - 1 ? [s + 1] : [])];
+    const high = new Set(run.filter((s) => level.get(s)! > PATCH.over && free(s % W, Math.floor(s / W))));
+    const found: number[][] = [];
+    for (const s of [...high].sort(by)) {
+      if (!high.has(s)) continue;
+      const rise = new Set([s]), q = [s];
+      high.delete(s);
+      for (let k = 0; k < q.length; k++) for (const n of near(q[k])) if (high.delete(n)) { rise.add(n); q.push(n); }
+      if (rise.size < PATCH.least) continue;
+      const patch = [s];
+      rise.delete(s);
+      while (patch.length < PATCH.most) {
+        const next = patch.flatMap(near).filter((n) => rise.has(n)).sort(by)[0];
+        if (next === undefined) break;
+        rise.delete(next); patch.push(next);
+      }
+      found.push(patch);
+    }
+    for (const patch of found) {
+      if (room < PATCH.least) break;
+      const [px, py] = [at[0] + patch[0] % W, at[1] + Math.floor(patch[0] / W)];
+      const to = CHAR_OF[row.patches[fbm(px / PATCH.pick, py / PATCH.pick, seed + 1) < 0.5 ? 0 : row.patches.length - 1]];
+      if (!to || walkable(to) !== walkable(c0)) continue;
+      for (const s of patch.slice(0, room)) set(s % W, Math.floor(s / W), to);
+      room -= Math.min(room, patch.length);
+    }
+    if (!row.stony) continue;
+    for (const s of run) {
+      const x = s % W, y = (s - x) / W;
+      if (room <= 0 || ch(x, y) !== c0 || !free(x, y) || lattice(at[0] + x, at[1] + y, seed + 2) >= PATCH.rock) continue;
+      let open = true;
+      for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) open &&= walkable(ch(x + dx, y + dy));
+      if (open) { set(x, y, CHAR_OF.rock!); room--; }
+    }
+  }
+  return { rows: cells.map((r) => r.join('')), changes };
+}
+
+/** A draft with the texture laid over it (`--texture`): its rows, counts and a note, and the squares changed, its start left alone. */
+export function textured(atlas: Atlas, grid: WorldGrid, d: Draft, x: number, y: number): Draft {
+  const { start } = d.def;
+  const { rows, changes } = texture(atlas, grid, d.def.rows, [x, y], (i, j) => i === start.x && j === start.y);
+  const counts: Partial<Record<WorldTerrain, number>> = {}, kinds: Record<string, number> = {};
+  for (const r of rows) for (const c of r) counts[MAP_TERRAIN[c]] = (counts[MAP_TERRAIN[c]] ?? 0) + 1;
+  for (const c of changes) { const k = `${MAP_TERRAIN[c.from]} to ${MAP_TERRAIN[c.to]}`; kinds[k] = (kinds[k] ?? 0) + 1; }
+  const said = Object.entries(kinds).map(([k, n]) => `${k} ${n}`).join(', ');
+  return { ...d, def: { ...d.def, rows }, counts, notes: [...d.notes, `textured on ${changes.length} squares${said ? `: ${said}` : ''}`], textured: changes };
+}
+
+/**
+ * The texture over a built outdoor map laid at `at` (`--over`), for the author to take or leave: what
+ * it would change, leaving alone every square the map names as well.
+ */
+export function over(atlas: Atlas, grid: WorldGrid, def: MapDef, at: Pt): { rows: string[]; changes: Change[] } {
+  const W = Math.max(...def.rows.map((r) => r.length)), held = new Set<number>();
+  for (const p of [def.start, ...Object.values(def.anchors ?? {}), ...(def.exits ?? []), ...(def.features ?? []), ...(def.secrets ?? []),
+    ...(def.encounters ?? []), ...(def.gates ?? []), ...(def.houses ?? []), ...(def.banners ?? []), ...(def.landmarks ?? [])]) held.add(p.y * W + p.x);
+  return texture(atlas, grid, def.rows, at, (x, y) => held.has(y * W + x));
 }
