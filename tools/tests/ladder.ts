@@ -365,6 +365,11 @@ export function ladder(): void {
     const best = bestRanged(RANGED, ITEMS, cls), not = unbettered(RANGED, ITEMS, cls);
     ok(!not.length, `the ${CLASSES[cls].name}'s best ranged weapon betters the rung before at each ranged rung: ${best.map(say).join(', ')}${not.length ? ` (not at ${not.join(', ')})` : ''}`);
   }
+  // Every long bow but an artifact is the martial four's: Acts II to V's, which no ranged rung names
+  // yet, and the +N copies off the ladder among them (the issue's Proposed; an artifact keeps its list).
+  const longBows = Object.values(ITEMS).filter((d) => d.slot === 'weapon' && d.kind === 'bow' && !d.short && !d.artifact), four = Object.keys(CLASSES).filter((c) => LINES[0].who.includes(c)).join();
+  const shut = longBows.filter((d) => Object.keys(CLASSES).filter((c) => usable(d, c as ClassId)).join() !== four).map((d) => d.id);
+  ok(longBows.length > 0 && !shut.length, `every long bow but an artifact is the martial four's, ${longBows.length} of them${shut.length ? ` (but not ${shut.join(', ')})` : ''}`);
   // And the rule refuses what it should: a short bow no step on the last (the Thornmark Short Bow on a
   // d6), and one a bard may not hold; the thief, then the bard, then betters nothing at 8.
   const flat = { ...ITEMS, thornmark_shortbow: { ...ITEMS.thornmark_shortbow, sides: 6 } }, barred = { ...ITEMS, thornmark_shortbow: { ...ITEMS.thornmark_shortbow, classes: [...MARTIAL, 'thief'] } };
@@ -385,7 +390,9 @@ export function ladder(): void {
       const d = ITEMS[id], before = ITEMS[r.bows[k]], got = a ? placesIn(a, id) : [], missing = where.filter((p) => !got.includes(p));
       if (!a || home(id) !== a) out.push(`${id} is no item of ${long}'s area, ${a?.id}`);
       if (!got.length || missing.length) out.push(`${id} is not where ${long} is (${missing.join(', ') || 'anywhere'})`);
-      if (!a || !d || !before || d.price >= before.price || d.price > CURVE[a.id as keyof typeof CURVE].price) out.push(`${id} (${d?.price} gold) is not cheaper than ${before?.id} (${before?.price}) inside ${a?.id}'s window`);
+      const unpriced = a ? a.maps.flatMap((m) => (m.features ?? []).filter((f) => f.kind === 'shop' && f.prices?.[long] !== undefined && f.prices?.[id] === undefined).map(() => m.id)) : [];
+      if (unpriced.length) out.push(`${id} has no price where ${long} has one (${unpriced.join(', ')})`);
+      if (!a || !d || !before || !Number.isInteger(d.price) || d.price >= before.price || d.price > CURVE[a.id as keyof typeof CURVE].price) out.push(`${id} (${d?.price} gold) is not a whole price cheaper than ${before?.id} (${before?.price}) inside ${a?.id}'s window`);
       if (onLadder.has(id)) out.push(`${id} is on the gate's ladder`);
     });
     return out;
