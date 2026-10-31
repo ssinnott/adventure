@@ -8,6 +8,10 @@ export const CHECKS = {
   gear: {
     25: ['slag_mace', 'marlinspike', 'ashwood_bow', 'flamberge', 'battle_staff', 'drakeskin', 'cinder_robe', 'basalt_shield', 'quickening'],
   },
+  // Its ranged rung (#1115): the Ashwood Bow's, with the short bow and the sling #1117 takes into `gear`.
+  ranged: {
+    25: ['ashwood_bow', 'ashwood_shortbow', 'drakeskin_sling'],
+  },
   // How far over the next floor its clear leaves a company, held as built (tools/tests/curve.ts).
   overRoad: { level: 27.4, why: 'the Stone, the rungs, the quests and the sentries, and the country behind the road adds to it (#522); accepted as built (#738)' },
   // Its seams as built (tools/tests/outdoors.ts): each whose first box is its own.

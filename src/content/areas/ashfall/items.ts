@@ -16,6 +16,9 @@ import { dwarfMail, mattock } from '../kilns/public.ts';
 export const slagMace = W('slag_mace', 'Slag Mace', 2300, 2, 12, { bonus: 5, classes: [...MARTIAL, 'cleric'] });
 export const marlinspike = W('marlinspike', 'Marlinspike', 2300, 1, 8, { kind: 'light', bonus: 13 });
 export const ashwoodBow = W('ashwood_bow', 'Ashwood Bow', 2400, 1, 12, { kind: 'bow', bonus: 12, ranged: true, twoHanded: true, classes: MARTIAL });
+// Its short bow and sling (#1115): a step and two behind it by `hits`, at three quarters of its price and half.
+export const ashwoodShortbow = W('ashwood_shortbow', 'Ashwood Short Bow', 1800, 1, 10, { kind: 'bow', short: true, bonus: 12, ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] });
+export const drakeskinSling = W('drakeskin_sling', 'Drakeskin Sling', 1200, 1, 8, { kind: 'light', bonus: 12, ranged: true });
 export const flamberge = W('flamberge', 'Flamberge', 2400, 2, 12, { bonus: 6, twoHanded: true, classes: MARTIAL });
 export const battleStaff = W('battle_staff', 'Battle Staff', 2000, 1, 10, { kind: 'staff', bonus: 12, twoHanded: true });
 export const drakeskin = A('drakeskin', 'Drakeskin Coat', 3100, 13, { classes: NO_CASTER_HEAVY });
@@ -23,8 +26,18 @@ export const cinderRobe = A('cinder_robe', 'Cinder Robe', 2000, 12);
 export const basaltShield: ItemDef = { id: 'basalt_shield', name: 'Basalt Shield', slot: 'shield', price: 1400, ac: 7, classes: MAIL };
 const WARES = [slagMace, marlinspike, ashwoodBow, flamberge, battleStaff, drakeskin, cinderRobe, basaltShield];
 
+/** The Ashwood Bow's short bow and sling (#1115), beside the step and off the gate's ladder: `ARMOURER_RANGED`, below. */
+const RANGED = [ashwoodShortbow, drakeskinSling];
+
 /** The armourer's stock, the act's one step (#512); the Wold has no town and buys here by the Rider's ride (#547). */
 export const ARMOURER: readonly string[] = WARES.map((d) => d.id);
+/**
+ * The Ashwood Bow's short bow and sling (#1115), sold at the same counter after the step. Off the gate's
+ * ladder, they stay out of `ARMOURER`, the rung's own: `ACT_IV` (tools/kit/rules/ladder.ts) takes its wares
+ * from it, and the ladder suite holds those to the rung's `gear`. #1117 moves them into `WARES` with the
+ * `gear` row, and this list goes.
+ */
+export const ARMOURER_RANGED: readonly string[] = RANGED.map((d) => d.id);
 
 /**
  * The stone cure (#546; MONSTERS §3.3): poured on one turned to glass, it lifts the stone. At the
@@ -187,4 +200,4 @@ export const kindler: ItemDef = { ...marlinspike, id: 'kindler', name: 'Kindler,
   'Struck on anything it throws blue sparks, and the sparks bite.',
 ] };
 
-export const ITEMS: readonly ItemDef[] = [...WARES, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling, townRoll, grimsAxe, kindler];
+export const ITEMS: readonly ItemDef[] = [...WARES, ...RANGED, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling, townRoll, grimsAxe, kindler];

@@ -80,3 +80,12 @@ export const WAR_CRY_LINE = (who: string, foes: string): string => `${who} roars
 export const DEATHLESS_LINE = (who: string): string => `${who} will not fall.`;
 export const FIGHTS_ON_LINE = (who: string): string => `${who} fights on.`;
 export const FALLS_LINE = (who: string): string => `${who} falls!`;
+
+/**
+ * The monk's feats (#1113, combat/feats/monk.ts): the line before a Flurry's strikes, a Leap's and a
+ * Wind Step's, and the words after a Quiet Palm's hit on a foe left standing, asleep or proof against it.
+ */
+export const FLURRY_LINE = (who: string): string => `${who} strikes in a flurry.`;
+export const PALM_LINE = (foe: string, sleeps: boolean): string => (sleeps ? `${foe} falls asleep.` : `${foe} does not sleep.`);
+export const LEAP_LINE = (who: string): string => `${who} leaps past the front.`;
+export const WIND_LINE = (who: string): string => `${who} steps on the wind.`;

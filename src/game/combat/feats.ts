@@ -29,6 +29,7 @@ import { canAttackFromRow, rages } from './perks.ts';
 import { canReach } from './foes.ts';
 import { KNIGHT } from './feats/knight.ts';
 import { BARBARIAN } from './feats/barbarian.ts';
+import { MONK } from './feats/monk.ts';
 
 /** The most stamina a member holds. */
 export const STAMINA_MAX = 6;
@@ -64,10 +65,11 @@ export interface FeatClass {
   round?: (s: CombatState, party: Party) => void;
 }
 
-/** Each class's feats, a line a class: the barbarian's, the thief's and the monk's come in pull requests of their own. */
+/** Each class's feats, a line a class: the thief's comes in a pull request of its own. */
 const BY_CLASS: Partial<Record<ClassId, FeatClass>> = {
   knight: KNIGHT,
   barbarian: BARBARIAN,
+  monk: MONK,
 };
 
 /** Every feat, class by class. */
