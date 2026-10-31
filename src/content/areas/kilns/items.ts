@@ -27,7 +27,7 @@ export const forgeShield: ItemDef = { id: 'forge_shield', name: 'Forge Shield', 
 const WARES = [forgeHammer, seax, steelBow, mattock, bandedStaff, dwarfMail, kilnRobe, forgeShield];
 const RANGED = [steelShortbow, wireSling];
 
-/** The forge's stock, the act's first step (#459); Kilnhaven's smith stocks the same (#469). */
+/** The forge's step, the act's first (#459); Kilnhaven's smith stocks the same (#469). */
 export const FORGE: readonly string[] = WARES.map((d) => d.id);
 /**
  * Sold beside the step at the forge and at the smith's (#1115), and kept out of it: the Steel Bow's
@@ -41,7 +41,7 @@ export const quarterMore = (price: number): number => Math.ceil((price * 5) / 4)
 
 /** Kilnhaven's smith's prices for the forge's stock, a shop's `prices` (#469). */
 export const SMITH_PRICES: Readonly<Record<string, number>> = Object.fromEntries(WARES.map((d) => [d.id, quarterMore(d.price)]));
-/** And for the short bow and the sling (#1115), in whole gold: 1,407 and 938. */
+/** And for the short bow and the sling (#1115), in whole gold as the step's are. */
 export const SMITH_RANGED: Readonly<Record<string, number>> = Object.fromEntries(RANGED.map((d) => [d.id, quarterMore(d.price)]));
 
 /**

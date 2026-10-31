@@ -21,7 +21,7 @@ export const furRobe = A('fur_robe', 'Fur Robe', 1600, 11);
 const WARES = [iceAxe, skinningKnife, huntersBow, bearSpear, guidesStaff, bearskin, furRobe];
 const RANGED = [huntersShortbow, hideSling];
 
-/** The furrier's stock, the act's last step (#487). */
+/** The furrier's step, the act's last (#487). */
 export const FURRIER: readonly string[] = WARES.map((d) => d.id);
 /**
  * Sold beside the step at the furrier's (#1115), and kept out of it: the Hunter's Bow's short bow and
