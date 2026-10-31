@@ -11,13 +11,14 @@ import type { SpellDef, Element } from '../spells.ts';
 import { armorClass, weaponOf, isDown, damage, addCondition, removeCondition, hasCondition, prestigeOf, deathAt, resists } from '../party.ts';
 import type { Party, Character } from '../party.ts';
 import type { World } from '../world.ts';
-import type { Items, Tables } from '../tables.ts';
+import type { Tables } from '../tables.ts';
 import {
   FRONT_ROW, MAX_MONSTERS, MAX_GROUPS, BLESS_HIT, WARD_AC, describe, toHit, roll, standing, frontStands, isLeader, SLUMBER_CHANCE,
 } from './state.ts';
 import type { MonsterInst, CombatState } from './state.ts';
 import {
   BREAK_LINE, ROUT_LINE, names, RITE_LINE, MEND_LINE, SMOULDER_LINE, CALL_LINE, DIM_LINE, THREAD_LINE, STAND_LINE, SWEEP_LINE,
+  FIGHTS_ON_LINE, FALLS_LINE,
 } from './lines.ts';
 import { vanished, songWards } from './perks.ts';
 
@@ -98,15 +99,38 @@ export function castable(s: CombatState, party: Party, m: MonsterInst, sp: Spell
 /**
  * A member takes a monster's blow or spell: a sleeper is woken by it, unless it fells them. A blow
  * that would kill is held at 1 hit point, once between rests, by a cleric of the third prestige who is
- * not dead (`riteSpent`). Returns what the line adds.
+ * not dead (`riteSpent`); one that fells a barbarian under its Deathless leaves it fighting on
+ * (`fightsOn`, #1113). Returns what the line adds.
  */
-export function struck(items: Items, party: Party, c: Character, dmg: number): string {
+export function struck(s: CombatState, party: Party, c: Character, dmg: number): string {
   const slept = hasCondition(c, 'asleep');
   const rite = !isDown(c) && c.hp - dmg <= deathAt(c) ? party.members.find((m) => m.cls === 'cleric' && prestigeOf(m) >= 3 && !m.riteSpent && !hasCondition(m, 'dead')) : undefined;
   if (rite) { rite.riteSpent = true; c.hp = 1; removeCondition(c, 'asleep'); return ` ${RITE_LINE(rite.name, c.name)}`; }
-  damage(items, c, dmg);
+  damage(s.tables.items, c, dmg);
+  const on = fightsOn(s, party, c);
+  if (on) return on;
   if (slept && !isDown(c) && dmg > 0) { removeCondition(c, 'asleep'); return ` ${c.name} wakes.`; }
   return '';
+}
+
+/**
+ * A barbarian's Deathless (#1113, combat/feats/barbarian.ts): felled above its death line while it
+ * runs, by a blow, a spell, a sweep, a breath or poison, it stays on its feet under 0 and fights on.
+ * The mark the line that felled it takes, or none; with no Deathless running, nothing is touched.
+ */
+export function fightsOn(s: CombatState, party: Party, c: Character): string {
+  if (!s.deathless?.[party.members.indexOf(c)] || !hasCondition(c, 'unconscious')) return '';
+  removeCondition(c, 'unconscious');
+  return ` ${FIGHTS_ON_LINE(c.name)}`;
+}
+
+/** Member `i`'s Deathless ends, its rounds out or the fight over: on its feet under 0, it falls as `damage` fells any member there. */
+export function deathlessEnds(s: CombatState, party: Party, i: number): void {
+  const c = party.members[i];
+  s.deathless![i] = 0;
+  if (isDown(c) || c.hp > 0) return;
+  damage(s.tables.items, c, 0);
+  s.log.push(FALLS_LINE(c.name));
 }
 
 /** A monster's turn spent on a spell (`MonsterDef.cast`): at its level held to SPELLS_GROW_TO, unranked, with no Spellfire. */
@@ -142,13 +166,13 @@ export function monsterCast(s: CombatState, party: Party, rng: RngInstance, m: M
     const up = party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c)), marks = up.filter(({ c }) => !vanished(s, c));
     const pick = rng.pick(marks.length ? marks : up);
     if (!pick) return;
-    const d = dmgOf(pick.i), woke = struck(s.tables.items, party, pick.c, d);
+    const d = dmgOf(pick.i), woke = struck(s, party, pick.c, d);
     s.log.push(`${who} casts ${sp.name}: ${pick.c.name} takes ${d}.${woke}` + (isDown(pick.c) ? ` ${pick.c.name} falls!` : ''));
     return;
   }
   const row = sp.target === 'all' ? party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c)) : rowFor(party);
   let total = 0, woke = '';
-  for (const { c, i } of row) { const d = dmgOf(i); total += d; woke += struck(s.tables.items, party, c, d); }
+  for (const { c, i } of row) { const d = dmgOf(i); total += d; woke += struck(s, party, c, d); }
   const fell = row.map(({ c }) => c).filter(isDown);
   const where = sp.target === 'all' ? 'the party' : row[0] && row[0].i >= FRONT_ROW ? 'the back row' : 'the front row';
   s.log.push(`${who} casts ${sp.name}: ${total} damage to ${where}.${woke}` + (fell.length ? ` ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'}!` : ''));
@@ -170,7 +194,7 @@ export function sweep(s: CombatState, party: Party, rng: RngInstance, m: Monster
     if (s.defending[i]) d = Math.ceil(d / 2);
     if (dimmed(s, c, el)) d = Math.ceil(d / 2);
     dealt = (dealt ?? 0) + d;
-    woke += struck(s.tables.items, party, c, d);
+    woke += struck(s, party, c, d);
   }
   const fell = row.map(({ c }) => c).filter(isDown);
   s.log.push(SWEEP_LINE(m.def.name, el, row[0].i >= FRONT_ROW ? 'the back row' : 'the front row', dealt) + woke + (fell.length ? ` ${names(fell)} ${fell.length === 1 ? 'falls' : 'fall'}!` : ''));
@@ -270,11 +294,20 @@ export function meetCalled(world: Pick<World, 'meet'>, s: CombatState, bands: nu
 /**
  * Who breaks (docs/MONSTERS.md §2, §3.3): once every leader in the fight is down its people leave it,
  * and those that `obeys` stand down though their kind never breaks; and a group's beasts once three
- * in four of them are down. A `steady` monster never breaks, nor a kind that does not. The fled pay
- * nothing.
+ * in four of them are down; and those of a group a War Cry marked once half of it is (#1113). A
+ * `steady` monster never breaks, nor a kind that does not. The fled pay nothing.
  */
 export function morale(s: CombatState): void {
   const breaks = (m: MonsterInst, how: 'leader' | 'rout'): boolean => standing(m) && !m.def.steady && KINDS[m.def.kind].breaks === how;
+  // A group (a rank) the barbarian's War Cry marked breaks at half down, at least (#1113): its people
+  // break and run, its beasts bolt. First, so that a leader it breaks is down for the rule below at once.
+  for (const g of s.cried ?? []) {
+    const rank = s.monsters.filter((m) => m.group === g), people = rank.filter((m) => breaks(m, 'leader')), beasts = rank.filter((m) => breaks(m, 'rout'));
+    if ((!people.length && !beasts.length) || 2 * rank.filter((m) => !standing(m)).length < rank.length) continue;
+    for (const m of [...people, ...beasts]) m.fled = true;
+    if (people.length) s.log.push(BREAK_LINE(describe(people), people.length === 1));
+    if (beasts.length) s.log.push(ROUT_LINE(describe(beasts), beasts.length === 1));
+  }
   const leaders = s.monsters.filter((m) => isLeader(s, m));
   if (leaders.length && leaders.every((m) => !standing(m))) {
     const gone = s.monsters.filter((m) => breaks(m, 'leader')), stood = s.monsters.filter((m) => m.def.obeys && standing(m) && !gone.includes(m));

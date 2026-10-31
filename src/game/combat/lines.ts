@@ -70,6 +70,18 @@ export function victoryLine(loot: Loot): string {
 }
 
 /**
+ * The barbarian's feats (#1113, combat/feats/barbarian.ts): a Frenzy, the line before a Cleave's blows,
+ * a War Cry at a group and a Deathless; one under it who fights on, the mark after the blow's or the
+ * poison's line that fells it, and one who falls as it ends.
+ */
+export const FRENZY_LINE = (who: string): string => `${who} flies into a frenzy.`;
+export const CLEAVE_LINE = (who: string, foes: string): string => `${who} cleaves into ${foes}.`;
+export const WAR_CRY_LINE = (who: string, foes: string): string => `${who} roars at ${foes}.`;
+export const DEATHLESS_LINE = (who: string): string => `${who} will not fall.`;
+export const FIGHTS_ON_LINE = (who: string): string => `${who} fights on.`;
+export const FALLS_LINE = (who: string): string => `${who} falls!`;
+
+/**
  * The monk's feats (#1113, combat/feats/monk.ts): the line before a Flurry's strikes, a Leap's and a
  * Wind Step's, and the words after a Quiet Palm's hit on a foe left standing, asleep or proof against it.
  */

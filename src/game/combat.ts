@@ -23,7 +23,7 @@ import {
 import { hurtMonster, elemental, castSpell } from './combat/casting.ts';
 import {
   canReach, waits, monsterAc, monsterHit, guard, castable, struck, monsterCast, sweep, regenerate, dim, calledBy, canCall, clocked, beat, call,
-  morale, challenger,
+  morale, challenger, fightsOn, deathlessEnds,
 } from './combat/foes.ts';
 import { spend, landed, bore, featRounds } from './combat/feats.ts';
 
@@ -132,7 +132,7 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   if (s.haste > 0) s.haste--;
   for (const t of [s.foeBless, s.foeShield]) t.forEach((n, band) => { if (n > 0) t[band] = n - 1; });
   if (s.glass && --s.glass.rounds <= 0) delete s.glass;
-  featRounds(s);
+  featRounds(s, party);
   // A monster held by the roots tears free as a member shakes off paralysis.
   const freed = s.monsters.filter((m) => standing(m) && m.conditions.includes('paralysed') && rng.chance(HOLD_BREAKS));
   for (const m of freed) m.conditions = m.conditions.filter((k) => k !== 'paralysed');
@@ -141,7 +141,7 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   beat(s);
   dim(s);
   for (const c of party.members) {
-    if (hasCondition(c, 'poisoned') && !isDown(c)) { damage(s.tables.items, c, 1); s.log.push(`${c.name} suffers from poison.`); }
+    if (hasCondition(c, 'poisoned') && !isDown(c)) { damage(s.tables.items, c, 1); s.log.push(`${c.name} suffers from poison.${fightsOn(s, party, c)}`); }
     if (hasCondition(c, 'paralysed') && rng.chance(0.35)) { removeCondition(c, 'paralysed'); s.log.push(`${c.name} can move again.`); }
   }
   checkOutcome(s, party, rng);
@@ -170,7 +170,7 @@ function strike(s: CombatState, party: Party, rng: RngInstance, i: number, targe
       // follows a sneak attack's. A feat's blow (`Strike`, #1113) may land sure, crit sure or never,
       // neither drawn, count for more and take the feat's mark after a crit's; one that lands builds
       // stamina while the feats are on (`landed`), which draws nothing.
-      const sneak = how.sneak || sneaks(s, c, m), struck = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m, sneak) + armsBonus(c) + song + (edge?.damage ?? 0))
+      const sneak = how.sneak || sneaks(s, c, m), struck = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m, sneak, i) + armsBonus(c) + song + (edge?.damage ?? 0))
         + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
       const chance = critChance(s.tables.items, c, s.crits ?? CRITS_ON), crit = how.crits ?? (chance > 0 && rng.chance(chance));
       const dmg = (crit ? 2 * struck : struck) * (how.times ?? 1);
@@ -236,7 +236,7 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       const alive = aliveMonsters(s).map((i) => s.monsters[i]);
       const ms = alive.reduce((a, m) => a + m.def.speed, 0) / Math.max(1, alive.length);
       const p = Math.max(0.15, Math.min(0.9, 0.5 + (ps - ms) * 0.03));
-      if (rng.chance(p)) { s.outcome = 'fled'; s.log.push('The party flees!'); wake(party); return true; }
+      if (rng.chance(p)) { s.outcome = 'fled'; s.log.push('The party flees!'); wake(s, party); return true; }
       s.log.push('The party fails to get away.');
       // A failed flight costs everyone's remaining turn this round.
       s.turn = s.order.length;
@@ -249,8 +249,11 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
   return true;
 }
 
-/** Sleep is a fight's: its sleepers wake once it is over, won or fled. */
-function wake(party: Party): void { for (const c of party.members) removeCondition(c, 'asleep'); }
+/** Sleep is a fight's: its sleepers wake once it is over, won or fled. So is a Deathless (#1113): one on its feet under 0 falls. */
+function wake(s: CombatState, party: Party): void {
+  for (const c of party.members) removeCondition(c, 'asleep');
+  s.deathless?.forEach((n, i) => { if (n > 0) deathlessEnds(s, party, i); });
+}
 
 /** Resolve the acting monster's turn. */
 export function monsterAct(s: CombatState, party: Party, rng: RngInstance): boolean {
@@ -286,7 +289,7 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
     const fromSp = m.def.drain === 'sp' ? Math.min(pick.c.sp, dmg) : 0;
     pick.c.sp -= fromSp;
     // A drain on hit points drinks what the member lost, never more than it had to lose.
-    const had = pick.c.hp, woke = struck(s.tables.items, party, pick.c, dmg - fromSp);
+    const had = pick.c.hp, woke = struck(s, party, pick.c, dmg - fromSp);
     if (m.def.drain === 'hp') m.hp = Math.min(m.def.hp, m.hp + Math.max(0, had - pick.c.hp));
     let line = fromSp === 0 ? `${m.def.name} hits ${pick.c.name} for ${dmg}${m.def.drain === 'hp' ? ' and drinks' : ''}.`
       : fromSp === dmg ? `${m.def.name} hits ${pick.c.name} for ${dmg} spell points.` : `${m.def.name} hits ${pick.c.name} for ${fromSp} spell points and ${dmg - fromSp}.`;
@@ -312,7 +315,7 @@ function checkOutcome(s: CombatState, party: Party, rng: RngInstance): void {
   morale(s);
   if (s.monsters.every((m) => !standing(m))) {
     s.outcome = 'victory';
-    wake(party);
+    wake(s, party);
     const loot: Loot = { xp: 0, shares: [], gold: 0, items: [], ready: [] };
     const slain = s.monsters.filter((q) => !q.fled);
     for (const m of slain) {
