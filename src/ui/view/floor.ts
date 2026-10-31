@@ -1,6 +1,6 @@
 // The floors (#1028): each square's ground in view as its look gives it (view/ground/, #1030): the tiles
-// and how they are laid, what the look lays over them and what lies on them, puddles after rain and the
-// glitter of lying snow; and a dungeon's ceiling.
+// and how they are laid, what the look lays over them, its detail in the nearest rows (#1102) and what lies
+// on them, puddles after rain and the glitter of lying snow; and a dungeon's ceiling.
 
 import type { Terrain, MapPalette } from '../../game/mapdef.ts';
 import { shade, rgba } from '../../lib/art/palettes.ts';
@@ -16,7 +16,7 @@ export function drawFloor(p: Paint, laid: Terrain, d: number, l: number, cell: {
   const { ctx, cx, horizon, h, haze, env } = p, kind = p.map.kind;
   const terrain = asDrawn(p, laid), v = variantAt(terrain, cell.x, cell.y, p.map);
   // The ground's variant at its cell, where the land gives one (#1101): its colour, what it lays and what lies on it.
-  const ground = v ? { ...GROUND[terrain], lays: v.lays ?? GROUND[terrain].lays, lies: v.lies ?? GROUND[terrain].lies } : GROUND[terrain];
+  const ground = v ? { ...GROUND[terrain], lays: v.lays ?? GROUND[terrain].lays, lies: v.lies ?? GROUND[terrain].lies, near: v.near ?? GROUND[terrain].near } : GROUND[terrain];
   // One colour a square, its cell's: the tiles vary from it by their hash alone.
   const base = groundColor(p, terrain, floorPal, cell.x, cell.y, plot?.crop, v);
   const sq: Square = { d, l, mx: cell.x, my: cell.y, seed, plot, rims };
@@ -42,6 +42,8 @@ export function drawFloor(p: Paint, laid: Terrain, d: number, l: number, cell: {
   }
   // What the look lays over its tiles: a field's rows and hedges, cobbles, a glow.
   look.lays?.(p, base, sq);
+  // In the nearest rows, its detail at the scale they allow (ground/near.ts, #1102).
+  if (d <= 1) look.near?.(p, base, sq);
   // What lies on it: a few marks a square, placed by hash, scaled by depth, each painted by the look.
   const u = unit(d, h);
   if (look.lies) for (let i = 0; i < look.lies.marks; i++) {

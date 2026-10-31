@@ -1,5 +1,5 @@
 // Where two grounds meet (#1100): a ranked look (`GroundLook.rank`) spills into a lower one beside it, a
-// ragged tongue of its colour and marks some fifth of the way into the lower square, so the heather runs
+// ragged tongue of its colour and marks (and in the nearest rows its detail, #1102) some fifth of the way into the lower square, so the heather runs
 // into the grass and the snow lies in drifts. A tongue's outline is its edge's: hashed from the edge and
 // the corners at its ends, never from a square or the eye, so an edge looks the same from both of its
 // squares and from every facing. At a corner the tongue runs on into the next edge's where the higher
@@ -118,6 +118,9 @@ export function drawEdges(p: Paint, sq: Square, edges: Edges, floorPal: string):
     for (let i = last; i >= 0; i--) ctx.lineTo(...pt(i / last, t.reach[i]));
     ctx.lineTo(...pt(-e0, t.reach[0])); ctx.closePath();
     ctx.fillStyle = fog(p, base, d); ctx.fill();
+    // In the nearest rows, the higher ground's detail on its tongue, placed by the edge and kept to the tongue (#1102).
+    const near = v?.near ?? GROUND[t.terrain].near;
+    if (near && d <= 1) { ctx.save(); ctx.clip(); near(p, base, { ...sq, seed: t.seed }); ctx.restore(); }
     const lies = v?.lies ?? GROUND[t.terrain].lies;
     if (!lies) continue;
     for (let i = 0; i < Math.round(lies.marks * MARKS); i++) {

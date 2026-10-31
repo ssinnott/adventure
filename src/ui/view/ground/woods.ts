@@ -6,7 +6,8 @@ import { drawTreeSprite, treeOf } from '../../scenery.ts';
 import { hash } from '../../paint/brush.ts';
 import { fog, grassColor } from '../common.ts';
 import type { Paint } from '../common.ts';
-import type { GroundLook, Mark } from './look.ts';
+import type { GroundLook, Mark, Square } from './look.ts';
+import { fronds, leaves, needles } from './near.ts';
 
 /** The floor of the woods: the grass of the year in the trees' shade, over moss and leaf litter. */
 function woodsColor(day: number): string { return mix(grassColor(day), '#3e5028', 0.45); }
@@ -25,5 +26,12 @@ function mark(p: Paint, m: Mark): void {
   }
 }
 
-export const woods: GroundLook = { color: woodsColor, drift: { toward: ['#24401e', '#a08a50'], by: 0.6 }, snow: 0.75, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
+/** Near to (#1102, near.ts): leaf litter in browns and ochre, twigs fallen across it and ferns arching over it. */
+function litter(p: Paint, base: string, sq: Square): void {
+  const px = leaves(p, base, sq, 12, 14, ['#6a4a2a', '#7a6030', '#4e5a2c', '#84603a'].map((c) => mix(c, base, 0.3)));
+  needles(p, base, sq, { rows: 3, cols: 4, a: '#3e2e1e', b: '#5a4630', len: [5, 9], salt: 241 }, px);
+  fronds(p, base, sq, { rows: 7, cols: 9, len: [7, 11], lit: 1.28, dark: 0.75, bare: 0.3, salt: 245 }, px).fill(p);
+}
+
+export const woods: GroundLook = { color: woodsColor, drift: { toward: ['#24401e', '#a08a50'], by: 0.6 }, snow: 0.75, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark }, near: litter,
   sides: { bare: 0.3, size: 0.5, spread: 0.2, tree: (p, x, y, s, tone, pick, trees) => drawTreeSprite(p.ctx, x, y, s, tone, treeOf(trees?.forest, pick), p.env.trees) } };

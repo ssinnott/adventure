@@ -70,6 +70,12 @@ export interface GroundLook {
   /** What it lays over its tiles, under the marks: a field's rows and hedges, the road's cobbles, the lava's glow. */
   lays?: (p: Paint, base: string, sq: Square) => void;
   /**
+   * Its detail in the nearest rows (#1102, view/ground/near.ts), the company's square and the one ahead, where the
+   * floor fills half the view: over what it lays and under what lies on it, at the scale those rows allow, placed by
+   * the cell. A variant may have its own.
+   */
+  near?: (p: Paint, base: string, sq: Square) => void;
+  /**
    * A drop: painted in place of the floor, nothing lies on it, it has rims where ground stands before it
    * and beyond it, and the ground does not run on to the horizon over it.
    */
@@ -113,4 +119,6 @@ export interface GroundLook {
 export interface Variant {
   name: string; share?: number;
   shift?: { toward: string | ((day: number) => string); by: number }; lays?: GroundLook['lays']; lies?: GroundLook['lies'];
+  /** Its own detail in the nearest rows (#1102), in place of the ground's. */
+  near?: GroundLook['near'];
 }

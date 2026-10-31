@@ -8,6 +8,7 @@ import { hash } from '../../paint/brush.ts';
 import { fog, unitIn, floorPt } from '../common.ts';
 import type { Paint } from '../common.ts';
 import type { GroundLook, Mark, Square } from './look.ts';
+import { cracks as craze, ripples, stones } from './near.ts';
 
 /** An ember, a drift, ripples, then cinders. */
 function mark(p: Paint, m: Mark): void {
@@ -66,11 +67,23 @@ function cracks(p: Paint, base: string, sq: Square): void {
   ctx.strokeStyle = dark ? '#e0642a' : fog(p, shade(base, 0.45), d); ctx.lineWidth = w; ctx.stroke();
 }
 
+// Near to (#1102, near.ts): cinders, black lumps lit grey on their tops, in the ash; the fine fall in soft ripples;
+// the crust crazed between its cracks, the crazing glowing by night as the cracks do. A deep snow hides them all.
+
+/** The cinders near to. */
+function cinders(p: Paint, base: string, sq: Square): void { stones(p, base, sq, { rows: 8, cols: 10, size: [1.5, 4.5], bare: 0.4, body: '#1c1a1a', lit: 1.7, shadow: '#0e0c0c' }).fill(p); }
+
+/** The fine fall's: long soft ripples. */
+function drifted(p: Paint, base: string, sq: Square): void { ripples(p, base, sq, { rows: 8, cols: 1, half: 22, lit: 1.45, shadow: 0.7 }).fill(p); }
+
+/** The crust's crazing: short cracks every way between the long ones, dark by day and lit by the fire under them by night. */
+function crazed(p: Paint, base: string, sq: Square): void { craze(p, sq, 9,p.dark ? '#b8501e' : fog(p, shade(base, 0.4), sq.d)).fill(p); }
+
 export const ash: GroundLook = { color: () => TERRAIN_COLORS.ash, drift: { toward: ['#141212', '#6e6a66'], by: 0.6 }, snow: 0.65, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
-  scatter: ['stump', 'steam', 'cinder'], rank: 1,
+  scatter: ['stump', 'steam', 'cinder'], rank: 1, near: cinders,
   // A fine fall lying pale and smooth; the cinders; a crust, blacker, cracked over the fire.
   variants: { scale: 4, looks: [
-    { name: 'fine fall', share: 0.35, shift: { toward: '#8a8480', by: 0.35 }, lies: { marks: 4, mark: fine } },
+    { name: 'fine fall', share: 0.35, shift: { toward: '#8a8480', by: 0.35 }, lies: { marks: 4, mark: fine }, near: drifted },
     { name: 'cinders', share: 0.4 },
-    { name: 'crust', share: 0.25, shift: { toward: '#0c0a0a', by: 0.5 }, lays: cracks, lies: { marks: 1, mark } },
+    { name: 'crust', share: 0.25, shift: { toward: '#0c0a0a', by: 0.5 }, lays: cracks, lies: { marks: 1, mark }, near: crazed },
   ] } };
