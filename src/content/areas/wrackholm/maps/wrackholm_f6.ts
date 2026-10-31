@@ -48,6 +48,8 @@ export const WRACKHOLM_F6: MapDef<'wrackholm_f6'> = {
   region: 'wrackholm',
   start: { x: 0, y: 12, facing: EAST },
   anchors: { from_smugglers_cove2: { x: 28, y: 9, facing: SOUTH }, from_tide_ship: { x: 14, y: 29, facing: NORTH } },
+  // The Tide Ship drawn tall: the rock at the cove's east lip, a building's square in place of rock, stands over the shore as her wreck.
+  landmarks: [{ x: 16, y: 30, kind: 'wreck' }],
   rows: [
     ',,,,,,,,,,^,,,,,,__~~~~WWWWWWWWW',
     ',,,,,,,,,,,,,,,,,,,___~~WWWWWWWW',
@@ -79,7 +81,7 @@ export const WRACKHOLM_F6: MapDef<'wrackholm_f6'> = {
     'hhhhhh,,,,,rr^^rr,,,,,,,_~~WWWWW',
     'hhhhh,,,,,,,rr^rr,,,,,__~~WWWWWW',
     ',h,hh,,,,,,,r_^_r,,,,_~~~WWWWWWW',
-    '_,,,,,,,,,,,r___r,,,_~~~WWWWWWWW',
+    '_,,,,,,,,,,,r___B,,,_~~~WWWWWWWW',
     '~_,,,,,,,,,rr___r,,_~~WWWWWWWWWW',
   ],
   features: [
