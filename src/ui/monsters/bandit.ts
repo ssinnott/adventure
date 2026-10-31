@@ -151,7 +151,7 @@ export function drawnBow(at: Pt, h: number, anchor: Pt): BowPts {
 /** The poacher's longbow, grounded at `y` and gripped at `at` by a man standing at `x`. */
 export function longbow(at: Pt, y: number, h: number, x: number, sway = 0): BowPts {
   const bx = at.x - h * 0.012;
-  return { top: { x: bx + h * 0.02 + sway, y: y - h * 1.2 }, bot: { x: bx - h * 0.005, y: y - h * 0.01 }, riser: { x: bx - h * 0.028, y: at.y }, back: { x, y: at.y } };
+  return { top: { x: bx + h * 0.02 + sway, y: y - h * 0.98 }, bot: { x: bx - h * 0.005, y: y - h * 0.01 }, riser: { x: bx - h * 0.028, y: at.y }, back: { x, y: at.y } };
 }
 
 /**
@@ -334,7 +334,7 @@ function archer(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, 
 
 /**
  * The poacher: a Downs countryman who takes the Queen's game on her own land. He stands easy at the
- * field edge with a yew longbow taller than he is grounded beside him in the far fist, a sheaf of
+ * field edge with a yew longbow as tall as he is grounded beside him in the far fist, a sheaf of
  * arrows loose in the near hand, a broad-brimmed hat pulled low, a jerkin in the tint patched with
  * whatever cloth came to hand over a russet shirt, and a hare hung by its hind legs from his belt.
  */
@@ -348,7 +348,7 @@ function poacher(ctx: CanvasRenderingContext2D, x: number, y: number, h: number,
   const far: Arm = [R.sFar, { x: x - h * 0.2, y: sy + h * 0.19 }, { x: x - h * 0.255, y: sy + h * 0.31 }];
   const hemY = y - h * 0.4;
   groundShadow(ctx, x - h * 0.04, y + 1, h * 0.8);
-  // The longbow, grounded by the far foot and standing a head above his hat: a D of yew, thick at
+  // The longbow, grounded by the far foot and reaching his hat: a D of yew, thick at
   // the grip and fining to the horn nocks, belly to the man, the string a finger's breadth off it.
   const bx = far[2].x - h * 0.012, { top, bot, riser: grip } = longbow(far[2], y, h, x, sway);
   const mid = Math.max(h * 0.016, 1.3), tip = Math.max(h * 0.007, 0.8);
