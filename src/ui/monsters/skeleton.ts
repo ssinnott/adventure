@@ -61,7 +61,7 @@ export const draw: MonsterDrawer = (ctx, kind, x, y, h, p) => {
 export const SPRITES = {
   skeleton: { draw, span: [0.22, 0.39] },
   bone_knight: { draw, span: [0.36, 0.42] },
-  ghoul: { draw, span: [0.33, 0.38] },
+  ghoul: { draw, span: [0.39, 0.43] },
   drowned: { draw, span: [0.27, 0.3] },
   barrow_guard: { draw, span: [0.2, 0.33] },
   barrow_captain: { draw, span: [0.27, 0.29] },
@@ -619,7 +619,8 @@ function knightMaul(K: KnightFrame): void {
  * The ghoul: a corpse that still has its flesh, which is what separates it from the two above. It
  * is drawn as skin stretched over the same frame rather than as bare bone -- the ribs and the hip
  * crests show THROUGH as creases, not as separate masses -- and it goes on its knuckles, hunched
- * so far forward that its head sits out in front of its shoulders instead of on top of them.
+ * so far forward that its head is sunk between two raised shoulders, low and square in front of the
+ * chest. The arms are long and hang outside the knees to the floor, so no limb crosses another.
  */
 function ghoul(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p: Paint): void {
   const R = makeRig(x, y, h, p, { tilt: -0.03, hipTilt: 0.026, turn: 0.03, near: [0.1, 0.19, 0.21], far: [-0.096, -0.15, -0.18], toe: [0.9, -0.7], lift: [0, 0.04] }, BONE);
@@ -628,19 +629,37 @@ function ghoul(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   const sw = p.breathe * h * 0.008;
   const D = (v: number) => sy + v * h;
   const cx = x + h * 0.02 + sw;
-  // Hunched: the head is carried forward and low, out past the shoulder line.
-  const hx = x + h * 0.2 + sw, hy = sy - h * 0.052, hr = h * 0.075;
+  // Hunched: the head is carried forward and low, centred on the trunk and sunk between the shoulders.
+  const hx = cx + h * 0.014, hy = sy - h * 0.004, hr = h * 0.08;
   groundShadow(ctx, x + h * 0.03, y + 1, h * 0.62);
 
-  // The far arm, long enough to reach the floor: it takes weight on its knuckles.
-  const farEl = { x: x - h * 0.23, y: D(0.2) }, farWr = { x: x - h * 0.2, y: D(0.44) };
+  // The far arm, long enough to reach the floor outside the far knee: it takes weight on its knuckles.
+  const farEl = { x: x - h * 0.3, y: D(0.32) }, farWr = { x: x - h * 0.325, y: D(0.65) };
+  const nearEl = { x: x + h * 0.345, y: D(0.27) }, nearWr = { x: x + h * 0.36, y: D(0.64) };
   blob(ctx, B, shade(hide, 0.74), [
-    ...limb(R.sFar.x, R.sFar.y, farEl.x, farEl.y, farWr.x, farWr.y, h * 0.044, h * 0.03, 71),
+    ...limb(R.sFar.x, R.sFar.y, farEl.x, farEl.y, farWr.x, farWr.y, h * 0.05, h * 0.036, 71),
   ], { h, formK: 0.5, spread: 0.7 });
+  // The near arm, the same: outside its knee, behind the trunk, which the shoulder cap hides its root in.
+  blob(ctx, B, shade(hide, 0.96), [
+    ...limb(R.sNear.x, R.sNear.y, nearEl.x, nearEl.y, nearWr.x, nearWr.y, h * 0.054, h * 0.038, 77),
+  ], { h, formK: 0.5, spread: 0.7 });
+  // The clawed hands, last of the limbs.
+  for (const [wx, wy, s, k] of [[farWr.x, farWr.y, -1, 0.9], [nearWr.x, nearWr.y, 1, 1]] as const) {
+    const parts: Part[] = [{ k: 'ell', x: wx, y: wy + h * 0.016, rx: h * 0.028 * k, ry: h * 0.024 * k, rot: 0.2 * s }];
+    for (let i = 0; i < 4; i++) {
+      const a = Math.PI / 2 - s * (i - 1.4) * 0.34, l = h * (0.058 + (i === 1 ? 0.014 : 0)) * k;
+      const bx = wx + s * (i - 1.4) * h * 0.016, by = wy + h * 0.024;
+      parts.push({ k: 'tube', pts: [bx, by, bx + Math.cos(a) * l * 0.6, by + Math.sin(a) * l * 0.6,
+        bx + Math.cos(a) * l * 0.6 + Math.cos(a + s * 0.8) * l * 0.5, by + Math.sin(a) * l * 0.6 + Math.sin(a + s * 0.8) * l * 0.5],
+        r0: h * 0.012 * k, r1: h * 0.004, wobble: 0.05, seed: 80 + i });
+    }
+    blob(ctx, B, shade(hide, s > 0 ? 1.04 : 0.82), parts, { h, formK: 0.5, spread: 0.75 });
+  }
+
   // Legs: deeply bent, the heels off the ground.
   blob(ctx, B, shade(hide, 0.86), [
-    ...limb(x - h * 0.07, D(0.28), x - h * 0.27, D(0.46), x - h * 0.145, D(0.71), h * 0.058, h * 0.034, 72),
-    ...limb(x + h * 0.08, D(0.28), x + h * 0.315, D(0.44), x + h * 0.185, D(0.71), h * 0.064, h * 0.036, 73),
+    ...limb(x - h * 0.07, D(0.28), x - h * 0.185, D(0.47), x - h * 0.145, D(0.71), h * 0.058, h * 0.034, 72),
+    ...limb(x + h * 0.08, D(0.28), x + h * 0.225, D(0.46), x + h * 0.185, D(0.71), h * 0.064, h * 0.036, 73),
   ], { h, formK: 0.5, spread: 0.72 });
   blob(ctx, B, shade(hide, 0.8), [
     { k: 'curve', pts: [x - h * 0.21, y - h * 0.012, x - h * 0.13, y - h * 0.062, x - h * 0.07, y - h * 0.02, x - h * 0.18, y + h * 0.008], wobble: 0.06, seed: 74, sub: 2 },
@@ -649,8 +668,9 @@ function ghoul(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
 
   // The trunk: a gaunt barrel with the ribs and the hip crests showing through it.
   blob(ctx, B, hide, [
-    // the neck, carrying the head out and down in front of the shoulder line
-    { k: 'cap', x0: cx + h * 0.075, y0: D(0.0), x1: hx - hr * 0.5, y1: hy + hr * 0.55, r0: h * 0.044, r1: h * 0.038 },
+    // the raised shoulders, humped up either side of the head
+    { k: 'ell', x: cx - h * 0.085, y: D(0.012), rx: h * 0.076, ry: h * 0.044, rot: -0.22 },
+    { k: 'ell', x: cx + h * 0.112, y: D(0.002), rx: h * 0.076, ry: h * 0.044, rot: 0.22 },
     { k: 'curve', pts: [
       cx - h * 0.126, D(0.015), cx - h * 0.05, D(-0.036), cx + h * 0.06, D(-0.042), cx + h * 0.142, D(0.012),
       cx + h * 0.118, D(0.085), cx + h * 0.086, D(0.17), cx + h * 0.112, D(0.245), cx + h * 0.122, D(0.31),
@@ -667,7 +687,7 @@ function ghoul(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   ] });
   // The ribs, as creases in the skin rather than bones of their own.
   if (!B.override) for (let i = 0; i < 4; i++) {
-    const v = 0.04 + i * 0.038, w = h * (0.092 - i * 0.01), sag = h * (0.022 + i * 0.004);
+    const v = 0.1 + i * 0.036, w = h * (0.092 - i * 0.01), sag = h * (0.022 + i * 0.004);
     softLine(ctx, B, [cx - w, D(v), cx - w * 0.2, D(v + sag / h), cx + w * 0.62, D(v + sag / h * 0.86), cx + w, D(v + 0.004)], hide, Math.max(1, h * 0.011), 0.38);
     softLine(ctx, B, [cx - w * 0.9, D(v - 0.011), cx + w * 0.2, D(v + sag / h * 0.5)], shade(hide, 1.2), Math.max(1, h * 0.007), 0.24);
   }
@@ -675,23 +695,6 @@ function ghoul(ctx: CanvasRenderingContext2D, x: number, y: number, h: number, p
   if (!B.override) for (const s2 of [-1, 1]) {
     softLine(ctx, B, [cx + s2 * h * 0.03, D(0.262), cx + s2 * h * 0.092, D(0.288)], hide, Math.max(1, h * 0.012), 0.34);
   }
-  // The near arm over the trunk, and the clawed hands.
-  const nearEl = { x: x + h * 0.27, y: D(0.19) }, nearWr = { x: x + h * 0.245, y: D(0.44) };
-  blob(ctx, B, shade(hide, 0.96), [
-    ...limb(R.sNear.x, R.sNear.y, nearEl.x, nearEl.y, nearWr.x, nearWr.y, h * 0.048, h * 0.032, 77),
-  ], { h, formK: 0.5, spread: 0.7 });
-  for (const [wx, wy, s, k] of [[farWr.x, farWr.y, -1, 0.9], [nearWr.x, nearWr.y, 1, 1]] as const) {
-    const parts: Part[] = [{ k: 'ell', x: wx, y: wy + h * 0.016, rx: h * 0.028 * k, ry: h * 0.024 * k, rot: 0.2 * s }];
-    for (let i = 0; i < 4; i++) {
-      const a = Math.PI / 2 - s * (i - 1.4) * 0.34, l = h * (0.058 + (i === 1 ? 0.014 : 0)) * k;
-      const bx = wx + s * (i - 1.4) * h * 0.016, by = wy + h * 0.024;
-      parts.push({ k: 'tube', pts: [bx, by, bx + Math.cos(a) * l * 0.6, by + Math.sin(a) * l * 0.6,
-        bx + Math.cos(a) * l * 0.6 + Math.cos(a + s * 0.8) * l * 0.5, by + Math.sin(a) * l * 0.6 + Math.sin(a + s * 0.8) * l * 0.5],
-        r0: h * 0.012 * k, r1: h * 0.004, wobble: 0.05, seed: 80 + i });
-    }
-    blob(ctx, B, shade(hide, s > 0 ? 1.04 : 0.82), parts, { h, formK: 0.5, spread: 0.75 });
-  }
-
   // The head: a skull under skin, carried out in front. Wide jaw, sunken sockets, no lips left.
   blob(ctx, B, shade(hide, 1.06), [
     { k: 'curve', pts: [
