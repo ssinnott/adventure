@@ -11,7 +11,7 @@ import { paintOn, CLEAR } from '../../src/ui/view/common.ts';
 import type { Env } from '../../src/ui/view/common.ts';
 import { hills as HILLS, HILL_MARKS, hillMarks } from '../../src/ui/view/ground/hills.ts';
 import { paintScene } from '../../src/ui/view/compositor.ts';
-import { World } from '../../src/game/world.ts';
+import { World, regionAt } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import type { GameMap } from '../../src/game/map.ts';
 import type { Tables } from '../../src/game/tables.ts';
@@ -50,14 +50,17 @@ const LIGHTS = [{}, { wet: 0.8 }, { cover: 0.7 }, { murk: 0.6 }].flatMap((w) => 
 /** Near and far, left, ahead and right, three seeds, alone and running on into a hill each side: 144 hills in each light. */
 const HILLS_PAINTED = [1, 2, 3, 4].flatMap((d) => [-1, 0, 1].flatMap((l) => [3, 71, 409].flatMap((seed) => [[false, false], [true, false], [false, true], [true, true]].map(([hl, hr]) => ({ d, l, seed, hl, hr })))));
 
-/** Every hill of `HILLS_PAINTED` in every light, of a kind or of none, as written down. */
-function painted(kind?: AreaLook['hills']): string {
+/** `HILLS_PAINTED` and one hill at each depth of a seed every kind marks (seed 1), so each kind's mark is drawn. */
+const MARKED = [...HILLS_PAINTED, ...[1, 2, 3, 4].map((d) => ({ d, l: 0, seed: 1, hl: false, hr: false }))];
+
+/** Every hill of `hills` in every light, of a kind or of none, as written down. */
+function painted(kind?: AreaLook['hills'], hills = HILLS_PAINTED): string {
   const log: string[] = [], ctx = recorder(log), g = globalThis as { Path2D?: unknown }, was = g.Path2D;
   g.Path2D = paths(log);
   try {
     for (const { env, dark } of LIGHTS) {
       const p = paintOn(ctx, { x: 0, y: 0, w: 400, h: 268 }, {} as GameMap, { dark, haze: dark ? '#1a1428' : '#c9d6e6', daylight: dark ? 0 : 1, gloom: dark ? 0 : 1, env, present: () => true });
-      for (const { d, l, seed, hl, hr } of HILLS_PAINTED) HILLS.mound!(p, '#6a8a4a', d, l, seed, hl, hr, kind);
+      for (const { d, l, seed, hl, hr } of hills) HILLS.mound!(p, '#6a8a4a', d, l, seed, hl, hr, kind);
     }
   } finally { g.Path2D = was; }
   return log.join('\n');
@@ -70,8 +73,8 @@ export function hills(): void {
   const none = painted(), digest = createHash('sha256').update(none).digest('hex').slice(0, 12);
   ok(digest === MAIN, `with no kind named a hill is main's, call for call (${HILLS_PAINTED.length * LIGHTS.length} hills, ${none.split('\n').length} calls, ${digest})`);
 
-  const kinds = Object.keys(HILL_MARKS) as Kind[], logs = kinds.map((k) => painted(k));
-  const alike = kinds.filter((_, i) => logs[i] === none || logs.some((o, j) => j !== i && o === logs[i]));
+  const kinds = Object.keys(HILL_MARKS) as Kind[], plain = painted(undefined, MARKED), logs = kinds.map((k) => painted(k, MARKED));
+  const alike = kinds.filter((_, i) => logs[i] === plain || logs.some((o, j) => j !== i && o === logs[i]));
   const named = [...new Set(Object.values(TABLES.looks).map((look) => look.hills).filter((k) => k !== undefined))];
   ok(!alike.length && named.length === kinds.length, `each of the ${kinds.length} kinds paints its own hill, none today's nor another's, and an area's look names each (${named.join(', ')})${alike.length ? '; alike: ' + alike.join(', ') : ''}`);
 
@@ -80,21 +83,26 @@ export function hills(): void {
   const g = globalThis as { Path2D?: unknown }, was = g.Path2D;
   g.Path2D = function Path2D() { return new Proxy({}, { get: () => () => {} }); };
   const maps = buildMaps();
-  const scene = (looks: Tables['looks']): string => {
+  // From the Kilns' N6 at 10,29, facing south, the moors' hills stand past the Kilns' own (d 3 and 4).
+  const O5 = ['kilnsheart_o5', 22, 19, 0] as const, N6 = ['kilnsheart_n6', 10, 29, 2] as const;
+  const scene = (looks: Tables['looks'], [at, x, y, f]: typeof O5 | typeof N6 = O5): string => {
     const w = new World({ ...TABLES, looks }, maps, defaultParty(TABLES, makeRng(1)), makeRng(1)), log: string[] = [];
-    w.state.weatherSeed = 1; w.travel('kilnsheart_o5', 22, 19, 0); w.state.minutes = 90 * 1440 + 11 * 60;
+    w.state.weatherSeed = 1; w.travel(at, x, y, f); w.state.minutes = 90 * 1440 + 11 * 60;
     paintScene(recorder(log), recorder(log), w, { x: 0, y: 0, w: 400, h: 268 });
     return log.join('\n');
   };
   const unnamed = (keep: (r: string) => boolean): Tables['looks'] => Object.fromEntries(Object.entries(TABLES.looks).map(([r, look]) => [r, keep(r) ? look : { ...look, hills: undefined }])) as Tables['looks'];
-  let takes = false, own = false;
-  try { const as = scene(TABLES.looks); takes = as !== scene(unnamed((r) => r !== 'kilns')); own = as === scene(unnamed((r) => r === 'kilns')); } finally { g.Path2D = was; }
-  ok(takes && own, `the view takes each hill's own region's kind: the Kilns' O5 is painted otherwise with the Kilns' hills unnamed (${takes ? 'it is' : 'it is not'}) and as it is with every other region's unnamed (${own ? 'it is' : 'it is not'})`);
+  let takes = false, own = false, others = false;
+  try {
+    const as = scene(TABLES.looks); takes = as !== scene(unnamed((r) => r !== 'kilns')); own = as === scene(unnamed((r) => r === 'kilns'));
+    others = scene(TABLES.looks, N6) !== scene(unnamed((r) => r === 'kilns'), N6);
+  } finally { g.Path2D = was; }
+  ok(takes && own && others, `the view takes each hill's own region's kind: the Kilns' O5 is painted otherwise with the Kilns' hills unnamed (${takes ? 'it is' : 'it is not'}) and as it is with every other region's unnamed (${own ? 'it is' : 'it is not'}); from the Kilns' N6 the moors' hills are their own, painted otherwise with every region's but the Kilns' unnamed (${others ? 'they are' : 'they are not'})`);
 
   // Each kind's marks over its hills in every map, a hill's region as the view finds it, against the caps.
   const world = new World(TABLES, maps, defaultParty(TABLES, makeRng(1)), makeRng(1)), tally = new Map<Kind, { hills: number; marked: number; most: number }>();
   for (const m of Object.values(world.maps) as GameMap[]) for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
-    const c = m.at(x, y), region = m.zoneAt(x, y)?.region ?? m.def.region, kind = region && TABLES.looks[region].hills;
+    const c = m.at(x, y), region = regionAt(m, x, y), kind = region && TABLES.looks[region].hills;
     if ((c.look ?? c).terrain !== 'hills' || !kind) continue;
     const t = tally.get(kind) ?? { hills: 0, marked: 0, most: 0 }, n = hillMarks(kind, x * 131 + y * 17);
     tally.set(kind, { hills: t.hills + 1, marked: t.marked + (n ? 1 : 0), most: Math.max(t.most, n) });

@@ -21,18 +21,19 @@ type Kind = NonNullable<AreaLook['hills']>;
 
 /**
  * The marks each kind lays on its hills, so that a range of them reads and is no clutter: the share of its
- * hills that carry them, by the square's seed, and the most one carries. One or two chalk scars on a down,
- * a tor on a moor's hill, a thread of smoke over a slag heap, one or two runs of fire down a cinder cone,
- * and a fan of scree. The rest of each kind is its body alone.
+ * hills that carry them, by the square's seed, and the most one carries. A chalk slip on a down, a tor on
+ * a moor's hill, a plume of smoke over a slag heap, one or two runs of fire down a cinder cone, and a fan of
+ * scree. The rest of each kind is its body alone.
  */
 export const HILL_MARKS: Readonly<Record<Kind, { share: number; most: number }>> = {
-  downs: { share: 0.5, most: 2 }, tors: { share: 0.35, most: 1 }, slag: { share: 0.2, most: 1 }, cinder: { share: 0.5, most: 2 }, scree: { share: 0.5, most: 1 },
+  downs: { share: 0.4, most: 1 }, tors: { share: 0.2, most: 1 }, slag: { share: 0.2, most: 1 }, cinder: { share: 0.5, most: 2 }, scree: { share: 0.5, most: 1 },
 };
 
 /** How many marks a hill of a kind carries, by its square's seed. */
 export function hillMarks(kind: Kind, seed: number): number {
-  const m = HILL_MARKS[kind];
-  return hash(seed, 64) < m.share ? 1 + Math.floor(hash(seed, 65) * m.most) : 0;
+  // One draw for both: a second hash of the next salt follows the first, and gave two marks to nine marked hills in ten.
+  const m = HILL_MARKS[kind], r = hash(seed, 64);
+  return r < m.share ? 1 + Math.floor((r / m.share) * m.most) : 0;
 }
 
 /** The kinds' own colours, before the weather: chalk, granite, scree, slag, cinder, smoke, and a cone's fire by day and by night. */
@@ -104,16 +105,23 @@ export function hillBody(p: Paint, base: string, d: number, l: number, seed: num
   return s;
 }
 
-/** A down's chalk: pale scars where the turf is broken, each from under the crest down and out along the flank. */
+/**
+ * A down's chalk: a slip where the turf has come away, a ragged wedge widest at its broken lip just under
+ * the crest (an eighth to a fifth of the hill's width) and narrowing down the flank, wider than it is tall,
+ * the lip a shade paler.
+ */
 function scars(p: Paint, s: HillShape, base: string, d: number, seed: number): void {
-  const { ctx } = p, sc = unit(d, p.h) / unit(1, p.h), w = s.rx - s.lx;
-  ctx.fillStyle = fog(p, mix(base, weathered(p, CHALK, 0.92), 0.8), d);
-  for (let i = 0; i < hillMarks('downs', seed); i++) {
-    const t = 0.22 + 0.56 * hash(seed, 66, i), [x, y] = onCrest(s, t), out = (t - 0.5) * w * 0.5;
-    const y0 = y + s.rise * 0.08, y1 = y + s.rise * (0.5 + 0.3 * hash(seed, 67, i)), ym = (y0 + y1) / 2, a = 2 * sc, b = 4.5 * sc;
-    ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x + out * 0.5 + b, ym); ctx.lineTo(x + out + a, y1); ctx.lineTo(x + out - a, y1); ctx.lineTo(x + out * 0.5 - b * 0.7, ym + a);
-    ctx.closePath(); ctx.fill();
-  }
+  if (!hillMarks('downs', seed)) return;
+  const { ctx } = p, w = s.rx - s.lx, t = 0.32 + 0.36 * hash(seed, 66), [x, y] = onCrest(s, t);
+  const W = w * (0.125 + 0.075 * hash(seed, 67)), H = W * (0.55 + 0.2 * hash(seed, 68)), y0 = y + s.rise * 0.07, out = (t - 0.5) * W * 0.8;
+  const jag = (k: number): number => (hash(seed, 69, k) - 0.5) * W * 0.09;
+  const lip: [number, number][] = [0, 1, 2, 3, 4].map((k) => [x + W * (k / 4 - 0.5), y0 + jag(k) + (k % 2 ? -W * 0.03 : 0)]);
+  const foot: [number, number][] = [[x + W * 0.36 + out * 0.5, y0 + H * 0.45 + jag(5)], [x + W * 0.22 + out, y0 + H * 0.88 + jag(6)], [x + out, y0 + H + jag(7)],
+    [x - W * 0.2 + out, y0 + H * 0.82 + jag(8)], [x - W * 0.38 + out * 0.5, y0 + H * 0.4 + jag(9)]];
+  const fill = (pts: [number, number][], c: string): void => { ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(...pts[0]); for (const q of pts.slice(1)) ctx.lineTo(...q); ctx.closePath(); ctx.fill(); };
+  const chalk = weathered(p, CHALK, 0.92), band = Math.max(1.5, H * 0.16);
+  fill([...lip, ...foot], fog(p, mix(base, chalk, 0.72), d));
+  fill([...lip, ...[...lip].reverse().map(([lx, ly]): [number, number] => [lx, ly + band])], fog(p, mix(base, chalk, 0.92), d));
 }
 
 /** A fan of scree down one flank, from under the crest to the foot, its stones the larger the lower they lie. */
@@ -182,34 +190,44 @@ function heap(p: Paint, s: HillShape, base: string, d: number, seed: number, lea
   ctx.restore();
 }
 
-/** A tor on a hill's crest: two or three granite slabs piled, lit and shadowed as a rock is, snow on each top once it lies. */
+/**
+ * A tor on a hill's crest: an outcrop, not a pile, broader than it is tall: two or three rounded granite
+ * blocks abreast, half to two thirds of the crest's width, and at most one smaller block across them. Its
+ * foot runs on down behind the crest, so the hill's outline is where it rises from; snow pales the granite.
+ */
 function tor(p: Paint, s: HillShape, d: number, seed: number): void {
-  const { ctx, h, env } = p, u = unit(d, h), stone = fog(p, weathered(p, GRANITE, 0.25), d);
-  const [x0, y0] = onCrest(s, 0.38 + 0.24 * hash(seed, 70)), n = 2 + Math.floor(hash(seed, 71) * 2);
-  let x = x0, y = y0 + u * 0.04, bw = u * (0.34 + 0.1 * hash(seed, 72));
-  for (let i = 0; i < n; i++) {
-    const bh = bw * (0.36 + 0.1 * hash(seed, 73, i));
-    celPoly(ctx, B, [x - bw / 2, y, x - bw / 2, y - bh * 0.65, x - bw * 0.38, y - bh, x + bw * 0.4, y - bh, x + bw / 2, y - bh * 0.6, x + bw / 2, y], stone, 0.38, 0.25);
-    if (env.cover > 0.2) {
-      ctx.fillStyle = mix(shade(stone, 1.15), fog(p, SNOW, d), Math.min(1, env.cover * 1.2));
-      ctx.beginPath(); ctx.moveTo(x - bw * 0.38, y - bh); ctx.lineTo(x + bw * 0.4, y - bh); ctx.lineTo(x + bw * 0.46, y - bh * 0.78); ctx.lineTo(x - bw * 0.46, y - bh * 0.78); ctx.closePath(); ctx.fill();
-    }
-    y -= bh * 0.96; x += (hash(seed, 74, i) - 0.5) * bw * 0.25; bw *= 0.78;
+  const { ctx, h } = p, u = unit(d, h), stone = fog(p, weathered(p, GRANITE, 0.35), d);
+  const [x0, y0] = onCrest(s, 0.4 + 0.2 * hash(seed, 70)), n = 2 + Math.floor(hash(seed, 71) * 2), W = u * (0.6 + 0.2 * hash(seed, 72));
+  const block = (x: number, foot: number, bw: number, bh: number): void => celPoly(ctx, B, [x - bw / 2, foot, x - bw / 2, foot - bh * 0.55, x - bw * 0.38, foot - bh * 0.88, x - bw * 0.1, foot - bh,
+    x + bw * 0.2, foot - bh * 0.97, x + bw * 0.42, foot - bh * 0.78, x + bw / 2, foot - bh * 0.42, x + bw / 2, foot], stone, 0.38, 0.25);
+  // Everything is clipped to above the hill's outline: what lies below it is the hill's.
+  const above = new Path2D(); above.rect(x0 - W * 1.5, y0 - W * 2, W * 3, W * 3); above.addPath(s.outline);
+  ctx.save(); ctx.clip(above, 'evenodd');
+  const bw = (W / n) * 1.08, foot = y0 + u * 0.12, tops: number[] = [];
+  // The blocks abreast, the outer first so the middle one stands before them; then, on some, one across them.
+  const order = n === 3 ? [0, 2, 1] : [0, 1];
+  for (const i of order) {
+    const bh = bw * (0.62 + 0.18 * hash(seed, 73, i)), x = x0 + (i - (n - 1) / 2) * bw * 0.86;
+    block(x, foot, bw * (0.92 + 0.16 * hash(seed, 74, i)), bh); tops[i] = foot - bh;
   }
+  if (hash(seed, 75) < 0.5) block(x0 + (hash(seed, 76) - 0.5) * bw * 0.5, Math.max(...tops) + bw * 0.12, bw * 0.7, bw * 0.42);
+  ctx.restore();
 }
 
-/** A thread of smoke from a slag heap's top, going up and bending away on the wind, the same way over every heap. */
+/**
+ * A plume of smoke from a slag heap's top, going up and bending away on the wind, the same way over every
+ * heap: a few pixels wide at the heap, wider and paler as it rises, in two flat tones.
+ */
 function smoke(p: Paint, s: HillShape, d: number, seed: number): void {
   if (!s.peak) return;
-  const { ctx, h } = p, u = unit(d, h), sc = u / unit(1, h), [x0, y0] = s.peak;
-  ctx.strokeStyle = fog(p, SMOKE, d);
-  for (const [from, to, lw] of [[0, 3, 2], [3, 7, 1.2]] as const) {
-    ctx.lineWidth = Math.max(1, lw * sc); ctx.beginPath();
-    for (let k = from; k <= to; k++) {
-      const f = k / 7, x = x0 + u * 0.3 * f * f + Math.sin(f * 6 + hash(seed, 87) * 6) * u * 0.035;
-      if (k === from) ctx.moveTo(x, y0 - u * 0.85 * f); else ctx.lineTo(x, y0 - u * 0.85 * f);
-    }
-    ctx.stroke();
+  const { ctx, h } = p, u = unit(d, h), sc = u / unit(1, h), [x0, y0] = s.peak, phase = hash(seed, 87) * 6;
+  const at = (f: number, side: number): [number, number] => [x0 + u * 0.3 * f * f + Math.sin(f * 6 + phase) * u * 0.035 + side * (1.5 + 6 * f) * sc, y0 - u * 0.85 * f];
+  for (const [from, to, c] of [[0, 4, fog(p, SMOKE, d)], [4, 7, fog(p, mix(SMOKE, '#d8d4ce', 0.5), d)]] as const) {
+    const ks = Array.from({ length: to - from + 1 }, (_, i) => (from + i) / 7);
+    ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(...at(ks[0], -1));
+    for (const f of ks.slice(1)) ctx.lineTo(...at(f, -1));
+    for (const f of [...ks].reverse()) ctx.lineTo(...at(f, 1));
+    ctx.closePath(); ctx.fill();
   }
 }
 
