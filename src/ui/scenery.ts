@@ -253,7 +253,7 @@ export function drawMonasterySprite(ctx: CanvasRenderingContext2D, x: number, y:
 // its own small drawing, of a shape no scattered prop is (a single rounded rock, a bush, a tussock,
 // bones, driftwood), and lower than a man but a statue and a rift. Front-facing on (x, y) with y the
 // ground line, as the sprites here; `tone` darkens with distance and the night as a rock's does, snow
-// whitens what lies open to the sky, and a light of its own (`light`) the night does not dim.
+// whitens what lies open to the sky and a light of its own (`light`) the night does not dim.
 
 /** The kinds of feature the view draws; a person, a business (its sign hangs over its door) and an event are none of them. */
 export const FEATURE_KINDS = ['cairn', 'chest', 'camp', 'shrine', 'well', 'statue', 'fountain', 'den', 'sign', 'rift'] as const;

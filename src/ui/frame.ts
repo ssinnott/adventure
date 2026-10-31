@@ -178,7 +178,7 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
     if ((c.solid === 'wall' || c.solid === 'building') && cell >= 6) { ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(ox + x * cell, oy + y * cell + cell - 1, cell, 1); }
   }
   // Features the party has stood next to, as the view draws them (`markOf`): a spent chest, cairn,
-  // shrine, fountain or statue gone from the map, a den burnt as a ruin, and a camp always shown.
+  // shrine, fountain or statue gone from the map, a den burnt as a ruin and a camp always shown.
   for (const f of m.features) {
     const mark = shown(f.x, f.y) ? markOf(world, f) : null;
     if (!mark) continue;
