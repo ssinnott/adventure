@@ -17,7 +17,7 @@ type Who = ReturnType<Parameters<typeof import('../../src/ui/viewport.ts').drawV
 const PATH_MAX = 15;
 /** The least of the band over the horizon the dead wood's bare trees fill: about 1.7% as drawn, 0% with none. */
 const DEAD_MIN = 1;
-/** The least of the band over the horizon the pinewoods' pines fill: about 43% as drawn, closer than the woods' 27%. */
+/** The least of the band over the horizon the pinewoods' pines fill: about 43% as drawn, closer than the woods' 22%. */
 const PINE_MIN = 20;
 export async function terrains({ page, ok }: Run): Promise<void> {
   const terrains = await page.evaluate(async () => {
