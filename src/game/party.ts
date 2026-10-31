@@ -1,12 +1,12 @@
-// The party and what it bears: a member made and equipped, its armour class, weapon and to-hit,
-// what it bears (`borne`), resists and is immune to (`immuneTo`), a stat as it stands (`statOf`), a
-// condition taken or dealt (`addCondition`, `lift`, `damage`), a heal cast, an item used
-// (`useItem`), what the clock's passing does to what is borne (`passClock`), whether the company
-// swims or climbs, and the premade and the drawn company (`randomParty`): what reads the items, the
-// calendar or the skills. Its parts are in game/party/ (#1020), held to the same rule, and it gives
-// on all they hold: the tables, the conditions, the levels and the order (#1066). Pure data and
-// pure functions; the rng is passed in so tests can pin it, and the item and spell tables are
-// handed in (#973, #974).
+// The party and what it bears: a member made and equipped, its armour class, weapon, to-hit and
+// chance to crit (`critChance`), what it bears (`borne`), resists and is immune to (`immuneTo`), a
+// stat as it stands (`statOf`), a condition taken or dealt (`addCondition`, `lift`, `damage`), a heal
+// cast, an item used (`useItem`), what the clock's passing does to what is borne (`passClock`),
+// whether the company swims or climbs, and the premade and the drawn company (`randomParty`): what
+// reads the items, the calendar or the skills. Its parts are in game/party/ (#1020), held to the
+// same rule, and it gives on all they hold: the tables, the conditions, the levels and the order
+// (#1066). Pure data and pure functions; the rng is passed in so tests can pin it, and the item and
+// spell tables are handed in (#973, #974).
 import { makeRng } from '../lib/engine/rng.ts';
 import type { RngInstance } from '../lib/engine/rng.ts';
 import { item, REGEN_PART } from './items.ts';
@@ -17,7 +17,8 @@ import type { Element } from './spells.ts';
 import { hasSkill } from './skills.ts';
 import type { Items, Tables } from './tables.ts';
 import {
-  STATS, STALWART_AC, HEALING_HANDS, TRAITS, RACES, CLASSES, BASE_STATS, bonus, RANK_STEP, robeLike, SUGGESTED,
+  STATS, STALWART_AC, HEALING_HANDS, TRAITS, RACES, CLASSES, BASE_STATS, bonus, RANK_STEP, robeLike, SUGGESTED, PRESTIGES,
+  CRITS_ON, CRIT_BASE, CRIT_PER_LUCK, CRIT_FLOOR, CRIT_STEP, CRIT_LEVELS,
 } from './party/tables.ts';
 import type { Stat, Stats, RaceId, ClassId, Condition, Character, Party } from './party/tables.ts';
 import { isDown, hasCondition, hasTrait, removeCondition, deathAt, heal, countItem } from './party/conditions.ts';
@@ -81,6 +82,18 @@ export function weaponOf(items: Items, c: Character): ItemDef { return c.equipme
 
 export function attackBonus(items: Items, c: Character): number {
   return CLASSES[c.cls].attack + Math.floor(c.level / 2) + bonus(statOf(items, c, 'accuracy')) + (weaponOf(items, c).plus ?? 0) + armsBonus(c);
+}
+
+/**
+ * The share of a member's weapon blows that land and crit, for double (DESIGN §6, #1114): CRIT_BASE,
+ * and CRIT_PER_LUCK for each point of Luck over 10 as borne, never under CRIT_FLOOR; a knight's,
+ * barbarian's, thief's or monk's CRIT_STEP more at each of CRIT_LEVELS. None while crits are off
+ * (`on`, CRITS_ON in play, a tool's own where it turns them on), so a blow draws nothing for one.
+ */
+export function critChance(items: Items, c: Character, on = CRITS_ON): number {
+  if (!on) return 0;
+  const steps = PRESTIGES[c.cls].calling === 'fighter' ? CRIT_LEVELS.filter((l) => c.level >= l).length : 0;
+  return Math.max(CRIT_FLOOR, CRIT_BASE + CRIT_PER_LUCK * (statOf(items, c, 'luck') - 10)) + CRIT_STEP * steps;
 }
 
 /** Whether race, class or a ward borne (`ItemDef.ward`, #847) keeps the condition off entirely. */

@@ -305,7 +305,8 @@ country, band 26 to 28.
 
 - Seven stats: Might, Intellect, Personality, Endurance, Accuracy, Speed, Luck. Four do something in
   a fight: Might a blow's damage, Accuracy its to-hit, Speed armour, the turn's order and a flight,
-  Personality a heal. Endurance and the spell stat are read when a level is gained, Luck by nothing.
+  Personality a heal. Endurance and the spell stat are read when a level is gained, and Luck a
+  blow's chance to crit (§6), built off until #1117 turns it on.
   A stat as a member stands is their own raised by what they bear (`statOf`, `ItemDef.stat`, #855):
   what they wear and the slotless items in their own pack, as a resistance is borne; armour in the
   pack and the bag raise nothing, and a save holds no raise. Four found items raise one by 3: the
@@ -683,6 +684,12 @@ Decided by the builder, each the owner's to overturn:
   measure (`hits`: the harness's, the ladder's, the pilot's) counts the die at 3.5. Four found
   weapons carry one (§5): Corposant (a morning star), the Thunderhead Axe and the Levin Mace
   lightning; the Beacon Hammer fire.
+- **A critical blow** (#1114): a member's weapon blow that lands may crit, for double, and the log
+  says "A true blow." after the hit. Its chance is 5%, and 2% for each point of Luck over 10 as
+  borne, never under 1%; a knight's, barbarian's, thief's or monk's 5% more at 15 and again at 23
+  (`critChance`). Spells and monsters never crit. Decided by the owner, 30 October 2026, which
+  overturns #18's call 7 for Luck; the figures are #1117's to size. Built off (`CRITS_ON`): no blow
+  crits, nor draws for one, until #1117 turns it on, and a tool may turn it on in a fight (`crits`).
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
