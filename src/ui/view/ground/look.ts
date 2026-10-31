@@ -6,6 +6,7 @@ import type { GameMap } from '../../../game/map.ts';
 import type { Terrain, Solid } from '../../../game/mapdef.ts';
 import type { Facing } from '../../../game/types.ts';
 import type { Env, Paint } from '../common.ts';
+import type { Prop } from '../model.ts';
 
 /**
  * A farm square as the view sees it: its field's crop, whether the rows run away from the eye or
@@ -71,6 +72,11 @@ export interface GroundLook {
   mound?: (p: Paint, base: string, d: number, l: number, seed: number, hillL: boolean, hillR: boolean) => void;
   /** The trees at the sides of a woodland square. */
   sides?: Sides;
+  /**
+   * What stands scattered on it (#1103): its props, each on its rate's share of the squares (`SCATTER_RATES`),
+   * one at most to a square, as view/scatter.ts places them. A variant of the ground may stand others.
+   */
+  scatter?: readonly Prop[];
   /** The billboard it draws, by what stands on it, in place of that solid's own: a glass tree on crystal, a mountain by its rock. */
   boards?: Partial<Record<Solid, (p: Paint, b: Board) => void>>;
 }

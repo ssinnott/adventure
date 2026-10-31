@@ -1,6 +1,7 @@
 // The art held to what the owner once found by hand. Every monster def has a drawing of its own
 // (EXPANSION §5.6), and the walls are dressed with restraint: the share of wall faces that carry
-// dressing stays near where #9 put it, and each kind of dressing has its rate. The silhouettes and
+// dressing stays near where #9 put it, and each kind of dressing has its rate. Open ground is scattered
+// with the same (#1103): a rate to each prop, a cap on each map. The silhouettes and
 // the cracks need a canvas, so they are the smoke test's (tools/smoke/art.ts and cracks.ts). Every
 // bow bends away from the man who holds it (#57).
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
@@ -14,6 +15,10 @@ import { merge, FAMILY_OF } from '../../src/ui/monsters/index.ts';
 import type { Sprite } from '../../src/ui/monsters/common.ts';
 import { heldBow, drawnBow, longbow, type BowPts } from '../../src/ui/monsters/bandit.ts';
 import { ok, familyModules } from './lib.ts';
+import { GROUND } from '../../src/ui/view/ground/index.ts';
+import { SCATTER_RATES, type Prop } from '../../src/ui/view/model.ts';
+import { scatterAt } from '../../src/ui/view/scatter.ts';
+import type { MapDef } from '../../src/game/mapdef.ts';
 
 /** The defs that draw with a kind another def draws with too, as 'kind: a, b'. */
 export function sharedKinds(defs: readonly { id: string; sprite: string }[]): string[] {
@@ -73,6 +78,31 @@ const share = (t: Tally): number => t.dressed / t.faces;
 const pct = (t: Tally): string => `${(100 * share(t)).toFixed(1)}% of ${t.faces}`;
 export const mapOver = (t: Tally): boolean => share(t) > (t.faces >= SMALL_MAP ? MAP_CAP : SMALL_MAP_CAP);
 export const kindOver = (t: Tally): boolean => t.faces >= KIND_FLOOR && share(t) > KIND_CAP;
+
+/**
+ * Scatter's caps (#1103): a ground's props add up to a fifth of its squares at most, and a map of 100 squares
+ * of open ground or more has props on at most a quarter of them, a smaller one on half. Set above the maps
+ * as they stand (some 12% in all and 18% at the most), so an honest map seldom fails by chance.
+ */
+const SCATTER_MAX = 0.2, SCATTER_CAP = 0.25, SMALL_SCATTER_CAP = 0.5;
+/**
+ * Count each outdoor map's open ground, its squares with no solid and no door whose ground scatters props,
+ * and how many of them `strewn` holds a prop stands on; a zone of the outdoors is a map of its own, as for
+ * the walls (the faces are its squares, the dressed those with a prop).
+ */
+function tallyScatter(maps: readonly GameMap[], strewn: Rule): Tally[] {
+  const out = new Map<string, Tally>();
+  for (const m of maps) if (m.kind === 'outdoor') for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
+    const c = m.at(x, y);
+    if (c.solid !== 'none' || c.door !== 'none' || !GROUND[c.terrain].scatter) continue;
+    const id = m.zoneAt(x, y)?.id ?? m.id, t = out.get(id) ?? { id, kind: m.kind, faces: 0, dressed: 0 };
+    out.set(id, t);
+    t.faces++;
+    if (strewn(m, x, y)) t.dressed++;
+  }
+  return [...out.values()];
+}
+const scatterOver = (t: Tally): boolean => share(t) > (t.faces >= SMALL_MAP ? SCATTER_CAP : SMALL_SCATTER_CAP);
 
 /**
  * The rule before #9 (21da74a), for the check to be seen failing: every wall rolled, no neighbour
@@ -268,6 +298,38 @@ export async function art(): Promise<void> {
   const then = tallyWalls(maps, BEFORE_9);
   const kindsThen = byKind(then);
   ok(kindsThen.every((t) => t.faces < KIND_FLOOR || kindOver(t)) && kindsThen.some(kindOver) && then.every(mapOver), `walls dressed as before #9 fail: ${kindsThen.map((t) => `${t.kind} ${pct(t)}`).join(', ')}${then.some((t) => !mapOver(t)) ? ' -> passed: ' + then.filter((t) => !mapOver(t)).map((t) => t.id).join(', ') : ''}`);
+
+  // What stands scattered on open ground (#1103), with the walls' restraint: each prop has its rate and a
+  // ground that stands it, a ground's add up to SCATTER_MAX at most, and no map's open ground carries props
+  // on more than SCATTER_CAP of its squares; open ground strewn on every square fails.
+  const strewing = Object.entries(GROUND).flatMap(([t, g]) => (g.scatter ? [[t, g.scatter] as const] : []));
+  const unstood = (Object.keys(SCATTER_RATES) as Prop[]).filter((k) => !(SCATTER_RATES[k] > 0) || !strewing.some(([, ps]) => ps.includes(k)));
+  const heavy = strewing.filter(([, ps]) => ps.reduce((n, k) => n + SCATTER_RATES[k], 0) > SCATTER_MAX + 1e-9).map(([t]) => t);
+  ok(strewing.length > 0 && !unstood.length && !heavy.length, `each prop has a rate and a ground that stands it, and a ground's add up to ${100 * SCATTER_MAX}% at most (${strewing.map(([t, ps]) => `${t}: ${ps.map((k) => `${k} ${SCATTER_RATES[k]}`).join(', ')}`).join('; ')})${unstood.length ? ' -> no rate or no ground: ' + unstood.join(', ') : ''}${heavy.length ? ' -> over: ' + heavy.join(', ') : ''}`);
+  const strewn = tallyScatter(maps, (m, x, y) => scatterAt(m, x, y) !== null), most = [...strewn].sort((a, b) => share(b) - share(a)).slice(0, 3);
+  const all = strewn.reduce((n, t) => [n[0] + t.dressed, n[1] + t.faces], [0, 0]), overStrewn = strewn.filter(scatterOver);
+  ok(strewn.length > 0 && !overStrewn.length, `every map's open ground carries props on at most ${100 * SCATTER_CAP}% of its squares (${100 * SMALL_SCATTER_CAP}% under ${SMALL_MAP}): ${(100 * all[0] / all[1]).toFixed(1)}% of ${all[1]} on ${strewn.length} maps, the most ${most.map((t) => `${t.id} ${pct(t)}`).join(', ')}${overStrewn.length ? ' -> over: ' + overStrewn.map((t) => `${t.id} ${pct(t)}`).join(', ') : ''}`);
+  const everywhere = tallyScatter(maps, () => true);
+  ok(everywhere.every(scatterOver), `open ground strewn on every square fails the cap on every map (${everywhere.length})`);
+  // None stands on a door, an exit or a gate, a feature's square or a group's start: on a field of grass
+  // where each is laid on a square that stands a prop without it, and on the maps as played. Reeds and
+  // driftwood stand only beside water.
+  const grassland = (o: Partial<MapDef> = {}): GameMap => new GameMap({ id: 'fx_scatter', name: 'Scatter', kind: 'outdoor', start: { x: 0, y: 0, facing: 0 }, rows: Array(16).fill(','.repeat(16)), ...o });
+  const bare = grassland(), propped = bare.cells.flatMap((_, i) => { const x = i % 16, y = Math.floor(i / 16); return x > 0 && y > 0 && x < 15 && y < 15 && scatterAt(bare, x, y) ? [{ x, y }] : []; });
+  const [fe, gr, ex, ga, dr] = propped;
+  const laid = propped.length >= 5 ? grassland({
+    rows: bare.def.rows.map((r, y) => (y === dr.y ? r.slice(0, dr.x) + 'G' + r.slice(dr.x + 1) : r)), legend: { G: { terrain: 'grass', door: 'door' } },
+    features: [{ kind: 'sign', x: fe.x, y: fe.y, text: 'A sign.' }], encounters: [{ id: 'fx_band', x: gr.x, y: gr.y, monsters: ['wolf'] }],
+    exits: [{ x: ex.x, y: ex.y, to: 'harrow', tx: 0, ty: 0 }], gates: [{ x: ga.x, y: ga.y }],
+  }) : bare;
+  const stoodOn = propped.length >= 5 ? [fe, gr, ex, ga, dr].filter((q) => scatterAt(laid, q.x, q.y)).length : -1;
+  const kept = maps.flatMap((m) => [...m.features, ...m.encounters, ...m.exits, ...m.gates, ...m.cells.flatMap((c, i) => (c.door !== 'none' ? [{ x: i % m.width, y: Math.floor(i / m.width) }] : []))].map((q) => ({ m, x: q.x, y: q.y })));
+  const onKept = kept.filter(({ m, x, y }) => scatterAt(m, x, y)).map(({ m, x, y }) => `${m.zoneAt(x, y)?.id ?? m.id} ${x},${y}`);
+  ok(stoodOn === 0 && !onKept.length, `no prop stands on a door, an exit or a gate, a feature's square or a group's start: on a field where each stands on a square that stood a prop (${propped.length} of 196 did), and on ${kept.length} such squares of the maps as played${stoodOn ? ` -> on the field: ${stoodOn}` : ''}${onKept.length ? ' -> ' + onKept.join(', ') : ''}`);
+  const wet = (m: GameMap, x: number, y: number): boolean => [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]].some(([nx, ny]) => m.inBounds(nx, ny) && ['water', 'deep', 'tidal'].includes(m.at(nx, ny).terrain));
+  const byWater = maps.flatMap((m) => m.cells.flatMap((_, i) => { const x = i % m.width, y = Math.floor(i / m.width), s = scatterAt(m, x, y); return s && (s.prop === 'reeds' || s.prop === 'driftwood') ? [{ m, x, y }] : []; }));
+  const dry = byWater.filter(({ m, x, y }) => !wet(m, x, y)).map(({ m, x, y }) => `${m.id} ${x},${y}`);
+  ok(byWater.length > 0 && !dry.length, `reeds and driftwood stand only beside water (${byWater.length} on the maps as played)${dry.length ? ' -> dry: ' + dry.join(', ') : ''}`);
 
   // Every bow bends away from its archer: the riser leads and the nocks trail back to the string. The
   // smuggler bowman's drew with the nocks out past the grip (#57), and that drawing fails, as does

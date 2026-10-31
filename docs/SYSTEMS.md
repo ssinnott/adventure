@@ -151,6 +151,13 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   holds them, a record over the terrains; the floors, the scene and the rain ask it and name no
   ground. In the view a new ground is a module there, its line in `src/ui/view/ground/index.ts` and
   its colour in `TERRAIN_COLORS` (the automap's): the typecheck names a terrain without either.
+- **Scatter**, `src/ui/view/scatter.ts` (#1103): a ground's look names the props it scatters, small
+  drawings in `src/ui/scenery.ts` (a bush, a boulder, gorse, reeds, a skull, a wisp of steam), each on
+  its rate's share of the ground's open squares (`SCATTER_RATES`, beside the walls' `DRESSING_RATES`).
+  `scatterAt` places one by a hash of the square, outdoors only: in a corner of it whose two sides are
+  open, never on a door, an exit, a gate, a feature's square or a group's start, and reeds and
+  driftwood only beside water. A prop is seen past and walked through: sight, the automap and the
+  pilot read none. `tools/tests/art.ts` holds the rates and a cap on each map, the smoke the way ahead.
 
 ## Stubbed or absent
 

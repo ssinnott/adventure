@@ -12,4 +12,5 @@ function mark(p: Paint, m: Mark): void {
   ctx.fillStyle = fog(p, shade(base, 0.8), d); ctx.fillRect(Math.round(x), Math.round(y), 1, 1);
 }
 
-export const sand: GroundLook = { color: () => TERRAIN_COLORS.sand, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 4, mark } };
+export const sand: GroundLook = { color: () => TERRAIN_COLORS.sand, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 4, mark },
+  scatter: ['driftwood', 'shells'] };

@@ -48,6 +48,7 @@ import { drawVoidFront, drawVoidSide, drawFrontFace, drawLighthouseFlank, LAMP_R
 import { drawRoof, drawChimney } from './roofs.ts';
 import { inTent, tentView, drawTentRoof } from './tents.ts';
 import { Scenes } from './kept.ts';
+import { drawScatter } from './scatter.ts';
 
 const DEPTH = VIEW_DEPTH;
 const LATERAL = VIEW_LATERAL;
@@ -356,6 +357,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
           const s = u * (sides.size + sides.spread * hash(c.x, c.y, 66 + side));
           sides.tree(p, bx, by, s, tone, hash(c.x, c.y, 68 + side));
         }
+      } else if (d > 0 && !backdrop) {
+        // Open ground: the prop scattered on it, if one stands there (scatter.ts, #1103).
+        drawScatter(p, c.x, c.y, d, l, f);
       }
     }
   }
