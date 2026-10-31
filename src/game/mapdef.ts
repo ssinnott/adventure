@@ -428,6 +428,8 @@ export interface MapPalette {
  * A landmark: a building square drawn as what it is, tall, over the land and from far off. A
  * lighthouse's lamp is lit by night once the party holds its `lit` flag. A monastery is bell towers
  * over a wall, with no lamp and no `lit`; it stands inside its block of building squares, whose walls
- * hide its foot near to.
+ * hide its foot near to. The kinds of #1096 are the view's own, not the site's icon: a volcano's cone
+ * and plume, a city's walls and keep, a stone ring, a tower, a great tree, chimney stacks, a fortress,
+ * falls and a wreck's masts. One may stand on a mountain's square, whose own drawing stands near to.
  */
-export interface Landmark { x: number; y: number; kind: 'lighthouse' | 'monastery'; lit?: string }
+export interface Landmark { x: number; y: number; kind: 'lighthouse' | 'monastery' | 'volcano' | 'city' | 'ring' | 'tower' | 'tree' | 'stacks' | 'fortress' | 'falls' | 'wreck'; lit?: string }

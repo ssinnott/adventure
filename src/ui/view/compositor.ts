@@ -1,6 +1,7 @@
 // The first-person viewport: a depth-layered compositor in the Might and Magic III-V tradition. It draws
 // the walls and the grounds, each as its look in view/ground/ gives it (#1030), and the ground past a hill
-// seen from below it (`standsAt`), a landmark tall over its building's square out to `LANDMARK_REACH`, the
+// seen from below it (`standsAt`), a landmark tall over its square out to its kind's reach and behind the land
+// nearer than it (view/landmarks.ts, #1096), the
 // tents, the wall dressing, the features on open ground (view/features.ts, #1110), the sky, the land past
 // the fourth square cast from the atlas (view/horizon.ts, #1095), the end of the world drawn as its look and
 // the weather over it:
@@ -32,12 +33,12 @@ import type { Facing } from '../../game/types.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 import { VOID_PINK } from '../palette.ts';
 import { drawMonsterSprite } from '../sprites.ts';
-import { drawTreeSprite, drawLighthouseSprite, drawMonasterySprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, treeOf } from '../scenery.ts';
+import { drawTreeSprite, drawLighthouseSprite, LANDMARK_SPRITES, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, treeOf } from '../scenery.ts';
 import type { MonsterSprite } from '../../game/monsters.ts';
 import { weatherSight } from '../../game/weather.ts';
 import { sunTimes } from '../../game/calendar.ts';
 import { hash } from '../paint/brush.ts';
-import { hearthBearing, hearthLook } from '../../game/stones.ts';
+import { HEARTH, hearthBearing, hearthLook } from '../../game/stones.ts';
 import { unit, CLEAR, paintOn, floorPt, pixel, addPoly } from './common.ts';
 import type { ViewRect, Flame, Env, View } from './common.ts';
 import { murkOf, toPair, drawnAt, standsAt, looksHouse, building, tentOf } from './model.ts';
@@ -54,13 +55,13 @@ import { inTent, tentView, drawTentRoof } from './tents.ts';
 import { Scenes } from './kept.ts';
 import { drawScatter } from './scatter.ts';
 import { drawFeatures } from './features.ts';
-import { castHorizon, drawLand } from './horizon.ts';
+import { castHorizon, drawLand, standing, standsOver } from './horizon.ts';
+import type { Horizon } from './horizon.ts';
+import { LANDMARK_REACH, landmarkShows, volcanoScale } from './landmarks.ts';
 import { GRID } from '../../content/maps.ts';
 
 const DEPTH = VIEW_DEPTH;
 const LATERAL = VIEW_LATERAL;
-/** How many squares off a landmark stands over the land: a lighthouse seen from across the bay. */
-const LANDMARK_REACH = 40;
 
 /** A figure the viewport draws for a group: the monster, its sprite, tint and size. `under` draws it under the ice. */
 export interface ViewMonster { id: string; sprite: MonsterSprite; tint: string; size: number; under?: 'ice'; }
@@ -186,6 +187,8 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const look = hearthLook(world.hearth), air = airOf(world);
   const skyBottom = hazeOf(daylight, cloud, env.murk, look.cast, air);
   const haze = map.kind === 'dungeon' ? null : skyBottom;
+  // The light the land past the fourth square is seen in (horizon.ts), and a volcano standing on it.
+  const light = { daylight, dark, murk: env.murk, cover: env.cover, day, haze: skyBottom };
 
   // The frame's Paint, which each painter below takes first (#1029): the light and the weather worked
   // out above, whether a feature is there now as the world says, and the flames the scene lights.
@@ -195,21 +198,26 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();
 
   const pal = map.paletteAt(px, py);
+  // The land past the fourth square cast from the atlas, outdoors, which a landmark stands behind (#1096).
+  let cast: Horizon | undefined;
   if (backdrop) { ctx.fillStyle = backdrop; ctx.fillRect(r.x, r.y, r.w, r.h); }
   else if (map.kind === 'dungeon') {
     ctx.fillStyle = shade(pal.ceiling, 0.7); ctx.fillRect(r.x, r.y, r.w, r.h / 2);
     ctx.fillStyle = shade(pal.floor, 0.5); ctx.fillRect(r.x, horizon, r.w, r.h / 2);
   } else {
     const { dawn, dusk } = sunTimes(day);
-    const at = world.worldCell, hearth = at ? { bearing: hearthBearing(world.tables.atlas, at.x, at.y), step: look.step } : undefined;
+    // The Hearth's bearing, and how far off it burns, which the land nearer than it stands in front of by day
+    // (#1096); the weather that takes the fourth square takes its column by day, as it takes a landmark.
+    const at = world.worldCell, far = (q: { x: number; y: number }): number | undefined => { const [hx, hy] = HEARTH(world.tables.atlas); return !wx || weatherSight(wx) >= 4 ? Math.hypot(hx - q.x, hy - q.y) : undefined; };
+    const hearth = at ? { bearing: hearthBearing(world.tables.atlas, at.x, at.y), step: look.step, far: far(at) } : undefined;
     // The land past the fourth square cast from the atlas where the party stands, over the horizon and
     // under it (horizon.ts, #1095): the grid alone, which never changes as a game runs.
-    const cast = at ? castHorizon(GRID, at, f, r.w, r.h) : undefined;
+    cast = at ? castHorizon(GRID, at, f, r.w, r.h) : undefined;
     const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth, cast: look.cast, air, horizon: cast };
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
     // Past a hill seen from below it the ground is the hill's (#53), in the colour it drifts to at its cell (#1098).
-    if (cast) drawLand(p, r, cast, { daylight, dark, murk: env.murk, cover: env.cover, day, haze: skyBottom }, pal.floor, (l) => {
+    if (cast) drawLand(p, r, cast, light, pal.floor, (l) => {
       const brow = hillOver(map, px, py, f, DEPTH + 1, l);
       return brow && shade(groundColor(p, map.at(brow.x, brow.y).terrain, pal.floor, brow.x, brow.y), dark ? 0.2 : 0.55);
     });
@@ -248,30 +256,46 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   // A landmark drawn tall, its lamp lit by night once the party holds its flag; the lamp is drawn
   // every frame, and goes out as a torch does wherever anything nearer is painted over it.
   // One tone near and far, so the tower does not darken as it comes into the squares drawn.
-  // The lamp and its flame are a lighthouse's: a monastery's towers stand dark by night.
+  // The lamp and its flame are a lighthouse's: a monastery's towers stand dark by night, and the kinds of
+  // #1096 light none, their fires and the smoke over them lit by the night's glow as they are painted.
   const landmarkTone = (dark ? 0.3 : 0.95) * (1 - env.murk * 0.5);
-  const drawLandmark = (lm: Landmark, bx: number, by: number, u: number, tone = landmarkTone): void => {
-    if (lm.kind === 'monastery') { drawMonasterySprite(ctx, bx, by, u, tone, env.cover); return; }
+  // The wind across the view, toward the party's right hand, which a landmark's smoke leans with.
+  const wind = wx ? (Math.cos(wx.windDir) * FACING_DX[rf] + Math.sin(wx.windDir) * FACING_DY[rf]) * wx.wind : 0;
+  const drawLandmark = (lm: Landmark, bx: number, by: number, u: number, tone = landmarkTone, rock?: string, shows?: (x: number, y: number) => boolean): void => {
+    if (lm.kind !== 'lighthouse') { LANDMARK_SPRITES[lm.kind](ctx, bx, by, u, { tone, snow: env.cover, wind, glow: dark ? 1 : 0, rock }); return; }
     const lit = (!lm.lit || !!world.party.flags[lm.lit]) && daylight < 0.35;
     const lamp = drawLighthouseSprite(ctx, bx, by, u, tone, lit ? 1 : 0, env.cover);
-    if (!lit) return;
+    // A lamp the land nearer than it hides lights nothing: its light would stand over that land.
+    if (!lit || (shows && !shows(lamp.x, lamp.y))) return;
     const fl: Flame = { x: lamp.x, y: lamp.y, s: lamp.r, lamp: true, under: pixel(ctx, lamp.x, lamp.y) };
     // The strip the beam and the glow can reach, read now: what is painted over it later is nearer.
     const R = lamp.r * LAMP_REACH, G = lamp.r * 6;
     const x0 = Math.max(r.x, Math.floor(lamp.x - R)), x1 = Math.min(r.x + r.w, Math.ceil(lamp.x + R));
     const y0 = Math.max(r.y, Math.floor(lamp.y - G)), y1 = Math.min(r.y + r.h, Math.ceil(lamp.y + G));
-    if (x1 > x0 && y1 > y0) fl.reach = { x: x0, y: y0, w: x1 - x0, h: y1 - y0, before: ctx.getImageData(x0, y0, x1 - x0, y1 - y0) };
+    if (x1 > x0 && y1 > y0) {
+      // Where the land nearer than it stands, painted before it, the strip is marked as painted over since.
+      const before = ctx.getImageData(x0, y0, x1 - x0, y1 - y0);
+      if (shows) for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) if (!shows(x + 0.5, y + 0.5)) before.data[((y - y0) * (x1 - x0) + x - x0) * 4 + 3] = 0;
+      fl.reach = { x: x0, y: y0, w: x1 - x0, h: y1 - y0, before };
+    }
     p.flames.push(fl);
   };
-  // Past the squares drawn, a landmark still stands over the land, out to LANDMARK_REACH; anything
-  // nearer is painted over it. The weather that takes the fourth square takes it too (fog, a
-  // downpour), its lamp with it; short of that, murk fades its tone.
+  // Past the squares drawn, a landmark still stands over the land, out to its kind's reach (landmarks.ts):
+  // the land the horizon casts nearer than it hides its foot and as much of it as that land stands over
+  // the horizon, column by column (#1096), and anything nearer is painted over it. A volcano is drawn to
+  // the range the skyline stands there and in its colour, so the cone is that range's summit. The weather
+  // that takes the fourth square takes it too (fog, a downpour), its lamp with it; short of that, murk fades its tone.
+  const land = cast;
   if (map.kind === 'outdoor' && !backdrop && (!wx || weatherSight(wx) >= 4)) for (const lm of map.landmarks) {
     const dx = lm.x - px, dy = lm.y - py, k = dx * FACING_DX[f] + dy * FACING_DY[f], lat = dx * FACING_DX[rf] + dy * FACING_DY[rf];
-    if (k <= Math.min(DEPTH, sight) || k > LANDMARK_REACH) continue;
-    const u = unit(k, r.h), bx = cx + lat * 2 * u;
-    if (bx < r.x - u * 2 || bx > r.x + r.w + u * 2) continue;
-    drawLandmark(lm, bx, horizon + u, u);
+    if (k <= Math.min(DEPTH, sight) || k > LANDMARK_REACH[lm.kind]) continue;
+    const u = unit(k, r.h), bx = cx + lat * 2 * u, range = lm.kind === 'volcano' ? standing('volcano', k, light) : undefined, s = range ? volcanoScale(range.h, u) : u;
+    if (bx < r.x - s * 3 || bx > r.x + r.w + s * 3) continue;
+    const shown = land && landmarkShows(land, Math.floor(bx - s * 3 - r.x), Math.ceil(bx + s * 3 - r.x), k);
+    ctx.save();
+    if (shown) { ctx.beginPath(); for (const q of shown) ctx.rect(r.x + q.c, r.y, q.n, q.top ? horizon - q.top - r.y : r.h); ctx.clip(); }
+    drawLandmark(lm, bx, horizon + u, s, landmarkTone, range?.colour, land && ((x, y) => { const top = standsOver(land, Math.floor(x - r.x), k); return !top || y < horizon - top; }));
+    ctx.restore();
   }
 
   for (let d = DEPTH; d >= 0; d--) {

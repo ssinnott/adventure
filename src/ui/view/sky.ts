@@ -1,8 +1,8 @@
 // The sky (#1028): the band over the horizon with its sun or moon, clouds, stars and distant hills, the
 // land cast from the atlas where it is given one (horizon.ts, #1095) and two bands where not (`drawSkyBand`,
 // the title's too), an ending's cast over its colours, the region's air (`airOf`, #1097)
-// and the haze it gives far things (`hazeOf`), the Hearth's light on the horizon by night and the title's
-// dusk (`drawDusk`).
+// and the haze it gives far things (`hazeOf`), the Hearth's light on the horizon by night, its pale column
+// by day behind the land nearer than it (`hearthShows`, #1096) and the title's dusk (`drawDusk`).
 
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 import { hash } from '../paint/brush.ts';
@@ -12,7 +12,7 @@ import type { World } from '../../game/world.ts';
 import type { Air } from '../../content/area.ts';
 import { grassColor } from './common.ts';
 import type { ViewRect } from './common.ts';
-import { drawSkyline } from './horizon.ts';
+import { drawSkyline, standsOver } from './horizon.ts';
 import type { Horizon } from './horizon.ts';
 
 export interface SkyOpts {
@@ -30,9 +30,10 @@ export interface SkyOpts {
   /**
    * The Hearth on the horizon by night: its compass bearing from the party, and its step, a Stone
    * restored a step brighter and wider (#168) and past full once the voyage is finished (game/stones.ts,
-   * #750). Not drawn when absent.
+   * #750); by day its pale column, which the land nearer than `far` squares stands in front of (#1096),
+   * and none without `far`, where the weather takes the far land. Not drawn when absent.
    */
-  hearth?: { bearing: number; step: number };
+  hearth?: { bearing: number; step: number; far?: number };
   /** The sky's colours once the hull is opened (#750), by day the wrong colour: the sky's own when absent. */
   cast?: HearthLook['cast'];
   /** The region's air (`airOf`): the sky's own when absent. */
@@ -160,8 +161,41 @@ export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOp
       ctx.lineTo(r.x + r.w, horizon + 1); ctx.closePath();
       ctx.fillStyle = dark ? shade(col, 0.5) : col; ctx.fill();
     }
-    if (o.hearth) drawHearthLight(ctx, r, o.hearth.bearing - f * 90, o.hearth.step, daylight, 1 - Math.min(1, cloud * 1.05 + murk * 0.5));
+    if (o.hearth) {
+      // By day it stands behind the land cast from the atlas, so only over it: the title's two bands have none.
+      const { night, day } = hearthShows(daylight, 1 - Math.min(1, cloud * 1.05 + murk * 0.5)), cast = o.horizon, far = o.hearth.far;
+      drawHearthLight(ctx, r, o.hearth.bearing - f * 90, o.hearth.step, night);
+      if (cast && far !== undefined) drawHearthByDay(ctx, r, o.hearth.bearing - f * 90, day, hazeOf(daylight, cloud, murk, o.cast, o.air), (c) => standsOver(cast, c, far));
+    }
   }
+}
+
+/**
+ * How strongly the Hearth shows where it lies, 0 .. 1, as the light goes: by night its light, fading out as
+ * `daylight` rises to 0.3, and by day its pale column, fading in from 0.3 to 0.6 (#1096); both lost under
+ * cloud and murk as the moon is (`seen`). Whatever the Stones and the ending, the day's is the same.
+ */
+export function hearthShows(daylight: number, seen: number): { night: number; day: number } {
+  return { night: Math.min(1, Math.max(0, (0.3 - daylight) / 0.3)) * seen, day: Math.min(1, Math.max(0, (daylight - 0.3) / 0.3)) * seen };
+}
+
+/** How tall the Hearth's column stands by day over the horizon, in pixels: its light's by night with no Stone home. */
+const HEARTH_DAY = 64;
+
+/**
+ * The Hearth by day where it lies, `ahead` degrees right of the way the party faces (#1096): a faint pale
+ * column of the haze's colour, a streak noticed the second time, its top third fainter, `day` of the way to
+ * its clearest. The land nearer than it in its column stands in front of it (`hidden`, pixels over the
+ * horizon), hiding its foot. Not drawn when its bearing is out of view.
+ */
+function drawHearthByDay(ctx: CanvasRenderingContext2D, r: ViewRect, ahead: number, day: number, haze: string, hidden: (c: number) => number): void {
+  let rel = (ahead % 360 + 360) % 360; if (rel > 180) rel -= 360;
+  if (day <= 0.02 || Math.abs(rel) > 100) return;
+  const horizon = r.y + r.h / 2, x = Math.round(r.x + r.w / 2 + (rel / 90) * r.w * 0.55) - 1;
+  if (x + 2 <= r.x || x >= r.x + r.w) return;
+  const top = horizon - HEARTH_DAY, thin = top + Math.round(HEARTH_DAY / 3), foot = horizon - Math.max(hidden(x - r.x), hidden(x + 1 - r.x)), pale = mix(haze, '#fffaf0', 0.6);
+  if (foot > thin) { ctx.fillStyle = rgba(pale, 0.7 * day); ctx.fillRect(x, thin, 2, foot - thin); }
+  if (foot > top) { ctx.fillStyle = rgba(pale, 0.35 * day); ctx.fillRect(x, top, 2, Math.min(foot, thin) - top); }
 }
 
 /** The view the title and the endings' pages (ui/title.ts, ui/ending.ts) share. */
@@ -209,8 +243,7 @@ export function drawDusk(ctx: CanvasRenderingContext2D, frame: number, look: Hea
  * restored (#168), and past full once the voyage is finished (#750); lost in cloud and murk as the
  * moon is. Not drawn when its bearing is out of view.
  */
-function drawHearthLight(ctx: CanvasRenderingContext2D, r: ViewRect, ahead: number, n: number, daylight: number, seen: number): void {
-  const light = Math.min(1, Math.max(0, (0.3 - daylight) / 0.3)) * seen;
+function drawHearthLight(ctx: CanvasRenderingContext2D, r: ViewRect, ahead: number, n: number, light: number): void {
   let rel = (ahead % 360 + 360) % 360; if (rel > 180) rel -= 360;
   if (light <= 0.02 || Math.abs(rel) > 100) return;
   const horizon = r.y + r.h / 2, hx = r.x + r.w / 2 + (rel / 90) * r.w * 0.55;

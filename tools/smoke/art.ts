@@ -255,6 +255,36 @@ export async function hearth({ page, ok }: Run): Promise<void> {
     const south = glow(2), north = glow(0);
     w.party.flags.q_tide_home = 1;
     const home = glow(2);
+    // By day (#1096), the Hearth where it lies against the Hearth moved sixty squares behind the company, its site
+    // moved in the atlas for the paint: the pixels that differ are its column's. At noon from the same road facing
+    // south; in fog that takes the fourth square; and from Sheerpoint's 11,20 facing east, the Hearth moved sixty
+    // squares ahead, behind the range there, with the rows the range stands over in its columns.
+    const Hz = await load<typeof import('../../src/ui/view/horizon.ts')>('/src/ui/view/horizon.ts'), Mp = await load<typeof import('../../src/content/maps.ts')>('/src/content/maps.ts');
+    const tables = w.tables;
+    const byDay = (map: string, x: number, y: number, f: Facing, fog = 0): { n: number; cols: number[]; low: number; over: number } => {
+      w.travel(map, x, y, f);
+      w.state.minutes = Math.floor(minutes / 1440) * 1440 + 720;
+      w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+      const at = w.worldCell!, ahead = (k: number): readonly [number, number] => [at.x + [0, 1, 0, -1][f] * k, at.y + [-1, 0, 1, 0][f] * k];
+      const paint = (where: readonly [number, number] | null): Uint8ClampedArray => {
+        if (where) (w as { tables: typeof tables }).tables = { ...tables, atlas: { ...tables.atlas, sites: tables.atlas.sites.map((s) => (s.icon === 'hearth' ? { ...s, at: where } : s)) } };
+        skyCtx.clearRect(0, 0, W, H); ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+        (w as { tables: typeof tables }).tables = tables;
+        return ctx.getImageData(0, 0, W, H).data;
+      };
+      const there = paint(map === 'shelf' ? null : ahead(60)), gone = paint(ahead(-60));
+      const cast = Hz.castHorizon(Mp.GRID, at, f, W, H), cols = new Set<number>();
+      let n = 0, low = 0, over = 0;
+      for (let i = 0; i < there.length; i += 4) {
+        if (Math.abs(there[i] - gone[i]) + Math.abs(there[i + 1] - gone[i + 1]) + Math.abs(there[i + 2] - gone[i + 2]) <= 6) continue;
+        const px = (i / 4) % W, py = Math.floor(i / 4 / W), top = Hz.standsOver(cast, px, 60);
+        n++; cols.add(px);
+        if (py >= H / 2) low++;
+        if (map !== 'shelf' && py >= H / 2 - top) over++;
+      }
+      return { n, cols: [...cols].sort((a, b) => a - b), low, over };
+    };
+    const day = byDay('shelf', 16, 6, 2), fogged = byDay('shelf', 16, 6, 2, 0.35), ranged = byDay('sheerpoint_i9', 11, 20, 1);
     // The title over each save: its column's light summed, and how far it swings over the frames.
     const title = (): { light: number; swing: number } => {
       g.saveGame();
@@ -275,9 +305,12 @@ export async function hearth({ page, ok }: Run): Promise<void> {
     const plain = title();
     g.store!.removeItem('hearth-of-caldera.save');
     w.party.flags = flags; w.state.minutes = minutes; w['cached'] = null; w.travel(place.map, place.x, place.y, place.f);
-    return { south, north, home, steadier, plain };
+    return { south, north, home, steadier, plain, day, fogged, ranged };
   });
   ok(hearth.south > 0 && hearth.north < hearth.south / 100 && hearth.home > hearth.south, `by night the Hearth stands over the hills where it lies, south of Helmstow and not north, and brighter with the Tide Stone home (${hearth.south} south, ${hearth.north} north, ${hearth.home} home)`);
+  const { day, fogged, ranged } = hearth;
+  ok(day.n > 40 && day.cols.length === 2 && day.cols[1] - day.cols[0] === 1 && day.low === 0 && fogged.n === 0, `by day the Hearth stands faint over the land where it lies, a pale column on its bearing from Helmstow's road facing south, and is gone in fog that takes the fourth square (${day.n} pixels in columns ${day.cols.join(' and ')}, ${day.low} under the horizon; in fog ${fogged.n})`);
+  ok(ranged.n > 0 && ranged.over === 0, `by day the Hearth's column stands only over a range nearer than it: moved sixty squares ahead of Sheerpoint's 11,20 facing east, behind the range there, it shows in ${ranged.n} pixels over the range and ${ranged.over} where the range stands`);
   ok(hearth.steadier.light > hearth.plain.light && hearth.steadier.swing < hearth.plain.swing, `the title over a save with the Tide Stone home draws a brighter, steadier Hearth (light ${hearth.steadier.light.toFixed(0)} against ${hearth.plain.light.toFixed(0)}, swing ${hearth.steadier.swing} against ${hearth.plain.swing})`);
 }
 

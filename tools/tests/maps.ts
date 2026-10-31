@@ -216,8 +216,9 @@ export function maps(): void {
       if (to) ok(to.passable(e.tx, e.ty) === 'ok', `${def.id} -> ${e.to}: arrival cell ${e.tx},${e.ty} is passable`);
     }
     for (const f of m.features) ok(m.passable(f.x, f.y, { swim: true, climb: true, keys: 1 }) !== 'wall', `${def.id}: feature ${f.kind} at ${f.x},${f.y} is not inside a wall`);
-    // A landmark is a building drawn as what it is (#312): it stands on a building's square.
-    for (const l of m.landmarks) ok(m.at(l.x, l.y).solid === 'building', `${def.id}: the ${l.kind} at ${l.x},${l.y} stands on a building's square`);
+    // A landmark is a building drawn as what it is (#312), or a mountain's square (#1096): a volcano's cone,
+    // whose own drawing stands near to.
+    for (const l of m.landmarks) ok(m.at(l.x, l.y).solid === 'building' || m.at(l.x, l.y).solid === 'mountain', `${def.id}: the ${l.kind} at ${l.x},${l.y} stands on a building's square or a mountain's`);
     for (const l of m.landmarks) if (l.kind === 'monastery') { const f = monasteryFault(m, l); ok(!f, `${def.id}: the monastery at ${l.x},${l.y} stands inside its block, with no lamp${f ? ' -> ' + f : ''}`); }
     for (const e of m.encounters) {
       ok(m.passable(e.x, e.y) === 'ok', `${def.id}: encounter ${e.id} at ${e.x},${e.y} is passable`);
