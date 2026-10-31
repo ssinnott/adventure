@@ -53,6 +53,12 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins
   (`airOf`, `src/ui/view/sky.ts`). With none, as over the Foreland and Thornmark, the sky is as it was.
 
+- **A region's hills** (#1105): its look's `hills` names their kind (`src/ui/view/ground/hills.ts`):
+  the Foreland's downs, a slip of chalk under some crests; Cairnmoor's and Wrackholm's tors, low granite
+  outcrops; the Kilns' slag heaps, some smoking; Ashfall's cinder cones lit red by night; the Whitespine's
+  scree. Each mark stands on a share (`HILL_MARKS`). With none, and past the zones (`regionAt`), a hill is
+  as it was; what one hides is the terrain's.
+
 - **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
   one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of
   `src/ui/scenery.ts`: a cairn, a chest, a camp's ring and fire, a shrine, a well, a statue, a
