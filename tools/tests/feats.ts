@@ -456,6 +456,12 @@ function monk(): void {
   const most = (a: PartyAction): number => Math.max(...[1, 2, 3, 4, 5, 6].map((seed) => struck(turn(monkAt(19), a, Array<MonsterDef>(12).fill(FRAIL), seed).lines)));
   const fl = most(feat('flurry')), at = most({ type: 'attack', target: 0 });
   ok(fl === 2 * (2 + FLURRY_MORE) && at === 4, `a Windwalker's flurry that fells carries on to twice its strikes, ${fl}, as its Attack does to twice its two, ${at}`);
+  // A tool's edge (`CombatOpts.edge`, the harness's what-ifs) that adds a blow to an Attack adds it to a flurry too.
+  {
+    const edged = (a: PartyAction): number => { const q = createParty([monkAt(11)]), { f, rng } = fight(q, [[STRAW]], 1, { feats: true, edge: () => ({ blows: 2, damage: 0, ac: 0 }) }); return struck(act(f, q, rng, 0, a, 2) ?? []); };
+    const fe = edged(feat('flurry')), ae = edged({ type: 'attack', target: 0 });
+    ok(ae === 3 && fe === ae + FLURRY_MORE, `a tool's edge that adds a blow to an Attack adds it to a flurry (flurry ${fe}, Attack ${ae})`);
+  }
 
   // Quiet Palm: one strike that, landing on a foe it leaves standing, puts it to sleep; one proof against
   // sleep, by its own nature or its kind's, does not, and the line says so; one it fells or misses, nothing.
@@ -470,6 +476,15 @@ function monk(): void {
   ok([proof, bones].every((x) => x.lines.length === 1 && x.lines[0].endsWith(` ${x.f.monsters[0].def.name} does not sleep.`) && x.f.monsters[0].conditions.length === 0)
     && felled.lines[0]?.endsWith(' Frail dies.') && !missed.lines[0]?.includes(' hits ') && [felled, missed].every((x) => !x.lines.join().includes('sleep') && x.f.monsters[0].conditions.length === 0),
     `a foe proof against sleep, its own or its kind's, is not put to sleep and the line says so ("${proof.lines[0]}", "${bones.lines[0]}"); one felled or missed hears nothing of it`);
+  // As Slumber's: a palm that lands on a foe held fast leaves it asleep in place of the hold.
+  {
+    const q = createParty([monkAt(8)]), { f, rng } = fight(q, [[STRAW]], 1);
+    until(f, q, rng, 0);
+    f.monsters[0].conditions = ['paralysed'];
+    const lines = act(f, q, rng, 0, feat('quiet_palm'), 3) ?? [];
+    ok(lines.length === 1 && lines[0].endsWith(` ${PALM_LINE(STRAW.name, true)}`) && f.monsters[0].conditions.join() === 'asleep',
+      `a palm on a foe held fast leaves it asleep in place of the hold, as Slumber does (${f.monsters[0].conditions.join()}: "${lines[0]}")`);
+  }
   // Asleep, it is a sleeper as Slumber's are: it loses its turns, and a blow that lands wakes it.
   {
     const HITTER = foe('test_hitter', { ac: -100, attack: 50, speed: 99, name: 'Hitter', plural: 'Hitters' });
@@ -513,6 +528,14 @@ function monk(): void {
   const through = [1, 2, 3, 4, 5, 6].map((seed) => leap(monkAt(19), 1, [STRAW, FRAIL_BOW], 0, undefined, seed).lines ?? []).find((l) => l[1]?.includes(' hits ') && l[2]?.includes(' hits '));
   ok(behind.lines === null && behind.st === 3 && windwalker.lines !== null && through?.length === 3 && through[1].endsWith(`Bowman dies. ${FOLLOW_LINE}`) && through[2].startsWith(`monk hits ${STRAW.name} for `),
     `from the back row a leap waits for the second prestige, and a Windwalker's that fells its foe carries on to the front ("${through?.slice(1).join(' ')}")`);
+  // Never at a foe of the back rank that has fallen, while another stands there: refused, nothing spent.
+  {
+    const q = createParty([monkAt(15)]), { f, rng } = band(q, [STRAW, BOW, BOW], 2, 1);
+    until(f, q, rng, 0);
+    f.monsters[1].hp = 0;
+    const fallen = act(f, q, rng, 0, feat('leap', 1), 3), kept = f.stamina![0], up = act(f, q, rng, 0, feat('leap', 2), 3);
+    ok(fallen === null && kept === 3 && up?.[0] === LEAP_LINE('monk'), `a leap at a foe of the back rank fallen is refused and nothing spent, at one standing taken ("${up?.join(' ')}")`);
+  }
 
   // Wind Step: the monk's blows, as an Attack's, and another turn at once; the turn, the round and the
   // order stand. A second at once costs 5 again, which a step's blows that fell nothing never build back;
