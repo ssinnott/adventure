@@ -151,6 +151,12 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   holds them, a record over the terrains; the floors, the scene and the rain ask it and name no
   ground. In the view a new ground is a module there, its line in `src/ui/view/ground/index.ts` and
   its colour in `TERRAIN_COLORS` (the automap's): the typecheck names a terrain without either.
+- **The drift** (#1098): a ground's colour drifts across the land in swathes some ten squares
+  across, by smooth noise of its cell that lies its own way on each map (`cellNoise`), toward the two
+  colours its look names (grass lusher and drier, ash black and grey). It is one colour a square, its
+  cell's, from wherever it is seen; rain and snow fall over it. Fifteen grounds of the open land
+  drift, from grass to snow; water, roads, fields, drops and the rest keep one colour, nothing drifts
+  underground and the automap's colours never do.
 
 ## Stubbed or absent
 
