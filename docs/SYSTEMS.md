@@ -20,7 +20,9 @@ in `docs/areas/`. Cut from the slice's doc by #1023, which keeps that doc whole 
   the app.
 - **`src/app/`** is the app, over the UI: the `Game` (`src/app/game.ts`: the screen stack, save and
   load, attract mode), the keyboard's queue (`src/app/input.ts`) and the pilot, which plays the game
-  for watching (`src/app/pilot/`, docs/PILOT.md). The entry, `src/main.ts`, is the app's.
+  for watching (`src/app/pilot/`, docs/PILOT.md). The entry, `src/main.ts`, is the app's. The wiki's
+  page, `wiki.html`, is a second entry, `src/app/wiki/main.ts`, which lays out the races, the
+  classes and the bestiary from the tables and draws them with the game's painters (README.md).
 - **`tools/`** is the tools, each one's usage in its header; `tools/kit/` is what they share with
   the suites and the walkthroughs (the headless game, the fight, the company, the line and the
   rules, #984); `tools/tests/` holds the suites, a file each, which `tools/test.ts` finds.
