@@ -1,14 +1,15 @@
 // The thief's four feats (DESIGN §5, #1113), on the frame of combat/feats.ts, with the bots' policy
 // for them. Ambush is an Attack whose every blow is a sneak attack (`Strike.sneak`): a blow that is one
-// by the thief's own Sneak Attack as well takes its damage once, and only the trait's builds the thief's
-// 1 more stamina (`landed`), so that no feat pays for itself. Blind is one blow; landing on a foe it
-// leaves standing, the foe hits BLIND_HIT less (`MonsterInst.blind`, read in `monsterHit`) for
-// BLIND_ROUNDS, every monster alike. Hamstring is one blow; landing, it holds its foe fast with the
-// game's hold (`paralysed`, as Grasping Roots holds) until its next turn has passed: to this round's
-// end where that turn is still to come, else to the next's (`MonsterInst.hamstrung`); it does not tear
-// free before, and one immune to holds is not held. Deathblow is one blow at a foe asleep or held that
-// its weapon reaches, a sneak attack for triple, the whole blow, never a crit, so no chance is drawn.
-// The rounds count as Bless's do: the round a feat is used in is its first.
+// by the thief's own Sneak Attack as well takes its damage once, and only its own (`sneaks`, its trait's
+// and its vanishing's) builds the thief's 1 more stamina (`landed`), so that no feat pays for itself.
+// Blind is one blow; landing on a foe it leaves standing, the foe hits BLIND_HIT less
+// (`MonsterInst.blind`, read in `monsterHit`) for BLIND_ROUNDS, every monster alike. Hamstring is one
+// blow; landing, it holds its foe fast with the game's hold (`paralysed`, as Grasping Roots holds)
+// until its next turn has passed: to this round's end where that turn is still to come, else to the
+// next's (`MonsterInst.hamstrung`); it does not tear free before, and one immune to holds is not held.
+// Deathblow is one blow at a foe asleep or held that its weapon reaches, a sneak attack for triple, the
+// whole blow, never a crit, so no chance is drawn. The rounds count as Bless's do: the round a feat is
+// used in is its first.
 import { BLIND_HIT, standing, describe, aliveMonsters } from '../state.ts';
 import type { CombatState, MonsterInst } from '../state.ts';
 import type { Character } from '../../party.ts';
