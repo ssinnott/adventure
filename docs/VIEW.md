@@ -37,6 +37,12 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   grounds of the open land drift, from grass to snow; water, roads, fields, drops and the rest keep
   one colour, nothing drifts underground and the automap's colours never do.
 
+- **A region's trees** (#1104): its look's `trees` names, by weight, those its forests and woods stand
+  (`forest`) and its pinewoods (`pine`, conifers only). A square takes its region's, picked by its hash
+  as before (`treeOf`, `src/ui/scenery.ts`), so a wood changes at a zone's border. Beside the five of
+  old stand an oak, a willow, a poplar, a rowan, a wind-bent thorn, a larch, a Scots pine and a
+  flat-topped tree of the steppe, each dressed by the year as the five are. With none named a region
+  stands today's mix.
 - **A region's look**, `src/content/areas/<area>/look.ts` (`Area.look`, #1097), merged by region into
   `Tables.looks`: its `air` casts the sky, the haze and the sun toward its colours by day, a fifth of
   the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins

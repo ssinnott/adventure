@@ -6,4 +6,6 @@ export const LOOK: AreaLook = {
   air: { strength: 0.2, top: '#603000', foot: '#b06010', haze: '#906020', sun: '#ff5030' },
   // Cinder cones, lit red by night.
   hills: 'cinder',
+  // Broadleaf and thorn; Scots pine among the dark conifers.
+  trees: { forest: { broadleaf: 2, thorn: 1 }, pine: { conifer: 2, scots: 1 } },
 };

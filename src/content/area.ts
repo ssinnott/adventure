@@ -77,7 +77,24 @@ export interface AreaLook {
   air?: Air;
   /** The kind of its hills (#1105, ui/view/ground/hills.ts): today's rolling grass where absent. */
   hills?: 'downs' | 'tors' | 'slag' | 'cinder' | 'scree';
+  /** The trees its land stands (#1104): today's mix where absent. */
+  trees?: Trees;
 }
+
+/**
+ * The trees an area's land stands, by weight (#1104): its forests' and its woods' (`forest`) and its
+ * pinewoods' (`pine`), which name conifers only. A list absent, the land stands today's mix: the five
+ * trees of old in the forests and the woods, their two conifers in the pinewoods.
+ */
+export interface Trees { forest?: TreeWeights; pine?: TreeWeights }
+/** How often each tree stands: its weight over the list's sum. */
+export type TreeWeights = Partial<Record<TreeName, number>>;
+/**
+ * The trees ui/scenery.ts draws: the broadleaf and the conifer of old in their two greens each and the
+ * birch; the regions' own, an oak, a willow, a poplar, a rowan, a wind-bent thorn, a larch, a Scots
+ * pine (`scots`) and a flat-topped tree of the steppe (`flattop`).
+ */
+export type TreeName = 'broadleaf' | 'birch' | 'conifer' | 'oak' | 'willow' | 'poplar' | 'rowan' | 'thorn' | 'larch' | 'scots' | 'flattop';
 
 /**
  * An area's air (#1097): the colours the sky is cast toward by day, as an ending casts it (ui/view/sky.ts)

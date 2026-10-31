@@ -6,4 +6,6 @@ export const LOOK: AreaLook = {
   air: { strength: 0.2, top: '#102030', foot: '#304860', haze: '#405870' },
   // Tors: granite piled on the hills over the sea.
   hills: 'tors',
+  // Wind-bent thorns and the odd rowan on the gulf's isles.
+  trees: { forest: { thorn: 3, rowan: 1 } },
 };
