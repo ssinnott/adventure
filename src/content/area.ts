@@ -75,7 +75,8 @@ export interface Area {
 export interface AreaLook {
   /** The air over it: today's sky where absent. */
   air?: Air;
-  /** The trees its land stands (#1104): today's mix where absent. */ trees?: Trees;
+  /** The trees its land stands (#1104): today's mix where absent. */
+  trees?: Trees;
 }
 
 /**

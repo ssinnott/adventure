@@ -65,17 +65,21 @@ export function terrain(): void {
     for (let v = 0; v < 5; v++) for (const day of [10, 17, 40, 66, 84, 98]) for (const snow of [0, 1]) for (const [u, tone] of [[30, 1], [9, 0.55], [30, 0.3]]) drawTreeSprite(rec, 100, 200, u, tone, v, treeSeason(day, snow));
     const digest = createHash('sha256').update(log.join('\n')).digest('hex').slice(0, 12);
     ok(off.length === 0 && digest === 'f9126684f7d5', `with no trees named a region draws today's mix: a forest and the woods any of the five trees of old by the square's hash, the pinewoods their two conifers, over ${hashes.length} hashes${off.length ? ` (not at ${off.slice(0, 3).join(', ')})` : ''}; and the five are drawn as main drew them at 910066af, call for call (${log.length} calls, ${digest})`);
-    // The view takes its square's region's trees: a wood of Thornmark's painted is not the one with its trees emptied.
+    // The view takes its square's region's trees, not the party's: from the Foreland, a zone of Rimewater's forest squares,
+    // of its woods and of its pinewood, each laid alone, paints otherwise with Rimewater's trees taken off.
     (globalThis as { Path2D?: unknown }).Path2D ??= function Path2D() { return new Proxy({}, { get: () => () => {} }); };
-    const wood = new GameMap({ id: 'fx_trees', name: 'Trees fixture', kind: 'outdoor', region: 'thornmark', start: { x: 3, y: 5, facing: NORTH }, rows: ['MMMMMMM', 'MTtTtTM', 'MtTtTtM', 'MTtTtTM', 'MtTptpM', 'Mpt.tpM', 'MMMMMMM'] });
-    const scene = (looks: typeof TABLES.looks): string => {
+    const scene = (k: string, looks: typeof TABLES.looks): string => {
+      const rows = ['MMMMMMM', `M${k.repeat(5)}M`, `M${k.repeat(5)}M`, `M${k.repeat(5)}M`, 'M.....M', 'M.....M', 'MMMMMMM'];
+      const wood = new GameMap({ id: 'fx_trees', name: 'Trees fixture', kind: 'outdoor', region: 'shelf', start: { x: 3, y: 5, facing: NORTH }, rows,
+        zones: [{ id: 'fx_rimewater', name: 'Rimewater fixture', x: 1, y: 1, w: 5, h: 3, region: 'rimewater' }] });
       const rng = makeRng(1), at = new World({ ...TABLES, looks }, { fx_trees: wood }, defaultParty(TABLES, rng), rng);
       at.state.weatherSeed = 1; at.state.minutes = 90 * 1440 + 12 * 60; log.length = 0;
       paintScene(rec, rec, at, { x: 0, y: 0, w: 400, h: 268 });
       return log.join('\n');
     };
-    const own = scene(TABLES.looks), bare = scene({ ...TABLES.looks, thornmark: { ...TABLES.looks.thornmark, trees: undefined } });
-    ok(TABLES.looks.thornmark.trees !== undefined && own !== bare, `the view takes its square's region's trees: Thornmark's forest and woods painted are not the same with its trees emptied`);
+    const bare = { ...TABLES.looks, rimewater: { ...TABLES.looks.rimewater, trees: undefined } };
+    const same = ['T', 't', 'p'].filter((k) => scene(k, TABLES.looks) === scene(k, bare));
+    ok(TABLES.looks.rimewater.trees?.forest !== undefined && TABLES.looks.rimewater.trees.pine !== undefined && same.length === 0, `the view takes its square's region's trees, not the party's: from the Foreland, a zone of Rimewater's forest, woods and pinewood each paint otherwise with Rimewater's trees taken off${same.length ? '; the same: ' + same.join(', ') : ''}`);
   }
   // Dead wood: walked through and seen past as the woods are, and grey, with no green in it.
   const dw = new GameMap({ id: 'fixture_dead', name: 'Dead wood fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMM', 'MdtM', 'MMMM'] });
