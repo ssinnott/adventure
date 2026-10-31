@@ -1,11 +1,9 @@
 // The Kilns' own rows of the suites (`AreaChecks`, src/content/area.ts): out of the game's build, found by
-// tools/checks.ts as the runner finds a walkthrough (#897). The Steiger's owed row went once the
-// Randzeche, its lair, placed it (#831).
+// tools/checks.ts as the runner finds a walkthrough (#897). The Kilns owe nothing: the Steiger's row went
+// once the Randzeche, its lair, placed it (#831), and O4's and O5's plain views' once #1106 broke them up.
 import type { AreaChecks } from '../../area.ts';
 
 export const CHECKS = {
-  // Its maps over the cap of plain views (tools/tests/plain.ts), each owed until #1106 breaks it up.
-  owes: { plain: { kilnsheart_o5: '#1106', kilnsheart_o4: '#1106' } },
   // Its rungs of the ladder (tools/harness.ts): Anvilhall's forge from 17.
   gear: {
     17: ['forge_hammer', 'seax', 'steel_bow', 'mattock', 'banded_staff', 'dwarf_mail', 'kiln_robe', 'forge_shield'],
