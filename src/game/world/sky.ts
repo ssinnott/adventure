@@ -41,9 +41,17 @@ export function hoursHold(when: Hours | readonly Hours[], minutes: number, weath
  * map's own. Throws, naming the map and the square, where neither names one: no sky is lent (#945).
  */
 export function regionOf(m: GameMap, x: number, y: number): RegionId {
-  const r = m.zoneAt(x, y)?.region ?? m.def.region;
+  const r = regionAt(m, x, y);
   if (!r) throw new Error(`map '${m.id}' names no region, nor does a zone at ${x},${y}`);
   return r;
+}
+
+/**
+ * The region a square is under where one is named, as `regionOf` finds it, and none where none is: the country
+ * past the zones of the outdoors, which the view looks out on as the atlas paints it and which has no sky and no look.
+ */
+export function regionAt(m: GameMap, x: number, y: number): RegionId | undefined {
+  return m.zoneAt(x, y)?.region ?? m.def.region;
 }
 
 /** The weather where the party stands, as last read: World opens it to the smoke, to pin a sky. */

@@ -24,7 +24,7 @@
 // top of the view so that it hides the sky behind it as well as the ground.
 
 import type { World } from '../../game/world.ts';
-import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight, hillOver, regionOf } from '../../game/world.ts';
+import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight, hillOver, regionAt } from '../../game/world.ts';
 import type { Cell, Landmark } from '../../game/mapdef.ts';
 import { FACING_DX, FACING_DY } from '../../game/types.ts';
 import type { Facing } from '../../game/types.ts';
@@ -167,6 +167,8 @@ function drawUnderIce(v: View, m: ViewMonster, x: number, d: number, l: number, 
  */
 export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderingContext2D, world: World, r: ViewRect, backdrop?: string): void {
   const map = world.map;
+  // The trees a square's region names; the country past the zones names no region, and stands today's mix.
+  const treesAt = (x: number, y: number) => { const r = regionAt(map, x, y); return r ? world.tables.looks[r].trees : undefined; };
   const { x: px, y: py, facing: f } = world.state;
   const dark = world.isDark && map.kind !== 'dungeon';
   const daylight = world.daylight;
@@ -348,7 +350,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         // The ground may draw its own for what stands on it: a glass tree on crystal, a mountain by its rock.
         const own = GROUND[cell.terrain].boards?.[cell.solid];
         if (own) own(p, { x: bx, y: by, u, tone, mx: c.x, my: c.y, cloud });
-        else if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, treeOf(world.tables.looks[regionOf(map, c.x, c.y)].trees?.forest, hash(c.x, c.y)), env.trees);
+        else if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, treeOf(treesAt(c.x, c.y)?.forest, hash(c.x, c.y)), env.trees);
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
@@ -362,7 +364,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
           if (hash(c.x, c.y, 60 + side) < sides.bare || solidAt(d, l + side)) continue;
           const bx = cx + (l * 2 + side * (0.62 + 0.22 * hash(c.x, c.y, 62 + side))) * u, by = horizon + u * (0.8 + 0.4 * hash(c.x, c.y, 64 + side));
           const s = u * (sides.size + sides.spread * hash(c.x, c.y, 66 + side));
-          sides.tree(p, bx, by, s, tone, hash(c.x, c.y, 68 + side), world.tables.looks[regionOf(map, c.x, c.y)].trees);
+          sides.tree(p, bx, by, s, tone, hash(c.x, c.y, 68 + side), treesAt(c.x, c.y));
         }
       } else if (d > 0 && !backdrop) {
         // Open ground: the prop scattered on it, if one stands there (scatter.ts, #1103).
