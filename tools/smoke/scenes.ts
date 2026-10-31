@@ -686,7 +686,7 @@ export async function kinds({ page, ok }: Run): Promise<void> {
     // Sheerpoint facing east: ahead is east; in each column the rows from the top of the range nearer than twenty squares down.
     w.travel('sheerpoint_i9', 11, 20, 1);
     const s = w.map, sx = w.state.x, sy = w.state.y, held = s.landmarks, cast = Hz.castHorizon(Mp.GRID, w.worldCell!, 1, W, H);
-    const range = (x: number): number => { const top = Hz.standsOver(cast, x, 20); return top ? H / 2 - top : H; };
+    const nearer = (d: number) => (x: number): number => { const top = Hz.standsOver(cast, x, d); return top ? H / 2 - top : H; }, range = nearer(20);
     let over = H;
     for (let x = 170; x < 230; x++) over = Math.min(over, range(x));
     lay([]); clear(12); const none = view();
@@ -696,17 +696,29 @@ export async function kinds({ page, ok }: Run): Promise<void> {
     }
     clear(23); lay([{ x: sx + 6, y: sy, kind: 'lighthouse' }]); view(); const lampBefore = lamps();
     lay([{ x: sx + 20, y: sy, kind: 'lighthouse' }]); view(); const lampBehind = lamps();
+    // The nearest square behind the range whose lamp shows over it: drawn at the frame its beam is longest, with
+    // its light and without, nothing differs in the rows the range stands over and something does over the sky.
+    let beam = { ahead: 0, overRange: 0, overSky: 0 };
+    for (let ahead = 11; ahead <= 16 && !beam.ahead; ahead++) {
+      lay([{ x: sx + ahead, y: sy, kind: 'lighthouse' }]); view();
+      if (!lamps()) continue;
+      const frame = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.drawViewport(ctx, w, { x: 0, y: 0, w: W, h: H }, () => null, 71, false); return ctx.getImageData(0, 0, W, H).data; };
+      const lit = frame(), flames = V.paintedFlames() as Flame[], was = flames.slice(); flames.length = 0;
+      const unlit = frame(); flames.push(...was);
+      beam = { ahead, overRange: count(lit, unlit, 6, nearer(ahead)), overSky: count(lit, unlit, 6) - count(lit, unlit, 6, nearer(ahead)) };
+    }
     lay(held);
     w.travel(from.id, from.x, from.y, from.f);
     w.state.minutes = minutes; w['cached'] = null;
-    return { out, over, lampBefore, lampBehind };
+    return { out, over, lampBefore, lampBehind, beam };
   });
-  const { out, over, lampBefore, lampBehind } = drawn;
+  const { out, over, lampBefore, lampBehind, beam } = drawn;
   for (const [kind, v] of Object.entries(out)) {
     ok(v.day > 40 && v.night > 20 && v.snow > 40 && v.near > 400 && v.lamps === 0, `the landmark '${kind}' stands over the land from Helmstow's road by noon, by night and under snow, and among the squares drawn, lighting no lamp (${v.day}, ${v.night} and ${v.snow} pixels of it far off; ${v.near} two ahead; ${v.lamps} lamps)`);
     ok(v.front > 50 && v.behind === 0, `the landmark '${kind}' is drawn over a range behind it and nowhere the range stands before it, from Sheerpoint's 11,20 facing east (${v.front} pixels over the range's rows six ahead, ${v.behind} twenty ahead; the range stands from row ${over} over the middle of the view)`);
   }
   ok(Object.keys(out).length >= 9 && lampBefore === 1 && lampBehind === 0, `a lighthouse behind a range nearer than it lights no lamp over the range by night, where one before it does (${lampBefore} before, ${lampBehind} behind; ${Object.keys(out).length} kinds drawn)`);
+  ok(beam.ahead > 0 && beam.overSky > 0 && beam.overRange === 0, `a lighthouse whose lamp shows over a range nearer than it throws its beam over the sky and never over the range (${beam.ahead} ahead: ${beam.overSky} pixels of beam over the sky, ${beam.overRange} over the range)`);
 }
 
 // A group placed on ice (#536): on the Foreland at noon, ice laid all about, two fen eels two squares
