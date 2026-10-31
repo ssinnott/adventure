@@ -163,6 +163,10 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `Tables.looks`: its `air` casts the sky, the haze and the sun toward its colours by day, a fifth of
   the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins
   (`airOf`, `src/ui/view/sky.ts`). With none, as over the Foreland and Thornmark, the sky is as it was.
+- **A region's hills** (#1105): its look's `hills` names their kind (`src/ui/view/ground/hills.ts`):
+  the Foreland's chalk downs, Cairnmoor's and Wrackholm's tors, the Kilns' slag heaps, Ashfall's cinder
+  cones lit red by night and the Whitespine's scree, each mark on a share (`HILL_MARKS`). With none, and
+  past the zones, a hill is as it was; what one hides is the terrain's.
 - **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
   one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of
   `src/ui/scenery.ts`: a cairn, a chest, a camp's ring and fire, a shrine, a well, a statue, a
