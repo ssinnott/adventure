@@ -155,6 +155,12 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `Tables.looks`: its `air` casts the sky, the haze and the sun toward its colours by day, a fifth of
   the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins
   (`airOf`, `src/ui/view/sky.ts`). With none, as over the Foreland and Thornmark, the sky is as it was.
+- **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
+  one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of
+  `src/ui/scenery.ts`: a cairn, a chest, a camp's ring and fire, a shrine, a well, a statue, a
+  fountain, a den, a sign and a rift. A spent one is gone and a burnt den is its ruin; an event and
+  a person are never drawn, and a business hangs its sign over its door. A camp's fire is lit by
+  night and underground, its flame drawn every frame as a torch's.
 
 ## Stubbed or absent
 
