@@ -8,6 +8,7 @@ import { drawText } from '../lib/engine/text.ts';
 import type { World } from '../game/world.ts';
 import type { Party, Character, Condition } from '../game/party.ts';
 import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
+import { STAMINA_MAX } from '../game/combat/feats.ts';
 import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
 import { drawnCell, markOf, markedGroups } from '../game/ink.ts';
@@ -211,11 +212,12 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
   ctx.fillStyle = '#c6453c'; ctx.beginPath(); ctx.moveTo(rx, ry - 10); ctx.lineTo(rx + 3, ry); ctx.lineTo(rx - 3, ry); ctx.closePath(); ctx.fill();
 }
 
-export function drawPartyCards(items: Items, ctx: CanvasRenderingContext2D, party: Party, selected: number, frame: number): void {
-  party.members.forEach((c, i) => drawCard(items, ctx, c, i, i === selected, frame));
+/** The company's cards; a fight with the feats on hands each member's stamina, shown where a caster's spell points are (#1113). */
+export function drawPartyCards(items: Items, ctx: CanvasRenderingContext2D, party: Party, selected: number, frame: number, stamina: readonly (number | undefined)[] = []): void {
+  party.members.forEach((c, i) => drawCard(items, ctx, c, i, i === selected, frame, stamina[i]));
 }
 
-function drawCard(items: Items, ctx: CanvasRenderingContext2D, c: Character, i: number, selected: boolean, frame: number): void {
+function drawCard(items: Items, ctx: CanvasRenderingContext2D, c: Character, i: number, selected: boolean, frame: number, stamina?: number): void {
   const r = cardRect(i);
   const down = isDown(c);
   panel(ctx, r.x, r.y, r.w, r.h, down ? '#241418' : PANEL, selected ? BRASS : undefined);
@@ -232,6 +234,10 @@ function drawCard(items: Items, ctx: CanvasRenderingContext2D, c: Character, i: 
     drawText(ctx, 'SP', bx, r.y + 34, { size: 1, color: TEXT_DIM });
     drawText(ctx, `${c.sp}/${c.maxSp}`, bx + bw, r.y + 34, { size: 1, color: TEXT, align: 'right' });
     bar(ctx, bx, r.y + 43, bw, 5, c.sp / c.maxSp, BLUE);
+  } else if (stamina !== undefined) {
+    drawText(ctx, 'ST', bx, r.y + 34, { size: 1, color: TEXT_DIM });
+    drawText(ctx, `${stamina}/${STAMINA_MAX}`, bx + bw, r.y + 34, { size: 1, color: TEXT, align: 'right' });
+    bar(ctx, bx, r.y + 43, bw, 5, stamina / STAMINA_MAX, YELLOW);
   }
   const cond = worstCondition(c);
   const ready = c.xp >= xpForLevel(c.level + 1);

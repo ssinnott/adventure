@@ -35,7 +35,15 @@ export type PartyAction =
   | { type: 'cast'; spellId: string; target: number; element?: Element; from?: string }
   | { type: 'defend' }
   | { type: 'use'; itemId: string; target: number }
-  | { type: 'flee' };
+  | { type: 'flee' }
+  | { type: 'feat'; featId: string; target: number };
+
+/**
+ * How a feat's blows differ from an Attack's (#1113; combat/feats.ts): so many blows, sure to land,
+ * so many times the damage, every one a crit or none (no chance drawn either way), and the feat's
+ * mark after the hit's sentence. Unset, each is the Attack's.
+ */
+export interface Strike { blows?: number; sure?: boolean; times?: number; crits?: boolean; mark?: string }
 
 type Outcome = 'ongoing' | 'victory' | 'defeat' | 'fled';
 
@@ -90,6 +98,14 @@ export interface CombatState {
   rankStep?: number;
   /** Whether a blow may crit, where a tool turns crits on before play does: CRITS_ON in play (see `critChance`). */
   crits?: boolean;
+  /** Whether the feats are on, where a tool turns them on before play does: FEATS_ON in play (see combat/feats.ts). */
+  feats?: boolean;
+  /** Each member's stamina, by its slot, while the feats are on; none else, and none past the fight (#1113). */
+  stamina?: number[];
+  /** The knight's Challenge (#1113): the member who made it, the group (`MonsterInst.group`) it holds and the rounds left. */
+  challenge?: { by: number; group: number; rounds: number };
+  /** Rounds left on the knight's Rally (#1113): the front row's to-hit (`RALLY_HIT`). */
+  rally?: number;
   /** What a tool trying new powers gives each member: none in play (see `Edge`). */
   edge?: (c: Character, s: CombatState) => Edge;
   log: string[];
@@ -100,10 +116,10 @@ export interface CombatState {
 /**
  * Where the fight happens, as far as the resolver cares: the weather's toll on missiles, and its line
  * for the log. A tool trying a ceiling on spells may also say where they stop growing, one trying
- * new powers for the company what each member gains, and one trying crits before play has them
- * whether blows crit.
+ * new powers for the company what each member gains, and one trying crits or feats before play has
+ * them whether blows crit and feats are on.
  */
-export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; rankStep?: number; crits?: boolean; edge?: (c: Character, s: CombatState) => Edge; }
+export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; rankStep?: number; crits?: boolean; feats?: boolean; edge?: (c: Character, s: CombatState) => Edge; }
 
 /**
  * What a tool trying new powers gives a member in a fight (tools/harness.ts): blows a turn with a
@@ -146,6 +162,8 @@ export const MAX_MONSTERS = 12, MAX_GROUPS = 3;
 
 /** What the buffs are worth while they last. */
 export const BLESS_HIT = 2, HASTE_HIT = 1, HASTE_SPEED = 8, WARD_AC = 3;
+/** And the knight's Rally on the front row's (#1113). */
+export const RALLY_HIT = 2;
 
 /** Monsters as the log names them: "Bandit", "3 Bandits, Bandit Archer". */
 export function describe(ms: readonly MonsterInst[]): string {

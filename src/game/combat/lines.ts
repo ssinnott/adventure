@@ -42,6 +42,16 @@ export const FIRST_LINE = 'The company strikes first.', SNEAK_LINE = 'Sneak atta
 export const CRIT_LINE = 'A true blow.';
 /** The mark a Windwalker's felling hit takes when its blow carries on to the next foe (`followsThrough`, #1070), after the death. */
 export const FOLLOW_LINE = 'The blow carries on.';
+/**
+ * The knight's feats (#1113, combat/feats/knight.ts): a Challenge and the foes it holds, Mighty Blow's
+ * mark (after a crit's place, before a death), a Rally and those it frees, and the line before a
+ * Champion's Strike's blows.
+ */
+export const CHALLENGE_LINE = (who: string, foes: string): string => `${who} challenges ${foes}.`;
+export const MIGHTY_LINE = 'A mighty blow.';
+export const RALLY_LINE = (who: string, freed: readonly Character[]): string =>
+  `${who} rallies the front row.` + (freed.length ? ` ${names(freed)} ${freed.length === 1 ? 'shakes' : 'shake'} it off.` : '');
+export const CHAMPION_LINE = (who: string): string => `${who} strikes as a champion.`;
 /** The log's line when those that obey stand down at the last leader's fall (`morale`). */
 export const STAND_LINE = (names: string, one: boolean): string => `${names} ${one ? 'stands' : 'stand'} down.`;
 /** The log's line for a sweep (`sweep`): an arm across a row or a breath of its element on one, and what it dealt, or its miss. */
