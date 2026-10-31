@@ -15,4 +15,4 @@ function mark(p: Paint, m: Mark): void {
 }
 
 export const dirt: GroundLook = { color: () => TERRAIN_COLORS.dirt, drift: { toward: ['#4e3a28', '#b49a6c'], by: 0.6 }, snow: 0.9, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 3, mark }, puddles: true,
-  scatter: ['stone'] };
+  scatter: ['stone'], rank: 2 };

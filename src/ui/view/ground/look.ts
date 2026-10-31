@@ -86,6 +86,12 @@ export interface GroundLook {
    * one at most to a square, as view/scatter.ts places them. A variant of the ground may stand others.
    */
   scatter?: readonly Prop[];
+  /**
+   * Its rank where it meets another ground on open ground (#1100, view/ground/edges.ts): a tongue of it spills
+   * into a lower one beside it, snow the highest, then heather, steppe, grass, sand, dirt and ash. A look with
+   * none takes none and gives none.
+   */
+  rank?: number;
   /** The billboard it draws, by what stands on it, in place of that solid's own: a glass tree on crystal, a mountain by its rock. */
   boards?: Partial<Record<Solid, (p: Paint, b: Board) => void>>;
 }

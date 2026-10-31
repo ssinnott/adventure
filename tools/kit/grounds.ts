@@ -1,5 +1,5 @@
-// The ground underfoot laid out small, a sample to a ground, for the checks that must see a ground
-// before a built map holds it: the smoke test paints each and sweeps it for cracks
+// The ground underfoot laid out small, a sample to a ground and one where four meet (#1100), for the
+// checks that must see a ground before a built map holds it: the smoke test paints each and sweeps it for cracks
 // (tools/smoke/cracks.ts), and the contact sheet shows each (`--ground`), as the Rift samples show
 // the templates. Each has a ruin or a hut, so the sweep has wall faces to look between, and is
 // seen from its start. No area places them.
@@ -155,6 +155,23 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
       'Ma##aaa!!!!M',
       'Ma#aaraa!!aM',
       'Maaaaaaaa!aM',
+      'MMMMMMMMMMMM',
+    ],
+  },
+  {
+    // Where four grounds meet (#1100): a drift of snow lying on the moor's edge, the heather running down
+    // into the grass and the grass into the sand, a lone square of snow out on the heather and a ruin on it.
+    id: 'ground_edges', name: 'Edges', kind: 'outdoor', region: 'shelf', start: { x: 6, y: 8, facing: NORTH },
+    rows: [
+      'MMMMMMMMMMMM',
+      'Mhhhhhhh,,_M',
+      'Mhhhhhh,,,_M',
+      'Mhh*hhh,,__M',
+      'Mhhhhh**,__M',
+      'Mhhhh****__M',
+      'Mhhhh,**,__M',
+      'M##hh,,,,,_M',
+      'M#hhh,,,,,_M',
       'MMMMMMMMMMMM',
     ],
   },

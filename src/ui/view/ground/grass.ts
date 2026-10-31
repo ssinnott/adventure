@@ -28,4 +28,4 @@ function mark(p: Paint, m: Mark): void {
 }
 
 export const grass: GroundLook = { color: grassColor, drift: { toward: ['#24702a', '#bcae5e'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark },
-  scatter: ['bush', 'boulder', 'thistle', 'molehill'] };
+  scatter: ['bush', 'boulder', 'thistle', 'molehill'], rank: 4 };
