@@ -41,6 +41,11 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   crust glowing by night; the steppe's, the pinewoods', the swamp's and the dunes'. `variantAt` picks one by
   noise of the cell, in patches; the road is cobbled within `TOWN_STEPS` of a door set in a building or a
   wall and a rutted track beyond. A picture alone: the way, snow, drag and the automap are the ground's.
+- **Where two grounds meet**, `src/ui/view/ground/edges.ts` (#1100): a look's `rank` (snow, then heather,
+  steppe, grass, sand, dirt and ash) spills into a lower one beside it on open ground, a ragged tongue of
+  its colour as drawn and a third of its marks, a fifth of the way in and two fifths at most; other looks,
+  a square something stands on and a dungeon's floor take none and give none. The outline is the edge's,
+  hashed from it and its corners, so an edge looks the same from both squares and from every facing.
 
 - **A region's trees** (#1104): its look's `trees` names, by weight, those its forests and woods stand
   (`forest`) and its pinewoods (`pine`, conifers only). A square takes its region's, picked by its hash
@@ -52,6 +57,12 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   `Tables.looks`: its `air` casts the sky, the haze and the sun toward its colours by day, a fifth of
   the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins
   (`airOf`, `src/ui/view/sky.ts`). With none, as over the Foreland and Thornmark, the sky is as it was.
+
+- **A region's hills** (#1105): its look's `hills` names their kind (`src/ui/view/ground/hills.ts`):
+  the Foreland's downs, a slip of chalk under some crests; Cairnmoor's and Wrackholm's tors, low granite
+  outcrops; the Kilns' slag heaps, some smoking; Ashfall's cinder cones lit red by night; the Whitespine's
+  scree. Each mark stands on a share (`HILL_MARKS`). With none, and past the zones (`regionAt`), a hill is
+  as it was; what one hides is the terrain's.
 
 - **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
   one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of

@@ -62,7 +62,7 @@ function turves(p: Paint, m: Mark): void {
 }
 
 export const heather: GroundLook = { color: heatherColor, drift: { toward: ['#943e88', '#4a3426'], by: 0.6 }, snow: 0.85, wets: true, splashes: true, ripples: false, vary: 0.04, lies: { marks: 7, mark },
-  scatter: ['gorse', 'boulder', 'peat'],
+  scatter: ['gorse', 'boulder', 'peat'], rank: 6,
   // The heather; bog cotton on greener, wetter ground; peat cut out of a darker moor.
   variants: { scale: 4, looks: [
     { name: 'bog cotton', share: 0.25, shift: { toward: '#7a8a4a', by: 0.5 }, lies: { marks: 7, mark: sedge } },
