@@ -8,6 +8,8 @@ dependencies, and nothing compiled to disk during development.
   plot and three subplots, scope tiers and technical notes.
 - [docs/SYSTEMS.md](docs/SYSTEMS.md) — how the game is put together: the layers and the folders,
   the outdoors as one map, the calendar and the weather, the art kits and what is stubbed.
+- [docs/VIEW.md](docs/VIEW.md) — the first-person view piece by piece: the grounds' looks and their
+  drift, a region's look, the features drawn and what moves outdoors.
 - [docs/CODEMAP.md](docs/CODEMAP.md) — a row to each file and its header's first paragraph, made
   by `node tools/codemap.ts`: a pull request edits the header of a file it adds or changes.
 - [docs/archive/](docs/archive/) — docs cut and kept whole as history: the slice's doc (#1023),

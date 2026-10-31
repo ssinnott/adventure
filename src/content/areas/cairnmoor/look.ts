@@ -6,4 +6,6 @@ export const LOOK: AreaLook = {
   tints: { grass: { toward: '#c88c28', by: 0.25 }, hills: { toward: '#c88c28', by: 0.25 }, woods: { toward: '#c88c28', by: 0.25 }, pine: { toward: '#c88c28', by: 0.25 } },
   // A low grey-green over the moor.
   air: { strength: 0.2, top: '#304010', foot: '#709000', haze: '#607020' },
+  // Rowan and thorn on the moor; Scots pine in its pinewoods.
+  trees: { forest: { rowan: 2, thorn: 2 }, pine: { scots: 1 } },
 };

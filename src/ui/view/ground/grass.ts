@@ -8,7 +8,7 @@ import type { Paint } from '../common.ts';
 import type { GroundLook, Mark } from './look.ts';
 
 /** How many flowers are out: none before Sowing or after Leafturn. */
-function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 12) / 8, (72 - day) / 10)); }
+export function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 12) / 8, (72 - day) / 10)); }
 
 /** Five tufts, then two flowers. */
 function mark(p: Paint, m: Mark): void {
@@ -27,4 +27,5 @@ function mark(p: Paint, m: Mark): void {
   ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 1.5 * sc, y - 4 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 1 * sc, y - 4.5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 2.5 * sc, y - 3 * sc); ctx.stroke();
 }
 
-export const grass: GroundLook = { color: grassColor, drift: { toward: ['#24702a', '#bcae5e'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark } };
+export const grass: GroundLook = { color: grassColor, drift: { toward: ['#24702a', '#bcae5e'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark },
+  scatter: ['bush', 'boulder', 'thistle', 'molehill'] };

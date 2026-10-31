@@ -69,7 +69,7 @@ export function air(): void {
   const lost = AREAS.filter((a) => airOf(at(a.id, 'arrive')) !== undefined || airOf(at(a.id)) !== a.look.air);
   ok(lost.length === 0, `an ending's cast wins over every region's air: under it the view takes none, in all ${AREAS.length} regions${lost.length ? '; not: ' + lost.map((a) => a.id).join(', ') : ''}`);
 
-  // The view takes its region's air: where there is one, the scene painted is not the scene with that region's look emptied,
+  // The view takes its region's air: where there is one, the scene painted is not the scene with that region's air taken off,
   // and over the Foreland, which has none, it is the same, so the first is no accident of the painting. Path2D is the page's.
   (globalThis as { Path2D?: unknown }).Path2D ??= function Path2D() { return new Proxy({}, { get: () => () => {} }); };
   const maps = buildMaps();
@@ -79,7 +79,7 @@ export function air(): void {
     paintScene(recorder(log), recorder(log), w, { x: 0, y: 0, w: 400, h: 268 });
     return log.join('\n');
   };
-  const takes = scene(TABLES.looks, 'emberwaste_f11', 22, 19) !== scene({ ...TABLES.looks, ashfall: {} }, 'emberwaste_f11', 22, 19);
-  const same = scene(TABLES.looks, 'downs_e2', 14, 26) === scene({ ...TABLES.looks, shelf: {} }, 'downs_e2', 14, 26);
-  ok(takes && same, `the view takes its region's air: Ashfall's noon scene is not the one painted with its look emptied, the Foreland's is${takes && same ? '' : ` (Ashfall ${takes ? 'differs' : 'the same'}, the Foreland ${same ? 'the same' : 'differs'})`}`);
+  const takes = scene(TABLES.looks, 'emberwaste_f11', 22, 19) !== scene({ ...TABLES.looks, ashfall: { ...TABLES.looks.ashfall, air: undefined } }, 'emberwaste_f11', 22, 19);
+  const same = scene(TABLES.looks, 'downs_e2', 14, 26) === scene({ ...TABLES.looks, shelf: { ...TABLES.looks.shelf, air: undefined } }, 'downs_e2', 14, 26);
+  ok(takes && same, `the view takes its region's air: Ashfall's noon scene is not the one painted with its air taken off, the Foreland's is${takes && same ? '' : ` (Ashfall ${takes ? 'differs' : 'the same'}, the Foreland ${same ? 'the same' : 'differs'})`}`);
 }

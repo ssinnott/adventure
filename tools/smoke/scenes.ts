@@ -17,7 +17,7 @@ type Who = ReturnType<Parameters<typeof import('../../src/ui/viewport.ts').drawV
 const PATH_MAX = 15;
 /** The least of the band over the horizon the dead wood's bare trees fill: about 1.7% as drawn, 0% with none. */
 const DEAD_MIN = 1;
-/** The least of the band over the horizon the pinewoods' pines fill: about 43% as drawn, closer than the woods' 27%. */
+/** The least of the band over the horizon the pinewoods' pines fill: about 43% as drawn, closer than the woods' 22%. */
 const PINE_MIN = 20;
 export async function terrains({ page, ok }: Run): Promise<void> {
   const terrains = await page.evaluate(async () => {
@@ -129,6 +129,32 @@ export async function terrains({ page, ok }: Run): Promise<void> {
       if (wall && off(withPines, i)) pineOverWall++;
       if (wall && off(withVines, i)) vinesOverWall++;
     }
+    // Scatter (#1103): each ground that scatters props laid as the woods were, its rates raised so a prop
+    // stands on every square that can stand one, against the same ground with none and with no wall. What
+    // the props paint from the horizon down in the strip straight ahead closes the way; where the wall
+    // changes the picture, they stand in front of it.
+    const M = await load<typeof import('../../src/ui/view/model.ts')>('/src/ui/view/model.ts');
+    const rates = { ...M.SCATTER_RATES }, strewn: { t: string; props: number; path: number; overWall: number }[] = [];
+    const low = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, H / 2, W, H / 2).data; };
+    const apart = (a: Uint8ClampedArray, b: Uint8ClampedArray, i: number): boolean => Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 30;
+    for (const t of Object.keys(V.GROUND) as Terrain[]) {
+      const look = V.GROUND[t], props = look.scatter;
+      if (!props) continue;
+      for (const k of props) M.SCATTER_RATES[k] = 1 / props.length;
+      woodsBy(t); const lit = low();
+      look.scatter = undefined; const plain = low();
+      for (let y = sy - 6; y < sy; y++) m.cells[y * m.width + sx + 1] = { terrain: t, solid: 'none', door: 'none', ch: '.' };
+      const open = low();
+      look.scatter = props; Object.assign(M.SCATTER_RATES, rates);
+      let stood = 0, blocked = 0, strip = 0, over = 0;
+      for (let i = 0; i < lit.length; i += 4) {
+        const prop = apart(lit, plain, i);
+        if (prop) stood++;
+        if (Math.abs((i / 4) % W - W / 2) < 12) { strip++; if (prop) blocked++; }
+        if (prop && apart(plain, open, i)) over++;
+      }
+      strewn.push({ t, props: Math.round(1000 * stood / (lit.length / 4)) / 10, path: Math.round(1000 * blocked / strip) / 10, overWall: over });
+    }
     for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
     w.state.minutes = minutes; w['cached'] = null;
     const dist = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
@@ -149,7 +175,7 @@ export async function terrains({ page, ok }: Run): Promise<void> {
     const { trees, path } = stand('woods'), dead = { ...stand('deadwood'), overWall: deadOverWall }, pine = { ...stand('pine'), overWall: pineOverWall };
     const vines = { ...stand('vines'), overWall: vinesOverWall };
     return {
-      trees, path, overWall, dead, pine, vines,
+      trees, path, overWall, dead, pine, vines, strewn,
       // The steppe at Harvest and in Sowing, the dunes and the grass by day (#543).
       wold: { steppe: mean['steppe summer'], sowing: mean['steppe spring'], dunes: mean['dunes summer'], grass: mean['grass summer'] },
       missing: '', thin, form, hedge, patchwork, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
@@ -173,6 +199,8 @@ export async function terrains({ page, ok }: Run): Promise<void> {
     ok(pine.trees >= PINE_MIN && pine.path <= PATH_MAX && pine.overWall === 0, `pines stand about the pinewoods, the way ahead open and none in front of a wall beside its square (${pine.trees}% of the band over the horizon is trees, at least ${PINE_MIN}; ${pine.path}% of the strip ahead, at most ${PATH_MAX}; ${pine.overWall} pixels over the wall's faces)`);
     const vines = terrains.vines;
     ok(vines.trees >= 10 && vines.path <= PATH_MAX && vines.overWall === 0, `trees hung with creepers stand about the vines, the way ahead open and none in front of a wall beside its square (${vines.trees}% of the band over the horizon, at least 10; ${vines.path}% of the strip ahead, at most ${PATH_MAX}; ${vines.overWall} pixels over the wall's faces)`);
+    const strewn = terrains.strewn;
+    ok(strewn.length > 0 && strewn.every((s) => s.props > 0 && s.path <= PATH_MAX && s.overWall === 0), `props scattered on open ground stand off the way ahead and in front of no wall beside their square, with one on every square that can stand one (of the view under the horizon, the strip straight ahead and pixels over the wall: ${strewn.map((s) => `${s.t} ${s.props}%, ${s.path}%, ${s.overWall}`).join('; ')}; the strip at most ${PATH_MAX}%)`);
     ok(terrains.hedge.off < 50 && terrains.hedge.apart > 40 && terrains.patchwork > 60, `the fields lie in patchwork with hedges between them (the hedge ${terrains.hedge.off} off its colour and ${terrains.hedge.apart} from the crop beside it; ${terrains.patchwork} between the most different squares in view)`);
     ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
   }
@@ -196,6 +224,52 @@ export async function terrains({ page, ok }: Run): Promise<void> {
     ok(steppe[0] > terrains.wold.grass[0] + 40 && green(sowing) > green(steppe) + 15, `the steppe lies tawny at Harvest where the grass lies green, and greener in Sowing (${steppe.map(Math.round).join(',')} at Harvest, ${sowing.map(Math.round).join(',')} in Sowing)`);
     ok(light(dunes) > light(steppe) + 5 && dunes[0] > dunes[2] + 60, `the dunes lie lighter than the steppe, and warm (${dunes.map(Math.round).join(',')} against ${light(steppe)} light)`);
   }
+  // Each region's trees (#1104): the woods and the pinewoods laid in the middle of the first of its zones on the
+  // outdoors, at noon in summer, against its grass there, and held to the Foreland's lines. The party is set down
+  // there and taken back without treading or seeing anything.
+  const regions = await page.evaluate(async () => {
+    const load: Load = (p) => import(p);
+    const V = await load<typeof import('../../src/ui/viewport.ts')>('/src/ui/viewport.ts');
+    const w = window.__game!.game!.world, W = 400, H = 268, { mapId, x: hx, y: hy, facing } = w.state, minutes = w.state.minutes;
+    const c = document.createElement('canvas'), sky = document.createElement('canvas');
+    c.width = sky.width = W; c.height = sky.height = H;
+    const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+    const out = Object.values(w.maps).find((m) => m.zones.length)!, rows: { region: string; woods: number[]; pine: number[] }[] = [];
+    for (const region of Object.keys(w.tables.looks)) {
+      const z = out.zones.find((q) => q.region === region && q.w >= 16 && q.h >= 16);
+      if (!z) { rows.push({ region, woods: [], pine: [] }); continue; }
+      const sx = z.x + (z.w >> 1), sy = z.y + (z.h >> 1), kept = new Map<number, Cell>();
+      Object.assign(w.state, { mapId: out.id, x: sx, y: sy, facing: 0, minutes: ((50 - 75 + 120) % 120) * 1440 + 12 * 60 });
+      w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+      const band = (terrain: Terrain): Uint8ClampedArray => {
+        for (let y = sy - 6; y <= sy + 6; y++) for (let x = sx - 6; x <= sx + 6; x++) {
+          const i = y * out.width + x;
+          if (!kept.has(i)) kept.set(i, out.cells[i]);
+          out.cells[i] = { terrain, solid: 'none', door: 'none', ch: '.' };
+        }
+        ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+        return ctx.getImageData(0, H / 2 - 60, W, 55).data;
+      };
+      // The share of the band the trees paint otherwise than the grass, and of the strip 24 wide up its middle.
+      const grass = band('grass'), stand = (t: Uint8ClampedArray): number[] => {
+        let risen = 0, blocked = 0, strip = 0;
+        for (let i = 0; i < t.length; i += 4) {
+          const differs = Math.abs(t[i] - grass[i]) + Math.abs(t[i + 1] - grass[i + 1]) + Math.abs(t[i + 2] - grass[i + 2]) > 30;
+          if (differs) risen++;
+          if (Math.abs((i / 4) % W - W / 2) < 12) { strip++; if (differs) blocked++; }
+        }
+        return [Math.round(1000 * risen / (t.length / 4)) / 10, Math.round(1000 * blocked / strip) / 10];
+      };
+      rows.push({ region, woods: stand(band('woods')), pine: stand(band('pine')) });
+      for (const [i, cell] of kept) out.cells[i] = cell;
+    }
+    Object.assign(w.state, { mapId, x: hx, y: hy, facing, minutes }); w['cached'] = null;
+    return rows;
+  });
+  const fell = (k: 'woods' | 'pine', least: number) => regions.filter((r) => !(r[k][0] >= least && r[k][1] <= PATH_MAX)).map((r) => r.region);
+  const each = (k: 'woods' | 'pine') => regions.map((r) => `${r.region} ${r[k].join('%/')}%`).join(', ');
+  ok(regions.length > 0 && fell('woods', 10).length === 0, `trees stand about the woods in each region, its own, and the way ahead stays open (of the band over the horizon and the strip ahead: ${each('woods')}; at least 10% and at most ${PATH_MAX}%${fell('woods', 10).length ? '; not: ' + fell('woods', 10).join(', ') : ''})`);
+  ok(regions.length > 0 && fell('pine', PINE_MIN).length === 0, `pines stand about the pinewoods in each region, its own, and the way ahead stays open (${each('pine')}; at least ${PINE_MIN}% and at most ${PATH_MAX}%${fell('pine', PINE_MIN).length ? '; not: ' + fell('pine', PINE_MIN).join(', ') : ''})`);
 }
 
 // A torch behind a tree and behind a monster: a sconced wall three squares ahead on the Foreland at
