@@ -1,6 +1,6 @@
 // The viewport's scenery, cel-shaded with the engine's helpers through a Brush: the trees dressed by
-// the season, the dead trees, the crystals, the lighthouse, the monastery, rocks, mountains, peaks,
-// cliffs, the volcano, the creeper trees and the pillar. Every sprite draws front-facing, centred on
+// the season, the dead trees, the crystals, the lighthouse, the monastery, the wilderness features
+// (#1110), rocks, mountains, peaks, cliffs, the volcano, the creeper trees and the pillar. Every sprite draws front-facing, centred on
 // (x, y) with y the ground line; `tone` darkens with distance. The monsters are ./sprites.ts's.
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { celBall, celCapsule, celPoly, celTaper, band } from '../lib/art/shading.ts';
@@ -246,6 +246,206 @@ export function drawMonasterySprite(ctx: CanvasRenderingContext2D, x: number, y:
     if (snowy) { ctx.fillStyle = white; ctx.fillRect(R(tx - tw * 1.25), R(tt - u * 0.05), R(tw * 2.5), px(u * 0.06)); }
     ctx.strokeStyle = dark; ctx.lineWidth = Math.max(1, u * 0.03); ctx.beginPath(); ctx.moveTo(tx, tt - cap); ctx.lineTo(tx, tt - cap - u * 0.3); ctx.stroke();
   }
+}
+
+// ---- The wilderness features (#1110) --------------------------------------------------------------
+// What the view draws for a feature on its square (view/features.ts says which, and where): each kind
+// its own small drawing, of a shape no scattered prop is (a single rounded rock, a bush, a tussock,
+// bones, driftwood), and lower than a man but a statue and a rift. Front-facing on (x, y) with y the
+// ground line, as the sprites here; `tone` darkens with distance and the night as a rock's does, snow
+// whitens what lies open to the sky, and a light of its own (`light`) the night does not dim.
+
+/** The kinds of feature the view draws; a person, a business (its sign hangs over its door) and an event are none of them. */
+export const FEATURE_KINDS = ['cairn', 'chest', 'camp', 'shrine', 'well', 'statue', 'fountain', 'den', 'sign', 'rift'] as const;
+export type FeatureKind = (typeof FEATURE_KINDS)[number];
+/**
+ * How a feature is drawn: its tone; the tone of a light of its own (a rift's, a fire's embers), which
+ * murk fades and the night does not; the snow lying (0 .. 1); whether a camp's fire is lit and a den
+ * burnt to its ruin; and its square's variant (0 .. 1).
+ */
+interface FeatureLook { tone: number; light: number; snow: number; lit: boolean; ruin: boolean; vary: number }
+/** Where a camp's lit fire burns: its flame is drawn every frame over the scene, as a torch's. */
+interface Fire { x: number; y: number; s: number }
+
+/** An outlined, cel-shaded box from its top left. */
+const box = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, c: string, sh = 0.3, hi = 0.22): void => celPoly(ctx, B, [x, y + h, x, y, x + w, y, x + w, y + h], c, sh, hi);
+/** The points of an ellipse about (x, y), for an outlined oval. */
+const oval = (x: number, y: number, rx: number, ry: number, n = 16): number[] => Array.from({ length: n }, (_, k) => [x + Math.cos((k / n) * Math.PI * 2) * rx, y + Math.sin((k / n) * Math.PI * 2) * ry]).flat();
+/** A flat mark in whole pixels, at least one each way: a band, a hasp, a line of writing, a cap of snow. */
+const mark = (ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, c: string): void => {
+  ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h)));
+};
+/** A flat ellipse with no outline: the ash under a fire, its light on the ground, the dark of a shaft. */
+const pool = (ctx: CanvasRenderingContext2D, x: number, y: number, rx: number, ry: number, c: string): void => {
+  ctx.fillStyle = c; ctx.beginPath(); ctx.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); ctx.fill();
+};
+const snowOn = (o: FeatureLook): string | null => (o.snow > 0.2 ? shade(SNOW_WHITE, o.tone) : null);
+
+/** A cairn: three to five flat stones stacked, each narrower than the one under it, a darker cap on top; snow on their shoulders. */
+function drawCairn(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook): void {
+  const n = 3 + Math.floor(o.vary * 2.99), white = snowOn(o);
+  let base = y, w = u * 0.66;
+  for (let i = 0; i < n; i++) {
+    const h = u * (0.2 - 0.015 * i), top = base - h, sx = x + u * 0.045 * (((i + Math.floor(o.vary * 5)) % 3) - 1);
+    const c = shade(i === n - 1 ? '#5e5a52' : ['#9c968a', '#8a857a', '#a6a094'][i % 3], o.tone);
+    celPoly(ctx, B, [sx - w / 2, base, sx - w * 0.46, top + h * 0.35, sx - w * 0.3, top, sx + w * 0.32, top, sx + w * 0.47, top + h * 0.3, sx + w / 2, base], c, 0.35, 0.25);
+    if (white) celPoly(ctx, B, [sx - w * 0.44, top + h * 0.3, sx - w * 0.3, top, sx + w * 0.32, top, sx + w * 0.45, top + h * 0.28], white, 0.15, 0.15);
+    base = top + h * 0.15; w *= 0.76;
+  }
+}
+
+/** A chest: a box of planks under a rounded lid, iron bands over both at either end and a brass hasp; snow on the lid. */
+function drawChest(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook): void {
+  const w = u * 0.62, hb = u * 0.27, hl = u * 0.15, lw = w + u * 0.05, top = y - hb - hl, white = snowOn(o);
+  box(ctx, x - w / 2, y - hb, w, hb, shade('#86562a', o.tone));
+  celPoly(ctx, B, [x - lw / 2, y - hb, x - lw / 2, top + hl * 0.45, x - lw * 0.36, top, x + lw * 0.36, top, x + lw / 2, top + hl * 0.45, x + lw / 2, y - hb], shade('#a06a34', o.tone), 0.3, 0.25);
+  for (const f of [-0.3, 0.3]) mark(ctx, x + f * w - u * 0.03, top + u * 0.02, u * 0.06, hb + hl - u * 0.02, shade('#36322f', o.tone));
+  mark(ctx, x - u * 0.045, y - hb - u * 0.05, u * 0.09, u * 0.12, shade('#e4b44c', o.tone));
+  if (white) mark(ctx, x - lw * 0.36, top, lw * 0.72, u * 0.045, white);
+}
+
+/**
+ * A camp: a ring of stones round a fire laid on its ash, its sticks stood together in a cone, charred at
+ * their tops. Lit, its embers glow, a pool of its light lies on the ground about it and it gives where
+ * the fire burns, for its flame.
+ */
+function drawCamp(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook): Fire | null {
+  const rx = u * 0.42, ry = u * 0.12, cy = y - ry * 0.3, white = snowOn(o), N = 9;
+  if (o.lit) { pool(ctx, x, cy, u * 0.95, u * 0.26, rgba('#ffb45a', 0.14 * o.light)); pool(ctx, x, cy, u * 0.6, u * 0.17, rgba('#ffc070', 0.18 * o.light)); }
+  const at = (k: number): number => (k / N) * Math.PI * 2 + 0.35;
+  const stone = (k: number): void => {
+    const sx = x + Math.cos(at(k)) * rx, sy = cy + Math.sin(at(k)) * ry, sw = u * 0.15, sh = u * 0.09;
+    celPoly(ctx, B, [sx - sw / 2, sy, sx - sw * 0.4, sy - sh, sx + sw * 0.4, sy - sh, sx + sw / 2, sy], shade(k % 2 ? '#8e897e' : '#77736a', o.tone), 0.3, 0.3);
+    if (white) mark(ctx, sx - sw * 0.38, sy - sh, sw * 0.76, u * 0.03, white);
+  };
+  // The far side of the ring, the ash and the sticks on it, then the near side over them.
+  for (let k = 0; k < N; k++) if (Math.sin(at(k)) < 0) stone(k);
+  pool(ctx, x, cy, rx * 0.66, ry * 0.7, o.lit ? shade('#a8441c', o.light) : shade('#5e5a56', o.tone));
+  const wood = shade('#5a3c26', o.tone), char = shade('#221c1a', o.tone), lw = Math.max(1, u * 0.06), apex = cy - u * 0.3;
+  for (const [f, g] of [[-0.6, -0.08], [0.6, 0.08], [-0.12, 0.02]]) {
+    const fx = x + f * rx, fy = cy + (f === -0.12 ? ry * 0.4 : 0), tx = x + g * u, mx = fx + (tx - fx) * 0.6, my = fy + (apex - fy) * 0.6;
+    stroke(ctx, [fx, fy, mx, my], wood, lw);
+    stroke(ctx, [mx, my, tx, apex], char, lw);
+  }
+  if (o.lit) for (const f of [-0.3, 0.05, 0.32]) mark(ctx, x + f * rx, cy - ry * (0.2 + 0.3 * Math.abs(f)), u * 0.05, u * 0.03, shade('#ffc050', o.light));
+  for (let k = 0; k < N; k++) if (Math.sin(at(k)) >= 0) stone(k);
+  return o.lit ? { x, y: cy - ry * 0.2, s: Math.max(2, u * 0.1) } : null;
+}
+
+/** A shrine: a small stone on a step under a gable of slate, an offering's glint in the dark of its niche; snow on its roof and step. */
+function drawShrine(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook): void {
+  const w = u * 0.38, h = u * 0.56, st = u * 0.08, foot = y - st, top = foot - h, white = snowOn(o);
+  box(ctx, x - w * 0.7, foot, w * 1.4, st, shade('#8a8478', o.tone));
+  box(ctx, x - w / 2, top, w, h, shade('#b4ac9c', o.tone), 0.32, 0.25);
+  const nr = w * 0.24, nb = foot - h * 0.18, nt = top + h * 0.22;
+  ctx.fillStyle = shade('#1e181c', o.tone);
+  ctx.beginPath(); ctx.moveTo(x - nr, nb); ctx.lineTo(x - nr, nt + nr); ctx.arc(x, nt + nr, nr, Math.PI, 0); ctx.lineTo(x + nr, nb); ctx.closePath(); ctx.fill();
+  mark(ctx, x - u * 0.03, nb - u * 0.07, u * 0.06, u * 0.06, shade('#e8c860', o.tone));
+  const rw = w * 0.82, eave = top + u * 0.03, rt = top - u * 0.2;
+  celPoly(ctx, B, [x - rw, eave, x, rt, x + rw, eave], shade('#5a5866', o.tone), 0.4, 0.25);
+  if (white) {
+    celPoly(ctx, B, [x - rw * 0.6, rt + (eave - rt) * 0.6, x, rt, x + rw * 0.6, rt + (eave - rt) * 0.6], white, 0.15, 0.15);
+    mark(ctx, x - w * 0.7, foot, w * 1.4, u * 0.03, white);
+  }
+}
+
+/** A well: a round wall of coursed stone about the shaft's dark, two posts on it and the winch across them, its crank, rope and bucket; snow on the lip and the beam. */
+function drawWell(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook): void {
+  const w = u * 0.78, h = u * 0.28, lip = u * 0.13, wt = y - h, px = w * 0.42, top = wt - u * 0.6, white = snowOn(o);
+  for (const s of [-1, 1]) box(ctx, x + s * px - u * 0.035, top, u * 0.07, wt - top + lip * 0.3, shade('#6a4a2c', o.tone));
+  box(ctx, x - w / 2, wt, w, h, shade('#8c877c', o.tone));
+  const joint = shade('#625e56', o.tone);
+  mark(ctx, x - w / 2 + 1, wt + h * 0.5, w - 2, 1, joint);
+  for (const f of [-0.25, 0.15, 0.38]) mark(ctx, x + f * w, wt + (f > 0 ? 1 : h * 0.5), 1, h * 0.5 - 1, joint);
+  celPoly(ctx, B, oval(x, wt, w / 2, lip / 2), white ?? shade('#a8a294', o.tone), 0.2, 0.2);
+  pool(ctx, x, wt, w * 0.38, lip * 0.28, shade('#121418', o.tone));
+  const by = top + u * 0.07;
+  box(ctx, x - px - u * 0.05, by - u * 0.035, px * 2 + u * 0.1, u * 0.07, shade('#7a5634', o.tone));
+  if (white) mark(ctx, x - px - u * 0.05, by - u * 0.035, px * 2 + u * 0.1, u * 0.025, white);
+  stroke(ctx, [x + px + u * 0.05, by, x + px + u * 0.13, by, x + px + u * 0.13, by + u * 0.1], shade('#3a3632', o.tone), Math.max(1, u * 0.03));
+  mark(ctx, x - u * 0.01, by + u * 0.035, u * 0.02, u * 0.2, shade('#c8b080', o.tone));
+  box(ctx, x - u * 0.07, by + u * 0.235, u * 0.14, u * 0.11, shade('#5a4030', o.tone));
+}
+
+/** A statue on its plinth: a robed figure of pale stone, one arm raised (a variant's held across it), over a darker plinth and its cornice; snow on the cornice, shoulders and head. */
+function drawStatue(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook): void {
+  const pw = u * 0.5, ph = u * 0.28, ch = u * 0.06, fb = y - ph - ch, sh = fb - u * 0.53, white = snowOn(o), stone = shade('#bcb6a8', o.tone);
+  box(ctx, x - pw / 2, y - ph, pw, ph, shade('#858074', o.tone));
+  box(ctx, x - pw * 0.58, fb, pw * 1.16, ch, shade('#a19b8e', o.tone));
+  const raised = o.vary > 0.5;
+  if (raised) celCapsule(ctx, B, x + u * 0.1, sh + u * 0.04, x + u * 0.2, sh - u * 0.2, u * 0.035, stone, 0.2);
+  celPoly(ctx, B, [x - u * 0.15, fb, x - u * 0.1, sh, x + u * 0.1, sh, x + u * 0.15, fb], stone, 0.35, 0.25);
+  if (!raised) celCapsule(ctx, B, x + u * 0.09, sh + u * 0.05, x - u * 0.04, sh + u * 0.2, u * 0.035, shade(stone, 0.92), 0.2);
+  celBall(ctx, B, x, sh - u * 0.085, u * 0.08, stone);
+  if (white) {
+    mark(ctx, x - pw * 0.58, fb, pw * 1.16, u * 0.03, white);
+    mark(ctx, x - u * 0.1, sh, u * 0.2, u * 0.025, white);
+    mark(ctx, x - u * 0.05, sh - u * 0.165, u * 0.1, u * 0.03, white);
+  }
+}
+
+/** A fountain: a low basin of dressed stone full to its lip, a spout behind it with water falling from it; frozen and its lip white under snow. */
+function drawFountain(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook): void {
+  const w = u * 0.9, h = u * 0.2, lip = u * 0.15, bt = y - h, white = snowOn(o), frozen = o.snow > 0.5, stone = shade('#a39b8b', o.tone);
+  box(ctx, x - u * 0.06, bt - u * 0.36, u * 0.12, u * 0.36, stone);
+  box(ctx, x - w / 2, bt, w, h, stone);
+  celPoly(ctx, B, oval(x, bt, w / 2, lip / 2), white ?? shade('#bab2a2', o.tone), 0.2, 0.2);
+  pool(ctx, x, bt, w * 0.41, lip * 0.3, shade(frozen ? '#c4d4e0' : '#4a80b4', o.tone));
+  if (!frozen) stroke(ctx, [x + u * 0.04, bt - u * 0.3, x + u * 0.13, bt - u * 0.25, x + u * 0.16, bt - u * 0.02], shade('#a8d2f0', o.tone), Math.max(1, u * 0.04));
+}
+
+/** A den: a mound of earth with a dark mouth at its foot and sticks over it; burnt, a charred mound, its mouth fallen in and its stakes black. Snow on its crown. */
+function drawDen(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook): void {
+  const w = u * 1.05, h = u * 0.5, white = snowOn(o), black = shade('#0e0a08', o.tone), mr = u * 0.19;
+  const pt = (f: number, t: number): number[] => [x + f * w, y - t * h];
+  celPoly(ctx, B, [...pt(-0.5, 0), ...pt(-0.42, 0.55), ...pt(-0.24, 0.92), ...pt(0.02, 1), ...pt(0.24, 0.9), ...pt(0.41, 0.58), ...pt(0.5, 0)], shade(o.ruin ? '#3e3a36' : '#70522e', o.tone), 0.35, 0.22);
+  if (white) celPoly(ctx, B, [...pt(-0.3, 0.8), ...pt(-0.24, 0.92), ...pt(0.02, 1), ...pt(0.24, 0.9), ...pt(0.3, 0.78)], white, 0.15, 0.15);
+  if (o.ruin) {
+    mark(ctx, x - mr, y - u * 0.06, mr * 2, u * 0.06, black);
+    for (const [f, t] of [[-0.28, 0.6], [0.06, 0.95], [0.3, 0.55]]) stroke(ctx, [...pt(f, t * 0.8), ...pt(f + 0.06, t + 0.35)], black, Math.max(1, u * 0.04));
+    return;
+  }
+  ctx.fillStyle = black;
+  ctx.beginPath(); ctx.moveTo(x - mr, y); ctx.lineTo(x - mr, y - u * 0.13); ctx.arc(x, y - u * 0.13, mr, Math.PI, 0); ctx.lineTo(x + mr, y); ctx.closePath(); ctx.fill();
+  for (const [f, t] of [[-0.3, 0.6], [0.1, 0.92], [0.32, 0.5]]) stroke(ctx, [...pt(f, t * 0.85), ...pt(f + 0.08, t + 0.3)], shade('#3a2a1c', o.tone), Math.max(1, u * 0.035));
+}
+
+/** A sign: a post with a board across its top lettered in two lines, a variant's pointed as a finger-post's; snow along the board. */
+function drawSign(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook): void {
+  const bw = u * 0.54, bh = u * 0.2, bt = y - u * 0.8, x0 = x - bw / 2, x1 = x + bw / 2, white = snowOn(o);
+  box(ctx, x - u * 0.035, bt, u * 0.07, y - bt, shade('#664628', o.tone));
+  celPoly(ctx, B, o.vary > 0.5 ? [x0, bt + bh, x0, bt, x1 - bh * 0.5, bt, x1, bt + bh / 2, x1 - bh * 0.5, bt + bh] : [x0, bt + bh, x0, bt, x1, bt, x1, bt + bh], shade('#a47c4a', o.tone), 0.3, 0.25);
+  for (const [f, t] of [[0.62, 0.3], [0.46, 0.62]]) mark(ctx, x0 + bw * 0.12, bt + bh * t, bw * f, u * 0.025, shade('#3a2a1a', o.tone));
+  if (white) mark(ctx, x0, bt, bw * 0.85, u * 0.03, white);
+}
+
+/** A rift: a tear in the air standing a little off the ground, its jagged lips a cold green light and its heart white; a light of its own. */
+function drawRift(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook): void {
+  const top = y - u * 1.3, H = u * 1.18, zig = [0, 0.14, 0.3, 0.48, 0.64, 0.82, 1], lean = [0, 0.05, -0.04, 0.06, -0.05, 0.03, 0];
+  const lips = (k: number): number[] => {
+    const left: number[] = [], right: number[] = [];
+    zig.forEach((f, i) => {
+      const half = Math.sin(Math.PI * f) * u * 0.17 * k * (i % 2 ? 1.2 : 0.8), cx = x + lean[i] * u, cy = top + f * H;
+      left.push(cx - half, cy); right.unshift(cx + half * 0.9, cy);
+    });
+    return [...left, ...right];
+  };
+  celPoly(ctx, B, lips(1), shade('#3cc08c', o.light), 0.15, 0.3);
+  ctx.fillStyle = shade('#eafff4', o.light); ctx.beginPath();
+  const inner = lips(0.42);
+  ctx.moveTo(inner[0], inner[1]);
+  for (let i = 2; i < inner.length; i += 2) ctx.lineTo(inner[i], inner[i + 1]);
+  ctx.closePath(); ctx.fill();
+  for (const [dx, dy] of [[-0.3, 0.3], [0.28, 0.55], [-0.22, 0.8]]) mark(ctx, x + dx * u, top + dy * H, u * 0.04, u * 0.04, shade('#9cf0d0', o.light));
+}
+
+const FEATURE_DRAWINGS: Record<FeatureKind, (ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: FeatureLook) => Fire | null | void> = {
+  cairn: drawCairn, chest: drawChest, camp: drawCamp, shrine: drawShrine, well: drawWell, statue: drawStatue, fountain: drawFountain, den: drawDen, sign: drawSign, rift: drawRift,
+};
+
+/** A feature of a kind the view draws, front-facing on (x, y) with y the ground line; a lit camp gives where its fire burns. */
+export function drawFeatureSprite(ctx: CanvasRenderingContext2D, kind: FeatureKind, x: number, y: number, u: number, o: FeatureLook): Fire | null {
+  return FEATURE_DRAWINGS[kind](ctx, x, y, u, o) ?? null;
 }
 
 export function drawRockSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, snow = 0): void {

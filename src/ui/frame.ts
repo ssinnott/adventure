@@ -10,7 +10,7 @@ import type { Party, Character, Condition } from '../game/party.ts';
 import { worstCondition, isDown, CLASSES, xpForLevel } from '../game/party.ts';
 import { FACING_NAMES } from '../game/types.ts';
 import { panel, bar, wrap } from './draw.ts';
-import { drawnCell, onAutomap, markedGroups } from '../game/ink.ts';
+import { drawnCell, markOf, markedGroups } from '../game/ink.ts';
 import { drawPortrait } from './portraits.ts';
 import { INK, PANEL, PANEL_LIGHT, BRASS, BRASS_DARK, TEXT, TEXT_DIM, RED, BLUE, GREEN, YELLOW, PURPLE, TERRAIN_COLORS, AUTOMAP_WASH, AUTOMAP_FADE, PARCHMENT, WOOD, WOOD_DARK, VOID_PINK } from './palette.ts';
 import { shade, rgba, mix } from '../lib/art/palettes.ts';
@@ -19,7 +19,6 @@ import { hash } from './brush.ts';
 import { shortDate } from '../game/calendar.ts';
 import { classify, isRainy, isSnowy, SKY_NAMES } from '../game/weather.ts';
 import type { Sky } from '../game/weather.ts';
-import { spentId } from '../game/wilds.ts';
 
 export const LAYOUT = {
   view: { x: 8, y: 8, w: 400, h: 268 },
@@ -178,16 +177,13 @@ export function drawAutomap(ctx: CanvasRenderingContext2D, world: World, frame: 
     ctx.fillRect(ox + x * cell, oy + y * cell, cell, cell);
     if ((c.solid === 'wall' || c.solid === 'building') && cell >= 6) { ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(ox + x * cell, oy + y * cell + cell - 1, cell, 1); }
   }
-  // Features the party has stood next to.
+  // Features the party has stood next to, as the view draws them (`markOf`): a spent chest, cairn,
+  // shrine, fountain or statue gone from the map, a den burnt as a ruin, and a camp always shown.
   for (const f of m.features) {
-    if (!shown(f.x, f.y) || !onAutomap(world, f)) continue;
+    const mark = shown(f.x, f.y) ? markOf(world, f) : null;
+    if (!mark) continue;
     const s = Math.max(1, cell - 2);
-    // A den shows standing and, burnt, as a ruin: before the spent skip, which would hide it.
-    if (f.kind === 'den') { ctx.fillStyle = world.used(f.id) ? DEN_ASH : DEN; ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s); continue; }
-    // A spent chest, cairn, shrine, fountain or statue is gone from the map; a camp always shows.
-    const spent = spentId(f);
-    if (spent && world.used(spent)) continue;
-    ctx.fillStyle = f.kind === 'chest' || f.kind === 'cairn' ? '#c08a1a' : f.kind === 'sign' ? '#6a5a4a' : '#8a3a9a';
+    ctx.fillStyle = f.kind === 'den' ? (mark === 'ruin' ? DEN_ASH : DEN) : f.kind === 'chest' || f.kind === 'cairn' ? '#c08a1a' : f.kind === 'sign' ? '#6a5a4a' : '#8a3a9a';
     ctx.fillRect(ox + f.x * cell + 1, oy + f.y * cell + 1, s, s);
   }
   // An exit not there yet (`after`, #749) is no exit on the map either.

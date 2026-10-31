@@ -80,6 +80,9 @@ export function fog(a: Air, color: string, d: number): string {
   return dark ? c : mix(c, haze, Math.min(0.3, d * 0.06));
 }
 
+/** The tone a thing standing on open ground d squares off takes, a tree's, a rock's or a feature's: darker by night, with distance and in murk. */
+export const boardTone = (a: Pick<Air, 'dark' | 'env'>, d: number): number => (a.dark ? 0.3 : Math.max(0.5, 1 - d * 0.12)) * (1 - a.env.murk * 0.1 * d);
+
 export const SNOW = '#eef2f7';
 /** The grass through the year: dull after winter, fresh in Sowing, deep in summer, tawny by Mistfall. */
 const GRASS: Ramp = [[0, '#6a7650'], [10, '#6a8a4a'], [22, '#58ae40'], [40, '#4c9a3a'], [62, '#5a9a3a'], [80, '#7a8a44'], [94, '#6e7650'], [120, '#6a7650']];
