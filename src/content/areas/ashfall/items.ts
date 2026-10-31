@@ -15,7 +15,7 @@ import { dwarfMail, mattock } from '../kilns/public.ts';
 // Sold at Cinderport's armourer (#512): a step past Rime Lodge's finds for every class, at 25.
 export const slagMace = W('slag_mace', 'Slag Mace', 2300, 2, 12, { bonus: 5, classes: [...MARTIAL, 'cleric'] });
 export const marlinspike = W('marlinspike', 'Marlinspike', 2300, 1, 8, { kind: 'light', bonus: 13 });
-export const ashwoodBow = W('ashwood_bow', 'Ashwood Bow', 2400, 1, 12, { kind: 'bow', bonus: 12, ranged: true, twoHanded: true, classes: ['ranger'] });
+export const ashwoodBow = W('ashwood_bow', 'Ashwood Bow', 2400, 1, 12, { kind: 'bow', bonus: 12, ranged: true, twoHanded: true, classes: MARTIAL });
 export const flamberge = W('flamberge', 'Flamberge', 2400, 2, 12, { bonus: 6, twoHanded: true, classes: MARTIAL });
 export const battleStaff = W('battle_staff', 'Battle Staff', 2000, 1, 10, { kind: 'staff', bonus: 12, twoHanded: true });
 export const drakeskin = A('drakeskin', 'Drakeskin Coat', 3100, 13, { classes: NO_CASTER_HEAVY });

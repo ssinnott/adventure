@@ -15,7 +15,11 @@
 // box while Ashfall is planned; and the stone cure (#546), a consumable inside the window, which the
 // company carries from 25, owed to Cinderport's chandler and the Riders' trader. And Act V (#746), the
 // last: the Hand's steel at 28, found on Hearth Isle and sold nowhere, a point past the armourer's for
-// every class, each piece inside the isle's window and placed by its box.
+// every class, each piece inside the isle's window and placed by its box. Beside them the ranged
+// rungs (#1115, each area's `ranged`): at each that holds a long bow, a short bow a step behind it
+// and a sling two, each a step on the last of its line, so that every class's best ranged weapon
+// betters the rung before; each sold where its bow is sold and found where it is found, and off
+// the gate's ladder until #1117.
 import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
 import { CURVE } from '../../src/content/progression.ts';
@@ -25,6 +29,8 @@ import { CLASSES, robeLike } from '../../src/game/party.ts';
 import type { ClassId } from '../../src/game/party.ts';
 import { hits } from '../../src/game/items.ts';
 import type { ItemDef } from '../../src/game/items.ts';
+import type { Items } from '../../src/game/tables.ts';
+import { MARTIAL } from '../../src/content/items.ts';
 import { GEAR, KIT, RUNGS_TWICE, companyAt } from '../kit/company.ts';
 import { CHECKS, once } from '../kit/checks.ts';
 import { gateCompany } from '../kit/company.ts';
@@ -122,6 +128,54 @@ const by = (level: number): string[] => GEAR.filter(([at]) => at <= level).flatM
 /** The rungs on an area (its id, the level, the items) that are another's: a rung is whole on the last area on the road whose items it holds (#897). */
 export const rungsAstray = (rungs: readonly (readonly [string, number, readonly string[]])[], areas: readonly Pick<Area, 'id' | 'items'>[] = AREAS): string[] =>
   rungs.filter(([id, , ids]) => areas[Math.max(...ids.map((i) => areas.findIndex((a) => a.items.some((x) => x.id === i))))]?.id !== id).map(([id, at]) => `${at} on ${id}`);
+
+/** A ranged rung (#1115, `AreaChecks.ranged`): the area it is on, its level, and its long bow, short bow and sling. */
+type Ranged = { area: string; level: number; bows: readonly string[] };
+/** The areas' ranged rungs, by level. An act's pull request adds its own to its areas' checks. */
+const RANGED: readonly Ranged[] = [...CHECKS].flatMap(([area, c]) => Object.entries(c.ranged ?? {}).map(([at, bows]) => ({ area, level: Number(at), bows }))).sort((a, b) => a.level - b.level);
+/**
+ * A ranged rung's three lines, each told by the item's `kind` and `short`, with the classes the issue
+ * gives it and how many steps by `hits` it stands behind its rung's long bow, a step a point.
+ */
+const LINES: readonly { line: string; is: (d: ItemDef) => boolean; who: readonly string[]; behind: number }[] = [
+  { line: 'long bow', is: (d) => d.kind === 'bow' && !d.short, who: MARTIAL, behind: 0 },
+  { line: 'short bow', is: (d) => d.kind === 'bow' && !!d.short, who: [...MARTIAL, 'thief', 'bard'], behind: 1 },
+  { line: 'sling', is: (d) => d.kind === 'light', who: Object.keys(CLASSES), behind: 2 },
+];
+/** The kits' ranged weapons, the plain Short Bow and Sling: what each line betters at its first rung. */
+const PLAIN = [...new Set(Object.values(CLASSES).flatMap((c) => c.kit))].filter((id) => ITEMS[id]?.ranged);
+/** What is wrong with the ranged rungs on `items`: an item not of its line, or not its line's classes', not its steps behind the long bow, or no step on its line's last. */
+function rangedFaults(rungs: readonly Ranged[], items: Items): string[] {
+  const out: string[] = [], last = LINES.map((l) => PLAIN.map((id) => items[id]).find((d) => !!d && l.is(d)));
+  for (const r of rungs) {
+    const long = items[r.bows[0]];
+    LINES.forEach((l, k) => {
+      const id = r.bows[k], d = items[id], was = last[k];
+      if (!d) { out.push(`${r.level}: ${id} is no item`); return; }
+      const who = Object.keys(CLASSES).filter((c) => usable(d, c as ClassId)), want = Object.keys(CLASSES).filter((c) => l.who.includes(c));
+      if (!d.ranged || !l.is(d)) out.push(`${r.level}: ${id} is no ${l.line}`);
+      if (who.join() !== want.join()) out.push(`${r.level}: ${id} is for ${who.join(', ') || 'nobody'}, not ${want.join(', ')}`);
+      if (long && hits(long) - hits(d) !== l.behind) out.push(`${r.level}: ${id} (${hits(d)}) is not ${['level with', 'a step behind', 'two steps behind'][l.behind]} ${long.id} (${hits(long)})`);
+      if (was && hits(d) < hits(was) + 1) out.push(`${r.level}: ${id} (${hits(d)}) is no step on ${was.id} (${hits(was)})`);
+      last[k] = d;
+    });
+  }
+  return out;
+}
+/** A class's best ranged weapon by `hits`, of the kits' and the ranged rungs' it may hold: before the first rung, then at each. */
+const bestRanged = (rungs: readonly Ranged[], items: Items, cls: ClassId): (ItemDef | undefined)[] =>
+  [0, ...rungs.map((r) => r.level)].map((at) => [...PLAIN, ...rungs.filter((r) => r.level <= at).flatMap((r) => r.bows)].map((id) => items[id])
+    .filter((d): d is ItemDef => !!d?.ranged && usable(d, cls)).sort((a, b) => hits(b) - hits(a))[0]);
+/** The rungs at which a class's best ranged weapon betters none it had before. */
+const unbettered = (rungs: readonly Ranged[], items: Items, cls: ClassId): number[] => {
+  const best = bestRanged(rungs, items, cls);
+  return rungs.filter((_, k) => !best[k + 1] || hits(best[k + 1]!) <= (best[k] ? hits(best[k]!) : 0)).map((r) => r.level);
+};
+/** Where an area places an item: each shop that sells it, box that gives it and monster that drops it. */
+const placesIn = (a: Area, id: string): string[] => [
+  ...a.maps.flatMap((m) => (m.features ?? []).flatMap((f) => (f.kind === 'shop' ? (f.stock.includes(id) ? [`${f.name} on ${m.id}`] : []) : giftOf(f)?.items?.includes(id) ? [`${f.kind} ${spentId(f) ?? ''} on ${m.id}`] : []))),
+  ...a.monsters.filter((m) => (m.drops ?? []).some((x) => x.item === id)).map((m) => `${m.id}'s drops`),
+];
 
 export function ladder(): void {
   // Class by class: each item the table names is in the ladder by its level, the class can use it,
@@ -301,6 +355,49 @@ export function ladder(): void {
   const armoury = tm.maps.flatMap((d) => (d.features ?? []).flatMap((f) => (f.kind === 'shop' ? f.stock : [])));
   const sold = chests.flatMap((c) => c.items.filter((id) => ITEMS[id].slot !== 'none' && armoury.includes(id)).map((id) => `${c.map}'s ${c.id} holds ${id}`));
   ok(armoury.length > 0 && !sold.length, `nothing in Thornmark gives gear its Armoury sells${sold.length ? ` (${sold.join('; ')})` : ''}`);
+
+  // The ranged rungs (#1115): at each, a long bow, a short bow a step behind it and a sling two, each a
+  // step on the last of its line, for the classes its line is for; so each class's best ranged weapon
+  // betters the rung before at every one.
+  const faults = rangedFaults(RANGED, ITEMS), say = (d?: ItemDef): string => (d ? `${d.id} ${hits(d)}` : 'none');
+  ok(RANGED.length > 0 && !faults.length, `at each ranged rung a long bow, a short bow a step behind it and a sling two, each a step on the last of its line; the long bows the martial four's, the short bows theirs, the thief's and the bard's, the slings anyone's (${RANGED.map((r) => `${r.level}: ${r.bows.map((id) => say(ITEMS[id])).join(', ')}`).join('; ')})${faults.length ? ` (but ${faults.join('; ')})` : ''}`);
+  for (const cls of Object.keys(CLASSES) as ClassId[]) {
+    const best = bestRanged(RANGED, ITEMS, cls), not = unbettered(RANGED, ITEMS, cls);
+    ok(!not.length, `the ${CLASSES[cls].name}'s best ranged weapon betters the rung before at each ranged rung: ${best.map(say).join(', ')}${not.length ? ` (not at ${not.join(', ')})` : ''}`);
+  }
+  // Every long bow but an artifact is the martial four's: Acts II to V's, which no ranged rung names
+  // yet, and the +N copies off the ladder among them (the issue's Proposed; an artifact keeps its list).
+  const longBows = Object.values(ITEMS).filter((d) => d.slot === 'weapon' && d.kind === 'bow' && !d.short && !d.artifact), four = Object.keys(CLASSES).filter((c) => LINES[0].who.includes(c)).join();
+  const shut = longBows.filter((d) => Object.keys(CLASSES).filter((c) => usable(d, c as ClassId)).join() !== four).map((d) => d.id);
+  ok(longBows.length > 0 && !shut.length, `every long bow but an artifact is the martial four's, ${longBows.length} of them${shut.length ? ` (but not ${shut.join(', ')})` : ''}`);
+  // And the rule refuses what it should: a short bow no step on the last (the Thornmark Short Bow on a
+  // d6), and one a bard may not hold; the thief, then the bard, then betters nothing at 8.
+  const flat = { ...ITEMS, thornmark_shortbow: { ...ITEMS.thornmark_shortbow, sides: 6 } }, barred = { ...ITEMS, thornmark_shortbow: { ...ITEMS.thornmark_shortbow, classes: [...MARTIAL, 'thief'] } };
+  const flatFault = rangedFaults(RANGED, flat).find((f) => f.includes('no step on yew_shortbow+1')), barredFault = rangedFaults(RANGED, barred).find((f) => f.includes('thornmark_shortbow is for'));
+  ok(!!flatFault && !!barredFault && unbettered(RANGED, flat, 'thief').includes(8) && unbettered(RANGED, barred, 'bard').includes(8),
+    `a ranged rung's short bow no step on the last, or one its bard may not hold, is refused, and the thief or the bard betters nothing at 8 (${flatFault}; ${barredFault})`);
+  // Each short bow and sling is an item of its long bow's area, sold where the bow is sold and found
+  // where it is found there (a shop's, a box's or a drop's), cheaper than the one before it in the
+  // rung and inside that area's window. The long bow is on the rung of the area whose checks hold it,
+  // which may be a later one on the road (13 is Wrackholm's, its Horn Bow +1 Saltreach's); and the
+  // two are off the gate's ladder until #1117 takes them into `gear`.
+  const onLadder = new Set(GEAR.flatMap(([, ids]) => ids));
+  const home = (id: string): Area | undefined => (AREAS as readonly Area[]).find((a) => a.items.some((x) => x.id === id));
+  const placed = RANGED.flatMap((r) => {
+    const [long] = r.bows, a = home(long), where = a ? placesIn(a, long) : [];
+    const out = CHECKS.get(r.area)?.gear?.[r.level]?.includes(long) ? [] : [`${long} is not on ${r.area}'s rung at ${r.level}`];
+    r.bows.slice(1).forEach((id, k) => {
+      const d = ITEMS[id], before = ITEMS[r.bows[k]], got = a ? placesIn(a, id) : [], missing = where.filter((p) => !got.includes(p));
+      if (!a || home(id) !== a) out.push(`${id} is no item of ${long}'s area, ${a?.id}`);
+      if (!got.length || missing.length) out.push(`${id} is not where ${long} is (${missing.join(', ') || 'anywhere'})`);
+      const unpriced = a ? a.maps.flatMap((m) => (m.features ?? []).filter((f) => f.kind === 'shop' && f.prices?.[long] !== undefined && f.prices?.[id] === undefined).map(() => m.id)) : [];
+      if (unpriced.length) out.push(`${id} has no price where ${long} has one (${unpriced.join(', ')})`);
+      if (!a || !d || !before || !Number.isInteger(d.price) || d.price >= before.price || d.price > CURVE[a.id as keyof typeof CURVE].price) out.push(`${id} (${d?.price} gold) is not a whole price cheaper than ${before?.id} (${before?.price}) inside ${a?.id}'s window`);
+      if (onLadder.has(id)) out.push(`${id} is on the gate's ladder`);
+    });
+    return out;
+  });
+  ok(RANGED.length > 0 && !placed.length, `each ranged rung's short bow and sling is its long bow's area's, sold where the bow is sold and found where it is found there, cheaper and inside the area's window, and off the gate's ladder till #1117 (${RANGED.map((r) => `${r.level}: ${[...new Set(home(r.bows[0]) ? placesIn(home(r.bows[0])!, r.bows[0]) : [])].join(', ')}`).join('; ')})${placed.length ? ` (but ${placed.join('; ')})` : ''}`);
 
   // The gate check's company wears what harness's does, level by level.
   const worn = (p: ReturnType<typeof companyAt>): string => JSON.stringify(p.members.map((m) => m.equipment));

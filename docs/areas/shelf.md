@@ -144,6 +144,9 @@ area on the road, it claims nothing new (`novel`), and the novelty check asks no
   on the limit), D3 99.7%, D4 96.7% and E4 100%.
 - **The ladder:** rungs 3 and 5 are the Foreland's (`gear`, in its checks): by 3 Mottram's gear
   and the kits' weapons with a plus, by 5 the kits' armour with a plus and the Downs' last finds.
+  Its ranged rungs (`ranged`, #1115) put a short bow a step behind the Long Bow and a sling two: the
+  Yew Short Bow and the Leather Sling at Mottram's and in the Seam's chest beside it, each with a
+  plus in D3's camp beside the Long Bow +1. They are off the gate's ladder until #1117.
 
 ## 10. Names
 
