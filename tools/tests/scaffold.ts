@@ -163,7 +163,8 @@ export async function scaffold(): Promise<void> {
   ok(changes.every((c) => runOf[c.y * SIZE + c.x] >= 0) && taken.every((n, r) => n <= runs[r] * TEXTURE_SHARE), `each in a run of a ground of the table, on a quarter of the run at most (${(100 * most).toFixed(0)}% at most, of ${runs.length} runs)`);
   const tr = reach(tdef), bp = plainShare(def), tp = plainShare(tdef);
   ok(tdef.start.x === def.start.x && tdef.start.y === def.start.y && tr.seen === tr.open, `its start is the bare draft's and every open square is reached from it (${tr.seen} of ${tr.open})`);
-  // #1108's measure: what the texture lays is ground of another look and the odd rock, so it never makes a view plain.
+  // #1108's measure: grass's looks and the scatter already break every view of the bare draft, so the
+  // textured one is held to no more; a patch is a dozen squares at most, too few to fill a view's window.
   ok(tp.plain <= bp.plain, `and no more of its views are plain by #1108's measure (${tp.plain} of ${tp.views}; bare, ${bp.plain} of ${bp.views})`);
 
   // Where the pass must change nothing: a box of water, of road, of grass on its edges alone (its
