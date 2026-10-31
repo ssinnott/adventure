@@ -255,13 +255,14 @@ the Monk, have feats: a turn's action of their own, paid in stamina. Stamina is 
 gone at its end, so it plays apart from spell points, which a day spends and a rest restores.
 Decided by the owner, 30 October 2026 (#1113); the rules and the feats below are that issue's
 design, the owner's to settle and to overturn. Built off (`FEATS_ON`, game/party/tables.ts; the
-frame, game/combat/feats.ts) until #1117 turns them on: the knight's, the monk's and the barbarian's four so far.
+frame, game/combat/feats.ts) until #1117 turns them on.
 
 - **Building it.** A member of the four starts a fight with none and takes 1 for each blow of its
   own that lands and 1 for each that lands on it (a sweep, a breath or a spell is no blow), 6 at
   most. Each class builds one way faster, 1
   more each time: the knight for a blow that lands on it, the barbarian for a blow of its own that
-  lands while it rages, the thief for a sneak attack that lands, the monk for a foe it fells.
+  lands while it rages, the thief for a sneak attack that lands (not a feat's), the monk for a foe
+  it fells.
 - **Spending it.** A feat costs 2 to 5 and takes the turn. The fight's menu says Feat for the four
   where a caster's says Cast, and the card shows the stamina where a caster's shows spell points.
 - **When.** Four to a class, at levels 1, 8, 15 and 23, so that each gains something at 15 and 23

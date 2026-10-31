@@ -133,8 +133,9 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   for (const t of [s.foeBless, s.foeShield]) t.forEach((n, band) => { if (n > 0) t[band] = n - 1; });
   if (s.glass && --s.glass.rounds <= 0) delete s.glass;
   featRounds(s, party);
-  // A monster held by the roots tears free as a member shakes off paralysis.
-  const freed = s.monsters.filter((m) => standing(m) && m.conditions.includes('paralysed') && rng.chance(HOLD_BREAKS));
+  // A monster held by the roots tears free as a member shakes off paralysis; one a thief holds
+  // (`hamstrung`, #1113) is held its rounds out, and nothing is drawn for it.
+  const freed = s.monsters.filter((m) => standing(m) && m.conditions.includes('paralysed') && !m.hamstrung && rng.chance(HOLD_BREAKS));
   for (const m of freed) m.conditions = m.conditions.filter((k) => k !== 'paralysed');
   if (freed.length) s.log.push(`${describe(freed)} ${freed.length === 1 ? 'tears' : 'tear'} free.`);
   regenerate(s);
@@ -169,13 +170,14 @@ function strike(s: CombatState, party: Party, rng: RngInstance, i: number, targe
       // crits are on, so that while they are off a blow draws what it drew before; its mark
       // follows a sneak attack's. A feat's blow (`Strike`, #1113) may land sure, crit sure or never,
       // neither drawn, count for more and take the feat's mark after a crit's; one that lands builds
-      // stamina while the feats are on (`landed`), which draws nothing.
-      const sneak = how.sneak || sneaks(s, c, m), struck = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m, sneak, i) + armsBonus(c) + song + (edge?.damage ?? 0))
+      // stamina while the feats are on (`landed`), which draws nothing, the thief's 1 more for its own
+      // sneak attack alone, not a feat's.
+      const mine = sneaks(s, c, m), sneak = how.sneak || mine, struck = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m, sneak, i) + armsBonus(c) + song + (edge?.damage ?? 0))
         + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
       const chance = critChance(s.tables.items, c, s.crits ?? CRITS_ON), crit = how.crits ?? (chance > 0 && rng.chance(chance));
       const dmg = (crit ? 2 * struck : struck) * (how.times ?? 1);
       hurtMonster(m, dmg);
-      landed(s, c, i, sneak, m.hp <= 0);
+      landed(s, c, i, mine, m.hp <= 0);
       const did = how.onLand && standing(m) ? how.onLand(m) : '';
       // The Windwalker's follow-through (`followsThrough`, #1070): a blow that fells its foe is not
       // spent while a foe it can reach stands, at most once more for each of the turn's own blows.

@@ -26,6 +26,10 @@ export interface MonsterInst {
   flash: number;
   /** One that mends (`MonsterDef.regen`) took fire this round, and will not mend at its end (`regenerate`). */
   burnt?: boolean;
+  /** The thief's Blind (#1113): the rounds left on it, its to-hit BLIND_HIT less (`monsterHit`). */
+  blind?: number;
+  /** The thief's Hamstring (#1113): the rounds left on its hold (`paralysed`), which does not tear free before they are out. */
+  hamstrung?: number;
 }
 
 export type TurnRef = { side: 'party'; i: number } | { side: 'monster'; i: number };
@@ -170,6 +174,8 @@ export const MAX_MONSTERS = 12, MAX_GROUPS = 3;
 export const BLESS_HIT = 2, HASTE_HIT = 1, HASTE_SPEED = 8, WARD_AC = 3;
 /** And the knight's Rally on the front row's (#1113). */
 export const RALLY_HIT = 2;
+/** And the thief's Blind off a foe's (#1113). */
+export const BLIND_HIT = 4;
 
 /** Monsters as the log names them: "Bandit", "3 Bandits, Bandit Archer". */
 export function describe(ms: readonly MonsterInst[]): string {

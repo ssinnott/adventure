@@ -12,12 +12,12 @@ import type { RngInstance } from '../../src/lib/engine/rng.ts';
 import { measureText } from '../../src/lib/engine/text.ts';
 import { createCharacter, createParty, CLASSES, FEATS_ON, TRAITS } from '../../src/game/party.ts';
 import type { Character, ClassId, Party } from '../../src/game/party.ts';
-import { startCombat, partyAct, currentTurn, monsterAct, buffHit } from '../../src/game/combat.ts';
-import { RALLY_HIT } from '../../src/game/combat/state.ts';
+import { startCombat, partyAct, currentTurn, monsterAct, buffHit, monsterHit, sneakDamage } from '../../src/game/combat.ts';
+import { RALLY_HIT, BLIND_HIT } from '../../src/game/combat/state.ts';
 import type { CombatState, CombatOpts, PartyAction } from '../../src/game/combat.ts';
-import { FEATS, STAMINA_MAX, featsOf, featsKnown, featFor, staminaOf } from '../../src/game/combat/feats.ts';
+import { FEATS, STAMINA_MAX, featsOf, featsKnown, featFor, staminaOf, aimable } from '../../src/game/combat/feats.ts';
 import { CHALLENGE_ROUNDS, RALLY_ROUNDS } from '../../src/game/combat/feats/knight.ts';
-import { aimable } from '../../src/game/combat/feats.ts';
+import { BLIND_ROUNDS, HAMSTRING_ROUNDS } from '../../src/game/combat/feats/thief.ts';
 import { FLURRY_MORE } from '../../src/game/combat/feats/monk.ts';
 import { FLURRY_LINE, PALM_LINE, LEAP_LINE, WIND_LINE, FOLLOW_LINE } from '../../src/game/combat/lines.ts';
 import { aliveMonsters } from '../../src/game/combat.ts';
@@ -90,6 +90,7 @@ const KNIGHT = FEATS.filter((x) => x.cls === 'knight');
 export function feats(): void {
   frame();
   knight();
+  thief();
   monk();
 }
 
@@ -390,6 +391,253 @@ function knight(): void {
     };
     const gate = play((x, q, rng) => gateTurn(x, q, rng, 0)), auto = play((x, q, rng) => { botTurn(x, q, rng, 0, asSeen, PLAYED); });
     ok(PLAYED.feats === true && gate === 'knight strikes as a champion.' && auto === gate, `both bots play the feats once a fight has them, the gate's and the game's auto-fight ("${gate}")`);
+  }
+}
+
+// The thief's four (#1113, combat/feats/thief.ts): each held to DESIGN §5's words, its cost, its level
+// and its edges, and legal from the back row with a sling; a feat's sneak attack builds stamina as a
+// plain blow; and the bots spend on them by the thief's policy.
+const KNIFE: ItemDef = { ...BLADE, id: 'fx_knife', name: 'Knife', kind: 'light' }, SLING: ItemDef = { ...BLADE, id: 'fx_sling', name: 'Sling', kind: 'light', ranged: true };
+const TT: Tables = { ...T, items: { ...T.items, fx_knife: KNIFE, fx_sling: SLING } };
+const THIEF = FEATS.filter((x) => x.cls === 'thief');
+/** A thief of `level`, its prestiges by it, with the knife (two blows from 11) or the sling. */
+function rogue(level: number, weapon = 'fx_knife'): Character {
+  const c = member('thief', level);
+  c.prestige = [11, 19, 27].filter((l) => level >= l).length;
+  c.equipment.weapon = weapon;
+  return c;
+}
+/** A fight on the tables with the knife and the sling, the feats on unless `opts` says. */
+function rogueFight(p: Party, groups: readonly (readonly MonsterDef[])[], seed: number, opts: CombatOpts = { feats: true }): { f: CombatState; rng: ReturnType<typeof counted> } {
+  const rng = counted(seed);
+  return { f: startCombat(TT, p, groups.map((monsters, k) => ({ id: `g${k}`, monsters })), rng, opts), rng };
+}
+/** The fight played on to member `i`'s turn in round `r` or a later one, the rest bracing: false if it ends first. */
+function upTo(f: CombatState, p: Party, rng: RngInstance, i: number, r: number): boolean {
+  while (until(f, p, rng, i)) { if (f.round >= r) return true; partyAct(f, p, rng, { type: 'defend' }); }
+  return false;
+}
+type Lie = CombatState['monsters'][number]['conditions'];
+
+function thief(): void {
+  const RAT = MONSTERS.rat.name, at = (l: string): number => Number(/ for (\d+)\./.exec(l)?.[1]), hits = (ls: readonly string[]): string[] => ls.filter((l) => l.includes(' hits '));
+  ok(THIEF.map((x) => `${x.name} ${x.cost} ${x.level}`).join(', ') === 'Ambush 2 1, Blind 3 8, Hamstring 3 15, Deathblow 5 23',
+    "the thief's four as DESIGN §5 has them: Ambush (2) at 1, Blind (3) at 8, Hamstring (3) at 15, Deathblow (5) at 23");
+
+  // By level and stamina; Deathblow only while a foe it reaches lies asleep or held; from the back row
+  // with a sling each of the four, with a blade none.
+  const has = (level: number, st: number, lie = false, slot = 0, weapon?: string): string => {
+    const c = rogue(level, weapon), q = createParty(slot ? [member('cleric'), member('cleric'), member('cleric'), c] : [c]), { f } = rogueFight(q, [[STRAW, STRAW]], 1);
+    f.stamina![slot] = st;
+    if (lie) f.monsters[1].conditions = ['asleep'];
+    return featsOf(f, q, slot).map((x) => x.id).join() + '/' + featsKnown(c).length;
+  };
+  const by = [has(1, 2), has(8, 2), has(8, 3), has(15, 6), has(23, 6), has(23, 6, true), has(23, 4, true), has(23, 6, true, 3), has(23, 6, true, 3, 'fx_sling')];
+  ok(by.join(' ') === 'ambush/1 ambush/2 ambush,blind/2 ambush,blind,hamstring/3 ambush,blind,hamstring/4 ambush,blind,hamstring,deathblow/4 ambush,blind,hamstring/4 /4 ambush,blind,hamstring,deathblow/4',
+    `a thief has its feats by its level and may use those it affords, Deathblow while a foe lies asleep, a blow's from the back row with a sling and not a blade (${by.join(' ')})`);
+  {
+    const q = createParty([rogue(23)]), off = rogueFight(q, [[STRAW]], 1, {});
+    until(off.f, q, off.rng, 0);
+    off.f.monsters[0].conditions = ['asleep'];
+    const was = off.f.log.length, drawn = off.rng.draws();
+    ok(THIEF.every((x) => !partyAct(off.f, q, off.rng, feat(x.id))) && off.f.log.length === was && off.rng.draws() === drawn && featFor(off.f, q, 0, 0) === undefined && off.f.monsters[0].blind === undefined,
+      "off, each of the thief's feats is refused with nothing drawn or said, a foe asleep before it, and its bots try none");
+  }
+
+  // Ambush: the thief's blows this turn, each a sneak attack for its damage where it would be none and
+  // the same where it would be one already; they build stamina as plain blows, 1 each and not a sneak
+  // attack's 2, so that it never pays for itself.
+  {
+    const play = (round: number, a: PartyAction): { lines: string[]; st: number } => {
+      const q = createParty([rogue(12)]), { f, rng } = rogueFight(q, [[STRAW, STRAW]], 4);
+      upTo(f, q, rng, 0, round);
+      f.stamina![0] = 2;
+      const from = f.log.length;
+      partyAct(f, q, rng, a);
+      return { lines: f.log.slice(from), st: f.stamina![0] };
+    };
+    const late = play(2, feat('ambush')), lateBlow = play(2, { type: 'attack', target: 0 }), early = play(1, feat('ambush')), earlyBlow = play(1, { type: 'attack', target: 0 });
+    const more = sneakDamage(rogue(12)), plain = at(hits(lateBlow.lines)[0] ?? '');
+    ok(late.lines[0] === 'thief strikes from ambush.' && hits(late.lines).length === 2 && hits(late.lines).every((l) => l.endsWith(`for ${plain + more}. ${SNEAK_LINE}`)) && hits(lateBlow.lines).every((l) => !l.includes(SNEAK_LINE)),
+      `in round 2 an ambush's two blows are sneak attacks, each ${plain} and ${more} more, where an Attack's are not ("${late.lines.join(' | ')}")`);
+    ok(hits(early.lines).length === 2 && hits(early.lines).join() === hits(earlyBlow.lines).join() && hits(early.lines).every((l) => l.endsWith(`for ${plain + more}. ${SNEAK_LINE}`)),
+      `on a foe yet to act in the first round, where its blows are sneak attacks already, an ambush's take the sneak damage once (${at(hits(early.lines)[0])})`);
+    ok(late.st === 2 - 2 + 2 && lateBlow.st === 2 + 2 && early.st === 2 - 2 + 2 * 2 && earlyBlow.st === STAMINA_MAX,
+      `its blows build 1 each as plain blows (2 spent, ${late.st} after), the thief's own sneak attacks 2 (${early.st} after an ambush on a foe yet to act)`);
+  }
+
+  // Blind: one blow; landing on a foe it leaves standing, the foe hits BLIND_HIT less the round it is
+  // struck in and the two after, as Bless counts; one it fells or misses is not blinded.
+  {
+    const q = createParty([rogue(12)]), { f, rng } = rogueFight(q, [[STRAW]], 2), m = f.monsters[0];
+    upTo(f, q, rng, 0, 2);
+    const before = monsterHit(f, m), said = act(f, q, rng, 0, feat('blind'), 3) ?? [], rounds = [before - monsterHit(f, m)];
+    while (f.outcome === 'ongoing' && rounds.length < 4) {
+      const t = currentTurn(f, q, rng);
+      if (!t) break;
+      if (f.round > rounds.length + 1) rounds.push(before - monsterHit(f, m));
+      if (t.side === 'monster') monsterAct(f, q, rng); else partyAct(f, q, rng, { type: 'defend' });
+    }
+    const shot = rogueFight(createParty([rogue(8)]), [[foe('test_shot', { ranged: true, missile: true, name: 'Shot', plural: 'Shots' })]], 1).f, sm = shot.monsters[0], aim = monsterHit(shot, sm);
+    sm.blind = 1;
+    ok(BLIND_HIT === 4 && BLIND_ROUNDS === 3 && said.length === 1 && said[0] === `thief hits ${RAT} for ${at(said[0])}. ${RAT} is blinded.` && rounds.join() === '4,4,4,0' && aim - monsterHit(shot, sm) === BLIND_HIT,
+      `a blind foe hits ${BLIND_HIT} less the round it is struck in and the two after (rounds 2 to 5: ${rounds.join(', ')}), with a bow as with a blade (${aim - monsterHit(shot, sm)}), one blow where the thief has two: "${said[0]}"`);
+    const once = (d: MonsterDef, seed: number): { said: string; blind?: number; st: number } => {
+      const r = createParty([rogue(8)]), x = rogueFight(r, [[d]], seed);
+      upTo(x.f, r, x.rng, 0, 2);
+      const lines = act(x.f, r, x.rng, 0, feat('blind'), 3) ?? [];
+      return { said: lines.join(' | '), blind: x.f.monsters[0].blind, st: x.f.stamina![0] };
+    };
+    const fell = once(foe('test_frail', { hp: 1, ac: -100, attack: -50, speed: 1 }), 1), miss = once(WALL, 1);
+    ok(fell.said.includes(`${RAT} dies.`) && !fell.said.includes('blinded') && fell.blind === undefined && miss.said === `thief misses ${RAT}.` && miss.blind === undefined && miss.st === 0,
+      `a foe the blow fells is not blinded ("${fell.said}"), nor one it misses, the cost spent ("${miss.said}")`);
+  }
+
+  // Hamstring: one blow; landing, its foe is held fast and loses its next turn, this round's where it is
+  // still to come and else the next round's, then moves again, on every seed: it does not tear free
+  // before. One immune to holds is not held, and one the blow fells is not held.
+  {
+    const HARE = foe('test_hare', { ac: -100, attack: -50, speed: 99, name: 'Hare', plural: 'Hares' }), IRON = foe('test_iron', { ac: -100, attack: -50, speed: 1, immune: ['paralysed'], name: 'Iron', plural: 'Irons' });
+    const turns = (d: MonsterDef, seed: number): { said: string; acts: string; moved: number } => {
+      const q = createParty([rogue(15)]), { f, rng } = rogueFight(q, [[d]], seed), acts = [0, 0, 0, 0, 0, 0];
+      let said = '';
+      while (f.outcome === 'ongoing' && f.round <= 4) {
+        const t = currentTurn(f, q, rng);
+        if (!t) break;
+        const round = f.round, from = f.log.length;
+        if (t.side === 'monster') { monsterAct(f, q, rng); acts[round]++; continue; }
+        if (round !== 2) { partyAct(f, q, rng, { type: 'defend' }); continue; }
+        f.stamina![0] = 3;
+        if (!partyAct(f, q, rng, feat('hamstring'))) partyAct(f, q, rng, { type: 'defend' });
+        said = f.log.slice(from).join(' | ');
+      }
+      return { said, acts: acts.slice(1, 5).join(''), moved: f.log.filter((l) => l.endsWith(' can move again.')).length };
+    };
+    const slow = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((seed) => turns(STRAW, seed)), fast = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((seed) => turns(HARE, seed));
+    const landed = (x: { said: string }): boolean => x.said.endsWith(' is held fast.');
+    ok(HAMSTRING_ROUNDS === 2 && slow.filter(landed).length >= 8 && slow.every((x) => (landed(x) ? x.acts === '1011' && x.moved === 1 : x.acts === '1111'))
+      && fast.filter(landed).length >= 8 && fast.every((x) => (landed(x) ? x.acts === '1101' && x.moved === 1 : x.acts === '1111')),
+    `a hamstrung foe loses one turn, rounds 1 to 4: a slower one its turn of the round (${slow.find(landed)?.acts}), a faster one its next round's (${fast.find(landed)?.acts}), on every seed of ten it lands on (${slow.filter(landed).length}, ${fast.filter(landed).length}), and moves again: "${fast.find(landed)?.said}"`);
+    const iron = turns(IRON, 1), frail = turns(foe('test_frail', { hp: 1, ac: -100, attack: -50, speed: 1 }), 1);
+    ok(iron.said === `thief hits Iron for ${at(iron.said)}. Iron is not held.` && iron.acts === '1111' && frail.said.includes(`${RAT} dies.`) && !frail.said.includes('held'),
+      `one immune to holds is not held, and the log says so ("${iron.said}"); one the blow fells is not held ("${frail.said}")`);
+    // The thief's next turn finds a faster foe held: its Deathblow may be aimed at it.
+    const q = createParty([rogue(23)]), { f, rng } = rogueFight(q, [[HARE]], 1);
+    upTo(f, q, rng, 0, 2);
+    act(f, q, rng, 0, feat('hamstring'), 3);
+    const drawn = rng.draws();
+    upTo(f, q, rng, 0, 3);
+    const between = rng.draws() - drawn;
+    f.stamina![0] = 5;
+    ok(f.round === 3 && between === 2 && f.monsters[0].conditions.includes('paralysed') && featsOf(f, q, 0).some((x) => x.id === 'deathblow') && act(f, q, rng, 0, feat('deathblow'), 5) !== null,
+      `and the thief's next turn finds it held, so that its Deathblow may take it; nothing is drawn for the hold at the round's end, only the new round's order (${between} draws)`);
+    // One that falls while it is held is not let go: the dead do not move again.
+    const r2 = createParty([rogue(15)]), x2 = rogueFight(r2, [[HARE, STRAW]], 1);
+    upTo(x2.f, r2, x2.rng, 0, 2);
+    const fell2 = act(x2.f, r2, x2.rng, 0, feat('hamstring'), 3) ?? [];
+    x2.f.monsters[0].hp = 0;
+    upTo(x2.f, r2, x2.rng, 0, 4);
+    ok(fell2.join().endsWith('Hare is held fast.') && x2.f.round === 4 && !x2.f.log.some((l) => l.endsWith(' can move again.')), `one that falls while it is held is not let go ("${fell2.join(' | ')}")`);
+  }
+
+  // Deathblow: one blow, aimed only at a foe asleep or held that it reaches; a sneak attack for triple,
+  // the whole blow, its steel and its sneak damage, never a crit and drawing no chance with crits on and
+  // the thief's Luck high; a foe asleep and held at once takes the same; one awake and free is refused.
+  {
+    const strike = (lie: Lie, crits = false, a: PartyAction = feat('deathblow')): { lines: string[] | null; draws: number; st: number } => {
+      const c = rogue(23), q = createParty([c]), { f, rng } = rogueFight(q, [[STRAW, STRAW]], 3, { feats: true, crits });
+      c.stats.luck = 60;
+      upTo(f, q, rng, 0, 3);
+      f.monsters[0].conditions = lie;
+      const was = rng.draws(), lines = act(f, q, rng, 0, a, 5);
+      return { lines, draws: rng.draws() - was, st: f.stamina![0] };
+    };
+    const awake = strike([]), asleep = strike(['asleep']), held = strike(['paralysed']), both = strike(['asleep', 'paralysed']), lucky = strike(['asleep'], true), blow = strike([], false, { type: 'attack', target: 0 });
+    const plain = at(hits(blow.lines ?? [])[0] ?? ''), more = sneakDamage(rogue(23)), line = `thief hits ${RAT} for ${3 * (plain + more)}. ${SNEAK_LINE} A deathblow.`;
+    ok(asleep.lines?.join() === line && held.lines?.join() === line && both.lines?.join() === line && asleep.st === 1,
+      `a deathblow on a foe asleep, held or both is one blow for three times the whole sneak attack, ${plain} and ${more} (built as a plain blow): "${line}"`);
+    ok(awake.lines === null && awake.st === 5 && awake.draws === 0 && lucky.lines?.join() === line && lucky.draws === asleep.draws,
+      `at a foe awake and free it is refused, nothing spent or drawn; with crits on it is no crit and draws what it draws with them off (${asleep.draws})`);
+    const r = createParty([rogue(23)]), rr = counted(1), x = startCombat(TT, r, [{ id: 'band', monsters: [STRAW, STRAW], back: 1 }], rr, { feats: true });
+    until(x, r, rr, 0);
+    x.monsters[1].conditions = ['asleep'];
+    x.stamina![0] = 5;
+    ok(featsOf(x, r, 0).every((d) => d.id !== 'deathblow') && !aimable(x, r.members[0], THIEF[3], 1), 'a sleeper of the back rank, beyond a blade\'s reach while the front stands, is no Deathblow\'s');
+  }
+
+  // Each of the four from the back row with a sling, as the premade six's thief strikes.
+  {
+    const used = THIEF.map((d) => {
+      const q = createParty([member('cleric'), member('cleric'), member('cleric'), rogue(23, 'fx_sling')]), { f, rng } = rogueFight(q, [[STRAW, STRAW]], 5);
+      upTo(f, q, rng, 3, 3);
+      f.monsters[0].conditions = ['asleep'];
+      return act(f, q, rng, 3, feat(d.id, 0), 5) !== null;
+    });
+    ok(used.every(Boolean), `from the back row with a sling each of the four may be used (${used.join(', ')})`);
+  }
+
+  // The bots' policy, by construction: Deathblow whenever it can, at the bot's foe where it lies asleep
+  // or held, else the one lying so with the most hit points, and from its level nothing else while one
+  // lies so; Hamstring at the hardest hitter while none lies so; Blind at the hardest hitter awake, free
+  // and not blind; Ambush where its blows are no sneak attacks already and what it leaves pays for its
+  // dearest other feat, at a foe awake; else a blow; and nothing unasked.
+  {
+    const HITTER = foe('test_hitter', { ac: -100, attack: -50, speed: 1, dice: 4, sides: 6, name: 'Hitter', plural: 'Hitters' });
+    const choose = (level: number, st: number, set?: (f: CombatState) => void, round = 3, opts: BotOpts = { feats: true }): string => {
+      const q = createParty([member('cleric'), member('cleric'), member('cleric'), rogue(level, 'fx_sling')]), x = rogueFight(q, [[STRAW, HITTER, STRAW]], 9);
+      upTo(x.f, q, x.rng, 3, round);
+      x.f.stamina![3] = st;
+      set?.(x.f);
+      const a = botTurn(x.f, q, x.rng, 3, asWritten, opts);
+      return a.type === 'feat' ? `${a.featId}@${a.target}` : a.type;
+    };
+    const lie = (...ks: [number, Lie][]) => (f: CombatState): void => { for (const [k, c] of ks) f.monsters[k].conditions = c; };
+    const dark = (f: CombatState): void => { for (const m of f.monsters) m.blind = 2; };
+    const picks = [
+      choose(23, 5, lie([2, ['asleep']])), choose(23, 5, (f) => { lie([0, ['asleep']], [2, ['asleep']])(f); f.monsters[0].hp = 10; }), choose(23, 5, (f) => { lie([1, ['paralysed']], [2, ['asleep']])(f); f.monsters[1].hp = 10; }),
+      choose(15, 3), choose(15, 3, lie([1, ['paralysed']])), choose(8, 3), choose(8, 3, (f) => { f.monsters[1].blind = 2; }),
+      choose(1, 2), choose(1, 2, undefined, 1), choose(1, 2, lie([0, ['asleep']])), choose(8, 2), choose(12, 5, dark), choose(12, 4, dark), choose(23, 4, lie([2, ['asleep']])), choose(23, 6, dark), choose(23, 6, undefined, 3, {}),
+    ];
+    ok(picks.join(' ') === 'deathblow@2 deathblow@0 deathblow@2 hamstring@1 blind@0 blind@1 blind@0 ambush@0 attack attack attack ambush@0 attack attack hamstring@1 attack',
+      `the bots deal a deathblow where they can, at their own foe before the one with the most hit points, and from 23 build for one while a foe lies asleep or held, hamstring the hardest hitter while none lies so, blind the hardest awake, free and not blind, ambush a foe awake where it adds a sneak attack and leaves enough for a dearer feat, else strike, and spend nothing unasked (${picks.join(' ')})`);
+    // Handed a foe it cannot strike, one fallen or one of the back rank beyond its blade while the front
+    // stands, the policy picks nothing at it.
+    const q = createParty([rogue(1)]), rr = counted(2), x = startCombat(TT, q, [{ id: 'band', monsters: [STRAW, STRAW, STRAW], back: 1 }], rr, { feats: true });
+    upTo(x, q, rr, 0, 3);
+    x.stamina![0] = 2;
+    x.monsters[0].hp = 0;
+    const at = [0, 1, 2].map((k) => { const a = featFor(x, q, 0, k); return a?.type === 'feat' ? `${a.featId}@${a.target}` : '-'; });
+    ok(at.join(' ') === '- ambush@1 -', `handed a fallen foe or one beyond its blade's reach, the policy picks no feat at it, and at one it reaches it ambushes (${at.join(' ')})`);
+  }
+
+  // Over fights of the gate's company (its thief behind, with the ladder's weapon) at 1, 8, 15 and 23
+  // against three of a kind of the level that sleep, the feats on: neither bot ever picks a feat it may
+  // not use, at any foe it might strike, and between them, the gate's and the game's auto-fight, they
+  // play each of the four.
+  {
+    const played = new Map<string, number>();
+    let picked = 0, bad = 0;
+    const kinds: Record<number, string> = { 1: 'bandit', 8: 'ogre', 15: 'ashen_gleaner', 23: 'ashen_mason' };
+    for (const level of [1, 8, 15, 23]) for (let seed = 1; seed <= 6; seed++) for (const auto of [false, true]) {
+      const q = gateCompany(level, seed), i = q.members.findIndex((m) => m.cls === 'thief'), { f, rng } = fight(q, [[0, 1, 2].map(() => MONSTERS[kinds[level]])], seed);
+      for (let n = 0; n < 400 && f.outcome === 'ongoing'; n++) {
+        const t = currentTurn(f, q, rng);
+        if (!t) break;
+        if (t.side === 'monster') { monsterAct(f, q, rng); continue; }
+        if (t.i === i) {
+          for (const k of f.monsters.keys()) {
+            const a = featFor(f, q, i, k), d = a?.type === 'feat' ? FEATS.find((x) => x.id === a.featId) : undefined;
+            if (a?.type !== 'feat') continue;
+            picked++;
+            if (!d || !featsOf(f, q, i).includes(d) || !aimable(f, q.members[i], d, a.target)) bad++;
+          }
+        }
+        const a = auto ? botTurn(f, q, rng, t.i, asSeen, PLAYED) : botTurn(f, q, rng, t.i, asWritten, { feats: true });
+        if (t.i === i && a.type === 'feat') played.set(a.featId, (played.get(a.featId) ?? 0) + 1);
+      }
+    }
+    const count = THIEF.map((d) => `${d.name} ${played.get(d.id) ?? 0}`).join(', ');
+    ok(picked > 0 && bad === 0 && THIEF.every((d) => (played.get(d.id) ?? 0) > 0), `in 48 fights neither bot picks a feat the thief may not use (${picked} picks) and they play each of the four (${count})`);
   }
 }
 
