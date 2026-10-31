@@ -406,6 +406,10 @@ export function ladder(): void {
     if (got.includes(r.bows[0])) (r.bows.slice(1).every((id) => got.includes(id)) ? paired : unpaired).push(`${r.level}: ${spentId(f) ?? f.kind} on ${m.id}`);
   }
   ok(paired.length > 0 && !unpaired.length, `every box that gives a ranged rung's long bow, in its area or another, gives its short bow and sling (${paired.join(', ')})${unpaired.length ? ` (but not ${unpaired.join(', ')})` : ''}`);
+  // And every rung of the ladder that holds a long bow has its ranged row on its area, led by that bow:
+  // an act that forgets its row fails here.
+  const rowless = onAreas.flatMap(([area, at, ids]) => ids.filter((id) => longBows.some((d) => d.id === id) && CHECKS.get(area)?.ranged?.[at]?.[0] !== id).map((id) => `${at}: ${id} on ${area}`));
+  ok(RANGED.length > 0 && !rowless.length, `every rung of the ladder that holds a long bow has its ranged row on its area, led by that bow (${RANGED.map((r) => r.level).join(', ')})${rowless.length ? ` (but not ${rowless.join(', ')})` : ''}`);
 
   // The gate check's company wears what harness's does, level by level.
   const worn = (p: ReturnType<typeof companyAt>): string => JSON.stringify(p.members.map((m) => m.equipment));
