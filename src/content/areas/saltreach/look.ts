@@ -3,5 +3,5 @@ import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
   // The delta's damp: a sea-green haze over the water and the reeds.
-  air: { strength: 0.2, top: '#406a70', foot: '#a0f0d0', haze: '#90e0c0' },
+  air: { strength: 0.2, top: '#205050', foot: '#00c080', haze: '#20b080' },
 };

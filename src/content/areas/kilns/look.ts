@@ -3,5 +3,5 @@ import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
   // Smoke from the kilns lies along the foot of the sky.
-  air: { strength: 0.2, foot: '#4a3a2a', haze: '#504438' },
+  air: { strength: 0.2, foot: '#201000', haze: '#201810' },
 };

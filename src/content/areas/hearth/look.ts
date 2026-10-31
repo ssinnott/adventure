@@ -2,6 +2,6 @@
 import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
-  // A warm gold, deepest at the foot, and a golden sun.
-  air: { strength: 0.2, top: '#c08020', foot: '#ffc800', haze: '#f0c040', sun: '#ffc840' },
+  // A warm gold, deepest at the foot; a golden sun.
+  air: { strength: 0.2, top: '#e09000', foot: '#ffc000', haze: '#f0b000', sun: '#ffc840' },
 };

@@ -3,5 +3,5 @@ import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
   // A low grey-green over the moor.
-  air: { strength: 0.2, top: '#3a4a28', foot: '#8a9a40', haze: '#7a8a50' },
+  air: { strength: 0.2, top: '#304010', foot: '#709000', haze: '#607020' },
 };

@@ -1,7 +1,7 @@
 // Each region's air (#1097): every area has a look, merged by region, and each colour of it is a colour,
-// an air casting the sky a fifth of the way at most; with no air the sky and the haze are main's, call for
-// call, painted into a context that writes down what it is told, so no canvas; an air casts by day and none
-// by night; and an ending's cast wins over every region's air. How the airs look is the twelve views' (#1094).
+// an air casting the sky a fifth of the way at most. With no air the sky and the haze are main's, call for
+// call, painted into a context that writes down what it is told, so no canvas. An air casts by day and is
+// gone by night, and an ending's cast wins over every region's air. How the airs look is the twelve views' (#1094).
 import { createHash } from 'node:crypto';
 import { AREAS, TABLES } from '../../src/content/index.ts';
 import type { Air } from '../../src/content/area.ts';

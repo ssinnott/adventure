@@ -2,6 +2,6 @@
 import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
-  // A hard, cold blue over the ice.
-  air: { strength: 0.2, top: '#0050b0', foot: '#60d8f0' },
+  // A hard, cold blue over the ice, icy at the foot.
+  air: { strength: 0.2, top: '#0060ff', foot: '#00e0ff' },
 };

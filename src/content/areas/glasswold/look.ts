@@ -2,6 +2,6 @@
 import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
-  // A bleached, pale sky, and a white sun.
+  // A bleached, pale sky; a white sun.
   air: { strength: 0.2, top: '#ffffff', foot: '#ffffff', haze: '#ffffff', sun: '#ffffff' },
 };
