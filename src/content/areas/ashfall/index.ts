@@ -33,6 +33,7 @@ import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
+import { LOOK } from './look.ts';
 
 export const MAPS = [CINDERCOAST_H10, CINDERCOAST_G10, CINDERPORT, FIREMOUNT_G11, MERIDIAN_CAMP, MERIDIAN_CAMP2, MERIDIAN_CAMP3, EMBERWASTE_F10, EMBERWASTE_E10, EMBERWASTE_F11, OLD_CINDER, OLD_CINDER2, EMBER_STONE, CINDERCOAST_F9, CINDERCOAST_G9, CINDERCOAST_H9, EMBERWASTE_E11,
     // Fire Mountain's east flank, its south-east foot and its south foot, the last of the country behind the road (#522).
@@ -69,6 +70,7 @@ export const AREA = {
   // mountain for thunder.
   climate: { summer: 24, winter: 10, daily: 6, damp: [0.04, 0.11], wettest: 200, fog: 0.3, lag: 16,
     fogText: 'Smoke comes down off the mountain and lies along the shore.', thunderText: 'Thunder over the mountain, or the mountain itself.' },
+  look: LOOK,
   // Cinderport's rooms (#521), each opened by its business in the town (#512).
   interiors: INTERIORS,
   // Vines underfoot (#543) and the drakes, a family of their own (#520), with G10 (#511); the heavy

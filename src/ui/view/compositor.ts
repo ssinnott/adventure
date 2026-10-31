@@ -39,7 +39,7 @@ import { hearthBearing, hearthLook } from '../../game/stones.ts';
 import { unit, CLEAR, paintOn, floorPt, pixel, addPoly } from './common.ts';
 import type { ViewRect, Flame, Env, View } from './common.ts';
 import { murkOf, toPair, drawnAt, standsAt, looksHouse, building, tentOf } from './model.ts';
-import { cast, drawSkyBand } from './sky.ts';
+import { airOf, hazeOf, drawSkyBand } from './sky.ts';
 import type { SkyOpts } from './sky.ts';
 import { drawWeather, strike, drawBolt } from './weather.ts';
 import { drawFloor, drawCeiling } from './floor.ts';
@@ -170,9 +170,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const cloud = wx?.cloud ?? 0;
   // A dark day lights the lamps early.
   const gloom = daylight * (1 - 0.3 * cloud - 0.25 * (wx?.precip ?? 0));
-  // Far things fade toward the sky's foot, greyed by cloud and by murk.
-  const look = hearthLook(world.hearth);
-  const skyBottom = cast(mix(mix('#1a1428', '#c9d6e6', daylight), mix('#1c1f26', '#b8c0c8', daylight), Math.min(1, cloud * 0.6 + env.murk)), look.cast?.foot, daylight);
+  // Far things fade toward the sky's foot, greyed by cloud and by murk, and the region's air (#1097).
+  const look = hearthLook(world.hearth), air = airOf(world);
+  const skyBottom = hazeOf(daylight, cloud, env.murk, look.cast, air);
   const haze = map.kind === 'dungeon' ? null : skyBottom;
 
   // The frame's Paint, which each painter below takes first (#1029): the light and the weather worked
@@ -190,7 +190,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   } else {
     const { dawn, dusk } = sunTimes(day);
     const at = world.worldCell, hearth = at ? { bearing: hearthBearing(world.tables.atlas, at.x, at.y), step: look.step } : undefined;
-    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth, cast: look.cast };
+    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth, cast: look.cast, air };
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
     // The ground runs on to the horizon in the terrain out past the last cell drawn, the void's as

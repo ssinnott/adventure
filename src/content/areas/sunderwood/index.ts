@@ -21,6 +21,7 @@ import { INTERIORS } from './interiors.ts';
 import { CHAPTER } from './chapter.ts';
 import { QUESTS } from './quests.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
+import { LOOK } from './look.ts';
 
 export const MAPS = [EAVES_I2, EAVES_J2, EAVES_K2, EAVES_K3, K3_RIFT.map, THE_SUNDER, THE_SUNDER2, EAVES_J3, LANTERNWOOD_L2, LANTERNWOOD_M2, LANTERNWOOD_L3, LANTERNWOOD_L4, LANTERNWOOD_K4, LANTERN_WATCH] as const;
 export { FLAGS };
@@ -36,6 +37,7 @@ export const AREA = {
   chapter: CHAPTER,
   climate: { summer: 16, winter: -2, daily: 5, damp: [0.01, 0.08], wettest: 85, fog: 0.6, lag: 8,
     fogText: 'Mist comes down through the pines.', thunderText: 'Thunder rolls down the gorge.' },
+  look: LOOK,
   interiors: INTERIORS,
   novel: { families: ['bears', 'moths'], terrain: ['deadwood', 'crystal', 'chasm'], mechanics: ['inflict:asleep'], landmarks: ['falls'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },

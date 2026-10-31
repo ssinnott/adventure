@@ -29,6 +29,7 @@ import { INTERIORS } from './interiors.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
 import { QUESTS } from './quests.ts';
+import { LOOK } from './look.ts';
 
 export const MAPS = [LONGMERE_M9, RIME_LODGE, LONGMERE_L9, COLDMERE_K9, COLDMERE_K10, SLEEPERS_BAY, SLEEPERS_BAY2, COLDMERE_J9, COLDMERE_K11, LONGMERE_L10, LONGMERE_L11, LONGMERE_M10, LONGMERE_M11, LONGMERE_N9, COLDMERE_K12, LONGMERE_L12, CREAG_FIONN, SPITTAL, SPITTAL2] as const;
 export { FLAGS };
@@ -52,6 +53,7 @@ export const AREA = {
   // fog off the open water.
   climate: { summer: 10, winter: -10, daily: 6, damp: [0.03, 0.08], wettest: 320, fog: 0.5, lag: 12,
     fogText: 'Fog comes up off the open water and lies on the ice.', thunderText: 'Thunder rolls down off the glacier.' },
+  look: LOOK,
   // Rime Lodge's rooms (#496), opened by the town's businesses (#487).
   interiors: INTERIORS,
   // The cats and a group on ice with M9 (#486); the keepers with the bay (#490).
