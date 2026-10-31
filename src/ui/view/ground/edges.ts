@@ -15,7 +15,7 @@ import { hash, hashStr } from '../../paint/brush.ts';
 import { drawnAt } from '../model.ts';
 import { fog, floorPt, unit, unitIn } from '../common.ts';
 import type { Paint } from '../common.ts';
-import { GROUND, groundColor } from './index.ts';
+import { GROUND, asDrawn, groundColor, variantAt } from './index.ts';
 import type { Square } from './look.ts';
 
 /** How many stretches a tongue's outline runs in along its edge. */
@@ -110,7 +110,7 @@ export function drawEdges(p: Paint, sq: Square, edges: Edges, floorPal: string):
     // A point `a` of the way along the edge and `r` in from it.
     const uv = (a: number, r: number): [number, number] => (dx ? [dx > 0 ? 1 - r : r, a] : [a, dy > 0 ? 1 - r : r]);
     const pt = (a: number, r: number): [number, number] => { const [s, tt] = st(...uv(a, r)); return floorPt(cx, horizon, h, d, l, s, tt); };
-    const base = groundColor(p, t.terrain, floorPal, t.from.x, t.from.y), last = t.reach.length - 1;
+    const v = variantAt(asDrawn(p, t.terrain), t.from.x, t.from.y, p.map), base = groundColor(p, t.terrain, floorPal, t.from.x, t.from.y, 0, v), last = t.reach.length - 1;
     // Its outline runs a little past the edge, under the next square's tiles, and past each end it runs on through.
     const e0 = t.reach[0] ? 0.01 : 0, e1 = t.reach[last] ? 0.01 : 0;
     ctx.beginPath();
@@ -118,7 +118,7 @@ export function drawEdges(p: Paint, sq: Square, edges: Edges, floorPal: string):
     for (let i = last; i >= 0; i--) ctx.lineTo(...pt(i / last, t.reach[i]));
     ctx.lineTo(...pt(-e0, t.reach[0])); ctx.closePath();
     ctx.fillStyle = fog(p, base, d); ctx.fill();
-    const lies = GROUND[t.terrain].lies;
+    const lies = v?.lies ?? GROUND[t.terrain].lies;
     if (!lies) continue;
     for (let i = 0; i < Math.round(lies.marks * MARKS); i++) {
       const a = 0.1 + 0.8 * hash(t.seed, 7, i), [s, tt] = st(...uv(a, reachAt(t, a) * (0.3 + 0.5 * hash(t.seed, 9, i))));

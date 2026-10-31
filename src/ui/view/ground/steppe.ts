@@ -1,6 +1,8 @@
-// The steppe's look (#1030): the Wold's dry grass through the year, tall tufts leaning one way on it.
+// The steppe's look (#1030): the Wold's dry grass through the year, tall tufts leaning one way on it; and
+// its variants across the land (#1101): short grass, the feather-grass and gravel.
 
-import { shade } from '../../../lib/art/palettes.ts';
+import { shade, mix } from '../../../lib/art/palettes.ts';
+import { hash } from '../../paint/brush.ts';
 import { fog } from '../common.ts';
 import { rampColor } from '../model.ts';
 import type { Paint } from '../common.ts';
@@ -25,5 +27,31 @@ function mark(p: Paint, m: Mark): void {
   if (i < 2 && env.cover <= 0.05) { ctx.fillStyle = fog(p, shade(base, 1.45), d); ctx.fillRect(Math.round(x + sc), Math.round(y - 6.5 * sc), Math.max(1, Math.round(1.5 * sc)), Math.max(1, Math.round(2 * sc))); }
 }
 
+/** The short grass's: a low tuft, three blades. */
+function short(p: Paint, m: Mark): void {
+  const { ctx, env } = p, { i, x, y, sc, base, d } = m;
+  if (env.cover > 0.3) return;
+  ctx.strokeStyle = fog(p, shade(base, i % 2 ? 1.25 : 0.78), d); ctx.lineWidth = Math.max(1, sc * 0.8);
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - sc, y - 2.5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 0.5 * sc, y - 3 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 1.8 * sc, y - 2 * sc); ctx.stroke();
+}
+
+/** The gravel's: four stones, each lit on its top, then a tuft or two. */
+function stones(p: Paint, m: Mark): void {
+  const { ctx, env } = p, { i, x, y, sc, base, seed, d } = m;
+  if (i >= 4) { mark(p, m); return; }
+  if (env.cover > 0.55) return;
+  const r = (1.2 + 1.4 * hash(seed, 71, i)) * sc + 0.4;
+  ctx.fillStyle = fog(p, mix(base, '#6a6660', 0.5), d);
+  ctx.beginPath(); ctx.ellipse(x, y - r * 0.4, r, r * 0.6, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = fog(p, mix(base, '#c8c4b8', 0.55), d);
+  ctx.beginPath(); ctx.ellipse(x, y - r * 0.6, r * 0.6, r * 0.3, 0, 0, Math.PI * 2); ctx.fill();
+}
+
 export const steppe: GroundLook = { color: steppeColor, drift: { toward: ['#6e9640', '#d4c070'], by: 0.6 }, snow: 0.9, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark },
-  scatter: ['tussock', 'skull', 'stone'], rank: 5 };
+  scatter: ['tussock', 'skull', 'stone'], rank: 5,
+  // Short grass greener and grazed, the feather-grass tall, gravel grey between the tufts.
+  variants: { scale: 4.5, looks: [
+    { name: 'short grass', share: 0.3, shift: { toward: '#6e9a44', by: 0.45 }, lies: { marks: 9, mark: short } },
+    { name: 'feather-grass', share: 0.45 },
+    { name: 'gravel', share: 0.25, shift: { toward: '#8a8476', by: 0.6 }, lies: { marks: 6, mark: stones } },
+  ] } };
