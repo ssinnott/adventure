@@ -151,6 +151,14 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   holds them, a record over the terrains; the floors, the scene and the rain ask it and name no
   ground. In the view a new ground is a module there, its line in `src/ui/view/ground/index.ts` and
   its colour in `TERRAIN_COLORS` (the automap's): the typecheck names a terrain without either.
+- **The drift** (#1098): a ground's colour drifts across the land in swathes some fourteen squares
+  across, by smooth noise of its cell (`cellNoise`), one land over the whole outdoors and a town's its
+  own, well toward one of the two colours its look names over most of it (grass lush and dry, ash
+  near-black and grey) and at most `by` of the way, reckoned from its colour on the first of Harvest
+  (`DRIFT_DAY`) and moving its colour of the day as much, so the year turns on every swathe. It is
+  one colour a square, its cell's, from wherever it is seen; rain and snow fall over it. Fifteen
+  grounds of the open land drift, from grass to snow; water, roads, fields, drops and the rest keep
+  one colour, nothing drifts underground and the automap's colours never do.
 - **A region's look**, `src/content/areas/<area>/look.ts` (`Area.look`, #1097), merged by region into
   `Tables.looks`: its `air` casts the sky, the haze and the sun toward its colours by day, a fifth of
   the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins

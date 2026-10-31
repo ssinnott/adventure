@@ -17,9 +17,10 @@ export interface Plot { crop: number; away: boolean; hedge: readonly [boolean, b
 export interface Rims { near: boolean; far: boolean }
 /**
  * A square of ground as its look's painters take it: how deep and how far across it is in view, its
- * seed and what the scene worked out for it (a field's plot, a drop's rims).
+ * cell on the map (`mx`, `my`, as a board's), its seed and what the scene worked out for it (a field's
+ * plot, a drop's rims).
  */
-export interface Square { d: number; l: number; seed: number; plot?: Plot; rims?: Rims }
+export interface Square { d: number; l: number; mx: number; my: number; seed: number; plot?: Plot; rims?: Rims }
 /**
  * A mark lying on a square: its number, where it falls (`s` deep and `t` across the square, `x` and
  * `y` on the screen), its scale there and the square's colour.
@@ -39,6 +40,12 @@ interface Sides { bare: number; size: number; spread: number; tree: (p: Paint, x
 export interface GroundLook {
   /** Its colour on a day of the year (a field's by its crop), before rain and snow. */
   color: (day: number, crop: number) => string;
+  /**
+   * How its colour drifts across the land by the cell (`cellNoise`, #1098): toward the first colour where
+   * the land's noise is low and the second where it is high, at most `by` of the way. Water, roads and
+   * drops have none.
+   */
+  drift?: { toward: readonly [string, string]; by: number };
   /** How white it goes under lying snow, 0 to 1: cobbles and sand show through, water never takes it (`SNOW_HOLD`). */
   snow: number;
   /** Whether rain darkens it. */
