@@ -235,12 +235,14 @@ export function emit(d: Draft, zoneId: string, x: number, y: number, mapImport: 
 
 /**
  * The texture's table: each ground the atlas lays in long runs, the grounds its patches are, each walked
- * as it is, and whether it is stony, where the odd rock stands. Steppe and ash are: the built maps stand a
- * rock beside them about as often as beside hills, beside grass less often and beside pine seldom.
+ * as it is, and whether it is stony, where the odd rock stands. Steppe, ash and hills are: the built maps
+ * stand a rock beside each on some 2.5% of its squares, beside grass less often and beside pine seldom.
+ * Hills take heather and dirt, not grass: a hill is hill grass on its mound, so grass there reads as a
+ * mound gone, not a second ground. The patch lies flat, as on any ground, and the mounds about it stand.
  */
 export const TEXTURE: Partial<Record<WorldTerrain, { patches: readonly WorldTerrain[]; stony?: true }>> = {
   grass: { patches: ['dirt', 'heather'] }, steppe: { patches: ['dirt', 'sand'], stony: true },
-  ash: { patches: ['dirt'], stony: true }, pine: { patches: ['woods'] },
+  ash: { patches: ['dirt'], stony: true }, pine: { patches: ['woods'] }, hills: { patches: ['heather', 'dirt'], stony: true },
 };
 /** The most of a run of one ground the texture changes: a draft is a start, not a finished map. */
 export const TEXTURE_SHARE = 0.25;

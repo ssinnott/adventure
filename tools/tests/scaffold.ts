@@ -5,8 +5,9 @@
 // The texture (#1107): the same box textured and laid back differs from the atlas only where the
 // texture changed it, each square walked as before or a rock on stony ground in the open, none on an
 // edge, water or the coast, a road or a river, on a quarter of a run at most, and no more of its views
-// plain (#1108); it changes nothing on a box of water, of road, of grass on its edges alone or of grass
-// beside water; and over every built outdoor map it proposes nothing on a square the map names.
+// plain (#1108), as the bare draft has none; the Downs' D2, a range of hills, has fewer textured than
+// bare; it changes nothing on a box of water, of road, of grass on its edges alone or of grass beside
+// water; and over every built outdoor map it proposes nothing on a square the map names.
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -23,6 +24,8 @@ import { ok } from './lib.ts';
 
 /** The Downs' first zone map: the square west of the Foreland, on the grid the built maps sit on. */
 const AT = [168, 30] as const;
+/** D2, the Downs' downs two boxes west of it: a range of hills, on which #1108's measure finds most views plain. */
+const HILLS_AT = [104, 30] as const;
 const REGIONS = AREAS.map((a) => a.id);
 /** The Deepthorn's first box, H3, where the atlas lays its light woods along the Wyke. */
 const WOODS_AT = [232, 62] as const;
@@ -166,6 +169,10 @@ export async function scaffold(): Promise<void> {
   // #1108's measure: grass's looks and the scatter already break every view of the bare draft, so the
   // textured one is held to no more; a patch is a dozen squares at most, too few to fill a view's window.
   ok(tp.plain <= bp.plain, `and no more of its views are plain by #1108's measure (${tp.plain} of ${tp.views}; bare, ${bp.plain} of ${bp.views})`);
+  // Where a draft is plain, on hills, the texture breaks it up: the Downs' D2, cut bare and textured.
+  const [hx, hy] = HILLS_AT, downs = unbuilt(hx, hy), hg = baseline(downs.atlas, downs.defs), hd = cut(downs.atlas, downs.defs, hg, REGIONS, 'downs', hx, hy);
+  const hb = 'refused' in hd ? undefined : plainShare(hd.def), ht = 'refused' in hd ? undefined : plainShare(textured(downs.atlas, hg, hd, hx, hy).def);
+  ok(!!hb && !!ht && ht.plain < hb.plain, `on the Downs' D2 at ${hx},${hy}, a range of hills, the textured draft has fewer plain views than the bare (${ht?.plain} of ${ht?.views}; bare, ${hb?.plain} of ${hb?.views})`);
 
   // Where the pass must change nothing: a box of water, of road, of grass on its edges alone (its
   // seams) and of grass beside water at every square (the coast); and a box of grass alone it does.

@@ -11,9 +11,9 @@
 // lies over a laid zone map, or holds a terrain no map character is, saying how many squares of
 // each. It registers nothing: that is the area's work.
 // --texture lays a second pass over the cut (#1107, `texture` in tools/kit/scaffold.ts): in each run
-// of grass, steppe, ash or pine, patches of a second ground by the world's noise, each walked as the
-// ground it replaces, and on steppe and ash the odd rock, which closes no way; never on an edge, the
-// coast, water, a road or a river, nor on more than a quarter of a run. --over runs the same pass over
+// of grass, steppe, ash, pine or hills, patches of a second ground by the world's noise, each walked as
+// the ground it replaces, and on steppe, ash and hills the odd rock, which closes no way; never on an
+// edge, the coast, water, a road or a river, nor on more than a quarter of a run. --over runs the same pass over
 // a built outdoor map and prints each square it would change, x,y: from -> to, grouped by the change,
 // and the map's plain views before and after (#1108), for the author to take or leave. It writes nothing.
 import { writeFileSync, existsSync } from 'node:fs';
