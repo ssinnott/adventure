@@ -24,10 +24,10 @@ import { GROUND_SAMPLES } from '../kit/grounds.ts';
 import { mix, hexToRgb } from '../../src/lib/art/palettes.ts';
 import { ok } from './lib.ts';
 import { paintOn } from '../../src/ui/viewport.ts';
-import { CLEAR } from '../../src/ui/view/common.ts';
+import { CLEAR, fog } from '../../src/ui/view/common.ts';
 import type { Paint } from '../../src/ui/view/common.ts';
 import { drawFloor } from '../../src/ui/view/floor.ts';
-import { groundColor, cellNoise } from '../../src/ui/view/ground/index.ts';
+import { groundColor, cellNoise, DRIFT_DAY } from '../../src/ui/view/ground/index.ts';
 import { viewCell, VIEW_LATERAL } from '../../src/game/world.ts';
 
 export function terrain(): void {
@@ -290,11 +290,11 @@ function drift(): void {
     }
   }
   // Each square of the run seen from every square that has it in view, at every facing: its floor's
-  // first fill, its colour fogged by its depth alone, is the same at each depth.
+  // first fill is its cell's own colour, fogged by its depth alone, at each depth.
   const p = paint(45);
   let views = 0, odd = 0;
   for (const c of run) for (let d = 0; d <= VIEW_DEPTH; d++) {
-    const at = new Set<string>();
+    const at = new Set<string>([fog(p, groundColor(p, 'grass', '#000000', c.x, c.y), d)]);
     for (const f of [NORTH, EAST, SOUTH, WEST]) for (let l = -VIEW_LATERAL; l <= VIEW_LATERAL; l++) {
       const o = viewCell(0, 0, f, d, l), eye = { x: c.x - o.x, y: c.y - o.y };
       if (eye.x < 0 || eye.y < 0 || eye.x >= map.width || eye.y >= map.height || map.at(eye.x, eye.y).solid !== 'none') continue;
@@ -312,8 +312,9 @@ function drift(): void {
   for (const t of Object.keys(GROUND) as Terrain[]) {
     const look = GROUND[t];
     for (const day of [10, 45, 91]) {
-      const q = paint(day), base = hexToRgb(look.color(day, 0)), drifts = look.drift;
-      const ends = drifts ? drifts.toward.map((e) => hexToRgb(mix(look.color(day, 0), e, drifts.by))) : [base];
+      const q = paint(day), base = hexToRgb(look.color(day, 0)), from = hexToRgb(look.color(DRIFT_DAY, 0)), drifts = look.drift;
+      // Its ends: its colour of the day moved as far as its colour on DRIFT_DAY goes toward each, at most `by`.
+      const ends = drifts ? drifts.toward.map((e) => hexToRgb(mix(look.color(DRIFT_DAY, 0), e, drifts.by)).map((v, i) => Math.max(0, Math.min(255, base[i] + v - from[i])))) : [base];
       const lo = base.map((v, i) => Math.min(v, ...ends.map((e) => e[i])) - 1), hi = base.map((v, i) => Math.max(v, ...ends.map((e) => e[i])) + 1);
       // How far toward each end it goes, on the channel that end moves most.
       const most = ends.map((e) => [0, 1, 2].reduce((m, j) => (Math.abs(e[j] - base[j]) > Math.abs(e[m] - base[m]) ? j : m), 0)), far = ends.map(() => 0);
@@ -331,6 +332,17 @@ function drift(): void {
   // The land's noise, by which they drift, lies its own way on each map.
   const lands = new Set(['downs_d3', 'downs_e2', 'thornmark'].map((id) => cellNoise(7, 9, id).toFixed(6))).size;
   ok(!wide.length && !still.length && reach >= 0.75 && fixed.every((t) => !GROUND[t].drift) && lands === 3, `no ground drifts past its look's bounds, each going at least ${Math.floor(reach * 100)}% of the way to both, and water, roads and drops never drift (${drifting.length} grounds drift, by a land that lies ${lands === 3 ? 'its own way on each map' : 'alike on two maps'}${wide.length ? `; past their bounds: ${wide.join(', ')}` : ''}${still.length ? `; drifting with none: ${still.join(', ')}` : ''})`);
+  // The year turns on every swathe as on its look: a cell's colour on a day, less its colour on DRIFT_DAY,
+  // is its look's own, wherever the drift has not run a channel to black or white.
+  const flat: string[] = [];
+  for (const t of drifting) for (const day of [10, 91]) {
+    const q = paint(day), r = paint(DRIFT_DAY), own = hexToRgb(GROUND[t].color(day, 0)), ref = hexToRgb(GROUND[t].color(DRIFT_DAY, 0));
+    for (let y = -40; y < 40; y += 4) for (let x = -40; x < 40; x += 4) {
+      const c = hexToRgb(groundColor(q, t, '#000000', x, y)), c0 = hexToRgb(groundColor(r, t, '#000000', x, y));
+      if (c.some((v, i) => v > 0 && v < 255 && v - c0[i] !== own[i] - ref[i]) && !flat.includes(t)) flat.push(t);
+    }
+  }
+  ok(!flat.length, `the year turns on every swathe as on its look, so the heather flowers at Harvest and the steppe greens in Sowing wherever the land lies (${drifting.length} grounds, on days 10 and 91 against ${DRIFT_DAY}${flat.length ? `; the year flattened on ${flat.join(', ')}` : ''})`);
   // Along the run, at midsummer and late in the year: the two most different squares well apart, and
   // three times as far apart as a square ever is from the next, so a swathe spans squares.
   const apart = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);

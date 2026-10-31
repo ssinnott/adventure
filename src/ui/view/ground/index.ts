@@ -6,7 +6,7 @@
 
 import type { Terrain } from '../../../game/mapdef.ts';
 import { fbm } from '../../../game/atlas/painter.ts';
-import { shade, mix } from '../../../lib/art/palettes.ts';
+import { shade, mix, hexToRgb, rgbToHex } from '../../../lib/art/palettes.ts';
 import { SNOW } from '../common.ts';
 import type { Paint } from '../common.ts';
 import type { GroundLook } from './look.ts';
@@ -58,6 +58,8 @@ export const asDrawn = (p: Paint, t: Terrain): Terrain => GROUND[t].drawnAs?.(p.
 
 /** How many squares across the land's swathes run, and how far the noise is stretched to reach a look's bounds. */
 const SWATHE = 14, STRETCH = 4.5;
+/** The day of the year a look's drift is reckoned from: the first of Harvest, the day of #1094's twelve views. */
+export const DRIFT_DAY = 45;
 
 /**
  * The land's noise at a cell, 0 to 1 (#1098): the atlas's `fbm`, smooth over some `scale` squares, its
@@ -72,13 +74,16 @@ export function cellNoise(x: number, y: number, salt: string, scale = SWATHE): n
 }
 
 /**
- * A look's colour drifted by the land at a cell: toward one of its two colours, as far as the swathe lies
- * from the middle, eased so that most land lies well toward one or the other and none past its look's `by`.
+ * A look's colour drifted by the land at a cell: moved as far as its colour on `DRIFT_DAY` goes toward one
+ * of its two colours, as far as the swathe lies from the middle, eased so that most land lies well toward
+ * one or the other and none past its look's `by`. It moves the colour it is handed by that much, so the
+ * year's colours and what is mixed in before it pass through whole.
  */
 function drifted(look: GroundLook, c: string, x: number, y: number, salt: string): string {
   if (!look.drift) return c;
   const s = Math.max(-1, Math.min(1, (cellNoise(x, y, salt) - 0.5) * STRETCH)), [low, high] = look.drift.toward;
-  return mix(c, s < 0 ? low : high, Math.abs(s) * (2 - Math.abs(s)) * look.drift.by);
+  const ref = look.color(DRIFT_DAY, 0), from = hexToRgb(ref), to = hexToRgb(mix(ref, s < 0 ? low : high, Math.abs(s) * (2 - Math.abs(s)) * look.drift.by)), at = hexToRgb(c);
+  return rgbToHex(at[0] + to[0] - from[0], at[1] + to[1] - from[1], at[2] + to[2] - from[2]);
 }
 
 /**
