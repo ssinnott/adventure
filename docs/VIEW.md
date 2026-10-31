@@ -48,6 +48,12 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins
   (`airOf`, `src/ui/view/sky.ts`). With none, as over the Foreland and Thornmark, the sky is as it was.
 
+- **The horizon**, `src/ui/view/horizon.ts` (#1095): past the fourth square the land is cast from the
+  world's grid where the company stands, a ray to each column out to the rim or `REACH` (240 squares).
+  Over the horizon the ranges, woods and hills stand as they lie there, stylised (56 px at most) and fading
+  with distance; under it each row of the band is the ground at its distance, hidden behind a range. Night,
+  murk, snow and the region's haze take it as they took the two bands, which the title's dusk keeps.
+
 - **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
   one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of
   `src/ui/scenery.ts`: a cairn, a chest, a camp's ring and fire, a shrine, a well, a statue, a
