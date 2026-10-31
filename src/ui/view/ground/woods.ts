@@ -28,7 +28,7 @@ function mark(p: Paint, m: Mark): void {
 
 /** Near to (#1102, near.ts): leaf litter in browns and ochre, twigs fallen across it and ferns arching over it. */
 function litter(p: Paint, base: string, sq: Square): void {
-  const px = leaves(p, base, sq, 12, 14, ['#6a4a2a', '#7a6030', '#4e5a2c', '#84603a'].map((c) => mix(c, base, 0.3)));
+  const px = leaves(p, base, sq, 10, 12,['#6a4a2a', '#7a6030', '#4e5a2c', '#84603a'].map((c) => mix(c, base, 0.3)));
   needles(p, base, sq, { rows: 3, cols: 4, a: '#3e2e1e', b: '#5a4630', len: [5, 9], salt: 241 }, px);
   fronds(p, base, sq, { rows: 7, cols: 9, len: [7, 11], lit: 1.28, dark: 0.75, bare: 0.3, salt: 245 }, px).fill(p);
 }

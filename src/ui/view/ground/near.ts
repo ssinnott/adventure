@@ -20,14 +20,17 @@ interface Spot { x: number; y: number; k: number; w: number; a: number; b: numbe
 
 /**
  * Where a square's detail falls: a lattice `rows` deep by `cols` across, each point jittered within its cell
- * by the square's seed and `salt`, and those below the view left out.
+ * by the square's seed and `salt`, and those below the view or more than half the view's height off the
+ * canvas's sides (no piece reaches so far) left out, which changes no pixel: the squares at the sides of the
+ * nearest rows lie off the view.
  */
 export function spots(p: Paint, sq: Square, rows: number, cols: number, salt: number): Spot[] {
-  const { cx, horizon, h } = p, { d, l, seed } = sq, foot = horizon + h / 2 + 2, out: Spot[] = [];
+  const { cx, horizon, h, ctx } = p, { d, l, seed } = sq, foot = horizon + h / 2 + 2, out: Spot[] = [];
+  const m = ctx.getTransform?.(), cw = ctx.canvas?.width, off = (x: number, y: number): boolean => !!m && !!cw && Math.abs(m.a * x + m.c * y + m.e - cw / 2) > cw / 2 + (m.a * h) / 2;
   for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
     const i = r * cols + c, s = (r + 0.15 + 0.7 * hash(seed, salt, i)) / rows, t = (c + 0.15 + 0.7 * hash(seed, salt + 1, i)) / cols;
     const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
-    if (y > foot) continue;
+    if (y > foot || off(x, y)) continue;
     const k = unitIn(d, s, h) / 64;
     out.push({ x: Math.round(x), y: Math.round(y), k, w: k > 1.5 ? 2 : 1, a: hash(seed, salt + 2, i), b: hash(seed, salt + 3, i), i, s, t });
   }
@@ -48,7 +51,7 @@ export function pixels(): Pixels {
     },
     fill: ({ ctx }) => {
       ctx.save();
-      for (const [c, a] of by) { ctx.beginPath(); for (let k = 0; k < a.length; k += 4) ctx.rect(a[k], a[k + 1], a[k + 2], a[k + 3]); ctx.fillStyle = c; ctx.fill(); }
+      for (const [c, a] of by) { ctx.fillStyle = c; for (let k = 0; k < a.length; k += 4) ctx.fillRect(a[k], a[k + 1], a[k + 2], a[k + 3]); }
       ctx.restore();
     },
   };
@@ -67,10 +70,27 @@ export function blade(px: Pixels, x: number, y: number, tall: number, lean: numb
   }
 }
 
+/** A line of whole pixels `w` square, laid a pixel at a time (`at`), each run of them along a row or down a column put as one. */
+function trace(px: Pixels, c: string, w: number): { at: (x: number, y: number) => void; end: () => void } {
+  let rx = 0, ry = 0, rw = 0, rh = 0;
+  return {
+    at: (fx, fy) => {
+      const x = Math.round(fx), y = Math.round(fy);
+      if (rw && x >= rx && x + w <= rx + rw && y >= ry && y + w <= ry + rh) return;
+      if (rw && rh === w && y === ry && (x === rx + rw || x + w === rx)) { rx = Math.min(rx, x); rw += w; return; }
+      if (rw && rw === w && x === rx && (y === ry + rh || y + w === ry)) { ry = Math.min(ry, y); rh += w; return; }
+      if (rw) px.put(c, rx, ry, rw, rh);
+      rx = x; ry = y; rw = w; rh = w;
+    },
+    end: () => { if (rw) px.put(c, rx, ry, rw, rh); rw = 0; },
+  };
+}
+
 /** A line of whole pixels from one point to another, `w` square. */
 function dots(px: Pixels, c: string, x0: number, y0: number, x1: number, y1: number, w: number): void {
-  const n = Math.max(1, Math.round(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) / w));
-  for (let j = 0; j <= n; j++) px.put(c, x0 + ((x1 - x0) * j) / n, y0 + ((y1 - y0) * j) / n, w, w);
+  const n = Math.max(1, Math.round(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0)) / w)), line = trace(px, c, w);
+  for (let j = 0; j <= n; j++) line.at(x0 + ((x1 - x0) * j) / n, y0 + ((y1 - y0) * j) / n);
+  line.end();
 }
 
 /** How a look's blades stand: the lattice, how tall (pixels at the square ahead's middle, least and most), how far they lean, their two tones and what share of spots stand none. */
@@ -176,12 +196,13 @@ export function fronds(p: Paint, base: string, sq: Square, o: Fronds, px = pixel
   const lit = tone(p, sq, o.lit, base), dark = tone(p, sq, o.dark, base);
   for (const q of spots(p, sq, o.rows, o.cols, o.salt ?? 171)) {
     if (q.a < o.bare) continue;
-    const len = (o.len[0] + (o.len[1] - o.len[0]) * q.b) * q.k, dir = q.i % 2 ? 1 : -1, n = Math.max(4, Math.round(len / q.w));
+    const len = (o.len[0] + (o.len[1] - o.len[0]) * q.b) * q.k, dir = q.i % 2 ? 1 : -1, n = Math.max(4, Math.round(len / q.w)), stem = trace(px, lit, q.w);
     for (let j = 0; j <= n; j++) {
       const f = j / n, x = q.x + dir * len * 0.75 * f, y = q.y - len * 0.9 * Math.sin(f * Math.PI * 0.75);
-      px.put(lit, x, y, q.w, q.w);
+      stem.at(x, y);
       if (j > 1 && j % 2 === 0) px.put(dark, x, y + q.w, q.w, Math.round(2 * q.k * (1.2 - f)) + q.w);
     }
+    stem.end();
   }
   return px;
 }
