@@ -158,4 +158,21 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
       'MMMMMMMMMMMM',
     ],
   },
+  {
+    // Where four grounds meet (#1100): a drift of snow lying on the moor's edge, the heather running down
+    // into the grass and the grass into the sand, a lone square of snow out on the heather and a ruin on it.
+    id: 'ground_edges', name: 'Edges', kind: 'outdoor', region: 'shelf', start: { x: 6, y: 8, facing: NORTH },
+    rows: [
+      'MMMMMMMMMMMM',
+      'Mhhhhhhh,,_M',
+      'Mhhhhhh,,,_M',
+      'Mhh*hhh,,__M',
+      'Mhhhhh**,__M',
+      'Mhhhh****__M',
+      'Mhhhh,**,__M',
+      'M##hh,,,,,_M',
+      'M#hhh,,,,,_M',
+      'MMMMMMMMMMMM',
+    ],
+  },
 ];

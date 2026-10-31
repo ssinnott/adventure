@@ -29,6 +29,8 @@ import type { Paint } from '../../src/ui/view/common.ts';
 import { drawFloor } from '../../src/ui/view/floor.ts';
 import { groundColor, cellNoise, DRIFT_DAY } from '../../src/ui/view/ground/index.ts';
 import { viewCell, VIEW_LATERAL } from '../../src/game/world.ts';
+import { tongue, edgesOf } from '../../src/ui/view/ground/edges.ts';
+import { drawnAt } from '../../src/ui/viewport.ts';
 
 export function terrain(): void {
   // Hills and farmland: their legend characters, open ground both.
@@ -108,16 +110,18 @@ export function terrain(): void {
   ok(SNOW_HOLD.steppe >= SNOW_HOLD.grass - 0.05 && SNOW_HOLD.dunes === SNOW_HOLD.sand && SNOW_HOLD.vines < SNOW_HOLD.steppe && SNOW_HOLD.volcano < 0.5 && SNOW_HOLD.vent === 0,
     `snow lies on the steppe as on grass and on the dunes as on sand, the creepers keep some off, the cone's warmth thins it and a vent takes none (${['steppe', 'dunes', 'vines', 'volcano', 'vent'].map((t) => SNOW_HOLD[t as 'steppe']).join(', ')})`);
   // The samples the smoke test sweeps and the contact sheet shows (tools/grounds.ts): one to each
-  // ground, its own ground in view from the start, a wall in it, square and placed by no area.
+  // ground, its own ground in view from the start, a wall in it, square and placed by no area; and one
+  // where four grounds meet (#1100), all four in view from its start.
   const sampled = GROUND_SAMPLES.map((d) => {
-    const g = new GameMap(d), t = d.id.replace('ground_', '');
-    const seen = viewCells(g, d.start.x, d.start.y, d.start.facing, VIEW_DEPTH).some((c) => g.at(c.x, c.y).terrain === t);
+    const g = new GameMap(d), t = d.id.replace('ground_', ''), own = t === 'edges' ? ['heather', 'grass', 'snow', 'sand'] : [t];
+    const inView = new Set(viewCells(g, d.start.x, d.start.y, d.start.facing, VIEW_DEPTH).map((c) => g.at(c.x, c.y).terrain as string));
+    const seen = own.every((o) => inView.has(o));
     const walls = g.cells.some((c) => c.solid === 'wall'), square = d.rows.every((r) => r.length === d.rows[0].length);
     return { t, fine: seen && walls && square && !MAP_DEFS.some((m) => m.id === d.id) };
   });
   const grounds = ['ash', 'pine', 'ice', 'cliff', 'peak',
-    'steppe', 'dunes', 'vines', 'volcano'];
-  ok(sampled.map((s) => s.t).join() === grounds.join() && sampled.every((s) => s.fine), `a sample of each ground, its ground in view from its start, a wall in it and no area's (${sampled.map((s) => `${s.t} ${s.fine ? 'fine' : 'wrong'}`).join(', ')})`);
+    'steppe', 'dunes', 'vines', 'volcano', 'edges'];
+  ok(sampled.map((s) => s.t).join() === grounds.join() && sampled.every((s) => s.fine), `a sample of each ground and one where four meet, its grounds in view from its start, a wall in it and no area's (${sampled.map((s) => `${s.t} ${s.fine ? 'fine' : 'wrong'}`).join(', ')})`);
   // Snow lies on both; the grain greens in Sowing and goes gold by Harvest, and fields span squares.
   ok(SNOW_HOLD.hills >= 0.85 && SNOW_HOLD.farm >= 0.85, `snow lies white on hills and fields (${SNOW_HOLD.hills}, ${SNOW_HOLD.farm})`);
   ok([0, 1].every((crop) => cropColor(crop, 20) !== cropColor(crop, 50) && cropColor(crop, 50) !== cropColor(crop, 100)), 'the grain turns from Sowing to Harvest to Frost');
@@ -142,6 +146,7 @@ export function terrain(): void {
   ok(spans >= 60 && crops.size >= 3, `the fields lie in patchwork, each over several squares (${spans} of 144 run on east, ${crops.size} crops)`);
   sight();
   drift();
+  edges();
 }
 
 /** A valley behind a ridge, the ridge across the row y = 3, with room to stand four squares off it. */
@@ -351,4 +356,49 @@ function drift(): void {
     return { most: Math.max(...cs.flatMap((a) => cs.map((b) => apart(a, b)))), step: Math.max(...cs.slice(1).map((c, i) => apart(c, cs[i]))) };
   });
   ok(along.every((a) => a.most >= 30 && 3 * a.step <= a.most), `a run of grass across downs_d3 varies along its length in swathes, not by the square (${run.length} squares; the most different ${along.map((a) => a.most.toFixed(1)).join(' and ')} apart, at midsummer and late in the year, at least 30; the most from one square to the next ${along.map((a) => a.step.toFixed(1)).join(' and ')}, a third of that at most)`);
+}
+
+/** The farthest a tongue reaches into its square: two fifths, so a square between two still shows its own ground. */
+const TONGUE_CAP = 0.4;
+
+/**
+ * Where two grounds meet (#1100): every edge of the outdoor maps and the ground samples, named from either of
+ * its squares, has the same tongue or none, and a square takes the same tongues from every facing; a pair
+ * with a rank-less ground, a square something stands on, two of one rank or a dungeon's floor has none, and
+ * every other pair has one, the higher ground's; a tongue reaches some fifth of the way in and never past
+ * TONGUE_CAP; where it runs on along its edge the next one starts as deep as it ends; and O7's snow spills
+ * into its heather.
+ */
+function edges(): void {
+  const maps = [...MAP_DEFS.filter((d) => d.kind === 'outdoor'), ...GROUND_SAMPLES].map((d) => new GameMap(d));
+  const rankAt = (m: GameMap, x: number, y: number): number => { const c = drawnAt(m, x, y); return c.solid === 'none' && c.door === 'none' ? GROUND[c.terrain].rank ?? 0 : 0; };
+  let pairs = 0, none = 0, given = 0, sum = 0, points = 0, most = 0, runs = 0, o7 = 0;
+  const odd: string[] = [], wrong: string[] = [], steps: string[] = [];
+  for (const m of maps) for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
+    for (const [dx, dy] of [[1, 0], [0, 1]]) {
+      if (!m.inBounds(x + dx, y + dy)) continue;
+      pairs++;
+      const t = tongue(m, x, y, x + dx, y + dy), back = tongue(m, x + dx, y + dy, x, y), ra = rankAt(m, x, y), rb = rankAt(m, x + dx, y + dy);
+      if (JSON.stringify(t) !== JSON.stringify(back)) odd.push(`${m.id} ${x},${y}`);
+      const owed = ra && rb && ra !== rb ? (ra > rb ? `${x},${y}` : `${x + dx},${y + dy}`) : '';
+      if (!t) { none++; if (owed) wrong.push(`${m.id} ${x},${y} none`); continue; }
+      if (`${t.from.x},${t.from.y}` !== owed) wrong.push(`${m.id} ${x},${y} from ${t.from.x},${t.from.y}`);
+      given++; sum += t.reach.reduce((a, b) => a + b, 0); points += t.reach.length; most = Math.max(most, ...t.reach);
+      if (m.id === 'highmoor_o7' && t.terrain === 'snow' && m.at(t.into.x, t.into.y).terrain === 'heather') o7++;
+      // The next edge along, the square beyond the one it runs into: as deep where they meet, if it runs on.
+      const ax = t.from.y === t.into.y ? 0 : 1, ay = 1 - ax, next = tongue(m, t.into.x + ax, t.into.y + ay, t.from.x + ax, t.from.y + ay), last = t.reach.length - 1;
+      if (t.reach[last] && next?.terrain === t.terrain && next.into.x === t.into.x + ax && next.into.y === t.into.y + ay) {
+        runs++;
+        if (next.reach[0] !== t.reach[last]) steps.push(`${m.id} ${t.into.x},${t.into.y}`);
+      }
+    }
+    const seen = new Set([NORTH, EAST, SOUTH, WEST].map((f) => JSON.stringify(edgesOf(m, x, y, f)?.tongues ?? [])));
+    if (seen.size > 1) odd.push(`${m.id} ${x},${y} by facing`);
+  }
+  // Underground the floor is the palette's, and nothing spills over it.
+  const cellar = new GameMap({ id: 'fx_cellar_edges', name: 'Cellar', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,*_#', '#hs:#', '#####'] });
+  const under = [[1, 1, 2, 1], [2, 1, 3, 1], [1, 2, 2, 2], [1, 1, 1, 2], [2, 1, 2, 2]].filter(([ax, ay, bx, by]) => tongue(cellar, ax, ay, bx, by)).length;
+  const mean = sum / points;
+  ok(!odd.length && !wrong.length && !under, `an edge's tongue is the same from both of its squares and a square's from every facing; a pair with a rank-less ground, a square something stands on or two of a rank has none, nor a dungeon's floor, and each other pair the higher's (${pairs} edges of ${maps.length} maps, ${given} tongues, ${none} none${odd.length ? `; not the same: ${odd.slice(0, 4).join(', ')}` : ''}${wrong.length ? `; wrong: ${wrong.slice(0, 4).join(', ')}` : ''}${under ? `; ${under} underground` : ''})`);
+  ok(mean >= 0.12 && mean <= 0.24 && most <= TONGUE_CAP && runs > 0 && !steps.length && o7 >= 60, `a tongue reaches some fifth into its square, never past ${TONGUE_CAP}, and runs on into the next edge's as deep where they meet; O7's snow spills into its heather (on average ${mean.toFixed(3)}, at most ${most.toFixed(3)}; ${runs} runs on${steps.length ? `, a step at ${steps.slice(0, 4).join(', ')}` : ''}; ${o7} tongues of snow on O7's heather)`);
 }

@@ -2,8 +2,10 @@
 // pixels. Each page function takes up what it laid before it returns, and the frame (boot.ts) takes it up
 // where one throws.
 import type { Load } from '../kit/browser.ts';
-import type { Cell, Landmark, MapPalette, Terrain } from '../../src/game/mapdef.ts';
+import type { Cell, Landmark, MapDef, MapPalette, Terrain } from '../../src/game/mapdef.ts';
 import type { Flame } from '../../src/ui/viewport.ts';
+import type { Tongue } from '../../src/ui/view/ground/edges.ts';
+import { GROUND_SAMPLES } from '../kit/grounds.ts';
 import type { Run } from './boot.ts';
 
 /** What a square of the view holds for the painter: the monsters drawn there. */
@@ -758,4 +760,112 @@ export async function features({ page, ok }: Run): Promise<void> {
   ok(r.ruin >= 150 && r.ruinApart >= 100, `a den burnt paints its ruin, otherwise than the den standing (${r.ruin} pixels, ${r.ruinApart} of them otherwise)`);
   ok(r.beside > r.shrine + 100, `a sign on a shrine's square stands beside it and both paint (${r.beside} pixels against the shrine's ${r.shrine})`);
   ok(r.backdrop === 0, `over the smoke's backdrop every kind stays out, as the billboards do (${r.backdrop} pixels)`);
+}
+
+// Where two grounds meet (#1100): the sample where heather, grass, snow and sand meet (tools/kit/grounds.ts), put
+// into the game's maps at a clear noon and taken out after. Every square the snow spills into is looked at from
+// each square that has it one or two ahead, straight on or one to a side, with open ground about the way, at
+// every facing, so from either side of each of its edges: painted as it is and with the snow's rank taken off,
+// the two differ on that square's floor where its tongues lie, as the pure function (`tongue`) lays them, and
+// nowhere else. Each point is put on the screen by the camera's own sums, not the painter's, so a tongue laid by
+// the square or the eye and not by the edge fails. A point within three pixels of an outline or of the square's
+// sides is not read, nor one inside a tongue that something stands over (a mark of the square's or a prop).
+export async function tongues({ page, ok }: Run): Promise<void> {
+  const r = await page.evaluate(async (def: MapDef) => {
+    const load: Load = (p) => import(p);
+    const V = await load<typeof import('../../src/ui/viewport.ts')>('/src/ui/viewport.ts'), M = await load<typeof import('../../src/game/map.ts')>('/src/game/map.ts');
+    const E = await load<typeof import('../../src/ui/view/ground/edges.ts')>('/src/ui/view/ground/edges.ts'), C = await load<typeof import('../../src/ui/view/common.ts')>('/src/ui/view/common.ts');
+    const T = await load<typeof import('../../src/game/types.ts')>('/src/game/types.ts');
+    const w = window.__game!.game!.world, back = { id: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing, minutes: w.state.minutes };
+    const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+    c.width = sky.width = W; c.height = sky.height = H;
+    const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+    const m = new M.GameMap(def), snow = V.GROUND.snow, rank = snow.rank;
+    const open = (x: number, y: number): boolean => m.inBounds(x, y) && m.at(x, y).solid === 'none' && m.at(x, y).door === 'none';
+    // The squares the snow spills into, each with its tongues of snow.
+    const into = new Map<string, Tongue[]>();
+    for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) for (const [dx, dy] of [[1, 0], [0, 1]]) {
+      const t = E.tongue(m, x, y, x + dx, y + dy), k = `${t?.into.x},${t?.into.y}`;
+      if (t?.terrain === 'snow') into.set(k, [...(into.get(k) ?? []), t]);
+    }
+    // Whether a point u east and v south of a square's corner lies in a tongue, by the reach the edge gives it.
+    const inside = (t: Tongue, u: number, v: number): boolean => {
+      const dx = t.from.x - t.into.x, dy = t.from.y - t.into.y, [a, r] = dx ? [v, dx > 0 ? 1 - u : u] : [u, dy > 0 ? 1 - v : v];
+      const n = t.reach.length - 1, i = Math.min(n - 1, Math.floor(a * n));
+      return r < t.reach[i] + (t.reach[i + 1] - t.reach[i]) * (a * n - i);
+    };
+    // Each tongue's sides of its edge and facings it is read from.
+    const seen = new Map<Tongue, Set<string>>();
+    let views = 0, read = 0, held = 0, covered = 0;
+    const bad: string[] = [];
+    const paint = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, 0, W, H).data; };
+    w.maps[def.id] = m;
+    try {
+      for (let ey = 0; ey < m.height; ey++) for (let ex = 0; ex < m.width; ex++) for (const f of [0, 1, 2, 3] as const) {
+        if (!open(ex, ey)) continue;
+        const fx = T.FACING_DX[f], fy = T.FACING_DY[f], rx = T.FACING_DX[(f + 1) & 3], ry = T.FACING_DY[(f + 1) & 3];
+        const targets: { x: number; y: number; ts: Tongue[] }[] = [];
+        for (const ts of into.values()) {
+          const { x: bx, y: by } = ts[0].into, d = (bx - ex) * fx + (by - ey) * fy, l = (bx - ex) * rx + (by - ey) * ry;
+          if (d < 1 || d > 2 || Math.abs(l) > 1) continue;
+          let clear = true;
+          for (let dd = 0; dd <= d; dd++) for (let ll = l - 1; ll <= l + 1; ll++) clear &&= open(ex + dd * fx + ll * rx, ey + dd * fy + ll * ry);
+          if (clear) targets.push({ x: bx, y: by, ts });
+        }
+        if (!targets.length) continue;
+        w.travel(def.id, ex, ey, f);
+        w.state.minutes = ((50 - 75 + 120) % 120) * 1440 + 12 * 60;
+        w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
+        const as = paint();
+        snow.rank = 0;
+        let bare: Uint8ClampedArray;
+        try { bare = paint(); } finally { snow.rank = rank; }
+        views++;
+        for (const b of targets) {
+          // A point of the square, u east and v south of its corner, on the screen as the camera puts it: k ahead
+          // of the eye's middle and lat across.
+          const proj = (u: number, v: number): [number, number] => {
+            const X = b.x + u - ex - 0.5, Y = b.y + v - ey - 0.5, un = C.unit(X * fx + Y * fy, H);
+            return [W / 2 + (X * rx + Y * ry) * 2 * un, H / 2 + un];
+          };
+          // The square's sides and each tongue's outline on the screen, which no point read lies within two and a half pixels of.
+          const lines: [number, number][][] = [[[0, 0], [1, 0], [1, 1], [0, 1], [0, 0]].map(([u, v]) => proj(u, v))];
+          for (const t of b.ts) {
+            const dx = t.from.x - t.into.x, dy = t.from.y - t.into.y, n = t.reach.length - 1;
+            lines.push(t.reach.map((r, i) => (dx ? proj(dx > 0 ? 1 - r : r, i / n) : proj(i / n, dy > 0 ? 1 - r : r))));
+          }
+          const off = ([px, py]: [number, number]): number => Math.min(...lines.flatMap((ln) => ln.slice(1).map(([qx, qy], j) => {
+            const [ox, oy] = ln[j], lx = qx - ox, ly = qy - oy, s = Math.max(0, Math.min(1, ((px - ox) * lx + (py - oy) * ly) / (lx * lx + ly * ly || 1)));
+            return Math.hypot(px - ox - s * lx, py - oy - s * ly);
+          })));
+          const pts: { i: number; want: boolean }[] = [];
+          for (let j = 0; j < 16; j++) for (let i = 0; i < 16; i++) {
+            const u = (i + 0.5) / 16, v = (j + 0.5) / 16, at = proj(u, v), sx = Math.floor(at[0]), sy = Math.floor(at[1]);
+            if (sx < 0 || sx >= W || sy < 0 || sy >= H || off(at) < 2.5) continue;
+            pts.push({ i: (sy * W + sx) * 4, want: b.ts.some((t) => inside(t, u, v)) });
+          }
+          // The square's bare ground with the snow's rank off: the middle colour of its points, which a tile varies from a little.
+          const mid = [0, 1, 2].map((ch) => pts.map((p) => bare[p.i + ch]).sort((a, z) => a - z)[pts.length >> 1]);
+          for (const p of pts) {
+            const changed = Math.abs(as[p.i] - bare[p.i]) + Math.abs(as[p.i + 1] - bare[p.i + 1]) + Math.abs(as[p.i + 2] - bare[p.i + 2]) > 24;
+            if (p.want && !changed && ![0, 1, 2].every((ch) => Math.abs(bare[p.i + ch] - mid[ch]) <= mid[ch] * 0.07 + 6)) { covered++; continue; }
+            read++; if (p.want) held++;
+            if (changed !== p.want) bad.push(`${b.x},${b.y} from ${ex},${ey} facing ${f}: ${p.want ? 'bare in' : 'snow outside'} its tongues`);
+          }
+          for (const t of b.ts) {
+            const side = (ex - t.into.x) * (t.from.x - t.into.x) + (ey - t.into.y) * (t.from.y - t.into.y) > 0 ? 'beyond' : 'before';
+            seen.set(t, new Set([...(seen.get(t) ?? []), side, `f${f}`]));
+          }
+        }
+      }
+    } finally {
+      snow.rank = rank;
+      w.travel(back.id, back.x, back.y, back.f); w.state.minutes = back.minutes; w['cached'] = null;
+      delete w.maps[def.id]; delete w.state.maps[def.id];
+    }
+    const all = [...into.values()].flat(), whole = all.filter((t) => seen.get(t)?.size === 6).length;
+    return { squares: into.size, tongues: all.length, whole, views, read, held, covered, bad };
+  }, GROUND_SAMPLES.find((d) => d.id === 'ground_edges')!);
+  ok(r.tongues >= 8 && r.whole === r.tongues && r.held >= 500 && !r.bad.length,
+    `an edge looks the same from both of its squares and every facing: the snow's tongues on the sample where four grounds meet lie on its floor where their edges lay them and nowhere else (${r.tongues} tongues into ${r.squares} squares, ${r.whole} of them read from both sides of the edge at all four facings, in ${r.views} views; ${r.read} points read, ${r.held} in a tongue, ${r.covered} covered${r.bad.length ? ` -> ${r.bad.length} out of place: ${r.bad.slice(0, 4).join(', ')}` : ''})`);
 }

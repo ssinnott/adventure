@@ -9,8 +9,10 @@ import { unit, fog, LIT, unitIn, floorPt, quad } from './common.ts';
 import type { Paint } from './common.ts';
 import { GROUND, asDrawn, groundColor } from './ground/index.ts';
 import type { Plot, Rims, Square } from './ground/look.ts';
+import { drawEdges } from './ground/edges.ts';
+import type { Edges } from './ground/edges.ts';
 
-export function drawFloor(p: Paint, laid: Terrain, d: number, l: number, cell: { x: number; y: number }, seed: number, floorPal: string, plot?: Plot, rims?: Rims): void {
+export function drawFloor(p: Paint, laid: Terrain, d: number, l: number, cell: { x: number; y: number }, seed: number, floorPal: string, plot?: Plot, rims?: Rims, edges?: Edges): void {
   const { ctx, cx, horizon, h, haze, env } = p, kind = p.map.kind;
   const terrain = asDrawn(p, laid), ground = GROUND[terrain];
   // One colour a square, its cell's: the tiles vary from it by their hash alone.
@@ -45,6 +47,8 @@ export function drawFloor(p: Paint, laid: Terrain, d: number, l: number, cell: {
     const [x, y] = floorPt(cx, horizon, h, d, l, s, t);
     look.lies.mark(p, { ...sq, i, s, t, x, y, sc: unitIn(d, s, h) / u, base });
   }
+  // Where a higher ground lies beside it, a tongue of that ground over its edge (ground/edges.ts, #1100).
+  if (edges) drawEdges(p, sq, edges, floorPal);
   // After rain, puddles stand on the grounds that hold them (the roads and the dirt), holding a little of the sky.
   if (env.wet > 0.3 && look.puddles && d <= 3) {
     for (let i = 0; i < 3; i++) {

@@ -44,6 +44,7 @@ import { airOf, hazeOf, drawSkyBand } from './sky.ts';
 import type { SkyOpts } from './sky.ts';
 import { drawWeather, strike, drawBolt } from './weather.ts';
 import { drawFloor, drawCeiling } from './floor.ts';
+import { edgesOf } from './ground/edges.ts';
 import { GROUND, groundColor } from './ground/index.ts';
 import { drawVoidFront, drawVoidSide, drawFrontFace, drawLighthouseFlank, LAMP_REACH, drawLamp, drawFlame, drawSideFace } from './walls.ts';
 import { drawRoof, drawChimney } from './roofs.ts';
@@ -269,7 +270,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       const plot = look.plot?.(map, c.x, c.y, f);
       // A drop's rims: where ground stands before it and beyond it, and not the drop.
       const rims = look.drop ? { near: d > 0 && !GROUND[drawn(...toPair(cellAt(px, py, f, d - 1, l))).terrain].drop, far: !GROUND[drawn(...toPair(cellAt(px, py, f, d + 1, l))).terrain].drop } : undefined;
-      drawFloor(p, cell.terrain, d, l, c, seed, cellPal.floor, plot, rims);
+      drawFloor(p, cell.terrain, d, l, c, seed, cellPal.floor, plot, rims, edgesOf(map, c.x, c.y, f));
       if (map.kind === 'dungeon') drawCeiling(p, cellPal, d, l, seed, f);
     }
     // A hill's mound, its look's, over the row's floors.
