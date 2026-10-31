@@ -123,6 +123,13 @@ function under(): void {
   back('a feature about the party come (a shrine whose seen holds)', () => { w.mapState.used.fx_kept_seen = 1; });
   back('a feature about the party gone (the shrine taken off the map)', () => { (m.features as Feature[]).splice(m.features.indexOf(shrine), 1); });
   delete w.mapState.used.fx_kept_seen;
+  // A chest opened is gone from the view as from the automap (#1110), though nothing in the place moves.
+  const chest = { kind: 'chest', id: 'fx_kept_chest', x, y: y + 2, gold: 0, items: [] } as Feature;
+  (m.features as Feature[]).push(chest);
+  at(g);
+  back('a feature about the party spent (a chest opened)', () => { w.mapState.used.fx_kept_chest = 1; });
+  (m.features as Feature[]).splice(m.features.indexOf(chest), 1);
+  delete w.mapState.used.fx_kept_chest;
   const i = (y + 3) * m.width + x, cell = m.cells[i];
   back('a cell about the party laid anew by hand', () => { m.cells[i] = { ...cell }; });
   m.cells[i] = cell;

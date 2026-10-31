@@ -19,6 +19,7 @@ import { ITEMS } from './items.ts';
 import { CHAPTER } from './chapter.ts';
 import { QUESTS } from './quests.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
+import { LOOK } from './look.ts';
 
 export const MAPS = [MONKSVALE_J11, MONASTERY, MONASTERY2, HIGHSPINE_I11, HIGHSPINE_I10, SHEERPOINT_I9, SHEERPOINT_I8,
     // The country behind the road (#508): the giants' ground, the Spine's south and the vale's end.
@@ -41,6 +42,7 @@ export const AREA = {
   // and cloud down in the vale.
   climate: { summer: 8, winter: -12, daily: 7, damp: [0.03, 0.08], wettest: 330, fog: 0.4, lag: 12,
     fogText: 'Cloud comes down off the crest and lies in the vale.', thunderText: 'Thunder rolls along the range.' },
+  look: LOOK,
   // No town, and no business (#443, call 7).
   interiors: [] as const,
   // Peaks underfoot, with the road through them (#543), with J11 (#499); a monastery kept by what did

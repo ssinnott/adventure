@@ -148,7 +148,7 @@ src/main.ts        boot: canvas, input, loop
 src/app/           game.ts, the Game (the screen stack, save and load, attract mode); input.ts, keyboard -> queued actions (plus a text mode for names); pilot/, which plays the game for watching
 src/game/          the model: map, outdoors, world, calendar, weather, party, people, guilds, items, spells, monsters, combat, quests, save
 src/content/       the content, in TypeScript: index.ts lists the areas in road order and merges their tables; guilds.ts the guilds
-src/content/areas/ one folder per area: its maps, monsters, items, chapter of the one quest, side quests, guild quests and climate (docs/areas/ has each one's doc)
+src/content/areas/ one folder per area: its maps, monsters, items, chapter of the one quest, side quests, guild quests, climate and look (docs/areas/ has each one's doc)
 src/ui/            viewport, frame, sprites (the monsters' dispatcher), scenery, screens, combat screen, quest log, title, party creation
 src/ui/monsters/   the enemy drawings, one module per family, each registering its kinds, merged by the barrel (index.ts) and dispatched by sprites.ts
 src/ui/interiors/  the businesses' interiors, a folder per area and a scene to a file, dispatched by interior.ts

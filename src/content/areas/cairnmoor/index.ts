@@ -22,6 +22,7 @@ import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
+import { LOOK } from './look.ts';
 
 export const MAPS = [HIGHMOOR_N7, CAIRNFIELD_N8, HIGHMOOR_O7, HIGHMOOR_O8, CAIRNFIELD_M7, CAIRNFIELD_M8, HIGHMOOR_P7, HIGHMOOR_P8, CAIRNFIELD_L8, CAIRNS, CAIRNS2, CARN_FADA, BEARN_LIATH] as const;
 export { FLAGS };
@@ -41,6 +42,7 @@ export const AREA = {
   // and fog off the bog.
   climate: { summer: 13, winter: -6, daily: 5, damp: [0.02, 0.09], wettest: 90, fog: 0.7, lag: 12,
     fogText: 'Fog comes up off the bog and lies on the heather.', thunderText: 'Thunder rolls over the moor.' },
+  look: LOOK,
   // No town, and no business (#434, call 9).
   interiors: [] as const,
   novel: { families: ['lights'], terrain: ['snow', 'ice'], mechanics: ['inflict:cursed'], landmarks: ['ring'] },

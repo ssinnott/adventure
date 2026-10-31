@@ -34,5 +34,5 @@ function mark(p: Paint, m: Mark): void {
   }
 }
 
-export const ash: GroundLook = { color: () => TERRAIN_COLORS.ash, snow: 0.65, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
+export const ash: GroundLook = { color: () => TERRAIN_COLORS.ash, drift: { toward: ['#141212', '#6e6a66'], by: 0.6 }, snow: 0.65, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
   scatter: ['stump', 'steam', 'cinder'] };

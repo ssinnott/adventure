@@ -27,5 +27,5 @@ function mark(p: Paint, m: Mark): void {
   }
 }
 
-export const pine: GroundLook = { color: pineColor, snow: 0.72, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
+export const pine: GroundLook = { color: pineColor, drift: { toward: ['#3a7032', '#b07a46'], by: 0.6 }, snow: 0.72, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
   sides: { bare: 0.15, size: 0.55, spread: 0.25, tree: (p, x, y, s, tone, pick) => drawTreeSprite(p.ctx, x, y, s, tone, 3 + Math.floor(pick * 2), p.env.trees) } };

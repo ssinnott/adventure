@@ -673,3 +673,117 @@ export async function range({ page, ok }: Run): Promise<void> {
   ok(vent.night > 20 && vent.snowedNight > 20 && vent.fire === 0 && volcano.night === 0, `a vent's fire shows by night, under snow too, and not by day, and the cone about it has none (${vent.night} and ${vent.snowedNight} pixels by night, ${vent.fire} at noon; the cone ${volcano.night})`);
   ok(vent.top < volcano.top - 8, `a vent's smoke stands up over the cone (its top at ${vent.top} against ${volcano.top})`);
 }
+
+// The wilderness features (#1110): on the Foreland, grass laid about and the features near taken up, each
+// kind put two squares ahead in turn, painted by noon and midnight in summer and in winter with and without
+// snow, and what each paints read off against the grass alone. Each kind paints in every light and is its
+// own drawing; the night darkens all but a rift's light and a camp's fire, which is lit and leaves its flame;
+// snow whitens what lies open. A spent chest, cairn, shrine, fountain or statue, an event, a person and a
+// shrine not there yet paint nothing, as the automap marks none of them; a burnt den paints its ruin; a sign
+// on a shrine's square stands beside it; over the smoke's backdrop they all stay out.
+export async function features({ page, ok }: Run): Promise<void> {
+  const r = await page.evaluate(async () => {
+    const load: Load = (p) => import(p);
+    const V = await load<typeof import('../../src/ui/viewport.ts')>('/src/ui/viewport.ts'), M = await load<typeof import('../../src/game/map.ts')>('/src/game/map.ts');
+    const w = window.__game!.game!.world;
+    const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+    c.width = sky.width = W; c.height = sky.height = H;
+    const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+    const minutes = w.state.minutes;
+    w.travel('shelf', 16, 16, 0);
+    type F = (typeof w.map.features)[number];
+    const m = w.map, kept = m.cells.slice(), had = m.features.slice(), list = m.features as F[], px = w.state.x, py = w.state.y, mapId = w.state.mapId;
+    for (let y = py - 6; y <= py + 1; y++) for (let x = px - 4; x <= px + 4; x++) m.cells[y * m.width + x] = { ...M.LEGEND[','], ch: ',' };
+    const near = (f: F): boolean => Math.abs(f.x - px) <= 4 && f.y >= py - 9 && f.y <= py + 1;
+    list.splice(0, list.length, ...had.filter((f) => !near(f)));
+    const base = list.length;
+    const fixture = (kind: string, more: object = {}): F => ({ kind, x: px, y: py - 2, id: `fx_feature_${kind}`, name: 'Fixture', text: 'A fixture.', done: 'Done.', gold: 0, items: [], lines: [], ...more }) as unknown as F;
+    const paint = (fs: F[], doy: number, hour: number, snow: boolean, backdrop?: string): Uint8ClampedArray => {
+      list.length = base; list.push(...fs);
+      w.state.minutes = ((doy - 75 + 120) % 120) * 1440 + hour * 60;
+      w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: snow ? -4 : 12, cover: snow ? 1 : 0, wet: 0 } };
+      ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }, backdrop);
+      return ctx.getImageData(0, 0, W, H).data;
+    };
+    // What a paint shows that the grass alone does not: how many pixels, their colours and light, and which
+    // pixels they are. Pale is the white of lying snow, which no feature's own colours are.
+    const pale = (a: Uint8ClampedArray, i: number): boolean => Math.min(a[i], a[i + 1], a[i + 2]) > 160 && Math.max(a[i], a[i + 1], a[i + 2]) - Math.min(a[i], a[i + 1], a[i + 2]) < 12;
+    const read = (a: Uint8ClampedArray, bare: Uint8ClampedArray) => {
+      const seen = new Set<number>(), at = new Set<number>();
+      let n = 0, light = 0;
+      for (let i = 0; i < a.length; i += 4) {
+        if (Math.abs(a[i] - bare[i]) + Math.abs(a[i + 1] - bare[i + 1]) + Math.abs(a[i + 2] - bare[i + 2]) <= 24) continue;
+        n++; at.add(i); seen.add((a[i] << 16) | (a[i + 1] << 8) | a[i + 2]); light += (a[i] + a[i + 1] + a[i + 2]) / 3;
+      }
+      return { n, colours: seen.size, light: n ? Math.round(light / n) : 0, at, a };
+    };
+    const kinds = ['cairn', 'chest', 'camp', 'shrine', 'well', 'statue', 'fountain', 'den', 'sign', 'rift'];
+    const lights: [string, number, number, boolean][] = [['noon', 50, 12, false], ['midnight', 50, 0, false], ['winter', 100, 12, false], ['snow', 100, 12, true], ['snowy midnight', 100, 0, true]];
+    const thin: string[] = [], got: Record<string, ReturnType<typeof read>> = {}, flames: Record<string, number> = {};
+    for (const [name, doy, hour, snow] of lights) {
+      const bare = paint([], doy, hour, snow), bareFlames = V.paintedFlames().length;
+      for (const kind of kinds) {
+        const q = read(paint([fixture(kind)], doy, hour, snow), bare);
+        flames[`${kind} ${name}`] = V.paintedFlames().length - bareFlames;
+        if (q.n < 150 || q.colours < 4) thin.push(`${kind} ${name} (${q.n} pixels, ${q.colours} colours)`);
+        got[`${kind} ${name}`] = q;
+      }
+    }
+    // Snow on each: the pale pixels among those the feature paints on a winter's noon, without snow and
+    // with it lying (a cap of snow on the ground behind it is no other than the ground).
+    const whitened: Record<string, [number, number]> = {};
+    for (const kind of kinds) {
+      const mask = got[`${kind} winter`].at, count = (a: Uint8ClampedArray): number => { let p = 0; for (const i of mask) if (pale(a, i)) p++; return p; };
+      whitened[kind] = [count(got[`${kind} winter`].a), count(got[`${kind} snow`].a)];
+    }
+    // Each kind its own drawing: the pixels any two paint otherwise, by noon.
+    const apart: string[] = [];
+    for (const a of kinds) for (const b of kinds) if (a < b) {
+      const A = got[`${a} noon`].at, B = got[`${b} noon`].at;
+      let only = 0; for (const i of A) if (!B.has(i)) only++; for (const i of B) if (!A.has(i)) only++;
+      apart.push(`${a}/${b} ${only}`);
+    }
+    // Gone and never drawn, as the automap marks them: each spent kind spent, an event, a person and a shrine
+    // not there until a used id holds; and a den burnt, its ruin.
+    const bare = paint([], 50, 12, false), none: Record<string, number> = {};
+    for (const kind of ['chest', 'cairn', 'shrine', 'fountain', 'statue']) {
+      w.mapState.used[`fx_feature_${kind}`] = 1;
+      none[`a spent ${kind}`] = read(paint([fixture(kind)], 50, 12, false), bare).n;
+      delete w.mapState.used[`fx_feature_${kind}`];
+    }
+    none['an event'] = read(paint([fixture('event')], 50, 12, false), bare).n;
+    none['a person'] = read(paint([fixture('npc')], 50, 12, false), bare).n;
+    const later = fixture('shrine', { after: { seen: `${mapId}:fx_feature_later` } });
+    none['a shrine not there yet'] = read(paint([later], 50, 12, false), bare).n;
+    w.mapState.used.fx_feature_later = 1;
+    const come = read(paint([later], 50, 12, false), bare).n;
+    delete w.mapState.used.fx_feature_later;
+    const standing = paint([fixture('den')], 50, 12, false);
+    w.mapState.used.fx_feature_den = 1;
+    const ruin = read(paint([fixture('den')], 50, 12, false), bare), ruinApart = read(paint([fixture('den')], 50, 12, false), standing).n;
+    delete w.mapState.used.fx_feature_den;
+    const shrine = got['shrine noon'].n, beside = read(paint([fixture('shrine'), fixture('sign')], 50, 12, false), bare).n;
+    const backBare = paint([], 50, 0, false, '#ff00ff'), backdrop = read(paint(kinds.map((k) => ({ ...fixture(k), x: px + (k.length % 3) - 1 })), 50, 0, false, '#ff00ff'), backBare).n;
+    list.splice(0, list.length, ...had);
+    for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
+    w.state.minutes = minutes; w['cached'] = null;
+    const brief = (k: string) => { const q = got[k]; return { n: q.n, light: q.light }; };
+    return { thin, apart, none, come, ruin: ruin.n, ruinApart, shrine, beside, backdrop, flames, whitened, at: Object.fromEntries(Object.keys(got).map((k) => [k, brief(k)])) };
+  });
+  const kinds = ['cairn', 'chest', 'camp', 'shrine', 'well', 'statue', 'fountain', 'den', 'sign', 'rift'];
+  ok(r.thin.length === 0, `each kind of feature paints by noon and midnight, in summer and in winter, with and without snow${r.thin.length ? ' -> too faint: ' + r.thin.join(', ') : ''}`);
+  const close = r.apart.filter((s) => Number(s.split(' ')[1]) < 150);
+  ok(close.length === 0, `each kind of feature is its own drawing: any two paint 150 pixels or more otherwise (the least ${r.apart.map((s) => Number(s.split(' ')[1])).sort((a, b) => a - b)[0]})${close.length ? ' -> too alike: ' + close.join(', ') : ''}`);
+  const day = (k: string, light: string) => r.at[`${k} ${light}`];
+  const dimmed = kinds.filter((k) => k !== 'camp' && k !== 'rift').filter((k) => day(k, 'midnight').light > day(k, 'noon').light * 0.6);
+  ok(dimmed.length === 0 && day('rift', 'midnight').light > day('rift', 'noon').light * 0.8, `the night darkens each feature but a rift's light, which it barely dims (${kinds.map((k) => `${k} ${day(k, 'noon').light} to ${day(k, 'midnight').light}`).join(', ')})${dimmed.length ? ' -> not darker: ' + dimmed.join(', ') : ''}`);
+  const fires = kinds.filter((k) => r.flames[`${k} noon`] || r.flames[`${k} winter`] || r.flames[`${k} snow`] || (k !== 'camp' && (r.flames[`${k} midnight`] || r.flames[`${k} snowy midnight`])));
+  ok(r.flames['camp midnight'] === 1 && r.flames['camp snowy midnight'] === 1 && fires.length === 0, `a camp's fire is lit by night, in snow too, and leaves its flame; by day it is out, and nothing else leaves one (${r.flames['camp midnight']} and ${r.flames['camp snowy midnight']} by night, ${r.flames['camp noon']} by noon)${fires.length ? ' -> a flame from: ' + fires.join(', ') : ''}`);
+  const unwhite = kinds.filter((k) => k !== 'rift').filter((k) => r.whitened[k][1] < 8 || r.whitened[k][0] > 0);
+  ok(unwhite.length === 0, `snow whitens what lies open on each feature but a rift, which shows nothing so pale without it (${kinds.filter((k) => k !== 'rift').map((k) => `${k} ${r.whitened[k][0]} to ${r.whitened[k][1]}`).join(', ')} pale pixels)${unwhite.length ? ' -> not so: ' + unwhite.join(', ') : ''}`);
+  const drawn = Object.entries(r.none).filter(([, n]) => n > 0);
+  ok(drawn.length === 0 && r.come >= 150, `${Object.keys(r.none).join(', ')} paint nothing, as the automap marks none of them, and the shrine paints once there (${r.come} pixels)${drawn.length ? ' -> drawn: ' + drawn.map(([k, n]) => `${k} ${n}`).join(', ') : ''}`);
+  ok(r.ruin >= 150 && r.ruinApart >= 100, `a den burnt paints its ruin, otherwise than the den standing (${r.ruin} pixels, ${r.ruinApart} of them otherwise)`);
+  ok(r.beside > r.shrine + 100, `a sign on a shrine's square stands beside it and both paint (${r.beside} pixels against the shrine's ${r.shrine})`);
+  ok(r.backdrop === 0, `over the smoke's backdrop every kind stays out, as the billboards do (${r.backdrop} pixels)`);
+}

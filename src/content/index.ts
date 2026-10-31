@@ -11,7 +11,7 @@ import type { ItemDef } from '../game/items.ts';
 import type { SpellDef } from '../game/spells.ts';
 import type { LogQuest, ChapteredQuest } from '../game/quests.ts';
 import type { GuildQuest } from '../game/guilds.ts';
-import type { Area, Flags } from './area.ts';
+import type { Area, AreaLook, Flags } from './area.ts';
 import { guildQuestDef, GUILDS } from './guilds.ts';
 import { STONES } from './stones.ts';
 import { ENDINGS } from './endings.ts';
@@ -151,6 +151,8 @@ export const QUESTS: readonly LogQuest[] = once('quest', [THE_QUEST, ...AREAS.fl
 once('quest or chapter', [...QUESTS, ...THE_QUEST.chapters], (q) => q.id);
 
 export const CLIMATES = Object.fromEntries(AREAS.map((a) => [a.id, a.climate])) as Record<RegionId, Climate>;
+/** Each region's look, merged as the climates are (#1097). */
+const LOOKS = Object.fromEntries(AREAS.map((a: Area) => [a.id, a.look])) as Record<RegionId, AreaLook>;
 
 /** Every business's interior, in road order. */
 export const INTERIORS: readonly Interior[] = once('interior', AREAS.flatMap((a) => a.interiors), (i) => i);
@@ -179,10 +181,10 @@ export const ATLAS: Atlas = {
 };
 
 /**
- * The tables src/game takes (game/tables.ts), all eleven, handed in by the app, the tools, the suites
+ * The tables src/game takes (game/tables.ts), all twelve, handed in by the app, the tools, the suites
  * and the walkthroughs (#973); nothing writes them. The exports above stay, for the areas and the tools.
  */
 export const TABLES: Tables = {
   items: ITEMS, monsters: MONSTERS, spells: SPELLS, quests: QUESTS, guildQuests: GUILD_QUESTS, guilds: GUILDS,
-  climates: CLIMATES, stones: STONES, endings: ENDINGS, atlas: ATLAS, maps: MAP_DEFS,
+  climates: CLIMATES, looks: LOOKS, stones: STONES, endings: ENDINGS, atlas: ATLAS, maps: MAP_DEFS,
 };

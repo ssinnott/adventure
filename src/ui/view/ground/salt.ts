@@ -17,4 +17,4 @@ function mark(p: Paint, m: Mark): void {
   ctx.beginPath(); ctx.moveTo(x - Math.cos(a) * len, y - Math.sin(a) * len * 0.4); ctx.lineTo(x, y); ctx.lineTo(x + Math.cos(b) * len, y + Math.sin(b) * len * 0.4); ctx.stroke();
 }
 
-export const salt: GroundLook = { color: () => TERRAIN_COLORS.salt, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 5, mark } };
+export const salt: GroundLook = { color: () => TERRAIN_COLORS.salt, drift: { toward: ['#bab09a', '#fafaf6'], by: 0.6 }, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 5, mark } };

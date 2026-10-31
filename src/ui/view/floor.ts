@@ -10,11 +10,12 @@ import type { Paint } from './common.ts';
 import { GROUND, asDrawn, groundColor } from './ground/index.ts';
 import type { Plot, Rims, Square } from './ground/look.ts';
 
-export function drawFloor(p: Paint, laid: Terrain, d: number, l: number, seed: number, floorPal: string, plot?: Plot, rims?: Rims): void {
+export function drawFloor(p: Paint, laid: Terrain, d: number, l: number, cell: { x: number; y: number }, seed: number, floorPal: string, plot?: Plot, rims?: Rims): void {
   const { ctx, cx, horizon, h, haze, env } = p, kind = p.map.kind;
   const terrain = asDrawn(p, laid), ground = GROUND[terrain];
-  const base = groundColor(p, terrain, floorPal, plot?.crop);
-  const sq: Square = { d, l, seed, plot, rims };
+  // One colour a square, its cell's: the tiles vary from it by their hash alone.
+  const base = groundColor(p, terrain, floorPal, cell.x, cell.y, plot?.crop);
+  const sq: Square = { d, l, mx: cell.x, my: cell.y, seed, plot, rims };
   // A drop is a floor of its own, in its own colour underground too, and nothing lies on it.
   if (ground.drop) { ground.drop(p, sq); return; }
   const n = d <= 2 ? 3 : 2;
