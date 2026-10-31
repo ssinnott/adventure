@@ -17,8 +17,20 @@ import { paintScene } from '../../src/ui/view/compositor.ts';
 import { paintOn, CLEAR } from '../../src/ui/view/common.ts';
 import type { Paint } from '../../src/ui/view/common.ts';
 import { GROUND, groundColor } from '../../src/ui/view/ground/index.ts';
-import { recorder } from './air.ts';
 import { ok } from './lib.ts';
+
+/** A 2D context that paints nothing and writes down each call and each setting, a gradient by its number and its stops, as air.ts's. */
+function recorder(log: string[]): CanvasRenderingContext2D {
+  let n = 0;
+  const gradient = (kind: string, a: unknown[]) => {
+    const id = `${kind}#${n++}`; log.push(`${id}(${a.join(',')})`);
+    return { id, addColorStop: (at: number, c: string) => { log.push(`${id}.stop(${at},${c})`); } };
+  };
+  return new Proxy({}, {
+    get: (_, k) => k === 'createLinearGradient' || k === 'createRadialGradient' ? (...a: unknown[]) => gradient(String(k), a) : (...a: unknown[]) => { log.push(`${String(k)}(${a.join(',')})`); },
+    set: (_, k, v) => { log.push(`${String(k)}=${v && typeof v === 'object' ? (v as { id: string }).id : String(v)}`); return true; },
+  }) as unknown as CanvasRenderingContext2D;
+}
 
 /** Every region's look with its tints taken off. */
 const BARE = Object.fromEntries(Object.entries(TABLES.looks).map(([r, l]) => [r, { ...l, tints: undefined }])) as Tables['looks'];

@@ -116,7 +116,7 @@ export interface Air {
  * way toward a colour, a quarter at most, before the land's drift, rain and snow (ui/view/ground/index.ts);
  * it changes at a zone's border. Being a quarter of the way at most, each colour is the tint made strong.
  */
-export type Tints = Partial<Record<Terrain, { toward: string; by: number }>>;
+type Tints = Partial<Record<Terrain, { toward: string; by: number }>>;
 
 /** Flags by name, each with a gloss of a few words on what holding it means (#995). */
 export type Flags = Readonly<Record<string, string>>;
