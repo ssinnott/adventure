@@ -16,6 +16,7 @@ import { standardEncounter } from './line.ts';
 import type { Role } from './line.ts';
 import { wakeWith, markOf, ANSWER, breathGuard, mendLines, REST_AT, pools, mustRest, blessWith, sleepWith, drinkFor, sleeps, wakesMany, striker, optsFor, letsLie, asWritten } from '../../src/game/bot.ts';
 import type { BotOpts } from '../../src/game/bot.ts';
+import { featFor } from '../../src/game/combat/feats.ts';
 import { ROUND_CAP, playOut, type Bot } from './fight.ts';
 import { type Rules, RULES, edgeOf, fielded, HARNESS } from './company.ts';
 
@@ -78,7 +79,9 @@ function mendRate(c: Character, rules: Readonly<Rules>): number {
  * more for its rounds were worth, sleep the blows the foes it could put down would strike, at the
  * spell's chance, for the rounds a sleeper sleeps (SLEEPS_FOR) or a hold holds, either for no more
  * rounds than the fight has left by the company's weapons; the caster's own blow is lost as for a
- * damage spell. And it drinks (`drinkFor`) where no spell pays, before its blow. It plays by the
+ * damage spell. And it drinks (`drinkFor`) where no spell pays, before its blow. It spends stamina
+ * on a feat as the gate's bot does (`featFor`, #1113), where no spell pays, before its blow, once a
+ * fight has the feats, unless `opts` sets them off (#1117). It plays by the
  * what-ifs `rules`, the bots' answers among them (`rules.answer`, play's unless set, #946).
  */
 export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, opts: BotOpts = {}, rules: Readonly<Rules> = RULES): void => {
@@ -160,6 +163,9 @@ export const thrifty = (s: CombatState, p: Party, rng: RngInstance, i: number, o
   // A draught, where `opts` asks: where no spell pays, before a blow.
   const drink = o.drink && best.type !== 'cast' ? drinkFor(s, p, c, asWritten, answer) : undefined;
   if (drink && partyAct(s, p, rng, drink)) return;
+  // A feat, as the gate's bot spends one (`gateTurn`): at the foe it would strike, where no spell pays.
+  const feat = (opts.feats ?? true) && best.type !== 'cast' ? featFor(s, p, i, weakest) : undefined;
+  if (feat && partyAct(s, p, rng, feat)) return;
   if (!partyAct(s, p, rng, best)) partyAct(s, p, rng, { type: 'defend' });
 };
 
