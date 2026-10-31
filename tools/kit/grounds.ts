@@ -158,4 +158,38 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
       'MMMMMMMMMMMM',
     ],
   },
+  {
+    // The downs in their looks (#1101): turf, meadow, rough and bracken meeting, a track over them up to a
+    // shepherd's hut, and a rock.
+    id: 'ground_grass', name: 'Grass', kind: 'outdoor', region: 'shelf', start: { x: 6, y: 8, facing: NORTH },
+    rows: [
+      'MMMMMMMMMMMM',
+      'M,,,,,,,,,,M',
+      'M,,##,,,,r,M',
+      'M,,#=,,,,,,M',
+      'M,,,=,,,,,,M',
+      'M,,,==,,,,,M',
+      'M,,,,=,,,,,M',
+      'M,,,,==,,,,M',
+      'M,,,,,=,,,,M',
+      'MMMMMMMMMMMM',
+    ],
+  },
+  {
+    // The moor in its looks (#1101): heather, bog cotton and peat cut out of it, running down into a bog of
+    // pools, reeds and tussocks; a ruin and a rock on the heather.
+    id: 'ground_heather', name: 'Heather', kind: 'outdoor', region: 'shelf', start: { x: 5, y: 7, facing: NORTH },
+    rows: [
+      'MMMMMMMMMMMM',
+      'MhhhhhhhhhhM',
+      'Mhh##hhhhrhM',
+      'Mhh#hhhhhhhM',
+      'MhhhhhhhhhhM',
+      'MwwhhhhhhwwM',
+      'MwwwhhhhwwwM',
+      'MwwwwhhwwwwM',
+      'MwwwwwwwwwwM',
+      'MMMMMMMMMMMM',
+    ],
+  },
 ];
