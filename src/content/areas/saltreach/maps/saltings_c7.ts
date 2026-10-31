@@ -60,7 +60,7 @@ export const SALTINGS_C7: MapDef<'saltings_c7'> = {
     { kind: 'event', x: 19, y: 2, id: 'c7_pans', once: true, text: 'Lanes between the pans, their mud walls crusted white, a gap in each for the sluice. Crab tracks over all of it.' },
     // The secret: the one pan with no sluice, its hoard reached by the crabs' hole under its east wall.
     { kind: 'event', x: 31, y: 5, id: 'c7_trodden', text: 'At this wall\'s foot the crust is trodden to grey mud. Every other wall in the pans stands in salt unbroken.' },
-    { kind: 'chest', x: 28, y: 4, id: 'c7_hoard', gold: 200, items: ['crabshell_buckler', 'horn_bow+1'] },
+    { kind: 'chest', x: 28, y: 4, id: 'c7_hoard', gold: 200, items: ['horn_bow+1', 'horn_shortbow+1', 'sharkskin_sling+1', 'crabshell_buckler'] },
     // The Star That Moved (#56's 24, #183): the pilots' stone where the lanes cross, the watch from it
     // by night, once, and the pilots' slate at its foot, there at any hour.
     { kind: 'event', x: 25, y: 7, id: 'c7_stone', once: true, text: 'Where the lanes cross, a stone waist high, a notch cut in its top facing the Scarp. Something is wedged at its foot.' },

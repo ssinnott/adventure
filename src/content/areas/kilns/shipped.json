@@ -711,7 +711,11 @@
     "seax+1",
     "sharkskin+2",
     "steel_bow",
-    "steel_bow+1"
+    "steel_bow+1",
+    "steel_shortbow",
+    "steel_shortbow+1",
+    "wire_sling",
+    "wire_sling+1"
   ],
   "monsters": [
     "anvil_guard",

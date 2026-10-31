@@ -15,21 +15,34 @@ import { sharkskin } from '../saltreach/public.ts';
 export const forgeHammer = W('forge_hammer', 'Forge Hammer', 1400, 2, 10, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
 export const seax = W('seax', 'Seax', 1400, 1, 8, { kind: 'light', bonus: 9 });
 export const steelBow = W('steel_bow', 'Steel Bow', 1500, 1, 12, { kind: 'bow', bonus: 8, ranged: true, twoHanded: true, classes: MARTIAL });
+// Its short bow and sling (#1115): the die a size smaller and two, so a step and two behind it by `hits`,
+// at three quarters of its price and half; a plus where it has one.
+export const steelShortbow = W('steel_shortbow', 'Steel Short Bow', 1125, 1, 10, { kind: 'bow', short: true, bonus: 8, ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] });
+export const wireSling = W('wire_sling', 'Wire Sling', 750, 1, 8, { kind: 'light', bonus: 8, ranged: true });
 export const mattock = W('mattock', 'Mattock', 1500, 2, 10, { bonus: 4, twoHanded: true, classes: MARTIAL });
 export const bandedStaff = W('banded_staff', 'Banded Staff', 1300, 1, 10, { kind: 'staff', bonus: 8, twoHanded: true });
 export const dwarfMail = A('dwarf_mail', 'Dwarf Mail', 2000, 11, { classes: NO_CASTER_HEAVY });
 export const kilnRobe = A('kiln_robe', 'Kiln Robe', 1300, 9);
 export const forgeShield: ItemDef = { id: 'forge_shield', name: 'Forge Shield', slot: 'shield', price: 1100, ac: 6, classes: MAIL };
 const WARES = [forgeHammer, seax, steelBow, mattock, bandedStaff, dwarfMail, kilnRobe, forgeShield];
+const RANGED = [steelShortbow, wireSling];
 
-/** The forge's stock, the act's first step (#459); Kilnhaven's smith stocks the same (#469). */
+/** The forge's step, the act's first (#459); Kilnhaven's smith stocks the same (#469). */
 export const FORGE: readonly string[] = WARES.map((d) => d.id);
+/**
+ * Sold beside the step at the forge and at the smith's (#1115), and kept out of it: the Steel Bow's
+ * short bow and sling are off the gate's ladder until #1117 takes them into the step, and the rung's
+ * `from` (tools/kit/rules/ladder.ts) is the step alone.
+ */
+export const FORGE_RANGED: readonly string[] = RANGED.map((d) => d.id);
 
 /** A quarter more than an item's own price, in whole gold: what Kilnhaven's smith asks (#434's call 1). */
 export const quarterMore = (price: number): number => Math.ceil((price * 5) / 4);
 
 /** Kilnhaven's smith's prices for the forge's stock, a shop's `prices` (#469). */
 export const SMITH_PRICES: Readonly<Record<string, number>> = Object.fromEntries(WARES.map((d) => [d.id, quarterMore(d.price)]));
+/** And for the short bow and the sling (#1115), in whole gold as the step's are. */
+export const SMITH_RANGED: Readonly<Record<string, number>> = Object.fromEntries(RANGED.map((d) => [d.id, quarterMore(d.price)]));
 
 /**
  * What the thane asks for the Anvil Stone (#434's call 1), for the great hall's question (#459): so
@@ -52,6 +65,8 @@ export const platePlus3 = P(plate, 3);
 export const forgeHammerPlus1 = P(forgeHammer, 1);
 export const mattockPlus1 = P(mattock, 1);
 export const steelBowPlus1 = P(steelBow, 1);
+export const steelShortbowPlus1 = P(steelShortbow, 1);
+export const wireSlingPlus1 = P(wireSling, 1);
 export const seaxPlus1 = P(seax, 1);
 export const kilnRobePlus1 = P(kilnRobe, 1);
 // M3's secret (#457): in the Hand's wagon stage behind the walled adit, the drover's, off the ladder.
@@ -120,10 +135,13 @@ export const durchschlag: ItemDef = { ...mattock, id: 'durchschlag', name: 'Durc
 
 export const ITEMS: readonly ItemDef[] = [
   ...WARES,
+  ...RANGED,
   platePlus3,
   forgeHammerPlus1,
   mattockPlus1,
   steelBowPlus1,
+  steelShortbowPlus1,
+  wireSlingPlus1,
   seaxPlus1,
   kilnRobePlus1,
   droversGoad,

@@ -8,4 +8,9 @@ export const CHECKS = {
   gear: {
     13: ['morning_star+1', 'stiletto+1', 'ironshod_staff+1', 'tidefolk_robe+1', 'horn_bow+1', 'plate+1', 'long_axe+1'],
   },
+  // Its ranged rung (#1115), the Horn Bow +1's, Saltreach's bow on Wrackholm's rung: the short bow and the
+  // sling #1117 takes into `gear`.
+  ranged: {
+    13: ['horn_bow+1', 'horn_shortbow+1', 'sharkskin_sling+1'],
+  },
 } satisfies AreaChecks;

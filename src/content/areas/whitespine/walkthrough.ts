@@ -543,8 +543,8 @@ function range(): Scene[] {
       for (let i = 0; i < 20 && !found9; i++) found9 = w.world.search();
       const into = found9 ? [w.world.move('forward'), w.world.move('forward')] : [];
       ok(found9 && into.every((r) => r.kind === 'moved') && w.world.used('i9_shards'), 'searched at the tally, the crack is found, and in the cache shards of every colour in the straw');
-      ok(cache9?.kind === 'chest' && cache9.gold === 500 && cache9.items.length === 1 && cache9.items.includes('hunters_bow+1'),
-        'and in the cache 500 gold and a Hunter\'s Bow +1, and no shard to carry off: the act has no Rift to take one to');
+      ok(cache9?.kind === 'chest' && cache9.gold === 500 && cache9.items.join() === 'hunters_bow+1,hunters_shortbow+1,hide_sling+1',
+        'and in the cache 500 gold and a Hunter\'s Bow +1 with its short bow and sling (#1115), and no shard to carry off: the act has no Rift to take one to');
       listen(w);
 
       // West of the crest: the pines stopping at the sea with steam on it, the hermit under the peaks who

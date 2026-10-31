@@ -8,6 +8,11 @@ export const CHECKS = {
     14: ['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield'],
     16: ['flail+1', 'ironwood_bow+1', 'plate+2', 'wardens_dirk+1', 'lanterns_staff', 'great_axe+1'],
   },
+  // Its ranged rungs (#1115): the Ironwood Bow's, with the short bow and the sling #1117 takes into `gear`.
+  ranged: {
+    14: ['ironwood_bow', 'ironwood_shortbow', 'watch_sling'],
+    16: ['ironwood_bow+1', 'ironwood_shortbow+1', 'watch_sling+1'],
+  },
   // Its seams as built (tools/tests/outdoors.ts): each whose first box is its own.
   seamsAsBuilt: [
     { seam: 'eaves_i2/deepthorn_i3', walk: '4-9 13-15', why: 'I2\'s mountains stand over I3\'s hills and woods, the stream going on between them at 3' },

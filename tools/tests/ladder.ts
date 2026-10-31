@@ -398,6 +398,14 @@ export function ladder(): void {
     return out;
   });
   ok(RANGED.length > 0 && !placed.length, `each ranged rung's short bow and sling is its long bow's area's, sold where the bow is sold and found where it is found there, cheaper and inside the area's window, and off the gate's ladder till #1117 (${RANGED.map((r) => `${r.level}: ${[...new Set(home(r.bows[0]) ? placesIn(home(r.bows[0])!, r.bows[0]) : [])].join(', ')}`).join('; ')})${placed.length ? ` (but ${placed.join('; ')})` : ''}`);
+  // And every box that gives a ranged rung's long bow, in any area, gives its short bow and sling: Wrackholm's
+  // E6 cache gives the Long Bow +1. A drop is no box: a draw on the fight's generator, it waits for #1117.
+  const paired: string[] = [], unpaired: string[] = [];
+  for (const r of RANGED) for (const m of MAP_DEFS) for (const f of m.features ?? []) {
+    const got = giftOf(f)?.items ?? [];
+    if (got.includes(r.bows[0])) (r.bows.slice(1).every((id) => got.includes(id)) ? paired : unpaired).push(`${r.level}: ${spentId(f) ?? f.kind} on ${m.id}`);
+  }
+  ok(paired.length > 0 && !unpaired.length, `every box that gives a ranged rung's long bow, in its area or another, gives its short bow and sling (${paired.join(', ')})${unpaired.length ? ` (but not ${unpaired.join(', ')})` : ''}`);
 
   // The gate check's company wears what harness's does, level by level.
   const worn = (p: ReturnType<typeof companyAt>): string => JSON.stringify(p.members.map((m) => m.equipment));
