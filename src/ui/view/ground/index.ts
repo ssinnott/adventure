@@ -6,6 +6,7 @@
 
 import type { Terrain } from '../../../game/mapdef.ts';
 import { fbm } from '../../../game/atlas/painter.ts';
+import { regionAt } from '../../../game/world.ts';
 import { shade, mix, hexToRgb, rgbToHex } from '../../../lib/art/palettes.ts';
 import { SNOW } from '../common.ts';
 import type { Paint } from '../common.ts';
@@ -88,11 +89,11 @@ function drifted(look: GroundLook, c: string, x: number, y: number, salt: string
 
 /**
  * A ground's colour tinted by the region its cell lies in (#1099): `by` of the way toward its region's
- * tint of it, the region as `regionOf` finds it (its zone's outdoors, its map's in a town), so the tint
- * changes at a zone's border; none where the Paint holds no looks or no region lies, as in the void.
+ * tint of it, the region `regionAt` finds (its zone's outdoors, its map's in a town), so the tint changes
+ * at a zone's border; none where the Paint holds no looks, nor past the zones, where no region is.
  */
 function tinted(p: Paint, t: Terrain, c: string, x: number, y: number): string {
-  const region = p.looks && (p.map.zoneAt(x, y)?.region ?? p.map.def.region), tint = region ? p.looks?.[region].tints?.[t] : undefined;
+  const region = p.looks && regionAt(p.map, x, y), tint = region ? p.looks?.[region].tints?.[t] : undefined;
   return tint ? mix(c, tint.toward, tint.by) : c;
 }
 

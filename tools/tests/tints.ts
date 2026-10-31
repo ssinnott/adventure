@@ -1,9 +1,10 @@
 // Each region's tints of the grounds it shares (#1099): every tint is a colour, cast a quarter of the way at
 // most. On every square of the outdoors and the towns a ground moves as far toward its own region's tint as
 // that tint moves its colour of the day and no farther, so the tint changes at a zone's border; a ground its
-// region does not tint is the colour it was. The Foreland's view and Thornmark's, which have none, are the
-// scenes painted with every tint taken off, call for call, where Hearth Isle's is not. How the tints look is
-// the twelve views' (#1094).
+// region does not tint is the colour it was, and so is every ground past the zones, which have no region.
+// The Foreland's view and Thornmark's, which have none, are the scenes painted with every tint taken off,
+// call for call, where Hearth Isle's is not; a view out past a zone's edge paints. How the tints look is the
+// twelve views' (#1094).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { mix, hexToRgb } from '../../src/lib/art/palettes.ts';
 import { AREAS, TABLES } from '../../src/content/index.ts';
@@ -11,7 +12,7 @@ import { buildMaps } from '../../src/content/maps.ts';
 import type { Terrain } from '../../src/game/mapdef.ts';
 import type { GameMap } from '../../src/game/map.ts';
 import type { Tables } from '../../src/game/tables.ts';
-import { World } from '../../src/game/world.ts';
+import { World, regionAt } from '../../src/game/world.ts';
 import { defaultParty } from '../../src/game/party.ts';
 import { paintScene } from '../../src/ui/view/compositor.ts';
 import { paintOn, CLEAR } from '../../src/ui/view/common.ts';
@@ -46,7 +47,6 @@ export function tints(): void {
   const maps = buildMaps(), ctx = {} as CanvasRenderingContext2D, tinted = [...new Set(all.map((x) => x.t as Terrain))];
   const paint = (m: GameMap, day: number, looks?: Tables['looks']): Paint => ({ ...paintOn(ctx, { x: 0, y: 0, w: 400, h: 268 }, m), env: { ...CLEAR, day }, looks });
   // A square no zone holds, the country past the built land that the view looks out on, has no region.
-  const regionAt = (m: GameMap, x: number, y: number) => m.zoneAt(x, y)?.region ?? m.def.region;
   const tintsAt = (m: GameMap, x: number, y: number) => { const r = regionAt(m, x, y); return r && TABLES.looks[r].tints; };
   let squares = 0, past = 0, border = 0, most = 0;
   const off = new Set<string>(), moved = new Set<string>(), took = new Set<string>();
@@ -91,4 +91,15 @@ export function tints(): void {
   const same = views.filter(([m, x, y]) => scene(TABLES.looks, m, x, y) === scene(BARE, m, x, y));
   const takes = scene(TABLES.looks, 'hearthisle_h6', 22, 19) !== scene(BARE, 'hearthisle_h6', 22, 19);
   ok(same.length === 2 && takes, `with no tints the view is as it was: the Foreland's and Thornmark's noon scenes are the ones painted with every tint taken off, call for call, and Hearth Isle's is not (${same.length} of 2 the same; Hearth Isle's ${takes ? 'differs' : 'the same'})`);
+
+  // A company at a zone's edge facing north, two squares short of the country past the zones where it lies as a
+  // ground some region tints: the view paints, those squares naming no region and taking no tint.
+  const out = Object.values(maps).find((m) => m.zones.length)!;
+  let edge: [number, number] | undefined, threw = '';
+  for (let y = 2; y < out.height && !edge; y++) for (let x = 0; x < out.width && !edge; x++) {
+    const past = out.at(x, y - 2);
+    if (out.zoneAt(x, y) && out.at(x, y).solid === 'none' && !out.zoneAt(x, y - 2) && tinted.includes((past.look ?? past).terrain)) edge = [x, y];
+  }
+  try { if (edge) scene(TABLES.looks, out.id, ...edge); } catch (e) { threw = String(e); }
+  ok(!!edge && !threw, `a view out past a zone's edge, on a ground some region tints, paints${edge ? ` (from ${edge.join(',')} facing north)` : ': no such square'}${threw ? `; it threw ${threw}` : ''}`);
 }
