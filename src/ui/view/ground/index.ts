@@ -87,15 +87,27 @@ function drifted(look: GroundLook, c: string, x: number, y: number, salt: string
 }
 
 /**
- * The colour of a ground at a cell, as the floors draw it: its look's, drifted by the land there, darker
- * when wet where rain darkens it, whitened by lying snow. Underground it is the palette's floor.
+ * A ground's colour tinted by the region its cell lies in (#1099): `by` of the way toward its region's
+ * tint of it, the region as `regionOf` finds it (its zone's outdoors, its map's in a town), so the tint
+ * changes at a zone's border; none where the Paint holds no looks or no region lies, as in the void.
+ */
+function tinted(p: Paint, t: Terrain, c: string, x: number, y: number): string {
+  const region = p.looks && (p.map.zoneAt(x, y)?.region ?? p.map.def.region), tint = region ? p.looks?.[region].tints?.[t] : undefined;
+  return tint ? mix(c, tint.toward, tint.by) : c;
+}
+
+/**
+ * The colour of a ground at a cell, as the floors draw it: its look's, tinted by its region and drifted
+ * by the land there, darker when wet where rain darkens it, whitened by lying snow. Underground it is
+ * the palette's floor.
  */
 export function groundColor(p: Paint, t: Terrain, floorPal: string, x: number, y: number, crop = 0): string {
   const { env } = p, kind = p.map.kind;
   if (kind === 'dungeon') return floorPal;
   const look = GROUND[asDrawn(p, t)];
-  // In this order: the look's colour today, the land's drift at the cell, then rain and snow over it.
+  // In this order: the look's colour today, its region's tint, the land's drift at the cell, then rain and snow over it.
   let c = look.color(env.day, crop);
+  c = tinted(p, asDrawn(p, t), c, x, y);
   c = drifted(look, c, x, y, p.map.id);
   if (env.wet > 0 && look.wets) c = shade(c, 1 - 0.18 * env.wet);
   const s = env.cover * look.snow;

@@ -179,7 +179,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
 
   // The frame's Paint, which each painter below takes first (#1029): the light and the weather worked
   // out above, whether a feature is there now as the world says, and the flames the scene lights.
-  const p = paintOn(ctx, r, map, { dark, haze, daylight, gloom, env, present: (q) => world.present(q) });
+  const p = paintOn(ctx, r, map, { dark, haze, daylight, gloom, env, present: (q) => world.present(q), looks: world.tables.looks });
   const { cx, horizon } = p;
   ctx.save();
   ctx.beginPath(); ctx.rect(r.x, r.y, r.w, r.h); ctx.clip();

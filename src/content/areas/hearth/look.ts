@@ -2,6 +2,8 @@
 import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
+  // Its grass, hills and woods a sunlit gold-green.
+  tints: { grass: { toward: '#f0ff00', by: 0.25 }, hills: { toward: '#f0ff00', by: 0.25 }, woods: { toward: '#f0ff00', by: 0.25 }, pine: { toward: '#f0ff00', by: 0.25 } },
   // A warm gold, deepest at the foot; a golden sun.
   air: { strength: 0.2, top: '#e09000', foot: '#ffc000', haze: '#f0b000', sun: '#ffc840' },
 };

@@ -2,5 +2,6 @@
 import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
+  // No tints: its grass, hills and woods as they always were.
   // No air: the sky as it always was.
 };
