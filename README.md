@@ -104,6 +104,16 @@ Ashfall and Saltreach. The bounds' artifacts are #846's: #847 has built their ma
 kinds of power, and all eight lie in the lairs their areas built (#830 to #837). The reach stays
 post-v1.
 
+The outdoors, varied (#1094, the owner's epic of 30 October 2026): its sixteen issues are built and
+merged on 31 October, and docs/VIEW.md holds each piece. A region has its own air, tints of the grounds
+it shares, hills and trees; a ground's colour drifts across the land, softens where two grounds meet,
+has several looks chosen by the land and, in the two nearest rows, detail drawn to scale; props are
+scattered, features drawn and life moves over the land. Past the fourth square the horizon is cast
+from the atlas, and the world map's tall sites stand over it as landmarks, nine new kinds placed by
+the nine areas, the Hearth by day among them. Every outdoor map is held to 15% of its views plain
+(#1108), the three that were over it were broken up by hand (#1106) and the scaffold lays patches in
+a draft (#1107). The twelve views before and after are in #1094's last comment.
+
 The owner's own playthrough of M3 is what remains before v1 is called done; the tracker holds no
 issue for it.
 
