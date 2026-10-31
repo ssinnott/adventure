@@ -151,6 +151,12 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   holds them, a record over the terrains; the floors, the scene and the rain ask it and name no
   ground. In the view a new ground is a module there, its line in `src/ui/view/ground/index.ts` and
   its colour in `TERRAIN_COLORS` (the automap's): the typecheck names a terrain without either.
+- **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
+  one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of
+  `src/ui/scenery.ts`: a cairn, a chest, a camp's ring and fire, a shrine, a well, a statue, a
+  fountain, a den, a sign and a rift. A spent one is gone and a burnt den is its ruin; an event and
+  a person are never drawn, and a business hangs its sign over its door. A camp's fire is lit by
+  night and underground, its flame drawn every frame as a torch's.
 
 ## Stubbed or absent
 
