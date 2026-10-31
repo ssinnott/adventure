@@ -5,7 +5,10 @@ import { W, A, P, MARTIAL, MAIL, NO_CASTER_HEAVY } from '../../items.ts';
 
 export const warhammer = W('warhammer', 'War Hammer', 300, 1, 10, { bonus: 2, classes: [...MARTIAL, 'cleric'] });
 export const greatsword = W('greatsword', 'Great Sword', 450, 2, 6, { bonus: 1, twoHanded: true, classes: MARTIAL });
-export const elfbow = W('elfbow', 'Thornmark Bow', 420, 1, 10, { kind: 'bow', bonus: 2, ranged: true, twoHanded: true, classes: ['ranger'] });
+export const elfbow = W('elfbow', 'Thornmark Bow', 420, 1, 10, { kind: 'bow', bonus: 2, ranged: true, twoHanded: true, classes: MARTIAL });
+// Its short bow and sling (#1115), as the Long Bow's: a step and two behind it, the plus finds' too.
+export const thornmarkShortbow = W('thornmark_shortbow', 'Thornmark Short Bow', 315, 1, 8, { kind: 'bow', short: true, bonus: 2, ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] });
+export const deerskinSling = W('deerskin_sling', 'Deerskin Sling', 210, 1, 6, { kind: 'light', bonus: 2, ranged: true });
 export const runeDagger = W('rune_dagger', 'Rune Dagger', 320, 1, 6, { kind: 'light', bonus: 3 });
 export const groveStaff = W('grove_staff', 'Grove Staff', 280, 1, 8, { kind: 'staff', bonus: 2, twoHanded: true });
 export const runedRobe = A('runed_robe', 'Runed Robe', 350, 3);
@@ -19,6 +22,8 @@ export const plate = A('plate', 'Plate Mail', 1200, 9, { classes: ['knight', 'pa
 export const warhammerPlus1 = P(warhammer, 1);
 export const greatswordPlus1 = P(greatsword, 1);
 export const elfbowPlus1 = P(elfbow, 1);
+export const thornmarkShortbowPlus1 = P(thornmarkShortbow, 1);
+export const deerskinSlingPlus1 = P(deerskinSling, 1);
 export const runeDaggerPlus1 = P(runeDagger, 1);
 export const groveStaffPlus1 = P(groveStaff, 1);
 export const runedRobePlus1 = P(runedRobe, 1);
@@ -29,6 +34,8 @@ export const brigandinePlus2 = P(brigandine, 2);
 export const warhammerPlus2 = P(warhammer, 2);
 export const greatswordPlus2 = P(greatsword, 2);
 export const elfbowPlus2 = P(elfbow, 2);
+export const thornmarkShortbowPlus2 = P(thornmarkShortbow, 2);
+export const deerskinSlingPlus2 = P(deerskinSling, 2);
 export const runeDaggerPlus2 = P(runeDagger, 2);
 export const runedRobePlus2 = P(runedRobe, 2);
 export const brigandinePlus3 = P(brigandine, 3);
@@ -66,6 +73,8 @@ export const ITEMS: readonly ItemDef[] = [
   greatsword,
   crossbow,
   elfbow,
+  thornmarkShortbow,
+  deerskinSling,
   runeDagger,
   groveStaff,
   runedRobe,
@@ -75,6 +84,8 @@ export const ITEMS: readonly ItemDef[] = [
   warhammerPlus1,
   greatswordPlus1,
   elfbowPlus1,
+  thornmarkShortbowPlus1,
+  deerskinSlingPlus1,
   runeDaggerPlus1,
   groveStaffPlus1,
   runedRobePlus1,
@@ -83,6 +94,8 @@ export const ITEMS: readonly ItemDef[] = [
   warhammerPlus2,
   greatswordPlus2,
   elfbowPlus2,
+  thornmarkShortbowPlus2,
+  deerskinSlingPlus2,
   runeDaggerPlus2,
   runedRobePlus2,
   brigandinePlus3,

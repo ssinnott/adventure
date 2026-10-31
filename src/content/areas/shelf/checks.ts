@@ -10,6 +10,11 @@ export const CHECKS = {
     3: ['longsword', 'axe', 'longbow', 'shield', 'scale', 'chain', 'dagger+1', 'mace+1', 'shortsword+1', 'staff+1'],
     5: ['robe+1', 'leather+1', 'buckler+1', 'captains_sword', 'queens_sword', 'captains_mail', 'halberd+1', 'spear+1', 'longbow+1', 'shield+1'],
   },
+  // Its ranged rungs (#1115): the Long Bow's, with the short bow and the sling #1117 takes into `gear`.
+  ranged: {
+    3: ['longbow', 'yew_shortbow', 'leather_sling'],
+    5: ['longbow+1', 'yew_shortbow+1', 'leather_sling+1'],
+  },
   // Its seams as built (tools/tests/outdoors.ts): each whose first box is the Foreland's, D4/D5 with Saltreach's.
   seamsAsBuilt: [
     { seam: 'downs_f2|shelf', walk: '1-28 30-31', why: 'the Foreland\'s ring stands against the Downs as mountains, but for the Salt Road\'s gap at 29' },

@@ -5,7 +5,11 @@ import type { ItemDef } from '../../../game/items.ts';
 import { W, A, P, core, MARTIAL, MAIL, ARTIFACT_PRICE } from '../../items.ts';
 
 export const spear = W('spear', 'Spear', 60, 1, 8, { twoHanded: true, classes: [...MARTIAL, 'monk', 'druid'] });
-export const longbow = W('longbow', 'Long Bow', 200, 1, 8, { kind: 'bow', bonus: 1, ranged: true, twoHanded: true, classes: ['ranger', 'knight'] });
+export const longbow = W('longbow', 'Long Bow', 200, 1, 8, { kind: 'bow', bonus: 1, ranged: true, twoHanded: true, classes: MARTIAL });
+// The Long Bow's short bow and sling (#1115): its die a size smaller and two, so a step and two
+// behind it by `hits`, at three quarters of its price and half; a plus where it has one.
+export const yewShortbow = W('yew_shortbow', 'Yew Short Bow', 150, 1, 6, { kind: 'bow', short: true, bonus: 1, ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] });
+export const leatherSling = W('leather_sling', 'Leather Sling', 100, 1, 4, { kind: 'light', bonus: 1, ranged: true });
 export const shield: ItemDef = { id: 'shield', name: 'Kite Shield', slot: 'shield', price: 150, ac: 2, classes: MAIL };
 export const halberd = W('halberd', 'Halberd', 150, 1, 12, { twoHanded: true, classes: MARTIAL });
 
@@ -30,6 +34,8 @@ export const bucklerPlus1 = P(core('buckler'), 1);
 export const halberdPlus1 = P(halberd, 1);
 export const spearPlus1 = P(spear, 1);
 export const longbowPlus1 = P(longbow, 1);
+export const yewShortbowPlus1 = P(yewShortbow, 1);
+export const leatherSlingPlus1 = P(leatherSling, 1);
 export const shieldPlus1 = P(shield, 1);
 export const captainsSword = P(core('longsword'), 1, { id: 'captains_sword', name: "Captain's Sword +1" });
 export const captainsMail = P(core('scale'), 1, { id: 'captains_mail', name: "Captain's Mail +1" });
@@ -71,6 +77,8 @@ export const dunstanLetter: ItemDef = { id: 'dunstan_letter', name: "Dunstan's L
 export const ITEMS: readonly ItemDef[] = [
   spear,
   longbow,
+  yewShortbow,
+  leatherSling,
   chain,
   shield,
   halberd,
@@ -84,6 +92,8 @@ export const ITEMS: readonly ItemDef[] = [
   halberdPlus1,
   spearPlus1,
   longbowPlus1,
+  yewShortbowPlus1,
+  leatherSlingPlus1,
   shieldPlus1,
   captainsSword,
   captainsMail,

@@ -44,7 +44,7 @@ export const GREYWATER2: MapDef<'greywater2'> = {
     { kind: 'chest', x: 12, y: 3, id: 'gw2_key', gold: 100, items: ['key_iron', 'potion_sp'] },
     { kind: 'chest', x: 14, y: 14, id: 'gw2_c2', gold: 90, items: ['chain', 'potion_heal'] },
     { kind: 'event', x: 7, y: 8, id: 'gw2_gallery', once: true, text: 'The gallery rings a sealed chamber. Through a crack in the wall, red light, and chanting.' },
-    { kind: 'chest', x: 1, y: 14, id: 'gw2_c3', gold: 70, items: ['longbow', 'elixir'] },
+    { kind: 'chest', x: 1, y: 14, id: 'gw2_c3', gold: 70, items: ['longbow', 'yew_shortbow', 'leather_sling', 'elixir'] },
     { kind: 'event', x: 9, y: 11, id: 'gw2_shrine', once: true, text: 'The shrine. A seam in the floor glows red, stitched shut with iron staples. Someone has been prising the staples out, one at a time.' },
     { kind: 'chest', x: 5, y: 11, id: 'gw2_ledger', gold: 250, items: ['greywater_ledger', 'elixir'] },
   ],

@@ -13,14 +13,14 @@ import { THRONE_COUNCIL, THRONE_WENNA } from './keep.ts';
 import { THRONE_COUSIN, THRONE_HOLD, THRONE_REMOVED, THRONE_TALLIS } from '../public.ts';
 import { ENDED, ENDINGS } from '../../../endings.ts';
 
-const STOCK = ['club', 'dagger', 'staff', 'shortsword', 'mace', 'longsword', 'axe', 'spear', 'sling', 'shortbow', 'longbow', 'robe', 'leather', 'scale', 'chain', 'buckler', 'shield', 'potion_heal', 'antidote', 'lantern_oil', 'rations', 'torch'];
+const STOCK = ['club', 'dagger', 'staff', 'shortsword', 'mace', 'longsword', 'axe', 'spear', 'sling', 'leather_sling', 'shortbow', 'yew_shortbow', 'longbow', 'robe', 'leather', 'scale', 'chain', 'buckler', 'shield', 'potion_heal', 'antidote', 'lantern_oil', 'rations', 'torch'];
 const DEARER: Readonly<Record<string, number>> = {
-  club: 8, dagger: 18, staff: 12, shortsword: 60, mace: 68, longsword: 180, axe: 135, spear: 90, sling: 23, shortbow: 120, longbow: 300,
+  club: 8, dagger: 18, staff: 12, shortsword: 60, mace: 68, longsword: 180, axe: 135, spear: 90, sling: 23, leather_sling: 150, shortbow: 120, yew_shortbow: 225, longbow: 300,
   robe: 15, leather: 90, scale: 330, chain: 750, buckler: 60, shield: 225, potion_heal: 45, antidote: 38, rations: 6, torch: 3,
 };
 // A port's, once Tallis has the chair (#764): twice the old city's, but the Lantern Oil as before.
 const PORT: Readonly<Record<string, number>> = {
-  club: 10, dagger: 24, staff: 16, shortsword: 80, mace: 90, longsword: 240, axe: 180, spear: 120, sling: 30, shortbow: 160, longbow: 400,
+  club: 10, dagger: 24, staff: 16, shortsword: 80, mace: 90, longsword: 240, axe: 180, spear: 120, sling: 30, leather_sling: 200, shortbow: 160, yew_shortbow: 300, longbow: 400,
   robe: 20, leather: 120, scale: 440, chain: 1000, buckler: 80, shield: 300, potion_heal: 60, antidote: 50, rations: 8, torch: 4,
 };
 // The Heart's three endings (#765; hearth.md §12): the inn at 12 again after the Council's verdict or

@@ -14,7 +14,7 @@ import { sharkskin } from '../saltreach/public.ts';
 // Sold at Anvilhall's forge (#459): a step past the Sunder's finds for every class, at 17.
 export const forgeHammer = W('forge_hammer', 'Forge Hammer', 1400, 2, 10, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
 export const seax = W('seax', 'Seax', 1400, 1, 8, { kind: 'light', bonus: 9 });
-export const steelBow = W('steel_bow', 'Steel Bow', 1500, 1, 12, { kind: 'bow', bonus: 8, ranged: true, twoHanded: true, classes: ['ranger'] });
+export const steelBow = W('steel_bow', 'Steel Bow', 1500, 1, 12, { kind: 'bow', bonus: 8, ranged: true, twoHanded: true, classes: MARTIAL });
 export const mattock = W('mattock', 'Mattock', 1500, 2, 10, { bonus: 4, twoHanded: true, classes: MARTIAL });
 export const bandedStaff = W('banded_staff', 'Banded Staff', 1300, 1, 10, { kind: 'staff', bonus: 8, twoHanded: true });
 export const dwarfMail = A('dwarf_mail', 'Dwarf Mail', 2000, 11, { classes: NO_CASTER_HEAVY });

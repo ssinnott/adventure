@@ -145,7 +145,10 @@ the tower, the barrow and the grove.
   furthest square 16 of 20); within 7, the town and the dungeons 99.1% to 100%.
 - **The ladder:** rungs 8, 9 and 10 are Thornmark's (`gear`, in its checks): by 8 the Armoury's
   tier, by 9 its chests' gear with a plus, by 10 the Deepthorn's +2s, the Tower Shield +1 and the
-  Eldest's Bough, a find for every class, each inside the window of 1,200 gold.
+  Eldest's Bough, a find for every class, each inside the window of 1,200 gold. Its ranged rungs
+  (`ranged`, #1115): the Thornmark Short Bow and the Deerskin Sling, a step and two behind the
+  Thornmark Bow, sold beside it in the Armoury and found with its plus beside the bow's +1 in the
+  Grove Roots and its +2 in I4. They are off the gate's ladder until #1117.
 
 ## 10. Names
 

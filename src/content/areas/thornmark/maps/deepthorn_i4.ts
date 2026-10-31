@@ -141,7 +141,7 @@ export const DEEPTHORN_I4: MapDef<'deepthorn_i4'> = {
     { kind: 'event', x: 10, y: 19, id: 'i4_groves', once: true, text: 'The old groves: oaks in rings, and rootwalkers among them like stumps. Every one faces the same way.' },
     { kind: 'event', x: 20, y: 22, id: 'i4_holly', once: true, text: 'Every rootwalker in the groves is turned the same way: towards a wall of holly on the east side.' },
     { kind: 'event', x: 23, y: 22, id: 'i4_first_grove', once: true, text: 'One oak behind the holly, older than the rings, and at its roots, in rows, the dead hunters\' bows, unstrung.' },
-    { kind: 'chest', x: 24, y: 21, id: 'i4_bows', gold: 275, items: ['elfbow+2'] },
+    { kind: 'chest', x: 24, y: 21, id: 'i4_bows', gold: 275, items: ['elfbow+2', 'thornmark_shortbow+2', 'deerskin_sling+2'] },
   ],
   secrets: [{ x: 21, y: 22, hint: 'i4_holly' }],
   // The old wood woke when the Stone was cut, and sleeps once the tear is closed: its groups stop

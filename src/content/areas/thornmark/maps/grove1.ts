@@ -45,7 +45,7 @@ export const GROVE1: MapDef<'grove1'> = {
     { kind: 'sign', x: 6, y: 11, text: 'Scratched beside the iron door: THE STONE IS A LOCK. WE HAVE THE KEY.' },
     { kind: 'event', x: 6, y: 11, id: 'g1_grit', once: true, text: 'The grit trail ends here, heaped against the root-wall to the west. The roots there have been trained around something.' },
     { kind: 'event', x: 8, y: 11, id: 'g1_east', once: true, text: 'The air is warmer past the door, and the roots here are dead and grey.' },
-    { kind: 'chest', x: 10, y: 3, id: 'g1_c2', gold: 150, items: ['elfbow+1', 'potion_heal', 'potion_heal'] },
+    { kind: 'chest', x: 10, y: 3, id: 'g1_c2', gold: 150, items: ['elfbow+1', 'thornmark_shortbow+1', 'deerskin_sling+1', 'potion_heal', 'potion_heal'] },
     { kind: 'chest', x: 12, y: 11, id: 'g1_c3', gold: 200, items: ['brigandine+1', 'elixir'] },
     { kind: 'event', x: 11, y: 11, id: 'g1_stairs', once: true, text: 'A stair, and beside it a dead elf in Thornhold green, a week gone. Her hands are burned to the wrist.' },
     // The Elder's Four (#219): the other two dead, one in each half on the way to Meva, and Meva, the fourth, alive in
