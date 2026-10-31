@@ -45,7 +45,7 @@ export const EAVES_K2: MapDef<'eaves_k2'> = {
     'cdvvvvvvddcd~~ddddTTTTTTTTTTTTTT',
     'ddcvvvvvddd~~dddcTTTTTTTTTTTTTTT',
     'dddvvvvv~~~~ddddTTTTTTTTTTTTTTTT',
-    'cddcvvvvvr~dddddTTTTTTTTTTTTTTTT',
+    'cddcvvvvvB~dddddTTTTTTTTTTTTTTTT',
     'ddddvvvvv.SddddTTTTTTTTTTTTTTTTT',
     'cdcdvvvvvrrrddTTTTTTTTTTTTTTTTTT',
     'cdddvvvvvrrrddTTTTTTTTTTTTTTTTTT',
@@ -105,6 +105,10 @@ export const EAVES_K2: MapDef<'eaves_k2'> = {
     { kind: 'chest', x: 9, y: 29, id: 'k2_ledge_chest', gold: 200, items: ['longsword+2'] },
   ],
   secrets: [{ x: 10, y: 29, hint: 'k2_rocks' }],
+  // Sunderfall, drawn tall over the lip and seen from far off, on the square at the water's mouth. It was the one
+  // rock within a square of the world map's point for it, and is a building square now, which a landmark needs
+  // (#1096, the owner's delegate's call): a rock and a building both stop every party.
+  landmarks: [{ x: 9, y: 28, kind: 'falls' }],
   encounters: [
     // At the bridge's far end the hounds and a spider in the glass; the gleaners and their dog at the
     // dam where the river leaves the pines; and on the road on east, where Lanternwood begins, the glass bears.

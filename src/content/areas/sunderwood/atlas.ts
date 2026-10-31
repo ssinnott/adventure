@@ -19,7 +19,7 @@ export const PLACES: readonly AtlasPlace[] = [
 export const SITES: readonly AtlasSite[] = [
   // V. Sunderwood.
   { name: 'The steading', icon: 'farm', map: 'eaves_j2', at: [20.5, 7.5], label: 'below' }, // the pine-cutters', at the glass trees (#56's 29)
-  { name: 'Lantern Watch', icon: 'tower', at: [372, 46], label: 'below' }, // at the gate on L2, 12,16 (#200, #201)
+  { name: 'Lantern Watch', icon: 'tower', map: 'lanternwood_l2', at: [12, 16], label: 'below' }, // at the gate on L2, 12,16 (#200, #201)
   { name: 'The Sunder', icon: 'rift', map: 'eaves_k3', at: [10.5, 8.5], label: 'right' }, // its door on the first landing (#199)
   { name: 'Sunderfall', icon: 'falls', map: 'eaves_k2', at: [8.5, 27.5], label: 'right' }, // its shrine, the Paladin's second prestige (#19)
 ];
