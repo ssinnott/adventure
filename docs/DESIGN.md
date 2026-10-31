@@ -240,7 +240,7 @@ adds armour: in the harness, armour that keeps up makes monsters hit harder, and
 | Class | First | Second | Third |
 |---|---|---|---|
 | Knight | a second attack each turn | while the knight stands, the front row gains +2 to-hit | a third attack each turn |
-| Thief | a second attack each turn with a light weapon (dagger, short sword, sling), and Sneak Attack, a blow on a foe in its first round before its turn, grows by 2 every two levels | once a fight, drops from sight for a round: no foe can single the thief out, and its blows that round are sneak attacks | a third attack each turn with a light weapon |
+| Thief | a second attack each turn with a light weapon (dagger, short sword, sling) or a short bow (#1115), and Sneak Attack, a blow on a foe in its first round before its turn, grows by 2 every two levels | once a fight, drops from sight for a round: no foe can single the thief out, and its blows that round are sneak attacks | a third attack each turn with a light weapon or a short bow |
 | Barbarian | a second attack each turn | Rage starts below three quarters of hit points, and the barbarian dies only at −30 | a third attack each turn |
 | Monk | two strikes a turn with a staff or bare hands | strikes from the back row, and a strike that fells a foe carries on to the next, to twice its strikes a turn | a third strike each turn |
 | Paladin | rank 1, and a second attack each turn | rank 2, and Holy Strike rises to +6, on the dead only | rank 3, and a third attack each turn |

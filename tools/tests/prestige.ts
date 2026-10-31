@@ -111,6 +111,12 @@ export function prestige(): void {
     'a knight strikes 1, 2, 2 and 3 times at 10, 11, 19 and 27; a barbarian and a paladin as it does');
   ok(blowsOf(TABLES.items, staffMonk) === 3 && blowsOf(TABLES.items, steelMonk) === 1 && blowsOf(TABLES.items, lightThief) === 2 && blowsOf(TABLES.items, heavyThief) === 1 && blowsOf(TABLES.items, bowRanger) === 3 && blowsOf(TABLES.items, bladeRanger) === 1 && blowsOf(TABLES.items, member('cleric', 27)) === 1 && item(TABLES.items, 'staff').kind === 'staff',
     'a monk with a staff or bare hands, a thief with a light weapon and a ranger with a bow; with anything else one blow, and a cleric always one');
+  // A short bow (#1115): a light weapon to the thief's extra attacks, as a sling is, and still a bow
+  // to the ranger's; the crossbow, neither light nor short, gives the thief one.
+  const shot = (cls: ClassId, level: number, weapon: string): number => { const c = member(cls, level); c.equipment.weapon = weapon; return blowsOf(TABLES.items, c); };
+  const shortBow = item(TABLES.items, 'shortbow');
+  ok(shortBow.short === true && shortBow.kind === 'bow' && [11, 19, 27].map((l) => shot('thief', l, 'shortbow')).join() === '2,2,3' && shot('thief', 27, 'crossbow') === 1 && shot('ranger', 27, 'shortbow') === 3,
+    `a thief shoots a short bow 2, 2 and 3 times at 11, 19 and 27, a crossbow once; a ranger shoots a short bow as any bow, ${shot('ranger', 27, 'shortbow')} times at 27`);
   // The knight's banner: +2 to-hit for the front row while a knight of the second stands.
   const banner = company(member('knight', 19), member('paladin', 19), member('thief', 19), member('cleric', 19), member('sorcerer', 19), member('druid', 19));
   const s = startCombat(TABLES, banner, [{ id: 'g', monsters: [foe('person')] }], makeRng(3));
