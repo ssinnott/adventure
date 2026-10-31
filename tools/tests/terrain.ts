@@ -411,7 +411,7 @@ function variants(): void {
   const out = new GameMap(PLAYED_DEFS.find((d) => d.id === OUTDOORS)!), looks = (Object.keys(GROUND) as Terrain[]).filter((t) => GROUND[t].variants);
   const key = (t: Terrain, x: number, y: number, m: GameMap = out): string => `${t}/${variantAt(t, x, y, m)?.name}`;
   // Nothing a ground does is a variant's: no key but its picture's, its ground's hold under snow, its ground's way and drag.
-  const picture = new Set(['name', 'share', 'shift', 'lays', 'lies']);
+  const picture = new Set(['name', 'share', 'shift', 'lays', 'lies', 'near']);
   const doing = looks.flatMap((t) => GROUND[t].variants!.looks.flatMap((v) => Object.keys(v).filter((k) => !picture.has(k)).map((k) => `${t}/${v.name}: ${k}`)));
   const bare: Paint = { ...paintOn({} as CanvasRenderingContext2D, { x: 0, y: 0, w: 800, h: 424 }, out), env: { ...CLEAR, day: 91 } }, snowed: Paint = { ...bare, env: { ...bare.env, cover: 1 } };
   const offWhite = looks.flatMap((t) => GROUND[t].variants!.looks.filter((v) => groundColor(snowed, t, '#000000', 3, 4, 0, v) !== mix(groundColor(bare, t, '#000000', 3, 4, 0, v), SNOW, SNOW_HOLD[t])).map((v) => `${t}/${v.name}`));

@@ -1,6 +1,7 @@
 // The maps as written, each on its own: every row the same width, exits and features on open
-// ground, every monster and item real and placed, every business with a room, and every open cell
-// reachable. What a clear of them is worth is the curve's (tools/tests/curve.ts).
+// ground, every landmark on a building's square or a mountain's (a ring on open ground too, since
+// you walk into a ring), every monster and item real and placed, every business with a room, and
+// every open cell reachable. What a clear of them is worth is the curve's (tools/tests/curve.ts).
 import { AREAS, ATLAS, MAP_DEFS, ITEMS, MONSTERS, INTERIORS } from '../../src/content/index.ts';
 import { GameMap } from '../../src/game/map.ts';
 import type { Feature, Landmark, MapDef } from '../../src/game/mapdef.ts';
@@ -202,6 +203,21 @@ export function monasteryFault(m: GameMap, l: Landmark): string | null {
   return open.length ? `it is on its block's edge, open at ${open.map(([x, y]) => `${x},${y}`).join(' and ')}` : null;
 }
 
+/**
+ * What is wrong with the square a landmark stands on, or null. A landmark is a building drawn as what it is
+ * (#312), or a mountain's square (#1096): a volcano's cone, whose own drawing stands near to. A ring (#1096)
+ * may stand on open ground too: you walk into a ring (Fionnlios's camp), so nothing blocks its square, and
+ * near to the stones drawn are its own, the rock squares round it. No other kind may stand on open ground,
+ * and a ring on a square that is neither a building's nor a mountain's must be one a party can walk into.
+ */
+function landmarkFault(m: GameMap, l: Landmark): string | null {
+  const c = m.at(l.x, l.y);
+  if (c.solid === 'building' || c.solid === 'mountain') return null;
+  const on = c.solid === 'none' ? c.terrain : `a ${c.solid}`;
+  if (l.kind !== 'ring') return `the ${l.kind} stands on ${on}, not a building's square or a mountain's`;
+  return m.passable(l.x, l.y) === 'ok' ? null : `the ring stands on ${on}, where a party cannot walk in`;
+}
+
 export function maps(): void {
   // The maps as written, each on its own, the Foreland and Thornmark included (see `outdoors` for how they are played).
   const maps = Object.fromEntries(MAP_DEFS.map((d) => [d.id, new GameMap(d)]));
@@ -217,8 +233,8 @@ export function maps(): void {
     }
     for (const f of m.features) ok(m.passable(f.x, f.y, { swim: true, climb: true, keys: 1 }) !== 'wall', `${def.id}: feature ${f.kind} at ${f.x},${f.y} is not inside a wall`);
     // A landmark is a building drawn as what it is (#312), or a mountain's square (#1096): a volcano's cone,
-    // whose own drawing stands near to.
-    for (const l of m.landmarks) ok(m.at(l.x, l.y).solid === 'building' || m.at(l.x, l.y).solid === 'mountain', `${def.id}: the ${l.kind} at ${l.x},${l.y} stands on a building's square or a mountain's`);
+    // whose own drawing stands near to; a ring may stand on open ground (`landmarkFault`).
+    for (const l of m.landmarks) { const f = landmarkFault(m, l); ok(!f, `${def.id}: the ${l.kind} at ${l.x},${l.y} stands on a building's square or a mountain's, a ring also on open ground${f ? ' -> ' + f : ''}`); }
     for (const l of m.landmarks) if (l.kind === 'monastery') { const f = monasteryFault(m, l); ok(!f, `${def.id}: the monastery at ${l.x},${l.y} stands inside its block, with no lamp${f ? ' -> ' + f : ''}`); }
     for (const e of m.encounters) {
       ok(m.passable(e.x, e.y) === 'ok', `${def.id}: encounter ${e.id} at ${e.x},${e.y} is passable`);
@@ -383,6 +399,18 @@ export function maps(): void {
     const edge = monasteryFault(cloister, { x: 2, y: 1, kind: 'monastery' }), corner = monasteryFault(ragged, ragged.landmarks[0]), lamp = monasteryFault(cloister, { x: 2, y: 2, kind: 'monastery', lit: 'q_lamp' });
     ok(cloister.landmarkAt(2, 2)?.kind === 'monastery' && monasteryFault(cloister, cloister.landmarks[0]) === null && edge === 'it is on its block\'s edge, open at 1,0 and 2,0 and 3,0' && corner === 'it is on its block\'s edge, open at 1,1' && lamp === 'it has a lamp\'s flag, \'q_lamp\'' && monasteryFault(cloister, { x: 2, y: 1, kind: 'lighthouse' }) === null,
       `a monastery inside its block passes, its door a side of the block; on the block's edge, with a corner square open or with a lamp's flag it fails (${edge}; ${corner}; ${lamp})`);
+  }
+  // The ring's exception (#1096): a ring stands on open ground, a building's square or a mountain's; any other
+  // kind only on the last two; and a ring on a rock, a tree or water, where a party cannot walk in, is refused.
+  // Each part of the rule fails when it is taken out (tried by hand: the building's, the mountain's, the ring's
+  // open ground, the kind's and the walking in).
+  {
+    const yard = new GameMap({ id: 'fx_yard', name: 'Yard', kind: 'outdoor', start: { x: 0, y: 1, facing: NORTH }, rows: [',BMrT~', ',,,,,,'] });
+    const at = (kind: Landmark['kind'], x: number, y: number): string | null => landmarkFault(yard, { x, y, kind });
+    const stands = [at('ring', 0, 1), at('ring', 1, 0), at('ring', 2, 0), at('tower', 1, 0), at('volcano', 2, 0)];
+    const refused = [at('tower', 0, 1), at('volcano', 0, 1), at('ring', 3, 0), at('ring', 4, 0), at('ring', 5, 0)];
+    ok(stands.every((f) => f === null) && refused.every((f) => f !== null),
+      `a ring stands on open ground, on a building's square or on a mountain's, a tower and a volcano only on the last two, and a ring on a rock, a tree or water is refused (${refused.join('; ')})`);
   }
   // Each area lists what is its own, and the lists are true: its maps share its weather, its monsters
   // are drawn with the sprite kinds it lists, and its businesses paint the rooms it lists.
