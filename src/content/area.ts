@@ -172,6 +172,8 @@ export interface Owes {
   edges?: Readonly<Record<string, readonly string[]>>;
   /** Locks someone else fixes, by the issue that fixes them (tools/tests/pillars.ts): an issue may be owed by several areas, a lock by one. */
   locks?: Readonly<Record<string, readonly string[]>>;
+  /** An outdoor map over the cap of plain views, by its id, until the issue that breaks it up does (tools/tests/plain.ts). */
+  plain?: Readonly<Record<string, string>>;
 }
 
 /**
