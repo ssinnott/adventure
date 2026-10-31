@@ -19,7 +19,7 @@ import { ok } from './lib.ts';
 const MAIN = 'c0513de2e115';
 
 /** A 2D context that paints nothing and writes down each call and each setting, a gradient by its number and its stops. */
-function recorder(log: string[]): CanvasRenderingContext2D {
+export function recorder(log: string[]): CanvasRenderingContext2D {
   let n = 0;
   const gradient = (kind: string, a: unknown[]) => {
     const id = `${kind}#${n++}`; log.push(`${id}(${a.join(',')})`);
