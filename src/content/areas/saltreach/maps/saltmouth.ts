@@ -96,7 +96,7 @@ export const SALTMOUTH: MapDef<'saltmouth'> = {
       '"Runner." A glass is set down before you ask. "The river crews have found somebody who pays in grey. We pay in coin and we are still here. Sit."',
       'She goes back to the door in the mirror. "Work comes when it comes."',
     ] }] },
-    { kind: 'shop', x: 3, y: 9, name: 'Seawall Armoury', stock: ['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe'], interior: 'saltmouth_armourer' },
+    { kind: 'shop', x: 3, y: 9, name: 'Seawall Armoury', stock: ['morning_star', 'stiletto', 'horn_bow', 'horn_shortbow', 'sharkskin_sling', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe'], interior: 'saltmouth_armourer' },
     // The locksmith's is a shop since a set of picks exists to sell (#860), the door's business. The Thief's
     // first prestige (DESIGN §5) is taught through its person, who stands after it on its square with no
     // room of his own, as Ysolde does at the Map Room.

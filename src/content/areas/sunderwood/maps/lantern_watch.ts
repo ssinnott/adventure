@@ -186,7 +186,7 @@ export const LANTERN_WATCH: MapDef<'lantern_watch'> = {
       'The prior at the desk with the shutter open on the gorge, and the lamp\'s light passing over him and away, and over him.',
       '"She lit it herself. Good hands." He does not turn. "The hall\'s split down the middle, and it\'ll not mend in my time, and I did that with one cut. Vask doesn\'t need to touch us. He has only to come up the road and let us see each other."',
     ] },
-    { kind: 'shop', x: 10, y: 5, name: 'The Watch Stores', stock: ['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield', 'lantern_oil', 'elixir', 'potion_sp_great', 'rations'], interior: 'watch_stores' },
+    { kind: 'shop', x: 10, y: 5, name: 'The Watch Stores', stock: ['flail', 'wardens_dirk', 'ironwood_bow', 'ironwood_shortbow', 'watch_sling', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield', 'lantern_oil', 'elixir', 'potion_sp_great', 'rations'], interior: 'watch_stores' },
     // The stores' keeper, once the lamp is asked about, counts the casks (#205).
     { kind: 'npc', x: 10, y: 5, name: 'Brother Cuthwin, keeper of the stores', flag: 'q_lamp_casks', after: { flag: 'q_lamp' }, lines: [
       '"Cuthwin. I keep the stores." He counts the casks with you, because you ask, and because nobody else has.',
