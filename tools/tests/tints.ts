@@ -3,9 +3,10 @@
 // tint moves its colour of the day and no farther; within two of another it is a blend of the tints round it,
 // one step from a border between its own and its neighbour's, and from a square to the next it moves a fifth
 // of the way from one to the other at most, so a zone's border fades and is no line. The country past the
-// zones has no region and no tint, and blends at its edge as a region with none. The Foreland's view and
-// Thornmark's, which have none, are the scenes painted with every tint taken off, call for call, where Hearth
-// Isle's is not; a view out past a zone's edge paints. How the tints look is the twelve views' (#1094).
+// zones has no region and no tint, and blends at its edge as a region with none. A view of the Foreland's or
+// Thornmark's, which have none, that sees no tinted land is the scene painted with every tint taken off, call
+// for call, where Hearth Isle's is not, nor is one whose horizon shows the land of a region that tints; a view
+// out past a zone's edge paints. How the tints look is the twelve views' (#1094).
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { mix, hexToRgb } from '../../src/lib/art/palettes.ts';
 import { AREAS, TABLES, type RegionId } from '../../src/content/index.ts';
@@ -127,8 +128,10 @@ export function tints(): void {
   ok(!steep.size && pairs > 0, `from a square to the next a tint moves a fifth of the way from one region's to another's at most, so a zone's border fades over two squares either side and is no line (${pairs} steps from a square to the next within two of a border, ground by ground; the steepest ${Math.round(steepest * 100)}% of the way between the tints round them, less a step of rounding${steep.size ? '; steep: ' + [...steep].slice(0, 6).join(', ') : ''})`);
   ok(!moved.size && past > 0 && fringe > 0, `a ground is the colour it was where no region within two squares tints it, as on the country past the zones three or more from one, and every ground is with the tints taken off (${past} squares past the zones, ${fringe} of them within two of a zone, which blend${moved.size ? '; moved: ' + [...moved].slice(0, 6).join(', ') : ''})`);
 
-  // The view: the Foreland's noon scene and Thornmark's, which have no tints, are the scenes painted with every
-  // tint taken off, call for call; Hearth Isle's is not, so the first is no accident of the painting. Path2D is the page's.
+  // The view: the noon scenes of the Foreland's down looking north and Thornmark's meadow, which have no tints
+  // and see no land that has, are the scenes painted with every tint taken off, call for call; Hearth Isle's is
+  // not, so the first is no accident of the painting, nor is Thornmark's from the south of its zone, whose
+  // horizon shows the land of the regions about it, tinted as the band is drawn from the atlas (#1095). Path2D is the page's.
   (globalThis as { Path2D?: unknown }).Path2D ??= function Path2D() { return new Proxy({}, { get: () => () => {} }); };
   const scene = (looks: Tables['looks'], map: string, x: number, y: number): string => {
     const w = new World({ ...TABLES, looks }, maps, defaultParty(TABLES, makeRng(1)), makeRng(1)), log: string[] = [];
@@ -136,10 +139,10 @@ export function tints(): void {
     paintScene(recorder(log), recorder(log), w, { x: 0, y: 0, w: 400, h: 268 });
     return log.join('\n');
   };
-  const views: [string, number, number][] = [['downs_e2', 14, 26], ['thornmark', 14, 26]];
-  const same = views.filter(([m, x, y]) => scene(TABLES.looks, m, x, y) === scene(BARE, m, x, y));
-  const takes = scene(TABLES.looks, 'hearthisle_h6', 22, 19) !== scene(BARE, 'hearthisle_h6', 22, 19);
-  ok(same.length === 2 && takes, `with no tints the view is as it was: the Foreland's and Thornmark's noon scenes are the ones painted with every tint taken off, call for call, and Hearth Isle's is not (${same.length} of 2 the same; Hearth Isle's ${takes ? 'differs' : 'the same'})`);
+  const views: [string, number, number][] = [['downs_e2', 14, 26], ['thornmark', 8, 8]];
+  const differs = (m: string, x: number, y: number): boolean => scene(TABLES.looks, m, x, y) !== scene(BARE, m, x, y);
+  const same = views.filter(([m, x, y]) => !differs(m, x, y)), takes = differs('hearthisle_h6', 22, 19), far = differs('thornmark', 14, 26);
+  ok(same.length === 2 && takes && far, `with no tints the view is as it was: the Foreland's and Thornmark's noon scenes that see no tinted land are the ones painted with every tint taken off, call for call, and Hearth Isle's is not, nor is Thornmark's whose horizon shows the land about it (${same.length} of 2 the same; Hearth Isle's ${takes ? 'differs' : 'the same'}; Thornmark's from the south of its zone ${far ? 'differs' : 'the same'})`);
 
   // A company at a zone's edge facing north, two squares short of the country past the zones where it lies as a
   // ground some region tints: the view paints, those squares naming no region and taking no tint.
