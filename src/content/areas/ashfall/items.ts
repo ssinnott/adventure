@@ -29,12 +29,12 @@ const WARES = [slagMace, marlinspike, ashwoodBow, flamberge, battleStaff, drakes
 /** The armourer's stock, the act's one step (#512); the Wold has no town and buys here by the Rider's ride (#547). */
 export const ARMOURER: readonly string[] = WARES.map((d) => d.id);
 /**
- * What The Hide and Hammer sells: the step and, beside the Ashwood Bow, its short bow and sling (#1115).
- * Off the gate's ladder, they stay out of `ARMOURER`, the rung's own: `ACT_IV` (tools/kit/rules/ladder.ts)
- * takes its wares from it, and the ladder suite holds those to the rung's `gear`. #1117 moves them into
- * `WARES` with the `gear` row, and this list goes.
+ * The Ashwood Bow's short bow and sling (#1115), sold at the same counter after the step. Off the gate's
+ * ladder, they stay out of `ARMOURER`, the rung's own: `ACT_IV` (tools/kit/rules/ladder.ts) takes its wares
+ * from it, and the ladder suite holds those to the rung's `gear`. #1117 moves them into `WARES` with the
+ * `gear` row, and this list goes.
  */
-export const COUNTER: readonly string[] = ARMOURER.flatMap((id) => (id === ashwoodBow.id ? [id, ashwoodShortbow.id, drakeskinSling.id] : [id]));
+export const ARMOURER_RANGED: readonly string[] = [ashwoodShortbow.id, drakeskinSling.id];
 
 /**
  * The stone cure (#546; MONSTERS §3.3): poured on one turned to glass, it lifts the stone. At the
