@@ -38,7 +38,7 @@ import { liveGroups, groupsInSight, meet, sightings, groupAt, moveMonsters, adja
 export { MINUTES_PER_DAY };
 // What the parts have, from the path it always had (#1008).
 export { seen, VIEW_DEPTH, VIEW_LATERAL, viewCell, isSolidWall, lineOfSight, hillOver, hillHiding } from './world/sight.ts';
-export { FOG, hoursHold, regionOf } from './world/sky.ts';
+export { FOG, hoursHold, regionOf, regionAt } from './world/sky.ts';
 export { DRAWN_MAX, groupDrawn, AWARE } from './world/groups.ts';
 
 export const START_MINUTES = 7 * 60;
