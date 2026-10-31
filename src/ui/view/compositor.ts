@@ -1,7 +1,8 @@
 // The first-person viewport: a depth-layered compositor in the Might and Magic III-V tradition. It draws
 // the walls and the grounds, each as its look in view/ground/ gives it (#1030), and the ground past a hill
 // seen from below it (`standsAt`), a landmark tall over its building's square out to `LANDMARK_REACH`, the
-// tents, the wall dressing, the sky, the end of the world drawn as its look and the weather over it:
+// tents, the wall dressing, the features on open ground (view/features.ts, #1110), the sky, the end of
+// the world drawn as its look and the weather over it:
 // `drawViewport`, the scene it caches and `paintScene`, which paints the scene back to front from the
 // parts beside it (#1028).
 //
@@ -48,6 +49,7 @@ import { drawVoidFront, drawVoidSide, drawFrontFace, drawLighthouseFlank, LAMP_R
 import { drawRoof, drawChimney } from './roofs.ts';
 import { inTent, tentView, drawTentRoof } from './tents.ts';
 import { Scenes } from './kept.ts';
+import { drawFeatures } from './features.ts';
 
 const DEPTH = VIEW_DEPTH;
 const LATERAL = VIEW_LATERAL;
@@ -357,6 +359,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
           sides.tree(p, bx, by, s, tone, hash(c.x, c.y, 68 + side));
         }
       }
+      // The features on open ground, each as the automap marks it, after what else stands there
+      // (view/features.ts, #1110); over the smoke test's backdrop they stay out, as the billboards do.
+      if (d > 0 && cell.solid === 'none' && !backdrop) drawFeatures(p, world, c.x, c.y, d, l);
     }
   }
   // A torch goes out where anything nearer was painted over it, a tree or a rock or a wall.
