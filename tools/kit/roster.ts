@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { AREAS, ATLAS, SPELLS } from '../../src/content/index.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import { FAMILY_OF } from '../../src/ui/monsters/index.ts';
+import { abilities as said, and } from '../../src/game/bestiary.ts';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -39,46 +40,13 @@ export function treeDefs(): Defs {
   return { areas: AREAS.map((a) => ({ id: a.id, name: names.get(a.id) ?? a.id, monsters: a.monsters })), family: FAMILY_OF, spells: SPELLS };
 }
 
-const and = (xs: readonly string[], last = 'and'): string => (xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} ${last} ${xs[xs.length - 1]}`);
-const share = (chance: number, per: string): string => (chance >= 1 ? `every ${per}` : `${chance} a ${per}`);
-/** What a condition it inflicts does, as a verb. */
-const DOES: Record<string, string> = { poisoned: 'poisons', diseased: 'diseases', asleep: 'puts to sleep', paralysed: 'paralyses', cursed: 'curses', stoned: 'turns to stone' };
-/** A condition or an element as the thing shrugged off; an element is its own name. */
-const NOUN: Record<string, string> = { asleep: 'sleep', poisoned: 'poison', diseased: 'disease', paralysed: 'paralysis', cursed: 'a curse', stoned: 'stone' };
-const noun = (k: string): string => NOUN[k] ?? k;
-/** A count of a monster, by its name or its plural: `a Core Sentry`, `3 Knockers`. */
-const counted = (n: number, d: { name: string; plural: string }): string =>
-  (n > 1 ? `${n} ${d.plural}` : d.name.startsWith('The ') ? d.name : `${/^[AEIOU]/.test(d.name) ? 'an' : 'a'} ${d.name}`);
-
 /**
- * What a def can do, in words, its own fields alone (its kind's are its kind's, MONSTERS §2): its
- * reach; what it inflicts, casts, drains, mends, calls and sweeps; what it shrugs off, resists or
- * is weak to; how it holds. '' where it does none of them.
+ * What a def can do, in words, its own fields alone (its kind's are its kind's, MONSTERS §2), as
+ * src/game/bestiary.ts says it for the roster and the wiki alike. '' where it does none of it.
  */
 export function abilities(d: MonsterDef, defs: Defs): string {
   const byId = new Map(defs.areas.flatMap((a) => a.monsters.map((m) => [m.id, m] as const)));
-  const out: string[] = [];
-  if (d.ranged) out.push(d.missile ? 'reaches the back row with a bow' : 'reaches the back row');
-  if (d.inflict) out.push(`${DOES[d.inflict.cond] ?? d.inflict.cond}, ${share(d.inflict.chance, 'hit')}`);
-  if (d.cast) out.push(`casts ${and(d.cast.spells.map((s) => defs.spells[s]?.name ?? s), 'or')}, ${share(d.cast.chance, 'turn')}`);
-  if (d.drain) out.push(d.drain === 'hp' ? 'its hits heal it' : 'its hits take spell points first');
-  if (d.regen) out.push(`mends ${d.regen} a round unless burnt`);
-  if (d.calls) {
-    const group = new Map<string, { n: number; d: { name: string; plural: string } }>();
-    for (const m of d.calls.monsters) {
-      const id = typeof m === 'string' ? m : m.id, def = typeof m === 'string' ? byId.get(m) : m;
-      const at = group.get(id) ?? { n: 0, d: def ?? { name: id, plural: id } };
-      group.set(id, { ...at, n: at.n + 1 });
-    }
-    out.push(`calls ${and([...group.values()].map((g) => counted(g.n, g.d)))}, ${share(d.calls.chance, 'turn')}`);
-  }
-  if (d.sweep) out.push(d.sweep.element ? `breathes ${d.sweep.element} on a row, ${share(d.sweep.chance, 'turn')}` : `sweeps a row, ${share(d.sweep.chance, 'turn')}`);
-  if (d.immune?.length) out.push(`shrugs off ${and(d.immune.map(noun))}`);
-  if (d.resist?.length) out.push(`resists ${and(d.resist.map(noun))}`);
-  if (d.weak?.length) out.push(`weak to ${and(d.weak.map(noun))}`);
-  if (d.steady) out.push('never breaks');
-  if (d.obeys) out.push('leaves once its leaders fall');
-  return out.join('; ');
+  return said(d, { spells: defs.spells, monster: (id) => byId.get(id) });
 }
 
 /** A text as a table's cell: a pipe escaped, and outside code spans a `<` or a `*`, which Markdown reads as a tag or emphasis. */

@@ -14,6 +14,7 @@ import { asked, attract, coach, drawing, edge, explore, fall, hall, inn, kept, l
 import { features, ice, kinds, landmarks, lighthouse, range, smooth, sunder, terrains, tongues, torches } from './smoke/scenes.ts';
 import { endings, hearth, hills, interiors, silhouettes, winding } from './smoke/art.ts';
 import { cracks, sweep } from './smoke/cracks.ts';
+import { wiki } from './smoke/wiki.ts';
 
 // Every run plays the same world: the page's Math.random is pinned, so the new game's seed is SMOKE_SEED
 // (the first draw floors to it in freshSeed) and every draw after it follows from it. SMOKE_SEED=random
@@ -25,7 +26,7 @@ if (process.env.SMOKE_SEED === 'random') console.log(`SMOKE_SEED=${SEED}`);
 
 // The parts in the order they run, each starting from the state it makes (boot.ts).
 const PARTS: Part[] = [title, explore, kept, thornmark, inn, coach, trainer, script, hall, interiors, terrains, torches, sunder, smooth, lighthouse, landmarks, kinds, ice, range,
-  features, tongues, questlog, asked, weather, worldmap, edge, pass, winding, cracks, hills, silhouettes, hearth, endings, lampglass, waymark, pilot, attract, drawing, fall, sweep];
+  features, tongues, questlog, asked, weather, worldmap, edge, pass, winding, cracks, hills, silhouettes, hearth, endings, lampglass, waymark, pilot, attract, drawing, fall, wiki, sweep];
 
 // The crack sweep looks one way from every square of the cellar, Helmstow and its keep on every
 // run, and all four ways from every square of the maps a pull request changes. SMOKE_BASE=<ref>

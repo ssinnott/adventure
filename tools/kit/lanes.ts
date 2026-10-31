@@ -55,9 +55,9 @@ const TABLE: readonly (readonly [RegExp, (m: RegExpExecArray) => Place])[] = [
   // Vendored: fixed upstream, never edited here (DESIGN §13); before the rest of src/.
   [/^src\/lib\//, () => ({ lane: null, why: 'src/lib/ is vendored game-engine: fixed upstream, never edited here (DESIGN §13)' })],
   // Systems: src/game/, src/ui/ outside the art modules, src/content/ outside an area's folder and whatever else stands in src/
-  // (main.ts, app/), so a new file there is placed; and the game's page.
+  // (main.ts, app/), so a new file there is placed; and the game's page and the wiki's.
   [/^src\//, systems],
-  [/^index\.html$/, systems],
+  [/^(index|wiki)\.html$/, systems],
   // Quality: the tools, CI and the content contract, and what configures the checks (their scripts, the typecheck, the ignore list).
   [/^(tools|\.github|types)\//, quality],
   [/^(package\.json|package-lock\.json|tsconfig\.json|\.gitignore)$/, quality],

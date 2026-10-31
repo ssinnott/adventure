@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0e0c10">
+<title>Caldera Wiki</title>
+<style>
+  :root { --bg: #0e0c10; --panel: #17141b; --line: #2e2833; --ink: #e8dfcf; --dim: #a39a8c; --gold: #d9b45a; --link: #e3c27a; }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 64px; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 Georgia, 'Times New Roman', serif; }
+  a { color: var(--link); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  header.top { padding: 28px 16px 8px; max-width: 1200px; margin: 0 auto; }
+  header.top h1 { margin: 0; font-size: 30px; color: var(--gold); letter-spacing: .02em; }
+  header.top p { margin: 6px 0 0; color: var(--dim); }
+  nav { position: sticky; top: 0; z-index: 2; background: rgba(14, 12, 16, .95); border-bottom: 1px solid var(--line);
+        padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: baseline; }
+  nav > a { font-weight: bold; }
+  nav .areas { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 13px; }
+  main { max-width: 1200px; margin: 0 auto; padding: 0 16px 64px; }
+  h2 { font-size: 24px; color: var(--gold); border-bottom: 1px solid var(--line); padding-bottom: 6px; margin-top: 40px; }
+  h2 a { color: inherit; }
+  h3 { font-size: 19px; margin: 28px 0 8px; }
+  h4 { margin: 18px 0 6px; font-size: 15px; color: var(--gold); }
+  .band { color: var(--dim); font-weight: normal; font-size: 14px; }
+  table { border-collapse: collapse; margin: 8px 0; background: var(--panel); }
+  th, td { border: 1px solid var(--line); padding: 4px 8px; text-align: left; vertical-align: middle; }
+  th { color: var(--dim); font-weight: normal; font-size: 13px; }
+  main table:not(.stats) { display: block; max-width: 100%; overflow-x: auto; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  canvas { image-rendering: pixelated; image-rendering: crisp-edges; display: block; }
+  .faces { display: flex; gap: 4px; }
+  .scroll { overflow-x: auto; }
+  table.grid td { text-align: center; }
+  figure.pair { margin: 0; display: inline-flex; flex-direction: column; align-items: center; }
+  figure.pair figcaption { font-size: 12px; color: var(--dim); }
+  article.class { border-top: 1px solid var(--line); margin-top: 28px; }
+  article.class header { display: flex; gap: 16px; align-items: flex-start; margin-top: 16px; }
+  article.class h3 { margin-top: 0; }
+  .note { font-style: italic; color: var(--dim); }
+  .aside { color: var(--dim); font-size: 13px; }
+  .filter { display: flex; gap: 8px; margin: 20px 0 0; }
+  .filter input, .filter select { background: var(--panel); color: var(--ink); border: 1px solid var(--line); padding: 6px 8px; font: inherit; }
+  .filter input { flex: 1; max-width: 320px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(270px, 100%), 1fr)); gap: 12px; }
+  article.monster { background: var(--panel); border: 1px solid var(--line); padding: 10px; }
+  article.monster canvas.sprite { width: 240px; height: 240px; margin: 0 auto 6px; background: radial-gradient(#221d27, #141117 70%); }
+  article.monster h4 { margin: 0; color: var(--ink); font-size: 16px; }
+  article.monster .kind { margin: 0 0 4px; color: var(--dim); font-size: 13px; }
+  article.monster p { margin: 6px 0 0; font-size: 13px; }
+  article.monster .look { font-style: italic; }
+  table.stats { width: 100%; font-size: 12px; background: transparent; }
+  table.stats th, table.stats td { padding: 2px 4px; }
+  #errors { position: fixed; left: 0; bottom: 0; max-width: 100%; margin: 0; padding: 6px 8px; background: rgba(120, 0, 0, .9);
+            color: #fff; font: 12px/1.4 monospace; white-space: pre-wrap; z-index: 10; display: none; }
+  @media (max-width: 600px) { article.class header { flex-direction: column; } nav .areas { display: none; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>The Hearth of Caldera: the wiki</h1>
+  <p>The races, the classes and the monsters, read from the game&rsquo;s own tables and drawn by its own painters.</p>
+</header>
+<div id="wiki"></div>
+<pre id="errors"></pre>
+<script>
+  // Installed before the module graph loads, so an import failure is shown too.
+  (function () {
+    var box = document.getElementById('errors'), seen = [];
+    function record(msg) { seen.push(String(msg)); box.style.display = 'block'; box.textContent = seen.slice(-8).join('\n'); }
+    window.addEventListener('error', function (e) { record(e.message || 'unknown error'); });
+    window.addEventListener('unhandledrejection', function (e) { var r = e.reason; record('unhandled rejection: ' + (r && r.message ? r.message : r)); });
+  })();
+</script>
+<script type="module" src="src/app/wiki/main.ts"></script>
+</body>
+</html>
