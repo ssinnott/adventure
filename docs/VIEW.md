@@ -36,6 +36,11 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   one colour a square, its cell's, from wherever it is seen; rain and snow fall over it. Fifteen
   grounds of the open land drift, from grass to snow; water, roads, fields, drops and the rest keep
   one colour, nothing drifts underground and the automap's colours never do.
+- **The variants** (#1101): eight grounds' looks have several, each its colour shifted the year round and
+  its own marks: turf, meadow, rough and bracken; heather, bog cotton and peat; a fine fall, cinders and a
+  crust glowing by night; the steppe's, the pinewoods', the swamp's and the dunes'. `variantAt` picks one by
+  noise of the cell, in patches; the road is cobbled within `TOWN_STEPS` of a door set in a building or a
+  wall and a rutted track beyond. A picture alone: the way, snow, drag and the automap are the ground's.
 
 - **A region's trees** (#1104): its look's `trees` names, by weight, those its forests and woods stand
   (`forest`) and its pinewoods (`pine`, conifers only). A square takes its region's, picked by its hash
