@@ -381,7 +381,7 @@ function theRoad(): Scene[] {
       ok([[1, 18], [2, 18], [6, 19], [7, 19]].every(([x, y]) => rim(x, y) === ':') && yard.every((c) => c === ':') && rim(0, 18) === ',' && rim(8, 19) === ',' && rim(4, 18) === 'B',
         'the rim\'s path is carved from the Bowl\'s grass at 0,18 through the rock into Anchorhold\'s yard, 2-5,19-20, and out to the east foot at 8,19; the cell at 4,18 is built into the rim');
       const anchorhold = ATLAS.sites.find((s) => s.name === 'Anchorhold')!;
-      ok(!anchorhold.planned && anchorhold.at[0] === i6.x + 4 && anchorhold.at[1] === i6.y + 18 && I6.features!.some((f) => f.kind === 'npc' && f.x === 4 && f.y === 19 && f.name === 'Hereswith, the anchoress'),
+      ok(!anchorhold.planned && anchorhold.map === 'hearthisle_i6' && anchorhold.at[0] === 4 && anchorhold.at[1] === 18 && I6.features!.some((f) => f.kind === 'npc' && f.x === 4 && f.y === 19 && f.name === 'Hereswith, the anchoress'),
         'Anchorhold\'s site, built, is the cell at 4,18, and the anchoress stands in the yard under its window, at 4,19 (#763)');
       for (const id of ['i6_wall', 'i6_cell', 'i6_path', 'i6_keel', 'i6_wyke']) see(w, `hearthisle_i6:${id}`);
       ok(['i6_wall', 'i6_cell', 'i6_path', 'i6_keel', 'i6_wyke'].every((id) => w.world.used(id)), 'the hours scratched on the cell, its window, the causeway from the path, the keel and the Wyke');

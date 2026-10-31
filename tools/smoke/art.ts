@@ -240,13 +240,18 @@ export async function hearth({ page, ok }: Run): Promise<void> {
     const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
     c.width = sky.width = W; c.height = sky.height = H;
     const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d', { willReadFrequently: true })!;
-    const minutes = w.state.minutes, flags = { ...w.party.flags }, place = { map: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing };
+    const minutes = w.state.minutes, light = w.state.light, flags = { ...w.party.flags }, place = { map: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing };
     const glow = (f: number): number => {
       w.travel('shelf', 16, 6, f as Facing);
+      // Unlit, as a fresh company is (the crack sweep leaves a light, which draws Helmstow's wall), and with no
+      // landmark laid: the reading is the sky's, and Helmstow's roofs north of the road are not the Hearth.
+      const marks = w.map.landmarks;
+      w.state.light = 0; (w.map as { landmarks: typeof marks }).landmarks = [];
       w.state.minutes = Math.floor(minutes / 1440) * 1440 + 1440;
       w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0 } };
       skyCtx.clearRect(0, 0, W, H); ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
       const d = ctx.getImageData(0, H / 2 - 100, W, 90).data;
+      (w.map as { landmarks: typeof marks }).landmarks = marks;
       let warm = 0;
       for (let i = 0; i < d.length; i += 4) warm += Math.max(0, d[i] - d[i + 2] - 4);
       return warm;
@@ -304,7 +309,7 @@ export async function hearth({ page, ok }: Run): Promise<void> {
     delete w.party.flags.q_tide_home;
     const plain = title();
     g.store!.removeItem('hearth-of-caldera.save');
-    w.party.flags = flags; w.state.minutes = minutes; w['cached'] = null; w.travel(place.map, place.x, place.y, place.f);
+    w.party.flags = flags; w.state.minutes = minutes; w.state.light = light; w['cached'] = null; w.travel(place.map, place.x, place.y, place.f);
     return { south, north, home, steadier, plain, day, fogged, ranged };
   });
   ok(hearth.south > 0 && hearth.north < hearth.south / 100 && hearth.home > hearth.south, `by night the Hearth stands over the hills where it lies, south of Helmstow and not north, and brighter with the Tide Stone home (${hearth.south} south, ${hearth.north} north, ${hearth.home} home)`);

@@ -99,6 +99,9 @@ export const LANTERNWOOD_L2: MapDef<'lanternwood_l2'> = {
     { kind: 'camp', x: 21, y: 28, name: 'The brothers\' clearing', text: 'A clearing south of the road, the stumps cut low and square, the Watch\'s work. The oaks meet over it, and the rain comes through late and in drops.' },
   ],
   secrets: [{ x: 5, y: 5, hint: 'l2_ash' }],
+  // Lantern Watch's tower, drawn tall over its wall and seen from far off, on the building square behind the
+  // gate; the gate's own square, 12,16, is the road's, and the world map's point for it lies at its corner.
+  landmarks: [{ x: 12, y: 15, kind: 'tower' }],
   encounters: [
     // Moths to the lit lamp by night, a deathshead among them; sunder hounds on the knoll's path; two
     // deathsheads at the tower's lamp by night, the box's group at 16; and two glass bears on the road
