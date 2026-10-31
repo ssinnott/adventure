@@ -37,7 +37,7 @@ interface Stand { h: number; day: string | ((day: number) => string); snow: numb
 /** The world's terrains that stand over the horizon: the ranges high, a wood a treeline, hills low. Every other terrain lies flat. */
 const STAND: Readonly<Partial<Record<WorldTerrain, Stand>>> = {
   peak: { h: 56, day: '#e4eaf0', snow: 1 },
-  volcano: { h: 56, day: '#46424a', snow: 0.4 },
+  volcano: { h: 56, day: '#56607c', snow: 0.4 },
   mountain: { h: 44, day: '#64769a', snow: 0.85 },
   cliff: { h: 30, day: '#8a7a68', snow: 0.6 },
   pine: { h: 18, day: '#2a4a3a', snow: 0.6 },
@@ -49,6 +49,9 @@ const STAND: Readonly<Partial<Record<WorldTerrain, Stand>>> = {
   hills: { h: 7, day: (d) => shade(GROUND.hills.color(d, 0), 0.85), snow: 0.8 },
   dunes: { h: 4, day: (d) => shade(GROUND.dunes.color(d, 0), 0.9), snow: 0.8 },
 };
+
+/** The most any land stands close by, in pixels: a peak's, as the far band stood at its highest. */
+const TALLEST = 56;
 
 /**
  * Which land a standing kind is deep in, for how high it stands there: a range (and the void past the rim, which
@@ -89,16 +92,22 @@ export function heightsOf(grid: Land): Uint8Array {
     for (let v = Math.max(0, y - 2); v <= Math.min(H - 1, y + 2); v++) for (let u = Math.max(0, x - 2); u <= Math.min(W - 1, x + 2); u++) if (group[v * W + u] === g) n++;
     hs[i] = Math.round((STAND[TERRAINS[terrain[i]]] ?? STAND.mountain!).h * (0.6 + 0.4 * (n / 25)) * SHAPE[g](x, y));
   }
-  // A flat square in the heart of a range (a lava flow down Fire Mountain, a road over a pass) stands with the range
-  // about it, a little lower, so the range is not cut into teeth.
-  const fill: [number, number][] = [];
+  // A range's heights are smoothed over the squares about each (a weighted three by three), so it is not cut into
+  // teeth: its edge stands at least half as high as it would, and a flat square in its heart (a lava flow down Fire
+  // Mountain, a road over a pass) stands with the range about it.
+  const smooth: [number, number][] = [];
   for (let y = 1; y < H - 1; y++) for (let x = 1; x < W - 1; x++) {
-    if (group[y * W + x]) continue;
+    const i = y * W + x, g = group[i];
+    if (g > 1) continue;
     let n = 0, sum = 0;
-    for (let v = y - 1; v <= y + 1; v++) for (let u = x - 1; u <= x + 1; u++) if (group[v * W + u] === 1) { n++; sum += hs[v * W + u]; }
-    if (n >= 5) fill.push([y * W + x, Math.round((0.85 * sum) / n)]);
+    for (let v = -1; v <= 1; v++) for (let u = -1; u <= 1; u++) {
+      const j = i + v * W + u;
+      if (group[j] === 1) { n++; sum += hs[j] * (u ? 2 : 4) / (v ? 2 : 1); }
+    }
+    if (g === 1) smooth.push([i, Math.max(Math.round(hs[i] / 2), Math.round(sum / 16))]);
+    else if (n >= 5) smooth.push([i, Math.round(sum / 16)]);
   }
-  for (const [i, v] of fill) hs[i] = v;
+  for (const [i, v] of smooth) hs[i] = v;
   heights.set(grid, hs);
   return hs;
 }
@@ -137,8 +146,15 @@ export function castHorizon(grid: Land, at: { x: number; y: number }, f: Facing,
     for (; k <= REACH; k++) {
       // The ray crosses this depth `lat` squares across, in the square the column shows there; its height is
       // drawn from the squares either side, so a range slopes and peaks across the columns rather than in blocks.
-      const lat = s * (k + 0.5), l0 = Math.floor(lat), fr = lat - l0;
-      const ax = at.x + k * fx + l0 * rx, ay = at.y + k * fy + l0 * ry, bx = ax + rx, by = ay + ry;
+      // Once nothing farther could stand over what stands, only the square shown is wanted.
+      const lat = s * (k + 0.5), l0 = Math.floor(lat), fr = lat - l0, ax = at.x + k * fx + l0 * rx, ay = at.y + k * fy + l0 * ry;
+      if (top >= TALLEST * (1 - k / REACH)) {
+        const ix = fr < 0.5 ? ax : ax + rx, iy = fr < 0.5 ? ay : ay + ry, i = ix >= 0 && iy >= 0 && ix < W && iy < H ? iy * W + ix : -1;
+        if (i < 0 || terrain[i] === TI.void) break;
+        along[k] = i;
+        continue;
+      }
+      const bx = ax + rx, by = ay + ry;
       const a = ax >= 0 && ay >= 0 && ax < W && ay < H ? ay * W + ax : -1, b = bx >= 0 && by >= 0 && bx < W && by < H ? by * W + bx : -1;
       const i = fr < 0.5 ? a : b, ha = a < 0 ? rim : tall[a], hb = b < 0 ? rim : tall[b];
       const up = ha || hb ? Math.round((ha + (hb - ha) * fr) * (1 - k / REACH)) : 0, most = ha >= hb ? a : b;
