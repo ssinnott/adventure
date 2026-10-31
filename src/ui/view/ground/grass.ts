@@ -8,7 +8,9 @@ import { fog, grassColor } from '../common.ts';
 import { rampColor } from '../model.ts';
 import type { Paint } from '../common.ts';
 import type { Ramp } from '../model.ts';
-import type { GroundLook, Mark } from './look.ts';
+import type { GroundLook, Mark, Square } from './look.ts';
+import { blades, fronds, spots, sward, tone } from './near.ts';
+import type { Pixels } from './near.ts';
 
 /** How many flowers are out: none before Sowing or after Leafturn. */
 export function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 12) / 8, (72 - day) / 10)); }
@@ -63,12 +65,40 @@ function frond(p: Paint, m: Mark): void {
   ctx.moveTo(x + 0.8 * sc, y - 3.4 * sc); ctx.lineTo(x - 0.8 * sc, y - 2 * sc); ctx.moveTo(x + 1.6 * sc, y - 3.4 * sc); ctx.lineTo(x + 2 * sc, y - 1.6 * sc); ctx.stroke();
 }
 
+// Near to (#1102, near.ts): the turf's blades lit on their left, the meadow's flowers on their stalks among them, the
+// rough's coarse tussocks with dead straw in them and the bracken's fronds arching over, each a blade's width.
+
+/** The meadow's: its sward, and flowers on their stalks from Sowing into Leafturn, none under snow. */
+function meadowNear(p: Paint, base: string, sq: Square): Pixels {
+  const px = blades(p, base, sq, { rows: 8, cols: 10, tall: [4, 7], lean: 1, lit: 1.18, dark: 0.82, bare: 0.25 });
+  if (p.env.cover <= 0.1) {
+    const stalk = tone(p, sq, 0.72, base);
+    for (const q of spots(p, sq, 4, 6, 161)) {
+      if (q.a > 0.5 * flowering(p.env.day)) continue;
+      const c = ['#f0e060', '#ffffff', '#e05a6a', '#c080e0', '#ffffff'][Math.floor(q.b * 5)], top = q.y - Math.round((2 + 2 * q.b) * q.k), w = 2 * q.w;
+      px.up.put(stalk, q.x, top, q.w, q.y - top);
+      px.up.put(fog(p, c, sq.d), q.x - q.w, top - w, w + q.w, w);
+      px.up.put(fog(p, c === '#f0e060' ? '#c08a30' : '#f0d040', sq.d), q.x, top - w, q.w, q.w);
+    }
+  }
+  return px;
+}
+
+/** The rough's: tussocks of long coarse blades, a tussock dark or dead straw. */
+function roughNear(p: Paint, base: string, sq: Square): Pixels { return blades(p, base, sq, { rows: 5, cols: 7, tall: [6, 10], lean: 1, lit: mix(base, '#c8bc78', 0.45), dark: 0.66, bare: 0.45, tuft: true, turns: true }); }
+
+/** The bracken's: fronds arching over to one side or the other, a leaflet hanging under each step, green or russet by the year. */
+function brackenNear(p: Paint, base: string, sq: Square): Pixels {
+  const c = rampColor(BRACKEN, p.env.day);
+  return fronds(p, base, sq, { rows: 4, cols: 5, len: [9, 15], lit: shade(c, 1.15), dark: shade(c, 0.72), bare: 0.15 });
+}
+
 export const grass: GroundLook = { color: grassColor, drift: { toward: ['#24702a', '#bcae5e'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark },
-  scatter: ['bush', 'boulder', 'thistle', 'molehill'], rank: 4,
+  scatter: ['bush', 'boulder', 'thistle', 'molehill'], rank: 4, near: sward,
   // Turf, the meadow lighter and flowering, the rough darker and coarse, bracken by the year.
   variants: { scale: 5, looks: [
-    { name: 'meadow', share: 0.22, shift: { toward: '#b8c860', by: 0.5 }, lies: { marks: 7, mark: meadow } },
+    { name: 'meadow', share: 0.22, shift: { toward: '#b8c860', by: 0.5 }, lies: { marks: 7, mark: meadow }, near: meadowNear },
     { name: 'turf', share: 0.4 },
-    { name: 'rough', share: 0.22, shift: { toward: '#2e4022', by: 0.5 }, lies: { marks: 5, mark: coarse } },
-    { name: 'bracken', share: 0.16, shift: { toward: (day) => rampColor(BRACKEN, day), by: 0.7 }, lies: { marks: 5, mark: frond } },
+    { name: 'rough', share: 0.22, shift: { toward: '#2e4022', by: 0.5 }, lies: { marks: 5, mark: coarse }, near: roughNear },
+    { name: 'bracken', share: 0.16, shift: { toward: (day) => rampColor(BRACKEN, day), by: 0.7 }, lies: { marks: 5, mark: frond }, near: brackenNear },
   ] } };
