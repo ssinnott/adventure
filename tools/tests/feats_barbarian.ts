@@ -124,8 +124,8 @@ function off(): void {
     return featsOf(x, r, slot).map((d) => d.id).join();
   };
   const by = [has(1, 6), has(8, 2), has(8, 3), has(15, 3), has(23, 4), has(23, 5), has(23, 6, 3)];
-  ok(by.join(' ') === 'frenzy frenzy frenzy,cleave frenzy,cleave,war_cry frenzy,cleave,war_cry frenzy,cleave,war_cry,deathless frenzy,war_cry,deathless',
-    `a barbarian has its feats by its level and may use those it affords, Cleave not from the back row with a blade (${by.join(' ')})`);
+  ok(by.join(' ') === 'frenzy frenzy frenzy,cleave frenzy,cleave,war_cry frenzy,cleave,war_cry frenzy,cleave,war_cry,deathless war_cry,deathless',
+    `a barbarian has its feats by its level and may use those it affords, Frenzy and Cleave not from the back row with a blade (${by.join(' ')})`);
   const rows = (() => { const r = createParty([member(B, 23, true)]), { f: x } = fight(r, [[STRAW]], 1); x.stamina![0] = 3; return featRows(T, r, x, 0).map((d) => `${d.label}${d.disabled ? '-' : ''}`).join(); })();
   ok(rows === 'Frenzy (2),Cleave (3),War Cry (3),Deathless (5)-', `the Feat list on 3 stamina: ${rows}`);
 }
@@ -137,6 +137,7 @@ function frenzy(): void {
   until(f, q, rng, 0);
   const calm = traitDamage(f, c, BLADE, f.monsters[0], false, 0), before = rages(f, c, 0);
   const said = act(f, q, rng, 0, feat('frenzy'), 2), spent = f.stamina![0];
+  f.stamina![0] = 0; // so that the cap does not hide what the next three blows build
   const raging = traitDamage(f, c, BLADE, f.monsters[0], false, 0), harness = traitDamage(f, c, BLADE, f.monsters[0], false);
   const rounds: boolean[] = [rages(f, c, 0)], built: string[] = [];
   while (f.outcome === 'ongoing') {
@@ -150,8 +151,8 @@ function frenzy(): void {
       built.push(`${hits.length}:${f.stamina![0] - st}:${hits.map((l) => / for (\d+)\./.exec(l)?.[1]).join('')}`);
     } else if (t.side === 'monster') monsterAct(f, q, rng); else partyAct(f, q, rng, { type: 'defend' });
   }
-  ok(!before && said?.join() === FRENZY_LINE(B) && said?.[0] === 'barbarian flies into a frenzy.' && spent === 0 && raging === calm + RAGE_DMG && harness === calm && FRENZY_ROUNDS === 3 && rounds.join() === 'true,true,true,false',
-    `a frenzy has a barbarian at full health rage, its blows +${RAGE_DMG} (${calm} to ${raging}), the round it is used in and the two after (rounds 1 to 4: ${rounds.join(', ')}): "${said?.[0]}"`);
+  ok(!before && said?.[0] === FRENZY_LINE(B) && said?.[0] === 'barbarian flies into a frenzy.' && said?.length === 2 && said[1].endsWith(` for ${1 + 4 + 1 + RAGE_DMG}.`) && spent === 2 && raging === calm + RAGE_DMG && harness === calm && FRENZY_ROUNDS === 3 && rounds.join() === 'true,true,true,false',
+    `a frenzy is an Attack that has a barbarian at full health rage, its own blow +${RAGE_DMG} and building 2 (${calm} to ${raging}), the round it is used in and the two after (rounds 1 to 4: ${rounds.join(', ')}): "${said?.join(' | ')}"`);
   const blade = 1 + 4 + 1;
   ok(built.join() === `1:2:${blade + RAGE_DMG},1:2:${blade + RAGE_DMG},1:1:${blade}`,
     `while it rages each blow of its own that lands is ${RAGE_DMG} the harder and builds 2, after it as before and 1 (hits:built:damage in rounds 2 to 4: ${built.join(', ')})`);
@@ -224,6 +225,20 @@ function warCry(): void {
     `half is rounded up: three break at two down, not one (${odd1.fled}, ${odd2.fled}); the dead never break (${bones.fled}) nor the steady (${steady.fled})`);
   const rank = cry([MAN, MAN, MAN, MAN], 1, true, 2);
   ok(rank.fled === 'xF--', `it marks the rank aimed at, a band's front, not its back rank (${rank.fled})`);
+
+  // A leader the cry breaks is down for the leader's rule at once: the fight's people go with it in the
+  // same turn, as at its fall. And where its people break and run, a cried group's beasts bolt.
+  {
+    const CAP = named('cap', 'Captain', { kind: 'person' }), PIKE = named('pike', 'Pike', { kind: 'person' });
+    const q = createParty([member(B, 15, true), member('cleric')]), rng = counted(6);
+    const f = startCombat(T, q, [{ id: 'a', monsters: [MAN, MAN, CAP], leader: CAP.id }, { id: 'b', monsters: [PIKE, PIKE, PIKE] }], rng, { feats: true });
+    act(f, q, rng, 0, feat('war_cry'), 3);
+    f.monsters[0].hp = 0; f.monsters[1].hp = 0;
+    const t = currentTurn(f, q, rng);
+    if (t?.side === 'monster') monsterAct(f, q, rng); else if (t) partyAct(f, q, rng, { type: 'defend' });
+    const fled = f.monsters.map((m) => (m.fled ? 'F' : m.hp > 0 ? '-' : 'x')).join(''), bolt = rats.lines.find((l) => l.startsWith('2 '));
+    ok(fled === 'xxFFFF' && bolt === '2 Giant Rats bolt.', `a leader the cry breaks takes the fight's people with it in the same turn (${fled}), and cried beasts bolt: "${bolt}"`);
+  }
 
   // The fled pay nothing: two slain and two fled pay half what four slain do.
   const paid = cry([MAN, MAN, MAN, MAN], 2), all = cry([MAN, MAN, MAN, MAN], 4, false);
@@ -306,9 +321,10 @@ function bots(): void {
     choose(1, 2, undefined, (c, f) => { bare(c); f.frenzy = [1, 0]; }), choose(8, 3, [[STRAW, STRAW]]), choose(8, 3, undefined, bare),
     choose(15, 3, [[STRAW, STRAW, STRAW, STRAW]]), choose(15, 3, [[BONES, BONES, BONES, BONES]]), choose(15, 3, [[MAN, MAN, MAN]]),
     choose(23, 5), choose(23, 5, undefined, wounded), choose(23, 5, undefined, (c, f) => { wounded(c); f.deathless = [2, 0]; }), choose(23, 5, undefined, (c, f) => { wounded(c); f.deathless = [1, 0]; }), choose(23, 5, undefined, wounded, {}),
+    choose(23, 5, undefined, (c) => { c.hp = Math.ceil(c.maxHp * 0.75); }), choose(15, 3, [[MAN, MAN, MAN, HAND]]),
   ];
-  ok(picks.join(' ') === 'frenzy@0 attack attack attack attack cleave@0 frenzy@0 war_cry@0 cleave@0 cleave@0 attack deathless@0 attack deathless@0 attack',
-    `the bots frenzy where two rounds of rage outweigh a turn's blows (bare hands, not a blade of 6 a blow nor a bow) and it rages not yet, cleave where the front outnumbers its blows, cry at four of a kind that breaks, hold off death under half and renew it in its last round, and spend nothing unasked (${picks.join(' ')})`);
+  ok(picks.join(' ') === 'frenzy@0 frenzy@0 attack attack attack cleave@0 frenzy@0 war_cry@0 cleave@0 cleave@0 frenzy@0 deathless@0 attack deathless@0 attack frenzy@0 cleave@0',
+    `the bots frenzy where it rages not yet, with a blade or bare hands and not a bow, cleave where the front outnumbers its blows, cry at four that break (the steady not counted), hold off death under half (not at three quarters) and renew it in its last round, and spend nothing unasked (${picks.join(' ')})`);
 
   // Fights the policy plays, each feat where it pays, and never one the frame refuses; both bots.
   const played: Record<string, number> = {};

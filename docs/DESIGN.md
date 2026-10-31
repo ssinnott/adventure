@@ -270,7 +270,7 @@ frame, game/combat/feats.ts) until #1117 turns them on: the knight's, the monk's
 | Class | 1 | 8 | 15 | 23 |
 |---|---|---|---|---|
 | Knight | Challenge (2): a group strikes only the knight for two rounds | Mighty Blow (3): one blow, sure to land, for double | Rally (4): the front row hits +2 for three rounds and shakes off sleep and paralysis | Champion's Strike (5): every blow this turn crits (#1114) |
-| Barbarian | Frenzy (2): rages for three rounds, whatever its wounds | Cleave (3): a blow at every foe of the front rank | War Cry (3): a group that breaks breaks with half of it down, not waiting for its leader or three in four | Deathless (5): for three rounds it fights on under 0 hit points, to its death line |
+| Barbarian | Frenzy (2): attacks and rages for three rounds, whatever its wounds | Cleave (3): a blow at every foe of the front rank | War Cry (3): a group that breaks breaks with half of it down, not waiting for its leader or three in four | Deathless (5): for three rounds it fights on under 0 hit points, to its death line |
 | Thief | Ambush (2): its blows this turn are sneak attacks | Blind (3): a foe it hits has −4 to hit for three rounds | Hamstring (3): a blow that, landing, holds its foe fast for a round | Deathblow (5): a sneak attack on a foe asleep or held, for triple |
 | Monk | Flurry (2): two more strikes this turn | Quiet Palm (3): a strike that, landing, puts its foe to sleep | Leap (3): strikes a foe of the back rank, past the front | Wind Step (5): attacks, then takes another turn at once |
 

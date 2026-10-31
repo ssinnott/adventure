@@ -299,6 +299,15 @@ export function meetCalled(world: Pick<World, 'meet'>, s: CombatState, bands: nu
  */
 export function morale(s: CombatState): void {
   const breaks = (m: MonsterInst, how: 'leader' | 'rout'): boolean => standing(m) && !m.def.steady && KINDS[m.def.kind].breaks === how;
+  // A group (a rank) the barbarian's War Cry marked breaks at half down, at least (#1113): its people
+  // break and run, its beasts bolt. First, so that a leader it breaks is down for the rule below at once.
+  for (const g of s.cried ?? []) {
+    const rank = s.monsters.filter((m) => m.group === g), people = rank.filter((m) => breaks(m, 'leader')), beasts = rank.filter((m) => breaks(m, 'rout'));
+    if ((!people.length && !beasts.length) || 2 * rank.filter((m) => !standing(m)).length < rank.length) continue;
+    for (const m of [...people, ...beasts]) m.fled = true;
+    if (people.length) s.log.push(BREAK_LINE(describe(people), people.length === 1));
+    if (beasts.length) s.log.push(ROUT_LINE(describe(beasts), beasts.length === 1));
+  }
   const leaders = s.monsters.filter((m) => isLeader(s, m));
   if (leaders.length && leaders.every((m) => !standing(m))) {
     const gone = s.monsters.filter((m) => breaks(m, 'leader')), stood = s.monsters.filter((m) => m.def.obeys && standing(m) && !gone.includes(m));
@@ -314,11 +323,4 @@ export function morale(s: CombatState): void {
     for (const m of gone) m.fled = true;
     if (gone.length) s.log.push(ROUT_LINE(describe(gone), gone.length === 1));
   });
-  // A group (a rank) the barbarian's War Cry marked breaks at half down, at least, its people and its beasts alike.
-  for (const g of s.cried ?? []) {
-    const rank = s.monsters.filter((m) => m.group === g), gone = rank.filter((m) => breaks(m, 'leader') || breaks(m, 'rout'));
-    if (!gone.length || 2 * rank.filter((m) => !standing(m)).length < rank.length) continue;
-    for (const m of gone) m.fled = true;
-    s.log.push(BREAK_LINE(describe(gone), gone.length === 1));
-  }
 }

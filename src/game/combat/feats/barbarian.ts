@@ -1,5 +1,5 @@
 // The barbarian's four feats (DESIGN §5, #1113), on the frame of combat/feats.ts, with the bots' policy
-// for them. Frenzy has the barbarian rage (`rages`, combat/perks.ts: its blows' damage and its stamina)
+// for them. Frenzy attacks and has the barbarian rage (`rages`, combat/perks.ts: its blows' damage and its stamina)
 // for FRENZY_ROUNDS whatever its wounds (`CombatState.frenzy`). Cleave is one blow of its weapon at each
 // foe of the front rank that the weapon reaches, or of the back once the front is down, as the rank
 // stands when it swings: the foe aimed at first, each blow its own to-hit, crit and stamina, and a foe
@@ -17,7 +17,7 @@ import type { CombatState, MonsterInst } from '../state.ts';
 import { rages, blowsOf } from '../perks.ts';
 import { canReach, deathlessEnds } from '../foes.ts';
 import { KINDS } from '../../monsters.ts';
-import { weaponOf, statOf, bonus, RAGE_DMG } from '../../party.ts';
+import { weaponOf } from '../../party.ts';
 import type { Character } from '../../party.ts';
 import { FRENZY_LINE, CLEAVE_LINE, WAR_CRY_LINE, DEATHLESS_LINE } from '../lines.ts';
 import type { FeatClass, FeatDef } from '../feats.ts';
@@ -32,8 +32,8 @@ const cleft = (s: CombatState, c: Character): number[] => {
 };
 
 const frenzy: FeatDef = {
-  id: 'frenzy', cls: 'barbarian', level: 1, cost: 2, name: 'Frenzy', text: 'Rages for three rounds, whatever its wounds.', target: 'none',
-  use: ({ s, party, c, i }) => { (s.frenzy ??= party.members.map(() => 0))[i] = FRENZY_ROUNDS; s.log.push(FRENZY_LINE(c.name)); },
+  id: 'frenzy', cls: 'barbarian', level: 1, cost: 2, name: 'Frenzy', text: 'Attacks and rages for three rounds, whatever its wounds.', target: 'blow',
+  use: ({ s, party, c, i, strike }) => { (s.frenzy ??= party.members.map(() => 0))[i] = FRENZY_ROUNDS; s.log.push(FRENZY_LINE(c.name)); strike(); },
 };
 const cleave: FeatDef = {
   id: 'cleave', cls: 'barbarian', level: 8, cost: 3, name: 'Cleave', text: 'A blow at every foe of the front rank.', target: 'blow',
@@ -69,20 +69,18 @@ export const BARBARIAN: FeatClass = {
   bot: ({ s, c, i, foe, has }) => {
     // Deathless under half its hit points, unless one of its own runs past this round: it fights on under 0.
     if (has(deathless.id) && c.hp < c.maxHp / 2 && (s.deathless?.[i] ?? 0) <= 1) return { featId: deathless.id, target: i };
-    // War Cry at the biggest group not yet cried at, four or more of it standing of a kind that breaks:
-    // half of it down, the rest run. No leader is read, as the game's bot never knows one first.
-    const loud = has(warCry.id) ? s.monsters.filter((m) => standing(m) && KINDS[m.def.kind].breaks !== 'never' && !s.cried?.includes(m.group)) : [];
+    // War Cry at the biggest group not yet cried at, four or more of it standing that break (of a kind that
+    // does, not steady): half of it down, the rest run. No leader is read, as the game's bot never knows one first.
+    const loud = has(warCry.id) ? s.monsters.filter((m) => standing(m) && !m.def.steady && KINDS[m.def.kind].breaks !== 'never' && !s.cried?.includes(m.group)) : [];
     const size = (m: MonsterInst): number => loud.filter((q) => q.group === m.group).length;
     const big = loud.reduce<MonsterInst | undefined>((a, m) => (!a || size(m) > size(a) ? m : a), undefined);
     if (big && size(big) >= 4) return { featId: warCry.id, target: s.monsters.indexOf(big) };
     // Cleave where the foes it falls on outnumber an Attack's blows: it strikes more often than an Attack.
     const rank = has(cleave.id) ? cleft(s, c) : [];
     if (rank.length > blowsOf(s.tables.items, c)) return { featId: cleave.id, target: rank.includes(foe) ? foe : rank[0] };
-    // Frenzy where it does not rage yet, and the rage of the two rounds after the one it spends adds more
-    // than the blows it gives up: a blow of its weapon, Might in, does less than twice RAGE_DMG (bare
-    // hands, a dagger); never with a bow, as rage adds nothing to a shot.
-    const w = weaponOf(s.tables.items, c), blow = (w.dice ?? 1) * ((w.sides ?? 4) + 1) / 2 + (w.bonus ?? 0) + bonus(statOf(s.tables.items, c, 'might'));
-    if (has(frenzy.id) && !rages(s, c, i) && !w.ranged && (FRENZY_ROUNDS - 1) * RAGE_DMG > blow) return { featId: frenzy.id, target: i };
+    // Frenzy where it does not rage yet: an Attack at the foe it would strike, raging, and two more rounds
+    // of rage. Never with a bow, as rage adds nothing to a shot.
+    if (has(frenzy.id) && !rages(s, c, i) && !weaponOf(s.tables.items, c).ranged && canReach(s, c, foe)) return { featId: frenzy.id, target: foe };
     return undefined;
   },
 };
