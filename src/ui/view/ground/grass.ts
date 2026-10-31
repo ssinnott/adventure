@@ -27,4 +27,4 @@ function mark(p: Paint, m: Mark): void {
   ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 1.5 * sc, y - 4 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 1 * sc, y - 4.5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 2.5 * sc, y - 3 * sc); ctx.stroke();
 }
 
-export const grass: GroundLook = { color: grassColor, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.12, lies: { marks: 7, mark } };
+export const grass: GroundLook = { color: grassColor, drift: { toward: ['#3a7e30', '#a6a058'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark } };

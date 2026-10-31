@@ -197,8 +197,10 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     // its look; the bare void and a drop have none, so short of them the ground is the party's own,
     // and past a hill seen from below it the hill's (#53).
     const out = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1)), far = out.look ?? out, brow = hillOver(map, px, py, f, DEPTH + 1, 0);
-    const farCell = brow ? map.at(brow.x, brow.y) : far.solid === 'void' || GROUND[far.terrain].drop ? map.at(px, py) : far;
-    const ground = shade(groundColor(p, farCell.terrain, pal.floor), dark ? 0.2 : 0.55);
+    const own = far.solid === 'void' || !!GROUND[far.terrain].drop, farCell = brow ? map.at(brow.x, brow.y) : own ? map.at(px, py) : far;
+    // Its colour drifts as the cell's it is taken from (#1098).
+    const fa = brow ?? (own ? { x: px, y: py } : { x: px + FACING_DX[f] * (DEPTH + 1), y: py + FACING_DY[f] * (DEPTH + 1) });
+    const ground = shade(groundColor(p, farCell.terrain, pal.floor, fa.x, fa.y), dark ? 0.2 : 0.55);
     const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
     gg.addColorStop(0, mix(ground, skyBottom, dark ? 0.1 : 0.5)); gg.addColorStop(1, ground);
     ctx.fillStyle = gg; ctx.fillRect(r.x, horizon, r.w, r.h / 2);
@@ -257,7 +259,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
       const cell = drawn(c.x, c.y), brow = behind(d, l);
-      if (brow) { drawFloor(p, 'hills', d, l, c.x * 131 + c.y * 17 + (map.id.length * 7), map.paletteAt(brow.x, brow.y).floor); continue; }
+      if (brow) { drawFloor(p, 'hills', d, l, c, c.x * 131 + c.y * 17 + (map.id.length * 7), map.paletteAt(brow.x, brow.y).floor); continue; }
       if (isSolidWall(cell)) continue;
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
       const cellPal = map.paletteAt(c.x, c.y);
@@ -265,7 +267,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       const plot = look.plot?.(map, c.x, c.y, f);
       // A drop's rims: where ground stands before it and beyond it, and not the drop.
       const rims = look.drop ? { near: d > 0 && !GROUND[drawn(...toPair(cellAt(px, py, f, d - 1, l))).terrain].drop, far: !GROUND[drawn(...toPair(cellAt(px, py, f, d + 1, l))).terrain].drop } : undefined;
-      drawFloor(p, cell.terrain, d, l, seed, cellPal.floor, plot, rims);
+      drawFloor(p, cell.terrain, d, l, c, seed, cellPal.floor, plot, rims);
       if (map.kind === 'dungeon') drawCeiling(p, cellPal, d, l, seed, f);
     }
     // A hill's mound, its look's, over the row's floors.
@@ -274,7 +276,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       const t = drawn(c.x, c.y).terrain, mound = GROUND[t].mound;
       if (!mound || isSolidWall(drawn(c.x, c.y)) || behind(d, l)) continue;
       const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return !!GROUND[n.terrain].mound && !isSolidWall(n) && !behind(d, l + dl); };
-      mound(p, groundColor(p, t, map.paletteAt(c.x, c.y).floor), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1));
+      mound(p, groundColor(p, t, map.paletteAt(c.x, c.y).floor, c.x, c.y), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1));
     }
     for (const l of order) {
       if (behind(d, l)) continue;

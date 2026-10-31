@@ -25,4 +25,4 @@ function mark(p: Paint, m: Mark): void {
   if (i < 2 && env.cover <= 0.05) { ctx.fillStyle = fog(p, shade(base, 1.45), d); ctx.fillRect(Math.round(x + sc), Math.round(y - 6.5 * sc), Math.max(1, Math.round(1.5 * sc)), Math.max(1, Math.round(2 * sc))); }
 }
 
-export const steppe: GroundLook = { color: steppeColor, snow: 0.9, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark } };
+export const steppe: GroundLook = { color: steppeColor, drift: { toward: ['#7e9a48', '#c8b468'], by: 0.55 }, snow: 0.9, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark } };

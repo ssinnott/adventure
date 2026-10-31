@@ -14,4 +14,4 @@ function mark(p: Paint, m: Mark): void {
   ctx.beginPath(); ctx.ellipse(x, y, 1.5 * sc + 0.5, 1 * sc + 0.4, 0, 0, Math.PI * 2); ctx.fill();
 }
 
-export const dirt: GroundLook = { color: () => TERRAIN_COLORS.dirt, snow: 0.9, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 3, mark }, puddles: true };
+export const dirt: GroundLook = { color: () => TERRAIN_COLORS.dirt, drift: { toward: ['#5e4630', '#a88e62'], by: 0.45 }, snow: 0.9, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 3, mark }, puddles: true };
