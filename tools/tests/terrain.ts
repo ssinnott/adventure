@@ -29,11 +29,17 @@ import { GROUND_SAMPLES } from '../kit/grounds.ts';
 import { mix, hexToRgb } from '../../src/lib/art/palettes.ts';
 import { ok } from './lib.ts';
 import { paintOn } from '../../src/ui/viewport.ts';
-import { CLEAR, fog } from '../../src/ui/view/common.ts';
+import { CLEAR, fog, SNOW } from '../../src/ui/view/common.ts';
 import type { Paint } from '../../src/ui/view/common.ts';
 import { drawFloor } from '../../src/ui/view/floor.ts';
-import { groundColor, cellNoise, DRIFT_DAY } from '../../src/ui/view/ground/index.ts';
+import { groundColor, cellNoise, DRIFT_DAY, variantAt } from '../../src/ui/view/ground/index.ts';
+import { TOWN_STEPS } from '../../src/ui/view/ground/road.ts';
 import { viewCell, VIEW_LATERAL } from '../../src/game/world.ts';
+import { PLAYED_DEFS } from '../../src/content/maps.ts';
+import { OUTDOORS } from '../../src/game/outdoors.ts';
+import { DRAG, passableCell } from '../../src/game/map.ts';
+import { tongue, edgesOf } from '../../src/ui/view/ground/edges.ts';
+import { drawnAt } from '../../src/ui/viewport.ts';
 
 export function terrain(): void {
   // Hills and farmland: their legend characters, open ground both.
@@ -147,16 +153,18 @@ export function terrain(): void {
   ok(SNOW_HOLD.steppe >= SNOW_HOLD.grass - 0.05 && SNOW_HOLD.dunes === SNOW_HOLD.sand && SNOW_HOLD.vines < SNOW_HOLD.steppe && SNOW_HOLD.volcano < 0.5 && SNOW_HOLD.vent === 0,
     `snow lies on the steppe as on grass and on the dunes as on sand, the creepers keep some off, the cone's warmth thins it and a vent takes none (${['steppe', 'dunes', 'vines', 'volcano', 'vent'].map((t) => SNOW_HOLD[t as 'steppe']).join(', ')})`);
   // The samples the smoke test sweeps and the contact sheet shows (tools/grounds.ts): one to each
-  // ground, its own ground in view from the start, a wall in it, square and placed by no area.
+  // ground, its own ground in view from the start, a wall in it, square and placed by no area; and one
+  // where four grounds meet (#1100), all four in view from its start.
   const sampled = GROUND_SAMPLES.map((d) => {
-    const g = new GameMap(d), t = d.id.replace('ground_', '');
-    const seen = viewCells(g, d.start.x, d.start.y, d.start.facing, VIEW_DEPTH).some((c) => g.at(c.x, c.y).terrain === t);
+    const g = new GameMap(d), t = d.id.replace('ground_', ''), own = t === 'edges' ? ['heather', 'grass', 'snow', 'sand'] : [t];
+    const inView = new Set(viewCells(g, d.start.x, d.start.y, d.start.facing, VIEW_DEPTH).map((c) => g.at(c.x, c.y).terrain as string));
+    const seen = own.every((o) => inView.has(o));
     const walls = g.cells.some((c) => c.solid === 'wall'), square = d.rows.every((r) => r.length === d.rows[0].length);
     return { t, fine: seen && walls && square && !MAP_DEFS.some((m) => m.id === d.id) };
   });
   const grounds = ['ash', 'pine', 'ice', 'cliff', 'peak',
-    'steppe', 'dunes', 'vines', 'volcano'];
-  ok(sampled.map((s) => s.t).join() === grounds.join() && sampled.every((s) => s.fine), `a sample of each ground, its ground in view from its start, a wall in it and no area's (${sampled.map((s) => `${s.t} ${s.fine ? 'fine' : 'wrong'}`).join(', ')})`);
+    'steppe', 'dunes', 'vines', 'volcano', 'edges', 'grass', 'heather'];
+  ok(sampled.map((s) => s.t).join() === grounds.join() && sampled.every((s) => s.fine), `a sample of each ground and one where four meet, its grounds in view from its start, a wall in it and no area's (${sampled.map((s) => `${s.t} ${s.fine ? 'fine' : 'wrong'}`).join(', ')})`);
   // Snow lies on both; the grain greens in Sowing and goes gold by Harvest, and fields span squares.
   ok(SNOW_HOLD.hills >= 0.85 && SNOW_HOLD.farm >= 0.85, `snow lies white on hills and fields (${SNOW_HOLD.hills}, ${SNOW_HOLD.farm})`);
   ok([0, 1].every((crop) => cropColor(crop, 20) !== cropColor(crop, 50) && cropColor(crop, 50) !== cropColor(crop, 100)), 'the grain turns from Sowing to Harvest to Frost');
@@ -181,6 +189,8 @@ export function terrain(): void {
   ok(spans >= 60 && crops.size >= 3, `the fields lie in patchwork, each over several squares (${spans} of 144 run on east, ${crops.size} crops)`);
   sight();
   drift();
+  variants();
+  edges();
 }
 
 /** A valley behind a ridge, the ridge across the row y = 3, with room to stand four squares off it. */
@@ -333,7 +343,7 @@ function drift(): void {
   const p = paint(45);
   let views = 0, odd = 0;
   for (const c of run) for (let d = 0; d <= VIEW_DEPTH; d++) {
-    const at = new Set<string>([fog(p, groundColor(p, 'grass', '#000000', c.x, c.y), d)]);
+    const at = new Set<string>([fog(p, groundColor(p, 'grass', '#000000', c.x, c.y, 0, variantAt('grass', c.x, c.y, map)), d)]);
     for (const f of [NORTH, EAST, SOUTH, WEST]) for (let l = -VIEW_LATERAL; l <= VIEW_LATERAL; l++) {
       const o = viewCell(0, 0, f, d, l), eye = { x: c.x - o.x, y: c.y - o.y };
       if (eye.x < 0 || eye.y < 0 || eye.x >= map.width || eye.y >= map.height || map.at(eye.x, eye.y).solid !== 'none') continue;
@@ -390,4 +400,138 @@ function drift(): void {
     return { most: Math.max(...cs.flatMap((a) => cs.map((b) => apart(a, b)))), step: Math.max(...cs.slice(1).map((c, i) => apart(c, cs[i]))) };
   });
   ok(along.every((a) => a.most >= 30 && 3 * a.step <= a.most), `a run of grass across downs_d3 varies along its length in swathes, not by the square (${run.length} squares; the most different ${along.map((a) => a.most.toFixed(1)).join(' and ')} apart, at midsummer and late in the year, at least 30; the most from one square to the next ${along.map((a) => a.step.toFixed(1)).join(' and ')}, a third of that at most)`);
+}
+
+/**
+ * The grounds' variants (#1101), over the outdoors as played: a picture alone, which changes nothing a ground
+ * does; one to a square by the map and the square alone; in patches of several squares at about their
+ * shares; the road cobbled by the towns' doors and a track in the country; and met in the ground samples.
+ */
+function variants(): void {
+  const out = new GameMap(PLAYED_DEFS.find((d) => d.id === OUTDOORS)!), looks = (Object.keys(GROUND) as Terrain[]).filter((t) => GROUND[t].variants);
+  const key = (t: Terrain, x: number, y: number, m: GameMap = out): string => `${t}/${variantAt(t, x, y, m)?.name}`;
+  // Nothing a ground does is a variant's: no key but its picture's, its ground's hold under snow, its ground's way and drag.
+  const picture = new Set(['name', 'share', 'shift', 'lays', 'lies']);
+  const doing = looks.flatMap((t) => GROUND[t].variants!.looks.flatMap((v) => Object.keys(v).filter((k) => !picture.has(k)).map((k) => `${t}/${v.name}: ${k}`)));
+  const bare: Paint = { ...paintOn({} as CanvasRenderingContext2D, { x: 0, y: 0, w: 800, h: 424 }, out), env: { ...CLEAR, day: 91 } }, snowed: Paint = { ...bare, env: { ...bare.env, cover: 1 } };
+  const offWhite = looks.flatMap((t) => GROUND[t].variants!.looks.filter((v) => groundColor(snowed, t, '#000000', 3, 4, 0, v) !== mix(groundColor(bare, t, '#000000', 3, 4, 0, v), SNOW, SNOW_HOLD[t])).map((v) => `${t}/${v.name}`));
+  const tally = new Map<string, number>(), walks = new Map<string, Set<string>>();
+  for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) {
+    const c = out.at(x, y), t = c.terrain;
+    if (c.solid !== 'none' || c.door !== 'none' || !GROUND[t].variants) continue;
+    const k = key(t, x, y);
+    tally.set(k, (tally.get(k) ?? 0) + 1);
+    if (!walks.has(k)) walks.set(k, new Set());
+    walks.get(k)!.add(`${out.passable(x, y)}, drag ${DRAG[t] ?? 1}, ${passableCell(c, { tide: 'high' })}`);
+  }
+  const unlike = looks.filter((t) => new Set(GROUND[t].variants!.looks.map((v) => [...walks.get(`${t}/${v.name}`) ?? []].sort().join('; '))).size > 1);
+  ok(!doing.length && !offWhite.length && !unlike.length && Object.keys(TERRAIN_COLORS).every((t) => t in GROUND),
+    `a variant is a picture alone: it carries nothing a ground does, whitens under snow by its ground's hold (SNOW_HOLD), is walked and dragged as its ground is and takes no colour of the automap's, which has one to a terrain (${looks.length} grounds with variants${doing.length ? `; doing: ${doing.join(', ')}` : ''}${offWhite.length ? `; off white: ${offWhite.join(', ')}` : ''}${unlike.length ? `; walked otherwise: ${unlike.join(', ')}` : ''})`);
+  // The same square gives the same variant from a map built again, asked in another order.
+  const again = new GameMap(PLAYED_DEFS.find((d) => d.id === OUTDOORS)!);
+  let asked = 0, moved = 0;
+  for (let y = out.height - 1; y >= 0; y -= 3) for (let x = out.width - 1; x >= 0; x -= 3) {
+    const t = out.at(x, y).terrain;
+    if (!GROUND[t].variants) continue;
+    asked++; if (key(t, x, y, again) !== key(t, x, y)) moved++;
+  }
+  ok(asked > 1000 && moved === 0, `the same square always gives the same variant, from a map built again and asked in another order (${asked} squares, ${moved} otherwise)`);
+  // In patches, never a chequer: the squares of a variant joined side by side, few alone; and each variant near its share.
+  const noisy = looks.filter((t) => 'scale' in GROUND[t].variants!), joined = new Set<number>(), patches = new Map<Terrain, { n: number; squares: number; alone: number }>();
+  const open = (x: number, y: number): string | undefined => (out.inBounds(x, y) && out.at(x, y).solid === 'none' && noisy.includes(out.at(x, y).terrain) ? key(out.at(x, y).terrain, x, y) : undefined);
+  for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) {
+    const k = open(x, y);
+    if (!k || joined.has(y * out.width + x)) continue;
+    const q = [[x, y]], p = patches.get(out.at(x, y).terrain) ?? { n: 0, squares: 0, alone: 0 };
+    let size = 0;
+    joined.add(y * out.width + x);
+    while (q.length) {
+      const [cx, cy] = q.pop()!;
+      size++;
+      for (const [nx, ny] of [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]]) if (!joined.has(ny * out.width + nx) && open(nx, ny) === k) { joined.add(ny * out.width + nx); q.push([nx, ny]); }
+    }
+    p.n++; p.squares += size; if (size === 1) p.alone++;
+    patches.set(out.at(x, y).terrain, p);
+  }
+  const least = Math.min(...noisy.map((t) => patches.get(t)!.squares / patches.get(t)!.n)), alone = Math.max(...noisy.map((t) => patches.get(t)!.alone / patches.get(t)!.squares));
+  const off = noisy.flatMap((t) => {
+    const vs = GROUND[t].variants!.looks, all = vs.reduce((n, v) => n + (v.share ?? 0), 0), seen = vs.reduce((n, v) => n + (tally.get(`${t}/${v.name}`) ?? 0), 0);
+    return vs.map((v) => ({ v: `${t}/${v.name}`, by: Math.abs((tally.get(`${t}/${v.name}`) ?? 0) / seen - (v.share ?? 0) / all) }));
+  }).sort((a, b) => b.by - a.by);
+  ok(least >= 6 && alone <= 0.05 && off[0].by <= 0.12, `variants lie in patches of several squares, never in a chequer, each near its share (${noisy.length} grounds over the outdoors; a patch ${least.toFixed(1)} squares at the least on average, at least 6; at most ${(alone * 100).toFixed(1)}% of a ground's squares alone in theirs, at most 5; the furthest from its share ${off[0].v}, ${Math.round(off[0].by * 100)} points, at most 12)`);
+  // The road: cobbled by every town's door and a track out past TOWN_STEPS from every way in.
+  const kinds = new Map(MAP_DEFS.map((d) => [d.id as string, d.kind]));
+  const roads: { x: number; y: number; k: string }[] = [];
+  for (let y = 0; y < out.height; y++) for (let x = 0; x < out.width; x++) if (out.at(x, y).terrain === 'road' && out.at(x, y).solid === 'none') roads.push({ x, y, k: key('road', x, y) });
+  const steps = (a: { x: number; y: number }, b: { x: number; y: number }): number => Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+  const towns = out.exits.filter((e) => kinds.get(e.to) === 'town'), tracked = towns.filter((e) => roads.some((r) => steps(r, e) <= 2 && r.k !== 'road/cobbles'));
+  const country = roads.filter((r) => out.exits.every((e) => steps(r, e) > TOWN_STEPS)), cobbled = roads.filter((r) => r.k === 'road/cobbles').length;
+  ok(towns.length >= 10 && !tracked.length && country.every((r) => r.k === 'road/track') && cobbled > 0, `the road is cobbled by the towns' doors and a track in the country (${towns.length} ways into a town, ${tracked.length} with a track by the door; ${cobbled} of ${roads.length} road squares cobbled, within ${TOWN_STEPS} steps of a way in set in a building or a wall)`);
+  // A track runs the same way in the world from every facing: the sides its plot opens, or a lone square's run, turned back from the facing.
+  const runs = (x: number, y: number, f: Facing): string => {
+    const pl = GROUND.road.plot!(out, x, y, f), sides = [(f + 2) & 3, f, (f + 3) & 3, (f + 1) & 3].filter((_, k) => !pl.hedge[k]);
+    return (sides.length ? sides : pl.away ? [f & 1, (f & 1) + 2] : [(f + 1) & 1, ((f + 1) & 1) + 2]).sort().join();
+  };
+  const turned = roads.filter((r) => new Set(([NORTH, EAST, SOUTH, WEST] as Facing[]).map((f) => runs(r.x, r.y, f))).size > 1);
+  ok(!turned.length, `a track runs the same way from every facing, along its road (${roads.length} road squares, ${turned.length} otherwise${turned.length ? `: ${turned.map((r) => `${r.x},${r.y}`).join(' ')}` : ''})`);
+  // Where a look's variants meet: the ground samples of the grass and the heather each show two or more of one ground's from the start.
+  const met = GROUND_SAMPLES.filter((d) => /grass|heather/.test(d.id)).map((d) => {
+    const m = new GameMap(d), names = new Set<string>();
+    for (let dd = 1; dd <= VIEW_DEPTH; dd++) for (let l = -VIEW_LATERAL; l <= VIEW_LATERAL; l++) {
+      const c = viewCell(d.start.x, d.start.y, d.start.facing, dd, l);
+      if (m.inBounds(c.x, c.y) && m.at(c.x, c.y).solid === 'none' && GROUND[m.at(c.x, c.y).terrain].variants) names.add(key(m.at(c.x, c.y).terrain, c.x, c.y, m));
+    }
+    const most = Math.max(...looks.map((t) => [...names].filter((n) => n.startsWith(`${t}/`)).length));
+    return { most, line: `${d.id}: ${[...names].join(', ')}` };
+  });
+  ok(met.length === 2 && met.every((s) => s.most >= 2), `the ground samples show where a look's variants meet (${met.map((s) => s.line).join('; ')})`);
+}
+
+/** The farthest a tongue reaches into its square: two fifths, so a square between two still shows its own ground. */
+const TONGUE_CAP = 0.4;
+
+/**
+ * Where two grounds meet (#1100): every edge of the outdoor maps and the ground samples, named from either of
+ * its squares, has the same tongue or none, and a square takes the same tongues from every facing; a pair
+ * with a rank-less ground, a square something stands on, two of one rank or a dungeon's floor has none, and
+ * every other pair has one, the higher ground's; a tongue reaches some fifth of the way in and never past
+ * TONGUE_CAP; where it runs on along its edge the next one starts as deep as it ends; and O7's snow spills
+ * into its heather.
+ */
+function edges(): void {
+  const maps = [...MAP_DEFS.filter((d) => d.kind === 'outdoor'), ...GROUND_SAMPLES].map((d) => new GameMap(d));
+  const rankAt = (m: GameMap, x: number, y: number): number => { const c = drawnAt(m, x, y); return c.solid === 'none' && c.door === 'none' ? GROUND[c.terrain].rank ?? 0 : 0; };
+  let pairs = 0, none = 0, given = 0, sum = 0, points = 0, most = 0, runs = 0, o7 = 0;
+  const odd: string[] = [], wrong: string[] = [], steps: string[] = [];
+  for (const m of maps) for (let y = 0; y < m.height; y++) for (let x = 0; x < m.width; x++) {
+    for (const [dx, dy] of [[1, 0], [0, 1]]) {
+      if (!m.inBounds(x + dx, y + dy)) continue;
+      pairs++;
+      const t = tongue(m, x, y, x + dx, y + dy), back = tongue(m, x + dx, y + dy, x, y), ra = rankAt(m, x, y), rb = rankAt(m, x + dx, y + dy);
+      if (JSON.stringify(t) !== JSON.stringify(back)) odd.push(`${m.id} ${x},${y}`);
+      const owed = ra && rb && ra !== rb ? (ra > rb ? `${x},${y}` : `${x + dx},${y + dy}`) : '';
+      if (!t) { none++; if (owed) wrong.push(`${m.id} ${x},${y} none`); continue; }
+      if (`${t.from.x},${t.from.y}` !== owed) wrong.push(`${m.id} ${x},${y} from ${t.from.x},${t.from.y}`);
+      given++; sum += t.reach.reduce((a, b) => a + b, 0); points += t.reach.length; most = Math.max(most, ...t.reach);
+      if (m.id === 'highmoor_o7' && t.terrain === 'snow' && m.at(t.into.x, t.into.y).terrain === 'heather') o7++;
+      // The next edge along, the square beyond the one it runs into: as deep where they meet, if it runs on.
+      const ax = t.from.y === t.into.y ? 0 : 1, ay = 1 - ax, next = tongue(m, t.into.x + ax, t.into.y + ay, t.from.x + ax, t.from.y + ay), last = t.reach.length - 1;
+      if (t.reach[last] && next?.terrain === t.terrain && next.into.x === t.into.x + ax && next.into.y === t.into.y + ay) {
+        runs++;
+        if (next.reach[0] !== t.reach[last]) steps.push(`${m.id} ${t.into.x},${t.into.y}`);
+      }
+    }
+    const seen = new Set([NORTH, EAST, SOUTH, WEST].map((f) => JSON.stringify(edgesOf(m, x, y, f)?.tongues ?? [])));
+    if (seen.size > 1) odd.push(`${m.id} ${x},${y} by facing`);
+  }
+  // Underground the floor is the palette's, and nothing spills over it.
+  const cellar = new GameMap({ id: 'fx_cellar_edges', name: 'Cellar', kind: 'dungeon', start: { x: 1, y: 1, facing: NORTH }, rows: ['#####', '#,*_#', '#hs:#', '#####'] });
+  const under = [[1, 1, 2, 1], [2, 1, 3, 1], [1, 2, 2, 2], [1, 1, 1, 2], [2, 1, 2, 2]].filter(([ax, ay, bx, by]) => tongue(cellar, ax, ay, bx, by)).length;
+  const mean = sum / points;
+  ok(!odd.length && !wrong.length && !under, `an edge's tongue is the same from both of its squares and a square's from every facing; a pair with a rank-less ground, a square something stands on or two of a rank has none, nor a dungeon's floor, and each other pair the higher's (${pairs} edges of ${maps.length} maps, ${given} tongues, ${none} none${odd.length ? `; not the same: ${odd.slice(0, 4).join(', ')}` : ''}${wrong.length ? `; wrong: ${wrong.slice(0, 4).join(', ')}` : ''}${under ? `; ${under} underground` : ''})`);
+  ok(mean >= 0.12 && mean <= 0.24 && most <= TONGUE_CAP && runs > 0 && !steps.length && o7 >= 60, `a tongue reaches some fifth into its square, never past ${TONGUE_CAP}, and runs on into the next edge's as deep where they meet; O7's snow spills into its heather (on average ${mean.toFixed(3)}, at most ${most.toFixed(3)}; ${runs} runs on${steps.length ? `, a step at ${steps.slice(0, 4).join(', ')}` : ''}; ${o7} tongues of snow on O7's heather)`);
+  // The ranks themselves, which the lines above read: the seven grounds of the open land, highest first, and no other
+  // look one, so the road, water, the chasm, fields and hills take none and give none.
+  const ranks = (Object.keys(GROUND) as Terrain[]).filter((t) => GROUND[t].rank).sort((a, b) => (GROUND[b].rank ?? 0) - (GROUND[a].rank ?? 0));
+  ok(ranks.join() === 'snow,heather,steppe,grass,sand,dirt,ash', `seven grounds have a rank, snow the highest, then heather, steppe, grass, sand, dirt and ash, and no other look has one, so the road, water, the chasm, fields and hills take none and give none (${ranks.join(', ')})`);
 }

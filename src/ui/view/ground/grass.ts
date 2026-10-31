@@ -1,10 +1,13 @@
 // The grass's look (#1030): the grass of the year, its tiles varying more than most, tufts on it and a
-// flower or two from Sowing into Leafturn.
+// flower or two from Sowing into Leafturn; and its variants across the land (#1101): the turf, a meadow
+// in flower through the summer, the rough in tussocks and bracken, russet from Leafturn.
 
-import { shade } from '../../../lib/art/palettes.ts';
+import { shade, mix } from '../../../lib/art/palettes.ts';
 import { hash } from '../../paint/brush.ts';
 import { fog, grassColor } from '../common.ts';
+import { rampColor } from '../model.ts';
 import type { Paint } from '../common.ts';
+import type { Ramp } from '../model.ts';
 import type { GroundLook, Mark } from './look.ts';
 
 /** How many flowers are out: none before Sowing or after Leafturn. */
@@ -27,5 +30,45 @@ function mark(p: Paint, m: Mark): void {
   ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 1.5 * sc, y - 4 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 1 * sc, y - 4.5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 2.5 * sc, y - 3 * sc); ctx.stroke();
 }
 
+/** Bracken through the year: dead and brown through the winter, green fronds from late Sowing, russet from Leafturn. */
+const BRACKEN: Ramp = [[0, '#7a5232'], [20, '#7a5a34'], [28, '#7a9a2a'], [58, '#7a9a2a'], [66, '#a0622a'], [74, '#a8542a'], [100, '#82502e'], [120, '#7a5232']];
+
+// The variants' marks stand where the turf's do and within a tuft's reach of the spot, so the grass lies as
+// flat as it did (the smoke's tones and edges across the square ahead): they differ in colour and in kind.
+
+/** The meadow's: three tufts, then flowers through the summer where the turf has its other tufts and its flowers. */
+function meadow(p: Paint, m: Mark): void {
+  const { ctx, env } = p, { i, x, y, sc, seed, d } = m;
+  if (i < 3) { mark(p, m); return; }
+  if (hash(seed, 43, i) > 0.85 * flowering(env.day) || env.cover > 0.1) return;
+  ctx.fillStyle = fog(p, ['#f0e060', '#ffffff', '#e05a6a', '#c080e0', '#ffffff'][Math.floor(hash(seed, 44, i) * 5)], d);
+  ctx.fillRect(Math.round(x), Math.round(y - 2 * sc), Math.max(1, Math.round(2 * sc)), Math.max(1, Math.round(2 * sc)));
+}
+
+/** The rough's: the turf's tufts coarse, dark blades and dead straw by turns; no flowers. */
+function coarse(p: Paint, m: Mark): void {
+  const { ctx, env } = p, { i, x, y, sc, base, d } = m;
+  if (i >= 5 || env.cover > 0.55) return;
+  ctx.strokeStyle = fog(p, env.cover > 0.05 ? shade(base, 0.8) : i % 2 ? mix(base, '#c8bc78', 0.5) : shade(base, 0.68), d); ctx.lineWidth = Math.max(1, sc);
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x - 1.5 * sc, y - 4 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 1 * sc, y - 4.5 * sc); ctx.moveTo(x, y); ctx.lineTo(x + 2.5 * sc, y - 3 * sc); ctx.stroke();
+}
+
+/** The bracken's: a frond arching over to the right, a leaflet down each side, green or russet by the year. */
+function frond(p: Paint, m: Mark): void {
+  const { ctx, env } = p, { i, x, y, sc, d } = m;
+  if (i >= 5 || env.cover > 0.55) return;
+  const c = rampColor(BRACKEN, env.day);
+  ctx.strokeStyle = fog(p, i % 2 ? c : shade(c, 0.8), d); ctx.lineWidth = Math.max(1, sc);
+  ctx.beginPath(); ctx.moveTo(x, y); ctx.quadraticCurveTo(x + 0.4 * sc, y - 4.5 * sc, x + 2.5 * sc, y - 3 * sc);
+  ctx.moveTo(x + 0.8 * sc, y - 3.4 * sc); ctx.lineTo(x - 0.8 * sc, y - 2 * sc); ctx.moveTo(x + 1.6 * sc, y - 3.4 * sc); ctx.lineTo(x + 2 * sc, y - 1.6 * sc); ctx.stroke();
+}
+
 export const grass: GroundLook = { color: grassColor, drift: { toward: ['#24702a', '#bcae5e'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark },
-  scatter: ['bush', 'boulder', 'thistle', 'molehill'] };
+  scatter: ['bush', 'boulder', 'thistle', 'molehill'], rank: 4,
+  // Turf, the meadow lighter and flowering, the rough darker and coarse, bracken by the year.
+  variants: { scale: 5, looks: [
+    { name: 'meadow', share: 0.22, shift: { toward: '#b8c860', by: 0.5 }, lies: { marks: 7, mark: meadow } },
+    { name: 'turf', share: 0.4 },
+    { name: 'rough', share: 0.22, shift: { toward: '#2e4022', by: 0.5 }, lies: { marks: 5, mark: coarse } },
+    { name: 'bracken', share: 0.16, shift: { toward: (day) => rampColor(BRACKEN, day), by: 0.7 }, lies: { marks: 5, mark: frond } },
+  ] } };

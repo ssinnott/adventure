@@ -2,7 +2,7 @@
 // answers to the questions the viewport asks of its ground, each once, and the shapes its painters take.
 // view/ground/index.ts holds the looks in `GROUND`, a record over every terrain.
 
-import type { Trees } from '../../../content/area.ts';
+import type { AreaLook, Trees } from '../../../content/area.ts';
 import type { GameMap } from '../../../game/map.ts';
 import type { Terrain, Solid } from '../../../game/mapdef.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -11,7 +11,8 @@ import type { Prop } from '../model.ts';
 
 /**
  * A farm square as the view sees it: its field's crop, whether the rows run away from the eye or
- * across it, and where a hedge parts it from the next field, near, far, left and right.
+ * across it, and where a hedge parts it from the next field, near, far, left and right. A road's is
+ * the same way round: its verge, where the road does not go on (#1101).
  */
 export interface Plot { crop: number; away: boolean; hedge: readonly [boolean, boolean, boolean, boolean]; }
 /** Where ground stands before a drop and beyond it: its lit lip and its far wall. */
@@ -77,8 +78,8 @@ export interface GroundLook {
   puddles?: boolean;
   /** A field square's plot, by its field and the fields beside it. */
   plot?: (map: GameMap, x: number, y: number, f: Facing) => Plot;
-  /** A hill: the mound it rises in over its square once the row's floors are down, running on into the hill beside it. */
-  mound?: (p: Paint, base: string, d: number, l: number, seed: number, hillL: boolean, hillR: boolean) => void;
+  /** A hill: the mound it rises in over its square once the row's floors are down, running on into the hill beside it, of its region's kind (#1105). */
+  mound?: (p: Paint, base: string, d: number, l: number, seed: number, hillL: boolean, hillR: boolean, kind?: AreaLook['hills']) => void;
   /** The trees at the sides of a woodland square. */
   sides?: Sides;
   /**
@@ -86,6 +87,30 @@ export interface GroundLook {
    * one at most to a square, as view/scatter.ts places them. A variant of the ground may stand others.
    */
   scatter?: readonly Prop[];
+  /**
+   * Its rank where it meets another ground on open ground (#1100, view/ground/edges.ts): a tongue of it spills
+   * into a lower one beside it, snow the highest, then heather, steppe, grass, sand, dirt and ash. A look with
+   * none takes none and gives none.
+   */
+  rank?: number;
   /** The billboard it draws, by what stands on it, in place of that solid's own: a glass tree on crystal, a mountain by its rock. */
   boards?: Partial<Record<Solid, (p: Paint, b: Board) => void>>;
+  /**
+   * Its looks across the land (#1101), one to a square by `variantAt`: in bands of the land's noise in their
+   * order, each band its look's share, in patches some `scale` squares across; or by its `pick` of the map
+   * and the square (the road's by the towns).
+   */
+  variants?: { looks: readonly Variant[] } & ({ scale: number } | { pick: (map: GameMap, x: number, y: number) => number });
+}
+
+/**
+ * One of a ground's looks (#1101): its name, its share of the ground where the land's noise chooses, how its
+ * colour is shifted from the ground's (as far as the ground's colour on `DRIFT_DAY` goes `by` of the way toward
+ * `toward`, kept the year round, or where `toward` is a colour by the day the day's colour `by` of the way
+ * toward it; then drifted, wetted and snowed on as the ground's is) and what it lays and what lies on it in
+ * place of the ground's; the ground's own where it gives none. Only a picture: the way, the snow it holds and the automap's colour are its ground's.
+ */
+export interface Variant {
+  name: string; share?: number;
+  shift?: { toward: string | ((day: number) => string); by: number }; lays?: GroundLook['lays']; lies?: GroundLook['lies'];
 }
