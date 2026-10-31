@@ -12,6 +12,7 @@ import { fog, unit, unitIn, floorPt, grassColor, SNOW } from '../common.ts';
 import type { Paint } from '../common.ts';
 import type { AreaLook } from '../../../content/area.ts';
 import type { GroundLook } from './look.ts';
+import { sward } from './near.ts';
 
 /** Hill grass: the grass of the year, thinner and drier on the rise. */
 function hillColor(day: number): string { return mix(grassColor(day), '#8a8450', 0.3); }
@@ -256,4 +257,5 @@ function drawHill(p: Paint, base: string, d: number, l: number, seed: number, hi
   if (kind === 'tors' && hillMarks('tors', seed)) tor(p, s, d, seed);
 }
 
-export const hills: GroundLook = { color: hillColor, drift: { toward: ['#3a7232', '#ac9658'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, mound: drawHill };
+// Near to (#1102, near.ts): the grass's sward on the hill's floor, where the company stands on it; the hill ahead is its mound.
+export const hills: GroundLook = { color: hillColor, drift: { toward: ['#3a7232', '#ac9658'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, mound: drawHill, near: sward };
