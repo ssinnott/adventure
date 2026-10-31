@@ -321,7 +321,8 @@ country, band 26 to 28.
   *Cartographer, Pathfinder, Mountaineer, Swimmer, Linguist, Merchant, Lockpick, Danger Sense,
   Perception, Arms Master, Spirit Sense, Navigator.* Built with #538: Linguist, the first, a list on
   each member that the sheet shows, learnt for 1,000 gold at any hall of the Lanterns or from a
-  person who teaches it, by a company that is a Lantern; the dwarves are born to it, and a copybook
+  person who teaches it, by a company that is a Lantern; the dwarves and the Bards are born to it
+  (the Bards by the owner's word, 30 October 2026, #1116, the class's second trait), and a copybook
   carried does its work (§9, Act III). Built with #805: Mountaineer and Swimmer, learnt as Linguist is,
   at the Wardens' Drillyard and at the Cartographers' halls in Saltmouth and Cinderport. A company
   with a Mountaineer standing climbs mountain and cliff; one with a Swimmer standing swims deep water.

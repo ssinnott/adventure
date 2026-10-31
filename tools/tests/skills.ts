@@ -1,18 +1,18 @@
-// The secondary skills (#538, #805, #856, #857; DESIGN §5, §8): a list on each member, all twelve
-// built. Each is one of DESIGN §5's twelve and taught by the guild DESIGN §8's table gives it; every
-// hall of that guild teaches its guild's three, to the guild's members, and a person who teaches one
-// teaches it too; a stranger to the guild is told so; a member learns a skill once, for its price; a
-// people or a class may be born to one (the dwarves to Linguist, the elves and the gnomes to
-// Perception, the Rangers to Pathfinder, the Thieves to Lockpick), and the hall will not sell it them;
-// the sheet lists what a member has. Each hall's own menu, two levels deep, is walked through a Game
-// as a player meets it, and every row of it fits the panel. Each skill does its work with it and not
-// without, for a company of each people: Mountaineer and Swimmer climb and swim; Perception finds
-// surely, and a square further; Spirit Sense marks the dead through a wall and Danger Sense an aware
-// group behind a hill; with an Arms Master standing the company comes before the monsters in every
-// round, a Windwalker in its speed's place among them, whose felling blow carries on; a Cartographer,
-// or a chart, maps a square further; a Lockpick, or a set of picks, opens a
-// locked chest, which a key opens too and nothing else. Pathfinder's pace and Lockpick's doors are
-// tools/tests/movement.ts's, Merchant's price tools/tests/shops.ts's and Navigator's fare
+// The secondary skills (#538, #805, #856, #857, #1116; DESIGN §5, §8): a list on each member, all
+// twelve built. Each is one of DESIGN §5's twelve and taught by the guild DESIGN §8's table gives it;
+// every hall of that guild teaches its guild's three, to the guild's members, and a person who teaches
+// one teaches it too; a stranger to the guild is told so; a member learns a skill once, for its price;
+// a people or a class may be born to one (the dwarves and the Bards to Linguist, the elves and the
+// gnomes to Perception, the Rangers to Pathfinder, the Thieves to Lockpick), and the hall will not
+// sell it them; the sheet lists what a member has. Each hall's own menu, two levels deep, is walked
+// through a Game as a player meets it, and every row of it fits the panel. Each skill does its work
+// with it and not without, for a company of each people: Mountaineer and Swimmer climb and swim;
+// Perception finds surely, and a square further; Spirit Sense marks the dead through a wall and
+// Danger Sense an aware group behind a hill; with an Arms Master standing the company comes before
+// the monsters in every round, a Windwalker in its speed's place among them, whose felling blow
+// carries on; a Cartographer, or a chart, maps a square further; a Lockpick, or a set of picks,
+// opens a locked chest, which a key opens too and nothing else. Pathfinder's pace and Lockpick's
+// doors are tools/tests/movement.ts's, Merchant's price tools/tests/shops.ts's and Navigator's fare
 // tools/tests/passage.ts's. A save keeps a member's skills, and one from before them has none.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
@@ -75,10 +75,11 @@ const BUILT: Record<GuildId, readonly SkillId[]> = {
 };
 
 /**
- * Who is born to each, by people or class: the dwarves to Linguist, the elves and the gnomes to
- * Perception (#856), the Rangers to Pathfinder and the Thieves to Lockpick (#857); nobody to the rest.
+ * Who is born to each, by people or class: the dwarves and the Bards (#1116) to Linguist, the elves
+ * and the gnomes to Perception (#856), the Rangers to Pathfinder and the Thieves to Lockpick (#857);
+ * nobody to the rest. A people comes before a class.
  */
-const BORN: Partial<Record<SkillId, readonly string[]>> = { linguist: ['dwarf'], perception: ['elf', 'gnome'], pathfinder: ['ranger'], lockpick: ['thief'] };
+const BORN: Partial<Record<SkillId, readonly string[]>> = { linguist: ['dwarf', 'bard'], perception: ['elf', 'gnome'], pathfinder: ['ranger'], lockpick: ['thief'] };
 
 /** The texts of #856's four, as the halls' rows note them. */
 const TEXTS: Partial<Record<SkillId, string>> = {
@@ -109,7 +110,7 @@ export function skills(): void {
     `each skill built is one of the twelve, its guild's, at ${SKILL_PRICE} gold: ${built.map((s) => `${s.name} (${s.guild})`).join(', ')}${astray.length ? ' -> astray: ' + astray.map((s) => s.name).join(', ') : ''}`);
   const born = built.map((s) => `${s.name} ${[...(s.races ?? []), ...(s.classes ?? [])].join('+') || 'none'}`);
   const misborn = built.filter((s) => [...(s.races ?? []), ...(s.classes ?? [])].join() !== (BORN[s.id] ?? []).join());
-  ok(!misborn.length, `the dwarves are born to Linguist, the elves and the gnomes to Perception, the Rangers to Pathfinder and the Thieves to Lockpick, and nobody to the others (${born.join(', ')})`);
+  ok(!misborn.length, `the dwarves and the Bards are born to Linguist, the elves and the gnomes to Perception, the Rangers to Pathfinder and the Thieves to Lockpick, and nobody to the others (${born.join(', ')})`);
   ok(Object.values(BUILT).every((ids) => ids.length === 3), 'every guild teaches its three: all twelve are built');
   ok(Object.values(TAUGHT).flat().length === 12 && new Set(Object.values(TAUGHT).flat()).size === 12, 'the twelve, three to a guild');
   // The rows of #805: the Wardens' Mountaineer and the Cartographers' Swimmer (the Tidefolk swim by their people).
@@ -176,16 +177,19 @@ export function skills(): void {
     });
     ok(answers.every((a) => a.fine), `an elf and a gnome are born to Perception, the sheet lists it and the hall will not sell it; the other peoples buy it (${answers.map((a) => a.said).join(', ')})`);
   }
-  // The Rangers are born to Pathfinder and the Thieves to Lockpick (#857): a member of the class has it
-  // unlearnt, the sheet lists it and the hall will not sell it; a member of every other class buys it.
-  for (const [id, cls] of [['pathfinder', 'ranger'], ['lockpick', 'thief']] as const) {
+  // The Rangers are born to Pathfinder and the Thieves to Lockpick (#857), the Bards to Linguist
+  // (#1116): a member of the class has it unlearnt and does its work (`skilled`, which the world asks:
+  // a bard reads Kiln-script), the sheet lists it and the hall will not sell it; a member of every
+  // other class buys it.
+  const CLASSES_BORN = { ranger: 'Rangers', thief: 'Thieves', bard: 'Bards' } as const;
+  for (const [id, cls] of [['pathfinder', 'ranger'], ['lockpick', 'thief'], ['linguist', 'bard']] as const) {
     const answers = KINDS_OF.map((k) => {
       const party = company((p) => { for (const m of p.members) { m.cls = k; m.race = 'human'; } p.flags[rankFlag(SKILLS[id].guild)] = 1; p.gold = 5000; }), c = party.members[0];
-      const isBorn = k === cls, had = hasSkill(c, id), listed = skillNames(c).includes(SKILLS[id].name), bar = skillBar(id, c, party), taught = learn(TABLES, id, party, 0).taught;
-      const fine = had === isBorn && listed === isBorn && bar === (isBorn ? 'born to it' : '') && taught === !isBorn && hasSkill(c, id) && party.gold === (isBorn ? 5000 : 5000 - SKILL_PRICE);
+      const isBorn = k === cls, had = hasSkill(c, id), does = skilled(TABLES.items, party, id) === (isBorn ? c : undefined), listed = skillNames(c).includes(SKILLS[id].name), bar = skillBar(id, c, party), taught = learn(TABLES, id, party, 0).taught;
+      const fine = had === isBorn && does && listed === isBorn && bar === (isBorn ? 'born to it' : '') && taught === !isBorn && hasSkill(c, id) && party.gold === (isBorn ? 5000 : 5000 - SKILL_PRICE);
       return { fine, said: `${k}: ${bar || 'sold'}${fine ? '' : ' WRONG'}` };
     });
-    ok(answers.every((a) => a.fine), `the ${cls === 'thief' ? 'Thieves' : 'Rangers'} are born to ${SKILLS[id].name}, the sheet lists it and the hall will not sell it; every other class buys it (${answers.map((a) => a.said).join(', ')})`);
+    ok(answers.every((a) => a.fine), `the ${CLASSES_BORN[cls]} are born to ${SKILLS[id].name} and do its work, the sheet lists it and the hall will not sell it; every other class buys it (${answers.map((a) => a.said).join(', ')})`);
   }
   // The others, as Linguist: a company of another guild is taught nothing; a company of the guild is
   // offered the skill for each of the six but one born to it, and a member learns it for the price, once.
