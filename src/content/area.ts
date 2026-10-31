@@ -75,6 +75,8 @@ export interface Area {
 export interface AreaLook {
   /** The air over it: today's sky where absent. */
   air?: Air;
+  /** The kind of its hills (#1105, ui/view/ground/hills.ts): today's rolling grass where absent. */
+  hills?: 'downs' | 'tors' | 'slag' | 'cinder' | 'scree';
 }
 
 /**

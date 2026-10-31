@@ -270,13 +270,15 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       drawFloor(p, cell.terrain, d, l, seed, cellPal.floor, plot, rims);
       if (map.kind === 'dungeon') drawCeiling(p, cellPal, d, l, seed, f);
     }
-    // A hill's mound, its look's, over the row's floors.
+    // A hill's mound, its look's, over the row's floors, of the kind its square's region names (#1105):
+    // the region as `regionOf` finds it, but none in the void past the zones, whose hills are today's.
     if (d > 0) for (const l of order) {
       const c = cellAt(px, py, f, d, l);
       const t = drawn(c.x, c.y).terrain, mound = GROUND[t].mound;
       if (!mound || isSolidWall(drawn(c.x, c.y)) || behind(d, l)) continue;
       const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return !!GROUND[n.terrain].mound && !isSolidWall(n) && !behind(d, l + dl); };
-      mound(p, groundColor(p, t, map.paletteAt(c.x, c.y).floor), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1));
+      const region = map.zoneAt(c.x, c.y)?.region ?? map.def.region;
+      mound(p, groundColor(p, t, map.paletteAt(c.x, c.y).floor), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1), region && world.tables.looks[region].hills);
     }
     for (const l of order) {
       if (behind(d, l)) continue;

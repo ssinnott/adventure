@@ -5,6 +5,7 @@
 import type { GameMap } from '../../../game/map.ts';
 import type { Terrain, Solid } from '../../../game/mapdef.ts';
 import type { Facing } from '../../../game/types.ts';
+import type { AreaLook } from '../../../content/area.ts';
 import type { Env, Paint } from '../common.ts';
 
 /**
@@ -67,8 +68,8 @@ export interface GroundLook {
   puddles?: boolean;
   /** A field square's plot, by its field and the fields beside it. */
   plot?: (map: GameMap, x: number, y: number, f: Facing) => Plot;
-  /** A hill: the mound it rises in over its square once the row's floors are down, running on into the hill beside it. */
-  mound?: (p: Paint, base: string, d: number, l: number, seed: number, hillL: boolean, hillR: boolean) => void;
+  /** A hill: the mound it rises in over its square once the row's floors are down, running on into the hill beside it, of its region's kind (#1105). */
+  mound?: (p: Paint, base: string, d: number, l: number, seed: number, hillL: boolean, hillR: boolean, kind?: AreaLook['hills']) => void;
   /** The trees at the sides of a woodland square. */
   sides?: Sides;
   /** The billboard it draws, by what stands on it, in place of that solid's own: a glass tree on crystal, a mountain by its rock. */
