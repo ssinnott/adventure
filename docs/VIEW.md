@@ -57,6 +57,11 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   `Tables.looks`: its `air` casts the sky, the haze and the sun toward its colours by day, a fifth of
   the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins
   (`airOf`, `src/ui/view/sky.ts`). With none, as over the Foreland and Thornmark, the sky is as it was.
+- **A region's tints** (#1099): its look's `tints` casts each ground it names toward a colour of its
+  own, a quarter of the way at most, before the drift, rain and snow (`groundColor`): grass, hills,
+  woods and pinewoods in ten regions, and the delta's swamp. A square takes its zone's, fading over
+  two squares either side of a zone's border or edge; the Foreland, Thornmark and the country past
+  the zones have none and the automap's colours are never tinted (`tools/tests/tints.ts`).
 
 - **The horizon**, `src/ui/view/horizon.ts` (#1095): past the fourth square the land is cast from the
   world's grid where the company stands, a ray to each column out to the rim or `REACH` (240 squares).

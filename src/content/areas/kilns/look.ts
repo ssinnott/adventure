@@ -2,6 +2,8 @@
 import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
+  // Its grass, hills and woods a sooty olive.
+  tints: { grass: { toward: '#302410', by: 0.25 }, hills: { toward: '#302410', by: 0.25 }, woods: { toward: '#302410', by: 0.25 }, pine: { toward: '#302410', by: 0.25 } },
   // Smoke from the kilns lies along the foot of the sky.
   air: { strength: 0.2, foot: '#201000', haze: '#201810' },
   // Slag heaps from the kilns, some still smoking.
