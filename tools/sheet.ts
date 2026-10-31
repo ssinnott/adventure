@@ -135,7 +135,7 @@ function planMap(id: string): MapPlan {
   }
   // Each landmark from afar, where the views near it cannot show it (within four squares a mountain's square shows its own drawing).
   for (const l of m.landmarks) {
-    const v = afar(l, def.start, (x, y) => open(m, x, y));
+    const v = afar(l, def.start, (x, y) => open(m, x, y), (x, y) => m.at(x, y).solid === 'mountain');
     if (v) views.push({ ...v, label: `the ${l.kind} from afar, ${v.x},${v.y} facing ${FACING_NAME[v.facing]}` });
   }
   // Its crop of the world map, in world cells, with `mark` ringed: outdoors, the zone with a

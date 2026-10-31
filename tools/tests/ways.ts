@@ -46,14 +46,17 @@ export function ways(): void {
     ok(!gated(id) && is(got, SHIP), `${id} keeps the seller for its entrance, world ${show(SHIP)}${gated(id) ? ' -> a gate leads in' : is(got, SHIP) ? '' : ` -> got ${show(got)}`}`);
   }
   // A landmark from afar (the sheet's far view): a square from which it lies 8 to 10 ahead along a facing, in its cone,
-  // the four squares ahead of it open too; the most nearly straight on, then nearest the start, then the first found.
+  // the viewer's square and the four on the line to it open; the fewest squares that hide it farther on (its own foot
+  // aside), then the most nearly straight on, then nearest the start, then the first found.
   {
     const field = (...shut: string[]) => (x: number, y: number): boolean => x >= 0 && y >= 0 && x <= 20 && y <= 20 && !shut.includes(`${x},${y}`);
-    const block = (x0: number, x1: number) => (x: number, y: number): boolean => x >= x0 && x <= x1 && y >= 14 && y <= 20;
-    const l = { x: 10, y: 10 }, start = { x: 10, y: 20 }, at = (v: ReturnType<typeof afar>): string => (v ? `${v.x},${v.y} facing ${v.facing}` : 'none');
-    const plain = afar(l, start, field()), shut = afar(l, start, field('10,18')), far = afar(l, start, field('10,15'));
-    const aside = afar(l, { x: 16, y: 20 }, block(12, 16)), wide = afar(l, start, block(16, 17)), pit = afar(l, start, () => false);
-    ok(at(plain) === '10,20 facing 0' && at(shut) === '2,10 facing 1' && at(far) === '10,20 facing 0' && at(aside) === '12,20 facing 0' && wide === null && pit === null,
-      `a landmark is seen from the square 8 to 10 back from it, in the facing's cone, the four squares ahead open: straight on from the road's end; the first of the equals (west) when a wall shuts that way, though not when a wall stands past the four squares; off to one side, 2 over, when only that is open; not past half the way ahead to a side; and from nowhere in a pit (${at(plain)}; ${at(shut)}; ${at(far)}; ${at(aside)}; ${at(wide)}; ${at(pit)})`);
+    const south = (x0: number, x1: number, ...shut: string[]) => (x: number, y: number): boolean => x >= x0 && x <= x1 && y >= 14 && y <= 20 && !shut.includes(`${x},${y}`);
+    const range = (...at: string[]) => (x: number, y: number): boolean => at.includes(`${x},${y}`);
+    const l = { x: 10, y: 10 }, start = { x: 10, y: 20 }, none = range(), at = (v: ReturnType<typeof afar>): string => (v ? `${v.x},${v.y} facing ${v.facing}` : 'none');
+    const plain = afar(l, start, field(), none), shut = afar(l, start, field('10,18'), none), far = afar(l, start, field('10,15'), none);
+    const aside = afar(l, start, south(5, 16, '10,19', '10,18', '10,17'), none), wide = afar(l, start, south(16, 17), none), pit = afar(l, start, () => false, none);
+    const hid = afar(l, start, field(), range('10,13')), foot = afar(l, start, field(), range('10,11')), least = afar(l, start, south(9, 11), range('10,14', '10,13'));
+    ok(at(plain) === '10,20 facing 0' && at(shut) === '2,10 facing 1' && at(far) === '10,20 facing 0' && at(aside) === '11,20 facing 0' && wide === null && pit === null && at(hid) === '2,10 facing 1' && at(foot) === '10,20 facing 0' && at(least) === '10,18 facing 0',
+      `a landmark is seen from the square 8 to 10 back from it, in the facing's cone, the four squares on the line open: straight on from the road's end; the first of the equals (west) when a wall shuts that way, though not when a wall stands past the four squares; one over when only that is open; not past half the way ahead to a side; from nowhere in a pit; the fewest squares that hide it on the line, though its own foot, the square before it, hides nothing: from another way when a range stands on this one, and from the nearer square of three when only that has one range between instead of two (${[plain, shut, far, aside, wide, pit, hid, foot, least].map(at).join('; ')})`);
   }
 }
