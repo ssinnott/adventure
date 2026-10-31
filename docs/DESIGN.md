@@ -254,8 +254,8 @@ adds armour: in the harness, armour that keeps up makes monsters hit harder, and
 the Monk, have feats: a turn's action of their own, paid in stamina. Stamina is built in a fight and
 gone at its end, so it plays apart from spell points, which a day spends and a rest restores.
 Decided by the owner, 30 October 2026 (#1113); the rules and the feats below are that issue's
-design, the owner's to settle and to overturn. Built off (`FEATS_ON`, game/combat/feats.ts) until
-#1117 turns them on: the knight's four so far.
+design, the owner's to settle and to overturn. Built off (`FEATS_ON`, game/party/tables.ts; the
+frame, game/combat/feats.ts) until #1117 turns them on: the knight's four so far.
 
 - **Building it.** A member of the four starts a fight with none and takes 1 for each blow of its
   own that lands and 1 for each that lands on it (a sweep, a breath or a spell is no blow), 6 at

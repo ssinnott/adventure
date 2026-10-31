@@ -3,13 +3,14 @@
 // `auto` on, the game's bot (game/bot.ts) plays the company's turns on a timer of its own, by what the
 // fight has shown it, and presses Space at the end; any key takes the fight back. With the feats on
 // (#1113) a knight's, barbarian's, thief's or monk's Cast reads Feat, its list the feats and then any
-// artifact's spell it bears, and its card shows its stamina where a caster's shows spell points.
+// artifact's spell it bears, and its card shows its stamina where a caster's shows spell points. Under
+// the list the feat the cursor is on says what it does, and Space on a feat barred says why.
 import type { Host, Screen } from './screen.ts';
 import type { Action } from './actions.ts';
 import { is } from './actions.ts';
 import { ListMenu } from './menu.ts';
-import { drawText } from '../lib/engine/text.ts';
-import { panel, menu } from './draw.ts';
+import { drawText, lineHeight } from '../lib/engine/text.ts';
+import { panel, menu, wrap } from './draw.ts';
 import { LAYOUT, drawPartyCards, drawStatus, drawPurse, drawViewportFrame, cardRect, logTail, COMBAT_LOG_LINES } from './frame.ts';
 import { drawMonsterSprite } from './sprites.ts';
 import { drawViewport, drawWeather } from './viewport.ts';
@@ -17,6 +18,7 @@ import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, meetCalled, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
 import type { CombatState, PartyAction, TurnRef } from '../game/combat.ts';
 import { FEATS, aimable, builds, featsOn, featsKnown, featsOf, staminaOf } from '../game/combat/feats.ts';
+import type { FeatDef } from '../game/combat/feats.ts';
 import { botTurn, asSeen, PLAYED } from '../game/bot.ts';
 import { spell, ELEMENTS } from '../game/spells.ts';
 import type { Element } from '../game/spells.ts';
@@ -65,6 +67,24 @@ export function commandRows(tables: Tables, party: Party, s: CombatState, who: n
 export function featRows(tables: Tables, party: Party, s: CombatState, who: number): { label: string; disabled: boolean }[] {
   const ready = featsOf(s, party, who);
   return [...featsKnown(party.members[who]).map((f) => ({ label: `${f.name} (${f.cost})`, disabled: !ready.includes(f) })), ...castRows(tables, party, party.members[who])];
+}
+/** What the hint under the command menu says of the back row, and Space on a blow's feat barred by it says again (`featBar`). */
+const BACK_ROW = 'Back row: needs a ranged weapon';
+/** The lines the hint under the Feat list may take: the longest feat's words (Rally's) wrap to three at the panel's width. */
+const HINT_LINES = 3;
+/** The hint under the Feat list for the row the cursor is on: what its feat does (`FeatDef.text`), wrapped to the panel, three lines at most; none on an artifact's spell. */
+export function featHint(c: Character, row: number): string[] {
+  const f = featsKnown(c)[row];
+  return f ? wrap(f.text, LAYOUT.map.w - 16).slice(0, HINT_LINES) : [];
+}
+/**
+ * Why member `who` may not use feat `f` now, in the words Space on it says: a blow's from a row it cannot strike
+ * from, as the command menu says of Attack there, else too little stamina; none where it may, or where only a rule
+ * of its aim bars it (`FeatDef.aims`), as the command menu's barred rows are silent.
+ */
+export function featBar(tables: Tables, party: Party, s: CombatState, who: number, f: FeatDef): string {
+  if (f.target === 'blow' && !canAttackFromRow(tables.items, party.members[who], who)) return `${BACK_ROW}.`;
+  return (s.stamina?.[who] ?? 0) < f.cost ? 'Not enough stamina.' : '';
 }
 
 export class CombatScreen implements Screen {
@@ -222,6 +242,10 @@ export class CombatScreen implements Screen {
           this.pendingFeat = f.id;
           if (f.target === 'none') act({ type: 'feat', featId: f.id, target: 0 });
           else { this.mode = 'featTarget'; this.sub = 0; }
+        } else if (is(a, 'interact') && known[this.sub]) {
+          // Space on a feat barred (the list took it for no choice) says why, as the spell list does for a spell it cannot cast.
+          const why = featBar(g.tables, g.party, s, who, known[this.sub]);
+          if (why) g.say(why);
         }
         break;
       }
@@ -342,7 +366,7 @@ export class CombatScreen implements Screen {
       if (this.mode === 'menu') {
         const opts = this.options(g, t.i);
         menu(ctx, opts.map((o) => o.label), r.x + 8, y, this.sel, { disabled: opts.map((o) => o.disabled) });
-        if (!canAttackFromRow(g.tables.items, c, t.i)) drawText(ctx, 'BACK ROW: NEEDS A RANGED WEAPON', r.x + 8, r.y + r.h - 24, { size: 1, color: TEXT_DIM });
+        if (!canAttackFromRow(g.tables.items, c, t.i)) drawText(ctx, BACK_ROW, r.x + 8, r.y + r.h - 24, { size: 1, color: TEXT_DIM });
       } else if (this.mode === 'target' || this.mode === 'spellTarget' || this.mode === 'featTarget') {
         drawText(ctx, 'TARGET', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, this.targets(g, t.i).map((mi) => `${s.monsters[mi].def.name} ${s.monsters[mi].hp}/${s.monsters[mi].def.hp}`), r.x + 8, y, this.sub);
@@ -353,7 +377,9 @@ export class CombatScreen implements Screen {
       } else if (this.mode === 'feat') {
         const rows = featRows(g.tables, g.party, s, t.i);
         drawText(ctx, `FEAT  (ST ${s.stamina?.[t.i] ?? 0})`, r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
-        menu(ctx, rows.map((x) => x.label), r.x + 8, y, this.sub, { disabled: rows.map((x) => x.disabled) });
+        y = menu(ctx, rows.map((x) => x.label), r.x + 8, y, this.sub, { disabled: rows.map((x) => x.disabled) });
+        // What the feat under the cursor does, in the dim of the back row's hint, under the list.
+        featHint(c, this.sub).forEach((l, i) => drawText(ctx, l, r.x + 8, y + 6 + i * lineHeight(1), { size: 1, color: TEXT_DIM }));
       } else if (this.mode === 'element') {
         drawText(ctx, 'AGAINST WHAT?', r.x + 8, y, { size: 1, color: TEXT_DIM }); y += 12;
         menu(ctx, ELEMENTS.map((e) => e[0].toUpperCase() + e.slice(1)), r.x + 8, y, this.sub);

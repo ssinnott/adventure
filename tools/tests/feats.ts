@@ -4,10 +4,12 @@
 // Built off (`FEATS_ON`): in play no stamina is built, no feat is legal or offered, the bots try none
 // and a fight draws as before, which a fight with the feats on and none spent holds to the draw; a
 // fight's `feats` turns them on for a tool, as here. The knight's Challenge, Mighty Blow, Rally and
-// Champion's Strike each do what DESIGN says, and the bots spend on them by the knight's policy. A
+// Champion's Strike each do what DESIGN says, and the bots spend on them by the knight's policy. The
+// Feat list says what the feat under its cursor does and, on Space, why a barred one is barred. A
 // class's feats to come add their lines in a block of their own beside the knight's.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
+import { measureText } from '../../src/lib/engine/text.ts';
 import { createCharacter, createParty, CLASSES, FEATS_ON, TRAITS } from '../../src/game/party.ts';
 import type { Character, ClassId, Party } from '../../src/game/party.ts';
 import { startCombat, partyAct, currentTurn, monsterAct, buffHit } from '../../src/game/combat.ts';
@@ -22,10 +24,13 @@ import { SKILLS } from '../../src/game/skills.ts';
 import type { ItemDef } from '../../src/game/items.ts';
 import type { MonsterDef } from '../../src/game/monsters.ts';
 import type { Tables } from '../../src/game/tables.ts';
-import { commandRows, featRows } from '../../src/ui/combat.ts';
+import type { Action } from '../../src/ui/actions.ts';
+import { LAYOUT } from '../../src/ui/frame.ts';
+import { CombatScreen, commandRows, featRows, featHint, featBar } from '../../src/ui/combat.ts';
 import { MONSTERS, SPELLS, TABLES } from '../../src/content/index.ts';
 import { gateCompany } from '../kit/company.ts';
 import { gateTurn } from '../kit/fight.ts';
+import { headlessGame, drive } from '../kit/headless.ts';
 import { ok } from './lib.ts';
 
 /** A blade that always does 1, so a blow's damage is the same on every draw: 1, +4, and the knight's Might and Weapon Master. */
@@ -280,6 +285,54 @@ function knight(): void {
   const labels = [0, 1, 2].map((i) => commandRows(T, m, mf.f, i)[1]), rows = featRows(T, m, mf.f, 0);
   ok(labels.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === 'Feat,Cast,Feat-' && rows.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === "Challenge (2),Mighty Blow (3),Rally (4)-,Champion's Strike (5)-",
     `with the feats on, the knight's and the barbarian's menu read Feat (the barbarian's barred: no feats yet) and the cleric's Cast; the knight's list on 3: ${rows.map((x) => x.label + (x.disabled ? ' barred' : '')).join(', ')}`);
+
+  // Under the list, what the feat the cursor is on does: its words, DESIGN's, whole and wrapped to the
+  // panel in three lines at most (Rally's the longest), each class's; nothing under an artifact's spell.
+  {
+    const axe = member('knight', 23, true), lone = createParty([axe]);
+    axe.equipment.weapon = 'grims_axe';
+    const list = featRows(T, lone, fight(lone, [[STRAW]], 1).f, 0), at = (c: Character, i: number): string[] => featHint(c, i);
+    const whole = [...new Set(FEATS.map((x) => x.cls))].map((cls) => member(cls, 23))
+      .every((c) => featsKnown(c).every((x, i) => at(c, i).join(' ') === x.text && at(c, i).every((l) => measureText(l) <= LAYOUT.map.w - 16)));
+    ok(whole && at(axe, 0).length === 2 && at(axe, 2).length === 3 && list.length === 5 && list[4].label.endsWith(' LEFT)') && at(axe, 4).length === 0,
+      `under the Feat list the feat the cursor is on says what it does, whole and in the panel's width (Challenge's in ${at(axe, 0).length} lines, Rally's in ${at(axe, 2).length}); none under an artifact's spell (${list[4]?.label})`);
+  }
+
+  // A feat barred says why: too little stamina, or for a blow the back row in the words of the command
+  // menu's hint, that before the stamina (a row no stamina cures); nothing where it may be used.
+  {
+    const bar = (id: string, st: number, back = false): string => {
+      const c = member('knight', 23, true), slot = back ? 3 : 0, q = createParty(back ? [member('cleric'), member('cleric'), member('cleric'), c] : [c]), { f: x } = fight(q, [[STRAW]], 1);
+      x.stamina![slot] = st;
+      return featBar(T, q, x, slot, FEATS.find((d) => d.id === id)!);
+    };
+    const why = [bar('mighty_blow', 2), bar('mighty_blow', 6, true), bar('mighty_blow', 1, true), bar('challenge', 1, true), bar('mighty_blow', 6)];
+    ok(why[0] === 'Not enough stamina.' && why[3] === why[0] && why[1] === why[2] && why[1].toUpperCase() === 'BACK ROW: NEEDS A RANGED WEAPON.' && why[4] === '',
+      `a feat barred says why: too little stamina, or for a blow the back row's hint, that first; a group's feat never the row's; nothing where it may be used (${why.join(' | ')})`);
+  }
+
+  // And Space on it, on the screen: the host says it, as for the spell list's "Not enough spell points.",
+  // Space alone and not the cursor passing over, and the feat is not chosen; one that may be used is
+  // chosen, and nothing said.
+  {
+    const space = (members: Character[], slot: number, st: number, down: number): { moved: string[]; said: string[]; mode: string; st: number } => {
+      const g = headlessGame(4, createParty(members), T), x = startCombat(T, g.party, [{ id: 'g', monsters: [STRAW] }], g.rng, { feats: true });
+      const screen = new CombatScreen(x, ['g']), read = screen as unknown as { mode: string };
+      g.push(screen);
+      until(x, g.party, g.rng, slot);
+      x.stamina![slot] = st;
+      const since = (from: number): string[] => g.log.slice(g.log.length - (g.said - from)), was = g.said;
+      drive(g, ['n2', ...Array<Action>(down).fill('down')]);
+      const moved = since(was), then = g.said;
+      drive(g, ['interact']);
+      return { moved, said: since(then), mode: read.mode, st: x.stamina![slot] };
+    };
+    const short = space([member('knight', 8, true), member('cleric')], 0, 2, 1), back = space([member('cleric'), member('cleric'), member('cleric'), member('knight', 8, true)], 3, 6, 1);
+    const free = space([member('knight', 8, true), member('cleric')], 0, 6, 0);
+    ok(short.said.join() === 'Not enough stamina.' && back.said.join() === 'Back row: needs a ranged weapon.' && short.mode === 'feat' && back.mode === 'feat' && short.st === 2 && back.st === 6
+      && short.moved.length === 0 && back.moved.length === 0 && free.moved.length === 0 && free.said.length === 0 && free.mode === 'featTarget',
+      `Space on Mighty Blow with 2 stamina says "${short.said}" and on it from the back row "${back.said}", the cursor passing over says nothing and the list stays (${short.mode}, ${back.mode}); on Challenge with 6 it says nothing and asks the target (${free.mode})`);
+  }
 
   // The edges: a challenge holds the rank aimed at, not the rest of its band, on the knight who made it
   // from whatever slot; a group's feat is never aimed at a fallen foe; a rally frees none who is down;
