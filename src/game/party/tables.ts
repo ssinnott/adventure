@@ -97,7 +97,7 @@ export const CLASSES: Record<ClassId, ClassDef> = {
   thief:    { id: 'thief', name: 'Thief', hpDie: 6, spDie: 0, attack: 2, stats: { speed: 15, luck: 13, accuracy: 12 }, kit: ['shortsword', 'leather', 'sling'], traits: ['sneak_attack', 'keen_eyes'], blurb: 'Locks, traps, and hitting first.' },
   barbarian: { id: 'barbarian', name: 'Barbarian', hpDie: 12, spDie: 0, attack: 3, stats: { might: 15, endurance: 14, accuracy: 12 }, kit: ['axe', 'leather'], traits: ['rage', 'die_hard'], blurb: 'Most hp of all. Big weapons, light armour.' },
   monk:     { id: 'monk', name: 'Monk', hpDie: 8, spDie: 0, attack: 3, stats: { accuracy: 14, speed: 13, might: 11 }, kit: ['staff', 'robe'], traits: ['unarmoured', 'stillness'], blurb: 'Staff and robe, no steel. Quick.' },
-  bard:     { id: 'bard', name: 'Bard', hpDie: 6, spDie: 4, spStat: 'personality', spells: 'cleric', attack: 1, stats: { personality: 15, speed: 13, accuracy: 12 }, kit: ['shortsword', 'leather', 'sling'], traits: ['inspire'], blurb: 'A blade, a song, and some healing.' },
+  bard:     { id: 'bard', name: 'Bard', hpDie: 6, spDie: 4, spStat: 'personality', spells: 'cleric', attack: 1, stats: { personality: 15, speed: 13, accuracy: 12 }, kit: ['shortsword', 'leather', 'sling'], traits: ['inspire'], blurb: 'A blade, a song, and some healing. Linguist.' },
   druid:    { id: 'druid', name: 'Druid', hpDie: 6, spDie: 6, spStat: 'personality', spells: 'druid', attack: 1, stats: { personality: 15, endurance: 12 }, kit: ['staff', 'leather'], traits: ['natures_ward', 'healing_hands'], blurb: 'Thorn, storm and mending. Wears leather.' },
 };
 

@@ -35,6 +35,11 @@ export interface ItemDef {
    * short sword, a sling), a staff, or a bow. A +N copy keeps its base's.
    */
   kind?: 'light' | 'staff' | 'bow';
+  /**
+   * A short bow (#1115): a bow to the ranger's extra shots, and to the thief's extra attacks a light
+   * weapon as a sling is (`blowsOf`). A +N copy keeps it.
+   */
+  short?: true;
   /** Armour class contribution. */
   ac?: number;
   /** A +N item's plus, counted in `bonus` or `ac` already; a weapon's also adds to to-hit (`attackBonus`). */
