@@ -1,8 +1,8 @@
 // The feats on stamina (DESIGN §5, #1113): the frame the four classes that cast nothing share, the
 // knight, the barbarian, the thief and the monk, and the registry each class's module gives its feats
-// and its bots' policy to. Built off (`FEATS_ON`): until #1117 turns them on, or a tool turns them on
-// in a fight (`CombatOpts.feats`), no stamina is built, no feat is offered and the bots try none, so
-// a fight draws and plays as before. Nothing here draws on the rng.
+// and its bots' policy to. On in play since #1117 (`FEATS_ON`); in a fight a tool sets them off in
+// (`CombatOpts.feats`) no stamina is built, no feat is offered and the bots try none, so it draws and
+// plays as one before them. Nothing here draws on the rng.
 //
 // Stamina is the fight's (`CombatState.stamina`, by slot), never a member's: none at a fight's start,
 // none after it, never saved. One of the four takes 1 for each blow of its own that lands, a feat's
