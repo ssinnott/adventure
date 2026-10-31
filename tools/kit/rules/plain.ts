@@ -9,15 +9,15 @@
 // wholly inside its map. It is plain when every square of the window shows one ground in one look and
 // nothing is drawn standing in it: no solid or door; no ground whose look stands trees at its sides; no
 // water, deep water or chasm, which no company stands on, so that one is a second ground; no scatter
-// (`scatterAt`, #1103) and no feature the view draws
-// (`featuresOn`, #1110), every feature taken as the map holds it, unspent and present. A ground's look
-// at a square is its variant (`variantAt`, #1101), a ground of its own as the owner has it, and what
-// its plot lays (a field's crop, rows and hedges; a road's verge), so farmland, three squares by two to
-// a field, is never plain. Not counted: line of sight; groups and people, who move and are not the map's;
-// the colour's drift and the region's tints, colour alone; a hill's marks (#1105), its look's as a
-// variant's marks are, so a range of slag heaps with a plume or two is still one ground; where two
-// grounds meet (#1100), already two. Scatter and variants fall by the map's own id and squares: laid
-// into the outdoors they fall by the outdoors', so a share as played differs a little.
+// (`scatterAt`, #1103) and no feature the view draws (`featuresOn`, #1110), every feature taken as the
+// map holds it, unspent and present. A ground's look at a square is its variant (`variantAt`, #1101), a
+// ground of its own as the owner has it, and what its plot lays (a field's crop, rows and hedges; a
+// road's verge), so farmland, three squares by two to a field, is never plain. Not counted: line of
+// sight; groups and people, who move and are not the map's; the colour's drift and the region's tints,
+// colour alone; a hill's marks (#1105), its look's as a variant's marks are, so a range of slag heaps
+// with a plume or two is still one ground; where two grounds meet (#1100), already two. Scatter and
+// variants fall by the map's own squares and id: laid into the outdoors they fall by the outdoors', so
+// a share as played differs a little.
 //
 // Without the pieces of #1094 (variants, scatter, features and fields), this is the survey's measure
 // of `b4651c2`: 36,714 of 205,840 views plain.
