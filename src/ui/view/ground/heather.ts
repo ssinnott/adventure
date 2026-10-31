@@ -21,4 +21,4 @@ function mark(p: Paint, m: Mark): void {
   if (hash(seed, 56, i) < bloom) { ctx.fillStyle = fog(p, '#a05a94', d); ctx.fillRect(Math.round(x - sc), Math.round(y - 2.5 * sc), Math.max(1, Math.round(2 * sc)), Math.max(1, Math.round(sc))); }
 }
 
-export const heather: GroundLook = { color: heatherColor, drift: { toward: ['#84487a', '#4e3a2c'], by: 0.55 }, snow: 0.85, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark } };
+export const heather: GroundLook = { color: heatherColor, drift: { toward: ['#943e88', '#4a3426'], by: 0.6 }, snow: 0.85, wets: true, splashes: true, ripples: false, vary: 0.04, lies: { marks: 7, mark } };

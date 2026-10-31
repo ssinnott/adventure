@@ -26,5 +26,5 @@ function mark(p: Paint, m: Mark): void {
   }
 }
 
-export const vines: GroundLook = { color: vinesColor, drift: { toward: ['#143c1e', '#3e6a2e'], by: 0.4 }, snow: 0.7, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
+export const vines: GroundLook = { color: vinesColor, drift: { toward: ['#103418', '#4a8034'], by: 0.6 }, snow: 0.7, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
   sides: { bare: 0.3, size: 0.5, spread: 0.2, tree: (p, x, y, s, tone, pick) => drawVineSprite(p.ctx, x, y, s, tone, Math.floor(pick * 3), p.env.trees) } };

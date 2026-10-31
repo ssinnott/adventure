@@ -57,7 +57,7 @@ export const SNOW_HOLD = Object.fromEntries(Object.entries(GROUND).map(([t, g]) 
 export const asDrawn = (p: Paint, t: Terrain): Terrain => GROUND[t].drawnAs?.(p.env) ?? t;
 
 /** How many squares across the land's swathes run, and how far the noise is stretched to reach a look's bounds. */
-const SWATHE = 10, STRETCH = 3.5;
+const SWATHE = 14, STRETCH = 4.5;
 
 /**
  * The land's noise at a cell, 0 to 1 (#1098): the atlas's `fbm`, smooth over some `scale` squares, its
@@ -71,11 +71,14 @@ export function cellNoise(x: number, y: number, salt: string, scale = SWATHE): n
   return fbm(x / scale, y / scale, h, 2);
 }
 
-/** A look's colour drifted by the land at a cell: toward one of its two colours, as far as the swathe lies from the middle. */
+/**
+ * A look's colour drifted by the land at a cell: toward one of its two colours, as far as the swathe lies
+ * from the middle, eased so that most land lies well toward one or the other and none past its look's `by`.
+ */
 function drifted(look: GroundLook, c: string, x: number, y: number, salt: string): string {
   if (!look.drift) return c;
   const s = Math.max(-1, Math.min(1, (cellNoise(x, y, salt) - 0.5) * STRETCH)), [low, high] = look.drift.toward;
-  return mix(c, s < 0 ? low : high, Math.abs(s) * look.drift.by);
+  return mix(c, s < 0 ? low : high, Math.abs(s) * (2 - Math.abs(s)) * look.drift.by);
 }
 
 /**

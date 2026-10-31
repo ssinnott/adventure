@@ -72,4 +72,4 @@ function drawHill(p: Paint, base: string, d: number, l: number, seed: number, hi
   }
 }
 
-export const hills: GroundLook = { color: hillColor, drift: { toward: ['#4a7a36', '#9c8a58'], by: 0.5 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, mound: drawHill };
+export const hills: GroundLook = { color: hillColor, drift: { toward: ['#3a7232', '#ac9658'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, mound: drawHill };
