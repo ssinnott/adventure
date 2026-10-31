@@ -253,7 +253,7 @@ export function drawLand(p: Paint, r: ViewRect, cast: Horizon, o: Light, floorPa
     runs(w, (c) => {
       const o2 = j * w + c, t = cast.ts[o2], b = browAt(c);
       if (b) return mix(b, o.haze, fade);
-      return STAND[TERRAINS[t]] || cast.cells[o2] < 0 ? stand(t, cast.ds[o2]) : mix(groundAt(cast.cells[o2], t), o.haze, fade);
+      return GROUP[TERRAINS[t]] === 1 || cast.cells[o2] < 0 ? stand(t, cast.ds[o2]) : mix(groundAt(cast.cells[o2], t), o.haze, fade);
     }, (c, n, col) => { ctx.fillStyle = col; ctx.fillRect(r.x + c, horizon + j, n, tall); });
   }
 }
