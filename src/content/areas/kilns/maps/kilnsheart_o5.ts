@@ -3,7 +3,8 @@
 // cutters' sheds and the foreman's east of it, and their camp back down the track; the mountain across
 // the north-west, with the stream at its corner, and the crag across the south-east, its top a lookout.
 // The tear at 12,16 is the way into the Anvil Stone's Rift (#465, TEAR).
-// Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.9 is its brief.
+// Cut from the atlas by tools/scaffold.ts; docs/areas/kilns.md §4.9 is its brief. Broken up by hand
+// (#1106): a path off the track across the hill to the crag's lookout, and an outcrop under the rim.
 import type { Feature, MapDef } from '../../../../game/mapdef.ts';
 import { EAST, NORTH } from '../../../../game/types.ts';
 import { WARDEN_SLAIN } from './anvil_stone.ts';
@@ -34,7 +35,7 @@ export const KILNSHEART_O5: MapDef<'kilnsheart_o5'> = {
     '^^^MMMMMMMMMMMMMMMM^^^^^^^^^^^^^',
     'MMMMMMMMMMMMMMM^^^^^^^^^^^^^^^^^',
     'MMMMMMMMMMMM^^^^^^^^^^^^^^^^^^^^',
-    'MMMMMMMMM^^^^^^^^^^^^^^^^^^^^^^^',
+    'MMMMMMMMM^^^^^^^^^^^^^^^^^^r^^^^',
     'MMMMMMM^^rrr^^^^^^^^^^^^^^^^^^^^',
     'MMMMMM^^r""S""^^BB^###^^^^^^^^^^',
     'MMMMM^^^^rrro"^^^^^D:#^^^^^^^^^^',
@@ -45,9 +46,9 @@ export const KILNSHEART_O5: MapDef<'kilnsheart_o5'> = {
     '^^^^^^^^^^^:^^^^^^^^^^^^^^^^^^^^',
     '^^^^^^^^^^^:"^^^^^^^^^^^^^^^^^^^',
     '^^^^^^^^^^^:^^^^^^^^^^^^^^^^^^^^',
-    '^^^^^^^^^^^:^^^^^^^^^^^^^^^^^^^^',
-    ',,^^^^^^^^::^^^^^^^^^^^^^^^^^^^^',
-    ',,^^^^^^^::^^^^^^^^^^^^^^^rr^^^^',
+    '^^^^^^^^^^^:::::::::::::^^^^^^^^',
+    ',,^^^^^^^^::^^^^^^^^^^^:^^^^^^^^',
+    ',,^^^^^^^::^^^^^^^^^^^^::^rr^^^^',
     ',,,^^^^^::^^^^^^^^^^^^^r"rrrr^^^',
     ',,,^^^^::^^^^^^^^^^rrrrr"rrrrrrr',
     ',,,^^^::^^^^^rrrrrrrrrrr"rrrrrrr',
