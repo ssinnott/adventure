@@ -2,6 +2,8 @@
 import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
+  // Its grass, hills and woods a cold grey-green.
+  tints: { grass: { toward: '#7898b8', by: 0.25 }, hills: { toward: '#7898b8', by: 0.25 }, woods: { toward: '#7898b8', by: 0.25 }, pine: { toward: '#7898b8', by: 0.25 } },
   // A hard, cold blue over the ice, icy at the foot.
   air: { strength: 0.2, top: '#0060ff', foot: '#00e0ff' },
   // Scots pine and larch about the lakes; birch and larch in the woods.
