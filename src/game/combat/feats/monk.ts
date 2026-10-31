@@ -6,8 +6,8 @@
 // place of any hold; a foe proof against sleep (`monsterImmune`: the dead, machines and their like) is
 // not, and the hit's line says so. It sleeps as any sleeper: a blow or a spell that hurts it wakes it,
 // and it wakes 1 in 4 at the top of a turn it then loses (game/combat.ts). Leap is one strike at a foe of
-// the back rank, past a front that stands (`FeatDef.aims`, `Strike.past`), barred while none of a back
-// rank stands. Wind Step is a turn's action as every feat is: the monk's blows, as an Attack's, and then
+// a back rank, past the front (`FeatDef.aims`, `Strike.past`), the front standing or not, barred while
+// none of a back rank stands. Wind Step is a turn's action as every feat is: the monk's blows, as an Attack's, and then
 // another turn at once (`FeatDef.again`), a full action, a feat among them while its stamina holds; the
 // round's order and its count are left as they were. A feat's strike that fells its foe carries on from
 // the second prestige as an Attack's does, with the feat's knobs. Nothing here draws.
