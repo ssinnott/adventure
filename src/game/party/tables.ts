@@ -220,10 +220,10 @@ export const TIER_STEPS: Readonly<Record<Tier, number>> = { expert: 1, master: 2
 /**
  * A critical blow (DESIGN §6, #1114): a member's weapon blow that lands crits, for double, at
  * CRIT_BASE and CRIT_PER_LUCK for each point of Luck over 10, never under CRIT_FLOOR, and a fighter's
- * CRIT_STEP more at each of CRIT_LEVELS (party.ts `critChance`). Built off: until CRITS_ON (#1117) no
- * blow crits, nor draws for one, so no figure moves.
+ * CRIT_STEP more at each of CRIT_LEVELS (party.ts `critChance`). On in play since #1117 (CRITS_ON); a
+ * fight a tool sets them off in (`CombatOpts.crits`) crits nothing, nor draws for it.
  */
-export const CRITS_ON = false;
+export const CRITS_ON = true;
 export const CRIT_BASE = 0.05, CRIT_PER_LUCK = 0.02, CRIT_FLOOR = 0.01, CRIT_STEP = 0.05;
 export const CRIT_LEVELS: readonly [number, number] = [15, 23];
 
