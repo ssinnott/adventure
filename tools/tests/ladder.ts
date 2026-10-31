@@ -371,23 +371,26 @@ export function ladder(): void {
   const flatFault = rangedFaults(RANGED, flat).find((f) => f.includes('no step on yew_shortbow+1')), barredFault = rangedFaults(RANGED, barred).find((f) => f.includes('thornmark_shortbow is for'));
   ok(!!flatFault && !!barredFault && unbettered(RANGED, flat, 'thief').includes(8) && unbettered(RANGED, barred, 'bard').includes(8),
     `a ranged rung's short bow no step on the last, or one its bard may not hold, is refused, and the thief or the bard betters nothing at 8 (${flatFault}; ${barredFault})`);
-  // Each short bow and sling is sold where its rung's long bow is sold and found where it is found, a
-  // shop's, a box's or a drop's of the rung's area, cheaper than the one before it in the rung and
-  // inside the area's window; the long bow is on its area's rung, and the two are off the gate's
-  // ladder until #1117 takes them into `gear`.
+  // Each short bow and sling is an item of its long bow's area, sold where the bow is sold and found
+  // where it is found there (a shop's, a box's or a drop's), cheaper than the one before it in the
+  // rung and inside that area's window. The long bow is on the rung of the area whose checks hold it,
+  // which may be a later one on the road (13 is Wrackholm's, its Horn Bow +1 Saltreach's); and the
+  // two are off the gate's ladder until #1117 takes them into `gear`.
   const onLadder = new Set(GEAR.flatMap(([, ids]) => ids));
+  const home = (id: string): Area | undefined => (AREAS as readonly Area[]).find((a) => a.items.some((x) => x.id === id));
   const placed = RANGED.flatMap((r) => {
-    const a = areaOf(r.area), [long] = r.bows, where = a ? placesIn(a, long) : [];
+    const [long] = r.bows, a = home(long), where = a ? placesIn(a, long) : [];
     const out = CHECKS.get(r.area)?.gear?.[r.level]?.includes(long) ? [] : [`${long} is not on ${r.area}'s rung at ${r.level}`];
     r.bows.slice(1).forEach((id, k) => {
       const d = ITEMS[id], before = ITEMS[r.bows[k]], got = a ? placesIn(a, id) : [], missing = where.filter((p) => !got.includes(p));
+      if (!a || home(id) !== a) out.push(`${id} is no item of ${long}'s area, ${a?.id}`);
       if (!got.length || missing.length) out.push(`${id} is not where ${long} is (${missing.join(', ') || 'anywhere'})`);
-      if (!d || !before || d.price >= before.price || d.price > CURVE[r.area as keyof typeof CURVE].price) out.push(`${id} (${d?.price} gold) is not cheaper than ${before?.id} (${before?.price}) inside ${r.area}'s window`);
+      if (!a || !d || !before || d.price >= before.price || d.price > CURVE[a.id as keyof typeof CURVE].price) out.push(`${id} (${d?.price} gold) is not cheaper than ${before?.id} (${before?.price}) inside ${a?.id}'s window`);
       if (onLadder.has(id)) out.push(`${id} is on the gate's ladder`);
     });
     return out;
   });
-  ok(RANGED.length > 0 && !placed.length, `each ranged rung's short bow and sling is sold where its long bow is sold and found where it is found, cheaper and inside its area's window, and off the gate's ladder till #1117 (${RANGED.map((r) => `${r.level}: ${[...new Set(placesIn(areaOf(r.area)!, r.bows[0]))].join(', ')}`).join('; ')})${placed.length ? ` (but ${placed.join('; ')})` : ''}`);
+  ok(RANGED.length > 0 && !placed.length, `each ranged rung's short bow and sling is its long bow's area's, sold where the bow is sold and found where it is found there, cheaper and inside the area's window, and off the gate's ladder till #1117 (${RANGED.map((r) => `${r.level}: ${[...new Set(home(r.bows[0]) ? placesIn(home(r.bows[0])!, r.bows[0]) : [])].join(', ')}`).join('; ')})${placed.length ? ` (but ${placed.join('; ')})` : ''}`);
 
   // The gate check's company wears what harness's does, level by level.
   const worn = (p: ReturnType<typeof companyAt>): string => JSON.stringify(p.members.map((m) => m.equipment));
