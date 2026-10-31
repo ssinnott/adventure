@@ -6,6 +6,8 @@ export const LOOK: AreaLook = {
   tints: { grass: { toward: '#c88c28', by: 0.25 }, hills: { toward: '#c88c28', by: 0.25 }, woods: { toward: '#c88c28', by: 0.25 }, pine: { toward: '#c88c28', by: 0.25 } },
   // Out in the gulf: a sky of slate and steel over the sea.
   air: { strength: 0.2, top: '#102030', foot: '#304860', haze: '#405870' },
+  // Tors: granite piled on the hills over the sea.
+  hills: 'tors',
   // Wind-bent thorns and the odd rowan on the gulf's isles.
   trees: { forest: { thorn: 3, rowan: 1 } },
 };

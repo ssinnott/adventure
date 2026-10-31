@@ -2,7 +2,7 @@
 // answers to the questions the viewport asks of its ground, each once, and the shapes its painters take.
 // view/ground/index.ts holds the looks in `GROUND`, a record over every terrain.
 
-import type { Trees } from '../../../content/area.ts';
+import type { AreaLook, Trees } from '../../../content/area.ts';
 import type { GameMap } from '../../../game/map.ts';
 import type { Terrain, Solid } from '../../../game/mapdef.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -77,8 +77,8 @@ export interface GroundLook {
   puddles?: boolean;
   /** A field square's plot, by its field and the fields beside it. */
   plot?: (map: GameMap, x: number, y: number, f: Facing) => Plot;
-  /** A hill: the mound it rises in over its square once the row's floors are down, running on into the hill beside it. */
-  mound?: (p: Paint, base: string, d: number, l: number, seed: number, hillL: boolean, hillR: boolean) => void;
+  /** A hill: the mound it rises in over its square once the row's floors are down, running on into the hill beside it, of its region's kind (#1105). */
+  mound?: (p: Paint, base: string, d: number, l: number, seed: number, hillL: boolean, hillR: boolean, kind?: AreaLook['hills']) => void;
   /** The trees at the sides of a woodland square. */
   sides?: Sides;
   /**
@@ -86,6 +86,12 @@ export interface GroundLook {
    * one at most to a square, as view/scatter.ts places them. A variant of the ground may stand others.
    */
   scatter?: readonly Prop[];
+  /**
+   * Its rank where it meets another ground on open ground (#1100, view/ground/edges.ts): a tongue of it spills
+   * into a lower one beside it, snow the highest, then heather, steppe, grass, sand, dirt and ash. A look with
+   * none takes none and gives none.
+   */
+  rank?: number;
   /** The billboard it draws, by what stands on it, in place of that solid's own: a glass tree on crystal, a mountain by its rock. */
   boards?: Partial<Record<Solid, (p: Paint, b: Board) => void>>;
 }

@@ -68,7 +68,8 @@ export async function winding({ page, ok }: Run): Promise<void> {
 
 // A hill's body stays inside its outline. The sweep lays hills flat, so it cannot see a crest
 // light drawn off its hill, floating clear of it with sky beneath; this can. Each hill is painted alone, near and far, left, ahead and right, and every inked
-// pixel lies within a pixel of its outline.
+// pixel lies within a pixel of its outline: today's hill and each kind a region names (#1105), its marks with it, by day and by
+// night, when a cinder cone's fire is lit.
 export async function hills({ page, ok }: Run): Promise<void> {
   const hillSpill: string[] = await page.evaluate(async () => {
     const load: Load = (p) => import(p);
@@ -76,9 +77,10 @@ export async function hills({ page, ok }: Run): Promise<void> {
     const W = 400, H = 268, out: string[] = [];
     const c = document.createElement('canvas'); c.width = W; c.height = H;
     const ctx = c.getContext('2d', { willReadFrequently: true })!;
-    for (const d of [1, 2, 3, 5]) for (const l of [-1, 0, 1]) for (const seed of [3, 71, 409]) {
+    const day = V.paintOn(ctx, { x: 0, y: 0, w: W, h: H }, window.__game!.game!.world.map), night = { ...day, dark: true, haze: '#1a1428', daylight: 0, gloom: 0 };
+    for (const kind of [undefined, 'downs', 'tors', 'slag', 'cinder', 'scree'] as const) for (const p of [day, night]) for (const d of [1, 2, 3, 5]) for (const l of [-1, 0, 1]) for (const seed of [3, 71, 409]) {
       ctx.clearRect(0, 0, W, H);
-      const { outline } = V.hillBody(V.paintOn(ctx, { x: 0, y: 0, w: W, h: H }, window.__game!.game!.world.map), '#6a8a4a', d, l, seed, false, false);
+      const { outline } = V.hillBody(p, '#6a8a4a', d, l, seed, false, false, kind);
       const px = ctx.getImageData(0, 0, W, H).data;
       const inside = (x: number, y: number): boolean => ctx.isPointInPath(outline, x + 0.5, y + 0.5);
       let n = 0;
@@ -86,11 +88,11 @@ export async function hills({ page, ok }: Run): Promise<void> {
         if (px[(y * W + x) * 4 + 3] < 128 || inside(x, y)) continue;
         if (![[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]].some(([dx, dy]) => inside(x + dx, y + dy))) n++;
       }
-      if (n) out.push(`d ${d} l ${l} seed ${seed}: ${n}px`);
+      if (n) out.push(`${kind ?? 'today'}${p === night ? ' by night' : ''} d ${d} l ${l} seed ${seed}: ${n}px`);
     }
     return out;
   });
-  ok(!hillSpill.length, `a hill's body, its crest light with it, is drawn inside its outline, near and far${hillSpill.length ? ` -> ${hillSpill.slice(0, 4).join(', ')}` : ''}`);
+  ok(!hillSpill.length, `a hill's body, its crest light with it, is drawn inside its outline, near and far, today's and each kind's by day and by night${hillSpill.length ? ` -> ${hillSpill.slice(0, 4).join(', ')}` : ''}`);
 }
 
 // The parts of a drawing that stand apart from its body by design, each with the most pieces it

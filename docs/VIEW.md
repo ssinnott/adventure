@@ -36,6 +36,11 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   one colour a square, its cell's, from wherever it is seen; rain and snow fall over it. Fifteen
   grounds of the open land drift, from grass to snow; water, roads, fields, drops and the rest keep
   one colour, nothing drifts underground and the automap's colours never do.
+- **Where two grounds meet**, `src/ui/view/ground/edges.ts` (#1100): a look's `rank` (snow, then heather,
+  steppe, grass, sand, dirt and ash) spills into a lower one beside it on open ground, a ragged tongue of
+  its colour as drawn and a third of its marks, a fifth of the way in and two fifths at most; other looks,
+  a square something stands on and a dungeon's floor take none and give none. The outline is the edge's,
+  hashed from it and its corners, so an edge looks the same from both squares and from every facing.
 
 - **A region's trees** (#1104): its look's `trees` names, by weight, those its forests and woods stand
   (`forest`) and its pinewoods (`pine`, conifers only). A square takes its region's, picked by its hash
@@ -52,6 +57,12 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   woods and pinewoods in ten regions, and the delta's swamp. A square takes its zone's, fading over
   two squares either side of a zone's border or edge; the Foreland, Thornmark and the country past
   the zones have none and the automap's colours are never tinted (`tools/tests/tints.ts`).
+
+- **A region's hills** (#1105): its look's `hills` names their kind (`src/ui/view/ground/hills.ts`):
+  the Foreland's downs, a slip of chalk under some crests; Cairnmoor's and Wrackholm's tors, low granite
+  outcrops; the Kilns' slag heaps, some smoking; Ashfall's cinder cones lit red by night; the Whitespine's
+  scree. Each mark stands on a share (`HILL_MARKS`). With none, and past the zones (`regionAt`), a hill is
+  as it was; what one hides is the terrain's.
 
 - **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
   one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of

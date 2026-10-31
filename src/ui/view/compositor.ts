@@ -45,6 +45,7 @@ import type { SkyOpts } from './sky.ts';
 import { drawWeather, strike, drawBolt } from './weather.ts';
 import { drawLife } from './life.ts';
 import { drawFloor, drawCeiling } from './floor.ts';
+import { edgesOf } from './ground/edges.ts';
 import { GROUND, groundColor } from './ground/index.ts';
 import { drawVoidFront, drawVoidSide, drawFrontFace, drawLighthouseFlank, LAMP_REACH, drawLamp, drawFlame, drawSideFace } from './walls.ts';
 import { drawRoof, drawChimney } from './roofs.ts';
@@ -275,16 +276,18 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       const plot = look.plot?.(map, c.x, c.y, f);
       // A drop's rims: where ground stands before it and beyond it, and not the drop.
       const rims = look.drop ? { near: d > 0 && !GROUND[drawn(...toPair(cellAt(px, py, f, d - 1, l))).terrain].drop, far: !GROUND[drawn(...toPair(cellAt(px, py, f, d + 1, l))).terrain].drop } : undefined;
-      drawFloor(p, cell.terrain, d, l, c, seed, cellPal.floor, plot, rims);
+      drawFloor(p, cell.terrain, d, l, c, seed, cellPal.floor, plot, rims, edgesOf(map, c.x, c.y, f));
       if (map.kind === 'dungeon') drawCeiling(p, cellPal, d, l, seed, f);
     }
-    // A hill's mound, its look's, over the row's floors.
+    // A hill's mound, its look's, over the row's floors, of the kind its square's region names (#1105):
+    // its region as `regionAt` finds it, none past the zones, whose hills are today's.
     if (d > 0) for (const l of order) {
       const c = cellAt(px, py, f, d, l);
       const t = drawn(c.x, c.y).terrain, mound = GROUND[t].mound;
       if (!mound || isSolidWall(drawn(c.x, c.y)) || behind(d, l)) continue;
       const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return !!GROUND[n.terrain].mound && !isSolidWall(n) && !behind(d, l + dl); };
-      mound(p, groundColor(p, t, map.paletteAt(c.x, c.y).floor, c.x, c.y), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1));
+      const region = regionAt(map, c.x, c.y);
+      mound(p, groundColor(p, t, map.paletteAt(c.x, c.y).floor, c.x, c.y), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1), region && world.tables.looks[region].hills);
     }
     for (const l of order) {
       if (behind(d, l)) continue;
