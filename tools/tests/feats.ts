@@ -478,8 +478,10 @@ function thief(): void {
       if (f.round > rounds.length + 1) rounds.push(before - monsterHit(f, m));
       if (t.side === 'monster') monsterAct(f, q, rng); else partyAct(f, q, rng, { type: 'defend' });
     }
-    ok(BLIND_HIT === 4 && BLIND_ROUNDS === 3 && said.length === 1 && said[0] === `thief hits ${RAT} for ${at(said[0])}. ${RAT} is blinded.` && rounds.join() === '4,4,4,0',
-      `a blind foe hits ${BLIND_HIT} less the round it is struck in and the two after (rounds 2 to 5: ${rounds.join(', ')}), one blow where the thief has two: "${said[0]}"`);
+    const shot = rogueFight(createParty([rogue(8)]), [[foe('test_shot', { ranged: true, missile: true, name: 'Shot', plural: 'Shots' })]], 1).f, sm = shot.monsters[0], aim = monsterHit(shot, sm);
+    sm.blind = 1;
+    ok(BLIND_HIT === 4 && BLIND_ROUNDS === 3 && said.length === 1 && said[0] === `thief hits ${RAT} for ${at(said[0])}. ${RAT} is blinded.` && rounds.join() === '4,4,4,0' && aim - monsterHit(shot, sm) === BLIND_HIT,
+      `a blind foe hits ${BLIND_HIT} less the round it is struck in and the two after (rounds 2 to 5: ${rounds.join(', ')}), with a bow as with a blade (${aim - monsterHit(shot, sm)}), one blow where the thief has two: "${said[0]}"`);
     const once = (d: MonsterDef, seed: number): { said: string; blind?: number; st: number } => {
       const r = createParty([rogue(8)]), x = rogueFight(r, [[d]], seed);
       upTo(x.f, r, x.rng, 0, 2);
@@ -523,10 +525,19 @@ function thief(): void {
     const q = createParty([rogue(23)]), { f, rng } = rogueFight(q, [[HARE]], 1);
     upTo(f, q, rng, 0, 2);
     act(f, q, rng, 0, feat('hamstring'), 3);
+    const drawn = rng.draws();
     upTo(f, q, rng, 0, 3);
+    const between = rng.draws() - drawn;
     f.stamina![0] = 5;
-    ok(f.round === 3 && f.monsters[0].conditions.includes('paralysed') && featsOf(f, q, 0).some((x) => x.id === 'deathblow') && act(f, q, rng, 0, feat('deathblow'), 5) !== null,
-      'and the thief\'s next turn finds it held, so that its Deathblow may take it');
+    ok(f.round === 3 && between === 2 && f.monsters[0].conditions.includes('paralysed') && featsOf(f, q, 0).some((x) => x.id === 'deathblow') && act(f, q, rng, 0, feat('deathblow'), 5) !== null,
+      `and the thief's next turn finds it held, so that its Deathblow may take it; nothing is drawn for the hold at the round's end, only the new round's order (${between} draws)`);
+    // One that falls while it is held is not let go: the dead do not move again.
+    const r2 = createParty([rogue(15)]), x2 = rogueFight(r2, [[HARE, STRAW]], 1);
+    upTo(x2.f, r2, x2.rng, 0, 2);
+    const fell2 = act(x2.f, r2, x2.rng, 0, feat('hamstring'), 3) ?? [];
+    x2.f.monsters[0].hp = 0;
+    upTo(x2.f, r2, x2.rng, 0, 4);
+    ok(fell2.join().endsWith('Hare is held fast.') && x2.f.round === 4 && !x2.f.log.some((l) => l.endsWith(' can move again.')), `one that falls while it is held is not let go ("${fell2.join(' | ')}")`);
   }
 
   // Deathblow: one blow, aimed only at a foe asleep or held that it reaches; a sneak attack for triple,
@@ -569,7 +580,7 @@ function thief(): void {
   // or held, else the one lying so with the most hit points, and from its level nothing else while one
   // lies so; Hamstring at the hardest hitter while none lies so; Blind at the hardest hitter awake, free
   // and not blind; Ambush where its blows are no sneak attacks already and what it leaves pays for its
-  // dearest other feat; else a blow; and nothing unasked.
+  // dearest other feat, at a foe awake; else a blow; and nothing unasked.
   {
     const HITTER = foe('test_hitter', { ac: -100, attack: -50, speed: 1, dice: 4, sides: 6, name: 'Hitter', plural: 'Hitters' });
     const choose = (level: number, st: number, set?: (f: CombatState) => void, round = 3, opts: BotOpts = { feats: true }): string => {
@@ -583,12 +594,12 @@ function thief(): void {
     const lie = (...ks: [number, Lie][]) => (f: CombatState): void => { for (const [k, c] of ks) f.monsters[k].conditions = c; };
     const dark = (f: CombatState): void => { for (const m of f.monsters) m.blind = 2; };
     const picks = [
-      choose(23, 5, lie([2, ['asleep']])), choose(23, 5, lie([0, ['asleep']], [2, ['asleep']])), choose(23, 5, (f) => { lie([1, ['paralysed']], [2, ['asleep']])(f); f.monsters[1].hp = 10; }),
-      choose(15, 3), choose(15, 3, lie([0, ['paralysed']])), choose(8, 3), choose(8, 3, (f) => { f.monsters[1].blind = 2; }),
-      choose(1, 2), choose(1, 2, undefined, 1), choose(8, 2), choose(12, 5, dark), choose(12, 4, dark), choose(23, 4, lie([2, ['asleep']])), choose(23, 6, dark), choose(23, 6, undefined, 3, {}),
+      choose(23, 5, lie([2, ['asleep']])), choose(23, 5, (f) => { lie([0, ['asleep']], [2, ['asleep']])(f); f.monsters[0].hp = 10; }), choose(23, 5, (f) => { lie([1, ['paralysed']], [2, ['asleep']])(f); f.monsters[1].hp = 10; }),
+      choose(15, 3), choose(15, 3, lie([1, ['paralysed']])), choose(8, 3), choose(8, 3, (f) => { f.monsters[1].blind = 2; }),
+      choose(1, 2), choose(1, 2, undefined, 1), choose(1, 2, lie([0, ['asleep']])), choose(8, 2), choose(12, 5, dark), choose(12, 4, dark), choose(23, 4, lie([2, ['asleep']])), choose(23, 6, dark), choose(23, 6, undefined, 3, {}),
     ];
-    ok(picks.join(' ') === 'deathblow@2 deathblow@0 deathblow@2 hamstring@1 blind@1 blind@1 blind@0 ambush@0 attack attack ambush@0 attack attack hamstring@1 attack',
-      `the bots deal a deathblow where they can and from 23 build for one while a foe lies asleep or held, hamstring the hardest hitter while none lies so, blind the hardest not blind, ambush where it adds a sneak attack and leaves enough for a dearer feat, else strike, and spend nothing unasked (${picks.join(' ')})`);
+    ok(picks.join(' ') === 'deathblow@2 deathblow@0 deathblow@2 hamstring@1 blind@0 blind@1 blind@0 ambush@0 attack attack attack ambush@0 attack attack hamstring@1 attack',
+      `the bots deal a deathblow where they can, at their own foe before the one with the most hit points, and from 23 build for one while a foe lies asleep or held, hamstring the hardest hitter while none lies so, blind the hardest awake, free and not blind, ambush a foe awake where it adds a sneak attack and leaves enough for a dearer feat, else strike, and spend nothing unasked (${picks.join(' ')})`);
     // Handed a foe it cannot strike, one fallen or one of the back rank beyond its blade while the front
     // stands, the policy picks nothing at it.
     const q = createParty([rogue(1)]), rr = counted(2), x = startCombat(TT, q, [{ id: 'band', monsters: [STRAW, STRAW, STRAW], back: 1 }], rr, { feats: true });
