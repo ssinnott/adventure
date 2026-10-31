@@ -2,7 +2,7 @@
 // tree or two at the sides of each square, the way through it open.
 
 import { shade, mix } from '../../../lib/art/palettes.ts';
-import { drawTreeSprite } from '../../scenery.ts';
+import { drawTreeSprite, treeOf } from '../../scenery.ts';
 import { hash } from '../../paint/brush.ts';
 import { fog, grassColor } from '../common.ts';
 import type { Paint } from '../common.ts';
@@ -26,4 +26,4 @@ function mark(p: Paint, m: Mark): void {
 }
 
 export const woods: GroundLook = { color: woodsColor, drift: { toward: ['#24401e', '#a08a50'], by: 0.6 }, snow: 0.75, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
-  sides: { bare: 0.3, size: 0.5, spread: 0.2, tree: (p, x, y, s, tone, pick) => drawTreeSprite(p.ctx, x, y, s, tone, Math.floor(pick * 5), p.env.trees) } };
+  sides: { bare: 0.3, size: 0.5, spread: 0.2, tree: (p, x, y, s, tone, pick, trees) => drawTreeSprite(p.ctx, x, y, s, tone, treeOf(trees?.forest, pick), p.env.trees) } };

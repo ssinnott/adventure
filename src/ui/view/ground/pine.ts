@@ -3,7 +3,7 @@
 
 import { shade, mix } from '../../../lib/art/palettes.ts';
 import { TERRAIN_COLORS } from '../../palette.ts';
-import { drawTreeSprite } from '../../scenery.ts';
+import { drawTreeSprite, treeOf } from '../../scenery.ts';
 import { hash } from '../../paint/brush.ts';
 import { fog, grassColor } from '../common.ts';
 import type { Paint } from '../common.ts';
@@ -28,4 +28,4 @@ function mark(p: Paint, m: Mark): void {
 }
 
 export const pine: GroundLook = { color: pineColor, drift: { toward: ['#3a7032', '#b07a46'], by: 0.6 }, snow: 0.72, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
-  sides: { bare: 0.15, size: 0.55, spread: 0.25, tree: (p, x, y, s, tone, pick) => drawTreeSprite(p.ctx, x, y, s, tone, 3 + Math.floor(pick * 2), p.env.trees) } };
+  sides: { bare: 0.15, size: 0.55, spread: 0.25, tree: (p, x, y, s, tone, pick, trees) => drawTreeSprite(p.ctx, x, y, s, tone, treeOf(trees?.pine, pick, true), p.env.trees) } };

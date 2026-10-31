@@ -1,6 +1,11 @@
 // Screenshot helper for eyeballing screens during development:
 //   node tools/shot.ts out.png [map x y facing] [keys...]
 // Starts a new game, optionally teleports, presses the keys given, and saves a PNG.
+//
+// The game draws every screen at its frame (`Game.frame`), which the loop counts on at each step, and
+// what moves over the view (the weather, the flames, life.ts) moves with it, so a shot taken at whatever
+// frame the loop has reached differs from run to run. frame:<n> holds the frame at n from that key on:
+// the same shot is then the same bytes every run (#1094's twelve views take frame:0).
 import fs from 'node:fs';
 import { createServer } from './server.ts';
 import { open, type Load } from './kit/browser.ts';
@@ -14,7 +19,8 @@ await page.keyboard.press('Space'); await page.waitForTimeout(80);
 if (process.env.STAY_ON_CREATE !== '1') { await page.keyboard.press('Space'); await page.waitForTimeout(100); }
 if (map) await page.evaluate(([m, xx, yy, ff]: string[]) => { const g = window.__game!.game!; g.world.travel(m, Number(xx), Number(yy), Number(ff) as Facing); g.enterCell(); }, [map, x, y, f]);
 // Pseudo-keys: fight:<groupId> starts a fight, time:<hour> sets the clock, walk:<n> steps forward n times,
-// day:<n> moves to game day n at the same hour, seed:<n> sets the weather seed, and sky:<kind>[:night]
+// day:<n> moves to game day n at the same hour, seed:<n> sets the weather seed, frame:<n> holds the frame
+// at n (above), and sky:<kind>[:night]
 // moves the clock on to the first hour of daylight (or of night) with that sky here: sky:rain, sky:fog,
 // sky:blizzard (the names are game/weather.ts's Sky).
 for (const k of keys) {
@@ -22,6 +28,7 @@ for (const k of keys) {
   else if (k.startsWith('time:')) await page.evaluate((hr: number) => { const g = window.__game!.game!; g.world.state.minutes = Math.floor(g.world.state.minutes / 1440) * 1440 + hr * 60; }, Number(k.slice(5)));
   else if (k.startsWith('day:')) await page.evaluate((d: number) => { const g = window.__game!.game!; g.world.state.minutes = (d - 1) * 1440 + g.world.state.minutes % 1440; }, Number(k.slice(4)));
   else if (k.startsWith('seed:')) await page.evaluate((s: number) => { window.__game!.game!.world.state.weatherSeed = s; }, Number(k.slice(5)));
+  else if (k.startsWith('frame:')) await page.evaluate((n: number) => { Object.defineProperty(window.__game!.game!, 'frame', { get: () => n, set: () => {} }); }, Number(k.slice(6)));
   else if (k.startsWith('sky:')) {
     const err = await page.evaluate(async (spec: string) => {
       const [kind, when] = spec.split(':');
