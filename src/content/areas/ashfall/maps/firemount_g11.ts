@@ -165,6 +165,9 @@ export const FIREMOUNT_G11: MapDef<'firemount_g11'> = {
     { kind: 'event', x: 28, y: 28, id: 'g11_ember', once: true, text: 'The flow goes on south-east under its crust, slow as treacle, and smokes where it meets the air.' },
   ],
   secrets: [{ x: 29, y: 16, hint: 'g11_rope' }],
+  // Fire Mountain drawn tall: the cone and its plume over the land from far off, on the mouth's square (the
+  // vent's own drawing stands within four squares).
+  landmarks: [{ x: 15, y: 8, kind: 'volcano' }],
   encounters: [
     // Ember salamanders on the slope under the track, the box's gentlest, nearest the way in, and three
     // more on the cone's shoulder; the vents' fight at the mouths, two stokers with ember salamanders,
