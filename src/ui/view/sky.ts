@@ -1,5 +1,6 @@
-// The sky (#1028): the band over the horizon with its sun or moon, clouds, stars and distant hills
-// (`drawSkyBand`, the title's too), an ending's cast over its colours, the region's air (`airOf`, #1097)
+// The sky (#1028): the band over the horizon with its sun or moon, clouds, stars and distant hills, the
+// land cast from the atlas where it is given one (horizon.ts, #1095) and two bands where not (`drawSkyBand`,
+// the title's too), an ending's cast over its colours, the region's air (`airOf`, #1097)
 // and the haze it gives far things (`hazeOf`), the Hearth's light on the horizon by night and the title's
 // dusk (`drawDusk`).
 
@@ -11,6 +12,8 @@ import type { World } from '../../game/world.ts';
 import type { Air } from '../../content/area.ts';
 import { grassColor } from './common.ts';
 import type { ViewRect } from './common.ts';
+import { drawSkyline } from './horizon.ts';
+import type { Horizon } from './horizon.ts';
 
 export interface SkyOpts {
   facing: number; hour: number; daylight: number; dark: boolean;
@@ -34,6 +37,8 @@ export interface SkyOpts {
   cast?: HearthLook['cast'];
   /** The region's air (`airOf`): the sky's own when absent. */
   air?: Air;
+  /** The land cast from the atlas where the party stands (horizon.ts, #1095), drawn in place of the two bands: the bands when absent, as the title's and the endings' dusk draw them. */
+  horizon?: Horizon;
 }
 
 /** A colour of the sky under an ending's cast: most of the way to it by day, less at dusk and none by night. */
@@ -138,12 +143,14 @@ export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOp
     ctx.globalAlpha = 1;
   }
   if (o.part !== 'back') {
-    // Distant hills: two silhouette bands with a profile fixed to the compass, green by the season,
-    // white under snow, and lost in the murk, the far band first.
+    // Distant hills: the land cast from the atlas where the party stands (#1095); without it, two
+    // silhouette bands with a profile fixed to the compass, green by the season, white under snow, and
+    // lost in the murk, the far band first.
     const cover = o.cover ?? 0, green = o.day === undefined ? '#3f8a4a' : mix('#3f8a4a', grassColor(o.day), 0.6);
     const far = mix(mix('#101426', mix('#6a8ab8', '#b4c2d6', cover * 0.8), daylight), bottom, Math.min(1, murk * 1.3));
     const near = mix(mix('#0c101e', mix(green, '#dfe6ee', cover * 0.85), daylight), bottom, Math.min(1, murk * 0.8));
-    for (const [layer, col, amp, base] of [[0, far, 26, 30], [1, near, 16, 14]] as [number, string, number, number][]) {
+    if (o.horizon) drawSkyline(ctx, r, o.horizon, { daylight, dark, murk, cover, day: o.day ?? 0, haze: hazeOf(daylight, cloud, murk, o.cast, o.air) });
+    else for (const [layer, col, amp, base] of [[0, far, 26, 30], [1, near, 16, 14]] as [number, string, number, number][]) {
       ctx.beginPath(); ctx.moveTo(r.x, horizon + 1);
       for (let x = 0; x <= r.w; x += 8) {
         const wx = (x + f * r.w * 1.0 + layer * 137) / (4 * r.w);

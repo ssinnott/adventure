@@ -1,8 +1,9 @@
 // The first-person viewport: a depth-layered compositor in the Might and Magic III-V tradition. It draws
 // the walls and the grounds, each as its look in view/ground/ gives it (#1030), and the ground past a hill
 // seen from below it (`standsAt`), a landmark tall over its building's square out to `LANDMARK_REACH`, the
-// tents, the wall dressing, the features on open ground (view/features.ts, #1110), the sky, the end of
-// the world drawn as its look and the weather over it:
+// tents, the wall dressing, the features on open ground (view/features.ts, #1110), the sky, the land past
+// the fourth square cast from the atlas (view/horizon.ts, #1095), the end of the world drawn as its look and
+// the weather over it:
 // `drawViewport`, the scene it caches and `paintScene`, which paints the scene back to front from the
 // parts beside it (#1028).
 //
@@ -53,6 +54,8 @@ import { inTent, tentView, drawTentRoof } from './tents.ts';
 import { Scenes } from './kept.ts';
 import { drawScatter } from './scatter.ts';
 import { drawFeatures } from './features.ts';
+import { castHorizon, drawLand } from './horizon.ts';
+import { GRID } from '../../content/maps.ts';
 
 const DEPTH = VIEW_DEPTH;
 const LATERAL = VIEW_LATERAL;
@@ -199,20 +202,30 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   } else {
     const { dawn, dusk } = sunTimes(day);
     const at = world.worldCell, hearth = at ? { bearing: hearthBearing(world.tables.atlas, at.x, at.y), step: look.step } : undefined;
-    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth, cast: look.cast, air };
+    // The land past the fourth square cast from the atlas where the party stands, over the horizon and
+    // under it (horizon.ts, #1095): the grid alone, which never changes as a game runs.
+    const cast = at ? castHorizon(GRID, at, f, r.w, r.h) : undefined;
+    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth, cast: look.cast, air, horizon: cast };
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
-    // The ground runs on to the horizon in the terrain out past the last cell drawn, the void's as
-    // its look; the bare void and a drop have none, so short of them the ground is the party's own,
-    // and past a hill seen from below it the hill's (#53).
-    const out = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1)), far = out.look ?? out, brow = hillOver(map, px, py, f, DEPTH + 1, 0);
-    const own = far.solid === 'void' || !!GROUND[far.terrain].drop, farCell = brow ? map.at(brow.x, brow.y) : own ? map.at(px, py) : far;
-    // Its colour drifts as the cell's it is taken from (#1098).
-    const fa = brow ?? (own ? { x: px, y: py } : { x: px + FACING_DX[f] * (DEPTH + 1), y: py + FACING_DY[f] * (DEPTH + 1) });
-    const ground = shade(groundColor(p, farCell.terrain, pal.floor, fa.x, fa.y), dark ? 0.2 : 0.55);
-    const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
-    gg.addColorStop(0, mix(ground, skyBottom, dark ? 0.1 : 0.5)); gg.addColorStop(1, ground);
-    ctx.fillStyle = gg; ctx.fillRect(r.x, horizon, r.w, r.h / 2);
+    // Past a hill seen from below it the ground is the hill's (#53), in the colour it drifts to at its cell (#1098).
+    if (cast) drawLand(p, r, cast, { daylight, dark, murk: env.murk, cover: env.cover, day, haze: skyBottom }, pal.floor, (l) => {
+      const brow = hillOver(map, px, py, f, DEPTH + 1, l);
+      return brow && shade(groundColor(p, map.at(brow.x, brow.y).terrain, pal.floor, brow.x, brow.y), dark ? 0.2 : 0.55);
+    });
+    else {
+      // The ground runs on to the horizon in the terrain out past the last cell drawn, the void's as
+      // its look; the bare void and a drop have none, so short of them the ground is the party's own,
+      // and past a hill seen from below it the hill's (#53).
+      const out = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1)), far = out.look ?? out, brow = hillOver(map, px, py, f, DEPTH + 1, 0);
+      const own = far.solid === 'void' || !!GROUND[far.terrain].drop, farCell = brow ? map.at(brow.x, brow.y) : own ? map.at(px, py) : far;
+      // Its colour drifts as the cell's it is taken from (#1098).
+      const fa = brow ?? (own ? { x: px, y: py } : { x: px + FACING_DX[f] * (DEPTH + 1), y: py + FACING_DY[f] * (DEPTH + 1) });
+      const ground = shade(groundColor(p, farCell.terrain, pal.floor, fa.x, fa.y), dark ? 0.2 : 0.55);
+      const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
+      gg.addColorStop(0, mix(ground, skyBottom, dark ? 0.1 : 0.5)); gg.addColorStop(1, ground);
+      ctx.fillStyle = gg; ctx.fillRect(r.x, horizon, r.w, r.h / 2);
+    }
   }
 
   const order: number[] = [];
