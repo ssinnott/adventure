@@ -10,14 +10,25 @@ import { plate } from '../thornmark/public.ts';
 export const iceAxe = W('ice_axe', 'Ice Axe', 1800, 2, 12, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
 export const skinningKnife = W('skinning_knife', 'Skinning Knife', 1800, 1, 8, { kind: 'light', bonus: 11 });
 export const huntersBow = W('hunters_bow', "Hunter's Bow", 1900, 1, 12, { kind: 'bow', bonus: 10, ranged: true, twoHanded: true, classes: MARTIAL });
+// Its short bow and sling (#1115): the die a size smaller and two, so a step and two behind it by `hits`,
+// at three quarters of its price and half; a plus where it has one.
+export const huntersShortbow = W('hunters_shortbow', "Hunter's Short Bow", 1425, 1, 10, { kind: 'bow', short: true, bonus: 10, ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] });
+export const hideSling = W('hide_sling', 'Hide Sling', 950, 1, 8, { kind: 'light', bonus: 10, ranged: true });
 export const bearSpear = W('bear_spear', 'Bear Spear', 1900, 2, 12, { bonus: 4, twoHanded: true, classes: MARTIAL });
 export const guidesStaff = W('guides_staff', "Guide's Staff", 1600, 1, 10, { kind: 'staff', bonus: 10, twoHanded: true });
 export const bearskin = A('bearskin', 'Bearskin Coat', 2500, 12, { classes: NO_CASTER_HEAVY });
 export const furRobe = A('fur_robe', 'Fur Robe', 1600, 11);
 const WARES = [iceAxe, skinningKnife, huntersBow, bearSpear, guidesStaff, bearskin, furRobe];
+const RANGED = [huntersShortbow, hideSling];
 
 /** The furrier's stock, the act's last step (#487). */
 export const FURRIER: readonly string[] = WARES.map((d) => d.id);
+/**
+ * Sold beside the step at the furrier's (#1115), and kept out of it: the Hunter's Bow's short bow and
+ * sling are off the gate's ladder until #1117 takes them into the step, and the rung's `from`
+ * (tools/kit/rules/ladder.ts) is the step alone.
+ */
+export const FURRIER_RANGED: readonly string[] = RANGED.map((d) => d.id);
 
 // Rimewater's of the bounds' eight (DESIGN §9, #847), with the Whitespine: the Grey Robe's 13 and a
 // point, cut to the cleric, the sorcerer, the druid and the monk, and its wearer never asleep. Found
@@ -43,6 +54,8 @@ export const iceAxePlus1 = P(iceAxe, 1);
 export const skinningKnifePlus1 = P(skinningKnife, 1);
 export const bearSpearPlus1 = P(bearSpear, 1);
 export const guidesStaffPlus1 = P(guidesStaff, 1);
+export const huntersShortbowPlus1 = P(huntersShortbow, 1);
+export const hideSlingPlus1 = P(hideSling, 1);
 // The bay's two (#490), in the locker behind its last row: the ladder's Hunter's Bow +1 and Plate
 // Mail +4, each named in the hill folk's tongue (§10), bogha a bow and luireach a coat of mail.
 export const huntersBowPlus1 = P(huntersBow, 1, { name: 'Bogha Fionn +1', text: [
@@ -70,11 +83,14 @@ export const healersNote: ItemDef = { id: 'healers_note', name: 'The Healer\'s N
 
 export const ITEMS: readonly ItemDef[] = [
   ...WARES,
+  ...RANGED,
   iceAxePlus1,
   skinningKnifePlus1,
   bearSpearPlus1,
   guidesStaffPlus1,
   huntersBowPlus1,
+  huntersShortbowPlus1,
+  hideSlingPlus1,
   platePlus4,
   lannFuar,
   matronCap,
