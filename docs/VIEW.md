@@ -36,6 +36,11 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   one colour a square, its cell's, from wherever it is seen; rain and snow fall over it. Fifteen
   grounds of the open land drift, from grass to snow; water, roads, fields, drops and the rest keep
   one colour, nothing drifts underground and the automap's colours never do.
+- **Where two grounds meet**, `src/ui/view/ground/edges.ts` (#1100): a look's `rank` (snow, then heather,
+  steppe, grass, sand, dirt and ash) spills into a lower one beside it on open ground, a ragged tongue of
+  its colour as drawn and a third of its marks, a fifth of the way in and two fifths at most; other looks,
+  a square something stands on and a dungeon's floor take none and give none. The outline is the edge's,
+  hashed from it and its corners, so an edge looks the same from both squares and from every facing.
 
 - **A region's trees** (#1104): its look's `trees` names, by weight, those its forests and woods stand
   (`forest`) and its pinewoods (`pine`, conifers only). A square takes its region's, picked by its hash
