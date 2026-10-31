@@ -653,7 +653,7 @@ export async function kinds({ page, ok }: Run): Promise<void> {
       w.state.minutes = Math.floor(minutes / 1440) * 1440 + hour * 60;
       w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0, ...sky } };
     };
-    // Painted afresh each time: the view's own cache keys on neither a landmark's kind nor the cells.
+    // Painted afresh each time by paintScene, which keeps no scene (the kept scenes are drawViewport's, view/kept.ts).
     const view = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, 0, W, H).data; };
     const lamps = (): number => V.paintedFlames().filter((f) => f.lamp).length;
     const lay = (l: readonly Landmark[]): void => { (w.map as { landmarks: readonly Landmark[] }).landmarks = l; };
