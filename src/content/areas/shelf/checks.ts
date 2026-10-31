@@ -4,8 +4,6 @@
 import type { AreaChecks } from '../../area.ts';
 
 export const CHECKS = {
-  // Its maps over the cap of plain views (tools/tests/plain.ts), each owed until #1106 breaks it up.
-  owes: { plain: { downs_d2: '#1106' } },
   // The ladder's first two rungs (tools/harness.ts): by 3 the band's gear from Mottram's and the kits'
   // weapons with a plus from the Downs' first boxes; by 5 the kits' armour with a plus and the Downs' last finds.
   gear: {
