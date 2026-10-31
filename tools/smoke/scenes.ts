@@ -871,8 +871,8 @@ export async function features({ page, ok }: Run): Promise<void> {
 // every facing, so from either side of each of its edges: painted as it is and with the snow's rank taken off,
 // the two differ on that square's floor where its tongues lie, as the pure function (`tongue`) lays them, and
 // nowhere else. Each point is put on the screen by the camera's own sums, not the painter's, so a tongue laid by
-// the square or the eye and not by the edge fails. A point within three pixels of an outline or of the square's
-// sides is not read, nor one inside a tongue that something stands over (a mark of the square's or a prop).
+// the square or the eye and not by the edge fails. A point within two and a half pixels of an outline or of the
+// square's sides is not read, nor one inside a tongue that something stands over (a mark of the square's or a prop).
 export async function tongues({ page, ok }: Run): Promise<void> {
   const r = await page.evaluate(async (def: MapDef) => {
     const load: Load = (p) => import(p);

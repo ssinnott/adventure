@@ -19,7 +19,7 @@ import { GROUND, groundColor } from './index.ts';
 import type { Square } from './look.ts';
 
 /** How many stretches a tongue's outline runs in along its edge. */
-const STEPS = 8;
+const STEPS = 16;
 /** How far into the square a tongue reaches: at a corner it runs on through, and between, some fifth of the way at most. */
 const CORNER = [0.12, 0.18], MIDDLE = [0.1, 0.26];
 /** How much each point of the outline is moved in or out by its own hash, so the outline is ragged and not smooth. */

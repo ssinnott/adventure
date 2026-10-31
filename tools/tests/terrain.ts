@@ -440,4 +440,8 @@ function edges(): void {
   const mean = sum / points;
   ok(!odd.length && !wrong.length && !under, `an edge's tongue is the same from both of its squares and a square's from every facing; a pair with a rank-less ground, a square something stands on or two of a rank has none, nor a dungeon's floor, and each other pair the higher's (${pairs} edges of ${maps.length} maps, ${given} tongues, ${none} none${odd.length ? `; not the same: ${odd.slice(0, 4).join(', ')}` : ''}${wrong.length ? `; wrong: ${wrong.slice(0, 4).join(', ')}` : ''}${under ? `; ${under} underground` : ''})`);
   ok(mean >= 0.12 && mean <= 0.24 && most <= TONGUE_CAP && runs > 0 && !steps.length && o7 >= 60, `a tongue reaches some fifth into its square, never past ${TONGUE_CAP}, and runs on into the next edge's as deep where they meet; O7's snow spills into its heather (on average ${mean.toFixed(3)}, at most ${most.toFixed(3)}; ${runs} runs on${steps.length ? `, a step at ${steps.slice(0, 4).join(', ')}` : ''}; ${o7} tongues of snow on O7's heather)`);
+  // The ranks themselves, which the lines above read: the seven grounds of the open land, highest first, and no other
+  // look one, so the road, water, the chasm, fields and hills take none and give none.
+  const ranks = (Object.keys(GROUND) as Terrain[]).filter((t) => GROUND[t].rank).sort((a, b) => (GROUND[b].rank ?? 0) - (GROUND[a].rank ?? 0));
+  ok(ranks.join() === 'snow,heather,steppe,grass,sand,dirt,ash', `seven grounds have a rank, snow the highest, then heather, steppe, grass, sand, dirt and ash, and no other look has one, so the road, water, the chasm, fields and hills take none and give none (${ranks.join(', ')})`);
 }
