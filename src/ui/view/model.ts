@@ -2,7 +2,8 @@
 // stands on a square ahead (`standsAt`) and a cell as the scene draws it (`drawnAt`), a town's gates
 // (`isGateway`), the houses, how they look, their buildings and the tents (`isHouse`, `looksHouse`,
 // `building`, `isTent`, `tentOf`), a wall's dressing and its rates (`wallDressing`, `DRESSING_RATES`, held by
-// tools/tests/art.ts), the fields and the colours of the ground through the year (`fieldAt`, `cropColor`,
+// tools/tests/art.ts) and the props scattered on open ground and theirs (`SCATTER_RATES`, #1103), the fields
+// and the colours of the ground through the year (`fieldAt`, `cropColor`,
 // `hedgeColor`, `heatherBloom`, `iceColor`), how cold the year is on the heights (`cold`) and how far the
 // weather closes the view (`murkOf`, `washes`). It takes src/game and nothing of the painters: no canvas.
 // The grounds' looks read it (view/ground/, #1030), so it reads none of them: `SNOW_HOLD` is theirs.
@@ -194,6 +195,20 @@ type Dressing = (typeof DRESSINGS)[keyof typeof DRESSINGS][number];
 export const DRESSING_RATES: Record<Dressing, number> = {
   flowers: 0.64, ivy: 0.36,
   sconce: 0.45, banner: 0.08, cobweb: 0.08, crack: 0.08, damp: 0.07, ring: 0.08, grate: 0.08, carving: 0.08,
+};
+
+/** The small things scattered on open ground (#1103), each drawn in scenery.ts and named by the grounds' looks that stand it (`GroundLook.scatter`). */
+export type Prop = 'bush' | 'boulder' | 'thistle' | 'molehill' | 'gorse' | 'peat' | 'tussock' | 'skull' | 'stone'
+  | 'stump' | 'steam' | 'cinder' | 'drift' | 'reeds' | 'snag' | 'driftwood' | 'shells';
+/**
+ * The share of a ground's open squares each prop stands on, by a hash of the square (view/scatter.ts); a
+ * ground's add up to a fifth at most, and what is left is bare. Reeds and driftwood stand only beside
+ * water, so they take less. A new prop is written here or it does not typecheck; tools/tests/art.ts holds
+ * them, and the share of a map's open ground they take.
+ */
+export const SCATTER_RATES: Record<Prop, number> = {
+  bush: 0.05, boulder: 0.03, thistle: 0.03, molehill: 0.03, gorse: 0.06, peat: 0.04, tussock: 0.07, skull: 0.02, stone: 0.04,
+  stump: 0.04, steam: 0.04, cinder: 0.05, drift: 0.08, reeds: 0.12, snag: 0.04, driftwood: 0.08, shells: 0.05,
 };
 
 /**

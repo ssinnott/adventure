@@ -22,6 +22,12 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   ground. In the view a new ground is a module there, its line in `src/ui/view/ground/index.ts` and
   its colour in `TERRAIN_COLORS` (the automap's): the typecheck names a terrain without either.
 
+- **Scatter**, `src/ui/view/scatter.ts` (#1103): a ground's look names the props it scatters, small
+  drawings in `src/ui/scenery.ts`, each on its rate's share of the ground's open squares
+  (`SCATTER_RATES`; the rates and a cap on each map are held by `tools/tests/art.ts`). `scatterAt`
+  places one by a hash of the square, outdoors only, in a corner whose sides are open and never on a
+  door, an exit, a gate, a feature or a group's start; reeds and driftwood only beside water. A prop is
+  seen past and walked through: sight, the automap and the pilot read none.
 - **The drift** (#1098): a ground's colour drifts across the land in swathes some fourteen squares
   across, by smooth noise of its cell (`cellNoise`), one land over the whole outdoors and a town's its
   own, well toward one of the two colours its look names over most of it (grass lush and dry, ash
