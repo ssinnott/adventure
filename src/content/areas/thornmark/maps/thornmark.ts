@@ -69,7 +69,7 @@ export const THORNMARK: MapDef<'thornmark'> = {
     'M,T,,,,=,,,,,,,,,,,rr,,,,,,,,,,M',
     'M,,,,,,=,,,,,,,,,,,r,,,,,,,,,,,M',
     'M,,TTT,=,TTT,,,,,,,,,,,,,,,,,,,M',
-    'M,TTTTT==TTTT,,,,,,,,,,,,,,,,,,M',
+    'M,TTTTB==TTTT,,,,,,,,,,,,,,,,,,M',
     'M,TTTTTT=TTTT,,,,,,,,,,,,,,,,,,M',
     'MMMMMMMM=MMMMMMMMMMMMMMMMMMMMMMM',
   ],
@@ -196,8 +196,11 @@ export const THORNMARK: MapDef<'thornmark'> = {
     },
   ],
   // The old Warden watchtower, drawn as the tower it is over the land and seen from far off, on the building
-  // square the world map's point for it falls in.
-  landmarks: [{ x: 4, y: 5, kind: 'tower' }],
+  // square the world map's point for it falls in; and the Grove's great tree, on the hollow's west gate, 6,29.
+  // That was an oak, the one square within a square of the Grove's point that stops every party, and is a
+  // building square now, which a landmark needs (#1096, the owner's delegate's call): an oak and a building
+  // both stop every party.
+  landmarks: [{ x: 4, y: 5, kind: 'tower' }, { x: 6, y: 29, kind: 'tree' }],
   encounters: [
     { id: 'tm_wolves1', x: 5, y: 9, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: RESPAWN.day },
     { id: 'tm_ogre', x: 5, y: 7, monsters: ['ogre', 'brigand_archer', 'brigand', 'brigand', 'brigand'], aware: 3, roams: false, choice: BARGAIN },
