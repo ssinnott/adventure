@@ -16,7 +16,7 @@ import { drawViewport, drawWeather } from './viewport.ts';
 import { BRASS, TEXT, TEXT_DIM, RED, YELLOW, GREEN } from './palette.ts';
 import { currentTurn, partyAct, monsterAct, meetCalled, aliveMonsters, canAttackFromRow, canReach, shareRange } from '../game/combat.ts';
 import type { CombatState, PartyAction, TurnRef } from '../game/combat.ts';
-import { FEATS, builds, featsOn, featsKnown, featsOf, staminaOf } from '../game/combat/feats.ts';
+import { FEATS, aimable, builds, featsOn, featsKnown, featsOf, staminaOf } from '../game/combat/feats.ts';
 import { botTurn, asSeen, PLAYED } from '../game/bot.ts';
 import { spell, ELEMENTS } from '../game/spells.ts';
 import type { Element } from '../game/spells.ts';
@@ -121,11 +121,10 @@ export class CombatScreen implements Screen {
   }
 
   private options(g: Host, who: number): { label: string; key: string; disabled: boolean }[] { return commandRows(g.tables, g.party, this.state, who); }
-  /** What the member may aim at: a weapon what it reaches, a feat's blow the same, a spell or a feat at a group anyone still in the fight. */
+  /** What the member may aim at: a weapon what it reaches, a feat the foes it may be aimed at (`aimable`), a spell anyone still in the fight. */
   private targets(g: Host, who: number): number[] {
-    const alive = aliveMonsters(this.state);
-    const blow = this.mode === 'target' || (this.mode === 'featTarget' && FEATS.find((f) => f.id === this.pendingFeat)?.target === 'blow');
-    return blow ? alive.filter((i) => canReach(this.state, g.party.members[who], i)) : alive;
+    const alive = aliveMonsters(this.state), c = g.party.members[who], f = this.mode === 'featTarget' ? FEATS.find((x) => x.id === this.pendingFeat) : undefined;
+    return this.mode === 'target' ? alive.filter((i) => canReach(this.state, c, i)) : f ? alive.filter((i) => aimable(this.state, c, f, i)) : alive;
   }
   private usable(g: Host, who: number): string[] { return usable(g.tables, g.party, who); }
 

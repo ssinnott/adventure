@@ -41,9 +41,11 @@ export type PartyAction =
 /**
  * How a feat's blows differ from an Attack's (#1113; combat/feats.ts): so many blows, sure to land,
  * so many times the damage, every one a crit or none (no chance drawn either way), and the feat's
- * mark after the hit's sentence. Unset, each is the Attack's.
+ * mark after the hit's sentence; every one a sneak attack, the first aimed past the front rank, and what
+ * a blow does to a foe it lands on and leaves standing, its words after the mark. Unset, each is the
+ * Attack's.
  */
-export interface Strike { blows?: number; sure?: boolean; times?: number; crits?: boolean; mark?: string }
+export interface Strike { blows?: number; sure?: boolean; times?: number; crits?: boolean; mark?: string; sneak?: boolean; past?: boolean; onLand?: (m: MonsterInst) => string }
 
 type Outcome = 'ongoing' | 'victory' | 'defeat' | 'fled';
 

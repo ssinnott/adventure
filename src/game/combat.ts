@@ -25,7 +25,7 @@ import {
   canReach, waits, monsterAc, monsterHit, guard, castable, struck, monsterCast, sweep, regenerate, dim, calledBy, canCall, clocked, beat, call,
   morale, challenger,
 } from './combat/foes.ts';
-import { spend, landed, bore } from './combat/feats.ts';
+import { spend, landed, bore, featRounds } from './combat/feats.ts';
 
 // The old path: what this file exported of the parts before, given on, so no importer changed.
 export type {
@@ -132,8 +132,7 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   if (s.haste > 0) s.haste--;
   for (const t of [s.foeBless, s.foeShield]) t.forEach((n, band) => { if (n > 0) t[band] = n - 1; });
   if (s.glass && --s.glass.rounds <= 0) delete s.glass;
-  if (s.challenge && --s.challenge.rounds <= 0) delete s.challenge;
-  if (s.rally) s.rally--;
+  featRounds(s);
   // A monster held by the roots tears free as a member shakes off paralysis.
   const freed = s.monsters.filter((m) => standing(m) && m.conditions.includes('paralysed') && rng.chance(HOLD_BREAKS));
   for (const m of freed) m.conditions = m.conditions.filter((k) => k !== 'paralysed');
@@ -155,7 +154,7 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
 function strike(s: CombatState, party: Party, rng: RngInstance, i: number, target: number, how: Strike = {}): boolean {
   const c = party.members[i];
   let m = s.monsters[target];
-  if (!m || !canAttackFromRow(s.tables.items, c, i) || !canReach(s, c, target)) return false;
+  if (!m || !canAttackFromRow(s.tables.items, c, i) || !(how.past ? standing(m) : canReach(s, c, target))) return false;
   const w = weaponOf(s.tables.items, c), edge = s.edge?.(c, s);
   const own = how.blows ?? (blowsOf(s.tables.items, c) + (edge ? edge.blows - 1 : 0)), song = songDamage(party), carries = followsThrough(c);
   let blows = own;
@@ -171,17 +170,18 @@ function strike(s: CombatState, party: Party, rng: RngInstance, i: number, targe
       // follows a sneak attack's. A feat's blow (`Strike`, #1113) may land sure, crit sure or never,
       // neither drawn, count for more and take the feat's mark after a crit's; one that lands builds
       // stamina while the feats are on (`landed`), which draws nothing.
-      const sneak = sneaks(s, c, m), struck = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
+      const sneak = how.sneak || sneaks(s, c, m), struck = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m, sneak) + armsBonus(c) + song + (edge?.damage ?? 0))
         + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
       const chance = critChance(s.tables.items, c, s.crits ?? CRITS_ON), crit = how.crits ?? (chance > 0 && rng.chance(chance));
       const dmg = (crit ? 2 * struck : struck) * (how.times ?? 1);
       hurtMonster(m, dmg);
       landed(s, c, i, sneak, m.hp <= 0);
+      const did = how.onLand && standing(m) ? how.onLand(m) : '';
       // The Windwalker's follow-through (`followsThrough`, #1070): a blow that fells its foe is not
       // spent while a foe it can reach stands, at most once more for each of the turn's own blows.
       const on = carries && m.hp <= 0 && blows < 2 * own && aliveMonsters(s).some((f) => canReach(s, c, f));
       if (on) blows++;
-      s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (crit ? ` ${CRIT_LINE}` : '') + (how.mark ? ` ${how.mark}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : '') + (on ? ` ${FOLLOW_LINE}` : ''));
+      s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (crit ? ` ${CRIT_LINE}` : '') + (how.mark ? ` ${how.mark}` : '') + (did ? ` ${did}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : '') + (on ? ` ${FOLLOW_LINE}` : ''));
     } else s.log.push(`${c.name} misses ${m.def.name}.`);
   }
   return true;
@@ -222,10 +222,14 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       s.log.push(...said);
       break;
     }
-    case 'feat':
-      // A feat (#1113): legal only while the feats are on, its stamina spent and its rule played (`spend`).
-      if (!spend(s, party, rng, t.i, action.featId, action.target, (how, at) => strike(s, party, rng, t.i, at, how))) return false;
+    case 'feat': {
+      // A feat (#1113): legal only while the feats are on, its stamina spent and its rule played (`spend`);
+      // one that leaves the turn unspent (`FeatDef.again`) has the member act again at once.
+      const f = spend(s, party, rng, t.i, action.featId, action.target, (how, at) => strike(s, party, rng, t.i, at, how));
+      if (!f) return false;
+      if (f.again) { checkOutcome(s, party, rng); return true; }
       break;
+    }
     case 'flee': {
       const up = party.members.filter((m) => !isDown(m));
       const ps = up.reduce((a, m) => a + statOf(s.tables.items, m, 'speed'), 0) / Math.max(1, up.length);

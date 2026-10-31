@@ -23,7 +23,7 @@
 import type { RngInstance } from '../../lib/engine/rng.ts';
 import { FEATS_ON } from '../party.ts';
 import type { Character, ClassId, Party } from '../party.ts';
-import { standing } from './state.ts';
+import { standing, aliveMonsters } from './state.ts';
 import type { CombatState, PartyAction, Strike } from './state.ts';
 import { canAttackFromRow, rages } from './perks.ts';
 import { canReach } from './foes.ts';
@@ -38,6 +38,10 @@ type FeatTarget = 'blow' | 'group' | 'none';
 /** A feat (DESIGN §5): its class, the level it comes at, its cost in stamina, its words and its rule. */
 export interface FeatDef {
   id: string; cls: ClassId; level: number; cost: number; name: string; text: string; target: FeatTarget;
+  /** The foes it may be aimed at where a blow's reach or a group's standing foe is not its rule (a foe asleep or held, the back rank). */
+  aims?: (s: CombatState, c: Character, target: number) => boolean;
+  /** It leaves the turn unspent: the member acts again at once. */
+  again?: boolean;
   /** What it does, once the frame has found it legal and taken its cost. */
   use: (f: FeatUse) => void;
 }
@@ -53,7 +57,11 @@ interface FeatUse {
 interface FeatBot { s: CombatState; p: Party; c: Character; i: number; foe: number; has: (id: string) => boolean }
 
 /** A class's feats and its bots' policy: the feat to spend on this turn and its target, or none. */
-export interface FeatClass { feats: readonly FeatDef[]; bot: (b: FeatBot) => { featId: string; target: number } | undefined }
+export interface FeatClass {
+  feats: readonly FeatDef[]; bot: (b: FeatBot) => { featId: string; target: number } | undefined;
+  /** Its feats' rounds counted down at a round's end, as Bless's are (`featRounds`); nothing drawn. */
+  round?: (s: CombatState) => void;
+}
 
 /** Each class's feats, a line a class: the barbarian's, the thief's and the monk's come in pull requests of their own. */
 const BY_CLASS: Partial<Record<ClassId, FeatClass>> = { knight: KNIGHT };
@@ -88,23 +96,32 @@ export function bore(s: CombatState, c: Character, i: number): void {
 /** The feats a member has at its level, its class's: none for a class with none. */
 export const featsKnown = (c: Character): readonly FeatDef[] => (BY_CLASS[c.cls]?.feats ?? []).filter((f) => c.level >= f.level);
 
-/** The feats member `i` has at its level and may afford now, a blow's only from a row it strikes from; none while the feats are off. */
+/** The feats member `i` has at its level and may afford now, a blow's only from a row it strikes from, one with a rule of aim only while a foe meets it; none while the feats are off. */
 export function featsOf(s: CombatState, party: Party, i: number): readonly FeatDef[] {
   const c = party.members[i], st = s.stamina?.[i];
-  return st === undefined ? [] : featsKnown(c).filter((f) => f.cost <= st && (f.target !== 'blow' || canAttackFromRow(s.tables.items, c, i)));
+  return st === undefined ? [] : featsKnown(c).filter((f) => f.cost <= st && (f.target !== 'blow' || canAttackFromRow(s.tables.items, c, i)) && (!f.aims || aliveMonsters(s).some((t) => f.aims!(s, c, t))));
+}
+
+/** Whether member `c`'s feat `f` may be aimed at monster `target`: by its own rule (`aims`), else a blow's at a foe its weapon reaches, a group's at one standing. */
+export function aimable(s: CombatState, c: Character, f: FeatDef, target: number): boolean {
+  const m = s.monsters[target];
+  return f.aims ? f.aims(s, c, target) : f.target === 'blow' ? canReach(s, c, target) : f.target === 'group' ? !!m && standing(m) : true;
 }
 
 /**
  * Member `i` spends stamina on feat `featId` at `target` (`partyAct`'s 'feat'): its cost taken and its
- * rule played, its blows by `strike`. False, and nothing done, where it may not.
+ * rule played, its blows by `strike`. The feat spent, or none and nothing done where it may not.
  */
-export function spend(s: CombatState, party: Party, rng: RngInstance, i: number, featId: string, target: number, strike: (how: Strike, at: number) => void): boolean {
-  const c = party.members[i], f = featsOf(s, party, i).find((x) => x.id === featId), m = s.monsters[target];
-  if (!f || (f.target === 'blow' && !canReach(s, c, target)) || (f.target === 'group' && !(m && standing(m)))) return false;
+export function spend(s: CombatState, party: Party, rng: RngInstance, i: number, featId: string, target: number, strike: (how: Strike, at: number) => void): FeatDef | undefined {
+  const c = party.members[i], f = featsOf(s, party, i).find((x) => x.id === featId);
+  if (!f || !aimable(s, c, f, target)) return undefined;
   s.stamina![i] -= f.cost;
   f.use({ s, party, rng, c, i, target, strike: (how = {}, at = target) => strike(how, at) });
-  return true;
+  return f;
 }
+
+/** The feats' round's end (`endRound`): each class's rounds counted down (`FeatClass.round`). */
+export function featRounds(s: CombatState): void { for (const k of Object.values(BY_CLASS)) k.round?.(s); }
 
 /**
  * The feat the bots spend on for member `i` this turn (`BotOpts.feats`, game/bot.ts): its class's

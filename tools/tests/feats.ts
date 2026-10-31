@@ -16,7 +16,7 @@ import type { CombatState, CombatOpts, PartyAction } from '../../src/game/combat
 import { FEATS, STAMINA_MAX, featsOf, featsKnown, featFor, staminaOf } from '../../src/game/combat/feats.ts';
 import { CHALLENGE_ROUNDS, RALLY_ROUNDS } from '../../src/game/combat/feats/knight.ts';
 import { CRIT_LINE, SNEAK_LINE, MIGHTY_LINE } from '../../src/game/combat/lines.ts';
-import { botTurn, asWritten, PLAYED } from '../../src/game/bot.ts';
+import { botTurn, asSeen, asWritten, PLAYED } from '../../src/game/bot.ts';
 import type { BotOpts } from '../../src/game/bot.ts';
 import { SKILLS } from '../../src/game/skills.ts';
 import type { ItemDef } from '../../src/game/items.ts';
@@ -25,6 +25,7 @@ import type { Tables } from '../../src/game/tables.ts';
 import { commandRows, featRows } from '../../src/ui/combat.ts';
 import { MONSTERS, SPELLS, TABLES } from '../../src/content/index.ts';
 import { gateCompany } from '../kit/company.ts';
+import { gateTurn } from '../kit/fight.ts';
 import { ok } from './lib.ts';
 
 /** A blade that always does 1, so a blow's damage is the same on every draw: 1, +4, and the knight's Might and Weapon Master. */
@@ -135,6 +136,11 @@ function frame(): void {
   ok(fell === 1 && felling.mine > fell && felling.st === felling.mine + fell, `the monk's blow that fells its foe builds 2 and its others 1 (${felling.mine} hits, ${fell} felling, ${felling.st})`);
   const swept = after('knight', [foe('test_sweeper', { attack: 50, speed: 99, sweep: { chance: 1 } })], 2);
   ok(swept.log.some((l) => l.includes(' sweeps the front row: ')) && swept.on === 0 && swept.st === swept.mine, `a sweep that lands builds nothing: a blow is what the log says hits (${swept.st})`);
+
+  // A blow of its own that misses builds none, and a foe's blow that fells the member builds as any.
+  const missing = after('knight', [WALL], 3), felled = after('thief', [BITER], 1, (c) => { c.hp = 1; });
+  ok(missing.mine < 3 && missing.st === Math.min(STAMINA_MAX, missing.mine + 2 * missing.on) && felled.on === 1 && felled.log.some((l) => l.endsWith(' falls!')) && felled.st === felled.on + felled.mine,
+    `a blow of its own that misses builds none (${3 - missing.mine} of 3 missed, ${missing.st} built), and a foe's that fells it builds as any (${felled.st})`);
 
   // The fight's, not the member's: none at its start, none kept after it, never saved.
   const kept = member('knight', 1, true), q = createParty([kept]), first = fight(q, [[BITER]], 5);
@@ -274,4 +280,56 @@ function knight(): void {
   const labels = [0, 1, 2].map((i) => commandRows(T, m, mf.f, i)[1]), rows = featRows(T, m, mf.f, 0);
   ok(labels.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === 'Feat,Cast,Feat-' && rows.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === "Challenge (2),Mighty Blow (3),Rally (4)-,Champion's Strike (5)-",
     `with the feats on, the knight's and the barbarian's menu read Feat (the barbarian's barred: no feats yet) and the cleric's Cast; the knight's list on 3: ${rows.map((x) => x.label + (x.disabled ? ' barred' : '')).join(', ')}`);
+
+  // The edges: a challenge holds the rank aimed at, not the rest of its band, on the knight who made it
+  // from whatever slot; a group's feat is never aimed at a fallen foe; a rally frees none who is down;
+  // and both bots play the feats once a fight has them, the gate's and the game's auto-fight.
+  {
+    const ARCHER = foe('test_archer', { attack: 50, speed: 97, ranged: true, name: 'Archer', plural: 'Archers' });
+    let ranks = 0, loose = 0;
+    for (let seed = 1; seed <= 6; seed++) {
+      const q = createParty([member('cleric'), member('knight', 1, true), member('monk')]), rng = counted(seed);
+      const x = startCombat(T, q, [{ id: 'band', monsters: [BITER, BITER, ARCHER, ARCHER], back: 2 }], rng, { feats: true });
+      act(x, q, rng, 1, feat('challenge'), 2);
+      const lines: string[] = [];
+      while (x.outcome === 'ongoing' && x.round <= 2) {
+        const t = currentTurn(x, q, rng);
+        if (!t) break;
+        const round = x.round, at = x.log.length;
+        if (t.side === 'monster') monsterAct(x, q, rng); else partyAct(x, q, rng, { type: 'defend' });
+        if (round === 2) lines.push(...x.log.slice(at));
+      }
+      const bites = lines.filter((l) => l.startsWith(`${MONSTERS.rat.name} `)), shots = lines.filter((l) => l.startsWith('Archer '));
+      if (bites.length === 2 && bites.every(onKnight)) ranks++;
+      if (shots.length === 2 && !shots.every(onKnight)) loose++;
+    }
+    ok(ranks === 6 && loose > 0, `a challenge holds the rank aimed at, on the knight who made it from the second slot (${ranks} of 6 seeds), and not its band's back rank (${loose})`);
+  }
+  {
+    const q = createParty([member('knight', 1, true)]), { f: x, rng } = fight(q, [[STRAW, STRAW]], 1);
+    until(x, q, rng, 0);
+    x.monsters[1].hp = 0;
+    ok(act(x, q, rng, 0, feat('challenge', 1), 2) === null && x.stamina![0] === 2 && act(x, q, rng, 0, feat('challenge', 0), 2) !== null,
+      'a challenge at a fallen foe is refused and nothing spent; at one standing it is made');
+  }
+  {
+    const q = createParty([member('knight', 15, true), member('monk'), member('barbarian')]), { f: x, rng } = fight(q, [[STRAW]], 1);
+    until(x, q, rng, 0);
+    q.members[1].hp = -1; q.members[1].conditions.push('unconscious', 'paralysed'); q.members[2].conditions.push('asleep');
+    const rallied = act(x, q, rng, 0, feat('rally'), 4);
+    ok(q.members[1].conditions.includes('paralysed') && !q.members[2].conditions.includes('asleep') && rallied?.[0] === 'knight rallies the front row. barbarian shakes it off.',
+      `a rally frees none who is down: "${rallied?.[0]}"`);
+  }
+  {
+    const play = (bot: (x: CombatState, q: Party, rng: RngInstance) => void): string => {
+      const q = createParty([member('knight', 23, true), member('cleric')]), { f: x, rng } = fight(q, [[STRAW]], 1);
+      until(x, q, rng, 0);
+      x.stamina![0] = 5;
+      const at = x.log.length;
+      bot(x, q, rng);
+      return x.log[at] ?? '';
+    };
+    const gate = play((x, q, rng) => gateTurn(x, q, rng, 0)), auto = play((x, q, rng) => { botTurn(x, q, rng, 0, asSeen, PLAYED); });
+    ok(PLAYED.feats === true && gate === 'knight strikes as a champion.' && auto === gate, `both bots play the feats once a fight has them, the gate's and the game's auto-fight ("${gate}")`);
+  }
 }

@@ -81,7 +81,7 @@ export function songDamage(party: Party): number {
 }
 
 /** Extra weapon damage from the attacker's traits and prestiges. */
-export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: MonsterInst): number {
+export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: MonsterInst, sneak = sneaks(s, c, m)): number {
   let n = 0;
   if (w.ranged) { if (hasTrait(c, 'marksman')) n += MARKSMAN_DMG + (prestigeOf(c) >= 2 ? MARKSMAN_MORE : 0); }
   else {
@@ -89,7 +89,7 @@ export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: Monster
     if (rages(c)) n += RAGE_DMG;
   }
   if (hasTrait(c, 'holy_strike') && KINDS[m.def.kind].holy) n += c.cls === 'paladin' && prestigeOf(c) >= 2 ? HOLY_STRIKE_RISEN : HOLY_STRIKE_DMG;
-  if (sneaks(s, c, m)) n += sneakDamage(c);
+  if (sneak) n += sneakDamage(c);
   return n;
 }
 

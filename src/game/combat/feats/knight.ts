@@ -47,6 +47,8 @@ const championsStrike: FeatDef = {
 
 export const KNIGHT: FeatClass = {
   feats: [challenge, mightyBlow, rally, championsStrike],
+  // The rounds a Challenge holds and a Rally lasts, counted down at a round's end.
+  round: (s) => { if (s.challenge && --s.challenge.rounds <= 0) delete s.challenge; if (s.rally) s.rally--; },
   // The bots' policy: the first of these that pays, in this order, or none and the knight strikes.
   bot: ({ s, p, c, i, foe, has }) => {
     // Champion's Strike whenever it can: every blow of the turn that lands is doubled.
