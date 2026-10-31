@@ -4,4 +4,6 @@ import type { AreaLook } from '../../area.ts';
 export const LOOK: AreaLook = {
   // A hard, cold blue over the ice, icy at the foot.
   air: { strength: 0.2, top: '#0060ff', foot: '#00e0ff' },
+  // Scots pine and larch about the lakes; birch and larch in the woods.
+  trees: { forest: { birch: 2, larch: 1 }, pine: { scots: 3, larch: 2 } },
 };

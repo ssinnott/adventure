@@ -12,4 +12,4 @@ function mark(p: Paint, m: Mark): void {
 }
 
 export const snow: GroundLook = { color: () => TERRAIN_COLORS.snow, drift: { toward: ['#c4d2e4', '#ffffff'], by: 0.6 }, snow: 1, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 2, mark },
-  rank: 7 };
+  scatter: ['drift'], rank: 7 };

@@ -1,28 +1,33 @@
 // The viewport's scenery, cel-shaded with the engine's helpers through a Brush: the trees dressed by
-// the season, the dead trees, the crystals, the lighthouse, the monastery, the wilderness features
-// (#1110), rocks, mountains, peaks, cliffs, the volcano, the creeper trees and the pillar. Every sprite draws front-facing, centred on
+// the season, the dead trees, the props scattered on open ground (#1103), the crystals, the lighthouse,
+// the monastery, the wilderness features (#1110), rocks, mountains, peaks, cliffs, the volcano, the
+// creeper trees and the pillar. Every sprite draws front-facing, centred on
 // (x, y) with y the ground line; `tone` darkens with distance. The monsters are ./sprites.ts's.
+import type { TreeName, TreeWeights } from '../content/area.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { celBall, celCapsule, celPoly, celTaper, band } from '../lib/art/shading.ts';
 import { B, stroke } from './monsters/common.ts';
+import type { Prop } from './view/model.ts';
 
 /**
  * How the time of year dresses a broadleaf tree: how much leaf is left (0 bare .. 1 full), how far it
- * has turned to autumn gold (`turn`) and on to brown (`brown`), spring's fresh green, blossom, and
- * the snow lying on it (0 .. 1).
+ * has turned to autumn gold (`turn`) and on to brown (`brown`), spring's fresh green, blossom, the
+ * berries on the rowan and the thorn (`berry`, #1104), and the snow lying on it (0 .. 1).
  */
-export interface TreeSeason { leaf: number; turn: number; brown: number; fresh: number; blossom: number; snow: number; }
-export const HIGH_SUMMER: TreeSeason = { leaf: 1, turn: 0, brown: 0, fresh: 0, blossom: 0, snow: 0 };
+export interface TreeSeason { leaf: number; turn: number; brown: number; fresh: number; blossom: number; berry: number; snow: number; }
+export const HIGH_SUMMER: TreeSeason = { leaf: 1, turn: 0, brown: 0, fresh: 0, blossom: 0, berry: 0, snow: 0 };
 
 const ramp = (v: number, a: number, b: number): number => Math.max(0, Math.min(1, (v - a) / (b - a)));
 /**
  * The trees on a day of the year (see game/calendar.ts): buds in Thaw, blossom in Sowing, full leaf
- * through the summer, gold and orange in Leafturn, brown and falling through Mistfall, bare by Frost.
+ * through the summer, gold and orange in Leafturn, brown and falling through Mistfall, bare by Frost;
+ * berries red from Harvest until the birds have had them by the end of Frost.
  */
 export function treeSeason(day: number, snow: number): TreeSeason {
   return {
     leaf: ramp(day, 6, 20) * (1 - ramp(day, 80, 92)), turn: ramp(day, 58, 72), brown: ramp(day, 76, 88),
-    fresh: ramp(day, 6, 12) * (1 - ramp(day, 22, 36)), blossom: ramp(day, 13, 19) * (1 - ramp(day, 24, 30)), snow,
+    fresh: ramp(day, 6, 12) * (1 - ramp(day, 22, 36)), blossom: ramp(day, 13, 19) * (1 - ramp(day, 24, 30)),
+    berry: ramp(day, 45, 52) * (1 - ramp(day, 94, 104)), snow,
   };
 }
 
@@ -48,7 +53,12 @@ function bareCrown(ctx: CanvasRenderingContext2D, x: number, top: number, u: num
   }
 }
 
+/**
+ * A living tree, `variant` of `TREES`: the broadleaf (0 and 1), the birch (2) and the conifer (3 and 4)
+ * of old, as they always were; the regions' own from 5 on (#1104).
+ */
 export function drawTreeSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, variant: number, season: TreeSeason = HIGH_SUMMER): void {
+  if (variant >= OLD_TREES) return REGIONAL[variant - OLD_TREES](ctx, x, y, u, tone, season);
   const conifer = variant >= 3;
   const trunk = shade('#5a3f2a', tone), leaf = shade(leafColor(variant, season), tone);
   const snow = season.snow > 0.15 ? shade(SNOW_WHITE, tone) : null;
@@ -102,6 +112,231 @@ export function drawTreeSprite(ctx: CanvasRenderingContext2D, x: number, y: numb
   }
 }
 
+// The regions' own trees (#1104), each dressed by the year as the five of old are and toned alike.
+/** A leaf through the year: spring's fresh green over `base`, turning to `autumn` and `browns` of the way on to brown. */
+function seasonLeaf(base: string, autumn: string, s: TreeSeason, browns = 0.75): string {
+  return mix(mix(mix(base, '#8ed058', s.fresh * 0.6), autumn, s.turn), '#7a5230', s.brown * browns);
+}
+/** Dabs strewn through an ellipse over a crown (flowers, catkins, berries): the first `share` of `n`, `size` across. */
+function dabs(ctx: CanvasRenderingContext2D, cx: number, cy: number, rx: number, ry: number, n: number, share: number, size: number, colour: (i: number) => string): void {
+  const sz = Math.max(1, Math.round(size));
+  for (let i = 0; i < n && i / n < share; i++) {
+    const a = i * 2.4, k = 0.3 + 0.6 * ((i * 37) % 10) / 10;
+    ctx.fillStyle = colour(i);
+    ctx.fillRect(Math.round(cx + Math.cos(a) * rx * k), Math.round(cy + Math.sin(a) * ry * k), sz, sz);
+  }
+}
+const treeSnow = (s: TreeSeason, tone: number): string | null => (s.snow > 0.15 ? shade(SNOW_WHITE, tone) : null);
+
+/** An oak (Thornmark's): low and broad, a short thick trunk with a knot, its limbs spread level under a broad crown; catkins in Sowing, russet in Leafturn. */
+function oak(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, s: TreeSeason): void {
+  const bark = shade('#5a4a38', tone), leaf = shade(seasonLeaf('#5e7428', '#a8662a', s), tone), snow = treeSnow(s, tone), top = y - u * 0.84;
+  celTaper(ctx, B, x + u * 0.04, y, x - u * 0.06, top, u * 0.21, u * 0.15, bark, 0.2);
+  ctx.fillStyle = shade('#2e2418', tone);
+  ctx.fillRect(Math.round(x - u * 0.06), Math.round(y - u * 0.42), Math.max(1, Math.round(u * 0.07)), Math.max(1, Math.round(u * 0.09)));
+  const limbs = [[x - u * 0.06, top, x - u * 0.45, top - u * 0.18, x - u * 0.86, top - u * 0.24], [x - u * 0.04, top + u * 0.04, x + u * 0.42, top - u * 0.22, x + u * 0.82, top - u * 0.3]];
+  for (const l of limbs) stroke(ctx, l, bark, Math.max(1, u * 0.11));
+  if (s.leaf < 0.6) {
+    const bare = s.leaf < 0.15 ? snow : null;
+    bareCrown(ctx, x - u * 0.04, top - u * 0.06, u, 0.95, bark, bare);
+    if (bare) for (const l of limbs) stroke(ctx, l.map((v, i) => v - (i % 2 ? Math.max(1, u * 0.07) : 0)), bare, Math.max(1, u * 0.05));
+  }
+  if (s.leaf >= 0.15) {
+    // A crown wider than it is tall, in lobes along its top, held up clear of the limbs.
+    const k = 0.55 + 0.45 * s.leaf;
+    for (const [dx, dy, r, t] of [[-0.72, 1.3, 0.34, 0.88], [0.74, 1.28, 0.32, 0.92], [-0.38, 1.56, 0.4, 1.02], [0.38, 1.58, 0.39, 0.98], [0, 1.78, 0.4, 1.08], [0.02, 1.3, 0.42, 0.8]]) {
+      celBall(ctx, B, x + dx * u, y - dy * u, r * u * k, shade(leaf, t), t > 0.85);
+    }
+    if (u > 8 && s.blossom > 0.1) dabs(ctx, x, y - u * 1.4, u * 0.85, u * 0.26, 10, s.blossom, u * 0.07, () => shade('#d8d878', tone));
+  }
+}
+
+/** A willow (the delta's): a short leaning trunk under a dome whose leaves hang in a curtain nearly to the ground; yellow catkins in Sowing, yellow in Leafturn, its bare twigs hanging gold. */
+function willow(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, s: TreeSeason): void {
+  const h = u * 2.3, bark = shade('#5e4a36', tone), leaf = shade(seasonLeaf('#7c9c3e', '#d8c448', s, 0.4), tone), snow = treeSnow(s, tone);
+  const cx = x + u * 0.08, cy = y - h * 0.68, fork = y - h * 0.5;
+  celTaper(ctx, B, x, y, cx, fork, u * 0.16, u * 0.11, bark, 0.2);
+  if (s.leaf < 0.6) {
+    const twig = shade('#b08a48', tone), bare = s.leaf < 0.15 ? snow : null;
+    for (const [dx, dy] of [[-0.62, 0.3], [-0.3, 0.52], [0.05, 0.62], [0.36, 0.5], [0.64, 0.28]]) {
+      const ex = cx + dx * u, ey = cy - dy * u;
+      stroke(ctx, [cx, fork, ex, ey], bark, Math.max(1, u * 0.07));
+      stroke(ctx, [ex, ey, ex + dx * u * 0.3, ey + u * 0.04, ex + dx * u * 0.42, y - h * 0.18], twig, Math.max(1, u * 0.04));
+      stroke(ctx, [ex - dx * u * 0.12, ey + u * 0.06, ex + dx * u * 0.06, ey + u * 0.1, ex + dx * u * 0.1, y - h * 0.32], twig, Math.max(1, u * 0.04));
+      if (bare) stroke(ctx, [(cx + ex) / 2, (fork + ey) / 2 - 1, ex, ey - 1], bare, Math.max(1, u * 0.04));
+    }
+  }
+  if (s.leaf >= 0.15) {
+    const k = 0.55 + 0.45 * s.leaf, half = u * 0.95 * k, fw = u * 0.17 * k;
+    // The curtain: seven fronds hung from under the dome, longer and shorter by turns, the outer splayed a little.
+    for (const i of [0, 6, 2, 4, 1, 5, 3]) {
+      const t = i / 3 - 1, fx = cx + t * half * 0.86, top = cy - h * 0.02 + Math.abs(t) * h * 0.06;
+      const foot = top + h * (0.34 + 0.06 * ((i * 3) % 4)) * (0.35 + 0.65 * s.leaf), sx = t * u * 0.08;
+      celPoly(ctx, B, [fx - fw, top, fx + fw, top, fx + fw * 0.75 + sx, foot - h * 0.06, fx + sx * 1.3, foot, fx - fw * 0.75 + sx, foot - h * 0.06], shade(leaf, i % 2 ? 0.84 : 0.96), 0.4, 0.2);
+    }
+    celBall(ctx, B, cx - u * 0.42 * k, cy - h * 0.02, u * 0.44 * k, shade(leaf, 0.96));
+    celBall(ctx, B, cx + u * 0.42 * k, cy, u * 0.44 * k, shade(leaf, 1.04));
+    celBall(ctx, B, cx, cy - h * 0.1, u * 0.52 * k, leaf);
+    if (u > 8 && s.blossom > 0.1) dabs(ctx, cx, cy + h * 0.1, half * 0.9, h * 0.22, 10, s.blossom, u * 0.07, () => shade('#e8d850', tone));
+    if (snow) stroke(ctx, [cx - u * 0.8 * k, cy - h * 0.06, cx - u * 0.4 * k, cy - h * 0.2, cx, cy - h * 0.1 - u * 0.5 * k, cx + u * 0.4 * k, cy - h * 0.18, cx + u * 0.8 * k, cy - h * 0.04], snow, Math.max(1, u * 0.08 * s.snow));
+  }
+}
+
+/** A poplar (the delta's): tall and narrow, its crown a column; red catkins in Sowing, bright yellow in Leafturn, bare its limbs swept up close about the trunk. */
+function poplar(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, s: TreeSeason): void {
+  const h = u * 3, bark = shade('#6a5a48', tone), leaf = shade(seasonLeaf('#4e8a3c', '#e8c838', s, 0.5), tone), snow = treeSnow(s, tone);
+  celTaper(ctx, B, x, y, x, y - h * (s.leaf < 0.6 ? 0.94 : 0.3), u * 0.1, u * (s.leaf < 0.6 ? 0.025 : 0.08), bark, 0.2);
+  if (s.leaf < 0.6) {
+    const bare = s.leaf < 0.15 ? snow : null;
+    for (let i = 0; i < 6; i++) {
+      const side = i % 2 ? 1 : -1, by = y - h * (0.26 + i * 0.11), limb = [x, by, x + side * u * 0.2, by - h * 0.12, x + side * u * 0.24, by - h * 0.22];
+      stroke(ctx, limb, bark, Math.max(1, u * 0.05));
+      if (bare) stroke(ctx, [limb[2] - side, limb[3] - 1, limb[4] - side, limb[5] - 1], bare, Math.max(1, u * 0.04));
+    }
+  }
+  if (s.leaf >= 0.15) {
+    const w = u * 0.38 * (0.55 + 0.45 * s.leaf);
+    celPoly(ctx, B, [x, y - h, x + w * 0.8, y - h * 0.76, x + w, y - h * 0.48, x + w * 0.62, y - h * 0.22, x - w * 0.62, y - h * 0.22, x - w, y - h * 0.48, x - w * 0.8, y - h * 0.76], leaf, 0.42, 0.25);
+    for (let i = 0; i < 4; i++) stroke(ctx, [x - w * 0.5, y - h * (0.32 + 0.14 * i), x + w * 0.1, y - h * (0.36 + 0.14 * i)], shade(leaf, 0.78), Math.max(1, u * 0.05));
+    if (u > 8 && s.blossom > 0.1) dabs(ctx, x, y - h * 0.6, w * 0.8, h * 0.3, 8, s.blossom, u * 0.07, () => shade('#b83a3a', tone));
+    if (snow) stroke(ctx, [x - w, y - h * 0.5, x - w * 0.8, y - h * 0.76, x, y - h + 1, x + w * 0.8, y - h * 0.76, x + w, y - h * 0.5], snow, Math.max(1, u * 0.07 * s.snow));
+  }
+}
+
+/** Red bunches of three, hung about a crown or its bare limbs: the rowan's berries. */
+function bunches(ctx: CanvasRenderingContext2D, at: readonly (readonly number[])[], u: number, share: number, colour: string): void {
+  const sz = Math.max(1, Math.round(u * 0.07));
+  ctx.fillStyle = colour;
+  for (let i = 0; i < at.length && i / at.length < share; i++) {
+    const [bx, by] = at[i].map(Math.round);
+    ctx.fillRect(bx, by, sz, sz); ctx.fillRect(bx + sz, by, sz, sz); ctx.fillRect(bx + Math.round(sz / 2), by + sz, sz, sz);
+  }
+}
+
+/** A rowan (the moors'): slender and smooth-barked, its crown light and open; cream flowers in Sowing, berries red from Harvest that stay on the bare limbs into Frost, flame in Leafturn. */
+function rowan(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, s: TreeSeason): void {
+  const h = u * 2.1, bark = shade('#7a7266', tone), leaf = shade(seasonLeaf('#4e8040', '#d8502a', s, 0.6), tone), top = y - h * 0.5;
+  celTaper(ctx, B, x, y, x, top, u * 0.1, u * 0.07, bark, 0.2);
+  stroke(ctx, [x, top, x - u * 0.32, y - h * 0.72], bark, Math.max(1, u * 0.06));
+  stroke(ctx, [x, top + u * 0.06, x + u * 0.3, y - h * 0.74], bark, Math.max(1, u * 0.06));
+  if (s.leaf < 0.6) bareCrown(ctx, x, top, u, 0.72, bark, s.leaf < 0.15 ? treeSnow(s, tone) : null, true);
+  const crown = [[-0.42, 0.68, 0.32, 0.9], [0.4, 0.7, 0.32, 1.02], [-0.16, 0.86, 0.36, 1.06], [0.2, 0.84, 0.34, 1], [0, 0.66, 0.28, 0.82]];
+  if (s.leaf >= 0.15) for (const [dx, dy, r, t] of crown) celBall(ctx, B, x + dx * u, y - dy * h, r * u * (0.55 + 0.45 * s.leaf), shade(leaf, t), t > 0.85);
+  if (u > 8 && s.leaf >= 0.15 && s.blossom > 0.1) dabs(ctx, x, y - h * 0.78, u * 0.55, u * 0.3, 8, s.blossom, u * 0.12, () => shade('#f4eedc', tone));
+  if (u > 8 && s.berry > 0.1) bunches(ctx, crown.map(([dx, dy, r]) => [x + dx * u - u * 0.05, y - dy * h + r * u * 0.3]), u, s.berry, shade('#d0261e', tone));
+}
+
+/** A thorn of the moors and the gulf: low and wind-bent, its trunk leaning and its crown swept to the lee; may blossom white in Sowing, dark red haws from Harvest. */
+function thorn(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, s: TreeSeason): void {
+  const h = u * 2.2, bark = shade('#4e4034', tone), leaf = shade(seasonLeaf('#3e6a34', '#8a5a2a', s, 0.7), tone), snow = treeSnow(s, tone);
+  const kx = x + u * 0.12, ky = y - h * 0.36, tx = x + u * 0.34, ty = y - h * 0.6;
+  celTaper(ctx, B, x - u * 0.06, y, kx, ky, u * 0.15, u * 0.11, bark, 0.2);
+  celTaper(ctx, B, kx, ky, tx, ty, u * 0.11, u * 0.07, bark, 0.2);
+  stroke(ctx, [kx, ky - h * 0.05, x + u * 0.5, y - h * 0.56, x + u * 0.82, y - h * 0.6], bark, Math.max(1, u * 0.07));
+  stroke(ctx, [kx, ky - h * 0.08, x - u * 0.12, y - h * 0.52, x - u * 0.3, y - h * 0.6], bark, Math.max(1, u * 0.06));
+  if (s.leaf < 0.6) {
+    const bare = s.leaf < 0.15 ? snow : null;
+    for (const [dx, dy] of [[-0.24, 0.76], [0.1, 0.88], [0.48, 0.96], [0.84, 0.88], [1.0, 0.72]]) {
+      const ex = x + dx * u, ey = y - dy * h, mx = (tx + ex) / 2 + u * 0.06, my = (ty + ey) / 2;
+      stroke(ctx, [tx, ty, mx, my, ex, ey], bark, Math.max(1, u * 0.045));
+      if (bare) stroke(ctx, [mx, my - 1, ex, ey - 1], bare, Math.max(1, u * 0.04));
+    }
+  }
+  if (s.leaf >= 0.15) {
+    const k = 0.55 + 0.45 * s.leaf;
+    for (const [dx, dy, r, t] of [[-0.22, 0.7, 0.3, 0.9], [0.2, 0.8, 0.38, 1.04], [0.6, 0.78, 0.34, 1], [0.88, 0.66, 0.24, 0.92], [0.38, 0.66, 0.3, 0.82]]) celBall(ctx, B, x + dx * u, y - dy * h, r * u * k, shade(leaf, t), t > 0.85);
+  }
+  if (u > 8 && s.leaf >= 0.15 && s.blossom > 0.1) dabs(ctx, x + u * 0.36, y - h * 0.76, u * 0.6, u * 0.24, 12, s.blossom, u * 0.09, (i) => shade(i % 4 ? '#faf6f0' : '#f0d8dc', tone));
+  if (u > 8 && s.berry > 0.1) dabs(ctx, x + u * 0.36, y - h * 0.72, u * 0.62, u * 0.26, 9, s.berry, u * 0.07, () => shade('#8a1a1e', tone));
+}
+
+/** A larch (the north's): a conifer that sheds, its tiers soft and drooping about a straight trunk; red cones in Sowing, gold in Leafturn, bare in Frost. */
+function larch(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, s: TreeSeason): void {
+  const h = u * 2.6, twig = shade('#7a5c46', tone), snow = treeSnow(s, tone), leaf = shade(mix(mix('#78a848', '#b8e868', s.fresh * 0.7), '#d8a028', s.turn), tone);
+  celTaper(ctx, B, x, y, x, y - h * 0.96, u * 0.11, u * 0.025, shade('#6a4a36', tone), 0.2);
+  for (let i = 0; i < 4; i++) {
+    const ty = y - h * (0.24 + i * 0.19), tw = u * 1.1 * (1 - i * 0.2), th = h * 0.26;
+    if (s.leaf < 0.6) for (const side of [-1, 1]) {
+      const limb = [x, ty - th * 0.55, x + side * tw * 0.3, ty - th * 0.3, x + side * tw * 0.5, ty + th * 0.02];
+      stroke(ctx, limb, twig, Math.max(1, u * 0.045));
+      if (snow && s.leaf < 0.15) stroke(ctx, limb.slice(0, 4).map((v, j) => v - (j % 2 ? 1 : 0)), snow, Math.max(1, u * 0.04));
+    }
+    if (s.leaf >= 0.15) {
+      const w2 = (tw * (0.55 + 0.45 * s.leaf)) / 2;
+      celPoly(ctx, B, [x - w2, ty + th * 0.04, x, ty - th, x + w2, ty + th * 0.04, x, ty - th * 0.22], shade(leaf, 1 - i * 0.05), 0.4, 0.25);
+      if (snow) stroke(ctx, [x - w2 * 0.5, ty - th * 0.5, x, ty - th, x + w2 * 0.5, ty - th * 0.5], snow, Math.max(1, u * 0.06 * s.snow));
+    }
+  }
+  if (u > 8 && s.leaf >= 0.15 && s.blossom > 0.1) dabs(ctx, x, y - h * 0.55, u * 0.4, h * 0.25, 7, s.blossom, u * 0.07, () => shade('#d0607a', tone));
+}
+
+/** A Scots pine (the north's): a tall trunk bare of limbs, red toward the top, under a flat crown in pads; pale candles in Sowing, green the year round, snow on the pads. */
+function scots(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, s: TreeSeason): void {
+  const h = u * 2.8, snow = treeSnow(s, tone), needles = shade(mix('#2e5c44', '#6aa060', s.fresh * 0.4), tone), limb = shade('#a85a34', tone);
+  celTaper(ctx, B, x, y, x + u * 0.06, y - h * 0.8, u * 0.12, u * 0.06, shade('#6a5040', tone), 0.2);
+  celTaper(ctx, B, x + u * 0.03, y - h * 0.42, x + u * 0.06, y - h * 0.8, u * 0.085, u * 0.06, shade('#c0683a', tone), 0.3);
+  stroke(ctx, [x + u * 0.04, y - h * 0.6, x - u * 0.36, y - h * 0.7], limb, Math.max(1, u * 0.06));
+  stroke(ctx, [x + u * 0.05, y - h * 0.68, x + u * 0.42, y - h * 0.78], limb, Math.max(1, u * 0.06));
+  // The pads: flat beneath, low domes above.
+  for (const [px, py, w, t] of [[-0.36, 0.7, 0.3, 0.9], [0.42, 0.78, 0.3, 0.95], [0.04, 0.86, 0.56, 1.04]]) {
+    const cx = x + px * u, cy = y - py * h, hw = w * u, hh = hw * 0.42;
+    celPoly(ctx, B, [cx - hw, cy, cx - hw * 0.8, cy - hh * 0.7, cx - hw * 0.35, cy - hh, cx + hw * 0.35, cy - hh, cx + hw * 0.8, cy - hh * 0.7, cx + hw, cy], shade(needles, t), 0.4, 0.25);
+    if (snow) stroke(ctx, [cx - hw * 0.85, cy - hh * 0.62, cx - hw * 0.35, cy - hh, cx + hw * 0.35, cy - hh, cx + hw * 0.85, cy - hh * 0.62], snow, Math.max(1, u * 0.1 * s.snow));
+  }
+  if (u > 8 && s.blossom > 0.1) dabs(ctx, x + u * 0.04, y - h * 0.9, u * 0.6, u * 0.08, 8, s.blossom, u * 0.07, () => shade('#e8dc9a', tone));
+}
+
+/** A flat-topped tree of the steppe (the Glasswold's): a slender trunk forking under a wide flat crown; yellow flowers in Sowing, dry gold in Leafturn, bare its twigs spread level; snow lies along its top. */
+function flattop(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, s: TreeSeason): void {
+  const h = u * 2.3, bark = shade('#5a4632', tone), leaf = shade(seasonLeaf('#6a7e3a', '#b8a048', s, 0.5), tone), snow = treeSnow(s, tone), fork = y - h * 0.36;
+  celTaper(ctx, B, x, y, x, fork, u * 0.1, u * 0.075, bark, 0.2);
+  for (const [dx, dy] of [[-0.56, 0.78], [0.06, 0.82], [0.6, 0.77]]) {
+    const ex = x + dx * u, ey = y - dy * h;
+    stroke(ctx, [x, fork, x + dx * u * 0.4, fork - (fork - ey) * 0.55, ex, ey], bark, Math.max(1, u * 0.065));
+    if (s.leaf < 0.6) {
+      stroke(ctx, [ex - u * 0.32, ey - u * 0.02, ex, ey, ex + u * 0.32, ey - u * 0.05], bark, Math.max(1, u * 0.04));
+      if (snow && s.leaf < 0.15) stroke(ctx, [ex - u * 0.3, ey - u * 0.02 - 1, ex, ey - 1, ex + u * 0.3, ey - u * 0.05 - 1], snow, Math.max(1, u * 0.04));
+    }
+  }
+  if (s.leaf >= 0.15) {
+    const w = u * (0.6 + 0.4 * s.leaf);
+    celPoly(ctx, B, [x - w * 0.85, y - h * 0.74, x - w * 0.7, y - h * 0.81, x + w * 0.65, y - h * 0.81, x + w * 0.9, y - h * 0.75, x + w * 0.5, y - h * 0.71, x - w * 0.5, y - h * 0.71], shade(leaf, 0.86), 0.4, 0.2);
+    celPoly(ctx, B, [x - w, y - h * 0.84, x - w * 0.8, y - h * 0.92, x - w * 0.2, y - h * 0.95, x + w * 0.45, y - h * 0.94, x + w, y - h * 0.86, x + w * 0.75, y - h * 0.8, x - w * 0.75, y - h * 0.8], leaf, 0.4, 0.25);
+    if (u > 8 && s.blossom > 0.1) dabs(ctx, x, y - h * 0.89, w * 0.9, h * 0.04, 10, s.blossom, u * 0.08, () => shade('#f0d040', tone));
+    if (snow) stroke(ctx, [x - w * 0.9, y - h * 0.88, x - w * 0.2, y - h * 0.955, x + w * 0.45, y - h * 0.945, x + w * 0.95, y - h * 0.87], snow, Math.max(1, u * 0.1 * s.snow));
+  }
+}
+
+/** The five trees of old, variants 0 to 4; the regions' own follow, in `TREES`' order. */
+const OLD_TREES = 5;
+const REGIONAL: readonly ((ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, s: TreeSeason) => void)[] = [oak, willow, poplar, rowan, thorn, larch, scots, flattop];
+/** The variants of `drawTreeSprite` each tree is drawn in: the broadleaf and the conifer of old in two greens each, every other in one. */
+export const TREES: Readonly<Record<TreeName, readonly number[]>> = {
+  broadleaf: [0, 1], birch: [2], conifer: [3, 4], oak: [5], willow: [6], poplar: [7], rowan: [8], thorn: [9], larch: [10], scots: [11], flattop: [12],
+};
+/** The trees that may stand in the pinewoods. */
+export const CONIFERS: readonly TreeName[] = ['conifer', 'larch', 'scots'];
+const NAMES = Object.keys(TREES) as TreeName[];
+
+/**
+ * The variant of `drawTreeSprite` a square's hash `h` (0 .. 1) picks from its region's trees by weight, in `TREES`'
+ * order, a tree of two greens taking either by where `h` falls in its share. With none named it is today's mix: any
+ * of the five of old in a forest or the woods, either conifer in the pinewoods (`pine`).
+ */
+export function treeOf(weights: TreeWeights | undefined, h: number, pine = false): number {
+  if (!weights) return pine ? 3 + Math.floor(h * 2) : Math.floor(h * 5);
+  let total = 0, last = 0;
+  for (const n of NAMES) total += Math.max(0, weights[n] ?? 0);
+  let at = h * total;
+  for (const n of NAMES) {
+    const w = weights[n] ?? 0, v = TREES[n];
+    if (!(w > 0)) continue;
+    if (at < w) return v[Math.min(v.length - 1, Math.floor((at * v.length) / w))];
+    at -= w; last = v[v.length - 1];
+  }
+  return last;
+}
+
 /**
  * A dead tree: a grey trunk, bleached and bare in every season, its limbs fanned or its top snapped
  * off short (`variant` 0 to 2). Snow lies along its limbs.
@@ -125,6 +360,164 @@ export function drawDeadTreeSprite(ctx: CanvasRenderingContext2D, x: number, y: 
   ctx.fillStyle = dark;
   for (let i = 0; i < 3; i++) ctx.fillRect(Math.round(x - u * 0.04 + (i % 2) * u * 0.05), Math.round(y - u * (0.25 + i * 0.28)), Math.max(1, Math.round(u * 0.03)), Math.max(1, Math.round(u * 0.14)));
 }
+
+// ---- What stands scattered on open ground (#1103) ---------------------------------------------------
+
+/**
+ * How a prop is coloured: `ink` takes a colour as the ground under it takes its own (darker by night,
+ * into the haze with distance and murk, darker in the rain), `ground` is that ground's colour in the
+ * season, `snow` how far snow lies on it (0 .. 1), `bloom` how far the flowers are out (0 .. 1) and
+ * `pick` a hash for its shape.
+ */
+interface PropInk { ink: (c: string) => string; ground: string; snow: number; bloom: number; pick: number }
+/** A colour whitened as far as the snow lies, as the top of a rock is. */
+const snowed = (c: string, snow: number): string => (snow > 0.2 ? mix(c, SNOW_WHITE, Math.min(1, snow * 1.2)) : c);
+/** A dot of colour, a pixel at the least. */
+function dab(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, c: string): void {
+  ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h)));
+}
+
+/**
+ * The props, each drawn about its foot at (x, y), `u` the square's half width there. Each is small, under
+ * half a wall's height, and ONE thing: a boulder or a stone is one rounded rock, never stacked
+ * or ringed, a snag is no post and the peat a low turf mound, so that none is taken for a feature's
+ * drawing (#1110). A deep snow buries the low ones.
+ */
+const PROPS: Record<Prop, (ctx: CanvasRenderingContext2D, x: number, y: number, u: number, k: PropInk) => void> = {
+  bush(ctx, x, y, u, { ink, ground, snow, pick }) {
+    const r = u * (0.12 + 0.03 * pick), leaf = ink(mix(ground, '#24401e', 0.5));
+    celBall(ctx, B, x - r * 0.75, y - r * 0.7, r * 0.8, shade(leaf, 0.9));
+    celBall(ctx, B, x + r * 0.8, y - r * 0.65, r * 0.75, leaf);
+    celBall(ctx, B, x, y - r * 1.15, r, shade(leaf, 1.08));
+    if (snow > 0.2) { ctx.fillStyle = ink(SNOW_WHITE); ctx.beginPath(); ctx.ellipse(x, y - r * 1.9, r * 0.85, r * 0.3 * Math.min(1, snow * 1.5), 0, 0, Math.PI * 2); ctx.fill(); }
+  },
+  boulder(ctx, x, y, u, { ink, ground, snow, pick }) {
+    const w = u * (0.16 + 0.04 * pick), h = w * (0.72 + 0.14 * pick), c = mix('#7a756c', ground, 0.15);
+    celPoly(ctx, B, [x - w, y, x - w * 0.92, y - h * 0.5, x - w * 0.6, y - h * 0.9, x - w * 0.1, y - h, x + w * 0.45, y - h * 0.88, x + w * 0.88, y - h * 0.5, x + w, y], ink(c), 0.4, 0.3);
+    if (snow > 0.2) celPoly(ctx, B, [x - w * 0.78, y - h * 0.7, x - w * 0.55, y - h * 0.9, x - w * 0.1, y - h, x + w * 0.45, y - h * 0.88, x + w * 0.7, y - h * 0.66, x, y - h * 0.8], ink(snowed(c, snow)), 0.2, 0.2);
+  },
+  thistle(ctx, x, y, u, { ink, ground, snow, bloom, pick }) {
+    if (snow > 0.55) return;
+    const h = u * (0.22 + 0.06 * pick), stem = ink(mix('#56704a', ground, 0.3)), lw = Math.max(1, u * 0.022);
+    stroke(ctx, [x, y, x + u * 0.01, y - h], stem, lw);
+    for (const s of [-1, 1]) stroke(ctx, [x, y - h * 0.3, x + s * u * 0.05, y - h * 0.42, x + s * u * 0.09, y - h * 0.4], stem, lw);
+    // Its head on a green bulb: purple in flower, brown gone to seed.
+    celBall(ctx, B, x + u * 0.01, y - h, u * 0.035, stem, false);
+    dab(ctx, x - u * 0.02, y - h - u * 0.075, u * 0.06, u * 0.04, ink(mix('#7a6448', '#9a4ca0', bloom)));
+  },
+  molehill(ctx, x, y, u, { ink, snow, pick }) {
+    if (snow > 0.55) return;
+    const w = u * (0.13 + 0.03 * pick), h = w * 0.75, earth = '#4a3626';
+    ctx.fillStyle = ink(snowed(earth, snow)); ctx.beginPath(); ctx.ellipse(x, y, w, h, 0, Math.PI, 0); ctx.fill();
+    for (const [dx, dy] of [[-0.45, 0.45], [0.1, 0.8], [0.4, 0.35]]) dab(ctx, x + dx * w, y - dy * h, u * 0.02, u * 0.015, ink(shade(earth, 1.4)));
+  },
+  gorse(ctx, x, y, u, { ink, ground, snow, bloom, pick }) {
+    // Spiny and ragged along its top, and in flower nearly all the year.
+    const w = u * (0.15 + 0.04 * pick), h = w * 1.25, pts = [x - w, y];
+    for (let i = 0; i <= 8; i++) { const t = i / 8; pts.push(x - w + 2 * w * t, y - h * Math.sin(Math.PI * (0.08 + 0.84 * t)) * (i % 2 ? 1 : 0.8)); }
+    pts.push(x + w, y);
+    celPoly(ctx, B, pts, ink(mix('#2e4a24', ground, 0.2)), 0.4, 0.25);
+    if (snow > 0.2) { stroke(ctx, [x - w * 0.6, y - h * 0.85, x, y - h * 1.02, x + w * 0.6, y - h * 0.85], ink(SNOW_WHITE), Math.max(1, u * 0.04)); return; }
+    for (let i = 0; i < 2 + Math.round(3 * bloom); i++) dab(ctx, x + w * 0.7 * Math.sin(i * 2.3 + pick * 6), y - h * (0.3 + 0.45 * ((i * 0.37 + pick) % 1)), u * 0.025, u * 0.025, ink('#e8c434'));
+  },
+  peat(ctx, x, y, u, { ink, ground, snow, pick }) {
+    if (snow > 0.55) return;
+    // Cut turves left to dry: a low mound, dark brown under the moor's own top.
+    const w = u * (0.15 + 0.03 * pick), h = w * 0.45;
+    celPoly(ctx, B, [x - w, y, x - w * 0.86, y - h * 0.75, x - w * 0.55, y - h, x + w * 0.55, y - h, x + w * 0.86, y - h * 0.75, x + w, y], ink('#3a2a20'), 0.35, 0.2);
+    dab(ctx, x - w * 0.6, y - h, w * 1.2, h * 0.28, ink(snowed(mix(ground, '#3a2a28', 0.35), snow)));
+  },
+  tussock(ctx, x, y, u, { ink, ground, snow, pick }) {
+    if (snow > 0.55) return;
+    // A clump of the steppe's grass, dark at its heart and standing taller than its tufts, all leaning one way.
+    const h = u * (0.2 + 0.06 * pick), lw = Math.max(1, u * 0.022), pale = ink(shade(ground, 1.25)), dun = ink(shade(ground, 0.8));
+    celPoly(ctx, B, [x - u * 0.1, y, x - u * 0.07, y - h * 0.45, x, y - h * 0.6, x + u * 0.09, y - h * 0.5, x + u * 0.12, y], ink(shade(ground, 0.6)), 0.3, 0);
+    for (let i = 0; i < 7; i++) {
+      const t = i / 6 - 0.5, bx = x + t * u * 0.12, top = y - h * (1 - Math.abs(t) * 0.7), lean = u * (t * 0.22 + 0.04);
+      stroke(ctx, [bx, y, bx + lean * 0.4, (y + top) / 2, bx + lean, top], i % 2 ? dun : pale, lw);
+    }
+  },
+  skull(ctx, x, y, u, { ink, snow }) {
+    if (snow > 0.55) return;
+    // An ox's skull bleached on the ground, its horns curving up.
+    const w = u * 0.07, bone = ink('#e2dac6'), lw = Math.max(1, u * 0.025);
+    for (const s of [-1, 1]) stroke(ctx, [x + s * w * 0.8, y - w * 1.3, x + s * w * 2, y - w * 1.6, x + s * w * 2.3, y - w * 2.4], bone, lw);
+    celPoly(ctx, B, [x - w, y - w * 1.5, x + w, y - w * 1.5, x + w * 0.8, y - w * 0.6, x + w * 0.4, y, x - w * 0.4, y, x - w * 0.8, y - w * 0.6], bone, 0.3, 0.2);
+    for (const s of [-1, 1]) dab(ctx, x + s * w * 0.45 - w * 0.15, y - w * 1.15, w * 0.3, w * 0.3, ink('#3a3228'));
+  },
+  stone(ctx, x, y, u, { ink, ground, snow, pick }) {
+    if (snow > 0.7) return;
+    const w = u * (0.08 + 0.03 * pick), h = w * 0.7, c = mix('#857d70', ground, 0.25);
+    celPoly(ctx, B, [x - w, y, x - w * 0.8, y - h * 0.7, x - w * 0.2, y - h, x + w * 0.5, y - h * 0.85, x + w, y - h * 0.3, x + w * 0.9, y], ink(snowed(c, snow * 0.6)), 0.4, 0.3);
+  },
+  stump(ctx, x, y, u, { ink, snow, pick }) {
+    // A charred stump, its top burnt ragged, the char cracked across.
+    const w = u * 0.075, h = u * (0.2 + 0.06 * pick), c = ink('#2c2622');
+    celPoly(ctx, B, [x - w * 1.5, y, x - w, y - h * 0.3, x - w, y - h * 0.92, x - w * 0.45, y - h, x - w * 0.05, y - h * 0.8, x + w * 0.35, y - h * 1.1, x + w, y - h * 0.86, x + w, y - h * 0.3, x + w * 1.6, y], c, 0.3, 0.2);
+    for (let i = 0; i < 3; i++) dab(ctx, x - w * 0.6 + (i % 2) * w * 0.5, y - h * (0.25 + 0.22 * i), w * 0.7, u * 0.015, ink('#4e423a'));
+    if (snow > 0.2) stroke(ctx, [x - w * 0.9, y - h * 0.95, x + w * 0.9, y - h * 0.9], ink(SNOW_WHITE), Math.max(1, u * 0.03));
+  },
+  steam(ctx, x, y, u, { ink, pick }) {
+    // The crack it rises from and the wisp leaning off it, its puffs run together, drawn still as the volcano's smoke is.
+    const lean = (pick < 0.5 ? -1 : 1) * u * (0.04 + 0.04 * Math.abs(2 * pick - 1));
+    ctx.fillStyle = ink('#1a1616'); ctx.beginPath(); ctx.ellipse(x, y, u * 0.07, u * 0.02, 0, 0, Math.PI * 2); ctx.fill();
+    for (let j = 0; j < 3; j++) {
+      ctx.fillStyle = rgba(ink('#e8eaec'), 0.5 - j * 0.12);
+      ctx.beginPath(); ctx.arc(x + lean * (j + 0.5), y - u * (0.07 + 0.085 * j), u * (0.045 + 0.025 * j), 0, Math.PI * 2); ctx.fill();
+    }
+  },
+  cinder(ctx, x, y, u, { ink, snow, pick }) {
+    // A lump of clinker, pitted where the gas came out of it.
+    const w = u * (0.11 + 0.03 * pick), h = w * 0.8, c = '#5a4034';
+    celPoly(ctx, B, [x - w, y, x - w * 0.95, y - h * 0.55, x - w * 0.5, y - h * 0.95, x + w * 0.15, y - h, x + w * 0.7, y - h * 0.7, x + w, y - h * 0.2, x + w * 0.9, y], ink(c), 0.4, 0.3);
+    for (const [dx, dy] of [[-0.45, 0.5], [0.1, 0.72], [0.45, 0.35]]) dab(ctx, x + dx * w, y - dy * h, u * 0.025, u * 0.02, ink('#221c1a'));
+    if (snow > 0.2) stroke(ctx, [x - w * 0.5, y - h * 0.92, x + w * 0.15, y - h, x + w * 0.65, y - h * 0.72], ink(SNOW_WHITE), Math.max(1, u * 0.03));
+  },
+  drift(ctx, x, y, u, { ink, pick }) {
+    // A stone, and the snow the wind banked against its lee to its shoulder.
+    const w = u * (0.09 + 0.03 * pick), h = w * 0.95, s = pick < 0.5 ? -1 : 1, white = ink(SNOW_WHITE);
+    celPoly(ctx, B, [x - w, y, x - w * 0.85, y - h * 0.7, x - w * 0.3, y - h, x + w * 0.4, y - h * 0.9, x + w, y - h * 0.4, x + w * 0.95, y], ink('#605c58'), 0.4, 0.3);
+    celPoly(ctx, B, [x + s * w * 0.2, y, x + s * w * 0.55, y - h * 0.75, x + s * w * 0.95, y - h * 0.6, x + s * w * 2.6, y], white, 0.25, 0.15);
+    stroke(ctx, [x - w * 0.55, y - h * 0.86, x - w * 0.2, y - h, x + w * 0.3, y - h * 0.9], white, Math.max(1, u * 0.03));
+  },
+  reeds(ctx, x, y, u, { ink, ground, pick }) {
+    // Pale against the swamp's green, two of them with a brown head.
+    const h = u * (0.32 + 0.08 * pick), lw = Math.max(1, u * 0.03), blade = ink(mix('#b8c068', ground, 0.15)), dark = ink(mix('#4e5a2a', ground, 0.2)), head = ink('#5a3a22');
+    for (let i = 0; i < 6; i++) {
+      const t = i / 5 - 0.5, bx = x + t * u * 0.14, top = y - h * (0.62 + 0.38 * (((i * 7 + 3) % 5) / 4)), lean = u * t * 0.08;
+      stroke(ctx, [bx, y, bx + lean, top], i % 2 ? dark : blade, lw);
+      if (i === 1 || i === 4) celCapsule(ctx, B, bx + lean * 0.9, top + u * 0.03, bx + lean * 0.8, top + u * 0.09, u * 0.022, head, 0.3);
+    }
+  },
+  snag(ctx, x, y, u, { ink, snow, pick }) {
+    // A dead trunk standing in the wet, leaning, snapped off ragged, the stub of a limb on it.
+    const h = u * (0.3 + 0.08 * pick), s = pick < 0.5 ? -1 : 1, lean = u * 0.05 * s, wood = ink('#8c867c');
+    celTaper(ctx, B, x, y, x + lean, y - h, u * 0.045, u * 0.028, wood, 0.2);
+    celPoly(ctx, B, [x + lean - u * 0.028, y - h, x + lean - u * 0.01, y - h - u * 0.06, x + lean + u * 0.008, y - h - u * 0.02, x + lean + u * 0.028, y - h - u * 0.08, x + lean + u * 0.028, y - h], wood, 0.3, 0.2);
+    stroke(ctx, [x + lean * 0.5, y - h * 0.55, x + lean * 0.5 - s * u * 0.1, y - h * 0.78], wood, Math.max(1, u * 0.025));
+    if (snow > 0.2) stroke(ctx, [x + lean - u * 0.025, y - h - u * 0.01, x + lean + u * 0.025, y - h - u * 0.01], ink(SNOW_WHITE), Math.max(1, u * 0.025));
+  },
+  driftwood(ctx, x, y, u, { ink, snow, pick }) {
+    // A bleached log the water left, a broken limb up from it.
+    const w = u * (0.16 + 0.04 * pick), r = u * 0.032, wood = ink(snowed('#c4baa6', snow * 0.5));
+    celCapsule(ctx, B, x - w, y - r, x + w, y - r * 1.3, r, wood, 0.3);
+    stroke(ctx, [x + w * 0.45, y - r * 1.8, x + w * 0.7, y - r * 4.2], wood, Math.max(1, r * 0.9));
+  },
+  shells(ctx, x, y, u, { ink, ground, snow, pick }) {
+    if (snow > 0.55) return;
+    // A few shells the tide left, each with its shadow on the sand.
+    const r = Math.max(1, u * 0.04), under = ink(shade(ground, 0.72));
+    for (let j = 0; j < 4; j++) {
+      const sx = x + u * (j * 0.08 - 0.12 + 0.03 * Math.sin(pick * 9 + j)), sy = y - u * 0.02 * (j % 2);
+      ctx.fillStyle = under; ctx.beginPath(); ctx.ellipse(sx + r * 0.2, sy + r * 0.15, r, r * 0.45, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = ink(['#f6efe2', '#d89a84', '#efe0c8', '#c8b8a8'][j]);
+      ctx.beginPath(); ctx.ellipse(sx, sy, r, r * 0.75, 0, Math.PI, 0); ctx.fill();
+    }
+  },
+};
+
+/** A prop scattered on open ground (#1103), its foot at (x, y), `u` the square's half width there. */
+export function drawPropSprite(ctx: CanvasRenderingContext2D, prop: Prop, x: number, y: number, u: number, k: PropInk): void { PROPS[prop](ctx, x, y, u, k); }
 
 /**
  * A glass tree of the Sunder's lip: shards of crystal standing up from one root, the tallest in the

@@ -13,4 +13,4 @@ function mark(p: Paint, m: Mark): void {
 }
 
 export const sand: GroundLook = { color: () => TERRAIN_COLORS.sand, drift: { toward: ['#b0965e', '#f4ead0'], by: 0.6 }, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 4, mark },
-  rank: 3 };
+  scatter: ['driftwood', 'shells'], rank: 3 };

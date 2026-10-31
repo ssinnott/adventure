@@ -9,6 +9,11 @@ import type { MapDef, Terrain } from '../../src/game/mapdef.ts';
 import { NORTH, EAST, SOUTH, WEST } from '../../src/game/types.ts';
 import type { Facing } from '../../src/game/types.ts';
 import { GROUND, SNOW_HOLD, cropColor, fieldAt, hedgeColor, heatherBloom, iceColor, standsAt } from '../../src/ui/viewport.ts';
+import { createHash } from 'node:crypto';
+import { paintScene } from '../../src/ui/viewport.ts';
+import { TREES, CONIFERS, treeOf, drawTreeSprite, treeSeason } from '../../src/ui/scenery.ts';
+import { hash } from '../../src/ui/paint/brush.ts';
+import type { TreeName } from '../../src/content/area.ts';
 import { viewCells, markedGroups } from '../../src/game/ink.ts';
 import { tideAt, TIDE_PERIOD, HIGH_WATER, MINUTES_PER_DAY, daylightAt } from '../../src/game/calendar.ts';
 import { hoursHold, VIEW_DEPTH, World, seen } from '../../src/game/world.ts';
@@ -44,6 +49,40 @@ export function terrain(): void {
   const w = new GameMap({ id: 'fixture_woods', name: 'Woods fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMM', 'MtTM', 'MMMM'] });
   ok(w.at(1, 1).terrain === 'woods' && w.passable(1, 1) === 'ok' && !w.blocksView(1, 1) && !w.blocksView(1, 1, from(2)) && w.passable(2, 1) !== 'ok', `'t' is woods, walked through and seen past, where 'T' is a tree that blocks (${w.at(1, 1).terrain}, ${w.passable(2, 1)})`);
   ok(SNOW_HOLD.woods > 0.5 && SNOW_HOLD.woods < SNOW_HOLD.grass, `snow lies on the woods' floor, thinner under the trees than on open grass (${SNOW_HOLD.woods})`);
+  // Each region's trees (#1104): each list an area's look names holds trees drawn, by weights summing above nought,
+  // the pinewoods' conifers only. With none named a region draws today's mix: the same tree by the same hash, and
+  // the five trees of old drawn as main drew them, call for call, into a context that writes down what it is told.
+  {
+    const lists = Object.entries(TABLES.looks).flatMap(([id, look]) => Object.entries(look.trees ?? {}).map(([k, t]) => ({ id: `${id} ${k}`, k, t: Object.entries(t ?? {}) as [string, number][] })));
+    const amiss = lists.filter(({ k, t }) => !['forest', 'pine'].includes(k) || !(t.reduce((s, [, v]) => s + v, 0) > 0)
+      || !t.every(([n, v]) => n in TREES && Number.isFinite(v) && v >= 0 && (k !== 'pine' || CONIFERS.includes(n as TreeName))));
+    ok(lists.length > 0 && amiss.length === 0, `each area's trees name only trees drawn, by weights summing above nought, its pinewoods' conifers only (${lists.length} lists${amiss.length ? '; wrong: ' + amiss.map((l) => l.id).join(', ') : ''})`);
+    const hashes = [0, 0.2, 0.4, 0.6, 0.8, 1 - 2 ** -32, ...Array.from({ length: 20000 }, (_, i) => hash(i, 3 * i + 1))];
+    const off = hashes.filter((h) => treeOf(undefined, h) !== Math.floor(h * 5) || treeOf(undefined, h, true) !== 3 + Math.floor(h * 2)
+      || treeOf({ broadleaf: 2, birch: 1, conifer: 2 }, h) !== Math.floor(h * 5) || treeOf({ conifer: 1 }, h, true) !== 3 + Math.floor(h * 2));
+    const log: string[] = [], rec = new Proxy({}, {
+      get: (_, k) => (...a: unknown[]) => { log.push(`${String(k)}(${a.join(',')})`); return /Gradient$/.test(String(k)) ? { addColorStop: (...s: unknown[]) => log.push(`stop(${s.join(',')})`) } : undefined; },
+      set: (_, k, v) => { log.push(`${String(k)}=${String(v)}`); return true; },
+    }) as unknown as CanvasRenderingContext2D;
+    for (let v = 0; v < 5; v++) for (const day of [10, 17, 40, 66, 84, 98]) for (const snow of [0, 1]) for (const [u, tone] of [[30, 1], [9, 0.55], [30, 0.3]]) drawTreeSprite(rec, 100, 200, u, tone, v, treeSeason(day, snow));
+    const digest = createHash('sha256').update(log.join('\n')).digest('hex').slice(0, 12);
+    ok(off.length === 0 && digest === 'f9126684f7d5', `with no trees named a region draws today's mix: a forest and the woods any of the five trees of old by the square's hash, the pinewoods their two conifers, over ${hashes.length} hashes${off.length ? ` (not at ${off.slice(0, 3).join(', ')})` : ''}; and the five are drawn as main drew them at 910066af, call for call (${log.length} calls, ${digest})`);
+    // The view takes its square's region's trees, not the party's: from the Foreland, a zone of Rimewater's forest squares,
+    // of its woods and of its pinewood, each laid alone, paints otherwise with Rimewater's trees taken off.
+    (globalThis as { Path2D?: unknown }).Path2D ??= function Path2D() { return new Proxy({}, { get: () => () => {} }); };
+    const scene = (k: string, looks: typeof TABLES.looks): string => {
+      const rows = ['MMMMMMM', `M${k.repeat(5)}M`, `M${k.repeat(5)}M`, `M${k.repeat(5)}M`, 'M.....M', 'M.....M', 'MMMMMMM'];
+      const wood = new GameMap({ id: 'fx_trees', name: 'Trees fixture', kind: 'outdoor', region: 'shelf', start: { x: 3, y: 5, facing: NORTH }, rows,
+        zones: [{ id: 'fx_rimewater', name: 'Rimewater fixture', x: 1, y: 1, w: 5, h: 3, region: 'rimewater' }] });
+      const rng = makeRng(1), at = new World({ ...TABLES, looks }, { fx_trees: wood }, defaultParty(TABLES, rng), rng);
+      at.state.weatherSeed = 1; at.state.minutes = 90 * 1440 + 12 * 60; log.length = 0;
+      paintScene(rec, rec, at, { x: 0, y: 0, w: 400, h: 268 });
+      return log.join('\n');
+    };
+    const bare = { ...TABLES.looks, rimewater: { ...TABLES.looks.rimewater, trees: undefined } };
+    const same = ['T', 't', 'p'].filter((k) => scene(k, TABLES.looks) === scene(k, bare));
+    ok(TABLES.looks.rimewater.trees?.forest !== undefined && TABLES.looks.rimewater.trees.pine !== undefined && same.length === 0, `the view takes its square's region's trees, not the party's: from the Foreland, a zone of Rimewater's forest, woods and pinewood each paint otherwise with Rimewater's trees taken off${same.length ? '; the same: ' + same.join(', ') : ''}`);
+  }
   // Dead wood: walked through and seen past as the woods are, and grey, with no green in it.
   const dw = new GameMap({ id: 'fixture_dead', name: 'Dead wood fixture', kind: 'outdoor', start: { x: 1, y: 1, facing: NORTH }, rows: ['MMMM', 'MdtM', 'MMMM'] });
   ok(dw.at(1, 1).terrain === 'deadwood' && dw.passable(1, 1) === 'ok' && !dw.blocksView(1, 1), `'d' is dead wood, walked through and seen past (${dw.at(1, 1).terrain}, ${dw.passable(1, 1)})`);

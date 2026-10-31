@@ -22,4 +22,4 @@ function mark(p: Paint, m: Mark): void {
 }
 
 export const heather: GroundLook = { color: heatherColor, drift: { toward: ['#943e88', '#4a3426'], by: 0.6 }, snow: 0.85, wets: true, splashes: true, ripples: false, vary: 0.04, lies: { marks: 7, mark },
-  rank: 6 };
+  scatter: ['gorse', 'boulder', 'peat'], rank: 6 };

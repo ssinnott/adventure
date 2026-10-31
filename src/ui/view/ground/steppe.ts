@@ -26,4 +26,4 @@ function mark(p: Paint, m: Mark): void {
 }
 
 export const steppe: GroundLook = { color: steppeColor, drift: { toward: ['#6e9640', '#d4c070'], by: 0.6 }, snow: 0.9, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark },
-  rank: 5 };
+  scatter: ['tussock', 'skull', 'stone'], rank: 5 };
