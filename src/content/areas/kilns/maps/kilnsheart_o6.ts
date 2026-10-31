@@ -89,7 +89,7 @@ export const KILNSHEART_O6: MapDef<'kilnsheart_o6'> = {
     // The secret: one vent among the hot ones blows cold, and in it the first dwarves' shelter.
     { kind: 'event', x: 24, y: 25, id: 'o6_cold', once: true, text: 'A vent at the ridge\'s south end, its lip bare of ash. The air at its mouth goes in, not out, and it is cool.' },
     { kind: 'event', x: 26, y: 25, id: 'o6_shelter', once: true, text: 'Bunks cut in the rock, a hearth of three stones with names scratched over it in the old script, and a bow left on pegs.' },
-    { kind: 'chest', x: 27, y: 25, id: 'o6_shelter_chest', gold: 450, items: ['steel_bow+1'] },
+    { kind: 'chest', x: 27, y: 25, id: 'o6_shelter_chest', gold: 450, items: ['steel_bow+1', 'steel_shortbow+1', 'wire_sling+1'] },
     // The Stone's strays: burnt footprints down off the crag to where the slag elder stands.
     { kind: 'event', x: 24, y: 6, id: 'o6_burnt', once: true, text: 'Footprints burnt into the ash come down off the crag from the north, each one glazed black, all one way.' },
     // The cairn on the west hills, and a warm spring in the grass under the crag.

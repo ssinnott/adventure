@@ -185,7 +185,11 @@ here (`novel`): the knockers and the salamanders; pine, ash and lava underfoot; 
   the dungeons 100% within 7.
 - **The ladder:** rung 17 is the Kilns' (`gear`, in its checks): Anvilhall's forge's eight wares;
   by 19 the same with a plus from the Kilns' and Cairnmoor's boxes (Cairnmoor's checks). The
-  dearest find, the Plate Mail +3 at 1,650 gold, sits in the window, 3,500.
+  dearest find, the Plate Mail +3 at 1,650 gold, sits in the window, 3,500. Its ranged rung
+  (`ranged`, #1115): the Steel Short Bow and the Wire Sling, a step and two behind the Steel Bow,
+  sold beside it at the forge and, a quarter more, at the Anchor Smithy (1,407 and 938 gold), and
+  found with a plus beside the Steel Bow +1 in the shelter on O6. They are off the gate's ladder
+  until #1117.
 
 ## 10. Names
 
