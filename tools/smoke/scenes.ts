@@ -270,6 +270,35 @@ export async function terrains({ page, ok }: Run): Promise<void> {
   const each = (k: 'woods' | 'pine') => regions.map((r) => `${r.region} ${r[k].join('%/')}%`).join(', ');
   ok(regions.length > 0 && fell('woods', 10).length === 0, `trees stand about the woods in each region, its own, and the way ahead stays open (of the band over the horizon and the strip ahead: ${each('woods')}; at least 10% and at most ${PATH_MAX}%${fell('woods', 10).length ? '; not: ' + fell('woods', 10).join(', ') : ''})`);
   ok(regions.length > 0 && fell('pine', PINE_MIN).length === 0, `pines stand about the pinewoods in each region, its own, and the way ahead stays open (${each('pine')}; at least ${PINE_MIN}% and at most ${PATH_MAX}%${fell('pine', PINE_MIN).length ? '; not: ' + fell('pine', PINE_MIN).join(', ') : ''})`);
+  // The country past the zones: the squares of the outdoors no zone holds look as the atlas paints them, forests,
+  // pinewoods and dead wood among them, and name no region (so no look): a company at a zone's edge looking out on
+  // each paints them, the trees today's mix, and does not throw (#1104).
+  const beyond = await page.evaluate(async () => {
+    const load: Load = (p) => import(p);
+    const V = await load<typeof import('../../src/ui/viewport.ts')>('/src/ui/viewport.ts');
+    const w = window.__game!.game!.world, { mapId, x: hx, y: hy, facing, minutes } = w.state;
+    const out = Object.values(w.maps).find((m) => m.zones.length)!, W = 400, H = 268, seen = new Set<string>();
+    const c = document.createElement('canvas'), sky = document.createElement('canvas');
+    c.width = sky.width = W; c.height = sky.height = H;
+    const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+    const dirs: [number, number, number][] = [[0, -1, 0], [1, 0, 1], [0, 1, 2], [-1, 0, 3]];
+    for (let y = 0; y < out.height && seen.size < 4; y++) for (let x = 0; x < out.width && seen.size < 4; x++) {
+      if (out.zoneAt(x, y)) continue;
+      const cell = out.at(x, y), look = cell.look ?? cell, kind = look.solid === 'tree' ? 'tree' : look.terrain;
+      if (!['tree', 'woods', 'pine', 'deadwood'].includes(kind) || seen.has(kind)) continue;
+      // Two squares off, on open ground of a zone, facing it.
+      for (const [dx, dy, f] of dirs) {
+        const px = x - dx * 2, py = y - dy * 2;
+        if (!out.inBounds(px, py) || !out.zoneAt(px, py) || out.at(px, py).solid !== 'none') continue;
+        Object.assign(w.state, { mapId: out.id, x: px, y: py, facing: f, minutes: 12 * 60 }); w['cached'] = null;
+        ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H });
+        seen.add(kind); break;
+      }
+    }
+    Object.assign(w.state, { mapId, x: hx, y: hy, facing, minutes }); w['cached'] = null;
+    return [...seen];
+  });
+  ok(beyond.length === 4, `a company at a zone's edge looking out on the country past the zones paints its trees, which name no region (${beyond.join(', ')})`);
 }
 
 // A torch behind a tree and behind a monster: a sconced wall three squares ahead on the Foreland at
