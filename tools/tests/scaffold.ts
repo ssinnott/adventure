@@ -4,10 +4,11 @@
 // Downs. Then the Deepthorn's first box, for the light woods no map could hold before #210.
 // The texture (#1107): the same box textured and laid back differs from the atlas only where the
 // texture changed it, each square walked as before or a rock on stony ground in the open, none on an
-// edge, water or the coast, a road or a river, on a quarter of a run at most, and no more of its views
+// edge, water or the coast, a road or a river, on a quarter of a run at most and no more of its views
 // plain (#1108), as the bare draft has none; the Downs' D2, a range of hills, has fewer textured than
 // bare; it changes nothing on a box of water, of road, of grass on its edges alone or of grass beside
-// water; and over every built outdoor map it proposes nothing on a square the map names.
+// water, nor where the atlas has a road or a river on a box of grass alone; and over every built
+// outdoor map it proposes nothing on a square the map names nor on more than a quarter of a run.
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -93,6 +94,28 @@ function reach(def: MapDef): { seen: number; open: number } {
   return { seen: seen.size, open };
 }
 
+/**
+ * Of the squares a pass changed in `rows`: whether each lies in a run of a ground of the table (its
+ * squares joined side by side), how many runs there are and the most of any run they take.
+ */
+function runShare(rows: readonly string[], changes: readonly { x: number; y: number }[]): { inRuns: boolean; runs: number; most: number } {
+  const H = rows.length, W = Math.max(...rows.map((r) => r.length)), runOf = new Int32Array(W * H).fill(-1), runs: number[] = [];
+  for (let s = 0; s < W * H; s++) {
+    const ch = rows[Math.floor(s / W)][s % W];
+    if (runOf[s] >= 0 || !TEXTURE[MAP_TERRAIN[ch]]) continue;
+    const q = [s];
+    runOf[s] = runs.length;
+    for (let k = 0; k < q.length; k++) {
+      const x = q[k] % W, y = (q[k] - x) / W;
+      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) if (nx >= 0 && ny >= 0 && nx < W && ny < H && runOf[ny * W + nx] < 0 && rows[ny][nx] === ch) { runOf[ny * W + nx] = runs.length; q.push(ny * W + nx); }
+    }
+    runs.push(q.length);
+  }
+  const taken = runs.map(() => 0);
+  for (const c of changes) if (runOf[c.y * W + c.x] >= 0) taken[runOf[c.y * W + c.x]]++;
+  return { inRuns: changes.every((c) => runOf[c.y * W + c.x] >= 0), runs: runs.length, most: Math.max(0, ...taken.map((n, r) => n / runs[r])) };
+}
+
 export async function scaffold(): Promise<void> {
   ok(Object.entries(CHAR_OF).every(([t, ch]) => MAP_TERRAIN[ch!] === t), 'every character a draft writes is its terrain on the world map');
   const { atlas, defs } = unbuilt(AT[0], AT[1]);
@@ -148,22 +171,8 @@ export async function scaffold(): Promise<void> {
   const kept = (x: number, y: number): boolean => x > 0 && y > 0 && x < SIZE - 1 && y < SIZE - 1 && !wetAt(x, y) && !eight(x, y, wetAt) && !g0.road[(AT[1] + y) * W + AT[0] + x] && !g0.river[(AT[1] + y) * W + AT[0] + x];
   ok(changes.every((c) => kept(c.x, c.y)), 'none is on an edge, water or the coast, a road or a river');
   // A run is a ground's squares joined side by side in the bare draft.
-  const runOf = new Int32Array(SIZE * SIZE).fill(-1), runs: number[] = [];
-  for (let s = 0; s < SIZE * SIZE; s++) {
-    const ch = def.rows[Math.floor(s / SIZE)][s % SIZE];
-    if (runOf[s] >= 0 || !TEXTURE[MAP_TERRAIN[ch]]) continue;
-    const q = [s];
-    runOf[s] = runs.length;
-    for (let k = 0; k < q.length; k++) {
-      const x = q[k] % SIZE, y = (q[k] - x) / SIZE;
-      for (const [nx, ny] of [[x + 1, y], [x - 1, y], [x, y + 1], [x, y - 1]]) if (nx >= 0 && ny >= 0 && nx < SIZE && ny < SIZE && runOf[ny * SIZE + nx] < 0 && def.rows[ny][nx] === ch) { runOf[ny * SIZE + nx] = runs.length; q.push(ny * SIZE + nx); }
-    }
-    runs.push(q.length);
-  }
-  const taken = runs.map(() => 0);
-  for (const c of changes) if (runOf[c.y * SIZE + c.x] >= 0) taken[runOf[c.y * SIZE + c.x]]++;
-  const most = Math.max(...taken.map((n, r) => n / runs[r]));
-  ok(changes.every((c) => runOf[c.y * SIZE + c.x] >= 0) && taken.every((n, r) => n <= runs[r] * TEXTURE_SHARE), `each in a run of a ground of the table, on a quarter of the run at most (${(100 * most).toFixed(0)}% at most, of ${runs.length} runs)`);
+  const spread = runShare(def.rows, changes);
+  ok(spread.inRuns && spread.most <= TEXTURE_SHARE, `each in a run of a ground of the table, on a quarter of the run at most (${(100 * spread.most).toFixed(0)}% at most, of ${spread.runs} runs)`);
   const tr = reach(tdef), bp = plainShare(def), tp = plainShare(tdef);
   ok(tdef.start.x === def.start.x && tdef.start.y === def.start.y && tr.seen === tr.open, `its start is the bare draft's and every open square is reached from it (${tr.seen} of ${tr.open})`);
   // #1108's measure: grass's looks and the scatter already break every view of the bare draft, so the
@@ -180,12 +189,16 @@ export async function scaffold(): Promise<void> {
   const edge = (i: number, j: number): boolean => i === 0 || j === 0 || i === SIZE - 1 || j === SIZE - 1;
   const still = [fixture(() => '~'), fixture(() => '='), fixture((i, j) => (edge(i, j) ? ',' : '=')), fixture((i) => (i % 2 ? '~' : ','))].map((rows) => texture(atlas, g0, rows, AT).changes.length);
   ok(still.every((n) => n === 0), `on a box of water, of road, of grass on its edges alone or of grass beside water it changes nothing (${still.join(', ')})`);
-  const lawn = texture(atlas, g0, fixture(() => ','), AT).changes.length;
-  ok(lawn > 0 && lawn <= SIZE * SIZE * TEXTURE_SHARE, `and on a box of grass alone it lays patches, on a quarter of it at most (${lawn} of ${SIZE * SIZE})`);
+  // At AT the atlas's road runs under the lawn, and the pass keeps off it whatever the rows lay there:
+  // no draft can show this, as a draft writes the road and a river as they are.
+  const lawn = texture(atlas, g0, fixture(() => ','), AT).changes;
+  const onWays = lawn.filter((c) => g0.road[(AT[1] + c.y) * W + AT[0] + c.x] || g0.river[(AT[1] + c.y) * W + AT[0] + c.x]).length;
+  ok(lawn.length > 0 && lawn.length <= SIZE * SIZE * TEXTURE_SHARE && onWays === 0, `and on a box of grass alone it lays patches, on a quarter of it at most, none on the atlas's road or a river (${lawn.length} of ${SIZE * SIZE}; ${onWays} on them)`);
 
   // --over: the same pass over every built outdoor map, which proposes nothing on a square the map names.
   const world = baseline(ATLAS, MAP_DEFS);
   let proposed = 0, astray = 0;
+  const crowded: string[] = [];
   for (const map of MAP_DEFS) {
     const at = map.kind === 'outdoor' ? mapAt(ATLAS, map.id) : undefined;
     if (!at) continue;
@@ -194,8 +207,10 @@ export async function scaffold(): Promise<void> {
     const r = over(ATLAS, world, map, at), fairly = fair(map, { ...map, rows: r.rows }), w = Math.max(...map.rows.map((s) => s.length));
     proposed += r.changes.length;
     astray += r.changes.filter((c) => named.has(`${c.x},${c.y}`) || c.x <= 0 || c.y <= 0 || c.x >= w - 1 || c.y >= map.rows.length - 1 || !fairly(c.x, c.y)).length;
+    const share = runShare(map.rows, r.changes);
+    if (!share.inRuns || share.most > TEXTURE_SHARE) crowded.push(map.id);
   }
-  ok(proposed > 0 && astray === 0, `over the built outdoor maps it proposes ${proposed} squares, none on an edge or a square its map names, each walked as before or a rock in the open (${astray} astray)`);
+  ok(proposed > 0 && astray === 0 && !crowded.length, `over the built outdoor maps it proposes ${proposed} squares, none on an edge or a square its map names, each walked as before or a rock in the open, on a quarter of a run at most (${astray} astray; over a quarter on ${crowded.join(', ') || 'none'})`);
 
   // It refuses what it cannot cut faithfully, and says why.
   const refused = (zone: string, x: number, y: number, why: RegExp, id?: string): boolean => { const r = cut(atlas, defs, g0, REGIONS, zone, x, y, id); return 'refused' in r && why.test(r.refused); };

@@ -13,9 +13,10 @@
 // --texture lays a second pass over the cut (#1107, `texture` in tools/kit/scaffold.ts): in each run
 // of grass, steppe, ash, pine or hills, patches of a second ground by the world's noise, each walked as
 // the ground it replaces, and on steppe, ash and hills the odd rock, which closes no way; never on an
-// edge, the coast, water, a road or a river, nor on more than a quarter of a run. --over runs the same pass over
-// a built outdoor map and prints each square it would change, x,y: from -> to, grouped by the change,
-// and the map's plain views before and after (#1108), for the author to take or leave. It writes nothing.
+// edge, the coast, water, a road or a river, nor on more than a quarter of a run. --over runs the
+// same pass over a built outdoor map and prints each square it would change, x,y: from -> to, grouped
+// by the change, and the map's plain views before and after (#1108), for the author to take or leave.
+// It writes nothing.
 import { writeFileSync, existsSync } from 'node:fs';
 import { relative, dirname, resolve } from 'node:path';
 import { pathToFileURL, fileURLToPath } from 'node:url';

@@ -337,7 +337,7 @@ export function texture(atlas: Atlas, grid: WorldGrid, rows: readonly string[], 
   return { rows: cells.map((r) => r.join('')), changes };
 }
 
-/** A draft with the texture laid over it (`--texture`): its rows, counts and a note, and the squares changed, its start left alone. */
+/** A draft with the texture laid over it (`--texture`): its rows, counts, note and the squares changed, its start left alone. */
 export function textured(atlas: Atlas, grid: WorldGrid, d: Draft, x: number, y: number): Draft {
   const { start } = d.def;
   const { rows, changes } = texture(atlas, grid, d.def.rows, [x, y], (i, j) => i === start.x && j === start.y);
