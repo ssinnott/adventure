@@ -6,7 +6,9 @@ import { TERRAIN_COLORS } from '../../palette.ts';
 import { hash } from '../../paint/brush.ts';
 import { fog, floorPt, quad } from '../common.ts';
 import type { Paint } from '../common.ts';
-import type { GroundLook, Mark } from './look.ts';
+import type { GroundLook, Mark, Square } from './look.ts';
+import { ripples, stones } from './near.ts';
+import type { Pixels } from './near.ts';
 
 /** The crest, then ripples. */
 function mark(p: Paint, m: Mark): void {
@@ -37,9 +39,21 @@ function scoured(p: Paint, m: Mark): void {
   ctx.beginPath(); ctx.moveTo(x - 8 * sc, y); ctx.lineTo(x + 8 * sc, y); ctx.stroke();
 }
 
-export const dunes: GroundLook = { color: () => TERRAIN_COLORS.dunes, drift: { toward: ['#b87a3e', '#f0cc94'], by: 0.6 }, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 5, mark },
+// Near to (#1102, near.ts): the ripple marks close set, lit along their crests; on the scoured sand long streaks and
+// pebbles the wind has left lying.
+
+/** The ripple-marked sand's near to. */
+function rippled(p: Paint, base: string, sq: Square): Pixels { return ripples(p, base, sq, { rows: 10, cols: 2, half: 15, lit: 1.16, shadow: 0.8 }); }
+
+/** The scoured sand's: long low streaks, and pebbles lit on their tops. */
+function streaked(p: Paint, base: string, sq: Square): Pixels {
+  const px = ripples(p, base, sq, { rows: 6, cols: 2, half: 16, lit: 1.1, shadow: 0.9, salt: 133 });
+  return stones(p, base, sq, { rows: 5, cols: 7, size: [2, 3], bare: 0.6, body: 0.6, lit: 0.95, shadow: 0.45 }, px);
+}
+
+export const dunes: GroundLook = { color: () => TERRAIN_COLORS.dunes, drift: { toward: ['#b87a3e', '#f0cc94'], by: 0.6 }, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 5, mark }, near: rippled,
   // Ridges marked by the wind's ripples, and sand scoured flat and pale between them.
   variants: { scale: 4.5, looks: [
     { name: 'ripple-marked', share: 0.6 },
-    { name: 'wind-scoured', share: 0.4, shift: { toward: '#f4e0b8', by: 0.4 }, lies: { marks: 6, mark: scoured } },
+    { name: 'wind-scoured', share: 0.4, shift: { toward: '#f4e0b8', by: 0.4 }, lies: { marks: 6, mark: scoured }, near: streaked },
   ] } };
