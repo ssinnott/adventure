@@ -69,7 +69,7 @@ export const DOWNS_D3: MapDef<'downs_d3'> = {
     { kind: 'den', x: 21, y: 26, id: 'd3_camp', name: 'The bandit camp', text: 'A hut of stolen planks by the road, a fire kept low, and a lookout who has already seen you.',
       breeds: ['billman', 'slinger'], keepers: 'd3_keepers', brood: ['d3_bandits', 'd3_bandits2'],
       ask: 'The camp\'s own are dead, and the hut is full of other people\'s things. Burn it?', burn: 'Burn it.', leave: 'Leave it.',
-      burnt: 'The hut burns with all it stole. The Salt Road is a road again.',
+      burnt: 'The hut burns with its loot. The Salt Road is only a road again.',
       ruin: 'Charred planks by the road, and the crows picking over them.', gold: 60, items: ['longbow+1', 'yew_shortbow+1', 'leather_sling+1'] },
     { kind: 'event', x: 10, y: 7, id: 'd3_barrow', once: true, text: 'A long mound on the down, ploughed round and never ploughed over.' },
     { kind: 'event', x: 24, y: 14, id: 'd3_pond', once: true, text: 'A dew pond gone to a crust of chalk, and no sheep for a mile.' },
