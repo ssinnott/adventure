@@ -46,6 +46,11 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   its colour as drawn and a third of its marks, a fifth of the way in and two fifths at most; other looks,
   a square something stands on and a dungeon's floor take none and give none. The outline is the edge's,
   hashed from it and its corners, so an edge looks the same from both squares and from every facing.
+- **The nearest rows**, `src/ui/view/ground/near.ts` (#1102): in the company's square and the one ahead a look paints
+  its detail (`near`, a variant its own) in whole pixels, placed by the cell and sized by its plane: blades, flowers,
+  fronds, sprigs and bog cotton, pebbles, cracks, cinders and the crust's crazing, needles, moss, ripples, reeds,
+  leaf litter and a field's crop in its rows. A tongue carries its ground's; a deep snow buries all but the snow's
+  own ridges; a hill's mound takes none.
 
 - **A region's trees** (#1104): its look's `trees` names, by weight, those its forests and woods stand
   (`forest`) and its pinewoods (`pine`, conifers only). A square takes its region's, picked by its hash
