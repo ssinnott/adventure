@@ -18,8 +18,8 @@
 // every class, each piece inside the isle's window and placed by its box. Beside them the ranged
 // rungs (#1115, each area's `ranged`): at each that holds a long bow, a short bow a step behind it
 // and a sling two, each a step on the last of its line, so that every class's best ranged weapon
-// betters the rung before; each sold where its bow is sold and found where it is found, and off
-// the gate's ladder until #1117.
+// betters the rung before; each sold where its bow is sold and found where it is found, and on
+// the gate's ladder beside it (#1117).
 import { AREAS, MAP_DEFS, MONSTERS, ITEMS } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
 import { CURVE } from '../../src/content/progression.ts';
@@ -103,6 +103,7 @@ export const DEEP_FINDS: Record<string, string> = {
   'tower_shield+1': '', 'rune_dagger+2': '',
   'runed_robe+2': '',
   'elfbow+2': '', 'brigandine+3': '',
+  'thornmark_shortbow+2': '', 'deerskin_sling+2': '',
   'warhammer+2': '',
   silver_torc: '',
   eldests_bough: '', 'greatsword+2': '',
@@ -380,7 +381,7 @@ export function ladder(): void {
   // where it is found there (a shop's, a box's or a drop's), cheaper than the one before it in the
   // rung and inside that area's window. The long bow is on the rung of the area whose checks hold it,
   // which may be a later one on the road (13 is Wrackholm's, its Horn Bow +1 Saltreach's); and the
-  // two are off the gate's ladder until #1117 takes them into `gear`.
+  // two are on the gate's ladder beside it (#1117: tools/kit/company.ts takes them into `gear`).
   const onLadder = new Set(GEAR.flatMap(([, ids]) => ids));
   const home = (id: string): Area | undefined => (AREAS as readonly Area[]).find((a) => a.items.some((x) => x.id === id));
   const placed = RANGED.flatMap((r) => {
@@ -393,11 +394,11 @@ export function ladder(): void {
       const unpriced = a ? a.maps.flatMap((m) => (m.features ?? []).filter((f) => f.kind === 'shop' && f.prices?.[long] !== undefined && f.prices?.[id] === undefined).map(() => m.id)) : [];
       if (unpriced.length) out.push(`${id} has no price where ${long} has one (${unpriced.join(', ')})`);
       if (!a || !d || !before || !Number.isInteger(d.price) || d.price >= before.price || d.price > CURVE[a.id as keyof typeof CURVE].price) out.push(`${id} (${d?.price} gold) is not a whole price cheaper than ${before?.id} (${before?.price}) inside ${a?.id}'s window`);
-      if (onLadder.has(id)) out.push(`${id} is on the gate's ladder`);
+      if (!onLadder.has(id)) out.push(`${id} is not on the gate's ladder`);
     });
     return out;
   });
-  ok(RANGED.length > 0 && !placed.length, `each ranged rung's short bow and sling is its long bow's area's, sold where the bow is sold and found where it is found there, cheaper and inside the area's window, and off the gate's ladder till #1117 (${RANGED.map((r) => `${r.level}: ${[...new Set(home(r.bows[0]) ? placesIn(home(r.bows[0])!, r.bows[0]) : [])].join(', ')}`).join('; ')})${placed.length ? ` (but ${placed.join('; ')})` : ''}`);
+  ok(RANGED.length > 0 && !placed.length, `each ranged rung's short bow and sling is its long bow's area's, sold where the bow is sold and found where it is found there, cheaper and inside the area's window, and on the gate's ladder (#1117) (${RANGED.map((r) => `${r.level}: ${[...new Set(home(r.bows[0]) ? placesIn(home(r.bows[0])!, r.bows[0]) : [])].join(', ')}`).join('; ')})${placed.length ? ` (but ${placed.join('; ')})` : ''}`);
   // And every box that gives a ranged rung's long bow, in any area, gives its short bow and sling: Wrackholm's
   // E6 cache gives the Long Bow +1. A drop is no box: a draw on the fight's generator, it waits for #1117.
   const paired: string[] = [], unpaired: string[] = [];

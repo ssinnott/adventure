@@ -1,8 +1,8 @@
 // The acts' rungs the ladder suite holds (#984): what each act's trainers and finds give each class
 // by a level. Five walkthroughs take them from here.
-import { FORGE } from '../../../src/content/areas/kilns/items.ts';
-import { FURRIER } from '../../../src/content/areas/rimewater/items.ts';
-import { ARMOURER } from '../../../src/content/areas/ashfall/items.ts';
+import { FORGE, FORGE_RANGED } from '../../../src/content/areas/kilns/items.ts';
+import { FURRIER, FURRIER_RANGED } from '../../../src/content/areas/rimewater/items.ts';
+import { ARMOURER, ARMOURER_RANGED } from '../../../src/content/areas/ashfall/items.ts';
 import type { ClassId } from '../../../src/game/party.ts';
 
 /**
@@ -13,7 +13,7 @@ import type { ClassId } from '../../../src/game/party.ts';
 export const ACT_II: readonly { level: number; name: string; from: Record<string, readonly [area: 'saltreach' | 'wrackholm' | 'sunderwood', whose: string]>; classes: Record<ClassId, readonly string[]> }[] = [
   {
     level: 11, name: "Saltmouth's armourer",
-    from: Object.fromEntries(['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe'].map((id) => [id, ['saltreach', '']])),
+    from: Object.fromEntries(['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe', 'horn_shortbow', 'sharkskin_sling'].map((id) => [id, ['saltreach', '']])),
     classes: {
       knight: ['morning_star'], paladin: ['morning_star'], ranger: ['horn_bow', 'sharkskin'], barbarian: ['long_axe', 'sharkskin'],
       cleric: ['morning_star', 'tidefolk_robe'], sorcerer: ['stiletto', 'tidefolk_robe'], thief: ['stiletto', 'sharkskin'], bard: ['stiletto', 'sharkskin'],
@@ -25,6 +25,7 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
     from: {
       'stiletto+1': ['saltreach', ''], 'ironshod_staff+1': ['saltreach', ''], 'morning_star+1': ['saltreach', ''],
       'tidefolk_robe+1': ['saltreach', ''], 'horn_bow+1': ['saltreach', ''], 'plate+1': ['wrackholm', ''], 'long_axe+1': ['wrackholm', ''],
+      'horn_shortbow+1': ['saltreach', ''], 'sharkskin_sling+1': ['saltreach', ''],
     },
     classes: {
       knight: ['morning_star+1', 'plate+1'], paladin: ['morning_star+1', 'plate+1'], ranger: ['horn_bow+1'], barbarian: ['long_axe+1'],
@@ -34,7 +35,7 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
   },
   {
     level: 14, name: "Lantern Watch's stores",
-    from: Object.fromEntries(['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield'].map((id) => [id, ['sunderwood', '']])),
+    from: Object.fromEntries(['flail', 'wardens_dirk', 'ironwood_bow', 'great_axe', 'watch_staff', 'lamellar', 'watch_habit', 'watch_shield', 'ironwood_shortbow', 'watch_sling'].map((id) => [id, ['sunderwood', '']])),
     classes: {
       knight: ['flail', 'watch_shield'], paladin: ['flail', 'watch_shield'], ranger: ['ironwood_bow', 'lamellar'], barbarian: ['great_axe', 'lamellar'],
       cleric: ['flail', 'watch_habit'], sorcerer: ['wardens_dirk', 'watch_habit'], thief: ['wardens_dirk', 'lamellar'], bard: ['wardens_dirk', 'lamellar'],
@@ -46,6 +47,7 @@ export const ACT_II: readonly { level: number; name: string; from: Record<string
     from: {
       'great_axe+1': ['sunderwood', ''], 'wardens_dirk+1': ['sunderwood', ''], 'flail+1': ['sunderwood', ''],
       'ironwood_bow+1': ['sunderwood', ''], 'plate+2': ['sunderwood', ''], lanterns_staff: ['sunderwood', ''],
+      'ironwood_shortbow+1': ['sunderwood', ''], 'watch_sling+1': ['sunderwood', ''],
     },
     classes: {
       knight: ['flail+1', 'plate+2'], paladin: ['flail+1', 'plate+2'], ranger: ['ironwood_bow+1'], barbarian: ['great_axe+1'],
@@ -69,7 +71,7 @@ export type Rung<Where extends string> = { level: number; name: string; found?: 
 export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
   {
     level: 17, name: "Anvilhall's forge",
-    from: Object.fromEntries(FORGE.map((id) => [id, ['kilns', '']])),
+    from: Object.fromEntries([...FORGE, ...FORGE_RANGED].map((id) => [id, ['kilns', '']])),
     classes: {
       knight: ['forge_hammer', 'forge_shield'], paladin: ['forge_hammer', 'forge_shield'], ranger: ['steel_bow', 'dwarf_mail'], barbarian: ['mattock', 'dwarf_mail'],
       cleric: ['forge_hammer', 'kiln_robe'], sorcerer: ['seax', 'kiln_robe'], thief: ['seax', 'dwarf_mail'], bard: ['seax', 'dwarf_mail'],
@@ -81,6 +83,7 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
     from: {
       'plate+3': ['kilns', ''], 'forge_hammer+1': ['kilns', ''], 'mattock+1': ['kilns', ''], 'steel_bow+1': ['kilns', ''],
       'seax+1': ['kilns', ''], 'kiln_robe+1': ['kilns', ''], 'banded_staff+1': ['cairnmoor', ''],
+      'steel_shortbow+1': ['kilns', ''], 'wire_sling+1': ['kilns', ''],
     },
     classes: {
       knight: ['forge_hammer+1', 'plate+3'], paladin: ['forge_hammer+1', 'plate+3'], ranger: ['steel_bow+1'], barbarian: ['mattock+1'],
@@ -90,7 +93,7 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
   },
   {
     level: 21, name: "Rime Lodge's furrier",
-    from: Object.fromEntries(FURRIER.map((id) => [id, ['rimewater', '']])),
+    from: Object.fromEntries([...FURRIER, ...FURRIER_RANGED].map((id) => [id, ['rimewater', '']])),
     classes: {
       knight: ['ice_axe'], paladin: ['ice_axe'], ranger: ['hunters_bow', 'bearskin'], barbarian: ['bear_spear', 'bearskin'],
       cleric: ['ice_axe', 'fur_robe'], sorcerer: ['skinning_knife', 'fur_robe'], thief: ['skinning_knife', 'bearskin'], bard: ['skinning_knife', 'bearskin'],
@@ -102,6 +105,7 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
     from: {
       'ice_axe+1': ['rimewater', ''], 'skinning_knife+1': ['rimewater', ''], 'bear_spear+1': ['rimewater', ''],
       'guides_staff+1': ['rimewater', ''], 'hunters_bow+1': ['rimewater', ''], 'plate+4': ['rimewater', ''],
+      'hunters_shortbow+1': ['rimewater', ''], 'hide_sling+1': ['rimewater', ''],
     },
     classes: {
       knight: ['ice_axe+1', 'plate+4'], paladin: ['ice_axe+1', 'plate+4'], ranger: ['hunters_bow+1'], barbarian: ['bear_spear+1'],
@@ -120,7 +124,7 @@ export const ACT_III: readonly Rung<'kilns' | 'cairnmoor' | 'rimewater'>[] = [
 export const ACT_IV: readonly Rung<'ashfall'>[] = [
   {
     level: 25, name: "Cinderport's armourer",
-    from: Object.fromEntries(ARMOURER.map((id) => [id, ['ashfall', '']])),
+    from: Object.fromEntries([...ARMOURER, ...ARMOURER_RANGED].map((id) => [id, ['ashfall', '']])),
     classes: {
       knight: ['slag_mace', 'basalt_shield'], paladin: ['slag_mace', 'basalt_shield'], ranger: ['ashwood_bow', 'drakeskin'], barbarian: ['flamberge', 'drakeskin'],
       cleric: ['slag_mace', 'cinder_robe'], sorcerer: ['marlinspike', 'cinder_robe'], thief: ['marlinspike', 'drakeskin'], bard: ['marlinspike', 'drakeskin'],
@@ -143,7 +147,7 @@ export const ACT_V: readonly Rung<'hearth'>[] = [
     from: {
       grey_knife: ['hearth', ''], // the isle, H6 (#753): the picket's chest and the champions' drop
       grey_staff: ['hearth', ''], grey_mail: ['hearth', ''], // the east rim, I6 (#754): the Hand's camp's chest and its hoard
-      grey_blade: ['hearth', ''], grey_bow: ['hearth', ''], // the temple (#755): its treasury
+      grey_blade: ['hearth', ''], grey_bow: ['hearth', ''], grey_shortbow: ['hearth', ''], grey_sling: ['hearth', ''], // the temple (#755): its treasury
       grey_robe: ['hearth', ''], // the crypt (#756): the dead champion's pack
       grey_shield: ['hearth', ''], old_lanterns_staff: ['hearth', ''], // the Ways (#757): the keepers' store and the hall behind the crack
       grey_axe: ['hearth', ''], // the Stair (#758): the rearguard's chest

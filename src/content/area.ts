@@ -144,7 +144,7 @@ export interface AreaChecks {
   /**
    * Its ranged rungs (#1115): by the level of a rung of its `gear` that holds a long bow, that bow, the
    * short bow a step behind it and the sling two (tools/tests/ladder.ts). The short bow and the sling
-   * are off the ladder until #1117 takes them into `gear`.
+   * stand on the ladder beside the bow (tools/kit/company.ts `RUNGS`, #1117).
    */
   ranged?: Readonly<Record<number, readonly [long: string, short: string, sling: string]>>;
   /** How far over the next floor its clear leaves a company, held as built (tools/tests/curve.ts). */

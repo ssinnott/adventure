@@ -30,9 +30,8 @@ const RANGED = [steelShortbow, wireSling];
 /** The forge's step, the act's first (#459); Kilnhaven's smith stocks the same (#469). */
 export const FORGE: readonly string[] = WARES.map((d) => d.id);
 /**
- * Sold beside the step at the forge and at the smith's (#1115), and kept out of it: the Steel Bow's
- * short bow and sling are off the gate's ladder until #1117 takes them into the step, and the rung's
- * `from` (tools/kit/rules/ladder.ts) is the step alone.
+ * Sold beside the step at the forge and at the smith's (#1115): the Steel Bow's short bow and sling,
+ * on the gate's ladder beside it since #1117; the rung's `from` (tools/kit/rules/ladder.ts) takes both.
  */
 export const FORGE_RANGED: readonly string[] = RANGED.map((d) => d.id);
 

@@ -24,9 +24,8 @@ const RANGED = [huntersShortbow, hideSling];
 /** The furrier's step, the act's last (#487). */
 export const FURRIER: readonly string[] = WARES.map((d) => d.id);
 /**
- * Sold beside the step at the furrier's (#1115), and kept out of it: the Hunter's Bow's short bow and
- * sling are off the gate's ladder until #1117 takes them into the step, and the rung's `from`
- * (tools/kit/rules/ladder.ts) is the step alone.
+ * Sold beside the step at the furrier's (#1115): the Hunter's Bow's short bow and sling, on the gate's
+ * ladder beside it since #1117; the rung's `from` (tools/kit/rules/ladder.ts) takes both.
  */
 export const FURRIER_RANGED: readonly string[] = RANGED.map((d) => d.id);
 
