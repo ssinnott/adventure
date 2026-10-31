@@ -183,7 +183,10 @@ gleaners. New here (`novel`): the long bodies and the toads, two new families, a
   wares; by 13 the same with a plus from Saltreach's and Wrackholm's finds (Wrackholm's checks).
   The dearest find, the Sharkskin Coat +1 at 1,250 gold, sits in the window, 2,000; Wytgat's, the
   Brine Needle at 1,150, in the enclave's, Wrackholm's 2,500. No window holds a find of the lair's:
-  the Elixir and the Sapphire Vial are consumables and the Telstok an artifact.
+  the Elixir and the Sapphire Vial are consumables and the Telstok an artifact. Its ranged rung
+  (`ranged`, #1115) puts a short bow a step behind the Horn Bow and a sling two: the Horn Short Bow
+  and the Sharkskin Sling at the Seawall Armoury beside it, each with a plus in C7's hoard beside the
+  Horn Bow +1 (13, on Wrackholm's checks). They are off the gate's ladder until #1117.
 
 ## 10. Names
 

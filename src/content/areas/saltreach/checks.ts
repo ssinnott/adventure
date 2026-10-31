@@ -7,6 +7,10 @@ export const CHECKS = {
   gear: {
     11: ['morning_star', 'stiletto', 'horn_bow', 'long_axe', 'ironshod_staff', 'sharkskin', 'tidefolk_robe'],
   },
+  // Its ranged rung (#1115): the Horn Bow's, with the short bow and the sling #1117 takes into `gear`.
+  ranged: {
+    11: ['horn_bow', 'horn_shortbow', 'sharkskin_sling'],
+  },
   // Its seams as built (tools/tests/outdoors.ts): each whose first box is its own.
   seamsAsBuilt: [
     { seam: 'delta_c5|delta_d5', walk: '17-20', water: '17-20', road: '0-1 3-4', why: 'the road crosses the line on a slant, and the shore steps across it, C5\'s sand against D5\'s shallows' },
