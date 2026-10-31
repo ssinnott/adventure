@@ -51,7 +51,7 @@ export function scatterAt(map: GameMap, x: number, y: number): Scattered | null 
   const first = Math.floor(hash(x, y, 1104) * 4);
   for (let i = 0; i < 4; i++) {
     const [sx, sy] = CORNERS[(first + i) % 4];
-    if (open(x + sx, y) && open(x, y + sy)) return { prop, ox: sx * (0.28 + 0.1 * hash(x, y, 1105)), oy: sy * (0.28 + 0.1 * hash(x, y, 1106)), size: 1.1 + 0.3 * hash(x, y, 1107), pick: hash(x, y, 1108) };
+    if (open(x + sx, y) && open(x, y + sy)) return { prop, ox: sx * (0.28 + 0.1 * hash(x, y, 1105)), oy: sy * (0.28 + 0.1 * hash(x, y, 1106)), size: 1.65 + 0.45 * hash(x, y, 1107), pick: hash(x, y, 1108) };
   }
   return null;
 }
@@ -68,5 +68,8 @@ export function drawScatter(p: Paint, x: number, y: number, d: number, l: number
   const along = 0.5 + s.ox * FACING_DX[f] + s.oy * FACING_DY[f], across = 0.5 + s.ox * FACING_DX[rf] + s.oy * FACING_DY[rf];
   const [px, py] = floorPt(p.cx, p.horizon, p.h, d, l, along, across);
   const ink = (c: string): string => fog(p, env.wet > 0 && look.wets ? shade(c, 1 - 0.18 * env.wet) : c, d);
+  // Inside save and restore: the caps and joins a prop's strokes set must not reach the nearer rows' marks.
+  p.ctx.save();
   drawPropSprite(p.ctx, s.prop, px, py, unitIn(d, along, p.h) * s.size, { ink, ground: look.color(env.day, 0), snow: env.cover * look.snow, bloom: flowering(env.day), pick: s.pick });
+  p.ctx.restore();
 }

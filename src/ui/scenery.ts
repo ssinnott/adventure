@@ -1,5 +1,6 @@
 // The viewport's scenery, cel-shaded with the engine's helpers through a Brush: the trees dressed by
-// the season, the dead trees, the props scattered on open ground (#1103), the crystals, the lighthouse, the monastery, rocks, mountains, peaks,
+// the season, the dead trees, the props scattered on open ground (#1103), the crystals, the lighthouse,
+// the monastery, rocks, mountains, peaks,
 // cliffs, the volcano, the creeper trees and the pillar. Every sprite draws front-facing, centred on
 // (x, y) with y the ground line; `tone` darkens with distance. The monsters are ./sprites.ts's.
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
@@ -144,8 +145,8 @@ function dab(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: 
 }
 
 /**
- * The props, each drawn about its foot at (x, y), `u` the square's half width there. Each is small, a
- * fifth of a wall's height or so, and ONE thing: a boulder or a stone is one rounded rock, never stacked
+ * The props, each drawn about its foot at (x, y), `u` the square's half width there. Each is small, under
+ * half a wall's height, and ONE thing: a boulder or a stone is one rounded rock, never stacked
  * or ringed, a snag is no post and the peat a low turf mound, so that none is taken for a feature's
  * drawing (#1110). A deep snow buries the low ones.
  */
@@ -224,12 +225,12 @@ const PROPS: Record<Prop, (ctx: CanvasRenderingContext2D, x: number, y: number, 
     if (snow > 0.2) stroke(ctx, [x - w * 0.9, y - h * 0.95, x + w * 0.9, y - h * 0.9], ink(SNOW_WHITE), Math.max(1, u * 0.03));
   },
   steam(ctx, x, y, u, { ink, pick }) {
-    // The crack it rises from and the wisp leaning off it, drawn still as the volcano's smoke is.
-    const lean = (pick - 0.5) * u * 0.12;
+    // The crack it rises from and the wisp leaning off it, its puffs run together, drawn still as the volcano's smoke is.
+    const lean = (pick < 0.5 ? -1 : 1) * u * (0.04 + 0.04 * Math.abs(2 * pick - 1));
     ctx.fillStyle = ink('#1a1616'); ctx.beginPath(); ctx.ellipse(x, y, u * 0.07, u * 0.02, 0, 0, Math.PI * 2); ctx.fill();
     for (let j = 0; j < 3; j++) {
       ctx.fillStyle = rgba(ink('#e8eaec'), 0.5 - j * 0.12);
-      ctx.beginPath(); ctx.arc(x + lean * (j + 0.5), y - u * (0.08 + 0.13 * j), u * (0.045 + 0.025 * j), 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(x + lean * (j + 0.5), y - u * (0.07 + 0.085 * j), u * (0.045 + 0.025 * j), 0, Math.PI * 2); ctx.fill();
     }
   },
   cinder(ctx, x, y, u, { ink, snow, pick }) {

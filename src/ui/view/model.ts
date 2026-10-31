@@ -2,7 +2,8 @@
 // stands on a square ahead (`standsAt`) and a cell as the scene draws it (`drawnAt`), a town's gates
 // (`isGateway`), the houses, how they look, their buildings and the tents (`isHouse`, `looksHouse`,
 // `building`, `isTent`, `tentOf`), a wall's dressing and its rates (`wallDressing`, `DRESSING_RATES`, held by
-// tools/tests/art.ts) and the props scattered on open ground and theirs (`SCATTER_RATES`, #1103), the fields and the colours of the ground through the year (`fieldAt`, `cropColor`,
+// tools/tests/art.ts) and the props scattered on open ground and theirs (`SCATTER_RATES`, #1103), the fields
+// and the colours of the ground through the year (`fieldAt`, `cropColor`,
 // `hedgeColor`, `heatherBloom`, `iceColor`), how cold the year is on the heights (`cold`) and how far the
 // weather closes the view (`murkOf`, `washes`). It takes src/game and nothing of the painters: no canvas.
 // The grounds' looks read it (view/ground/, #1030), so it reads none of them: `SNOW_HOLD` is theirs.
