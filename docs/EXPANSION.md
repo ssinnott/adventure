@@ -297,6 +297,8 @@ fountain that gives a stat or a resistance once, a cairn with a cache, a statue 
 hint lies elsewhere, a camp where the party can rest safely, a hermit with a rumour. Each is cheap
 to place and worth the walk.
 
+Outdoors, no more than 15% of a map's views may be plain (`tools/kit/rules/plain.ts`).
+
 ### 5.4 The pillars, where they can be checked
 
 - **Hints.** If every secret door is to have a hint (today all five give one, the Foreland's two

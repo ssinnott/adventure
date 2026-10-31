@@ -15,7 +15,7 @@ if (stray.length) throw new Error(`src/content/areas/${stray.map((d) => d.name).
 
 /** The fields of `AreaChecks` and of its `owes`, every one and no other: a checks.ts naming another is refused by it. */
 const FIELDS: Record<keyof AreaChecks, true> = { owes: true, gear: true, overRoad: true, seamsAsBuilt: true, openOnNothing: true };
-const OWES: Record<keyof Owes, true> = { curve: true, unplaced: true, unset: true, cutOff: true, edges: true, locks: true };
+const OWES: Record<keyof Owes, true> = { curve: true, unplaced: true, unset: true, cutOff: true, edges: true, locks: true, plain: true };
 /** The keys of a checks.ts's rows that are no field (`satisfies AreaChecks` is the file's word alone; this is the runner's). */
 export const unknownFields = (rows: object): string[] => [
   ...Object.keys(rows).filter((k) => !Object.hasOwn(FIELDS, k)),
