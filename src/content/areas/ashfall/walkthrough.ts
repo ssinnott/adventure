@@ -1890,7 +1890,7 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   // The armourer's sells the act's one step (#542), each class its rung at 25, at list price; the
   // chandler's the provisions, lamp oil and the stone cure (#546), and no steel.
   const armourer = ofKind(PORT, 'shop').find((f) => f.interior === 'cinderport_armourer')!, chandler = ofKind(PORT, 'shop').find((f) => f.interior === 'cinderport_chandlery')!;
-  ok(armourer.stock.length === ARMOURER.length && ARMOURER.every((id) => armourer.stock.includes(id)) && !armourer.prices, `${armourer.name} sells the act's step, all ${ARMOURER.length} wares and nothing else, at list price`);
+  ok(armourer.stock.length === ARMOURER.length + 2 && [...ARMOURER, 'ashwood_shortbow', 'drakeskin_sling'].every((id) => armourer.stock.includes(id)) && !armourer.prices, `${armourer.name} sells the act's step, all ${ARMOURER.length} wares, and with the bow its short bow and sling (#1115), nothing else, at list price`);
   for (const m of w.party.members) for (const id of ACT_IV[0].classes[m.cls]) {
     const before = w.party.gold;
     ok(!!buy(TABLES.items, w.party, armourer, id) && before - w.party.gold === item(TABLES.items, id).price, `${m.name} buys a ${item(TABLES.items, id).name} at the armourer's for ${item(TABLES.items, id).price} gold`);

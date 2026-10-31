@@ -9,7 +9,7 @@
 import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
-import { ARMOURER, CURES } from '../items.ts';
+import { COUNTER, CURES } from '../items.ts';
 import { FOUNDING_RAISED } from './cindercoast_g10.ts';
 import { SHOVEL_STORY } from './firemount_g11.ts';
 import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING, sells } from '../../../crossings.ts';
@@ -98,7 +98,7 @@ export const CINDERPORT: MapDef<'cinderport'> = {
     // Up the street: the armourer's, the smith's, who sells the act's step (#542), and the potter's
     // across from it. The smith gives The Shovel That Does Not Blunt and the potter The Founding Stone
     // (#56's 52 and 50, #519); the scavenger off the mountain is at the smith's once his story is told.
-    { kind: 'shop', x: 9, y: 9, name: 'The Hide and Hammer', stock: [...ARMOURER], interior: 'cinderport_armourer' },
+    { kind: 'shop', x: 9, y: 9, name: 'The Hide and Hammer', stock: [...COUNTER], interior: 'cinderport_armourer' },
     { kind: 'npc', x: 9, y: 9, name: 'Gorran, the smith', flag: 'q_shovel', lines: [
       'A broad man at the forge, a drake\'s hide laced on its frame behind him to cure.',
       '"Gorran. Drake hide for coats, the mountain\'s slag for maces, basalt for a shield. What the coast has, I make into what it kills you with."',
