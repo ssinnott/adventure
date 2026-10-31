@@ -180,7 +180,8 @@ machines and the volcano with G11 and the springs with H10; the rest is on the r
 - **The ladder:** rung 25 is Ashfall's (`gear`, in its checks): Cinderport's armourer, every class
   bettered by it. Its ranged rung (`ranged`, #1115): the Ashwood Short Bow and the Drakeskin Sling, a
   step and two behind the Ashwood Bow, sold at the Hide and Hammer after the step and off the
-  gate's ladder until #1117. The Horn Bow +2 in E10's grave is Saltreach's, off the ladder, and has neither.
+  gate's ladder until #1117. The Horn Bow +2 in E10's grave, Saltreach's bow with a plus and off the
+  ladder, has neither.
 
 ## 10. Names
 
