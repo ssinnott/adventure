@@ -68,3 +68,12 @@ export function victoryLine(loot: Loot): string {
   const [least, most] = shareRange(loot);
   return least === most ? `Victory! ${loot.xp} experience, ${loot.gold} gold.` : `Victory! ${least} to ${most} experience by level, ${loot.gold} gold.`;
 }
+
+/**
+ * The monk's feats (#1113, combat/feats/monk.ts): the line before a Flurry's strikes, a Leap's and a
+ * Wind Step's, and the words after a Quiet Palm's hit on a foe left standing, asleep or proof against it.
+ */
+export const FLURRY_LINE = (who: string): string => `${who} strikes in a flurry.`;
+export const PALM_LINE = (foe: string, sleeps: boolean): string => (sleeps ? `${foe} falls asleep.` : `${foe} does not sleep.`);
+export const LEAP_LINE = (who: string): string => `${who} leaps past the front.`;
+export const WIND_LINE = (who: string): string => `${who} steps on the wind.`;
