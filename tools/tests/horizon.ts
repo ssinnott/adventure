@@ -4,7 +4,8 @@
 // cast the sky's hills are main's two bands, call for call, as the title's and the endings' dusk paint them. How the
 // land looks is the twelve views' (#1094).
 import { createHash } from 'node:crypto';
-import { GRID } from '../../src/content/maps.ts';
+import { GRID, buildMaps } from '../../src/content/maps.ts';
+import { regionOf } from '../../src/game/world/sky.ts';
 import { ATLAS } from '../../src/content/index.ts';
 import { mapAt, TERRAINS, TI } from '../../src/game/atlas.ts';
 import { FACING_DX, FACING_DY } from '../../src/game/types.ts';
@@ -129,6 +130,14 @@ export function horizon(): void {
       }
     });
     ok(wrong.length === 0 && rim > 0 && reach > 0, `every ray ends at the rim, the first square past the world's edge, or at the reach of ${REACH} squares: of the ${rim + reach} rays from the twelve views facing each way, ${rim} at the rim and ${reach} at the reach; the cast costs ${ms.toFixed(1)} ms a scene${wrong.length ? '; wrong: ' + wrong.join('; ') : ''}`);
+
+    // The far land takes the air over the company (`airOf`), never a square's own region, which the unbuilt country past
+    // the zones has none of (`regionOf` throws there): the cast reads the grid alone, and these casts cross it.
+    const outdoors = buildMaps().caldera, shown = new Set<number>();
+    for (const h of casts) for (const i of h.cells) if (i >= 0) shown.add(i);
+    let past = 0;
+    for (const i of shown) try { regionOf(outdoors, i % GRID.width, Math.floor(i / GRID.width)); } catch { past++; }
+    ok(past > 0, `the cast asks no square its region: of the ${shown.size} squares the ground band shows from the twelve views facing each way, ${past} lie past every zone, where regionOf throws, and are cast as the rest`);
   }
 
   // A step: the horizon a step ahead is the horizon from the square before it over the land moved a step nearer, so it
