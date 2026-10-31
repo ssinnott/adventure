@@ -26,6 +26,9 @@ export const cinderRobe = A('cinder_robe', 'Cinder Robe', 2000, 12);
 export const basaltShield: ItemDef = { id: 'basalt_shield', name: 'Basalt Shield', slot: 'shield', price: 1400, ac: 7, classes: MAIL };
 const WARES = [slagMace, marlinspike, ashwoodBow, flamberge, battleStaff, drakeskin, cinderRobe, basaltShield];
 
+/** The Ashwood Bow's short bow and sling (#1115), beside the step and off the gate's ladder: `ARMOURER_RANGED`, below. */
+const RANGED = [ashwoodShortbow, drakeskinSling];
+
 /** The armourer's stock, the act's one step (#512); the Wold has no town and buys here by the Rider's ride (#547). */
 export const ARMOURER: readonly string[] = WARES.map((d) => d.id);
 /**
@@ -34,7 +37,7 @@ export const ARMOURER: readonly string[] = WARES.map((d) => d.id);
  * from it, and the ladder suite holds those to the rung's `gear`. #1117 moves them into `WARES` with the
  * `gear` row, and this list goes.
  */
-export const ARMOURER_RANGED: readonly string[] = [ashwoodShortbow.id, drakeskinSling.id];
+export const ARMOURER_RANGED: readonly string[] = RANGED.map((d) => d.id);
 
 /**
  * The stone cure (#546; MONSTERS §3.3): poured on one turned to glass, it lifts the stone. At the
@@ -197,4 +200,4 @@ export const kindler: ItemDef = { ...marlinspike, id: 'kindler', name: 'Kindler,
   'Struck on anything it throws blue sparks, and the sparks bite.',
 ] };
 
-export const ITEMS: readonly ItemDef[] = [...WARES, ashwoodShortbow, drakeskinSling, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling, townRoll, grimsAxe, kindler];
+export const ITEMS: readonly ItemDef[] = [...WARES, ...RANGED, quickening, scavengersAxe, graveBow, emberPart1, emberPart3, meridianMail, meridianStaff, faneMap, ...PARTS, squareFlamberge, foundingStone, emberPart2, hearthSymbol, benchStaff, benchCoat, sentinelVisor, meridianJournal4, greyShovel, groveSeedling, townRoll, grimsAxe, kindler];
