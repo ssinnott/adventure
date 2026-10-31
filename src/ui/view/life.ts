@@ -27,7 +27,7 @@ import { murkOf, drawnAt } from './model.ts';
 export const LIFE_CAPS = { birds: 3, gulls: 3, ash: 48, shimmer: 6, fireflies: 6, mist: 3 } as const;
 
 /** A bank of mist over a row of the view: its depth and the run of squares across it lies over, left to right. */
-export interface Bank { d: number; l0: number; l1: number }
+interface Bank { d: number; l0: number; l1: number }
 
 /**
  * What moves in view now: how many of each part, the mist as its banks and how thick it lies at this
@@ -87,9 +87,10 @@ export function lifeIn(world: World): Life {
   const coast = sea >= 6, rf = ((f + 1) & 3) as Facing, h = Math.floor(minutes / 60);
   const across = (Math.cos(wx.windDir) * FACING_DX[rf] + Math.sin(wx.windDir) * FACING_DY[rf]) * wx.wind;
   const fair = wx.precip < 0.1 && wx.storm < 0.05 && wx.wind < 0.75;
-  // Birds each hour and each way, the more the more open the land; gulls the same, but none in a quarter of them.
-  const birds = !coast && fair && daylight >= 0.5 && open / n >= 0.4 && ash / n < 0.2 ? Math.min(LIFE_CAPS.birds, 1 + Math.floor(mixHash(h, f, 41) * 3 * open / n)) : 0;
+  // Gulls each hour and each way, none in a quarter of them; birds the same over open land, the more the more
+  // open, three of the two together at most.
   const gulls = coast && wx.precip < 0.3 && wx.storm < 0.3 && daylight >= 0.3 ? Math.floor(mixHash(h, f, 42) * (LIFE_CAPS.gulls + 1)) : 0;
+  const birds = fair && daylight >= 0.5 && open / n >= 0.4 && ash / n < 0.2 ? Math.min(LIFE_CAPS.birds - gulls, 1 + Math.floor(mixHash(h, f, 41) * 3 * open / n)) : 0;
   // Ash lifted off the ash by the wind, and laid by rain; grey in the dark, it is lost there.
   const ashN = ash / n >= 0.2 && daylight >= 0.2 && wx.precip < 0.3 ? Math.round(LIFE_CAPS.ash * Math.min(1, 1.25 * ash / n) * (0.7 + 0.3 * wx.wind) * (1 - murk)) : 0;
   // Heat over the hot ground through the middle of a hot summer's day.
