@@ -145,6 +145,13 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   painted into two canvases (the sky and everything in front of it) and kept for each facing of the
   square, four at most, while all it read holds (`src/ui/view/kept.ts`, #1073); the weather and the
   year reach into it.
+- **What moves outdoors**, `src/ui/view/life.ts` (#1109), drawn every frame over the kept scene and
+  under the weather: birds wheeling by day over open ground, gulls where the sea or its shallows lie
+  near (the world's grid), ash on the wind over the ash, heat shimmer over steppe, sand and dunes at a
+  hot summer noon, fireflies in the woods on summer nights and mist over water and low ground at dawn.
+  A pure function of the frame, the minute, the weather, the ground in view and where the company
+  stands; nothing in a fight, underground, in fog or where the dark would hide it, nor over a solid
+  or a hill before it; each part to its cap (`LIFE_CAPS`, `tools/tests/life.ts`). No setting turns it off.
 - **The grounds' looks**, `src/ui/view/ground/`: a module to each terrain exports its look (#1030),
   its colour through the year, how white snow makes it, whether rain darkens it or splashes on it,
   its tiles, what lies on it and what stands about it. `GROUND` in `src/ui/view/ground/index.ts`
