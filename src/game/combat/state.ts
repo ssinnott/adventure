@@ -112,6 +112,10 @@ export interface CombatState {
   challenge?: { by: number; group: number; rounds: number };
   /** Rounds left on the knight's Rally (#1113): the front row's to-hit (`RALLY_HIT`). */
   rally?: number;
+  /** The barbarian's (#1113): rounds left on each member's Frenzy and Deathless, by slot; the groups (`MonsterInst.group`) a War Cry marked. */
+  frenzy?: number[];
+  deathless?: number[];
+  cried?: number[];
   /** What a tool trying new powers gives each member: none in play (see `Edge`). */
   edge?: (c: Character, s: CombatState) => Edge;
   log: string[];

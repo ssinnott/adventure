@@ -22,6 +22,9 @@ export const greyMail = A('grey_mail', 'Grey Mail', 7000, 14, { classes: NO_CAST
 export const greyBlade = W('grey_blade', 'Grey Blade', 6600, 2, 12, { bonus: 6, classes: [...MARTIAL, 'cleric'] });
 /** The Hand's bow, a point past Cinderport's Ashwood Bow (1d12+12): the martial classes', as every long bow (#1115). */
 export const greyBow = W('grey_bow', 'Grey Bow', 6800, 1, 12, { kind: 'bow', bonus: 13, ranged: true, twoHanded: true, classes: MARTIAL });
+// Its short bow and sling (#1115): a step and two behind it by `hits`, at three quarters of its price and half; found beside it, never sold.
+export const greyShortbow = W('grey_shortbow', 'Grey Short Bow', 5100, 1, 10, { kind: 'bow', short: true, bonus: 13, ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] });
+export const greySling = W('grey_sling', 'Grey Sling', 3400, 1, 8, { kind: 'light', bonus: 13, ranged: true });
 /** The Hand's robe, a point past Cinderport's Cinder Robe (ac 12): anyone's to wear, as that is. */
 export const greyRobe = A('grey_robe', 'Grey Robe', 6200, 13);
 /** The rearguard's axe, a point past Cinderport's Flamberge (2d12+6): two-handed, the martial classes' (§8; §9.1, 41). */
@@ -75,6 +78,8 @@ export const ITEMS: readonly ItemDef[] = [
   // In the temple's treasury (#755).
   greyBlade,
   greyBow,
+  greyShortbow,
+  greySling,
   // In the dead champion's pack in the crypt's side vault (#756).
   greyRobe,
   // In the keepers' store behind the Ways' first west frame, and behind the crack for a company that widens it (#757).

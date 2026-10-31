@@ -255,7 +255,7 @@ the Monk, have feats: a turn's action of their own, paid in stamina. Stamina is 
 gone at its end, so it plays apart from spell points, which a day spends and a rest restores.
 Decided by the owner, 30 October 2026 (#1113); the rules and the feats below are that issue's
 design, the owner's to settle and to overturn. Built off (`FEATS_ON`, game/party/tables.ts; the
-frame, game/combat/feats.ts) until #1117 turns them on: the knight's and the thief's four so far.
+frame, game/combat/feats.ts) until #1117 turns them on.
 
 - **Building it.** A member of the four starts a fight with none and takes 1 for each blow of its
   own that lands and 1 for each that lands on it (a sweep, a breath or a spell is no blow), 6 at
@@ -271,9 +271,9 @@ frame, game/combat/feats.ts) until #1117 turns them on: the knight's and the thi
 | Class | 1 | 8 | 15 | 23 |
 |---|---|---|---|---|
 | Knight | Challenge (2): a group strikes only the knight for two rounds | Mighty Blow (3): one blow, sure to land, for double | Rally (4): the front row hits +2 for three rounds and shakes off sleep and paralysis | Champion's Strike (5): every blow this turn crits (#1114) |
-| Barbarian | Frenzy (2): rages for three rounds, whatever its wounds | Cleave (3): a blow at every foe of the front rank | War Cry (3): a group that breaks breaks with half of it down, not waiting for its leader or three in four | Deathless (5): for three rounds it fights on under 0 hit points, to its death line |
+| Barbarian | Frenzy (2): attacks and rages for three rounds, whatever its wounds | Cleave (3): a blow at every foe of the front rank | War Cry (3): a group that breaks breaks with half of it down, not waiting for its leader or three in four | Deathless (5): for three rounds it fights on under 0 hit points, to its death line |
 | Thief | Ambush (2): its blows this turn are sneak attacks | Blind (3): a foe it hits has −4 to hit for three rounds | Hamstring (3): a blow that, landing, holds its foe fast for a round | Deathblow (5): a sneak attack on a foe asleep or held, for triple |
-| Monk | Flurry (2): two more strikes this turn | Quiet Palm (3): a strike that, landing, puts its foe to sleep | Leap (3): strikes a foe of the back rank, past the front | Wind Step (5): takes another turn at once |
+| Monk | Flurry (2): two more strikes this turn | Quiet Palm (3): a strike that, landing, puts its foe to sleep | Leap (3): strikes a foe of the back rank, past the front | Wind Step (5): attacks, then takes another turn at once |
 
 No feat's name is a skill's, a trait's or a spell's. The bots play a feat where it pays, as they
 weigh a spell, and the gate measures the feats once #1117 turns them on.

@@ -18,6 +18,10 @@ import type { CombatState, CombatOpts, PartyAction } from '../../src/game/combat
 import { FEATS, STAMINA_MAX, featsOf, featsKnown, featFor, staminaOf, aimable } from '../../src/game/combat/feats.ts';
 import { CHALLENGE_ROUNDS, RALLY_ROUNDS } from '../../src/game/combat/feats/knight.ts';
 import { BLIND_ROUNDS, HAMSTRING_ROUNDS } from '../../src/game/combat/feats/thief.ts';
+import { FLURRY_MORE } from '../../src/game/combat/feats/monk.ts';
+import { FLURRY_LINE, PALM_LINE, LEAP_LINE, WIND_LINE, FOLLOW_LINE } from '../../src/game/combat/lines.ts';
+import { aliveMonsters } from '../../src/game/combat.ts';
+import { newerCompany } from '../kit/company.ts';
 import { CRIT_LINE, SNEAK_LINE, MIGHTY_LINE } from '../../src/game/combat/lines.ts';
 import { botTurn, asSeen, asWritten, PLAYED } from '../../src/game/bot.ts';
 import type { BotOpts } from '../../src/game/bot.ts';
@@ -87,6 +91,7 @@ export function feats(): void {
   frame();
   knight();
   thief();
+  monk();
 }
 
 function frame(): void {
@@ -285,8 +290,8 @@ function knight(): void {
   const m = createParty([member('knight', 23, true), member('cleric'), member('barbarian')]), mf = fight(m, [[STRAW]], 1);
   mf.f.stamina![0] = 3;
   const labels = [0, 1, 2].map((i) => commandRows(T, m, mf.f, i)[1]), rows = featRows(T, m, mf.f, 0);
-  ok(labels.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === 'Feat,Cast,Feat-' && rows.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === "Challenge (2),Mighty Blow (3),Rally (4)-,Champion's Strike (5)-",
-    `with the feats on, the knight's and the barbarian's menu read Feat (the barbarian's barred: no feats yet) and the cleric's Cast; the knight's list on 3: ${rows.map((x) => x.label + (x.disabled ? ' barred' : '')).join(', ')}`);
+  ok(labels.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === 'Feat,Cast,Feat' && rows.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === "Challenge (2),Mighty Blow (3),Rally (4)-,Champion's Strike (5)-",
+    `with the feats on, the knight's and the barbarian's menu read Feat and the cleric's Cast; the knight's list on 3: ${rows.map((x) => x.label + (x.disabled ? ' barred' : '')).join(', ')}`);
 
   // Under the list, what the feat the cursor is on does: its words, DESIGN's, whole and wrapped to the
   // panel in three lines at most (Rally's the longest), each class's; nothing under an artifact's spell.
@@ -622,5 +627,241 @@ function thief(): void {
     }
     const count = THIEF.map((d) => `${d.name} ${played.get(d.id) ?? 0}`).join(', ');
     ok(picked > 0 && bad === 0 && THIEF.every((d) => (played.get(d.id) ?? 0) > 0), `in 48 fights neither bot picks a feat the thief may not use (${picked} picks) and they play each of the four (${count})`);
+  }
+}
+
+// The monk's four (#1113, game/combat/feats/monk.ts): Flurry, Quiet Palm, Leap and Wind Step as DESIGN §5
+// has them, each with its edges, off as the knight's are, and the bots' policy.
+const MONKS = FEATS.filter((x) => x.cls === 'monk');
+/** A monk of a level with the prestiges it brings (at 11, 19 and 27) unless given, with its staff, as it starts. */
+function monkAt(level: number, prestige = [11, 19, 27].filter((l) => level >= l).length): Character {
+  const c = member('monk', level);
+  c.prestige = prestige;
+  return c;
+}
+/** One that any blow that lands fells, a bowman of the back rank and one that falls to a blow: none hits back. */
+const FRAIL = foe('test_frail', { hp: 1, ac: -100, attack: -50, speed: 1, name: 'Frail', plural: 'Frail' });
+const BOW = foe('test_bow', { ac: -100, attack: -50, speed: 1, ranged: true, name: 'Bowman', plural: 'Bowmen' }), FRAIL_BOW = { ...BOW, id: 'test_frail_bow', hp: 1 };
+/** A fight of `p` against one band, its last `back` in the back rank, the feats on unless `opts` says. */
+function band(p: Party, monsters: readonly MonsterDef[], back: number, seed: number, opts: CombatOpts = { feats: true }): { f: CombatState; rng: ReturnType<typeof counted> } {
+  const rng = counted(seed);
+  return { f: startCombat(T, p, [{ id: 'band', monsters, back }], rng, opts), rng };
+}
+/** The strikes a log's lines hold, and those of them that land. */
+const struck = (lines: readonly string[]): number => lines.filter((l) => / (hits|misses) /.test(l)).length;
+const landing = (lines: readonly string[]): number => lines.filter((l) => / hits /.test(l)).length;
+
+function monk(): void {
+  ok(MONKS.map((x) => `${x.name} ${x.cost} ${x.level}`).join(', ') === 'Flurry 2 1, Quiet Palm 3 8, Leap 3 15, Wind Step 5 23' && MONKS.every((x) => x.target === 'blow'),
+    "the monk's four as DESIGN §5 has them: Flurry (2) at 1, Quiet Palm (3) at 8, Leap (3) at 15, Wind Step (5) at 23, each struck at a foe");
+
+  // By its level and its stamina, a blow's from a row it strikes from (the back only from its second
+  // prestige), Leap only while a foe of a back rank stands.
+  const has = (level: number, st: number, back = true, slot = 0): string => {
+    const c = monkAt(level), q = createParty(slot ? [member('cleric'), member('cleric'), member('cleric'), c] : [c]), { f } = band(q, back ? [STRAW, BOW] : [STRAW, STRAW], back ? 1 : 0, 1);
+    f.stamina![slot] = st;
+    return featsOf(f, q, slot).map((x) => x.id).join() || '-';
+  };
+  const by = [has(1, 6), has(8, 2), has(8, 3), has(15, 6, false), has(15, 3), has(23, 5), has(23, 6, false, 3), has(15, 6, true, 3), has(1, 1)];
+  ok(by.join(' ') === 'flurry flurry flurry,quiet_palm flurry,quiet_palm flurry,quiet_palm,leap flurry,quiet_palm,leap,wind_step flurry,quiet_palm,wind_step - -',
+    `a monk has its feats by its level and its stamina, from the back row only from its second prestige, and Leap only while a back rank stands (${by.join(' ')})`);
+
+  // Off in play, as the knight's: none built, each feat refused with nothing drawn or said, the menu's Cast, the bots strike.
+  {
+    const q = createParty([monkAt(23)]), { f, rng } = band(q, [STRAW, BOW], 1, 1, {});
+    until(f, q, rng, 0);
+    const label = commandRows(T, q, f, 0)[1].label, was = f.log.length, drawn = rng.draws(), refused = MONKS.every((x) => !partyAct(f, q, rng, feat(x.id, x.id === 'leap' ? 1 : 0)));
+    ok(f.stamina === undefined && featsOf(f, q, 0).length === 0 && refused && f.log.length === was && rng.draws() === drawn && featFor(f, q, 0, 0) === undefined && label === 'Cast'
+      && botTurn(f, q, rng, 0, asWritten, PLAYED).type === 'attack', 'off, a monk of 23 builds no stamina, each of its feats is refused with nothing drawn or said, its menu reads Cast and the bots strike');
+  }
+
+  // Flurry: the monk's blows a turn and two more, each a strike of its own: three at 1, four from the
+  // first prestige, five from the third and three with a weapon not a staff; each lands by its own
+  // to-hit, none sure, and builds by it.
+  const turn = (c: Character, a: PartyAction, foes: MonsterDef[] = [STRAW], seed = 1, st = 2): { lines: string[]; st: number } => {
+    const q = createParty([c]), { f, rng } = fight(q, [foes], seed), lines = act(f, q, rng, 0, a, st) ?? [];
+    return { lines, st: f.stamina![0] };
+  };
+  const bladed = monkAt(11);
+  bladed.equipment.weapon = 'fx_blade';
+  const sets = [monkAt(1), monkAt(11), monkAt(27), bladed].map((c) => ({ fl: turn(structuredClone(c), feat('flurry')), at: turn(structuredClone(c), { type: 'attack', target: 0 }) }));
+  const counts = sets.map(({ fl, at }) => `${struck(fl.lines)}/${struck(at.lines)}`).join(' '), walled = turn(monkAt(27), feat('flurry'), [WALL]);
+  ok(counts === '3/1 4/2 5/3 3/1' && FLURRY_MORE === 2 && sets.every(({ fl }) => fl.lines[0] === 'monk strikes in a flurry.' && fl.st === Math.min(STAMINA_MAX, landing(fl.lines)))
+    && struck(walled.lines) === 5 && landing(walled.lines) < 5,
+    `a flurry is the monk's strikes a turn and two more (flurry/attack at 1, 11 and 27 and at 11 with a blade: ${counts}), each landing by its own to-hit (${landing(walled.lines)} of 5 on a wall) and building by it`);
+  // A Windwalker's follow-through takes the flurry's strikes as the turn's own: it carries on to twice them.
+  const most = (a: PartyAction): number => Math.max(...[1, 2, 3, 4, 5, 6].map((seed) => struck(turn(monkAt(19), a, Array<MonsterDef>(12).fill(FRAIL), seed).lines)));
+  const fl = most(feat('flurry')), at = most({ type: 'attack', target: 0 });
+  ok(fl === 2 * (2 + FLURRY_MORE) && at === 4, `a Windwalker's flurry that fells carries on to twice its strikes, ${fl}, as its Attack does to twice its two, ${at}`);
+  // A tool's edge (`CombatOpts.edge`, the harness's what-ifs) that adds a blow to an Attack adds it to a flurry too.
+  {
+    const edged = (a: PartyAction): number => { const q = createParty([monkAt(11)]), { f, rng } = fight(q, [[STRAW]], 1, { feats: true, edge: () => ({ blows: 2, damage: 0, ac: 0 }) }); return struck(act(f, q, rng, 0, a, 2) ?? []); };
+    const fe = edged(feat('flurry')), ae = edged({ type: 'attack', target: 0 });
+    ok(ae === 3 && fe === ae + FLURRY_MORE, `a tool's edge that adds a blow to an Attack adds it to a flurry (flurry ${fe}, Attack ${ae})`);
+  }
+
+  // Quiet Palm: one strike that, landing on a foe it leaves standing, puts it to sleep; one proof against
+  // sleep, by its own nature or its kind's, does not, and the line says so; one it fells or misses, nothing.
+  const palm = (c: Character, target: MonsterDef, seed = 1): { lines: string[]; f: CombatState; st: number } => {
+    const q = createParty([c]), { f, rng } = fight(q, [[target]], seed), lines = act(f, q, rng, 0, feat('quiet_palm'), 3) ?? [];
+    return { lines, f, st: f.stamina![0] };
+  };
+  const PROOF = foe('test_proof', { ac: -100, attack: -50, speed: 1, immune: ['asleep'], name: 'Proof', plural: 'Proofs' }), BONES = foe('test_bones', { ac: -100, attack: -50, speed: 1, kind: 'dead', name: 'Bones', plural: 'Bones' });
+  const slept = palm(monkAt(11), STRAW), proof = palm(monkAt(8), PROOF), bones = palm(monkAt(8), BONES), felled = palm(monkAt(8), FRAIL), missed = palm(monkAt(8), WALL);
+  ok(slept.lines.length === 1 && slept.lines[0].endsWith(' Giant Rat falls asleep.') && slept.f.monsters[0].conditions.join() === 'asleep' && slept.st === 1,
+    `a quiet palm is one strike where the monk has two, and landing puts its foe to sleep for 3 ("${slept.lines[0]}")`);
+  ok([proof, bones].every((x) => x.lines.length === 1 && x.lines[0].endsWith(` ${x.f.monsters[0].def.name} does not sleep.`) && x.f.monsters[0].conditions.length === 0)
+    && felled.lines[0]?.endsWith(' Frail dies.') && !missed.lines[0]?.includes(' hits ') && [felled, missed].every((x) => !x.lines.join().includes('sleep') && x.f.monsters[0].conditions.length === 0),
+    `a foe proof against sleep, its own or its kind's, is not put to sleep and the line says so ("${proof.lines[0]}", "${bones.lines[0]}"); one felled or missed hears nothing of it`);
+  // As Slumber's: a palm that lands on a foe held fast leaves it asleep in place of the hold.
+  {
+    const q = createParty([monkAt(8)]), { f, rng } = fight(q, [[STRAW]], 1);
+    until(f, q, rng, 0);
+    f.monsters[0].conditions = ['paralysed'];
+    const lines = act(f, q, rng, 0, feat('quiet_palm'), 3) ?? [];
+    ok(lines.length === 1 && lines[0].endsWith(` ${PALM_LINE(STRAW.name, true)}`) && f.monsters[0].conditions.join() === 'asleep',
+      `a palm on a foe held fast leaves it asleep in place of the hold, as Slumber does (${f.monsters[0].conditions.join()}: "${lines[0]}")`);
+  }
+  // Asleep, it is a sleeper as Slumber's are: it loses its turns, and a blow that lands wakes it.
+  {
+    const HITTER = foe('test_hitter', { ac: -100, attack: 50, speed: 99, name: 'Hitter', plural: 'Hitters' });
+    let palmed = 0, quiet = 0, woken = 0;
+    for (let seed = 1; seed <= 6; seed++) {
+      const q = createParty([monkAt(8), member('cleric')]), { f, rng } = fight(q, [[HITTER]], seed);
+      if (!act(f, q, rng, 0, feat('quiet_palm'), 3)?.[0].endsWith(PALM_LINE('Hitter', true))) continue;
+      palmed++;
+      const round = f.round + 1, lines: string[] = [];
+      while (f.outcome === 'ongoing' && f.round <= round) {
+        const t = currentTurn(f, q, rng);
+        if (!t) break;
+        const at = f.log.length;
+        if (t.side === 'monster') monsterAct(f, q, rng); else partyAct(f, q, rng, { type: 'defend' });
+        if (f.round === round) lines.push(...f.log.slice(at));
+      }
+      if (!lines.some((l) => l.startsWith('Hitter '))) quiet++;
+      const r = createParty([monkAt(8), member('knight', 8, true)]), x = fight(r, [[STRAW, STRAW]], seed);
+      act(x.f, r, x.rng, 0, feat('quiet_palm'), 3);
+      until(x.f, r, x.rng, 1);
+      const asleep = x.f.monsters[0].conditions.join(), hit = act(x.f, r, x.rng, 1, { type: 'attack', target: 0 })?.some((l) => l.startsWith('knight hits '));
+      if (asleep === 'asleep' && hit && x.f.monsters[0].conditions.length === 0) woken++;
+    }
+    ok(palmed >= 5 && quiet === palmed && woken >= 5, `a foe palmed to sleep strikes no blow the round after (${quiet} of ${palmed} seeds), and a blow that lands on it wakes it (${woken} of 6)`);
+  }
+
+  // Leap: one strike at a foe of the back rank, past a front that stands, where its Attack does not
+  // reach; refused at the front and with no back rank standing; from the back row only from the second
+  // prestige; one that fells its foe carries on to the front, as a Windwalker's strikes do.
+  const leap = (c: Character, target: number, monsters: MonsterDef[] = [STRAW, BOW], slot = 0, a: PartyAction = feat('leap', target), seed = 1): { lines: string[] | null; st: number } => {
+    const q = createParty(slot ? [member('cleric'), member('cleric'), member('cleric'), c] : [c]), { f, rng } = band(q, monsters, monsters.length > 1 && monsters[1].ranged ? 1 : 0, seed);
+    const lines = act(f, q, rng, slot, a, 3);
+    return { lines, st: f.stamina![slot] };
+  };
+  const leaps = [1, 2, 3, 4, 5, 6].map((seed) => leap(monkAt(15), 1, undefined, 0, undefined, seed)), reached = leap(monkAt(15), 1, undefined, 0, { type: 'attack', target: 1 });
+  const front = leap(monkAt(15), 0), none = leap(monkAt(15), 1, [STRAW, STRAW]), shown = leaps.find((x) => landing(x.lines ?? []) > 0)?.lines;
+  ok(leaps.every((x) => x.lines?.length === 2 && x.lines[0] === 'monk leaps past the front.' && /^monk (hits|misses) Bowman\b/.test(x.lines[1]) && x.st === landing(x.lines)) && !!shown && reached.lines === null
+    && front.lines === null && front.st === 3 && none.lines === null && none.st === 3,
+    `a leap is one strike at the back rank's bowman, past the front its Attack does not pass, on six seeds ("${shown?.join(' ')}"); at the front, or with no back rank, it is refused and nothing spent`);
+  const behind = leap(monkAt(15), 1, undefined, 3), windwalker = leap(monkAt(19), 1, undefined, 3);
+  const through = [1, 2, 3, 4, 5, 6].map((seed) => leap(monkAt(19), 1, [STRAW, FRAIL_BOW], 0, undefined, seed).lines ?? []).find((l) => l[1]?.includes(' hits ') && l[2]?.includes(' hits '));
+  ok(behind.lines === null && behind.st === 3 && windwalker.lines !== null && through?.length === 3 && through[1].endsWith(`Bowman dies. ${FOLLOW_LINE}`) && through[2].startsWith(`monk hits ${STRAW.name} for `),
+    `from the back row a leap waits for the second prestige, and a Windwalker's that fells its foe carries on to the front ("${through?.slice(1).join(' ')}")`);
+  // Never at a foe of the back rank that has fallen, while another stands there: refused, nothing spent.
+  {
+    const q = createParty([monkAt(15)]), { f, rng } = band(q, [STRAW, BOW, BOW], 2, 1);
+    until(f, q, rng, 0);
+    f.monsters[1].hp = 0;
+    const fallen = act(f, q, rng, 0, feat('leap', 1), 3), kept = f.stamina![0], up = act(f, q, rng, 0, feat('leap', 2), 3);
+    ok(fallen === null && kept === 3 && up?.[0] === LEAP_LINE('monk'), `a leap at a foe of the back rank fallen is refused and nothing spent, at one standing taken ("${up?.join(' ')}")`);
+  }
+
+  // Wind Step: the monk's blows, as an Attack's, and another turn at once; the turn, the round and the
+  // order stand. A second at once costs 5 again, which a step's blows that fell nothing never build back;
+  // the next action ends the turn.
+  {
+    const q = createParty([monkAt(23), member('cleric')]), { f, rng } = fight(q, [[STRAW, STRAW]], 1);
+    until(f, q, rng, 0);
+    f.stamina![0] = 6;
+    const order = JSON.stringify(f.order), turn = f.turn, round = f.round, at = f.log.length;
+    const took = partyAct(f, q, rng, feat('wind_step')), lines = f.log.slice(at), next = currentTurn(f, q, rng), left = f.stamina![0], drawn = rng.draws();
+    const again = partyAct(f, q, rng, feat('wind_step')), still = f.turn === turn && rng.draws() === drawn, ends = partyAct(f, q, rng, { type: 'attack', target: 0 }) && f.turn === turn + 1;
+    ok(took && lines[0] === 'monk steps on the wind.' && struck(lines) === 2 && next?.side === 'party' && next.i === 0 && f.round === round && JSON.stringify(f.order) === order && left === 1 + landing(lines) && !again && still && ends,
+      `a wind step strikes as an Attack and leaves the turn with the monk, in the same round and order ("${lines.join(' ')}"); a second at once on ${left} is refused, nothing drawn, and its next action ends the turn`);
+    const r = createParty([monkAt(23), member('cleric')]), x = fight(r, [[STRAW]], 3);
+    until(x.f, r, x.rng, 0);
+    x.f.stamina![0] = 6;
+    partyAct(x.f, r, x.rng, feat('wind_step'));
+    x.f.stamina![0] = 5;
+    const at2 = x.f.log.length, second = partyAct(x.f, r, x.rng, feat('wind_step')), more = x.f.log.slice(at2);
+    ok(second && x.f.stamina![0] === landing(more) && currentTurn(x.f, r, x.rng)?.side === 'party', `a second wind step at once costs 5 again (left with ${x.f.stamina![0]}, what its blows built) and gives another turn as the first`);
+  }
+  // Played on: each round the order as it began, the monk acting twice in its place, the rounds one by one.
+  {
+    const q = createParty([monkAt(23), member('cleric')]), { f, rng } = fight(q, [[STRAW, STRAW]], 2), orders: string[] = [], seen: string[] = [];
+    let stepped = 0;
+    while (f.outcome === 'ongoing' && f.round <= 4) {
+      const t = currentTurn(f, q, rng);
+      if (!t || f.round > 4) break;
+      if (orders.length < f.round) orders.push(f.order.map((o) => `${o.side[0]}${o.i}`).join(' '));
+      seen[f.round - 1] = `${seen[f.round - 1] ?? ''} ${t.side[0]}${t.i}`.trim();
+      if (t.side === 'monster') monsterAct(f, q, rng);
+      else if (t.i === 0 && stepped < f.round) { stepped = f.round; f.stamina![0] = 6; partyAct(f, q, rng, feat('wind_step')); }
+      else partyAct(f, q, rng, t.i === 0 ? { type: 'attack', target: 0 } : { type: 'defend' });
+    }
+    ok(orders.length === 4 && seen.every((x, k) => x === orders[k].replace('p0', 'p0 p0')), `played on, each round keeps its order with the monk twice in its place, and the rounds pass one by one (${seen.join(' / ')})`);
+  }
+
+  // The bots' policy, by construction: Wind Step whenever it can; Leap at the back rank's caster or
+  // bowman past the front; Quiet Palm at the hardest hitter it reaches, free and able to sleep, but the
+  // foe it strikes; Flurry whenever it can; else a blow, and nothing unasked.
+  {
+    const choose = (level: number, st: number, monsters: MonsterDef[] = [STRAW], back = 0, set?: (x: CombatState) => void, opts: BotOpts = { feats: true }): string => {
+      const q = createParty([monkAt(level), member('cleric')]), { f, rng } = band(q, monsters, back, 9);
+      until(f, q, rng, 0);
+      f.stamina![0] = st;
+      set?.(f);
+      const a = botTurn(f, q, rng, 0, asWritten, opts);
+      return a.type === 'feat' ? `${a.featId}@${a.target}` : a.type;
+    };
+    const HARD = foe('test_hard', { ac: -100, attack: -50, speed: 1, dice: 4, sides: 10, bonus: 5 }), MID = foe('test_mid', { ac: -100, attack: -50, speed: 1, dice: 2, sides: 6 });
+    const picks = [
+      choose(23, 6, [STRAW, BOW], 1), choose(23, 4, [STRAW, BOW], 1), choose(23, 4, [STRAW, STRAW], 1), choose(15, 3, [STRAW, HARD]), choose(15, 3, [HARD, STRAW, MID]),
+      choose(8, 3, [STRAW, PROOF]), choose(8, 3, [STRAW, STRAW], 0, (x) => { x.monsters[1].conditions = ['asleep']; }), choose(8, 3), choose(23, 4, [STRAW, BOW], 1, (x) => { x.monsters[0].hp = 0; }), choose(1, 2), choose(1, 1), choose(23, 6, undefined, 0, undefined, {}),
+    ];
+    ok(picks.join(' ') === 'wind_step@0 leap@1 flurry@0 quiet_palm@1 quiet_palm@2 flurry@0 flurry@0 flurry@0 flurry@1 flurry@0 attack attack',
+      `the bots step on the wind with 5, leap at a bowman behind the front, palm the hardest hitter but the one they strike, leave the proof and the sleeping, leap at none their blows reach, else flurry, else strike, and spend nothing unasked (${picks.join(' ')})`);
+  }
+
+  // Both bots, the gate's and the game's auto-fight, play each of the monk's four in fights that hold
+  // a use for each (a monk of 23 among the newer six against a front of three, with a slinger behind
+  // and without, all hitting often and lightly), and the policy never picks a feat the frame would
+  // refuse, whatever foe it is handed.
+  {
+    const BRUTE = foe('test_brute', { ac: 12, attack: 30, speed: 6, name: 'Brute', plural: 'Brutes' }), SLINGER = foe('test_slinger', { ac: 12, attack: 30, speed: 6, ranged: true, name: 'Slinger', plural: 'Slingers' });
+    const bots: [string, (x: CombatState, q: Party, rng: RngInstance, i: number) => void][] = [['gate', (x, q, rng, i) => gateTurn(x, q, rng, i)], ['auto', (x, q, rng, i) => { botTurn(x, q, rng, i, asSeen, PLAYED); }]];
+    const kinds = (who: string): [string, (l: string) => boolean][] => [
+      ['flurry', (l) => l === FLURRY_LINE(who)], ['palm', (l) => l.startsWith(`${who} hits `) && (l.includes(' falls asleep.') || l.includes(' does not sleep.'))], ['leap', (l) => l === LEAP_LINE(who)], ['step', (l) => l === WIND_LINE(who)],
+    ];
+    let picks = 0, bad = 0;
+    const played = bots.map(([name, bot]) => {
+      const n: Record<string, number> = {};
+      for (let seed = 1; seed <= 8; seed++) {
+        const q = newerCompany(23, seed), m = q.members.findIndex((c) => c.cls === 'monk'), who = q.members[m].name, { f, rng } = band(q, seed % 2 ? [BRUTE, BRUTE, BRUTE, SLINGER] : [BRUTE, BRUTE, BRUTE], seed % 2, seed);
+        for (let k = 0; k < 800 && f.outcome === 'ongoing' && f.round <= 12; k++) {
+          const t = currentTurn(f, q, rng);
+          if (!t) break;
+          if (t.side === 'monster') { monsterAct(f, q, rng); continue; }
+          if (t.i === m) for (const foeAt of aliveMonsters(f)) {
+            const a = featFor(f, q, m, foeAt), d = a?.type === 'feat' ? FEATS.find((x) => x.id === a.featId) : undefined;
+            if (a) { picks++; if (!d || a.type !== 'feat' || !featsOf(f, q, m).includes(d) || !aimable(f, q.members[m], d, a.target)) bad++; }
+          }
+          const from = f.log.length;
+          bot(f, q, rng, t.i);
+          for (const l of f.log.slice(from)) for (const [kind, is] of kinds(who)) if (is(l)) n[kind] = (n[kind] ?? 0) + 1;
+        }
+      }
+      return `${name} ${['flurry', 'palm', 'leap', 'step'].map((k) => n[k] ?? 0).join('/')}`;
+    });
+    ok(played.every((x) => x.split(' ')[1].split('/').every((k) => Number(k) > 0)) && picks > 0 && bad === 0,
+      `both bots play each of the monk's four (flurry/palm/leap/step: ${played.join(', ')}), and of ${picks} picks the frame would refuse ${bad}`);
   }
 }

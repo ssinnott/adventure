@@ -7,6 +7,10 @@ export const CHECKS = {
   gear: {
     28: ['grey_blade', 'grey_axe', 'grey_knife', 'grey_bow', 'grey_staff', 'old_lanterns_staff', 'grey_mail', 'grey_robe', 'grey_shield'],
   },
+  // Its ranged rung (#1115): the Grey Bow's, with the short bow and the sling #1117 takes into `gear`.
+  ranged: {
+    28: ['grey_bow', 'grey_shortbow', 'grey_sling'],
+  },
   // Its seams as built (tools/tests/outdoors.ts): each whose first box is its own.
   seamsAsBuilt: [
     { seam: 'hearthisle_h6|hearthisle_i6', walk: '0-1 19-20 24 27-28', why: 'the rim\'s rock and the Bowl\'s grass each step at the line, and the pocket behind the tally-house at 24 is shut against H6\'s rock' },

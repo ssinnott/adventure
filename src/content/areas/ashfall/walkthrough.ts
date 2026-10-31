@@ -92,7 +92,7 @@ import { World, HARDER_IN, WARNING_IN } from '../../../game/world.ts';
 import { COMPACT_SHIP, RIDERS_RIDE, LAST_CROSSING } from '../../crossings.ts';
 import { ACT_IV, ACT_V } from '../../../../tools/kit/rules/ladder.ts';
 import { CURVE } from '../../progression.ts';
-import { ARMOURER, CURES } from './items.ts';
+import { ARMOURER, ARMOURER_RANGED, CURES } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { GATE, FOUNDING_RAISED, ELDEST_HEARD } from './maps/cindercoast_g10.ts';
 import { ROAD_WEST, VENTS, STAIR, STAIR2, ROPE, LIT } from './public.ts';
@@ -1890,10 +1890,14 @@ function cinderport(ok: (cond: boolean, msg: string) => void): void {
   // The armourer's sells the act's one step (#542), each class its rung at 25, at list price; the
   // chandler's the provisions, lamp oil and the stone cure (#546), and no steel.
   const armourer = ofKind(PORT, 'shop').find((f) => f.interior === 'cinderport_armourer')!, chandler = ofKind(PORT, 'shop').find((f) => f.interior === 'cinderport_chandlery')!;
-  ok(armourer.stock.length === ARMOURER.length && ARMOURER.every((id) => armourer.stock.includes(id)) && !armourer.prices, `${armourer.name} sells the act's step, all ${ARMOURER.length} wares and nothing else, at list price`);
+  ok(armourer.stock.length === ARMOURER.length + ARMOURER_RANGED.length && [...ARMOURER, ...ARMOURER_RANGED].every((id) => armourer.stock.includes(id)) && !armourer.prices, `${armourer.name} sells the act's step, all ${ARMOURER.length} wares, and after it the Ashwood Bow's short bow and sling (#1115), nothing else, at list price`);
   for (const m of w.party.members) for (const id of ACT_IV[0].classes[m.cls]) {
     const before = w.party.gold;
     ok(!!buy(TABLES.items, w.party, armourer, id) && before - w.party.gold === item(TABLES.items, id).price, `${m.name} buys a ${item(TABLES.items, id).name} at the armourer's for ${item(TABLES.items, id).price} gold`);
+  }
+  for (const id of ARMOURER_RANGED) {
+    const before = w.party.gold;
+    ok(!!buy(TABLES.items, w.party, armourer, id) && before - w.party.gold === item(TABLES.items, id).price, `a ${item(TABLES.items, id).name} bought at the armourer's for ${item(TABLES.items, id).price} gold, at list price`);
   }
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote', ...CURES].every((id) => chandler.stock.includes(id)) && !chandler.stock.some((id) => ARMOURER.includes(id)) && !chandler.prices,
     'the chandler\'s sells the provisions, lamp oil and the Quickening Draught at list price, and no steel');

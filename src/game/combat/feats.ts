@@ -28,7 +28,9 @@ import type { CombatState, PartyAction, Strike } from './state.ts';
 import { canAttackFromRow, rages } from './perks.ts';
 import { canReach } from './foes.ts';
 import { KNIGHT } from './feats/knight.ts';
+import { BARBARIAN } from './feats/barbarian.ts';
 import { THIEF } from './feats/thief.ts';
+import { MONK } from './feats/monk.ts';
 
 /** The most stamina a member holds. */
 export const STAMINA_MAX = 6;
@@ -61,11 +63,16 @@ interface FeatBot { s: CombatState; p: Party; c: Character; i: number; foe: numb
 export interface FeatClass {
   feats: readonly FeatDef[]; bot: (b: FeatBot) => { featId: string; target: number } | undefined;
   /** Its feats' rounds counted down at a round's end, as Bless's are (`featRounds`); nothing drawn. */
-  round?: (s: CombatState) => void;
+  round?: (s: CombatState, party: Party) => void;
 }
 
-/** Each class's feats, a line a class: the barbarian's, the thief's and the monk's come in pull requests of their own. */
-const BY_CLASS: Partial<Record<ClassId, FeatClass>> = { knight: KNIGHT, thief: THIEF };
+/** Each class's feats, a line a class. */
+const BY_CLASS: Partial<Record<ClassId, FeatClass>> = {
+  knight: KNIGHT,
+  barbarian: BARBARIAN,
+  thief: THIEF,
+  monk: MONK,
+};
 
 /** Every feat, class by class. */
 export const FEATS: readonly FeatDef[] = Object.values(BY_CLASS).flatMap((k) => k.feats);
@@ -86,7 +93,7 @@ const add = (s: CombatState, i: number, n: number): void => { s.stamina![i] = Ma
 /** A blow of member `i`'s own landed (the attack loop): 1, and 1 more for the barbarian raging, the thief's own sneak attack (`sneaks`, not a feat's), the monk's felling blow. */
 export function landed(s: CombatState, c: Character, i: number, sneak: boolean, fells: boolean): void {
   if (!s.stamina || !builds(c)) return;
-  add(s, i, (c.cls === 'barbarian' && rages(c)) || (c.cls === 'thief' && sneak) || (c.cls === 'monk' && fells) ? 2 : 1);
+  add(s, i, (c.cls === 'barbarian' && rages(s, c, i)) || (c.cls === 'thief' && sneak) || (c.cls === 'monk' && fells) ? 2 : 1);
 }
 
 /** A foe's blow landed on member `i` (the monsters' turn): 1, and the knight 1 more. */
@@ -122,7 +129,7 @@ export function spend(s: CombatState, party: Party, rng: RngInstance, i: number,
 }
 
 /** The feats' round's end (`endRound`): each class's rounds counted down (`FeatClass.round`). */
-export function featRounds(s: CombatState): void { for (const k of Object.values(BY_CLASS)) k.round?.(s); }
+export function featRounds(s: CombatState, party: Party): void { for (const k of Object.values(BY_CLASS)) k.round?.(s, party); }
 
 /**
  * The feat the bots spend on for member `i` this turn (`BotOpts.feats`, game/bot.ts): its class's
