@@ -440,7 +440,7 @@ function range(): Scene[] {
         sealedLedge.add(k);
         for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) go.push([x + dx, y + dy]);
       }
-      ok(sealedLedge.size > 500 && !sealedLedge.has(square(out, i10, ledge.x, ledge.y)) && i10.x + ledge.x === watch.at[0] && i10.y + ledge.y === watch.at[1] && !watch.planned,
+      ok(sealedLedge.size > 500 && !sealedLedge.has(square(out, i10, ledge.x, ledge.y)) && watch.map === 'highspine_i10' && ledge.x === watch.at[0] && ledge.y === watch.at[1] && !watch.planned,
         `the ledge at the atlas's Stairwatch is shut but for the chimney: none of I10's ${sealedLedge.size} squares walked, waded, climbed or floated reaches it`);
       w.world.travel('highspine_i10', chimney.x, chimney.y - 1, SOUTH);
       let found = false;

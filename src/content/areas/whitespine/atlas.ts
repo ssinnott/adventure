@@ -44,7 +44,7 @@ export const SITES: readonly AtlasSite[] = [
   { name: 'Highcell', icon: 'monastery', at: [322, 342], label: 'right' }, // the Monastery, at the gate on J11, 26,24 (#499, #500)
   { name: 'Peak Stone', icon: 'stone', at: [292, 318], label: 'below' }, // whole, on I11 at 28,0 (#501)
   { name: 'Giants', icon: 'label', at: [300, 296] }, // the giants' ground, J10 (#508)
-  { name: 'Stairwatch', icon: 'tower', at: [270, 312], label: 'right' }, // over the Giants' Stair: the Knight's third prestige; the ledge on I10, 6,26 (#502, #448)
+  { name: 'Stairwatch', icon: 'tower', map: 'highspine_i10', at: [6, 26], label: 'right' }, // over the Giants' Stair: the Knight's third prestige; the ledge on I10, 6,26, world cell 270,312 (#502, #448); by its map, so the sheet draws its tower (#1096)
   { name: 'Spine Summit', icon: 'camp', at: [300, 328], label: 'right' }, // the Monk's third prestige: the camp on J11, 4,10 (#499, #448)
   { name: 'Rook\'s Nest', icon: 'cave', at: [286, 230], label: 'right' }, // over the Hand's causeway: the Thief's third prestige; the hollow on I8, 22,8 (#504, #448)
 ];
