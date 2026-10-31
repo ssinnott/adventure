@@ -44,8 +44,26 @@ export function life(): void {
   const delta = at('delta_b5', 22, 19, 0, 91, 4.5), wood = at('lanternwood_l3', 9, 10, 3, 91, 23);
   ok(delta.mist.length > 0 && delta.gulls > 0 && wood.fireflies > 0 && !wood.birds,
     `at dawn mist lies over the delta's water and gulls fly over its shallows (${say(delta)}); a summer night in Lanternwood has its fireflies (${say(wood)})`);
-  const mill = at('mill', 1, 1, 0, 91, 11, FAIR), under = !w.underSky, fog = at('wold_c8', 14, 26, 0, 91, 11, { ...FAIR, fog: 0.8 });
-  ok(under && none(mill) && none(fog), `nothing moves underground (the mill: ${say(mill)}) or in fog (the Glasswold: ${say(fog)})`);
+  // Underground: every other square of every dungeon, all four facings, at dawn, noon and midnight under a fair sky
+  // (the dawn's mist would lie on the water of some of them, were it drawn there).
+  let below = 0, alive = '';
+  for (const id of Object.keys(w.maps)) {
+    const m = w.maps[id];
+    if (m.kind !== 'dungeon') continue;
+    for (let y = 1; y < m.height; y += 2) for (let x = 1; x < m.width; x += 2) {
+      if (m.at(x, y).solid !== 'none') continue;
+      for (const hour of [4.5, 12, 23]) {
+        at(id, x, y, 0, 91, hour, FAIR);
+        for (const f of [0, 1, 2, 3] as const) {
+          w.state.facing = f; below++;
+          const l = lifeIn(w);
+          if (!alive && !none(l)) alive = ` -> ${id} ${x},${y} f${f} ${hour}h: ${say(l)}`;
+        }
+      }
+    }
+  }
+  const fog = at('wold_c8', 14, 26, 0, 91, 11, { ...FAIR, fog: 0.8 });
+  ok(below > 1000 && !alive && none(fog), `nothing moves underground (${below} views of the dungeons at dawn, noon and midnight under a fair sky${alive}) or in fog (the Glasswold: ${say(fog)})`);
 
   // Same world, same life: a turn away and back, and reading it again, draw nothing from the generator.
   const once = JSON.stringify(at('wold_c8', 14, 26, 0, 91, 11)); at('wold_c8', 14, 26, 1, 91, 11);

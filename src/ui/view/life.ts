@@ -19,6 +19,7 @@ import { sunTimes } from '../../game/calendar.ts';
 import { isWater } from '../../game/atlas.ts';
 import { GRID } from '../../content/maps.ts';
 import { mix, rgba } from '../../lib/art/palettes.ts';
+import { hashStr } from '../paint/brush.ts';
 import { unit } from './common.ts';
 import type { ViewRect } from './common.ts';
 import { murkOf, drawnAt } from './model.ts';
@@ -33,14 +34,14 @@ interface Bank { d: number; l0: number; l1: number }
  * What moves in view now: how many of each part, the mist as its banks and how thick it lies at this
  * hour (0 .. 1), the wind across the view toward the party's right hand (negative: the left), the
  * cloud, the light (the daylight greyed by cloud), the murk that fades it all, and the hour on the
- * world's clock, which picks where the birds wheel.
+ * world's clock and the region's number, which pick where the birds and gulls wheel: each region its own.
  */
 export interface Life {
   birds: number; gulls: number; ash: number; shimmer: number; fireflies: number;
-  mist: readonly Bank[]; dawn: number; across: number; cloud: number; light: number; murk: number; hour: number;
+  mist: readonly Bank[]; dawn: number; across: number; cloud: number; light: number; murk: number; hour: number; region: number;
 }
 
-const NONE: Life = { birds: 0, gulls: 0, ash: 0, shimmer: 0, fireflies: 0, mist: [], dawn: 0, across: 0, cloud: 0, light: 0, murk: 0, hour: 0 };
+const NONE: Life = { birds: 0, gulls: 0, ash: 0, shimmer: 0, fireflies: 0, mist: [], dawn: 0, across: 0, cloud: 0, light: 0, murk: 0, hour: 0, region: 0 };
 
 /** Open ground, which birds wheel over by day. */
 const OPEN: ReadonlySet<Terrain> = new Set<Terrain>(['grass', 'farm', 'steppe', 'heather', 'hills', 'dirt', 'road', 'sand', 'dunes', 'salt', 'snow', 'ice', 'tidal', 'vines']);
@@ -115,7 +116,7 @@ export function lifeIn(world: World): Life {
       if (best) mist.push(best);
     }
   }
-  return { birds, gulls, ash: ashN, shimmer, fireflies, mist, dawn: thick, across, cloud: wx.cloud, light, murk, hour: h };
+  return { birds, gulls, ash: ashN, shimmer, fireflies, mist, dawn: thick, across, cloud: wx.cloud, light, murk, hour: h, region: Math.floor(hashStr(world.region) * 0x40000000) };
 }
 
 /**
@@ -173,9 +174,9 @@ const GULL: readonly (readonly [number, number][])[] = [
 ];
 const GULL_TIPS: readonly (readonly [number, number][])[] = [[[-3, 0], [3, 0]], [[-3, 1], [3, 1]]];
 
-/** Birds wheeling together high over open ground, this hour's and this way's, a beat of the wings now and then. */
+/** Birds wheeling together high over open ground, this hour's, this way's and this region's, a beat of the wings now and then. */
 function drawBirds(v: Frame): void {
-  const { ctx, r, life, frame } = v, s = life.hour * 4 + v.f, n = life.birds, cx = r.w / 2, horizon = r.h / 2;
+  const { ctx, r, life, frame } = v, s = (life.hour * 4 + v.f) ^ life.region, n = life.birds, cx = r.w / 2, horizon = r.h / 2;
   const fx = r.w * (0.25 + 0.5 * mixHash(s, 61)), rise0 = r.h * (0.3 + 0.1 * mixHash(s, 62)), turn = mixHash(s, 63) < 0.5 ? 1 : -1;
   ctx.fillStyle = rgba(mix('#24222a', '#44444c', life.cloud), 1 - 2 * life.murk);
   ctx.beginPath();
@@ -192,7 +193,7 @@ function drawBirds(v: Frame): void {
 
 /** Gulls gliding low over the coast, carried along by the wind across the view, beating their wings more often than the land's birds. */
 function drawGulls(v: Frame): void {
-  const { ctx, r, life, frame } = v, s = life.hour * 4 + v.f + 7, n = life.gulls, cx = r.w / 2, horizon = r.h / 2, wrap = r.w + 24;
+  const { ctx, r, life, frame } = v, s = ((life.hour * 4 + v.f) ^ life.region) + 7, n = life.gulls, cx = r.w / 2, horizon = r.h / 2, wrap = r.w + 24;
   const dir = life.across > 0.03 ? 1 : life.across < -0.03 ? -1 : mixHash(s, 71) < 0.5 ? 1 : -1, speed = 0.1 + 0.3 * Math.min(1, Math.abs(life.across));
   const seen: [number, number, number][] = [];
   for (let i = 0; i < n; i++) {
