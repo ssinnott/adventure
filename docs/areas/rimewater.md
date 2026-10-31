@@ -170,7 +170,10 @@ the keepers with the bay; the rest is on the road before it, or no kind the chec
   99.9%; within 12 in the country, L11 96.5% (its furthest square 18) and M10 99.0% (17), every
   other box 100%; the town and the dungeons 100% within 7.
 - **The ladder:** rungs 21 and 22 are Rimewater's (`gear`, in its checks): by 21 Rime Lodge's
-  furrier, by 22 its finds, every class bettered by each.
+  furrier, by 22 its finds, every class bettered by each. Its ranged rungs (`ranged`, #1115): the
+  Hunter's Short Bow and the Hide Sling, a step and two behind the Hunter's Bow, sold beside it at
+  the furrier's and found with a plus beside Bogha Fionn +1 in the bay's locker and in Whitespine's
+  cache on I9. They are off the gate's ladder until #1117.
 
 ## 10. Names
 
@@ -208,7 +211,8 @@ coat of mail. It goes into NAMES §2's row for the hill folk, Cairnmoor's and Ri
   black mail (the Plate Mail +4); their ids stay (#490's 15). The Matron's Cap is plain English, a
   machine's part. The sleepers' ring has no name: none came that did not tell the secret, and it is
   cut (§11). Trollbrand, the enclave's spear (#832's 26), is plain English as the furrier's wares
-  are: the row has no word for a spear or for fire.
+  are: the row has no word for a spear or for fire. The locker's other two, the Hunter's Short
+  Bow +1 and the Hide Sling +1 (#1115), keep the ladder's names: the row has none for either.
 - **The stair** is *Under Loch Fuar*, as Carn Dubh's is *Under Carn Dubh*, since nothing on the
   surface names the bay; the lower level keeps the docs' plain name (#490's 7).
 

@@ -8,6 +8,10 @@ export const CHECKS = {
   gear: {
     17: ['forge_hammer', 'seax', 'steel_bow', 'mattock', 'banded_staff', 'dwarf_mail', 'kiln_robe', 'forge_shield'],
   },
+  // Its ranged rung (#1115): the Steel Bow's, with the short bow and the sling #1117 takes into `gear`.
+  ranged: {
+    17: ['steel_bow', 'steel_shortbow', 'wire_sling'],
+  },
   // How far over the next floor its clear leaves a company, held as built (tools/tests/curve.ts).
   overRoad: { level: 19.5, why: 'the bosses pay the line\'s (MONSTERS §4.3 and §4.4), and the country behind the road (#474) and the bounds (#831) add to it' },
   // Its seams as built (tools/tests/outdoors.ts): each whose first box is its own.
