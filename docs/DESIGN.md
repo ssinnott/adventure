@@ -250,6 +250,32 @@ adds armour: in the harness, armour that keeps up makes monsters hit harder, and
 | Sorcerer | rank 1 | rank 2 | rank 3; damage spells pass a monster's resistance to their element, though not an immunity |
 | Druid | rank 1 | rank 2 | rank 3; beasts of a lower level than the druid leave the company alone |
 
+**Feats and stamina.** The four classes that cast nothing, the Knight, the Barbarian, the Thief and
+the Monk, have feats: a turn's action of their own, paid in stamina. Stamina is built in a fight and
+gone at its end, so it plays apart from spell points, which a day spends and a rest restores.
+Decided by the owner, 30 October 2026 (#1113); the rules and the feats below are that issue's
+design, the owner's to settle and to overturn. Not built yet: #1113 builds them, switched off until
+#1117 turns them on.
+
+- **Building it.** A member of the four starts a fight with none and takes 1 for each blow of its
+  own that lands and 1 for each that lands on it, 6 at most. Each class builds one way faster, 1
+  more each time: the knight for a blow that lands on it, the barbarian for a blow of its own that
+  lands while it rages, the thief for a sneak attack that lands, the monk for a foe it fells.
+- **Spending it.** A feat costs 2 to 5 and takes the turn. The fight's menu says Feat for the four
+  where a caster's says Cast, and the card shows the stamina where a caster's shows spell points.
+- **When.** Four to a class, at levels 1, 8, 15 and 23, so that each gains something at 15 and 23
+  as the casters do.
+
+| Class | 1 | 8 | 15 | 23 |
+|---|---|---|---|---|
+| Knight | Challenge (2): a group strikes only the knight for two rounds | Mighty Blow (3): one blow, sure to land, for double | Rally (4): the front row hits +2 for three rounds and shakes off sleep and paralysis | Champion's Strike (5): every blow this turn crits (#1114) |
+| Barbarian | Frenzy (2): rages for three rounds, whatever its wounds | Cleave (3): a blow at every foe of the front rank | War Cry (3): a group that breaks breaks with half of it down, not waiting for its leader or three in four | Deathless (5): for three rounds it fights on under 0 hit points, to its death line |
+| Thief | Ambush (2): its blows this turn are sneak attacks | Blind (3): a foe it hits has −4 to hit for three rounds | Hamstring (3): a blow that, landing, holds its foe fast for a round | Deathblow (5): a sneak attack on a foe asleep or held, for triple |
+| Monk | Flurry (2): two more strikes this turn | Quiet Palm (3): a strike that, landing, puts its foe to sleep | Leap (3): strikes a foe of the back rank, past the front | Wind Step (5): takes another turn at once |
+
+No feat's name is a skill's, a trait's or a spell's. The bots play a feat where it pays, as they
+weigh a spell, and the gate measures the feats once #1117 turns them on.
+
 **The trainers.** Every first is taught in a city a company reaches by 11, by someone with a job
 there. Every second is off the beaten path: not a step of the one quest, and not within about ten
 squares of the road. Every third is hard to find and dangerous, and its trainer waits on the surface
@@ -653,6 +679,8 @@ Decided by the builder, each the owner's to overturn:
   line.
 - **Turn order** by Speed, party and monsters interleaved. One action per character. While an Arms
   Master stands, every standing member acts before any monster, in every round (§5, #856, #1070).
+- **Feats** (§5): a knight, barbarian, thief or monk may spend the stamina it has built in the fight
+  on a feat, its action for the turn (#1113; not built yet).
 - **Rows:** front three take and deal melee; back three need reach, ranged, or spells. Swap costs
   a turn.
 - **Encounter cap:** a single fight is at most 12 monsters in at most 3 groups. Bigger threats
