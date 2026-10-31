@@ -9,6 +9,10 @@ import { plate } from '../thornmark/public.ts';
 export const flail = W('flail', 'Flail', 1100, 2, 8, { bonus: 3, classes: [...MARTIAL, 'cleric'] });
 export const wardensDirk = W('wardens_dirk', "Warden's Dirk", 1100, 1, 8, { kind: 'light', bonus: 7 });
 export const ironwoodBow = W('ironwood_bow', 'Ironwood Bow', 1200, 1, 12, { kind: 'bow', bonus: 6, ranged: true, twoHanded: true, classes: MARTIAL });
+// The Ironwood Bow's short bow and sling (#1115): its die a size smaller and two, so a step and two behind
+// it by `hits`, at three quarters of its price and half; a plus where it has one.
+export const ironwoodShortbow = W('ironwood_shortbow', 'Ironwood Short Bow', 900, 1, 10, { kind: 'bow', short: true, bonus: 6, ranged: true, twoHanded: true, classes: [...MARTIAL, 'thief', 'bard'] });
+export const watchSling = W('watch_sling', 'Watch Sling', 600, 1, 8, { kind: 'light', bonus: 6, ranged: true });
 export const greatAxe = W('great_axe', 'Great Axe', 1200, 2, 8, { bonus: 4, twoHanded: true, classes: MARTIAL });
 export const watchStaff = W('watch_staff', 'Watch Staff', 1000, 1, 10, { kind: 'staff', bonus: 6, twoHanded: true });
 export const lamellar = A('lamellar', 'Lamellar', 1600, 10, { classes: NO_CASTER_HEAVY });
@@ -19,6 +23,8 @@ export const watchShield: ItemDef = { id: 'watch_shield', name: 'Watch Shield', 
 // §4). The plate is a step past the stores' lamellar, for those who wear plate.
 export const flailPlus1 = P(flail, 1);
 export const ironwoodBowPlus1 = P(ironwoodBow, 1);
+export const ironwoodShortbowPlus1 = P(ironwoodShortbow, 1);
+export const watchSlingPlus1 = P(watchSling, 1);
 export const platePlus2 = P(plate, 2);
 export const wardensDirkPlus1 = P(wardensDirk, 1);
 export const lanternsStaff = P(watchStaff, 1, { id: 'lanterns_staff', name: "Lantern's Staff +1" });
@@ -61,6 +67,8 @@ export const ITEMS: readonly ItemDef[] = [
   flail,
   wardensDirk,
   ironwoodBow,
+  ironwoodShortbow,
+  watchSling,
   greatAxe,
   watchStaff,
   lamellar,
@@ -68,6 +76,8 @@ export const ITEMS: readonly ItemDef[] = [
   watchShield,
   flailPlus1,
   ironwoodBowPlus1,
+  ironwoodShortbowPlus1,
+  watchSlingPlus1,
   platePlus2,
   wardensDirkPlus1,
   lanternsStaff,
