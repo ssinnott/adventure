@@ -80,8 +80,8 @@ export interface GroundLook {
   /**
    * Its detail in the nearest rows (#1102, view/ground/near.ts), the company's square and the one ahead, where the
    * floor fills half the view, at the scale those rows allow, placed by the cell, rooted where the square's footing
-   * keeps: gathered for the floor to fill, what lies flat under what lies on it and the tongues, what stands up over
-   * them. A variant may have its own.
+   * keeps: gathered for the floor to fill under what lies on it and the tongues, or for a tongue, what lies flat on
+   * it and what stands over every tongue. A variant may have its own.
    */
   near?: (p: Paint, base: string, sq: Square) => Pixels;
   /**

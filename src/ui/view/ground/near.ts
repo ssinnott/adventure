@@ -2,10 +2,11 @@
 // ahead (`GroundLook.near`), where the floor fills half the view under the horizon, at the scale those rows allow.
 // Each piece falls on a lattice over the square, jittered by the square's seed (its cell's, as the marks are), is
 // sized by the plane it lies on, so the square ahead's are about half the size of the company's own, and is drawn
-// in whole pixels, flat and hard-edged, a colour at a time. A piece stands where its root is: none is rooted under
-// a tongue but the tongue's own (`Footing`, view/ground/edges.ts). What lies flat is filled under the marks and the
-// tongues, what stands up over them (`Pixels`). The pieces here are the looks' to colour and choose from: blades,
-// fronds, stones, cracks, ripples, needles and leaves.
+// in whole pixels, flat and hard-edged, a colour at a time. A piece stands where its root is (`Footing`,
+// view/ground/edges.ts): a tongue's are rooted under it alone, what lies flat of them kept to it and what stands
+// filled over every tongue (`Pixels`); a square's own lie under its marks and tongues, those rooted under a tongue
+// kept to the square. The pieces here are the looks' to colour and choose from: blades, fronds, stones, cracks,
+// ripples, needles and leaves.
 
 import { shade } from '../../../lib/art/palettes.ts';
 import { hash } from '../../paint/brush.ts';
