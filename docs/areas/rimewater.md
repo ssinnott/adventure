@@ -170,7 +170,10 @@ the keepers with the bay; the rest is on the road before it, or no kind the chec
   99.9%; within 12 in the country, L11 96.5% (its furthest square 18) and M10 99.0% (17), every
   other box 100%; the town and the dungeons 100% within 7.
 - **The ladder:** rungs 21 and 22 are Rimewater's (`gear`, in its checks): by 21 Rime Lodge's
-  furrier, by 22 its finds, every class bettered by each.
+  furrier, by 22 its finds, every class bettered by each. Its ranged rungs (`ranged`, #1115): the
+  Hunter's Short Bow and the Hide Sling, a step and two behind the Hunter's Bow, sold beside it at
+  the furrier's and found with a plus beside Bogha Fionn +1 in the bay's locker and in Whitespine's
+  cache on I9. They are off the gate's ladder until #1117.
 
 ## 10. Names
 
