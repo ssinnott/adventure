@@ -18,6 +18,7 @@ import { shade, mix } from '../../lib/art/palettes.ts';
 import { HIGH_SUMMER } from '../scenery.ts';
 import type { TreeSeason } from '../scenery.ts';
 import type { Tide } from '../../game/calendar.ts';
+import type { Tables } from '../../game/tables.ts';
 import { rampColor } from './model.ts';
 import type { Ramp } from './model.ts';
 
@@ -46,11 +47,13 @@ export interface Paint {
   ctx: CanvasRenderingContext2D; cx: number; horizon: number; h: number;
   dark: boolean; haze: string | null; daylight: number; gloom: number;
   map: GameMap; env: Env; present: (f: Feature) => boolean; flames: Flame[];
+  /** Each region's look, whose tints the grounds take (#1099): none where absent, as for a hill painted alone. */
+  looks?: Tables['looks'];
 }
 /** Where a frame is drawn: the part of a Paint the figures over a finished scene take (`drawViewport`). */
 export type View = Pick<Paint, 'ctx' | 'cx' | 'horizon' | 'h'>;
 /** The light a frame is painted in and what the world says is there, as `paintOn` takes them. */
-type Light = Pick<Paint, 'dark' | 'haze' | 'daylight' | 'gloom' | 'env' | 'present'>;
+type Light = Pick<Paint, 'dark' | 'haze' | 'daylight' | 'gloom' | 'env' | 'present' | 'looks'>;
 /** A clear day: not dark, no haze, full daylight, the clear `env` and every feature there. */
 const DAY: Light = { dark: false, haze: null, daylight: 1, gloom: 1, env: CLEAR, present: () => true };
 /**
