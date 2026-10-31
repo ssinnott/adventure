@@ -145,28 +145,9 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   painted into two canvases (the sky and everything in front of it) and kept for each facing of the
   square, four at most, while all it read holds (`src/ui/view/kept.ts`, #1073); the weather and the
   year reach into it.
-- **The grounds' looks**, `src/ui/view/ground/`: a module to each terrain exports its look (#1030),
-  its colour through the year, how white snow makes it, whether rain darkens it or splashes on it,
-  its tiles, what lies on it and what stands about it. `GROUND` in `src/ui/view/ground/index.ts`
-  holds them, a record over the terrains; the floors, the scene and the rain ask it and name no
-  ground. In the view a new ground is a module there, its line in `src/ui/view/ground/index.ts` and
-  its colour in `TERRAIN_COLORS` (the automap's): the typecheck names a terrain without either.
-- **A region's look**, `src/content/areas/<area>/look.ts` (`Area.look`, #1097), merged by region into
-  `Tables.looks`: its `air` casts the sky, the haze and the sun toward its colours by day, a fifth of
-  the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins
-  (`airOf`, `src/ui/view/sky.ts`). With none, as over the Foreland and Thornmark, the sky is as it was.
-- **A region's trees** (#1104): its look's `trees` names, by weight, those its forests and woods stand
-  (`forest`) and its pinewoods (`pine`, conifers only). A square takes its region's, picked by its hash
-  as before (`treeOf`, `src/ui/scenery.ts`), so a wood changes at a zone's border. Beside the five of
-  old stand an oak, a willow, a poplar, a rowan, a wind-bent thorn, a larch, a Scots pine and a
-  flat-topped tree of the steppe, each dressed by the year as the five are, the rowan's and the
-  thorn's berries red from Harvest. With none named a region stands today's mix.
-- **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
-  one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of
-  `src/ui/scenery.ts`: a cairn, a chest, a camp's ring and fire, a shrine, a well, a statue, a
-  fountain, a den, a sign and a rift. A spent one is gone and a burnt den is its ruin; an event and
-  a person are never drawn, and a business hangs its sign over its door. A camp's fire is lit by
-  night and underground, its flame drawn every frame as a torch's.
+- **The view's pieces**, `docs/VIEW.md`: the grounds' looks and how their colour drifts, a region's look,
+  the features drawn and what moves outdoors, a bullet each, kept there so that this page stays inside
+  the systems lane's first read.
 
 ## Stubbed or absent
 

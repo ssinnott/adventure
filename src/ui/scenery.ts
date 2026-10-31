@@ -1,11 +1,13 @@
 // The viewport's scenery, cel-shaded with the engine's helpers through a Brush: the trees dressed by
-// the season, the dead trees, the crystals, the lighthouse, the monastery, the wilderness features
-// (#1110), rocks, mountains, peaks, cliffs, the volcano, the creeper trees and the pillar. Every sprite draws front-facing, centred on
+// the season, the dead trees, the props scattered on open ground (#1103), the crystals, the lighthouse,
+// the monastery, the wilderness features (#1110), rocks, mountains, peaks, cliffs, the volcano, the
+// creeper trees and the pillar. Every sprite draws front-facing, centred on
 // (x, y) with y the ground line; `tone` darkens with distance. The monsters are ./sprites.ts's.
 import type { TreeName, TreeWeights } from '../content/area.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { celBall, celCapsule, celPoly, celTaper, band } from '../lib/art/shading.ts';
 import { B, stroke } from './monsters/common.ts';
+import type { Prop } from './view/model.ts';
 
 /**
  * How the time of year dresses a broadleaf tree: how much leaf is left (0 bare .. 1 full), how far it
@@ -358,6 +360,164 @@ export function drawDeadTreeSprite(ctx: CanvasRenderingContext2D, x: number, y: 
   ctx.fillStyle = dark;
   for (let i = 0; i < 3; i++) ctx.fillRect(Math.round(x - u * 0.04 + (i % 2) * u * 0.05), Math.round(y - u * (0.25 + i * 0.28)), Math.max(1, Math.round(u * 0.03)), Math.max(1, Math.round(u * 0.14)));
 }
+
+// ---- What stands scattered on open ground (#1103) ---------------------------------------------------
+
+/**
+ * How a prop is coloured: `ink` takes a colour as the ground under it takes its own (darker by night,
+ * into the haze with distance and murk, darker in the rain), `ground` is that ground's colour in the
+ * season, `snow` how far snow lies on it (0 .. 1), `bloom` how far the flowers are out (0 .. 1) and
+ * `pick` a hash for its shape.
+ */
+interface PropInk { ink: (c: string) => string; ground: string; snow: number; bloom: number; pick: number }
+/** A colour whitened as far as the snow lies, as the top of a rock is. */
+const snowed = (c: string, snow: number): string => (snow > 0.2 ? mix(c, SNOW_WHITE, Math.min(1, snow * 1.2)) : c);
+/** A dot of colour, a pixel at the least. */
+function dab(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, c: string): void {
+  ctx.fillStyle = c; ctx.fillRect(Math.round(x), Math.round(y), Math.max(1, Math.round(w)), Math.max(1, Math.round(h)));
+}
+
+/**
+ * The props, each drawn about its foot at (x, y), `u` the square's half width there. Each is small, under
+ * half a wall's height, and ONE thing: a boulder or a stone is one rounded rock, never stacked
+ * or ringed, a snag is no post and the peat a low turf mound, so that none is taken for a feature's
+ * drawing (#1110). A deep snow buries the low ones.
+ */
+const PROPS: Record<Prop, (ctx: CanvasRenderingContext2D, x: number, y: number, u: number, k: PropInk) => void> = {
+  bush(ctx, x, y, u, { ink, ground, snow, pick }) {
+    const r = u * (0.12 + 0.03 * pick), leaf = ink(mix(ground, '#24401e', 0.5));
+    celBall(ctx, B, x - r * 0.75, y - r * 0.7, r * 0.8, shade(leaf, 0.9));
+    celBall(ctx, B, x + r * 0.8, y - r * 0.65, r * 0.75, leaf);
+    celBall(ctx, B, x, y - r * 1.15, r, shade(leaf, 1.08));
+    if (snow > 0.2) { ctx.fillStyle = ink(SNOW_WHITE); ctx.beginPath(); ctx.ellipse(x, y - r * 1.9, r * 0.85, r * 0.3 * Math.min(1, snow * 1.5), 0, 0, Math.PI * 2); ctx.fill(); }
+  },
+  boulder(ctx, x, y, u, { ink, ground, snow, pick }) {
+    const w = u * (0.16 + 0.04 * pick), h = w * (0.72 + 0.14 * pick), c = mix('#7a756c', ground, 0.15);
+    celPoly(ctx, B, [x - w, y, x - w * 0.92, y - h * 0.5, x - w * 0.6, y - h * 0.9, x - w * 0.1, y - h, x + w * 0.45, y - h * 0.88, x + w * 0.88, y - h * 0.5, x + w, y], ink(c), 0.4, 0.3);
+    if (snow > 0.2) celPoly(ctx, B, [x - w * 0.78, y - h * 0.7, x - w * 0.55, y - h * 0.9, x - w * 0.1, y - h, x + w * 0.45, y - h * 0.88, x + w * 0.7, y - h * 0.66, x, y - h * 0.8], ink(snowed(c, snow)), 0.2, 0.2);
+  },
+  thistle(ctx, x, y, u, { ink, ground, snow, bloom, pick }) {
+    if (snow > 0.55) return;
+    const h = u * (0.22 + 0.06 * pick), stem = ink(mix('#56704a', ground, 0.3)), lw = Math.max(1, u * 0.022);
+    stroke(ctx, [x, y, x + u * 0.01, y - h], stem, lw);
+    for (const s of [-1, 1]) stroke(ctx, [x, y - h * 0.3, x + s * u * 0.05, y - h * 0.42, x + s * u * 0.09, y - h * 0.4], stem, lw);
+    // Its head on a green bulb: purple in flower, brown gone to seed.
+    celBall(ctx, B, x + u * 0.01, y - h, u * 0.035, stem, false);
+    dab(ctx, x - u * 0.02, y - h - u * 0.075, u * 0.06, u * 0.04, ink(mix('#7a6448', '#9a4ca0', bloom)));
+  },
+  molehill(ctx, x, y, u, { ink, snow, pick }) {
+    if (snow > 0.55) return;
+    const w = u * (0.13 + 0.03 * pick), h = w * 0.75, earth = '#4a3626';
+    ctx.fillStyle = ink(snowed(earth, snow)); ctx.beginPath(); ctx.ellipse(x, y, w, h, 0, Math.PI, 0); ctx.fill();
+    for (const [dx, dy] of [[-0.45, 0.45], [0.1, 0.8], [0.4, 0.35]]) dab(ctx, x + dx * w, y - dy * h, u * 0.02, u * 0.015, ink(shade(earth, 1.4)));
+  },
+  gorse(ctx, x, y, u, { ink, ground, snow, bloom, pick }) {
+    // Spiny and ragged along its top, and in flower nearly all the year.
+    const w = u * (0.15 + 0.04 * pick), h = w * 1.25, pts = [x - w, y];
+    for (let i = 0; i <= 8; i++) { const t = i / 8; pts.push(x - w + 2 * w * t, y - h * Math.sin(Math.PI * (0.08 + 0.84 * t)) * (i % 2 ? 1 : 0.8)); }
+    pts.push(x + w, y);
+    celPoly(ctx, B, pts, ink(mix('#2e4a24', ground, 0.2)), 0.4, 0.25);
+    if (snow > 0.2) { stroke(ctx, [x - w * 0.6, y - h * 0.85, x, y - h * 1.02, x + w * 0.6, y - h * 0.85], ink(SNOW_WHITE), Math.max(1, u * 0.04)); return; }
+    for (let i = 0; i < 2 + Math.round(3 * bloom); i++) dab(ctx, x + w * 0.7 * Math.sin(i * 2.3 + pick * 6), y - h * (0.3 + 0.45 * ((i * 0.37 + pick) % 1)), u * 0.025, u * 0.025, ink('#e8c434'));
+  },
+  peat(ctx, x, y, u, { ink, ground, snow, pick }) {
+    if (snow > 0.55) return;
+    // Cut turves left to dry: a low mound, dark brown under the moor's own top.
+    const w = u * (0.15 + 0.03 * pick), h = w * 0.45;
+    celPoly(ctx, B, [x - w, y, x - w * 0.86, y - h * 0.75, x - w * 0.55, y - h, x + w * 0.55, y - h, x + w * 0.86, y - h * 0.75, x + w, y], ink('#3a2a20'), 0.35, 0.2);
+    dab(ctx, x - w * 0.6, y - h, w * 1.2, h * 0.28, ink(snowed(mix(ground, '#3a2a28', 0.35), snow)));
+  },
+  tussock(ctx, x, y, u, { ink, ground, snow, pick }) {
+    if (snow > 0.55) return;
+    // A clump of the steppe's grass, dark at its heart and standing taller than its tufts, all leaning one way.
+    const h = u * (0.2 + 0.06 * pick), lw = Math.max(1, u * 0.022), pale = ink(shade(ground, 1.25)), dun = ink(shade(ground, 0.8));
+    celPoly(ctx, B, [x - u * 0.1, y, x - u * 0.07, y - h * 0.45, x, y - h * 0.6, x + u * 0.09, y - h * 0.5, x + u * 0.12, y], ink(shade(ground, 0.6)), 0.3, 0);
+    for (let i = 0; i < 7; i++) {
+      const t = i / 6 - 0.5, bx = x + t * u * 0.12, top = y - h * (1 - Math.abs(t) * 0.7), lean = u * (t * 0.22 + 0.04);
+      stroke(ctx, [bx, y, bx + lean * 0.4, (y + top) / 2, bx + lean, top], i % 2 ? dun : pale, lw);
+    }
+  },
+  skull(ctx, x, y, u, { ink, snow }) {
+    if (snow > 0.55) return;
+    // An ox's skull bleached on the ground, its horns curving up.
+    const w = u * 0.07, bone = ink('#e2dac6'), lw = Math.max(1, u * 0.025);
+    for (const s of [-1, 1]) stroke(ctx, [x + s * w * 0.8, y - w * 1.3, x + s * w * 2, y - w * 1.6, x + s * w * 2.3, y - w * 2.4], bone, lw);
+    celPoly(ctx, B, [x - w, y - w * 1.5, x + w, y - w * 1.5, x + w * 0.8, y - w * 0.6, x + w * 0.4, y, x - w * 0.4, y, x - w * 0.8, y - w * 0.6], bone, 0.3, 0.2);
+    for (const s of [-1, 1]) dab(ctx, x + s * w * 0.45 - w * 0.15, y - w * 1.15, w * 0.3, w * 0.3, ink('#3a3228'));
+  },
+  stone(ctx, x, y, u, { ink, ground, snow, pick }) {
+    if (snow > 0.7) return;
+    const w = u * (0.08 + 0.03 * pick), h = w * 0.7, c = mix('#857d70', ground, 0.25);
+    celPoly(ctx, B, [x - w, y, x - w * 0.8, y - h * 0.7, x - w * 0.2, y - h, x + w * 0.5, y - h * 0.85, x + w, y - h * 0.3, x + w * 0.9, y], ink(snowed(c, snow * 0.6)), 0.4, 0.3);
+  },
+  stump(ctx, x, y, u, { ink, snow, pick }) {
+    // A charred stump, its top burnt ragged, the char cracked across.
+    const w = u * 0.075, h = u * (0.2 + 0.06 * pick), c = ink('#2c2622');
+    celPoly(ctx, B, [x - w * 1.5, y, x - w, y - h * 0.3, x - w, y - h * 0.92, x - w * 0.45, y - h, x - w * 0.05, y - h * 0.8, x + w * 0.35, y - h * 1.1, x + w, y - h * 0.86, x + w, y - h * 0.3, x + w * 1.6, y], c, 0.3, 0.2);
+    for (let i = 0; i < 3; i++) dab(ctx, x - w * 0.6 + (i % 2) * w * 0.5, y - h * (0.25 + 0.22 * i), w * 0.7, u * 0.015, ink('#4e423a'));
+    if (snow > 0.2) stroke(ctx, [x - w * 0.9, y - h * 0.95, x + w * 0.9, y - h * 0.9], ink(SNOW_WHITE), Math.max(1, u * 0.03));
+  },
+  steam(ctx, x, y, u, { ink, pick }) {
+    // The crack it rises from and the wisp leaning off it, its puffs run together, drawn still as the volcano's smoke is.
+    const lean = (pick < 0.5 ? -1 : 1) * u * (0.04 + 0.04 * Math.abs(2 * pick - 1));
+    ctx.fillStyle = ink('#1a1616'); ctx.beginPath(); ctx.ellipse(x, y, u * 0.07, u * 0.02, 0, 0, Math.PI * 2); ctx.fill();
+    for (let j = 0; j < 3; j++) {
+      ctx.fillStyle = rgba(ink('#e8eaec'), 0.5 - j * 0.12);
+      ctx.beginPath(); ctx.arc(x + lean * (j + 0.5), y - u * (0.07 + 0.085 * j), u * (0.045 + 0.025 * j), 0, Math.PI * 2); ctx.fill();
+    }
+  },
+  cinder(ctx, x, y, u, { ink, snow, pick }) {
+    // A lump of clinker, pitted where the gas came out of it.
+    const w = u * (0.11 + 0.03 * pick), h = w * 0.8, c = '#5a4034';
+    celPoly(ctx, B, [x - w, y, x - w * 0.95, y - h * 0.55, x - w * 0.5, y - h * 0.95, x + w * 0.15, y - h, x + w * 0.7, y - h * 0.7, x + w, y - h * 0.2, x + w * 0.9, y], ink(c), 0.4, 0.3);
+    for (const [dx, dy] of [[-0.45, 0.5], [0.1, 0.72], [0.45, 0.35]]) dab(ctx, x + dx * w, y - dy * h, u * 0.025, u * 0.02, ink('#221c1a'));
+    if (snow > 0.2) stroke(ctx, [x - w * 0.5, y - h * 0.92, x + w * 0.15, y - h, x + w * 0.65, y - h * 0.72], ink(SNOW_WHITE), Math.max(1, u * 0.03));
+  },
+  drift(ctx, x, y, u, { ink, pick }) {
+    // A stone, and the snow the wind banked against its lee to its shoulder.
+    const w = u * (0.09 + 0.03 * pick), h = w * 0.95, s = pick < 0.5 ? -1 : 1, white = ink(SNOW_WHITE);
+    celPoly(ctx, B, [x - w, y, x - w * 0.85, y - h * 0.7, x - w * 0.3, y - h, x + w * 0.4, y - h * 0.9, x + w, y - h * 0.4, x + w * 0.95, y], ink('#605c58'), 0.4, 0.3);
+    celPoly(ctx, B, [x + s * w * 0.2, y, x + s * w * 0.55, y - h * 0.75, x + s * w * 0.95, y - h * 0.6, x + s * w * 2.6, y], white, 0.25, 0.15);
+    stroke(ctx, [x - w * 0.55, y - h * 0.86, x - w * 0.2, y - h, x + w * 0.3, y - h * 0.9], white, Math.max(1, u * 0.03));
+  },
+  reeds(ctx, x, y, u, { ink, ground, pick }) {
+    // Pale against the swamp's green, two of them with a brown head.
+    const h = u * (0.32 + 0.08 * pick), lw = Math.max(1, u * 0.03), blade = ink(mix('#b8c068', ground, 0.15)), dark = ink(mix('#4e5a2a', ground, 0.2)), head = ink('#5a3a22');
+    for (let i = 0; i < 6; i++) {
+      const t = i / 5 - 0.5, bx = x + t * u * 0.14, top = y - h * (0.62 + 0.38 * (((i * 7 + 3) % 5) / 4)), lean = u * t * 0.08;
+      stroke(ctx, [bx, y, bx + lean, top], i % 2 ? dark : blade, lw);
+      if (i === 1 || i === 4) celCapsule(ctx, B, bx + lean * 0.9, top + u * 0.03, bx + lean * 0.8, top + u * 0.09, u * 0.022, head, 0.3);
+    }
+  },
+  snag(ctx, x, y, u, { ink, snow, pick }) {
+    // A dead trunk standing in the wet, leaning, snapped off ragged, the stub of a limb on it.
+    const h = u * (0.3 + 0.08 * pick), s = pick < 0.5 ? -1 : 1, lean = u * 0.05 * s, wood = ink('#8c867c');
+    celTaper(ctx, B, x, y, x + lean, y - h, u * 0.045, u * 0.028, wood, 0.2);
+    celPoly(ctx, B, [x + lean - u * 0.028, y - h, x + lean - u * 0.01, y - h - u * 0.06, x + lean + u * 0.008, y - h - u * 0.02, x + lean + u * 0.028, y - h - u * 0.08, x + lean + u * 0.028, y - h], wood, 0.3, 0.2);
+    stroke(ctx, [x + lean * 0.5, y - h * 0.55, x + lean * 0.5 - s * u * 0.1, y - h * 0.78], wood, Math.max(1, u * 0.025));
+    if (snow > 0.2) stroke(ctx, [x + lean - u * 0.025, y - h - u * 0.01, x + lean + u * 0.025, y - h - u * 0.01], ink(SNOW_WHITE), Math.max(1, u * 0.025));
+  },
+  driftwood(ctx, x, y, u, { ink, snow, pick }) {
+    // A bleached log the water left, a broken limb up from it.
+    const w = u * (0.16 + 0.04 * pick), r = u * 0.032, wood = ink(snowed('#c4baa6', snow * 0.5));
+    celCapsule(ctx, B, x - w, y - r, x + w, y - r * 1.3, r, wood, 0.3);
+    stroke(ctx, [x + w * 0.45, y - r * 1.8, x + w * 0.7, y - r * 4.2], wood, Math.max(1, r * 0.9));
+  },
+  shells(ctx, x, y, u, { ink, ground, snow, pick }) {
+    if (snow > 0.55) return;
+    // A few shells the tide left, each with its shadow on the sand.
+    const r = Math.max(1, u * 0.04), under = ink(shade(ground, 0.72));
+    for (let j = 0; j < 4; j++) {
+      const sx = x + u * (j * 0.08 - 0.12 + 0.03 * Math.sin(pick * 9 + j)), sy = y - u * 0.02 * (j % 2);
+      ctx.fillStyle = under; ctx.beginPath(); ctx.ellipse(sx + r * 0.2, sy + r * 0.15, r, r * 0.45, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = ink(['#f6efe2', '#d89a84', '#efe0c8', '#c8b8a8'][j]);
+      ctx.beginPath(); ctx.ellipse(sx, sy, r, r * 0.75, 0, Math.PI, 0); ctx.fill();
+    }
+  },
+};
+
+/** A prop scattered on open ground (#1103), its foot at (x, y), `u` the square's half width there. */
+export function drawPropSprite(ctx: CanvasRenderingContext2D, prop: Prop, x: number, y: number, u: number, k: PropInk): void { PROPS[prop](ctx, x, y, u, k); }
 
 /**
  * A glass tree of the Sunder's lip: shards of crystal standing up from one root, the tallest in the

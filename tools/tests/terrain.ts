@@ -1,7 +1,8 @@
 // Hills, farmland, woods, dead wood, crystal, the chasm, salt, heather, tidal ground, ash, pine, ice,
 // peaks and cliffs, steppe, dunes, vines and the volcano: their legend characters, snow and the crops through the year, the fields'
 // patchwork, the tide, the ice through the year and every terrain's own colour on the automap; and
-// what a hill hides from lower ground (#53) and a wall from the squares round the company (#889).
+// what a hill hides from lower ground (#53) and a wall from the squares round the company (#889); and
+// each ground's colour, drifting across the land by its cell (#1098).
 import { GameMap } from '../../src/game/map.ts';
 import { existsSync, readFileSync } from 'node:fs';
 import type { MapDef, Terrain } from '../../src/game/mapdef.ts';
@@ -27,6 +28,12 @@ import { MAP_DEFS, CLIMATES, TABLES } from '../../src/content/index.ts';
 import { GROUND_SAMPLES } from '../kit/grounds.ts';
 import { mix, hexToRgb } from '../../src/lib/art/palettes.ts';
 import { ok } from './lib.ts';
+import { paintOn } from '../../src/ui/viewport.ts';
+import { CLEAR, fog } from '../../src/ui/view/common.ts';
+import type { Paint } from '../../src/ui/view/common.ts';
+import { drawFloor } from '../../src/ui/view/floor.ts';
+import { groundColor, cellNoise, DRIFT_DAY } from '../../src/ui/view/ground/index.ts';
+import { viewCell, VIEW_LATERAL } from '../../src/game/world.ts';
 
 export function terrain(): void {
   // Hills and farmland: their legend characters, open ground both.
@@ -169,6 +176,7 @@ export function terrain(): void {
   ok(closest.d >= 15, `every terrain's automap colour stands apart from every other (closest ${closest.pair}, ${closest.d.toFixed(1)})`);
   ok(spans >= 60 && crops.size >= 3, `the fields lie in patchwork, each over several squares (${spans} of 144 run on east, ${crops.size} crops)`);
   sight();
+  drift();
 }
 
 /** A valley behind a ridge, the ridge across the row y = 3, with room to stand four squares off it. */
@@ -287,4 +295,95 @@ function sight(): void {
   const data = deserialize(serialize(old.state, old.party, 1));
   const back = new World(TABLES, { fx_sight: new GameMap(def(VALLEY, 4, 5, NORTH)) }, data.party, makeRng(1), data.world);
   ok(SAVE_VERSION >= 5 && back.explored(4, 2) && !back.sees(4, 2) && seen(data.world.maps.fx_sight.explored, 2 * 9 + 4), `a save made before loads with what it marked, the valley past the ridge among it, though from there it is not seen now (version ${SAVE_VERSION})`);
+}
+
+/**
+ * Each ground's colour drifts across the land by its cell (#1098): a square's ground is one colour, its
+ * cell's, from every facing and every square it is seen from; no ground drifts past its look's bounds,
+ * and water, roads and drops never drift; a run of grass across downs_d3 varies along its length in
+ * swathes, by no step from a square to the next.
+ */
+function drift(): void {
+  const def = MAP_DEFS.find((m) => m.id === 'downs_d3');
+  if (!def) { ok(false, 'downs_d3 is there to drift the grass across'); return; }
+  const map = new GameMap(def), grassAt = (x: number, y: number): boolean => map.at(x, y).terrain === 'grass' && map.at(x, y).solid === 'none';
+  // A canvas that keeps only what each fill is filled with.
+  const fills: string[] = [], kept: Record<string | symbol, unknown> = {};
+  const ctx = new Proxy(kept, {
+    get: (t, k) => (k === 'fill' ? () => fills.push(String(t.fillStyle)) : k in t ? t[k] : () => undefined),
+    set: (t, k, v) => { t[k] = v; return true; },
+  }) as unknown as CanvasRenderingContext2D;
+  const paint = (day: number): Paint => ({ ...paintOn(ctx, { x: 0, y: 0, w: 800, h: 424 }, map), env: { ...CLEAR, day } });
+  // The longest run of grass across the map, along a row or down a column.
+  let run: { x: number; y: number }[] = [];
+  for (const across of [true, false]) for (let a = 0; a < (across ? map.height : map.width); a++) {
+    let now: { x: number; y: number }[] = [];
+    for (let b = 0; b <= (across ? map.width : map.height); b++) {
+      const [x, y] = across ? [b, a] : [a, b];
+      if (b < (across ? map.width : map.height) && grassAt(x, y)) now.push({ x, y });
+      else { if (now.length > run.length) run = now; now = []; }
+    }
+  }
+  // Each square of the run seen from every square that has it in view, at every facing: its floor's
+  // first fill is its cell's own colour, fogged by its depth alone, at each depth.
+  const p = paint(45);
+  let views = 0, odd = 0;
+  for (const c of run) for (let d = 0; d <= VIEW_DEPTH; d++) {
+    const at = new Set<string>([fog(p, groundColor(p, 'grass', '#000000', c.x, c.y), d)]);
+    for (const f of [NORTH, EAST, SOUTH, WEST]) for (let l = -VIEW_LATERAL; l <= VIEW_LATERAL; l++) {
+      const o = viewCell(0, 0, f, d, l), eye = { x: c.x - o.x, y: c.y - o.y };
+      if (eye.x < 0 || eye.y < 0 || eye.x >= map.width || eye.y >= map.height || map.at(eye.x, eye.y).solid !== 'none') continue;
+      const cell = viewCell(eye.x, eye.y, f, d, l);
+      fills.length = 0; drawFloor(p, 'grass', d, l, cell, cell.x * 131 + cell.y * 17 + map.id.length * 7, '#000000');
+      at.add(fills[0]); views++;
+    }
+    if (at.size > 1) odd++;
+  }
+  ok(run.length >= 12 && views > 100 * run.length && odd === 0, `a square of grass is one colour, its cell's, from every facing and every square it is seen from (${run.length} squares of a run across downs_d3, ${views} views of them; ${odd} squares and depths of more than one colour)`);
+  // Every ground at three days of the year over a stretch of cells, out past a map's edge: within its
+  // look's bounds, reaching toward both; the ones with no drift alike everywhere.
+  const wide: string[] = [], still: string[] = [];
+  let reach = 1;
+  for (const t of Object.keys(GROUND) as Terrain[]) {
+    const look = GROUND[t];
+    for (const day of [10, 45, 91]) {
+      const q = paint(day), base = hexToRgb(look.color(day, 0)), from = hexToRgb(look.color(DRIFT_DAY, 0)), drifts = look.drift;
+      // Its ends: its colour of the day moved as far as its colour on DRIFT_DAY goes toward each, at most `by`.
+      const ends = drifts ? drifts.toward.map((e) => hexToRgb(mix(look.color(DRIFT_DAY, 0), e, drifts.by)).map((v, i) => Math.max(0, Math.min(255, base[i] + v - from[i])))) : [base];
+      const lo = base.map((v, i) => Math.min(v, ...ends.map((e) => e[i])) - 1), hi = base.map((v, i) => Math.max(v, ...ends.map((e) => e[i])) + 1);
+      // How far toward each end it goes, on the channel that end moves most.
+      const most = ends.map((e) => [0, 1, 2].reduce((m, j) => (Math.abs(e[j] - base[j]) > Math.abs(e[m] - base[m]) ? j : m), 0)), far = ends.map(() => 0);
+      for (let y = -40; y < 40; y += drifts ? 1 : 8) for (let x = -40; x < 40; x += drifts ? 1 : 8) {
+        const c = hexToRgb(groundColor(q, t, '#000000', x, y));
+        if (c.some((v, i) => v < lo[i] || v > hi[i]) && !wide.includes(t)) wide.push(t);
+        if (!drifts && c.join() !== base.join() && !still.includes(t)) still.push(t);
+        ends.forEach((e, k) => { const i = most[k]; far[k] = Math.max(far[k], (c[i] - base[i]) / (e[i] - base[i] || 1)); });
+      }
+      if (drifts) reach = Math.min(reach, ...far);
+    }
+  }
+  const fixed = (['water', 'deep', 'road'] as Terrain[]).concat((Object.keys(GROUND) as Terrain[]).filter((t) => GROUND[t].drop));
+  const drifting = (Object.keys(GROUND) as Terrain[]).filter((t) => GROUND[t].drift);
+  // The land's noise, by which they drift, lies its own way on each map.
+  const lands = new Set(['downs_d3', 'downs_e2', 'thornmark'].map((id) => cellNoise(7, 9, id).toFixed(6))).size;
+  ok(!wide.length && !still.length && reach >= 0.75 && fixed.every((t) => !GROUND[t].drift) && lands === 3, `no ground drifts past its look's bounds, each going at least ${Math.floor(reach * 100)}% of the way to both, and water, roads and drops never drift (${drifting.length} grounds drift, by a land that lies ${lands === 3 ? 'its own way on each map' : 'alike on two maps'}${wide.length ? `; past their bounds: ${wide.join(', ')}` : ''}${still.length ? `; drifting with none: ${still.join(', ')}` : ''})`);
+  // The year turns on every swathe as on its look: a cell's colour on a day, less its colour on DRIFT_DAY,
+  // is its look's own, wherever the drift has not run a channel to black or white.
+  const flat: string[] = [];
+  for (const t of drifting) for (const day of [10, 91]) {
+    const q = paint(day), r = paint(DRIFT_DAY), own = hexToRgb(GROUND[t].color(day, 0)), ref = hexToRgb(GROUND[t].color(DRIFT_DAY, 0));
+    for (let y = -40; y < 40; y += 4) for (let x = -40; x < 40; x += 4) {
+      const c = hexToRgb(groundColor(q, t, '#000000', x, y)), c0 = hexToRgb(groundColor(r, t, '#000000', x, y));
+      if (c.some((v, i) => v > 0 && v < 255 && v - c0[i] !== own[i] - ref[i]) && !flat.includes(t)) flat.push(t);
+    }
+  }
+  ok(!flat.length, `the year turns on every swathe as on its look, so the heather flowers at Harvest and the steppe greens in Sowing wherever the land lies (${drifting.length} grounds, on days 10 and 91 against ${DRIFT_DAY}${flat.length ? `; the year flattened on ${flat.join(', ')}` : ''})`);
+  // Along the run, at midsummer and late in the year: the two most different squares well apart, and
+  // three times as far apart as a square ever is from the next, so a swathe spans squares.
+  const apart = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+  const along = [45, 91].map((day) => {
+    const cs = run.map((c) => hexToRgb(groundColor(paint(day), 'grass', '#000000', c.x, c.y)));
+    return { most: Math.max(...cs.flatMap((a) => cs.map((b) => apart(a, b)))), step: Math.max(...cs.slice(1).map((c, i) => apart(c, cs[i]))) };
+  });
+  ok(along.every((a) => a.most >= 30 && 3 * a.step <= a.most), `a run of grass across downs_d3 varies along its length in swathes, not by the square (${run.length} squares; the most different ${along.map((a) => a.most.toFixed(1)).join(' and ')} apart, at midsummer and late in the year, at least 30; the most from one square to the next ${along.map((a) => a.step.toFixed(1)).join(' and ')}, a third of that at most)`);
 }

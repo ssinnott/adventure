@@ -129,6 +129,32 @@ export async function terrains({ page, ok }: Run): Promise<void> {
       if (wall && off(withPines, i)) pineOverWall++;
       if (wall && off(withVines, i)) vinesOverWall++;
     }
+    // Scatter (#1103): each ground that scatters props laid as the woods were, its rates raised so a prop
+    // stands on every square that can stand one, against the same ground with none and with no wall. What
+    // the props paint from the horizon down in the strip straight ahead closes the way; where the wall
+    // changes the picture, they stand in front of it.
+    const M = await load<typeof import('../../src/ui/view/model.ts')>('/src/ui/view/model.ts');
+    const rates = { ...M.SCATTER_RATES }, strewn: { t: string; props: number; path: number; overWall: number }[] = [];
+    const low = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, H / 2, W, H / 2).data; };
+    const apart = (a: Uint8ClampedArray, b: Uint8ClampedArray, i: number): boolean => Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > 30;
+    for (const t of Object.keys(V.GROUND) as Terrain[]) {
+      const look = V.GROUND[t], props = look.scatter;
+      if (!props) continue;
+      for (const k of props) M.SCATTER_RATES[k] = 1 / props.length;
+      woodsBy(t); const lit = low();
+      look.scatter = undefined; const plain = low();
+      for (let y = sy - 6; y < sy; y++) m.cells[y * m.width + sx + 1] = { terrain: t, solid: 'none', door: 'none', ch: '.' };
+      const open = low();
+      look.scatter = props; Object.assign(M.SCATTER_RATES, rates);
+      let stood = 0, blocked = 0, strip = 0, over = 0;
+      for (let i = 0; i < lit.length; i += 4) {
+        const prop = apart(lit, plain, i);
+        if (prop) stood++;
+        if (Math.abs((i / 4) % W - W / 2) < 12) { strip++; if (prop) blocked++; }
+        if (prop && apart(plain, open, i)) over++;
+      }
+      strewn.push({ t, props: Math.round(1000 * stood / (lit.length / 4)) / 10, path: Math.round(1000 * blocked / strip) / 10, overWall: over });
+    }
     for (let i = 0; i < kept.length; i++) m.cells[i] = kept[i];
     w.state.minutes = minutes; w['cached'] = null;
     const dist = (a: number[], b: number[]): number => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
@@ -149,7 +175,7 @@ export async function terrains({ page, ok }: Run): Promise<void> {
     const { trees, path } = stand('woods'), dead = { ...stand('deadwood'), overWall: deadOverWall }, pine = { ...stand('pine'), overWall: pineOverWall };
     const vines = { ...stand('vines'), overWall: vinesOverWall };
     return {
-      trees, path, overWall, dead, pine, vines,
+      trees, path, overWall, dead, pine, vines, strewn,
       // The steppe at Harvest and in Sowing, the dunes and the grass by day (#543).
       wold: { steppe: mean['steppe summer'], sowing: mean['steppe spring'], dunes: mean['dunes summer'], grass: mean['grass summer'] },
       missing: '', thin, form, hedge, patchwork, turns: Math.round(dist(mean['farm spring'], mean['farm summer'])),
@@ -173,6 +199,8 @@ export async function terrains({ page, ok }: Run): Promise<void> {
     ok(pine.trees >= PINE_MIN && pine.path <= PATH_MAX && pine.overWall === 0, `pines stand about the pinewoods, the way ahead open and none in front of a wall beside its square (${pine.trees}% of the band over the horizon is trees, at least ${PINE_MIN}; ${pine.path}% of the strip ahead, at most ${PATH_MAX}; ${pine.overWall} pixels over the wall's faces)`);
     const vines = terrains.vines;
     ok(vines.trees >= 10 && vines.path <= PATH_MAX && vines.overWall === 0, `trees hung with creepers stand about the vines, the way ahead open and none in front of a wall beside its square (${vines.trees}% of the band over the horizon, at least 10; ${vines.path}% of the strip ahead, at most ${PATH_MAX}; ${vines.overWall} pixels over the wall's faces)`);
+    const strewn = terrains.strewn;
+    ok(strewn.length > 0 && strewn.every((s) => s.props > 0 && s.path <= PATH_MAX && s.overWall === 0), `props scattered on open ground stand off the way ahead and in front of no wall beside their square, with one on every square that can stand one (of the view under the horizon, the strip straight ahead and pixels over the wall: ${strewn.map((s) => `${s.t} ${s.props}%, ${s.path}%, ${s.overWall}`).join('; ')}; the strip at most ${PATH_MAX}%)`);
     ok(terrains.hedge.off < 50 && terrains.hedge.apart > 40 && terrains.patchwork > 60, `the fields lie in patchwork with hedges between them (the hedge ${terrains.hedge.off} off its colour and ${terrains.hedge.apart} from the crop beside it; ${terrains.patchwork} between the most different squares in view)`);
     ok(hills.tones >= 12 && hills.tones >= 3 * grass.tones && farm.edges >= 2 && farm.edges > grass.edges, `a hill rises where grass lies flat, and a field has rows (tones down the square: grass ${grass.tones}, hills ${hills.tones}; edges across it: grass ${grass.edges}, farm ${farm.edges})`);
   }

@@ -12,4 +12,5 @@ function mark(p: Paint, m: Mark): void {
   ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 0.5 * sc, y - 7 * sc); ctx.moveTo(x + 2 * sc, y); ctx.lineTo(x + 1.5 * sc, y - 5 * sc); ctx.stroke();
 }
 
-export const swamp: GroundLook = { color: () => TERRAIN_COLORS.swamp, snow: 0.5, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 3, mark } };
+export const swamp: GroundLook = { color: () => TERRAIN_COLORS.swamp, drift: { toward: ['#2e4a2c', '#8c8a48'], by: 0.6 }, snow: 0.5, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 3, mark },
+  scatter: ['reeds', 'snag'] };

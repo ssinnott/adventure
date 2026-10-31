@@ -7,6 +7,7 @@ import type { GameMap } from '../../../game/map.ts';
 import type { Terrain, Solid } from '../../../game/mapdef.ts';
 import type { Facing } from '../../../game/types.ts';
 import type { Env, Paint } from '../common.ts';
+import type { Prop } from '../model.ts';
 
 /**
  * A farm square as the view sees it: its field's crop, whether the rows run away from the eye or
@@ -17,9 +18,10 @@ export interface Plot { crop: number; away: boolean; hedge: readonly [boolean, b
 export interface Rims { near: boolean; far: boolean }
 /**
  * A square of ground as its look's painters take it: how deep and how far across it is in view, its
- * seed and what the scene worked out for it (a field's plot, a drop's rims).
+ * cell on the map (`mx`, `my`, as a board's), its seed and what the scene worked out for it (a field's
+ * plot, a drop's rims).
  */
-export interface Square { d: number; l: number; seed: number; plot?: Plot; rims?: Rims }
+export interface Square { d: number; l: number; mx: number; my: number; seed: number; plot?: Plot; rims?: Rims }
 /**
  * A mark lying on a square: its number, where it falls (`s` deep and `t` across the square, `x` and
  * `y` on the screen), its scale there and the square's colour.
@@ -40,6 +42,12 @@ interface Sides { bare: number; size: number; spread: number; tree: (p: Paint, x
 export interface GroundLook {
   /** Its colour on a day of the year (a field's by its crop), before rain and snow. */
   color: (day: number, crop: number) => string;
+  /**
+   * How its colour drifts across the land by the cell (`cellNoise`, #1098): toward the first colour where
+   * the land's noise is low and the second where it is high, at most `by` of the way. Water, roads and
+   * drops have none.
+   */
+  drift?: { toward: readonly [string, string]; by: number };
   /** How white it goes under lying snow, 0 to 1: cobbles and sand show through, water never takes it (`SNOW_HOLD`). */
   snow: number;
   /** Whether rain darkens it. */
@@ -73,6 +81,11 @@ export interface GroundLook {
   mound?: (p: Paint, base: string, d: number, l: number, seed: number, hillL: boolean, hillR: boolean) => void;
   /** The trees at the sides of a woodland square. */
   sides?: Sides;
+  /**
+   * What stands scattered on it (#1103): its props, each on its rate's share of the squares (`SCATTER_RATES`),
+   * one at most to a square, as view/scatter.ts places them. A variant of the ground may stand others.
+   */
+  scatter?: readonly Prop[];
   /** The billboard it draws, by what stands on it, in place of that solid's own: a glass tree on crystal, a mountain by its rock. */
   boards?: Partial<Record<Solid, (p: Paint, b: Board) => void>>;
 }
