@@ -9,7 +9,7 @@
 import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { WEST } from '../../../../game/types.ts';
-import { FORGE, SMITH_PRICES } from '../items.ts';
+import { FORGE, FORGE_RANGED, SMITH_PRICES, SMITH_RANGED } from '../items.ts';
 import { TAKEN } from './anvilhall.ts';
 import { FERRY, COMPACT_SHIP, DROVE_COACH, sells } from '../../../crossings.ts';
 
@@ -121,7 +121,7 @@ export const KILNHAVEN: MapDef<'kilnhaven'> = {
     { kind: 'event', x: 4, y: 9, id: 'kh_tar', once: true, text: 'A tar pot on a fire by the quay, and a boat on her side for tarring.' },
     // The smith: the forge's step at a quarter more (#535), the company's only forge once Anvilhall's
     // is shut to it, and never shut itself.
-    { kind: 'shop', x: 5, y: 10, name: 'The Anchor Smithy', stock: [...FORGE], prices: SMITH_PRICES, interior: 'kilnhaven_smith' },
+    { kind: 'shop', x: 5, y: 10, name: 'The Anchor Smithy', stock: [...FORGE, ...FORGE_RANGED], prices: { ...SMITH_PRICES, ...SMITH_RANGED }, interior: 'kilnhaven_smith' },
     { kind: 'npc', x: 5, y: 10, name: 'Dietmar, the port\'s smith', lines: [
       'A dwarf at the brick forge, an anchor in on the floor for mending.',
       '"Dietmar. Hold steel, carted down from Anvilhall, and the cart costs. A quarter on the hold\'s price, to anyone."',

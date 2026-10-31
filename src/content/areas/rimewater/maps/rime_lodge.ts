@@ -8,7 +8,7 @@ import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH, WEST } from '../../../../game/types.ts';
 import { sells, DROVE_COACH } from '../../../crossings.ts';
-import { FURRIER } from '../items.ts';
+import { FURRIER, FURRIER_RANGED } from '../items.ts';
 import { WENNA_LODGE } from '../public.ts';
 
 /**
@@ -57,7 +57,7 @@ export const RIME_LODGE: MapDef<'rime_lodge'> = {
     // their skills (call 5, #538), the healer's house and the furrier's, the act's last step (#535).
     { kind: 'temple', x: 1, y: 3, name: 'The Healer\'s House', interior: 'rime_temple' },
     { kind: 'guild', x: 7, y: 3, name: 'The Lodge\'s Lantern Hall', classes: ['cleric', 'sorcerer', 'paladin', 'ranger', 'bard', 'druid'], fee: 500, maxTier: 7, interior: 'rime_hall', hall: 'lanterns' },
-    { kind: 'shop', x: 13, y: 3, name: 'The Furrier\'s', stock: [...FURRIER], interior: 'rime_furrier' },
+    { kind: 'shop', x: 13, y: 3, name: 'The Furrier\'s', stock: [...FURRIER, ...FURRIER_RANGED], interior: 'rime_furrier' },
     { kind: 'event', x: 7, y: 4, id: 'rl_lamps', when: { hours: 'night' }, text: 'A lantern in every window of the hall all night, and keepers going out to the ice with more.' },
     { kind: 'event', x: 13, y: 4, id: 'rl_pelts', once: true, text: 'Pelts on frames outside the furrier\'s: lynx, bear, and a long pale hide with no fur on it at all.' },
 

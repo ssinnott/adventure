@@ -65,7 +65,7 @@ export const THE_SUNDER2: MapDef<'the_sunder2'> = {
     { kind: 'event', x: 19, y: 6, id: 'su2_river', once: true, text: 'The river that went over the lip comes down the east face in threads, into a pool. The pool goes into a crack in the floor, and nothing comes out.' },
     { kind: 'event', x: 15, y: 14, id: 'su2_narrows', once: true, text: 'The gorge pinches to a stride between rock. Something stands in the gap, taller than the gap is wide, and the glass in it lights the rock either side.' },
     { kind: 'event', x: 17, y: 17, id: 'su2_fallen', once: true, text: 'A niche in the rock. Others who came down lie in it, laid straight, side by side. Their gear is at their feet, dry.' },
-    { kind: 'chest', x: 17, y: 17, id: 'su2_fallen_chest', gold: 300, items: ['flail+1', 'ironwood_bow+1'] },
+    { kind: 'chest', x: 17, y: 17, id: 'su2_fallen_chest', gold: 300, items: ['flail+1', 'ironwood_bow+1', 'ironwood_shortbow+1', 'watch_sling+1'] },
     { kind: 'event', x: 15, y: 20, id: 'su2_silence', once: true, text: 'Bare rock. No glass, no dead wood. Your boots are the only sound, and the rock gives it back.' },
     // The wall: the step.
     { kind: 'event', x: 15, y: 25, id: 'su2_wall', once: true, text: 'A wall, under everything. Flat, no join, further both ways than the light. Warm under the hand.' },

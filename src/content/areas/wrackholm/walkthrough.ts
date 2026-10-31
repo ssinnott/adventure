@@ -333,7 +333,7 @@ function ashore(): Scene[] {
       ok(!!at && w.world.state.x === at.x && w.world.state.y === at.y, 'through it, the cache under the floor');
       if (chest?.kind === 'chest') {
         w.world.markUsed(chest.id); w.party.gold += chest.gold; w.party.bag.push(...chest.items);
-        ok(w.party.bag.includes('longbow+1'), 'and in it the Long Bow +1');
+        ok(['longbow+1', 'yew_shortbow+1', 'leather_sling+1'].every((id) => w.party.bag.includes(id)), 'and in it the Long Bow +1, with its short bow and its sling (#1115)');
       }
       see(w, 'wrackholm_e6:e6_cache');
       listen(w);
