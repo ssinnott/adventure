@@ -26,7 +26,7 @@ type Kind = NonNullable<AreaLook['hills']>;
  * and a fan of scree. The rest of each kind is its body alone.
  */
 export const HILL_MARKS: Readonly<Record<Kind, { share: number; most: number }>> = {
-  downs: { share: 0.5, most: 2 }, tors: { share: 0.35, most: 1 }, slag: { share: 0.3, most: 1 }, cinder: { share: 0.5, most: 2 }, scree: { share: 0.5, most: 1 },
+  downs: { share: 0.5, most: 2 }, tors: { share: 0.35, most: 1 }, slag: { share: 0.2, most: 1 }, cinder: { share: 0.5, most: 2 }, scree: { share: 0.5, most: 1 },
 };
 
 /** How many marks a hill of a kind carries, by its square's seed. */
