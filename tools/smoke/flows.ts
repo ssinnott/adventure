@@ -59,8 +59,9 @@ export async function explore({ page, seed, ok }: Run): Promise<void> {
 // its one lookup of the groups is the frame the view paints afresh with the groups asked square by
 // square (`V.dropScenes`, the game's `monstersAt`), at rest and after a turn and back, a step, an hour,
 // another weather, a door found, a group slain, a tick, another map and another size; a fight's
-// backdrop paints the view whole, which exploring beneath it leaves undrawn; and the milliseconds of
-// 200 frames at rest, turning and in a fight (no bound: runners vary).
+// backdrop paints the view whole, which exploring beneath it leaves undrawn; what moves over the land
+// (life.ts) moves from frame to frame, but not in a fight's backdrop nor underground; and the
+// milliseconds of 200 frames at rest, turning and in a fight (no bound: runners vary).
 export async function kept({ page, ok }: Run): Promise<void> {
   const r = await page.evaluate(async () => {
     const load: Load = (p) => import(p);
@@ -179,8 +180,17 @@ export async function kept({ page, ok }: Run): Promise<void> {
     while (g.screens.length > 1) g.pop();
     w.travel(w.state.mapId, q.state.x, q.state.y + 2, 0); w.state.minutes = day; clear();
     const atRest = time(() => g.render(sx)), turning = time((i) => { w.state.facing = (i & 1 ? 1 : 0); g.render(sx); });
+    // What moves over the land (life.ts, #1109), on the Glasswold at a fair summer noon: drawn alone at two frames it is
+    // there and has moved; the view drawn as a fight's backdrop there is the same at both; underground it is nothing.
+    const L = await load<typeof import('../../src/ui/view/life.ts')>('/src/ui/view/life.ts');
+    const alone = (n: number): string => { x.clearRect(0, 0, 640, 360); L.drawLife(x, w, R, n); const d = x.getImageData(R.x, R.y, R.w, R.h).data; let k = 0; for (let i = 3; i < d.length; i += 4) if (d[i]) k++; return k ? `${k} ${hash()}` : ''; };
+    const backdrop = (n: number): string => { x.fillStyle = '#000'; x.fillRect(0, 0, 640, 360); V.drawViewport(x, w, R, () => null, n, false); return hash(); };
+    w.travel('wold_c8', 14, 26, 0); w.state.minutes = 90 * 1440 + 12 * 60;
+    w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0, precip: 0, snow: 0, fog: 0, wind: 0.3, windDir: 0.5, storm: 0, temp: 30, cover: 0, wet: 0 } };
+    const life = { early: alone(40), late: alone(400), fight: backdrop(40) === backdrop(400), below: '' };
+    w.travel('mill', 1, 1, 0); life.below = alone(40);
     w.travel(place.id, place.x, place.y, place.f as Facing); w.state.minutes = minutes; w['cached'] = null;
-    return { rest, ticks, out, slainAt, door, town, resized, held4, reach, readReach: K.READ_REACH, flames, beneath: beneath === frameAlone, left, whole, ms: [atRest, turning, inFight], R: R.w * R.h };
+    return { rest, ticks, out, slainAt, door, town, resized, held4, reach, readReach: K.READ_REACH, flames, beneath: beneath === frameAlone, left, whole, ms: [atRest, turning, inFight], R: R.w * R.h, life };
   });
   if ('missing' in r) { ok(false, `the kept scenes: ${r.missing}`); return; }
   ok(r.rest.every(Boolean) && r.ticks > 1, `exploring before a group, each of 8 frames drawn through the kept scene and one lookup of the groups is the frame painted afresh with the groups asked square by square, the flames and figures moving (${r.ticks} of 4 frames differ)`);
@@ -194,6 +204,8 @@ export async function kept({ page, ok }: Run): Promise<void> {
   ok(r.flames.lit !== '' && r.flames.again === r.flames.lit && r.flames.again === r.flames.fresh,
     `a facing drawn again leaves paintedFlames() the flames a paint of it leaves (Harrow by night: ${r.flames.n} flame${r.flames.n === 1 ? '' : 's'})`);
   ok(r.beneath && r.left > 0 && r.whole === 0, `under a fight exploring draws its frame alone, the view left to the fight (${r.left} of ${r.R} pixels magenta beneath), whose backdrop paints it whole (${r.whole} left)`);
+  ok(r.life.early !== '' && r.life.late !== '' && r.life.early !== r.life.late && r.life.fight && r.life.below === '',
+    `what moves over the land moves on the Glasswold at a fair summer noon (${r.life.early.split(' ')[0]} pixels at frame 40, ${r.life.late.split(' ')[0]} at 400), and not in a fight's backdrop there nor underground`);
   ok(r.ms.every(Number.isFinite), `Game.render's 200 frames, each flushed: ${r.ms[0].toFixed(1)} ms exploring at rest before a group, ${r.ms[1].toFixed(1)} ms turning back and forth, ${r.ms[2].toFixed(1)} ms in a fight`);
 }
 

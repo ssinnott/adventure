@@ -11,7 +11,7 @@ import type { Ramp } from '../model.ts';
 import type { GroundLook, Mark } from './look.ts';
 
 /** How many flowers are out: none before Sowing or after Leafturn. */
-function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 12) / 8, (72 - day) / 10)); }
+export function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 12) / 8, (72 - day) / 10)); }
 
 /** Five tufts, then two flowers. */
 function mark(p: Paint, m: Mark): void {
@@ -64,6 +64,7 @@ function frond(p: Paint, m: Mark): void {
 }
 
 export const grass: GroundLook = { color: grassColor, drift: { toward: ['#24702a', '#bcae5e'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark },
+  scatter: ['bush', 'boulder', 'thistle', 'molehill'],
   // Turf, the meadow lighter and flowering, the rough darker in tussocks, bracken by the year.
   variants: { scale: 5, looks: [
     { name: 'meadow', share: 0.22, shift: { toward: '#b8c860', by: 0.5 }, lies: { marks: 9, mark: meadow } },

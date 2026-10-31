@@ -4,4 +4,6 @@ import type { AreaLook } from '../../area.ts';
 export const LOOK: AreaLook = {
   // Under the leaves: a green shade over the wood.
   air: { strength: 0.2, top: '#006020', foot: '#80ff00', haze: '#60c000' },
+  // Birches, the broadleaves among them; no conifer.
+  trees: { forest: { birch: 3, broadleaf: 2 } },
 };

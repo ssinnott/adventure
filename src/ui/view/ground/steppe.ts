@@ -48,6 +48,7 @@ function stones(p: Paint, m: Mark): void {
 }
 
 export const steppe: GroundLook = { color: steppeColor, drift: { toward: ['#6e9640', '#d4c070'], by: 0.6 }, snow: 0.9, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark },
+  scatter: ['tussock', 'skull', 'stone'],
   // Short grass greener and grazed, the feather-grass tall, gravel grey between the tufts.
   variants: { scale: 4.5, looks: [
     { name: 'short grass', share: 0.3, shift: { toward: '#6e9a44', by: 0.45 }, lies: { marks: 9, mark: short } },

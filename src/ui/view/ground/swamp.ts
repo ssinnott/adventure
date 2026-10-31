@@ -39,6 +39,7 @@ function tussock(p: Paint, m: Mark): void {
 }
 
 export const swamp: GroundLook = { color: () => TERRAIN_COLORS.swamp, drift: { toward: ['#2e4a2c', '#8c8a48'], by: 0.6 }, snow: 0.5, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 3, mark },
+  scatter: ['reeds', 'snag'],
   // Pools where the ground is wettest, the reeds about them, tussocks on the drier ground.
   variants: { scale: 4, looks: [
     { name: 'pools', share: 0.3, shift: { toward: '#2a4034', by: 0.5 }, lays: pool, lies: { marks: 1, mark } },

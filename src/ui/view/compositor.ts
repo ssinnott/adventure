@@ -24,14 +24,14 @@
 // top of the view so that it hides the sky behind it as well as the ground.
 
 import type { World } from '../../game/world.ts';
-import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight, hillOver } from '../../game/world.ts';
+import { VIEW_DEPTH, VIEW_LATERAL, viewCell as cellAt, isSolidWall, lineOfSight, hillOver, regionOf } from '../../game/world.ts';
 import type { Cell, Landmark } from '../../game/mapdef.ts';
 import { FACING_DX, FACING_DY } from '../../game/types.ts';
 import type { Facing } from '../../game/types.ts';
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 import { VOID_PINK } from '../palette.ts';
 import { drawMonsterSprite } from '../sprites.ts';
-import { drawTreeSprite, drawLighthouseSprite, drawMonasterySprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason } from '../scenery.ts';
+import { drawTreeSprite, drawLighthouseSprite, drawMonasterySprite, drawRockSprite, drawMountainSprite, drawPillarSprite, treeSeason, treeOf } from '../scenery.ts';
 import type { MonsterSprite } from '../../game/monsters.ts';
 import { weatherSight } from '../../game/weather.ts';
 import { sunTimes } from '../../game/calendar.ts';
@@ -43,12 +43,14 @@ import { murkOf, toPair, drawnAt, standsAt, looksHouse, building, tentOf } from 
 import { airOf, hazeOf, drawSkyBand } from './sky.ts';
 import type { SkyOpts } from './sky.ts';
 import { drawWeather, strike, drawBolt } from './weather.ts';
+import { drawLife } from './life.ts';
 import { drawFloor, drawCeiling } from './floor.ts';
 import { GROUND, groundColor } from './ground/index.ts';
 import { drawVoidFront, drawVoidSide, drawFrontFace, drawLighthouseFlank, LAMP_REACH, drawLamp, drawFlame, drawSideFace } from './walls.ts';
 import { drawRoof, drawChimney } from './roofs.ts';
 import { inTent, tentView, drawTentRoof } from './tents.ts';
 import { Scenes } from './kept.ts';
+import { drawScatter } from './scatter.ts';
 import { drawFeatures } from './features.ts';
 
 const DEPTH = VIEW_DEPTH;
@@ -136,6 +138,8 @@ export function drawViewport(
     ctx.fillStyle = g; ctx.fillRect(r.x, r.y, r.w, r.h);
   }
   ctx.restore();
+  // What moves over the land (life.ts), under the weather; a fight, which draws its own weather, draws none.
+  if (weather) drawLife(ctx, world, r, frame);
   if (weather) drawWeather(ctx, world, r, frame);
 }
 
@@ -344,7 +348,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
         // The ground may draw its own for what stands on it: a glass tree on crystal, a mountain by its rock.
         const own = GROUND[cell.terrain].boards?.[cell.solid];
         if (own) own(p, { x: bx, y: by, u, tone, mx: c.x, my: c.y, cloud });
-        else if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y) * 5), env.trees);
+        else if (cell.solid === 'tree') drawTreeSprite(ctx, bx, by, u, tone, treeOf(world.tables.looks[regionOf(map, c.x, c.y)].trees?.forest, hash(c.x, c.y)), env.trees);
         else if (cell.solid === 'rock') drawRockSprite(ctx, bx, by, u, tone, env.cover);
         else if (cell.solid === 'mountain') drawMountainSprite(ctx, bx, by, u, tone, Math.floor(hash(c.x, c.y, 3) * 3));
         else if (cell.solid === 'pillar') drawPillarSprite(ctx, bx, horizon, u, tone);
@@ -358,8 +362,11 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
           if (hash(c.x, c.y, 60 + side) < sides.bare || solidAt(d, l + side)) continue;
           const bx = cx + (l * 2 + side * (0.62 + 0.22 * hash(c.x, c.y, 62 + side))) * u, by = horizon + u * (0.8 + 0.4 * hash(c.x, c.y, 64 + side));
           const s = u * (sides.size + sides.spread * hash(c.x, c.y, 66 + side));
-          sides.tree(p, bx, by, s, tone, hash(c.x, c.y, 68 + side));
+          sides.tree(p, bx, by, s, tone, hash(c.x, c.y, 68 + side), world.tables.looks[regionOf(map, c.x, c.y)].trees);
         }
+      } else if (d > 0 && !backdrop) {
+        // Open ground: the prop scattered on it, if one stands there (scatter.ts, #1103).
+        drawScatter(p, c.x, c.y, d, l, f);
       }
       // The features on open ground, each as the automap marks it, after what else stands there
       // (view/features.ts, #1110); over the smoke test's backdrop they stay out, as the billboards do.

@@ -67,6 +67,7 @@ function cracks(p: Paint, base: string, sq: Square): void {
 }
 
 export const ash: GroundLook = { color: () => TERRAIN_COLORS.ash, drift: { toward: ['#141212', '#6e6a66'], by: 0.6 }, snow: 0.65, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
+  scatter: ['stump', 'steam', 'cinder'],
   // A fine fall lying pale and smooth; the cinders; a crust, blacker, cracked over the fire.
   variants: { scale: 4, looks: [
     { name: 'fine fall', share: 0.35, shift: { toward: '#8a8480', by: 0.35 }, lies: { marks: 4, mark: fine } },
