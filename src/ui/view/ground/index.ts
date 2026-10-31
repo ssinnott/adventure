@@ -5,6 +5,8 @@
 // suites. A new ground is a module beside these, its look, and its line below.
 
 import type { Terrain } from '../../../game/mapdef.ts';
+import type { GameMap } from '../../../game/map.ts';
+import type { RegionId } from '../../../game/weather.ts';
 import { fbm } from '../../../game/atlas/painter.ts';
 import { regionAt } from '../../../game/world.ts';
 import { shade, mix, hexToRgb, rgbToHex } from '../../../lib/art/palettes.ts';
@@ -87,14 +89,86 @@ function drifted(look: GroundLook, c: string, x: number, y: number, salt: string
   return rgbToHex(at[0] + to[0] - from[0], at[1] + to[1] - from[1], at[2] + to[2] - from[2]);
 }
 
+/** How many squares either side of a zone's border a region's tint fades over (#1099): a blend, not a line. */
+const FADE = 2;
+
+/**
+ * A map's regions by square, for the tints, over the map and `FADE` squares round it, `span` squares a
+ * row: `regions` each once, none (the country past the zones) among them; `at` each square's index into
+ * it, the region `regionAt` finds; `blends` whether a square within `FADE` of it lies in another, so that
+ * its tint is a blend.
+ */
+interface Regions { readonly regions: readonly (RegionId | undefined)[]; readonly at: Uint8Array; readonly blends: Uint8Array; readonly span: number }
+const regionsByMap = new WeakMap<GameMap, Regions>();
+/** The map last asked and its regions, so a scene's many asks of one map skip the lookup. */
+let lastMap: GameMap | undefined, lastRegions: Regions | undefined;
+
+/**
+ * A map's regions by square, found once a map: its zones laid down last to first over the map's region,
+ * so a square takes the first zone that holds it, as `zoneAt` finds it; then which squares blend, along
+ * the rows and down the columns.
+ */
+function regionsOf(map: GameMap): Regions {
+  if (map === lastMap && lastRegions) return lastRegions;
+  let found = regionsByMap.get(map);
+  if (!found) {
+    const span = map.width + 2 * FADE, rows = map.height + 2 * FADE, regions: (RegionId | undefined)[] = [];
+    const index = (r: RegionId | undefined): number => { const i = regions.indexOf(r); return i < 0 ? regions.push(r) - 1 : i; };
+    const at = new Uint8Array(span * rows).fill(index(map.def.region)), along = new Uint8Array(span * rows), blends = new Uint8Array(span * rows);
+    for (let k = map.zones.length - 1; k >= 0; k--) {
+      const z = map.zones[k], i = index(z.region ?? map.def.region), x0 = Math.max(0, z.x + FADE), x1 = Math.min(span, z.x + z.w + FADE);
+      if (x0 < x1) for (let y = Math.max(0, z.y + FADE); y < Math.min(rows, z.y + z.h + FADE); y++) at.fill(i, y * span + x0, y * span + x1);
+    }
+    // A square blends where one within FADE down its column lies in another region, or has one along its row that does.
+    for (let y = 0; y < rows; y++) for (let x = FADE; x < span - FADE; x++) {
+      const i = y * span + x;
+      for (let d = -FADE; d <= FADE; d++) if (at[i + d] !== at[i]) { along[i] = 1; break; }
+    }
+    for (let y = FADE; y < rows - FADE; y++) for (let x = FADE; x < span - FADE; x++) {
+      const i = y * span + x;
+      for (let d = -FADE; d <= FADE; d++) if (at[i + d * span] !== at[i] || along[i + d * span]) { blends[i] = 1; break; }
+    }
+    regionsByMap.set(map, found = { regions, at, blends, span });
+  }
+  lastMap = map; lastRegions = found;
+  return found;
+}
+
 /**
  * A ground's colour tinted by the region its cell lies in (#1099): `by` of the way toward its region's
- * tint of it, the region `regionAt` finds (its zone's outdoors, its map's in a town), so the tint changes
- * at a zone's border; none where the Paint holds no looks, nor past the zones, where no region is.
+ * tint of it, the region `regionAt` finds (its zone's outdoors, its map's in a town); none where the Paint
+ * holds no looks, nor past the zones, where no region is. Within `FADE` of another region it is the mean
+ * of what each square round the cell takes, each region by how many of them it holds, so the tint fades
+ * over a zone's border and the zones' edge as a land changes, and is no line. A function of the cell.
  */
 function tinted(p: Paint, t: Terrain, c: string, x: number, y: number): string {
-  const region = p.looks && regionAt(p.map, x, y), tint = region ? p.looks?.[region].tints?.[t] : undefined;
-  return tint ? mix(c, tint.toward, tint.by) : c;
+  const looks = p.looks;
+  if (!looks) return c;
+  const map = p.map, g = regionsOf(map), w = map.width, h = map.height;
+  if (x >= 0 && y >= 0 && x < w && y < h && !g.blends[(y + FADE) * g.span + x + FADE]) {
+    const r = g.regions[g.at[(y + FADE) * g.span + x + FADE]], tint = r ? looks[r].tints?.[t] : undefined;
+    return tint ? mix(c, tint.toward, tint.by) : c;
+  }
+  // Each region by how many of the squares round the cell it holds, then the mean of what each square takes, as `mix` rounds it.
+  const counts = new Array<number>(g.regions.length).fill(0), from = hexToRgb(c), sum = [0, 0, 0], n = (2 * FADE + 1) ** 2;
+  for (let sy = y - FADE; sy <= y + FADE; sy++) for (let sx = x - FADE; sx <= x + FADE; sx++) {
+    const on = sx >= -FADE && sy >= -FADE && sx < w + FADE && sy < h + FADE;
+    counts[on ? g.at[(sy + FADE) * g.span + sx + FADE] : g.regions.indexOf(regionAt(map, sx, sy))]++;
+  }
+  for (let k = 0; k < counts.length; k++) {
+    if (!counts[k]) continue;
+    const r = g.regions[k], tint = r ? looks[r].tints?.[t] : undefined, to = tint ? rgbOf(tint.toward) : from, by = tint ? tint.by : 0;
+    for (let j = 0; j < 3; j++) sum[j] += counts[k] * Math.round(from[j] + (to[j] - from[j]) * by);
+  }
+  return rgbToHex(sum[0] / n, sum[1] / n, sum[2] / n);
+}
+
+/** A tint's colour as red, green and blue, read once. */
+const rgbs = new Map<string, readonly number[]>();
+function rgbOf(hex: string): readonly number[] {
+  let v = rgbs.get(hex);
+  if (!v) rgbs.set(hex, v = hexToRgb(hex));
+  return v;
 }
 
 /**

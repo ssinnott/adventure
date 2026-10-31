@@ -73,7 +73,8 @@ export interface Area {
 
 /** How an area's land looks (#1097): a field to each part of the view it colours, today's look where one is absent. */
 export interface AreaLook {
-  /** Its grounds' tints (#1099): today's colours where absent. */ tints?: Tints;
+  /** Its grounds' tints (#1099): today's colours where absent. */
+  tints?: Tints;
   /** The air over it: today's sky where absent. */
   air?: Air;
   /** The trees its land stands (#1104): today's mix where absent. */
@@ -114,7 +115,8 @@ export interface Air {
 /**
  * An area's tints of the grounds it shares with others (#1099), each ground it names cast `by` of the
  * way toward a colour, a quarter at most, before the land's drift, rain and snow (ui/view/ground/index.ts);
- * it changes at a zone's border. Being a quarter of the way at most, each colour is the tint made strong.
+ * it fades over two squares either side of a zone's border. Being a quarter of the way at most, each
+ * colour is the tint made strong.
  */
 type Tints = Partial<Record<Terrain, { toward: string; by: number }>>;
 

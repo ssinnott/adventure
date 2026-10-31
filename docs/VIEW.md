@@ -49,9 +49,9 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   (`airOf`, `src/ui/view/sky.ts`). With none, as over the Foreland and Thornmark, the sky is as it was.
 - **A region's tints** (#1099): its look's `tints` casts each ground it names toward a colour of its
   own, a quarter of the way at most, before the drift, rain and snow (`groundColor`): grass, hills,
-  woods and pinewoods in ten regions, and the delta's swamp. A square takes its zone's, so a tint
-  changes at a zone's border; the Foreland and Thornmark have none, the automap's colours are never
-  tinted, and with none a ground is as it was (`tools/tests/tints.ts`).
+  woods and pinewoods in ten regions, and the delta's swamp. A square takes its zone's, fading over
+  two squares either side of a zone's border or edge; the Foreland, Thornmark and the country past
+  the zones have none and the automap's colours are never tinted (`tools/tests/tints.ts`).
 
 - **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
   one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of
