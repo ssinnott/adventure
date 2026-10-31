@@ -34,6 +34,7 @@ import { INTERIORS } from './interiors.ts';
 import { GUILDS } from './guilds.ts';
 import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { CHAPTER } from './chapter.ts';
+import { LOOK } from './look.ts';
 
 export const MAPS = [DELTA_D5, DELTA_C5, C5_RIFT.map, DELTA_C4, UPPERWATER_C3, DELTA_B5, B5_RIFT_N.map, B5_RIFT_S.map, DELTA_B6, DROWNED_TEMPLES, DROWNED_TEMPLES2, SALTINGS_C6, SALTMOUTH, SALTINGS_C7, UPPERWATER_B3, DELTA_B4, UPPERWATER_C2, UPPERWATER_B2, UPPERWATER_A3, DELTA_A4, DELTA_A5, DELTA_A6, SALTINGS_B7, SALTINGS_D6, WYTGAT, SJONGWIERDE, SJONGWIERDE2] as const;
 export { FLAGS };
@@ -61,6 +62,7 @@ export const AREA = {
   // The delta's: mild and wet, with sea fog off the gulf.
   climate: { summer: 19, winter: 4, daily: 4, damp: [0.02, 0.09], wettest: 300, fog: 0.9, lag: 4,
     fogText: 'Fog comes in off the gulf.', thunderText: 'Thunder rolls over the fen.' },
+  look: LOOK,
   interiors: INTERIORS,
   novel: { families: ['longbodies', 'toads'], terrain: ['salt'], mechanics: [], landmarks: [] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },

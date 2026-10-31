@@ -21,6 +21,7 @@ import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { INTERIORS } from './interiors.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
+import { LOOK } from './look.ts';
 
 export const MAPS = [WOLD_D10, WOLD_D9, WOLD_D8, WOLD_C8, WOLD_B8, WOLD_B9, WOLD_E9, WOLD_E8, WOLD_D7, WOLD_E7, KARAORDU, KUSHDAG] as const;
 export { FLAGS };
@@ -53,6 +54,7 @@ export const AREA = {
   // in spring, dust for fog and thunder over the grass.
   climate: { summer: 26, winter: -4, daily: 11, damp: [0.01, 0.06], wettest: 120, fog: 0.1, lag: 18,
     fogText: 'Dust comes up off the grass and hangs in the air.', thunderText: 'Thunder rolls over the grass from far off.' },
+  look: LOOK,
   // The Riders' trader's tent at Akordu (#526).
   interiors: INTERIORS,
   // The glass walkers, a new family, placed first here (#533), and the dunes underfoot (#543). Steppe

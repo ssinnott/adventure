@@ -1,7 +1,8 @@
 // The first-person viewport: a depth-layered compositor in the Might and Magic III-V tradition. It draws
 // the walls and the grounds, each as its look in view/ground/ gives it (#1030), and the ground past a hill
 // seen from below it (`standsAt`), a landmark tall over its building's square out to `LANDMARK_REACH`, the
-// tents, the wall dressing, the sky, the end of the world drawn as its look and the weather over it:
+// tents, the wall dressing, the features on open ground (view/features.ts, #1110), the sky, the end of
+// the world drawn as its look and the weather over it:
 // `drawViewport`, the scene it caches and `paintScene`, which paints the scene back to front from the
 // parts beside it (#1028).
 //
@@ -39,7 +40,7 @@ import { hearthBearing, hearthLook } from '../../game/stones.ts';
 import { unit, CLEAR, paintOn, floorPt, pixel, addPoly } from './common.ts';
 import type { ViewRect, Flame, Env, View } from './common.ts';
 import { murkOf, toPair, drawnAt, standsAt, looksHouse, building, tentOf } from './model.ts';
-import { cast, drawSkyBand } from './sky.ts';
+import { airOf, hazeOf, drawSkyBand } from './sky.ts';
 import type { SkyOpts } from './sky.ts';
 import { drawWeather, strike, drawBolt } from './weather.ts';
 import { drawLife } from './life.ts';
@@ -49,6 +50,7 @@ import { drawVoidFront, drawVoidSide, drawFrontFace, drawLighthouseFlank, LAMP_R
 import { drawRoof, drawChimney } from './roofs.ts';
 import { inTent, tentView, drawTentRoof } from './tents.ts';
 import { Scenes } from './kept.ts';
+import { drawFeatures } from './features.ts';
 
 const DEPTH = VIEW_DEPTH;
 const LATERAL = VIEW_LATERAL;
@@ -173,9 +175,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   const cloud = wx?.cloud ?? 0;
   // A dark day lights the lamps early.
   const gloom = daylight * (1 - 0.3 * cloud - 0.25 * (wx?.precip ?? 0));
-  // Far things fade toward the sky's foot, greyed by cloud and by murk.
-  const look = hearthLook(world.hearth);
-  const skyBottom = cast(mix(mix('#1a1428', '#c9d6e6', daylight), mix('#1c1f26', '#b8c0c8', daylight), Math.min(1, cloud * 0.6 + env.murk)), look.cast?.foot, daylight);
+  // Far things fade toward the sky's foot, greyed by cloud and by murk, and the region's air (#1097).
+  const look = hearthLook(world.hearth), air = airOf(world);
+  const skyBottom = hazeOf(daylight, cloud, env.murk, look.cast, air);
   const haze = map.kind === 'dungeon' ? null : skyBottom;
 
   // The frame's Paint, which each painter below takes first (#1029): the light and the weather worked
@@ -193,15 +195,17 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   } else {
     const { dawn, dusk } = sunTimes(day);
     const at = world.worldCell, hearth = at ? { bearing: hearthBearing(world.tables.atlas, at.x, at.y), step: look.step } : undefined;
-    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth, cast: look.cast };
+    const sky: SkyOpts = { facing: f, hour: (world.state.minutes % 1440) / 60, daylight, dark, dawn, dusk, cloud, murk: env.murk, heavy: wx?.precip ?? 0, drift: world.state.minutes * 0.35, cover: env.cover, day, hearth, cast: look.cast, air };
     drawSkyBand(skyCtx, r, { ...sky, part: 'back' });
     drawSkyBand(ctx, r, { ...sky, part: 'hills' });
     // The ground runs on to the horizon in the terrain out past the last cell drawn, the void's as
     // its look; the bare void and a drop have none, so short of them the ground is the party's own,
     // and past a hill seen from below it the hill's (#53).
     const out = map.at(px + FACING_DX[f] * (DEPTH + 1), py + FACING_DY[f] * (DEPTH + 1)), far = out.look ?? out, brow = hillOver(map, px, py, f, DEPTH + 1, 0);
-    const farCell = brow ? map.at(brow.x, brow.y) : far.solid === 'void' || GROUND[far.terrain].drop ? map.at(px, py) : far;
-    const ground = shade(groundColor(p, farCell.terrain, pal.floor), dark ? 0.2 : 0.55);
+    const own = far.solid === 'void' || !!GROUND[far.terrain].drop, farCell = brow ? map.at(brow.x, brow.y) : own ? map.at(px, py) : far;
+    // Its colour drifts as the cell's it is taken from (#1098).
+    const fa = brow ?? (own ? { x: px, y: py } : { x: px + FACING_DX[f] * (DEPTH + 1), y: py + FACING_DY[f] * (DEPTH + 1) });
+    const ground = shade(groundColor(p, farCell.terrain, pal.floor, fa.x, fa.y), dark ? 0.2 : 0.55);
     const gg = ctx.createLinearGradient(0, horizon, 0, horizon + unit(DEPTH + 0.5, r.h));
     gg.addColorStop(0, mix(ground, skyBottom, dark ? 0.1 : 0.5)); gg.addColorStop(1, ground);
     ctx.fillStyle = gg; ctx.fillRect(r.x, horizon, r.w, r.h / 2);
@@ -260,7 +264,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     for (const l of order) {
       const c = cellAt(px, py, f, d, l);
       const cell = drawn(c.x, c.y), brow = behind(d, l);
-      if (brow) { drawFloor(p, 'hills', d, l, c.x * 131 + c.y * 17 + (map.id.length * 7), map.paletteAt(brow.x, brow.y).floor); continue; }
+      if (brow) { drawFloor(p, 'hills', d, l, c, c.x * 131 + c.y * 17 + (map.id.length * 7), map.paletteAt(brow.x, brow.y).floor); continue; }
       if (isSolidWall(cell)) continue;
       const seed = c.x * 131 + c.y * 17 + (map.id.length * 7);
       const cellPal = map.paletteAt(c.x, c.y);
@@ -268,7 +272,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       const plot = look.plot?.(map, c.x, c.y, f);
       // A drop's rims: where ground stands before it and beyond it, and not the drop.
       const rims = look.drop ? { near: d > 0 && !GROUND[drawn(...toPair(cellAt(px, py, f, d - 1, l))).terrain].drop, far: !GROUND[drawn(...toPair(cellAt(px, py, f, d + 1, l))).terrain].drop } : undefined;
-      drawFloor(p, cell.terrain, d, l, seed, cellPal.floor, plot, rims);
+      drawFloor(p, cell.terrain, d, l, c, seed, cellPal.floor, plot, rims);
       if (map.kind === 'dungeon') drawCeiling(p, cellPal, d, l, seed, f);
     }
     // A hill's mound, its look's, over the row's floors.
@@ -277,7 +281,7 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
       const t = drawn(c.x, c.y).terrain, mound = GROUND[t].mound;
       if (!mound || isSolidWall(drawn(c.x, c.y)) || behind(d, l)) continue;
       const hillAt = (dl: number): boolean => { const n = drawn(...toPair(cellAt(px, py, f, d, l + dl))); return !!GROUND[n.terrain].mound && !isSolidWall(n) && !behind(d, l + dl); };
-      mound(p, groundColor(p, t, map.paletteAt(c.x, c.y).floor), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1));
+      mound(p, groundColor(p, t, map.paletteAt(c.x, c.y).floor, c.x, c.y), d, l, c.x * 131 + c.y * 17, hillAt(-1), hillAt(1));
     }
     for (const l of order) {
       if (behind(d, l)) continue;
@@ -360,6 +364,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
           sides.tree(p, bx, by, s, tone, hash(c.x, c.y, 68 + side));
         }
       }
+      // The features on open ground, each as the automap marks it, after what else stands there
+      // (view/features.ts, #1110); over the smoke test's backdrop they stay out, as the billboards do.
+      if (d > 0 && cell.solid === 'none' && !backdrop) drawFeatures(p, world, c.x, c.y, d, l);
     }
   }
   // A torch goes out where anything nearer was painted over it, a tree or a rock or a wall.

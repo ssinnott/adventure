@@ -1,10 +1,14 @@
 // The sky (#1028): the band over the horizon with its sun or moon, clouds, stars and distant hills
-// (`drawSkyBand`, the title's too), an ending's cast over its colours, the Hearth's light on the horizon
-// by night and the title's dusk (`drawDusk`).
+// (`drawSkyBand`, the title's too), an ending's cast over its colours, the region's air (`airOf`, #1097)
+// and the haze it gives far things (`hazeOf`), the Hearth's light on the horizon by night and the title's
+// dusk (`drawDusk`).
 
 import { shade, mix, rgba } from '../../lib/art/palettes.ts';
 import { hash } from '../paint/brush.ts';
+import { hearthLook } from '../../game/stones.ts';
 import type { HearthLook } from '../../game/stones.ts';
+import type { World } from '../../game/world.ts';
+import type { Air } from '../../content/area.ts';
 import { grassColor } from './common.ts';
 import type { ViewRect } from './common.ts';
 
@@ -28,11 +32,31 @@ export interface SkyOpts {
   hearth?: { bearing: number; step: number };
   /** The sky's colours once the hull is opened (#750), by day the wrong colour: the sky's own when absent. */
   cast?: HearthLook['cast'];
+  /** The region's air (`airOf`): the sky's own when absent. */
+  air?: Air;
 }
 
 /** A colour of the sky under an ending's cast: most of the way to it by day, less at dusk and none by night. */
-export function cast(c: string, to: string | undefined, daylight: number): string {
+function cast(c: string, to: string | undefined, daylight: number): string {
   return to ? mix(c, to, 0.75 * Math.min(1, daylight / 0.5)) : c;
+}
+
+/**
+ * The air over the party (#1097): its region's, as the region's look gives it, and none under an ending's
+ * cast, which wins. Changes at a zone's border as the weather does. The sky, its sun and the haze take it.
+ */
+export function airOf(world: World): Air | undefined {
+  return world.underSky && !hearthLook(world.hearth).cast ? world.tables.looks[world.region].air : undefined;
+}
+
+/** A colour of the sky under an air: as an ending casts it, but `strength` of the way by day, and lost in murk; the colour itself without one. */
+function aired(c: string, to: string | undefined, air: Air | undefined, daylight: number, murk: number): string {
+  return air && to ? mix(c, to, air.strength * Math.min(1, daylight / 0.5) * (1 - murk)) : c;
+}
+
+/** What far things fade toward: the sky's foot, greyed by cloud and by murk, under an ending's cast and then the air's haze. */
+export function hazeOf(daylight: number, cloud: number, murk: number, ending?: HearthLook['cast'], air?: Air): string {
+  return aired(cast(mix(mix('#1a1428', '#c9d6e6', daylight), mix('#1c1f26', '#b8c0c8', daylight), Math.min(1, cloud * 0.6 + murk)), ending?.foot, daylight), air?.haze ?? air?.foot, air, daylight, murk);
 }
 
 /** The sky, sun or moon, clouds, stars and distant hills for the top half of `r`. Also used by the title. */
@@ -42,9 +66,9 @@ export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOp
   const cx = r.x + r.w / 2, horizon = r.y + r.h / 2;
   // A clear sky's blues greyed toward an overcast lid, darkened by a downpour; murk pales the foot
   // of it, and fog washes the whole of it out.
-  const bottom = cast(mix(mix('#1a1428', '#bcd8f0', daylight), mix('#181a20', '#b0b8c2', daylight), Math.min(1, cloud * 0.8 + murk * 0.6)), o.cast?.foot, daylight);
+  const bottom = aired(cast(mix(mix('#1a1428', '#bcd8f0', daylight), mix('#181a20', '#b0b8c2', daylight), Math.min(1, cloud * 0.8 + murk * 0.6)), o.cast?.foot, daylight), o.air?.foot, o.air, daylight, murk);
   if (o.part !== 'hills') {
-    const top = mix(cast(mix(mix(mix('#07091a', '#2f7ad8', daylight), mix('#0c0e14', '#7a8490', daylight), cloud), mix('#06070a', '#3c424c', daylight), 0.55 * heavy), o.cast?.top, daylight), bottom, murk * 0.7);
+    const top = mix(aired(cast(mix(mix(mix('#07091a', '#2f7ad8', daylight), mix('#0c0e14', '#7a8490', daylight), cloud), mix('#06070a', '#3c424c', daylight), 0.55 * heavy), o.cast?.top, daylight), o.air?.top, o.air, daylight, murk), bottom, murk * 0.7);
     const dusk = (daylight > 0.05 && daylight < 0.6 ? 1 - Math.abs(daylight - 0.3) / 0.3 : 0) * (1 - 0.8 * cloud);
     const g = ctx.createLinearGradient(0, r.y, 0, horizon);
     g.addColorStop(0, top); g.addColorStop(0.7, mix(bottom, '#e8905a', dusk * 0.35)); g.addColorStop(1, mix(bottom, '#f0b070', dusk * 0.6));
@@ -72,10 +96,10 @@ export function drawSkyBand(ctx: CanvasRenderingContext2D, r: ViewRect, o: SkyOp
       ctx.fillStyle = gg; ctx.fillRect(ox - rad * 4, oy - rad * 4, rad * 8, rad * 8);
       ctx.beginPath(); ctx.arc(ox, oy, rad, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill();
     };
-    const dawn = o.dawn ?? 6.5, dusk2 = o.dusk ?? 18.5, seen = 1 - Math.min(1, cloud * 1.05 + murk * 0.5);
+    const dawn = o.dawn ?? 6.5, dusk2 = o.dusk ?? 18.5, seen = 1 - Math.min(1, cloud * 1.05 + murk * 0.5), sun = o.air?.sun;
     if (seen > 0.05) {
       ctx.globalAlpha = seen;
-      if (hour >= dawn - 1 && hour <= dusk2 + 1) drawOrb((hour - dawn + 1) / (dusk2 - dawn + 2), '#fff4c0', '#ffd080', 9);
+      if (hour >= dawn - 1 && hour <= dusk2 + 1) drawOrb((hour - dawn + 1) / (dusk2 - dawn + 2), sun ?? '#fff4c0', sun ? mix('#ffd080', sun, 0.5) : '#ffd080', 9);
       const night = 24 - (dusk2 - dawn), since = ((hour - dusk2) % 24 + 24) % 24;
       if (since <= night) drawOrb(since / night, '#e8ecf4', '#b0c0e0', 6);
       ctx.globalAlpha = 1;

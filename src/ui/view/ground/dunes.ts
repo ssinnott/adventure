@@ -27,4 +27,4 @@ function mark(p: Paint, m: Mark): void {
   }
 }
 
-export const dunes: GroundLook = { color: () => TERRAIN_COLORS.dunes, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 5, mark } };
+export const dunes: GroundLook = { color: () => TERRAIN_COLORS.dunes, drift: { toward: ['#b87a3e', '#f0cc94'], by: 0.6 }, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 5, mark } };
