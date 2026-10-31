@@ -50,6 +50,7 @@ import { drawVoidFront, drawVoidSide, drawFrontFace, drawLighthouseFlank, LAMP_R
 import { drawRoof, drawChimney } from './roofs.ts';
 import { inTent, tentView, drawTentRoof } from './tents.ts';
 import { Scenes } from './kept.ts';
+import { drawScatter } from './scatter.ts';
 import { drawFeatures } from './features.ts';
 
 const DEPTH = VIEW_DEPTH;
@@ -363,6 +364,9 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
           const s = u * (sides.size + sides.spread * hash(c.x, c.y, 66 + side));
           sides.tree(p, bx, by, s, tone, hash(c.x, c.y, 68 + side));
         }
+      } else if (d > 0 && !backdrop) {
+        // Open ground: the prop scattered on it, if one stands there (scatter.ts, #1103).
+        drawScatter(p, c.x, c.y, d, l, f);
       }
       // The features on open ground, each as the automap marks it, after what else stands there
       // (view/features.ts, #1110); over the smoke test's backdrop they stay out, as the billboards do.
