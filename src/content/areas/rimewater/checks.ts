@@ -9,6 +9,11 @@ export const CHECKS = {
     21: ['ice_axe', 'skinning_knife', 'hunters_bow', 'bear_spear', 'guides_staff', 'bearskin', 'fur_robe'],
     22: ['ice_axe+1', 'skinning_knife+1', 'bear_spear+1', 'guides_staff+1', 'hunters_bow+1', 'plate+4'],
   },
+  // Its ranged rungs (#1115): the Hunter's Bow's, with the short bow and the sling #1117 takes into `gear`.
+  ranged: {
+    21: ['hunters_bow', 'hunters_shortbow', 'hide_sling'],
+    22: ['hunters_bow+1', 'hunters_shortbow+1', 'hide_sling+1'],
+  },
   // Its seams as built (tools/tests/outdoors.ts): each whose first box is its own.
   seamsAsBuilt: [
     { seam: 'longmere_m9|longmere_n9', walk: '7-8 11-29', why: 'the glacier\'s edge stands down M9\'s east against N9\'s pines but at 9 and 10, its only way in' },

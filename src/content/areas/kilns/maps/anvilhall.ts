@@ -8,7 +8,7 @@
 import type { MapDef } from '../../../../game/mapdef.ts';
 import { anchored } from '../../../../game/map.ts';
 import { NORTH } from '../../../../game/types.ts';
-import { FORGE, ANVIL_STONE_PRICE } from '../items.ts';
+import { FORGE, FORGE_RANGED, ANVIL_STONE_PRICE } from '../items.ts';
 import { NOVICE_TOLD, NOVICE_KEPT } from '../../whitespine/public.ts';
 import { CREW_OPEN } from '../../hearth/public.ts';
 import { HYMN_SUNG } from '../public.ts';
@@ -107,7 +107,7 @@ export const ANVILHALL: MapDef<'anvilhall'> = {
     // step (#535), gone for good once the Stone is taken, its smiths with it, and its door barred.
     { kind: 'trainer', x: 4, y: 3, name: 'The Old Working', maxLevel: 19, interior: 'anvilhall_training_hall' },
     { kind: 'sign', x: 5, y: 3, id: 'ah_muster', text: 'Over the old working\'s door, what the dwarves shout lifting stone.', read: 'MUSTER STATION. ALL HANDS.' },
-    { kind: 'shop', x: 10, y: 3, name: 'The Smiths\' Forge', stock: [...FORGE], interior: 'anvilhall_forge', until: { flag: TAKEN } },
+    { kind: 'shop', x: 10, y: 3, name: 'The Smiths\' Forge', stock: [...FORGE, ...FORGE_RANGED], interior: 'anvilhall_forge', until: { flag: TAKEN } },
     { kind: 'npc', x: 10, y: 3, name: 'Gerda, master of the forge', until: { flag: TAKEN }, lines: [
       'A dwarf woman at the anvil with her striker across it from her. Neither stops for you.',
       '"Gerda. What is on the rack is for sale. What is on the anvil is not."',

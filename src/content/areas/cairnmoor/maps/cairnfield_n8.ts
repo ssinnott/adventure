@@ -94,7 +94,7 @@ export const CAIRNFIELD_N8: MapDef<'cairnfield_n8'> = {
     ] },
     { kind: 'event', x: 6, y: 9, id: 'n8_coach_door', once: true, text: 'Its door hangs open, and the snow inside is trodden. The luggage on its roof is still corded down.' },
     { kind: 'event', x: 8, y: 9, id: 'n8_seat', once: true, text: 'Under the seat, a strongbox chained to the frame: the fare for the lodge, and a bow in oiled cloth.' },
-    { kind: 'chest', x: 8, y: 9, id: 'n8_strongbox', gold: 970, items: ['steel_bow+1'] },
+    { kind: 'chest', x: 8, y: 9, id: 'n8_strongbox', gold: 970, items: ['steel_bow+1', 'steel_shortbow+1', 'wire_sling+1'] },
     // The crags west of the road, the cairns on every side, and the bog east.
     { kind: 'event', x: 2, y: 10, id: 'n8_crags', once: true, text: 'Grey crags west of the road. The wind has blown their lee bare to the heather.' },
     { kind: 'event', x: 20, y: 10, id: 'n8_cairns', once: true, text: 'Cairns on every side now, some knee high, some taller than a man, their stones grey with lichen.' },

@@ -97,7 +97,7 @@ export const WRACKHOLM_E6: MapDef<'wrackholm_e6'> = {
     { kind: 'event', x: 15, y: 18, id: 'e6_huts', once: true, text: 'Huts south of the inlet, tarred black, roofed with turf and sail under stones. Rats run under the floors, not far.' },
     { kind: 'event', x: 13, y: 22, id: 'e6_gulls_roof', once: true, text: 'Every roof here is bare but one. There the gulls sit shoulder to shoulder and will not lift for a thrown stone.' },
     { kind: 'event', x: 13, y: 20, id: 'e6_cache', once: true, text: 'Under the boards, a sailcloth pit: a Compact knife in a Helmstow coat, and the crews\' pay, grey coins with no face.' },
-    { kind: 'chest', x: 13, y: 20, id: 'e6_cache_box', gold: 140, items: ['longbow+1'] },
+    { kind: 'chest', x: 13, y: 20, id: 'e6_cache_box', gold: 140, items: ['longbow+1', 'yew_shortbow+1', 'leather_sling+1'] },
     // The moor: the lookout on the west cliff, the cairn on the crown, the camp, the Tidefolk's bowl.
     { kind: 'event', x: 13, y: 5, id: 'e6_lookout', once: true, text: 'A nest of stones on the west cliff, the grass worn to a man\'s shape. Across the water Saltmouth, low and smoking.' },
     { kind: 'cairn', x: 24, y: 18, id: 'e6_cairn', text: 'A cairn on the moor\'s crown, shore stones carried up through the heather, and a ship\'s block gone soft among them.', gold: 60, items: ['potion_heal'] },

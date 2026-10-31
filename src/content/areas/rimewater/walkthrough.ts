@@ -64,7 +64,7 @@ import { nightCost, stay, payFee, hallOffers, learnSpell, train } from '../../..
 import { spellsFor } from '../../../game/spells.ts';
 import { makeRng } from '../../../lib/engine/rng.ts';
 import { ACT_III } from '../../../../tools/kit/rules/ladder.ts';
-import { FURRIER } from './items.ts';
+import { FURRIER, FURRIER_RANGED } from './items.ts';
 import { INTERIORS } from './interiors.ts';
 import { NIGHTS, WENNA_UP } from './maps/rime_lodge.ts';
 import { CHAPTER } from './chapter.ts';
@@ -312,8 +312,13 @@ function theRoad(): Scene[] {
         && INTERIORS.every((id) => TOWN.features!.some((f) => 'interior' in f && f.interior === id)), 'Rime Lodge has its six businesses, each opening into its room: the inn, the hall, the temple, the furrier\'s, the provisioner\'s and the yard');
       w.party.gold = 40000;
       const furrier = ofKind(TOWN, 'shop').find((f) => f.interior === 'rime_furrier')!, rung = ACT_III.find((r) => r.level === 21)!;
-      ok(furrier.stock.length === FURRIER.length && FURRIER.every((id) => furrier.stock.includes(id)), `the furrier's sells the act's last step, all ${FURRIER.length} wares and nothing else`);
+      ok(furrier.stock.length === FURRIER.length + FURRIER_RANGED.length && [...FURRIER, ...FURRIER_RANGED].every((id) => furrier.stock.includes(id)),
+        `the furrier's sells the act's last step, all ${FURRIER.length} wares, and the Hunter's Bow's short bow and sling beside it (#1115), and nothing else`);
       for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(TABLES.items, w.party, furrier, id), `${m.name} buys a ${item(TABLES.items, id).name} at the furrier's`);
+      for (const id of FURRIER_RANGED) {
+        const before = w.party.gold;
+        ok(!!buy(TABLES.items, w.party, furrier, id) && before - w.party.gold === item(TABLES.items, id).price, `and a ${item(TABLES.items, id).name} for its own ${item(TABLES.items, id).price} gold`);
+      }
       const stores = ofKind(TOWN, 'shop').find((f) => f.interior === 'rime_provisioner')!;
       ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => stores.stock.includes(id)) && !stores.stock.some((id) => FURRIER.includes(id)), 'the provisioner\'s sells provisions and lamp oil, and no gear');
       const hall = ofKind(TOWN, 'guild')[0];
@@ -902,8 +907,8 @@ function sleepersBay(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   const into = gives ? [w.world.move('forward'), w.world.move('forward')] : [];
   ok(gives && into.every((r) => r.kind === 'moved') && w.world.used('sb2_locker'), 'searched where the path stops, the back wall gives on the locker');
   const locker = B2.features!.find((f) => f.kind === 'chest' && f.id === 'sb2_locker_chest');
-  ok(locker?.kind === 'chest' && locker.items.join() === 'hunters_bow+1,plate+4' && locker.gold === 1500 && item(TABLES.items, 'hunters_bow+1').name === 'Bogha Fionn +1' && item(TABLES.items, 'plate+4').name === 'Luireach Dubh +4',
-    'in the locker, four hundred years of pockets: 1,500 gold, Bogha Fionn and Luireach Dubh');
+  ok(locker?.kind === 'chest' && locker.items.join() === 'hunters_bow+1,hunters_shortbow+1,hide_sling+1,plate+4' && locker.gold === 1500 && item(TABLES.items, 'hunters_bow+1').name === 'Bogha Fionn +1' && item(TABLES.items, 'plate+4').name === 'Luireach Dubh +4',
+    'in the locker, four hundred years of pockets: 1,500 gold, Bogha Fionn with its short bow and sling (#1115), and Luireach Dubh');
   listen(w);
 }
 

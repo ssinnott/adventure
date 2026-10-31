@@ -308,6 +308,8 @@
     "great_axe+1",
     "ironwood_bow",
     "ironwood_bow+1",
+    "ironwood_shortbow",
+    "ironwood_shortbow+1",
     "lamellar",
     "lanterns_roll",
     "lanterns_staff",
@@ -323,6 +325,8 @@
     "watch_habit",
     "watch_map",
     "watch_shield",
+    "watch_sling",
+    "watch_sling+1",
     "watch_staff"
   ],
   "monsters": [

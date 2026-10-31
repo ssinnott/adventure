@@ -161,7 +161,10 @@ underfoot and the wreck, the Tide Ship's site.
   within 12 in the country, E5, F5 and F7 100%; the dungeons 100% within 7, the Rift 97.6%.
 - **The ladder:** rung 13 is Wrackholm's (`gear`, in its checks): the same with a plus from
   Saltreach's and Wrackholm's finds. The dearest find, the Plate Mail +1 at 1,350 gold, sits in the
-  window, 2,500, and the Brokenback's, Keelhaul at 1,600, in the Sunderwood's, 3,000.
+  window, 2,500, and the Brokenback's, Keelhaul at 1,600, in the Sunderwood's, 3,000. Its ranged rung
+  (`ranged`, #1115) is the Horn Bow +1's, Saltreach's bow, with its short bow and sling from C7's
+  hoard; E6's cache holds Act I's Long Bow +1, and beside it now the Yew Short Bow +1 and the Leather
+  Sling +1. They are off the gate's ladder until #1117.
 
 ## 10. Names
 

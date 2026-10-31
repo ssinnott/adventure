@@ -108,7 +108,7 @@ import { readLine, markLine, readMarks } from '../../../game/inscriptions.ts';
 import { answerRiddle } from '../../../game/wilds.ts';
 import { ACT_III } from '../../../../tools/kit/rules/ladder.ts';
 import { roadPlace } from '../../../game/atlas.ts';
-import { FORGE, ANVIL_STONE_PRICE, SMITH_PRICES, quarterMore } from './items.ts';
+import { FORGE, FORGE_RANGED, ANVIL_STONE_PRICE, SMITH_PRICES, SMITH_RANGED, quarterMore } from './items.ts';
 import { VERSE_READ, BOUGHT, TAKEN } from './maps/anvilhall.ts';
 import { MOUTH } from './maps/kilnsheart_n4.ts';
 import { TEAR } from './maps/kilnsheart_o5.ts';
@@ -1021,8 +1021,13 @@ function anvilhall(w: Walk, ok: (cond: boolean, msg: string) => void): void {
   stay(w.party, w.world, inn);
   ok(w.party.members.every((m) => m.hp === m.maxHp && m.sp === m.maxSp) && w.world.hour >= 6 && w.world.hour <= 9 && w.party.gold === 30000 - night, `a night at ${inn.name} for ${night} gold, and the company wakes whole in the morning`);
   const rung = ACT_III.find((r) => r.level === 17)!;
-  ok(FORGE_SHOP.stock.length === FORGE.length && FORGE.every((id) => FORGE_SHOP.stock.includes(id)), `the smiths' forge sells the act's first step, all ${FORGE.length} wares and nothing else`);
+  ok(FORGE_SHOP.stock.length === FORGE.length + FORGE_RANGED.length && [...FORGE, ...FORGE_RANGED].every((id) => FORGE_SHOP.stock.includes(id)),
+    `the smiths' forge sells the act's first step, all ${FORGE.length} wares, and the Steel Bow's short bow and sling beside it (#1115), and nothing else`);
   for (const m of w.party.members) for (const id of rung.classes[m.cls]) ok(!!buy(TABLES.items, w.party, FORGE_SHOP, id), `${m.name} buys a ${item(TABLES.items, id).name} at the forge`);
+  for (const id of FORGE_RANGED) {
+    const before = w.party.gold;
+    ok(!!buy(TABLES.items, w.party, FORGE_SHOP, id) && before - w.party.gold === item(TABLES.items, id).price, `and a ${item(TABLES.items, id).name} for its own ${item(TABLES.items, id).price} gold`);
+  }
   const stores = ofKind(TOWN, 'shop').find((f) => f.interior === 'anvilhall_stores')!;
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => stores.stock.includes(id)) && !stores.stock.some((id) => FORGE.includes(id)), 'the stores sell provisions and lamp oil, and no steel');
   const yard = ofKind(TOWN, 'trainer')[0];
@@ -1154,12 +1159,17 @@ function kilnhaven(ok: (cond: boolean, msg: string) => void): void {
 
   // The smith sells the act's first step at a quarter more than Anvilhall's forge (#535), each class
   // its rung; the chandler's sells the provisions at list price, and no steel.
-  ok(SMITHY.stock.length === FORGE.length && FORGE.every((id) => SMITHY.stock.includes(id) && SMITHY.prices?.[id] === SMITH_PRICES[id] && SMITH_PRICES[id] === quarterMore(item(TABLES.items, id).price)),
-    `the smith sells the forge's ${FORGE.length} wares and nothing else, each at a quarter more (${FORGE.map((id) => `${item(TABLES.items, id).name} ${SMITH_PRICES[id]}`).join(', ')})`);
+  const wares = [...FORGE, ...FORGE_RANGED], asked: Readonly<Record<string, number>> = { ...SMITH_PRICES, ...SMITH_RANGED };
+  ok(SMITHY.stock.length === wares.length && wares.every((id) => SMITHY.stock.includes(id) && SMITHY.prices?.[id] === asked[id] && asked[id] === quarterMore(item(TABLES.items, id).price)),
+    `the smith sells the forge's ${wares.length} wares, the step's ${FORGE.length} and the Steel Bow's short bow and sling (#1115), and nothing else, each at a quarter more (${wares.map((id) => `${item(TABLES.items, id).name} ${asked[id]}`).join(', ')})`);
   const rung = ACT_III.find((r) => r.level === 17)!;
   for (const m of w.party.members) for (const id of rung.classes[m.cls]) {
     const before = w.party.gold;
     ok(!!buy(TABLES.items, w.party, SMITHY, id) && before - w.party.gold === SMITH_PRICES[id], `${m.name} buys a ${item(TABLES.items, id).name} at the smith for ${SMITH_PRICES[id]} gold`);
+  }
+  for (const id of FORGE_RANGED) {
+    const before = w.party.gold;
+    ok(!!buy(TABLES.items, w.party, SMITHY, id) && before - w.party.gold === SMITH_RANGED[id], `and a ${item(TABLES.items, id).name} for ${SMITH_RANGED[id]} gold`);
   }
   const chandler = ofKind(HAVEN, 'shop').find((f) => f.interior === 'kilnhaven_chandlery')!;
   ok(['rations', 'lantern_oil', 'potion_heal', 'antidote'].every((id) => chandler.stock.includes(id)) && !chandler.stock.some((id) => FORGE.includes(id)) && !chandler.prices, 'the chandler\'s sells the provisions and lamp oil at list price, and no steel');

@@ -142,7 +142,10 @@ chasm underfoot; sleep inflicted (`inflict:asleep`); the falls.
   the Watch 100%.
 - **The ladder:** rungs 14 and 16 are Sunderwood's (`gear`, in its checks): by 14 the Watch's
   stores, by 16 their wares with a plus, the Lanterns' staff and the Sunder's Plate Mail +2, at
-  1,500 the dearest find, each inside the window of 3,000 gold.
+  1,500 the dearest find, each inside the window of 3,000 gold. Its ranged rungs (`ranged`, #1115) put
+  a short bow a step behind the Ironwood Bow and a sling two: the Ironwood Short Bow and the Watch
+  Sling in the Watch's stores beside it, each with a plus in the Sunder's fallen chest beside the
+  Ironwood Bow +1. They are off the gate's ladder until #1117.
 
 ## 10. Names
 
