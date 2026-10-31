@@ -118,6 +118,9 @@ export const KILNSHEART_N5: MapDef<'kilnsheart_n5'> = {
     { kind: 'event', x: 23, y: 24, id: 'n5_footprints', once: true, text: 'Footprints along the track, each one burnt into the dirt and still warm, coming out of the east.' },
   ],
   secrets: [{ x: 5, y: 4, hint: 'n5_laid' }],
+  // Gluthutte's chimneys, drawn tall over the smelter's yard and seen from far off, on the building square the
+  // world map's point for it falls in.
+  landmarks: [{ x: 12, y: 1, kind: 'stacks' }],
   encounters: [
     // Fire beetles at the forges, behind the smelter and at the yard's foot; salamanders on the slag
     // heap; and on the cutters' track east, a slag elder strayed from the Stone, until its tear is

@@ -107,6 +107,9 @@ export const IRONFELLS_N3: MapDef<'ironfells_n3'> = {
     { kind: 'event', x: 27, y: 27, id: 'n3_fall', once: true, text: 'An old working cut into the rock, its props down and the roof in at the back. Something has bored out through the fall.' },
   ],
   secrets: [{ x: 29, y: 20, hint: 'n3_ruts' }],
+  // Anvilhall, drawn as the fortress it is over the crag and seen from far off, on the mountain square behind
+  // its gate; the gate's own square, 28,8, is a door in the wall, and the world map's point for it lies on it.
+  landmarks: [{ x: 28, y: 7, kind: 'fortress' }],
   encounters: [
     // Slaglings on the trail's far end by night, strays from the Stone until its tear is closed; fire
     // beetles and salamanders on the two heaps of spoil, beetles most on the low one by the road and
