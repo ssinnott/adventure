@@ -633,6 +633,82 @@ export async function landmarks({ page, ok }: Run): Promise<void> {
   ok(tent.door.tent >= 20 && tent.door.smooth === 0 && tent.door.stone === 0, `a door in a tent is a flap, the doorway's dark showing under its turned-back corner, where a smooth wall's door is its seam and a stone wall's its planks (${tent.door.tent} dark pixels in the corner; smooth ${tent.door.smooth}, stone ${tent.door.stone})`);
 }
 
+// The kinds of #1096, each laid for the part. From Helmstow's road facing south over the Wyke, the land about
+// cleared to grass: twenty squares ahead (or as far as its reach, if less) each stands over the land by noon, by
+// night and under snow, lighting no lamp, and two ahead on a building's square, among the squares drawn. From
+// Sheerpoint's 11,20 facing east, where a range stands from ten squares off over the middle of the view: six ahead
+// each is drawn over the range, and twenty ahead nothing of it is drawn where the range stands, its foot and as
+// much of it as the range covers hidden; a lighthouse there lights no lamp over the range by night.
+export async function kinds({ page, ok }: Run): Promise<void> {
+  const drawn = await page.evaluate(async () => {
+    const load: Load = (p) => import(p);
+    const V = await load<typeof import('../../src/ui/viewport.ts')>('/src/ui/viewport.ts'), Hz = await load<typeof import('../../src/ui/view/horizon.ts')>('/src/ui/view/horizon.ts');
+    const Mp = await load<typeof import('../../src/content/maps.ts')>('/src/content/maps.ts'), Lm = await load<typeof import('../../src/ui/view/landmarks.ts')>('/src/ui/view/landmarks.ts');
+    const w = window.__game!.game!.world;
+    const W = 400, H = 268, c = document.createElement('canvas'), sky = document.createElement('canvas');
+    c.width = sky.width = W; c.height = sky.height = H;
+    const ctx = c.getContext('2d', { willReadFrequently: true })!, skyCtx = sky.getContext('2d')!;
+    const from = { id: w.state.mapId, x: w.state.x, y: w.state.y, f: w.state.facing }, minutes = w.state.minutes;
+    const clear = (hour: number, sky: Record<string, number> = {}): void => {
+      w.state.minutes = Math.floor(minutes / 1440) * 1440 + hour * 60;
+      w['cached'] = { seed: w.state.weatherSeed!, minutes: w.state.minutes, region: w.region, weather: { cloud: 0.1, precip: 0, snow: 0, fog: 0, wind: 0, windDir: 0, storm: 0, temp: 12, cover: 0, wet: 0, ...sky } };
+    };
+    // Painted afresh each time: the view's own cache keys on neither a landmark's kind nor the cells.
+    const view = (): Uint8ClampedArray => { ctx.clearRect(0, 0, W, H); V.paintScene(ctx, skyCtx, w, { x: 0, y: 0, w: W, h: H }); return ctx.getImageData(0, 0, W, H).data; };
+    const lamps = (): number => V.paintedFlames().filter((f) => f.lamp).length;
+    const lay = (l: readonly Landmark[]): void => { (w.map as { landmarks: readonly Landmark[] }).landmarks = l; };
+    const count = (a: Uint8ClampedArray, b: Uint8ClampedArray, by: number, rows: (x: number) => number = () => 0): number => {
+      let n = 0;
+      for (let x = 0; x < W; x++) for (let y = rows(x); y < H; y++) { const i = (y * W + x) * 4; if (Math.abs(a[i] - b[i]) + Math.abs(a[i + 1] - b[i + 1]) + Math.abs(a[i + 2] - b[i + 2]) > by) n++; }
+      return n;
+    };
+    const kinds = (Object.keys(Lm.LANDMARK_REACH) as Landmark['kind'][]).filter((k) => k !== 'lighthouse' && k !== 'monastery');
+    const out: Record<string, { day: number; night: number; snow: number; near: number; lamps: number; front: number; behind: number }> = {};
+    // Helmstow's road facing south: ahead is south.
+    w.travel('shelf', 16, 6, 2);
+    const m = w.map, px = w.state.x, py = w.state.y, cells = m.cells.slice(), kept = m.landmarks;
+    const grass: Cell = { terrain: 'grass', solid: 'none', door: 'none', ch: ',' }, building: Cell = { terrain: 'floor', solid: 'building', door: 'none', ch: 'B' };
+    for (let yy = py - 1; yy <= py + 8; yy++) for (let xx = px - 4; xx <= px + 4; xx++) m.cells[yy * m.width + xx] = grass;
+    const SNOW = { cover: 0.8, snow: 1, temp: -4 };
+    lay([]); clear(12); const noneDay = view(); clear(23); const noneNight = view(); clear(12, SNOW); const noneSnow = view();
+    m.cells[(py + 2) * m.width + px] = building; clear(12); const noneNear = view();
+    for (const kind of kinds) {
+      const far = Math.min(20, Lm.LANDMARK_REACH[kind]);
+      m.cells[(py + 2) * m.width + px] = grass;
+      lay([{ x: px, y: py + far, kind }]); clear(12); const day = count(view(), noneDay, 30);
+      clear(23); const night = count(view(), noneNight, 10), lit = lamps(); clear(12, SNOW); const snow = count(view(), noneSnow, 30);
+      m.cells[(py + 2) * m.width + px] = building;
+      lay([{ x: px, y: py + 2, kind }]); clear(12); const near = count(view(), noneNear, 30);
+      out[kind] = { day, night, snow, near, lamps: lit, front: 0, behind: 0 };
+    }
+    for (let i = 0; i < cells.length; i++) m.cells[i] = cells[i];
+    lay(kept);
+    // Sheerpoint facing east: ahead is east; in each column the rows from the top of the range nearer than twenty squares down.
+    w.travel('sheerpoint_i9', 11, 20, 1);
+    const s = w.map, sx = w.state.x, sy = w.state.y, held = s.landmarks, cast = Hz.castHorizon(Mp.GRID, w.worldCell!, 1, W, H);
+    const range = (x: number): number => { const top = Hz.standsOver(cast, x, 20); return top ? H / 2 - top : H; };
+    let over = H;
+    for (let x = 170; x < 230; x++) over = Math.min(over, range(x));
+    lay([]); clear(12); const none = view();
+    for (const kind of kinds) {
+      lay([{ x: sx + 6, y: sy, kind }]); out[kind].front = count(view(), none, 30, range);
+      lay([{ x: sx + Math.min(20, Lm.LANDMARK_REACH[kind]), y: sy, kind }]); out[kind].behind = count(view(), none, 30, range);
+    }
+    clear(23); lay([{ x: sx + 6, y: sy, kind: 'lighthouse' }]); view(); const lampBefore = lamps();
+    lay([{ x: sx + 20, y: sy, kind: 'lighthouse' }]); view(); const lampBehind = lamps();
+    lay(held);
+    w.travel(from.id, from.x, from.y, from.f);
+    w.state.minutes = minutes; w['cached'] = null;
+    return { out, over, lampBefore, lampBehind };
+  });
+  const { out, over, lampBefore, lampBehind } = drawn;
+  for (const [kind, v] of Object.entries(out)) {
+    ok(v.day > 40 && v.night > 20 && v.snow > 40 && v.near > 400 && v.lamps === 0, `the landmark '${kind}' stands over the land from Helmstow's road by noon, by night and under snow, and among the squares drawn, lighting no lamp (${v.day}, ${v.night} and ${v.snow} pixels of it far off; ${v.near} two ahead; ${v.lamps} lamps)`);
+    ok(v.front > 50 && v.behind === 0, `the landmark '${kind}' is drawn over a range behind it and nowhere the range stands before it, from Sheerpoint's 11,20 facing east (${v.front} pixels over the range's rows six ahead, ${v.behind} twenty ahead; the range stands from row ${over} over the middle of the view)`);
+  }
+  ok(Object.keys(out).length >= 9 && lampBefore === 1 && lampBehind === 0, `a lighthouse behind a range nearer than it lights no lamp over the range by night, where one before it does (${lampBefore} before, ${lampBehind} behind; ${Object.keys(out).length} kinds drawn)`);
+}
+
 // A group placed on ice (#536): on the Foreland at noon, ice laid all about, two fen eels two squares
 // ahead drawn as the view draws a group. Under the ice they paint its floor and nothing over the
 // horizon; the same pair not under it stands up over it.

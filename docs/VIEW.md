@@ -63,6 +63,11 @@ to the view says what is now true in its bullet here, and adds one if it adds a 
   Over the horizon the ranges, woods and hills stand as they lie there, stylised (56 px at most) and fading
   with distance; under it each row of the band is the ground at its distance, hidden behind a range. Night,
   murk, snow and the region's haze take it as they took the two bands, which the title's dusk keeps.
+- **The landmarks**, `src/ui/view/landmarks.ts` (#1096): a kind is the view's own, not a site's icon, and a drawing
+  of `src/ui/scenery.ts`: the lighthouse, the monastery, a volcano's cone and plume, a city, a ring, a tower, a great
+  tree, stacks, a fortress, falls and a wreck. Past the fourth square one stands out to its kind's reach, hidden column
+  by column by the land nearer than it (`standsOver`), a volcano as its range's summit; by day the Hearth stands as a
+  faint pale column on its bearing behind the land nearer than it, and none where fog takes the fourth square.
 - **A region's hills** (#1105): its look's `hills` names their kind (`src/ui/view/ground/hills.ts`):
   the Foreland's downs, a slip of chalk under some crests; Cairnmoor's and Wrackholm's tors, low granite
   outcrops; the Kilns' slag heaps, some smoking; Ashfall's cinder cones lit red by night; the Whitespine's

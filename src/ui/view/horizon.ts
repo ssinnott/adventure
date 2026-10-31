@@ -4,7 +4,8 @@
 // one before it: the ranges high, a wood a treeline, hills low, open ground and water flat (`STAND`), stylised,
 // no taller than the two bands before them, and fading slowly with distance. Under it, the ground band: a world
 // cell to each row of pixels down to the fourth row's floor, hidden behind the nearest range. Ask `standsOver`
-// how high the land nearer than a distance stands in a column (a landmark, #1096). `drawSkyline` paints the first
+// how high the land nearer than a distance stands in a column (a landmark, #1096), and `standing` how high a
+// range stands at its heart (a volcano's cone). `drawSkyline` paints the first
 // (sky.ts) and `drawLand` the second (compositor.ts), each colour darker by night, white under lying snow and on
 // the peaks always, faded into the region's haze with distance and lost in murk. It reads the grid alone, which
 // never changes as a game runs, so a square's horizon is painted once, with its scene (kept.ts). Land and water
@@ -192,6 +193,14 @@ function standColor(t: number, d: number, o: Light): string {
   const day = mix(typeof s.day === 'string' ? s.day : s.day(o.day), SNOW, s.snow >= 1 ? 1 : o.cover * s.snow);
   const c = mix(mix('#101426', day, o.daylight), o.haze, Math.min(1, 0.12 + (0.4 * d) / REACH + o.murk * 1.3));
   return o.dark ? shade(c, 0.5) : c;
+}
+
+/**
+ * How high a kind of land stands over the horizon at the heart of its range `d` squares off, in pixels, and the
+ * colour it is seen in there: what a volcano's cone is drawn to (#1096), so it stands on its range as one.
+ */
+export function standing(t: WorldTerrain, d: number, o: Light): { h: number; colour: string } {
+  return { h: Math.round((STAND[t]?.h ?? 0) * (1 - d / REACH)), colour: standColor(TI[t], d, o) };
 }
 
 /** Each standing kind's colour at each distance, worked out once a paint. */
