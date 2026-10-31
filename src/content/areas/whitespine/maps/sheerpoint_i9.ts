@@ -73,7 +73,7 @@ export const SHEERPOINT_I9: MapDef<'sheerpoint_i9'> = {
     { kind: 'event', x: 18, y: 11, id: 'i9_masons_camp', once: true, text: 'A camp on a shelf off the trail, its fire long out. Hammers lie on a stone, put down and never taken up.' },
     { kind: 'event', x: 17, y: 10, id: 'i9_tally', once: true, text: 'A tally cut in the rock face in fives, row under row. The last row runs on into a crack in the face.' },
     { kind: 'event', x: 15, y: 10, id: 'i9_shards', once: true, text: 'Crates stacked in the dark, packed in straw. In the straw, shards of every colour, laid in fives.' },
-    { kind: 'chest', x: 14, y: 10, id: 'i9_cache', gold: 500, items: ['hunters_bow+1'] },
+    { kind: 'chest', x: 14, y: 10, id: 'i9_cache', gold: 500, items: ['hunters_bow+1', 'hunters_shortbow+1', 'hide_sling+1'] },
     // The trail's end: the masons' sledge, and over the sea the Hearth and the causeway running out to it.
     { kind: 'event', x: 20, y: 6, id: 'i9_sledge', once: true, text: 'A sledge on the trail, loaded with cut stone under a sheet, its runners grooved deep in the rock.' },
     { kind: 'event', x: 20, y: 2, id: 'i9_hearth', once: true, text: 'Ahead over the sea the Hearth stands up out of the water, so close its heat is on your face.' },

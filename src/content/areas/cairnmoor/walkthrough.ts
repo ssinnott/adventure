@@ -236,7 +236,7 @@ function theRoad(): Scene[] {
       ok(seat && inside.every((r) => r.kind === 'moved') && w.world.used('n8_seat'), 'searched at the coach\'s open door, the seat comes up, and the strongbox under it can be reached');
       listen(w);
       const strongbox = N8.features!.find((f) => f.kind === 'chest' && f.id === 'n8_strongbox');
-      ok(strongbox?.kind === 'chest' && strongbox.items.includes('steel_bow+1') && strongbox.gold === 970 && strongbox.x === 8 && strongbox.y === 9, 'in the strongbox, the fare for the lodge and a second Steel Bow +1');
+      ok(strongbox?.kind === 'chest' && strongbox.items.join() === 'steel_bow+1,steel_shortbow+1,wire_sling+1' && strongbox.gold === 970 && strongbox.x === 8 && strongbox.y === 9, 'in the strongbox, the fare for the lodge and a second Steel Bow +1 with its short bow and sling (#1115)');
 
       // The beacon cairn (#862): at the field's end where the marsh begins, off the road and off every
       // quest's way, its top stones scorched; under them a hammer whose blows carry fire, and no gold. The
