@@ -1539,7 +1539,7 @@ map has nothing a player can read, so the hidden third is earned at the Core (#2
   `VIEW_LATERAL`, `src/game/world/sight.ts`), with depth-layered walls and doors, buildings under
   their roofs, tents, hills that hide what lies behind them from lower ground, billboards and the
   sky with its sun, moon, stars and clouds; the weather over it all; landmarks standing over the
-  land out to 40 squares (`LANDMARK_REACH`, `src/ui/view/compositor.ts`); and where nothing is
+  land out to their kind's reach (`LANDMARK_REACH`, `src/ui/view/landmarks.ts`); and where nothing is
   built, the void drawn as the ground the world map paints there. Drawn from vector shapes at
   runtime, not bitmaps, so it scales and re-skins cheaply (see §13).
 - **Frame:** the status strip at the top right (the facing, the time and the place; the date and the

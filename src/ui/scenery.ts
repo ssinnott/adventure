@@ -1,9 +1,10 @@
 // The viewport's scenery, cel-shaded with the engine's helpers through a Brush: the trees dressed by
 // the season, the dead trees, the props scattered on open ground (#1103), the crystals, the lighthouse,
-// the monastery, the wilderness features (#1110), rocks, mountains, peaks, cliffs, the volcano, the
-// creeper trees and the pillar. Every sprite draws front-facing, centred on
+// the monastery, the landmarks of #1096, the wilderness features (#1110), rocks, mountains, peaks,
+// cliffs, the volcano, the creeper trees and the pillar. Every sprite draws front-facing, centred on
 // (x, y) with y the ground line; `tone` darkens with distance. The monsters are ./sprites.ts's.
 import type { TreeName, TreeWeights } from '../content/area.ts';
+import type { Landmark } from '../game/mapdef.ts';
 import { shade, mix, rgba } from '../lib/art/palettes.ts';
 import { celBall, celCapsule, celPoly, celTaper, band } from '../lib/art/shading.ts';
 import { B, stroke } from './monsters/common.ts';
@@ -601,7 +602,7 @@ export function drawLighthouseSprite(ctx: CanvasRenderingContext2D, x: number, y
  * hills. Snow lies along the wall's top and on the caps when `snow` lies. Wider than its square, as
  * it is seen from far off; near to, the block of building squares it stands in hides its foot.
  */
-export function drawMonasterySprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, snow = 0): void {
+function drawMonasterySprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, tone: number, snow = 0): void {
   const stone = shade('#a8a090', tone), shadow = shade('#7e776a', tone), coping = shade('#5e584e', tone);
   const slate = shade('#555660', tone), slateShadow = shade('#393a42', tone), dark = shade('#221e1a', tone);
   const bronze = shade('#b08a42', tone), white = shade('#eef2f7', tone), snowy = snow > 0.2;
@@ -640,6 +641,300 @@ export function drawMonasterySprite(ctx: CanvasRenderingContext2D, x: number, y:
     ctx.strokeStyle = dark; ctx.lineWidth = Math.max(1, u * 0.03); ctx.beginPath(); ctx.moveTo(tx, tt - cap); ctx.lineTo(tx, tt - cap - u * 0.3); ctx.stroke();
   }
 }
+
+// ---- The landmarks of #1096 ------------------------------------------------------------------------
+// The tall sites the world map charts, each kind a drawing drawn as the lighthouse and the monastery are:
+// front-facing on its foot at y, in squares' half widths u, flat colour lit from the left, `tone`
+// darkening it by night and in murk as theirs, snow white along its tops once it lies, and wider than
+// its square, as it is seen from far off (view/landmarks.ts says how far, and what nearer land hides).
+// Nothing in them moves: smoke leans with the wind the scene is painted in, and a fire shows by the
+// night's glow.
+
+/**
+ * How a landmark of #1096 is drawn: its tone; the snow lying (0 .. 1); the wind across the view, toward
+ * the right hand (-1 .. 1), which its smoke leans with; the night's glow on its fires and from under its
+ * smoke (0 by day .. 1 by night); and, for a volcano seen on the skyline, the colour the horizon paints its
+ * rock there, so the cone and its range read as one (its own when absent).
+ */
+interface LandmarkLook { tone: number; snow: number; wind: number; glow: number; rock?: string }
+
+/** A polygon of points [x, y, x, y, …], filled flat. */
+function fillPts(ctx: CanvasRenderingContext2D, pts: readonly number[], c: string): void {
+  ctx.fillStyle = c; ctx.beginPath(); ctx.moveTo(pts[0], pts[1]);
+  for (let i = 2; i < pts.length; i += 2) ctx.lineTo(pts[i], pts[i + 1]);
+  ctx.closePath(); ctx.fill();
+}
+
+/** A block from (x0, y0) to (x1, y1) on whole pixels, never less than one across. */
+function slab(ctx: CanvasRenderingContext2D, x0: number, y0: number, x1: number, y1: number, c: string): void {
+  const a = Math.round(x0), b = Math.round(y0);
+  ctx.fillStyle = c; ctx.fillRect(a, b, Math.max(1, Math.round(x1) - a), Math.max(1, Math.round(y1) - b));
+}
+
+/** A block `w` either side of x from y0 down to y1, lit on its left and in shade on its right. */
+function litSlab(ctx: CanvasRenderingContext2D, x: number, w: number, y0: number, y1: number, lit: string, dim: string): void {
+  slab(ctx, x - w, y0, x, y1, lit); slab(ctx, x, y0, x + w, y1, dim);
+}
+
+/** `n` merlons along a wall's top from x0 to x1, standing `h` on y, and snow `s` deep on each where it lies. */
+function merlons(ctx: CanvasRenderingContext2D, x0: number, x1: number, y: number, h: number, n: number, c: string, snow: string | null, s: number): void {
+  const step = (x1 - x0) / (2 * n - 1);
+  for (let i = 0; i < n; i++) {
+    slab(ctx, x0 + 2 * i * step, y - h, x0 + (2 * i + 1) * step, y, c);
+    if (snow) slab(ctx, x0 + 2 * i * step, y - h - s, x0 + (2 * i + 1) * step, y - h, snow);
+  }
+}
+
+/**
+ * Smoke going up from (x, y): `n` puffs over `rise`, each wider than the one under it and thinner at the
+ * top, leaning off with the wind and lit `fire`'s red from under by the night's glow. A quiet plume:
+ * painted with the scene, so it stands still.
+ */
+function smoke(ctx: CanvasRenderingContext2D, x: number, y: number, r0: number, rise: number, n: number, o: LandmarkLook, fire: string): void {
+  const grey = shade('#8e8882', Math.max(o.tone, 0.4)), pale = shade('#bdb7ae', Math.max(o.tone, 0.4));
+  for (let k = n - 1; k >= 0; k--) {
+    const t = k / (n - 1), r = r0 * (1 + 0.9 * t), px = x + o.wind * rise * 0.9 * t * t, py = y - rise * t;
+    ctx.globalAlpha = 1 - 0.5 * t * t;
+    ctx.fillStyle = mix(grey, fire, o.glow * 0.7 * (1 - t)); ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = mix(pale, fire, o.glow * 0.5 * (1 - t)); ctx.beginPath(); ctx.arc(px - r * 0.25, py - r * 0.3, r * 0.55, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+/** A volcano's cone over its foot, in squares' half widths: its lip, where its plume goes up off its mouth. */
+export const VOLCANO_LIP = 2;
+
+/**
+ * A volcano standing over the land: its cone, broad at the foot and cut off at its lip, the lip notched
+ * where its mouth is, ash run pale down from it and thin snow under it once snow lies; the fire in the
+ * mouth dull by day and bright by night, and the plume going up off it, leaning with the wind and lit red
+ * from under by night.
+ */
+function drawGreatVolcanoSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: LandmarkLook): void {
+  const rock = o.rock ?? shade('#48302c', o.tone), dim = shade(rock, 0.8), ash = mix(rock, shade('#a49a90', o.tone), 0.3);
+  const P = (f: number, t: number): number[] => [x + f * u, y - t * u], L = VOLCANO_LIP;
+  fillPts(ctx, [...P(-2.4, 0), ...P(-1.35, L * 0.48), ...P(-0.8, L * 0.8), ...P(-0.52, L), ...P(-0.24, L * 0.985), ...P(-0.12, L * 0.94), ...P(0, L * 0.94), ...P(0, 0)], rock);
+  fillPts(ctx, [...P(0, 0), ...P(0, L * 0.94), ...P(0.13, L * 0.94), ...P(0.25, L * 0.99), ...P(0.52, L), ...P(0.8, L * 0.8), ...P(1.35, L * 0.48), ...P(2.4, 0)], dim);
+  // The ash run down each flank from the lip, paler on the lit one.
+  for (const [f0, f1, t1] of [[-0.38, -1.05, 0.42], [-0.12, -0.32, 0.55], [0.3, 0.92, 0.4]]) fillPts(ctx, [...P(f0 - 0.05, L * 0.97), ...P(f0 + 0.05, L * 0.97), ...P(f1 + 0.04, L * t1), ...P(f1 - 0.04, L * t1)], f0 < 0 ? ash : shade(ash, 0.82));
+  // Snow under the lip on either side of the mouth, deeper as it lies deeper; never in the mouth.
+  if (o.snow > 0.05) {
+    const d = L * (0.07 + 0.1 * Math.min(1, o.snow)), white = shade(SNOW_WHITE, o.tone);
+    fillPts(ctx, [...P(-0.52, L), ...P(-0.24, L * 0.985), ...P(-0.2, L - d), ...P(-0.42, L - d * 1.4), ...P(-0.62, L - d * 0.8)], white);
+    fillPts(ctx, [...P(0.52, L), ...P(0.25, L * 0.99), ...P(0.21, L - d * 1.2), ...P(0.44, L - d), ...P(0.63, L - d * 1.3)], white);
+  }
+  // The fire in the mouth, then the plume off it.
+  slab(ctx, x - 0.12 * u, y - L * 0.985 * u, x + 0.13 * u, y - L * 0.94 * u, mix('#7a2a14', '#ffb040', o.glow));
+  smoke(ctx, x, y - L * 0.97 * u, u * 0.24, u * 2.2, 6, o, '#c0583a');
+}
+
+/**
+ * A walled city: its curtain wall with a gate under the gatehouse and merlons along the top, a round
+ * tower at each end under a slate cone, the roofs of its houses over the wall, a church's spire and its
+ * keep standing over it all, a turret at each corner. Snow lies along the tops.
+ */
+function drawCitySprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: LandmarkLook): void {
+  const stone = shade('#b4ab9a', o.tone), dim = shade('#878071', o.tone), coping = shade('#625c52', o.tone), dark = shade('#221e1a', o.tone);
+  const slate = shade('#555660', o.tone), slateDim = shade('#393a42', o.tone), tile = shade('#94503a', o.tone), tileDim = shade('#6a3828', o.tone);
+  const white = o.snow > 0.2 ? shade(SNOW_WHITE, o.tone) : null, s = Math.max(1, u * 0.06);
+  const cap = (cx: number, foot: number, w: number, h: number): void => { fillPts(ctx, [cx - w, foot, cx, foot - h, cx, foot], slate); fillPts(ctx, [cx, foot, cx, foot - h, cx + w, foot], slateDim); };
+  // The church's spire behind on the left, and the keep in the middle: its windows, battlements and turrets.
+  litSlab(ctx, x - 1.15 * u, 0.13 * u, y - 2.5 * u, y, stone, dim); cap(x - 1.15 * u, y - 2.5 * u, 0.18 * u, 0.9 * u);
+  const kw = 0.68 * u, kt = y - 3.3 * u;
+  litSlab(ctx, x, kw, kt, y, stone, dim);
+  slab(ctx, x - kw, kt, x + kw, kt + s, coping);
+  for (const [f, t] of [[-0.3, 2.6], [0.3, 2.6], [-0.3, 1.9]]) slab(ctx, x + f * u - 0.04 * u, y - t * u, x + f * u + 0.04 * u, y - (t - 0.24) * u, dark);
+  merlons(ctx, x - kw, x + kw, kt, 0.2 * u, 4, stone, white, s);
+  for (const tx of [x - kw, x + kw]) { litSlab(ctx, tx, 0.15 * u, kt - 0.45 * u, kt + 0.3 * u, stone, dim); cap(tx, kt - 0.45 * u, 0.2 * u, 0.4 * u); }
+  // The houses' roofs over the wall between the keep and the towers.
+  for (const [f, h, w] of [[-1.75, 1.75, 0.32], [-0.95, 1.95, 0.36], [0.95, 1.85, 0.34], [1.65, 1.7, 0.3]]) {
+    fillPts(ctx, [x + (f - w) * u, y - 1.2 * u, x + f * u, y - h * u, x + f * u, y - 1.2 * u], tile);
+    fillPts(ctx, [x + f * u, y - 1.2 * u, x + f * u, y - h * u, x + (f + w) * u, y - 1.2 * u], tileDim);
+  }
+  // The curtain wall, its right-hand end in shade, its merlons and snow, the gatehouse over the gate.
+  const ww = 2.3 * u, wt = y - 1.2 * u;
+  slab(ctx, x - ww, wt, x + ww, y, stone); slab(ctx, x + ww * 0.72, wt, x + ww, y, dim);
+  merlons(ctx, x - ww, x + ww, wt, 0.16 * u, 9, stone, white, s);
+  slab(ctx, x - ww, wt, x + ww, wt + s, coping);
+  litSlab(ctx, x, 0.36 * u, y - 1.6 * u, y, stone, dim);
+  merlons(ctx, x - 0.36 * u, x + 0.36 * u, y - 1.6 * u, 0.16 * u, 3, stone, white, s);
+  fillPts(ctx, [x - 0.17 * u, y, x - 0.17 * u, y - 0.45 * u, x, y - 0.62 * u, x + 0.17 * u, y - 0.45 * u, x + 0.17 * u, y], dark);
+  for (const tx of [x - ww, x + ww]) { litSlab(ctx, tx, 0.3 * u, y - 1.75 * u, y, stone, dim); cap(tx, y - 1.75 * u, 0.38 * u, 0.6 * u); if (white) slab(ctx, tx - 0.38 * u, y - 1.75 * u - s, tx + 0.38 * u, y - 1.75 * u, white); }
+}
+
+/**
+ * A ring of standing stones: the far side's smaller, higher on the ground and in shade, two of them under
+ * a lintel; the near side's taller, each leaning a little and lit on its left. Snow caps their tops.
+ */
+function drawRingSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: LandmarkLook): void {
+  const stone = shade('#908e84', o.tone), dim = shade('#66645c', o.tone), far = shade('#727068', o.tone), farDim = shade('#52504a', o.tone);
+  const white = o.snow > 0.2 ? shade(SNOW_WHITE, o.tone) : null, s = Math.max(1, u * 0.06);
+  const stoneAt = (sx: number, foot: number, h: number, w: number, lean: number, c: string, d: string): void => {
+    const top = foot - h;
+    fillPts(ctx, [sx - w, foot, sx - w * 0.8 + lean, top, sx + lean, top - h * 0.04, sx, foot], c);
+    fillPts(ctx, [sx, foot, sx + lean, top - h * 0.04, sx + w * 0.8 + lean, top, sx + w, foot], d);
+    if (white) slab(ctx, sx - w * 0.8 + lean, top - s, sx + w * 0.8 + lean, top + s, white);
+  };
+  const back = y - 0.25 * u;
+  for (const [f, h, l] of [[-1.3, 1.25, 0.03], [-0.5, 1.45, 0], [0.45, 1.45, 0], [1.25, 1.2, -0.04]]) stoneAt(x + f * u, back, h * u, 0.15 * u, l * u, far, farDim);
+  slab(ctx, x - 0.66 * u, back - 1.6 * u, x + 0.62 * u, back - 1.43 * u, far);
+  if (white) slab(ctx, x - 0.66 * u, back - 1.6 * u - s, x + 0.62 * u, back - 1.6 * u, white);
+  for (const [f, h, l] of [[-1.75, 1.35, -0.04], [-0.95, 1.8, 0.02], [-0.05, 1.55, 0], [0.85, 1.75, -0.03], [1.65, 1.3, 0.05]]) stoneAt(x + f * u, y, h * u, 0.19 * u, l * u, stone, dim);
+}
+
+/**
+ * A tower: a square shaft of stone narrowing a little as it goes up, a door at its foot, slits up it and
+ * string courses round it, its parapet corbelled out over the top under three merlons. Snow lies on them.
+ */
+function drawTowerSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: LandmarkLook): void {
+  const stone = shade('#8e877a', o.tone), dim = shade('#686256', o.tone), coping = shade('#55504a', o.tone), dark = shade('#221e1a', o.tone);
+  const white = o.snow > 0.2 ? shade(SNOW_WHITE, o.tone) : null, s = Math.max(1, u * 0.06);
+  const wb = 0.5 * u, wt = 0.42 * u, top = y - 4.3 * u, half = (t: number): number => wb + (wt - wb) * t;
+  fillPts(ctx, [x - wb, y, x - wt, top, x, top, x, y], stone);
+  fillPts(ctx, [x, y, x, top, x + wt, top, x + wb, y], dim);
+  for (const t of [0.36, 0.68]) slab(ctx, x - half(t), y - (y - top) * t, x + half(t), y - (y - top) * t + s, coping);
+  fillPts(ctx, [x - 0.12 * u, y, x - 0.12 * u, y - 0.42 * u, x, y - 0.55 * u, x + 0.12 * u, y - 0.42 * u, x + 0.12 * u, y], dark);
+  for (const [f, t] of [[-0.18, 0.47], [0.14, 0.58], [-0.12, 0.82]]) slab(ctx, x + f * u - 0.035 * u, y - (y - top) * t, x + f * u + 0.035 * u, y - (y - top) * t + 0.24 * u, dark);
+  const pw = wt + 0.08 * u, ph = 0.32 * u;
+  litSlab(ctx, x, pw, top - ph, top, stone, dim);
+  slab(ctx, x - pw, top - s, x + pw, top + s, coping);
+  merlons(ctx, x - pw, x + pw, top - ph, 0.22 * u, 3, stone, white, s);
+}
+
+/**
+ * A great tree: a broad trunk flared at its roots, two limbs going up into a crown far wider than any
+ * tree's, dark and evergreen the year round, lit on its upper left and deep in shade under its right.
+ * Snow lies on the crown's top.
+ */
+function drawGreatTreeSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: LandmarkLook): void {
+  const bark = shade('#4c3e30', o.tone), barkDim = shade('#33291f', o.tone), leaf = shade('#2e5a34', o.tone), lit = shade('#3f7240', o.tone), deep = shade('#21422a', o.tone);
+  const white = o.snow > 0.2 ? shade(SNOW_WHITE, o.tone) : null;
+  fillPts(ctx, [x - 0.62 * u, y, x - 0.36 * u, y - 0.35 * u, x - 0.3 * u, y - 2.7 * u, x, y - 2.7 * u, x, y], bark);
+  fillPts(ctx, [x, y, x, y - 2.7 * u, x + 0.28 * u, y - 2.7 * u, x + 0.34 * u, y - 0.35 * u, x + 0.6 * u, y], barkDim);
+  fillPts(ctx, [x - 0.28 * u, y - 2.1 * u, x - 1.3 * u, y - 3.2 * u, x - 1.2 * u, y - 3.4 * u, x - 0.15 * u, y - 2.5 * u], bark);
+  fillPts(ctx, [x + 0.22 * u, y - 2.3 * u, x + 1.25 * u, y - 3.4 * u, x + 1.15 * u, y - 3.6 * u, x + 0.1 * u, y - 2.7 * u], barkDim);
+  for (const [f, t, r, c] of [[-1.45, 3.4, 0.85, deep], [1.45, 3.5, 0.85, deep], [0, 3.3, 1, deep], [-0.95, 4.3, 0.95, leaf], [0.95, 4.35, 0.95, leaf], [0, 4.9, 1.05, leaf], [-1.35, 4.2, 0.5, lit], [-0.55, 5.2, 0.62, lit], [0.35, 5.45, 0.45, lit]] as const) {
+    const bx = x + f * u, by = y - t * u, br = r * u;
+    if (white && t > 4) { ctx.fillStyle = white; ctx.beginPath(); ctx.arc(bx, by - br * 0.2, br, 0, Math.PI * 2); ctx.fill(); }
+    ctx.fillStyle = c; ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill();
+  }
+}
+
+/**
+ * Chimney stacks over the works they draw for: three of brick, each taller than the last is short, under
+ * a dark cap and its smoke leaning with the wind; the long low works under its roof, its furnaces' mouths
+ * dull red by day and bright by night, which light the smoke from under. Snow lies along the roof.
+ */
+function drawStacksSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: LandmarkLook): void {
+  const brick = shade('#7e4838', o.tone), brickDim = shade('#5a3124', o.tone), wall = shade('#5e4c42', o.tone), wallDim = shade('#44362e', o.tone);
+  const roof = shade('#3c3a3c', o.tone), dark = shade('#1e1a18', o.tone), white = o.snow > 0.2 ? shade(SNOW_WHITE, o.tone) : null;
+  const stacks = [[-1.0, 4.2, 0.17], [0.2, 5.0, 0.2], [1.1, 3.6, 0.15]];
+  for (const [f, h, w] of stacks) {
+    const sx = x + f * u, top = y - h * u;
+    fillPts(ctx, [sx - w * u, y - u, sx - w * 0.8 * u, top, sx, top, sx, y - u], brick);
+    fillPts(ctx, [sx, y - u, sx, top, sx + w * 0.8 * u, top, sx + w * u, y - u], brickDim);
+    slab(ctx, sx - w * u, top, sx + w * u, top + 0.14 * u, dark);
+  }
+  slab(ctx, x - 1.7 * u, y - u, x + 1.7 * u, y, wall); slab(ctx, x + 1.2 * u, y - u, x + 1.7 * u, y, wallDim);
+  fillPts(ctx, [x - 1.8 * u, y - u, x - 1.45 * u, y - 1.4 * u, x + 1.45 * u, y - 1.4 * u, x + 1.8 * u, y - u], roof);
+  if (white) slab(ctx, x - 1.45 * u, y - 1.4 * u - Math.max(1, u * 0.06), x + 1.45 * u, y - 1.4 * u, white);
+  for (const f of [-1.2, -0.4, 0.4, 1.2]) slab(ctx, x + (f - 0.14) * u, y - 0.42 * u, x + (f + 0.14) * u, y, mix('#4a1e12', '#e07a32', o.glow));
+  for (const [f, h, w] of stacks) smoke(ctx, x + f * u, y - (h + 0.12) * u, w * 1.1 * u, 1.3 * u, 4, o, '#d0683a');
+}
+
+/**
+ * A fortress: a battered wall broad at its foot under heavy merlons, two square towers flanking its gate,
+ * the great hall standing behind; the gate a deep square mouth under its lintel, its portcullis down,
+ * dark by day and lit dim from within by night. Snow lies along the tops.
+ */
+function drawFortressSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: LandmarkLook): void {
+  const stone = shade('#776f64', o.tone), dim = shade('#575047', o.tone), coping = shade('#433d36', o.tone), dark = shade('#1c1916', o.tone);
+  const white = o.snow > 0.2 ? shade(SNOW_WHITE, o.tone) : null, s = Math.max(1, u * 0.06);
+  litSlab(ctx, x, 1.35 * u, y - 2.35 * u, y, stone, dim);
+  merlons(ctx, x - 1.35 * u, x + 1.35 * u, y - 2.35 * u, 0.24 * u, 5, stone, white, s);
+  fillPts(ctx, [x - 2.15 * u, y, x - 1.95 * u, y - 1.45 * u, x, y - 1.45 * u, x, y], stone);
+  fillPts(ctx, [x, y, x, y - 1.45 * u, x + 1.95 * u, y - 1.45 * u, x + 2.15 * u, y], dim);
+  merlons(ctx, x - 1.95 * u, x + 1.95 * u, y - 1.45 * u, 0.2 * u, 7, stone, white, s);
+  for (const side of [-1, 1]) {
+    const tx = x + side * 0.78 * u;
+    fillPts(ctx, [tx - 0.46 * u, y, tx - 0.4 * u, y - 2.85 * u, tx, y - 2.85 * u, tx, y], stone);
+    fillPts(ctx, [tx, y, tx, y - 2.85 * u, tx + 0.4 * u, y - 2.85 * u, tx + 0.46 * u, y], dim);
+    merlons(ctx, tx - 0.4 * u, tx + 0.4 * u, y - 2.85 * u, 0.26 * u, 2, side < 0 ? stone : dim, white, s);
+    slab(ctx, tx - 0.035 * u, y - 2.2 * u, tx + 0.035 * u, y - 1.9 * u, dark);
+  }
+  slab(ctx, x - 0.3 * u, y - 0.95 * u, x + 0.3 * u, y, mix(dark, '#a04a22', 0.5 * o.glow));
+  for (const f of [-0.15, 0, 0.15]) slab(ctx, x + (f - 0.025) * u, y - 0.95 * u, x + (f + 0.025) * u, y, coping);
+  slab(ctx, x - 0.3 * u, y - 0.6 * u, x + 0.3 * u, y - 0.56 * u, coping);
+  slab(ctx, x - 0.38 * u, y - 1.08 * u, x + 0.38 * u, y - 0.95 * u, coping);
+}
+
+/**
+ * Falls: a drop of dark rock, ragged along its top, ledged across, the water pouring over its lip in the
+ * middle and falling the height of it, streaked; at its foot the spray, a cloud wider than the fall, and
+ * mist hung over the drop. Snow lies along the rock's top; the water never takes it.
+ */
+function drawFallsSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: LandmarkLook): void {
+  const rock = shade('#5a5c52', o.tone), rockDim = shade('#43453d', o.tone), ledge = shade('#33352f', o.tone);
+  const water = shade('#d2e0e6', o.tone), streak = shade('#9cb2be', o.tone), spray = shade('#e6eef0', o.tone), mist = shade('#c4d2d8', o.tone);
+  const P = (f: number, t: number): number[] => [x + f * u, y - t * u];
+  const left: [number, number][] = [[-1.55, 0], [-1.5, 2.7], [-1.1, 3.0], [-0.6, 2.85], [-0.35, 3.05], [0, 3.05]], right: [number, number][] = [[0, 3.05], [0.35, 3.05], [0.7, 2.9], [1.15, 3.1], [1.5, 2.75], [1.55, 0]];
+  fillPts(ctx, [...left.flatMap(([f, t]) => P(f, t)), ...P(0, 0)], rock);
+  fillPts(ctx, [...P(0, 0), ...right.flatMap(([f, t]) => P(f, t))], rockDim);
+  if (o.snow > 0.2) { const d = 0.08 + 0.1 * Math.min(1, o.snow); fillPts(ctx, [...[...left, ...right.slice(1)].slice(1, -1).flatMap(([f, t]) => P(f, t)), ...[...left, ...right.slice(1)].slice(1, -1).reverse().flatMap(([f, t]) => P(f * 0.98, t - d))], shade(SNOW_WHITE, o.tone)); }
+  for (const [f0, f1, t] of [[-1.4, -0.45, 2.0], [0.45, 1.35, 1.3], [-1.3, -0.5, 0.9]]) slab(ctx, x + f0 * u, y - t * u, x + f1 * u, y - (t - 0.07) * u, ledge);
+  fillPts(ctx, [...P(-0.3, 3.05), ...P(0.3, 3.05), ...P(0.42, 0.4), ...P(-0.42, 0.4)], water);
+  for (const f of [-0.18, 0.05, 0.22]) slab(ctx, x + (f - 0.025) * u, y - 2.9 * u, x + (f + 0.025) * u, y - 0.6 * u, streak);
+  for (const [f, t, r] of [[-0.75, 0.35, 0.42], [0.75, 0.38, 0.4], [-0.35, 0.55, 0.5], [0.35, 0.6, 0.5], [0, 0.45, 0.55]]) { ctx.fillStyle = spray; ctx.beginPath(); ctx.arc(x + f * u, y - t * u, r * u, 0, Math.PI * 2); ctx.fill(); }
+  ctx.globalAlpha = 0.7;
+  for (const [f, t, r] of [[-0.55, 1.5, 0.35], [0.5, 1.9, 0.3]]) { ctx.fillStyle = mist; ctx.beginPath(); ctx.arc(x + f * u, y - t * u, r * u, 0, Math.PI * 2); ctx.fill(); }
+  ctx.globalAlpha = 1;
+}
+
+/**
+ * A wreck: a ship aground and listing, her bow raised to the left, a strake along her and a gash in her
+ * side; her masts leaning with her, the main standing whole with a yard across it and another hanging,
+ * a rag of sail on it, the fore broken off and the mizzen short, her rigging run down to bow and stern.
+ * Snow lies along her rail.
+ */
+function drawWreckSprite(ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: LandmarkLook): void {
+  const timber = shade('#4c3c2e', o.tone), timberDim = shade('#382c22', o.tone), spar = shade('#3a2e24', o.tone), rail = shade('#6a5644', o.tone), dark = shade('#1a1612', o.tone), sail = shade('#b4aa92', o.tone);
+  const P = (f: number, t: number): number[] => [x + f * u, y - t * u];
+  fillPts(ctx, [...P(-2.05, 1.15), ...P(1.75, 0.85), ...P(1.55, 0), ...P(-1.35, 0)], timber);
+  fillPts(ctx, [...P(-1.72, 0.45), ...P(1.63, 0.4), ...P(1.55, 0), ...P(-1.35, 0)], timberDim);
+  fillPts(ctx, [...P(-2.05, 1.15), ...P(1.75, 0.85), ...P(1.74, 0.77), ...P(-2.0, 1.07)], o.snow > 0.2 ? shade(SNOW_WHITE, o.tone) : rail);
+  fillPts(ctx, [...P(0.3, 0.75), ...P(0.75, 0.6), ...P(0.6, 0.25), ...P(0.25, 0.4)], dark);
+  const mast = (f: number, t: number, len: number, w: number): [number, number] => {
+    const lean = 0.12 * len;
+    fillPts(ctx, [...P(f - w, t), ...P(f + lean - w * 0.7, t + len), ...P(f + lean + w * 0.7, t + len), ...P(f + w, t)], spar);
+    return [f + lean, t + len];
+  };
+  const [mx, mt] = mast(0.1, 1.0, 3.3, 0.09), [fx, ft] = mast(-1.15, 1.08, 1.7, 0.08), [zx, zt] = mast(1.15, 0.92, 2.0, 0.07);
+  fillPts(ctx, [...P(fx - 0.1, ft), ...P(fx + 0.02, ft + 0.22), ...P(fx + 0.1, ft)], spar);
+  fillPts(ctx, [...P(mx - 0.8, mt - 0.95), ...P(mx + 0.62, mt - 0.82), ...P(mx + 0.62, mt - 0.9), ...P(mx - 0.8, mt - 1.03)], spar);
+  fillPts(ctx, [...P(mx - 0.4, mt - 1.55), ...P(mx + 0.55, mt - 2.05), ...P(mx + 0.58, mt - 1.98), ...P(mx - 0.37, mt - 1.48)], spar);
+  fillPts(ctx, [...P(mx - 0.72, mt - 0.99), ...P(mx - 0.2, mt - 0.95), ...P(mx - 0.3, mt - 1.65), ...P(mx - 0.66, mt - 1.5)], sail);
+  ctx.save();
+  ctx.strokeStyle = spar; ctx.lineWidth = Math.max(1, u * 0.03);
+  for (const [a, b] of [[P(mx, mt), P(-2.05, 1.15)], [P(mx, mt), P(1.75, 0.85)], [P(zx, zt), P(1.75, 0.85)]]) { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
+  ctx.restore();
+}
+
+/** Each landmark's drawing, by its kind: the lighthouse's lamp is the compositor's to light. */
+export const LANDMARK_SPRITES: Readonly<Record<Landmark['kind'], (ctx: CanvasRenderingContext2D, x: number, y: number, u: number, o: LandmarkLook) => void>> = {
+  lighthouse: (ctx, x, y, u, o) => { drawLighthouseSprite(ctx, x, y, u, o.tone, 0, o.snow); },
+  monastery: (ctx, x, y, u, o) => drawMonasterySprite(ctx, x, y, u, o.tone, o.snow),
+  volcano: drawGreatVolcanoSprite, city: drawCitySprite, ring: drawRingSprite, tower: drawTowerSprite, tree: drawGreatTreeSprite,
+  stacks: drawStacksSprite, fortress: drawFortressSprite, falls: drawFallsSprite, wreck: drawWreckSprite,
+};
+
+/**
+ * How tall each landmark's drawing stands over its foot, in squares' half widths, to its topmost pixel but
+ * a smoke's: what its reach is reckoned from (view/landmarks.ts). The lighthouse's to its finial.
+ */
+export const LANDMARK_HEIGHT: Readonly<Record<Landmark['kind'], number>> = {
+  lighthouse: LIGHTHOUSE_HEIGHT + 1.16, monastery: 4.9, volcano: VOLCANO_LIP, city: 4.15, ring: 1.87, tower: 4.84, tree: 5.95,
+  stacks: 5, fortress: 3.11, falls: 3.1, wreck: 4.3,
+};
 
 // ---- The wilderness features (#1110) --------------------------------------------------------------
 // What the view draws for a feature on its square (view/features.ts says which, and where): each kind
