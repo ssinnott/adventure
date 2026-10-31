@@ -195,6 +195,9 @@ export const THORNMARK: MapDef<'thornmark'> = {
       choice: { ask: 'Lift it, with its earth?', answers: [{ label: 'Lift it.', gives: 'grove_seedling', sets: 'q_seedling_taken', says: ['It comes up whole, roots and earth, and sits in two hands.'] }] },
     },
   ],
+  // The old Warden watchtower, drawn as the tower it is over the land and seen from far off, on the building
+  // square the world map's point for it falls in.
+  landmarks: [{ x: 4, y: 5, kind: 'tower' }],
   encounters: [
     { id: 'tm_wolves1', x: 5, y: 9, monsters: ['dire_wolf', 'dire_wolf', 'dire_wolf', 'dire_wolf'], aware: 5, respawn: RESPAWN.day },
     { id: 'tm_ogre', x: 5, y: 7, monsters: ['ogre', 'brigand_archer', 'brigand', 'brigand', 'brigand'], aware: 3, roams: false, choice: BARGAIN },
