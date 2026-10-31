@@ -42,7 +42,7 @@ interface SkillDef {
 export const SKILL_PRICE = 1000;
 
 export const SKILLS: Readonly<Record<SkillId, SkillDef>> = {
-  linguist: { id: 'linguist', name: 'Linguist', text: 'Reads Kiln-script.', guild: 'lanterns', price: SKILL_PRICE, races: ['dwarf'] },
+  linguist: { id: 'linguist', name: 'Linguist', text: 'Reads Kiln-script.', guild: 'lanterns', price: SKILL_PRICE, races: ['dwarf'], classes: ['bard'] },
   // No people is born to these two: the Tidefolk swim by their people (`RACES`), not by the skill.
   mountaineer: { id: 'mountaineer', name: 'Mountaineer', text: 'Climbs mountain and cliff.', guild: 'wardens', price: SKILL_PRICE },
   swimmer: { id: 'swimmer', name: 'Swimmer', text: 'Swims deep water.', guild: 'cartographers', price: SKILL_PRICE },
