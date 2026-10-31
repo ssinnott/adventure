@@ -56,6 +56,8 @@ export const HIGHSPINE_I10: MapDef<'highspine_i10'> = {
   band: [22, 24],
   region: 'whitespine',
   start: { x: 27, y: 30, facing: NORTH },
+  // Stairwatch drawn tall: the rock south of the ledge, a building's square in place of rock, stands over the land as a tower.
+  landmarks: [{ x: 6, y: 27, kind: 'tower' }],
   rows: [
     '|ppppppppppppppppp=MMMMMAAAAAAAM',
     '|ppppppppppppppppp=pMMMMAAAAAAAM',
@@ -84,7 +86,7 @@ export const HIGHSPINE_I10: MapDef<'highspine_i10'> = {
     'p||rrrSrrpppppppppppppppp=pMMMMM',
     'a||rrr:rrpppppppppppppppp=pMMMMM',
     'ap||r""rrpppppppppppppppp==pMMMM',
-    'pp||rrrrpppppppppppppppppp=pMMMM',
+    'pp||rrBrpppppppppppppppppp=pMMMM',
     'pp||pppppppppppppppppppppp=MMMMM',
     'pp||pppppppppppppppppppppp==MMMM',
     'pp||ppppppppppppppppppppppM=MMMM',
