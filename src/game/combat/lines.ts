@@ -38,6 +38,8 @@ export const DIM_LINE = 'Through the roof, the light goes out a little.', THREAD
  * the mark a sneak attack's hit takes (`sneaks`), a sentence after the hit's own and before a death.
  */
 export const FIRST_LINE = 'The company strikes first.', SNEAK_LINE = 'Sneak attack.';
+/** The mark a critical hit takes (`critChance`, #1114): after the hit's own sentence and a sneak attack's, before a death. */
+export const CRIT_LINE = 'A true blow.';
 /** The mark a Windwalker's felling hit takes when its blow carries on to the next foe (`followsThrough`, #1070), after the death. */
 export const FOLLOW_LINE = 'The blow carries on.';
 /** The log's line when those that obey stand down at the last leader's fall (`morale`). */

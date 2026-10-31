@@ -10,13 +10,13 @@ import { spell } from './spells.ts';
 import { item, ELEMENT_DIE, chargesLeft } from './items.ts';
 import {
   attackBonus, weaponOf, isDown, canAct, damage, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay, armsBonus,
-  statOf, borne, useItem,
+  statOf, borne, useItem, critChance, CRITS_ON,
 } from './party.ts';
 import type { Party } from './party.ts';
 import type { Tables } from './tables.ts';
 import { FRONT_ROW, MAX_MONSTERS, HASTE_SPEED, describe, toHit, roll, standing, frontStands, aliveMonsters, HOLD_BREAKS } from './combat/state.ts';
 import type { MonsterInst, TurnRef, PartyAction, Loot, CombatState, CombatOpts, CombatGroup } from './combat/state.ts';
-import { STONE_LINE, FIRST_LINE, SNEAK_LINE, FOLLOW_LINE, victoryLine } from './combat/lines.ts';
+import { STONE_LINE, FIRST_LINE, SNEAK_LINE, CRIT_LINE, FOLLOW_LINE, victoryLine } from './combat/lines.ts';
 import {
   blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow, strikesFirst, sneaks, followsThrough,
 } from './combat/perks.ts';
@@ -67,6 +67,7 @@ export function startCombat(tables: Tables, party: Party, groups: readonly Comba
     defending: party.members.map(() => false), rangedPenalty: opts.rangedPenalty ?? 0, log: [], outcome: 'ongoing', loot: null,
     ...(opts.spellsGrowTo !== undefined ? { spellsGrowTo: opts.spellsGrowTo } : {}),
     ...(opts.rankStep !== undefined ? { rankStep: opts.rankStep } : {}),
+    ...(opts.crits !== undefined ? { crits: opts.crits } : {}),
     ...(opts.edge ? { edge: opts.edge } : {}),
   };
   s.log.push(describeGroups(s) + ' attack!');
@@ -159,15 +160,19 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
         const hit = rng.chance(toHit(attackBonus(s.tables.items, c) + buffHit(s, party, t.i) - (w.ranged && !weatherproof(c) ? s.rangedPenalty : 0), monsterAc(s, m)));
         if (hit) {
           // An elemental weapon adds a die of its element to the steel, which lands as ever; a sneak
-          // attack (`sneaks`, read before the blow lands) is marked after the hit's own sentence.
-          const sneak = sneaks(s, c, m), dmg = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
+          // attack (`sneaks`, read before the blow lands) is marked after the hit's own sentence. A
+          // critical blow (`critChance`, #1114) doubles it all, drawn after its dice and only while
+          // crits are on, so that while they are off a blow draws what it drew before; its mark
+          // follows a sneak attack's.
+          const sneak = sneaks(s, c, m), struck = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
             + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
+          const chance = critChance(s.tables.items, c, s.crits ?? CRITS_ON), crit = chance > 0 && rng.chance(chance), dmg = crit ? 2 * struck : struck;
           hurtMonster(m, dmg);
           // The Windwalker's follow-through (`followsThrough`, #1070): a blow that fells its foe is not
           // spent while a foe it can reach stands, at most once more for each of the turn's own blows.
           const on = carries && m.hp <= 0 && blows < 2 * own && aliveMonsters(s).some((i) => canReach(s, c, i));
           if (on) blows++;
-          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : '') + (on ? ` ${FOLLOW_LINE}` : ''));
+          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (crit ? ` ${CRIT_LINE}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : '') + (on ? ` ${FOLLOW_LINE}` : ''));
         } else s.log.push(`${c.name} misses ${m.def.name}.`);
       }
       break;

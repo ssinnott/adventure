@@ -88,6 +88,8 @@ export interface CombatState {
   spellsGrowTo?: number;
   /** What a spell rank adds, where a tool tries another: RANK_STEP in play (see `rankMult`). */
   rankStep?: number;
+  /** Whether a blow may crit, where a tool turns crits on before play does: CRITS_ON in play (see `critChance`). */
+  crits?: boolean;
   /** What a tool trying new powers gives each member: none in play (see `Edge`). */
   edge?: (c: Character, s: CombatState) => Edge;
   log: string[];
@@ -97,10 +99,11 @@ export interface CombatState {
 
 /**
  * Where the fight happens, as far as the resolver cares: the weather's toll on missiles, and its line
- * for the log. A tool trying a ceiling on spells may also say where they stop growing, and one trying
- * new powers for the company what each member gains.
+ * for the log. A tool trying a ceiling on spells may also say where they stop growing, one trying
+ * new powers for the company what each member gains, and one trying crits before play has them
+ * whether blows crit.
  */
-export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; rankStep?: number; edge?: (c: Character, s: CombatState) => Edge; }
+export interface CombatOpts { rangedPenalty?: number; note?: string; spellsGrowTo?: number; rankStep?: number; crits?: boolean; edge?: (c: Character, s: CombatState) => Edge; }
 
 /**
  * What a tool trying new powers gives a member in a fight (tools/harness.ts): blows a turn with a
