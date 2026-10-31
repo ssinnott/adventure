@@ -10,7 +10,7 @@ import {
 } from '../party.ts';
 import type { ClassId, Party, Character, Condition } from '../party.ts';
 import type { Items } from '../tables.ts';
-import { FRONT_ROW, BLESS_HIT, HASTE_HIT } from './state.ts';
+import { FRONT_ROW, BLESS_HIT, HASTE_HIT, RALLY_HIT } from './state.ts';
 import type { MonsterInst, CombatState } from './state.ts';
 
 /** The blows each prestige adds a turn: a second at the first and a third at the third. */
@@ -26,6 +26,8 @@ export const BANNER_HIT = 2, MARKSMAN_MORE = 2, HOLY_STRIKE_RISEN = 6, SNEAK_GRO
 const SONG_DMG = 1, SONG_RISEN = 2;
 /** The share of its hit points a barbarian's Rage starts below: half, three quarters at its second prestige. */
 export const rageBelow = (c: Character): number => (c.cls === 'barbarian' && prestigeOf(c) >= 2 ? 0.75 : 0.5);
+/** Whether a member rages: it has Rage and stands below `rageBelow` (its blows' damage, and the barbarian's stamina, #1113). */
+export const rages = (c: Character): boolean => hasTrait(c, 'rage') && c.hp < c.maxHp * rageBelow(c);
 
 /**
  * Blows a turn with the weapon in hand: one, and a prestige's more where its weapon suits it, a
@@ -63,12 +65,14 @@ export const weatherproof = (c: Character): boolean => c.cls === 'ranger' && pre
 
 /**
  * The party's current to-hit bonus from buffs, from a bard still standing (more at its third), and
- * for a member of the front row (`at`, its slot) from a knight of the second prestige still standing.
+ * for a member of the front row (`at`, its slot) from a knight of the second prestige still standing
+ * and from a knight's Rally while it lasts (#1113).
  */
 export function buffHit(s: CombatState, party: Party, at?: number): number {
   const sung = singer(party), song = sung < 0 ? 0 : sung >= 3 ? SONG_RISEN : INSPIRE_HIT;
   const banner = at !== undefined && at < FRONT_ROW && party.members.some((m) => !isDown(m) && m.cls === 'knight' && prestigeOf(m) >= 2) ? BANNER_HIT : 0;
-  return (s.bless > 0 ? BLESS_HIT : 0) + (s.haste > 0 ? HASTE_HIT : 0) + song + banner;
+  const rally = s.rally && at !== undefined && at < FRONT_ROW ? RALLY_HIT : 0;
+  return (s.bless > 0 ? BLESS_HIT : 0) + (s.haste > 0 ? HASTE_HIT : 0) + song + banner + rally;
 }
 /** The damage a bard's song adds to every blow: 1 from its first prestige, 2 from its third. */
 export function songDamage(party: Party): number {
@@ -77,15 +81,15 @@ export function songDamage(party: Party): number {
 }
 
 /** Extra weapon damage from the attacker's traits and prestiges. */
-export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: MonsterInst): number {
+export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: MonsterInst, sneak = sneaks(s, c, m)): number {
   let n = 0;
   if (w.ranged) { if (hasTrait(c, 'marksman')) n += MARKSMAN_DMG + (prestigeOf(c) >= 2 ? MARKSMAN_MORE : 0); }
   else {
     if (hasTrait(c, 'weapon_master')) n += WEAPON_MASTER_DMG;
-    if (hasTrait(c, 'rage') && c.hp < c.maxHp * rageBelow(c)) n += RAGE_DMG;
+    if (rages(c)) n += RAGE_DMG;
   }
   if (hasTrait(c, 'holy_strike') && KINDS[m.def.kind].holy) n += c.cls === 'paladin' && prestigeOf(c) >= 2 ? HOLY_STRIKE_RISEN : HOLY_STRIKE_DMG;
-  if (sneaks(s, c, m)) n += sneakDamage(c);
+  if (sneak) n += sneakDamage(c);
   return n;
 }
 

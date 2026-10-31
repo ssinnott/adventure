@@ -30,6 +30,15 @@ export function canReach(s: CombatState, c: Character, target: number): boolean 
 /** A monster of the back rank with no bow, spell, call or breath waits for the front to fall before it steps up. */
 export const waits = (s: CombatState, m: MonsterInst): boolean => m.back && !m.def.ranged && !m.def.cast && !m.def.calls && !m.def.sweep?.element && frontStands(s);
 
+/**
+ * The member a monster's blow must fall on (#1113): the knight whose Challenge holds its group, while
+ * it runs and the knight is among those the blow could take (`pool`); none else, and it picks as ever.
+ */
+export function challenger<T extends { i: number }>(s: CombatState, m: MonsterInst, pool: readonly T[]): T | undefined {
+  const ch = s.challenge;
+  return ch && ch.group === m.group ? pool.find(({ i }) => i === ch.by) : undefined;
+}
+
 /** A monster's armour, with a Ward over its group. */
 export const monsterAc = (s: CombatState, m: MonsterInst): number => m.def.ac + (s.foeShield[m.band] > 0 ? WARD_AC : 0);
 /** A monster's to-hit, with a Bless over its group and the weather's toll on its bow. */

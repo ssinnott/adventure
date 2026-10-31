@@ -10,12 +10,12 @@ import { spell } from './spells.ts';
 import { item, ELEMENT_DIE, chargesLeft } from './items.ts';
 import {
   attackBonus, weaponOf, isDown, canAct, damage, addCondition, removeCondition, hasCondition, bonus, canTrain, killPay, armsBonus,
-  statOf, borne, useItem, critChance, CRITS_ON,
+  statOf, borne, useItem, critChance, CRITS_ON, FEATS_ON,
 } from './party.ts';
 import type { Party } from './party.ts';
 import type { Tables } from './tables.ts';
 import { FRONT_ROW, MAX_MONSTERS, HASTE_SPEED, describe, toHit, roll, standing, frontStands, aliveMonsters, HOLD_BREAKS } from './combat/state.ts';
-import type { MonsterInst, TurnRef, PartyAction, Loot, CombatState, CombatOpts, CombatGroup } from './combat/state.ts';
+import type { MonsterInst, TurnRef, PartyAction, Loot, CombatState, CombatOpts, CombatGroup, Strike } from './combat/state.ts';
 import { STONE_LINE, FIRST_LINE, SNEAK_LINE, CRIT_LINE, FOLLOW_LINE, victoryLine } from './combat/lines.ts';
 import {
   blowsOf, vanished, songWards, weatherproof, buffHit, songDamage, traitDamage, canAttackFromRow, strikesFirst, sneaks, followsThrough,
@@ -23,8 +23,9 @@ import {
 import { hurtMonster, elemental, castSpell } from './combat/casting.ts';
 import {
   canReach, waits, monsterAc, monsterHit, guard, castable, struck, monsterCast, sweep, regenerate, dim, calledBy, canCall, clocked, beat, call,
-  morale,
+  morale, challenger,
 } from './combat/foes.ts';
+import { spend, landed, bore, featRounds } from './combat/feats.ts';
 
 // The old path: what this file exported of the parts before, given on, so no importer changed.
 export type {
@@ -68,6 +69,9 @@ export function startCombat(tables: Tables, party: Party, groups: readonly Comba
     ...(opts.spellsGrowTo !== undefined ? { spellsGrowTo: opts.spellsGrowTo } : {}),
     ...(opts.rankStep !== undefined ? { rankStep: opts.rankStep } : {}),
     ...(opts.crits !== undefined ? { crits: opts.crits } : {}),
+    // The feats (#1113): stamina only while they are on, none for a fight with them off.
+    ...(opts.feats !== undefined ? { feats: opts.feats } : {}),
+    ...((opts.feats ?? FEATS_ON) ? { stamina: party.members.map(() => 0) } : {}),
     ...(opts.edge ? { edge: opts.edge } : {}),
   };
   s.log.push(describeGroups(s) + ' attack!');
@@ -128,6 +132,7 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   if (s.haste > 0) s.haste--;
   for (const t of [s.foeBless, s.foeShield]) t.forEach((n, band) => { if (n > 0) t[band] = n - 1; });
   if (s.glass && --s.glass.rounds <= 0) delete s.glass;
+  featRounds(s);
   // A monster held by the roots tears free as a member shakes off paralysis.
   const freed = s.monsters.filter((m) => standing(m) && m.conditions.includes('paralysed') && rng.chance(HOLD_BREAKS));
   for (const m of freed) m.conditions = m.conditions.filter((k) => k !== 'paralysed');
@@ -142,41 +147,55 @@ function endRound(s: CombatState, party: Party, rng: RngInstance): void {
   checkOutcome(s, party, rng);
 }
 
+/**
+ * Member `i`'s blows with its weapon at `target`: an Attack's, or a feat's as `how` says (`Strike`,
+ * #1113). False, and nothing done, where it cannot strike from its row or its weapon does not reach.
+ */
+function strike(s: CombatState, party: Party, rng: RngInstance, i: number, target: number, how: Strike = {}): boolean {
+  const c = party.members[i];
+  let m = s.monsters[target];
+  if (!m || !canAttackFromRow(s.tables.items, c, i) || !(how.past ? standing(m) : canReach(s, c, target))) return false;
+  const w = weaponOf(s.tables.items, c), edge = s.edge?.(c, s);
+  const own = how.blows ?? (blowsOf(s.tables.items, c) + (edge ? edge.blows - 1 : 0)), song = songDamage(party), carries = followsThrough(c);
+  let blows = own;
+  for (let blow = 0; blow < blows; blow++) {
+    // A later blow falls on the weakest foe still standing, once the first's has fallen.
+    if (!standing(m)) { const left = aliveMonsters(s).filter((f) => canReach(s, c, f)); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
+    const hit = how.sure || rng.chance(toHit(attackBonus(s.tables.items, c) + buffHit(s, party, i) - (w.ranged && !weatherproof(c) ? s.rangedPenalty : 0), monsterAc(s, m)));
+    if (hit) {
+      // An elemental weapon adds a die of its element to the steel, which lands as ever; a sneak
+      // attack (`sneaks`, read before the blow lands) is marked after the hit's own sentence. A
+      // critical blow (`critChance`, #1114) doubles it all, drawn after its dice and only while
+      // crits are on, so that while they are off a blow draws what it drew before; its mark
+      // follows a sneak attack's. A feat's blow (`Strike`, #1113) may land sure, crit sure or never,
+      // neither drawn, count for more and take the feat's mark after a crit's; one that lands builds
+      // stamina while the feats are on (`landed`), which draws nothing.
+      const sneak = how.sneak || sneaks(s, c, m), struck = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m, sneak) + armsBonus(c) + song + (edge?.damage ?? 0))
+        + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
+      const chance = critChance(s.tables.items, c, s.crits ?? CRITS_ON), crit = how.crits ?? (chance > 0 && rng.chance(chance));
+      const dmg = (crit ? 2 * struck : struck) * (how.times ?? 1);
+      hurtMonster(m, dmg);
+      landed(s, c, i, sneak, m.hp <= 0);
+      const did = how.onLand && standing(m) ? how.onLand(m) : '';
+      // The Windwalker's follow-through (`followsThrough`, #1070): a blow that fells its foe is not
+      // spent while a foe it can reach stands, at most once more for each of the turn's own blows.
+      const on = carries && m.hp <= 0 && blows < 2 * own && aliveMonsters(s).some((f) => canReach(s, c, f));
+      if (on) blows++;
+      s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (crit ? ` ${CRIT_LINE}` : '') + (how.mark ? ` ${how.mark}` : '') + (did ? ` ${did}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : '') + (on ? ` ${FOLLOW_LINE}` : ''));
+    } else s.log.push(`${c.name} misses ${m.def.name}.`);
+  }
+  return true;
+}
+
 /** Resolve the acting character's action. Returns false if the action was not legal (nothing happens). */
 export function partyAct(s: CombatState, party: Party, rng: RngInstance, action: PartyAction): boolean {
   const t = currentTurn(s, party, rng);
   if (!t || t.side !== 'party') return false;
   const c = party.members[t.i];
   switch (action.type) {
-    case 'attack': {
-      let m = s.monsters[action.target];
-      if (!m || !canAttackFromRow(s.tables.items, c, t.i) || !canReach(s, c, action.target)) return false;
-      const w = weaponOf(s.tables.items, c), edge = s.edge?.(c, s);
-      const own = blowsOf(s.tables.items, c) + (edge ? edge.blows - 1 : 0), song = songDamage(party), carries = followsThrough(c);
-      let blows = own;
-      for (let blow = 0; blow < blows; blow++) {
-        // A later blow falls on the weakest foe still standing, once the first's has fallen.
-        if (!standing(m)) { const left = aliveMonsters(s).filter((i) => canReach(s, c, i)); if (!left.length) break; m = s.monsters[left.reduce((a, b) => (s.monsters[b].hp < s.monsters[a].hp ? b : a))]; }
-        const hit = rng.chance(toHit(attackBonus(s.tables.items, c) + buffHit(s, party, t.i) - (w.ranged && !weatherproof(c) ? s.rangedPenalty : 0), monsterAc(s, m)));
-        if (hit) {
-          // An elemental weapon adds a die of its element to the steel, which lands as ever; a sneak
-          // attack (`sneaks`, read before the blow lands) is marked after the hit's own sentence. A
-          // critical blow (`critChance`, #1114) doubles it all, drawn after its dice and only while
-          // crits are on, so that while they are off a blow draws what it drew before; its mark
-          // follows a sneak attack's.
-          const sneak = sneaks(s, c, m), struck = roll(rng, w.dice ?? 1, w.sides ?? 4, (w.bonus ?? 0) + (w.ranged ? 0 : bonus(statOf(s.tables.items, c, 'might'))) + traitDamage(s, c, w, m) + armsBonus(c) + song + (edge?.damage ?? 0))
-            + (w.element ? elemental(s, m, w.element, roll(rng, 1, ELEMENT_DIE, 0)) : 0);
-          const chance = critChance(s.tables.items, c, s.crits ?? CRITS_ON), crit = chance > 0 && rng.chance(chance), dmg = crit ? 2 * struck : struck;
-          hurtMonster(m, dmg);
-          // The Windwalker's follow-through (`followsThrough`, #1070): a blow that fells its foe is not
-          // spent while a foe it can reach stands, at most once more for each of the turn's own blows.
-          const on = carries && m.hp <= 0 && blows < 2 * own && aliveMonsters(s).some((i) => canReach(s, c, i));
-          if (on) blows++;
-          s.log.push(`${c.name} hits ${m.def.name} for ${dmg}.` + (sneak ? ` ${SNEAK_LINE}` : '') + (crit ? ` ${CRIT_LINE}` : '') + (m.hp <= 0 ? ` ${m.def.name} dies.` : '') + (on ? ` ${FOLLOW_LINE}` : ''));
-        } else s.log.push(`${c.name} misses ${m.def.name}.`);
-      }
+    case 'attack':
+      if (!strike(s, party, rng, t.i, action.target)) return false;
       break;
-    }
     case 'cast': {
       const sp = spell(s.tables.spells, action.spellId);
       if (sp.context === 'explore' || (sp.glass && !action.element)) return false;
@@ -201,6 +220,14 @@ export function partyAct(s: CombatState, party: Party, rng: RngInstance, action:
       const said = target ? useItem(s.tables.items, party, c, d.id, target) : null;
       if (!said) return false;
       s.log.push(...said);
+      break;
+    }
+    case 'feat': {
+      // A feat (#1113): legal only while the feats are on, its stamina spent and its rule played (`spend`);
+      // one that leaves the turn unspent (`FeatDef.again`) has the member act again at once.
+      const f = spend(s, party, rng, t.i, action.featId, action.target, (how, at) => strike(s, party, rng, t.i, at, how));
+      if (!f) return false;
+      if (f.again) { checkOutcome(s, party, rng); return true; }
       break;
     }
     case 'flee': {
@@ -248,9 +275,11 @@ export function monsterAct(s: CombatState, party: Party, rng: RngInstance): bool
   const any = seen.length ? seen : party.members.map((c, i) => ({ c, i })).filter(({ c }) => !isDown(c));
   // From under the ice it reaches one square, the front row over it, bow or none; with that row down, nobody.
   const pool = m.under ? front : m.def.ranged || front.length === 0 ? any : front;
-  const pick = rng.pick(pool);
+  // A knight's Challenge holds its group's blows on it (`challenger`, #1113): no pick is drawn then.
+  const pick = challenger(s, m, pool) ?? rng.pick(pool);
   if (!pick) { s.turn++; checkOutcome(s, party, rng); return true; }
   if (rng.chance(toHit(monsterHit(s, m), guard(s, pick.c, pick.i)))) {
+    bore(s, pick.c, pick.i);
     let dmg = roll(rng, m.def.dice, m.def.sides, m.def.bonus);
     if (s.defending[pick.i]) dmg = Math.ceil(dmg / 2);
     // A drain on spell points takes what it can of them, and the rest from hit points.

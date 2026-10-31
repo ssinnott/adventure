@@ -17,11 +17,14 @@
 // whose turn is worth least, sleeps the group with the most it could put down (a sorcerer's Slumber,
 // a druid's Grasping Roots) and lets the sleepers lie while another of the company can strike, and
 // gives a draught to the lowest where no one can mend them, or to a sleeper or one held no one can
-// free; so its turn is mend, wake, burn, bless, sleep, blast, drink, strike, brace. It cures nothing
+// free; and, behind `feats` (#1113), at any level, spends a knight's, barbarian's, thief's or monk's
+// stamina on a feat where its class's policy finds one pays (combat/feats/); so its turn is mend,
+// wake, burn, bless, sleep, blast, drink, feat, strike, brace. It cures nothing
 // but sleep and a hold, so it is weaker than a player. Plainly: the gate's bot never blesses, sleeps,
 // drinks or flees (no option set, #865, and a flight only turns a win into a loss where the gate
-// measures whether a fight is winnable); the game's, the auto-fight and the pilot's fights, blesses,
-// sleeps and drinks from level 11 (`PLAYED`, #865) and flees a fight lost as #723 built it (`beaten`).
+// measures whether a fight is winnable), and plays the feats once a fight has them (tools/kit/fight.ts);
+// the game's, the auto-fight and the pilot's fights, blesses, sleeps and drinks from level 11 and plays
+// the feats (`PLAYED`, #865, #1113) and flees a fight lost as #723 built it (`beaten`).
 // The gate's knows every monster as written (`asWritten`); the game's knows a sweep, a breath, a
 // drain, a call or a leader only once the fight has shown it, and a foe Slumber cannot take once a
 // Slumber has taken none of its kind (`asSeen`), as both know an element's work and a mending only
@@ -32,6 +35,7 @@ import { isDown, canAct, hasCondition } from './party.ts';
 import type { Party, Character, ClassId } from './party.ts';
 import { partyAct, aliveMonsters, canAttackFromRow, canReach, isLeader, canCall, sweptRow, seenMult, FRONT_ROW } from './combat.ts';
 import type { CombatState, MonsterInst, PartyAction } from './combat.ts';
+import { featFor } from './combat/feats.ts';
 import { monsterImmune } from './monsters.ts';
 import { item } from './items.ts';
 import type { ItemDef } from './items.ts';
@@ -215,16 +219,18 @@ export function gateBurn(s: CombatState, c: Character, lie = false): { spellId: 
  * What the bots do beyond the turn they have always played, each off unless set (#853): Bless in the
  * first round (`blessWith`), sleep a group (`sleepWith`) and drink a draught (`drinkFor`). Off, a
  * bot plays as it did before them; the game's auto-fight sets all three (`PLAYED`, #865), the gate and
- * the harness none unless a what-if does (`--bot`).
+ * the harness none unless a what-if does (`--bot`). And spend stamina on a feat (`featFor`, #1113),
+ * where the fight has the feats on: the auto-fight and the gate set it.
  */
-export interface BotOpts { bless?: boolean; sleep?: boolean; drink?: boolean }
+export interface BotOpts { bless?: boolean; sleep?: boolean; drink?: boolean; feats?: boolean }
 
 /**
  * The bots' options as the game plays them (#865): bless, sleep and drink, all three, in the auto-fight
  * (ui/combat.ts), the pilot's fights with it. The gate's company buys nothing optional and its bot plays
- * plainer than a player, so the gate and the harness pass none unless a what-if sets them.
+ * plainer than a player, so the gate and the harness pass none unless a what-if sets them. The feats
+ * too (#1113), which the gate's plays as well.
  */
-export const PLAYED: Readonly<BotOpts> = { bless: true, sleep: true, drink: true };
+export const PLAYED: Readonly<BotOpts> = { bless: true, sleep: true, drink: true, feats: true };
 
 /**
  * The first level past Act I (#865): a member of it or over blesses, sleeps and drinks as the options
@@ -314,8 +320,9 @@ export function drinkFor(s: CombatState, p: Party, c: Character, sees: Sees = as
 
 /**
  * The bot's turn for member `i`: the action it took, in gateTurn's order (mend, wake, burn, bless,
- * sleep, blast, drink, strike, brace), bless, sleep and drink only where `opts` asks (#853), and from
- * level 11 (`optsFor`, #865), the sleepers let lie by the whole company once one is (`letsLie`). Each
+ * sleep, blast, drink, feat, strike, brace), bless, sleep and drink only where `opts` asks (#853), and from
+ * level 11 (`optsFor`, #865), the sleepers let lie by the whole company once one is (`letsLie`), a feat
+ * where `opts` asks at any level (#1113). Each
  * is tried on the resolver in turn and the first it takes is the turn; bracing it always takes. `sees`
  * is what it knows of the monsters: the gate's every trait as written, the game's auto-fight only
  * what the fight has shown (`asSeen`); `answer` the bots' answers, play's (`ANSWER`) unless a tool
@@ -352,6 +359,8 @@ export function botTurn(s: CombatState, p: Party, rng: RngInstance, i: number, s
   if (blast && (a = took({ type: 'cast', spellId: blast.id, target: aim }))) return a;
   const drink = o.drink ? drinkFor(s, p, c, sees, answer) : undefined;
   if (drink && (a = took(drink))) return a;
+  const feat = opts.feats ? featFor(s, p, i, blade) : undefined;
+  if (feat && (a = took(feat))) return a;
   if (canAttackFromRow(s.tables.items, c, i) && (a = took({ type: 'attack', target: blade }))) return a;
   const brace: PartyAction = { type: 'defend' };
   partyAct(s, p, rng, brace);

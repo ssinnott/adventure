@@ -41,9 +41,10 @@ export function playOut(s: CombatState, p: Party, rng: RngInstance, bot: Bot, ru
 /**
  * The bot's turn for member `i`, as the gate plays it: the game's `botTurn` knowing every monster as
  * written, with the options `rules.bot` asks (#853, `--bot`), none unless a what-if passes them
- * (#865), and the answers `rules.answer` asks, play's unless passed (#946).
+ * (#865), but the feats, which it plays once a fight has them unless a what-if sets them off (#1113),
+ * and the answers `rules.answer` asks, play's unless passed (#946).
  */
-export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number, rules: Readonly<Rules> = RULES): void { botTurn(s, p, rng, i, asWritten, rules.bot, rules.answer); }
+export function gateTurn(s: CombatState, p: Party, rng: RngInstance, i: number, rules: Readonly<Rules> = RULES): void { botTurn(s, p, rng, i, asWritten, { feats: true, ...rules.bot }, rules.answer); }
 /** The gate's bot as a fight plays it (`playOut`): `gateTurn`, under the what-ifs the fight is handed. */
 export const gateBot: Bot = (s, p, rng, i, _opts, rules) => gateTurn(s, p, rng, i, rules);
 
