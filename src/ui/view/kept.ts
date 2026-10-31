@@ -17,6 +17,7 @@ import type { Facing } from '../../game/types.ts';
 import type { Weather } from '../../game/weather.ts';
 import type { Tables } from '../../game/tables.ts';
 import { VIEW_DEPTH } from '../../game/world.ts';
+import { spentId } from '../../game/keys.ts';
 import type { Flame, ViewRect } from './common.ts';
 
 /** The most scenes kept: one to each facing of the square the party stands on. */
@@ -40,25 +41,27 @@ export function placeKey(world: World, r: ViewRect): string {
  * What else a scene's paint reads, read back to tell whether it would paint the same again: the map
  * and its landmarks, the weather read, the tables, the cells within `READ_REACH` of the party (a cell
  * laid anew is another cell) and each feature among them, with whether it is there now (a feature
- * comes and goes by its hours, its flags, the items carried, what is seen and slain).
+ * comes and goes by its hours, its flags, the items carried, what is seen and slain) and spent (a
+ * chest opened, a den burnt: the view draws them as the automap marks them, #1110).
  */
 interface Reads {
   map: GameMap; landmarks: readonly Landmark[]; weather: Weather | null; tables: Tables;
-  cells: readonly (Cell | null)[]; features: readonly Feature[]; there: readonly boolean[];
+  cells: readonly (Cell | null)[]; features: readonly Feature[]; there: readonly boolean[]; spent: readonly boolean[];
 }
 
 function readsOf(world: World): Reads {
   const map = world.map, { x: px, y: py } = world.state, cells: (Cell | null)[] = [];
   for (let y = py - READ_REACH; y <= py + READ_REACH; y++) for (let x = px - READ_REACH; x <= px + READ_REACH; x++) cells.push(map.inBounds(x, y) ? map.at(x, y) : null);
   const features = map.features.filter((f) => Math.abs(f.x - px) <= READ_REACH && Math.abs(f.y - py) <= READ_REACH);
-  return { map, landmarks: map.landmarks, weather: world.underSky ? world.weather : null, tables: world.tables, cells, features, there: features.map((f) => world.present(f)) };
+  const spent = features.map((f) => { const id = spentId(f); return id !== undefined && world.used(id); });
+  return { map, landmarks: map.landmarks, weather: world.underSky ? world.weather : null, tables: world.tables, cells, features, there: features.map((f) => world.present(f)), spent };
 }
 
 function sameReads(a: Reads, b: Reads): boolean {
   if (a.map !== b.map || a.landmarks !== b.landmarks || a.weather !== b.weather || a.tables !== b.tables) return false;
   if (a.cells.length !== b.cells.length || a.features.length !== b.features.length) return false;
   for (let i = 0; i < a.cells.length; i++) if (a.cells[i] !== b.cells[i]) return false;
-  for (let i = 0; i < a.features.length; i++) if (a.features[i] !== b.features[i] || a.there[i] !== b.there[i]) return false;
+  for (let i = 0; i < a.features.length; i++) if (a.features[i] !== b.features[i] || a.there[i] !== b.there[i] || a.spent[i] !== b.spent[i]) return false;
   return true;
 }
 

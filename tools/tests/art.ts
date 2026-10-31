@@ -2,11 +2,15 @@
 // (EXPANSION §5.6), and the walls are dressed with restraint: the share of wall faces that carry
 // dressing stays near where #9 put it, and each kind of dressing has its rate. The silhouettes and
 // the cracks need a canvas, so they are the smoke test's (tools/smoke/art.ts and cracks.ts). Every
-// bow bends away from the man who holds it (#57).
+// bow bends away from the man who holds it (#57). The view draws each feature the automap marks and
+// none it does not (#1110); their drawings are the smoke's (the features part, tools/smoke/scenes.ts).
 import { MONSTERS, MAP_DEFS } from '../../src/content/index.ts';
 import { buildMaps } from '../../src/content/maps.ts';
 import { wallDressing, isSolidWall, isHouse, isTent, tentOf, DRESSINGS, DRESSING_RATES, looksHouse, isGateway, drawnAt } from '../../src/ui/viewport.ts';
-import { drawnCell } from '../../src/game/ink.ts';
+import { drawnCell, markOf } from '../../src/game/ink.ts';
+import { spentId } from '../../src/game/keys.ts';
+import { featuresOn } from '../../src/ui/view/features.ts';
+import { headlessGame } from '../kit/headless.ts';
 import { hash } from '../../src/ui/brush.ts';
 import { FACING_DX, FACING_DY } from '../../src/game/types.ts';
 import { GameMap } from '../../src/game/map.ts';
@@ -262,6 +266,26 @@ export async function art(): Promise<void> {
   ok(cave('rrSrr', true) === 'none' && cave('##S##', true) === 'a door' && cave('rrDrr') === 'a door', `underground, a found secret door among rock is a gap, in a wall a door, and a plain door stays one (${cave('rrSrr', true)}, ${cave('##S##', true)}, ${cave('rrDrr')})`);
   const guised = maps.flatMap((m) => m.cells.flatMap((c, i) => (drawnCell(m, i % m.width, Math.floor(i / m.width)) !== c ? [`${m.id} ${i % m.width},${Math.floor(i / m.width)}`] : [])));
   console.log(`  (doors drawn as their neighbours on the maps as played: ${guised.length}${guised.length ? ': ' + guised.join(', ') : ''})`);
+
+  // The wilderness features (#1110): on every map as played the view draws each feature the automap marks
+  // where it stands, and nothing it does not. Each one marked but a person and a business (whose sign hangs
+  // over its door) stands on open ground as drawn and is of a kind the view draws, and the view draws no
+  // other; and so again with every one spent, gone from both but a den, a ruin in both.
+  const world = headlessGame(4).world, unfigured = new Set(['npc', 'inn', 'temple', 'shop', 'guild', 'trainer']), unmatched: string[] = [];
+  let inked = 0;
+  for (const spend of [false, true]) for (const id of Object.keys(world.maps)) {
+    const { x, y } = world.maps[id].def.start;
+    world.travel(id, x, y);
+    const m = world.map;
+    if (spend) for (const f of m.features) { const s = spentId(f); if (s) world.mapState.used[s] = 1; }
+    for (const f of m.features) {
+      const mark = markOf(world, f), wants = mark !== null && !unfigured.has(f.kind);
+      const drawn = drawnAt(m, f.x, f.y).solid === 'none' && featuresOn(world, f.x, f.y).some((q) => q.f === f && q.ruin === (mark === 'ruin'));
+      if (wants) inked++;
+      if (wants !== drawn) unmatched.push(`${id} ${f.kind} ${f.x},${f.y}${spend ? ' spent' : ''}`);
+    }
+  }
+  ok(inked > 0 && !unmatched.length, `on every map as played the view draws each feature the automap marks, where it stands, and nothing it does not, as they are and spent (${inked} marked)${unmatched.length ? ' -> ' + unmatched.slice(0, 12).join(', ') : ''}`);
 
   // The check fails the walls as they were dressed before #9: every map, and every kind of map with
   // faces enough to be held to its cap.

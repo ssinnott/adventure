@@ -1,5 +1,5 @@
 // The automap's ink: what a cell is drawn as, and what the map marks (a feature there now, the groups
-// in view or near and those a sense finds). The view draws its walls by it, the automap inks and
+// in view or near and those a sense finds). The view draws its walls and features by it, the automap inks and
 // marks its squares by it and the pilot's fair view (app/pilot/known.ts) reads the map through it,
 // so all three show one map.
 import type { GameMap } from './map.ts';
@@ -10,6 +10,7 @@ import { AWARE, VIEW_DEPTH, VIEW_LATERAL, viewCell, hillHiding } from './world.t
 import { hasSkill, SPIRIT_REACH } from './skills.ts';
 import { monster } from './monsters.ts';
 import { isDown } from './party.ts';
+import { spentId } from './keys.ts';
 
 /** The billboards a door outdoors may be set among, in the order a tie goes. */
 const GUISES = ['mountain', 'rock', 'tree', 'glass'] as const;
@@ -51,6 +52,17 @@ export function viewCells(map: GameMap, px: number, py: number, f: Facing, sight
 
 /** Whether the automap marks a feature: not an event, and not a person who is not there now. A feature of another map than the party's names it. */
 export const onAutomap = (world: Pick<World, 'present'>, f: Feature, on?: string): boolean => f.kind !== 'event' && world.present(f, on);
+
+/**
+ * How the automap marks a feature of the party's map and the view draws it (#1110): not at all where
+ * `onAutomap` says not, nor once spent (a chest, cairn, shrine, fountain or statue); a den burnt as its
+ * ruin; anything else, a camp among them, as it stands.
+ */
+export function markOf(world: Pick<World, 'present' | 'used'>, f: Feature): 'there' | 'ruin' | null {
+  if (!onAutomap(world, f)) return null;
+  const spent = spentId(f), used = spent !== undefined && world.used(spent);
+  return f.kind === 'den' ? (used ? 'ruin' : 'there') : used ? null : 'there';
+}
 
 /**
  * The live groups the automap marks: in view, or on a seen square within two steps of the party; none

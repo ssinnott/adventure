@@ -40,6 +40,7 @@ import { ZONES, PLACES, SITES, LINKS } from './atlas.ts';
 import { GUILDS } from './guilds.ts';
 import { QUESTS } from './quests.ts';
 import { CHAPTER } from './chapter.ts';
+import { LOOK } from './look.ts';
 
 export const MAPS = [IRONFELLS_M3, IRONFELLS_N3, ANVILHALL, KILNSHEART_N4, DEEP_MINES, DEEP_MINES2, DEEP_MINES3, IRONFELLS_N2, KILNSHEART_N5, KILNSHEART_N6, KILNMOUTH_M6, KILNSHEART_O5, ANVIL_STONE, KILNMOUTH_L6, KILNHAVEN, KILNSHEART_O6, LAVA_TUBES, LAVA_TUBES2, KILNMOUTH_M4, KILNMOUTH_M5, IRONFELLS_O3, KILNSHEART_O4, KILNMOUTH_K6, KILNSHEART_P5, KILNSHEART_P6, KILNMOUTH_L7, KILNSHEART_P4, SEESTOLLEN, RANDZECHE, RANDZECHE2] as const;
 export { FLAGS };
@@ -61,6 +62,7 @@ export const AREA = {
   // forges' smoke in the haze.
   climate: { summer: 21, winter: -3, daily: 7, damp: [0, 0.05], wettest: 80, fog: 0.3, lag: 10,
     fogText: 'A haze comes down off the Fells, and it smells of smoke.', thunderText: 'Thunder rolls along the Fells.' },
+  look: LOOK,
   interiors: INTERIORS,
   novel: { families: ['salamanders', 'knockers'], terrain: ['pine', 'ash', 'lava'], mechanics: ['sign:read', 'sign:marks', 'encounter:sets'], landmarks: ['fortress', 'forge', 'mine'] },
   atlas: { zones: ZONES, places: PLACES, sites: SITES, links: LINKS },

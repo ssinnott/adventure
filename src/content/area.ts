@@ -57,6 +57,8 @@ export interface Area {
   guilds?: readonly GuildQuest[];
   /** The weather its maps share. */
   climate: Climate;
+  /** How its land looks beside its weather, in its look.ts (#1097): merged by region into `Tables.looks`. */
+  look: AreaLook;
   /** Its businesses' painted rooms: the Interior union is made of these, and src/ui/interior.ts paints each. */
   interiors: readonly string[];
   /** What is new in it, which no area earlier on the road has (EXPANSION §5.4; tools/tests/pillars.ts). */
@@ -67,6 +69,28 @@ export interface Area {
    * own (a link between two areas is the plan's). Merged into ATLAS with the plan (atlas.ts).
    */
   atlas: { zones: readonly AtlasZone[]; places: readonly AtlasPlace[]; sites: readonly AtlasSite[]; links?: readonly AtlasLink[] };
+}
+
+/** How an area's land looks (#1097): a field to each part of the view it colours, today's look where one is absent. */
+export interface AreaLook {
+  /** The air over it: today's sky where absent. */
+  air?: Air;
+}
+
+/**
+ * An area's air (#1097): the colours the sky is cast toward by day, as an ending casts it (ui/view/sky.ts)
+ * and much less, `strength` of the way at noon, less at dusk, none by night and lost in murk; an ending's
+ * cast wins. Being a fifth of the way at most, each colour is the air's own made strong.
+ */
+export interface Air {
+  /** How far of the way by day, a fifth at most, so the weather still reads. */
+  strength: number;
+  /** What the sky's top and its foot are cast toward: today's where absent. */
+  top?: string; foot?: string;
+  /** What far things fade toward: the foot's colour where absent. */
+  haze?: string;
+  /** The sun's colour, its glow taking half of it: today's pale gold where absent. */
+  sun?: string;
 }
 
 /** Flags by name, each with a gloss of a few words on what holding it means (#995). */
