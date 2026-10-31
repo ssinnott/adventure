@@ -47,7 +47,7 @@ export const PLACES: readonly AtlasPlace[] = [
 
 export const SITES: readonly AtlasSite[] = [
   // VI. The Kilns (docs/areas/kilns.md §10 has the dwarves' names).
-  { name: 'Anvilhall', icon: 'fortress', at: [452, 70], label: 'below' }, // at the gate on N3, 28,8 (#458, #459)
+  { name: 'Anvilhall', icon: 'fortress', map: 'ironfells_n3', at: [28, 8], label: 'below' }, // at the gate on N3, 28,8 (#458, #459)
   { name: 'Tiefzeche', icon: 'mine', at: [440, 96], label: 'below' }, // the Deep Mines, at the shaft on N4, 16,2 (#461, #462)
   { name: 'Gluthutte', icon: 'forge', map: 'kilnsheart_n5', at: [12.5, 1.5], label: 'below' }, // the Forges: the smelter on N5 (#463)
   { name: 'Anvil Stone', icon: 'stone', map: 'kilnsheart_o5', at: [12.5, 10.5], label: 'below' }, // the Stone on its anvil of rock on O5, 12,10 (#464)
