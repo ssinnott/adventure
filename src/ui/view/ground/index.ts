@@ -1,8 +1,10 @@
 // Every terrain's look in the view (#1030): `GROUND`, a record over the terrains made of their modules
 // here, so that a terrain with no module of its own fails the typecheck; what the painters ask through it,
-// the ground a square is drawn as (`asDrawn`) and its colour now at its cell (`groundColor`), drifting
-// across the land by the cell's noise (`cellNoise`, #1098); and `SNOW_HOLD`, read off the looks for the
-// suites. A new ground is a module beside these, its look, and its line below.
+// the ground a square is drawn as (`asDrawn`), its variant at a cell (`variantAt`, #1101) and its colour
+// now at its cell (`groundColor`), tinted by its region (#1099) and drifting across the land by the cell's noise
+// (`cellNoise`, #1098); and
+// `SNOW_HOLD`, read off the looks for the suites. A new ground is a module beside these, its look, and its
+// line below.
 
 import type { Terrain } from '../../../game/mapdef.ts';
 import type { GameMap } from '../../../game/map.ts';
@@ -12,7 +14,7 @@ import { regionAt } from '../../../game/world.ts';
 import { shade, mix, hexToRgb, rgbToHex } from '../../../lib/art/palettes.ts';
 import { SNOW } from '../common.ts';
 import type { Paint } from '../common.ts';
-import type { GroundLook } from './look.ts';
+import type { GroundLook, Variant } from './look.ts';
 import { floor } from './floor.ts';
 import { grass } from './grass.ts';
 import { dirt } from './dirt.ts';
@@ -87,6 +89,24 @@ function drifted(look: GroundLook, c: string, x: number, y: number, salt: string
   const s = Math.max(-1, Math.min(1, (cellNoise(x, y, salt) - 0.5) * STRETCH)), [low, high] = look.drift.toward;
   const ref = look.color(DRIFT_DAY, 0), from = hexToRgb(ref), to = hexToRgb(mix(ref, s < 0 ? low : high, Math.abs(s) * (2 - Math.abs(s)) * look.drift.by)), at = hexToRgb(c);
   return rgbToHex(at[0] + to[0] - from[0], at[1] + to[1] - from[1], at[2] + to[2] - from[2]);
+}
+
+/** How steeply the land's noise is ranked into a variant's band: it lies about its middle as a bell does. */
+const RANK = 10;
+
+/**
+ * A ground's variant at a cell (#1101), or none where its look has none or the map is a dungeon: by its
+ * look's `pick` where it has one, else by the land's noise there, its own for each ground and map at its
+ * look's scale, ranked so that each variant takes about its share. A function of the map and the cell
+ * alone, which the floors and the plain views read alike.
+ */
+export function variantAt(t: Terrain, x: number, y: number, map: GameMap): Variant | undefined {
+  const vs = GROUND[t].variants;
+  if (!vs || map.kind === 'dungeon') return undefined;
+  if ('pick' in vs) return vs.looks[vs.pick(map, x, y)];
+  const u = 1 / (1 + Math.exp((0.5 - cellNoise(x, y, `${map.id}/${t}`, vs.scale)) * RANK)), all = vs.looks.reduce((n, v) => n + (v.share ?? 0), 0);
+  let top = 0;
+  return vs.looks.find((v) => u * all < (top += v.share ?? 0)) ?? vs.looks[vs.looks.length - 1];
 }
 
 /** How many squares either side of a zone's border a region's tint fades over (#1099): a blend, not a line. */
@@ -172,16 +192,24 @@ function rgbOf(hex: string): readonly number[] {
 }
 
 /**
- * The colour of a ground at a cell, as the floors draw it: its look's, tinted by its region and drifted
- * by the land there, darker when wet where rain darkens it, whitened by lying snow. Underground it is
- * the palette's floor.
+ * The colour of a ground at a cell, as the floors draw it: its look's, or its variant's there where the
+ * floors hand one (`variantAt`), tinted by its region (#1099), drifted by the land, darker when wet where
+ * rain darkens it, whitened by lying snow. Underground it is the palette's floor.
  */
-export function groundColor(p: Paint, t: Terrain, floorPal: string, x: number, y: number, crop = 0): string {
+export function groundColor(p: Paint, t: Terrain, floorPal: string, x: number, y: number, crop = 0, v?: Variant): string {
   const { env } = p, kind = p.map.kind;
   if (kind === 'dungeon') return floorPal;
   const look = GROUND[asDrawn(p, t)];
-  // In this order: the look's colour today, its region's tint, the land's drift at the cell, then rain and snow over it.
+  // In this order: the look's colour today, its variant's shift, its region's tint, the land's drift at the cell, then rain and snow over it.
   let c = look.color(env.day, crop);
+  if (v?.shift) {
+    const { toward, by } = v.shift;
+    // A fixed colour moves it as the drift does; a colour of the day is mixed into the day's, as the bracken turns.
+    if (typeof toward === 'string') {
+      const ref = look.color(DRIFT_DAY, 0), from = hexToRgb(ref), to = hexToRgb(mix(ref, toward, by)), at = hexToRgb(c);
+      c = rgbToHex(at[0] + to[0] - from[0], at[1] + to[1] - from[1], at[2] + to[2] - from[2]);
+    } else c = mix(c, toward(env.day), by);
+  }
   c = tinted(p, asDrawn(p, t), c, x, y);
   c = drifted(look, c, x, y, p.map.id);
   if (env.wet > 0 && look.wets) c = shade(c, 1 - 0.18 * env.wet);

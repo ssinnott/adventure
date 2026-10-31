@@ -1,4 +1,5 @@
-// The dunes' look (#1030): sand in ridges, a crest across each square and the wind's ripples.
+// The dunes' look (#1030): sand in ridges, a crest across each square and the wind's ripples; and its
+// variants across the land (#1101): ripple-marked and wind-scoured.
 
 import { shade } from '../../../lib/art/palettes.ts';
 import { TERRAIN_COLORS } from '../../palette.ts';
@@ -27,4 +28,18 @@ function mark(p: Paint, m: Mark): void {
   }
 }
 
-export const dunes: GroundLook = { color: () => TERRAIN_COLORS.dunes, drift: { toward: ['#b87a3e', '#f0cc94'], by: 0.6 }, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 5, mark } };
+/** The scoured sand's: long streaks the wind has combed, a pebble left lying on the hard floor between. */
+function scoured(p: Paint, m: Mark): void {
+  const { ctx, env } = p, { i, x, y, sc, base, d } = m;
+  if (env.cover > 0.55) return;
+  if (i % 3 === 2) { ctx.fillStyle = fog(p, shade(base, 0.55), d); ctx.fillRect(Math.round(x), Math.round(y - sc), Math.max(1, Math.round(1.5 * sc)), Math.max(1, Math.round(sc))); return; }
+  ctx.strokeStyle = fog(p, shade(base, i % 2 ? 1.12 : 0.9), d); ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x - 8 * sc, y); ctx.lineTo(x + 8 * sc, y); ctx.stroke();
+}
+
+export const dunes: GroundLook = { color: () => TERRAIN_COLORS.dunes, drift: { toward: ['#b87a3e', '#f0cc94'], by: 0.6 }, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 5, mark },
+  // Ridges marked by the wind's ripples, and sand scoured flat and pale between them.
+  variants: { scale: 4.5, looks: [
+    { name: 'ripple-marked', share: 0.6 },
+    { name: 'wind-scoured', share: 0.4, shift: { toward: '#f4e0b8', by: 0.4 }, lies: { marks: 6, mark: scoured } },
+  ] } };
