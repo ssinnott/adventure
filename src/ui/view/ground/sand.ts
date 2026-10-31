@@ -6,6 +6,7 @@ import { fog } from '../common.ts';
 import type { Paint } from '../common.ts';
 import type { GroundLook, Mark, Square } from './look.ts';
 import { ripples } from './near.ts';
+import type { Pixels } from './near.ts';
 
 /** A darker grain. */
 function mark(p: Paint, m: Mark): void {
@@ -14,7 +15,7 @@ function mark(p: Paint, m: Mark): void {
 }
 
 /** Near to (#1102, near.ts): the wind's ripple marks, each lit along its crest with its shadow under it. */
-function rippled(p: Paint, base: string, sq: Square): void { ripples(p, base, sq, { rows: 8, cols: 2, half: 13, lit: 1.12, shadow: 0.84 }).fill(p); }
+function rippled(p: Paint, base: string, sq: Square): Pixels { return ripples(p, base, sq, { rows: 8, cols: 2, half: 13, lit: 1.12, shadow: 0.84 }); }
 
 export const sand: GroundLook = { color: () => TERRAIN_COLORS.sand, drift: { toward: ['#b0965e', '#f4ead0'], by: 0.6 }, snow: 0.6, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 4, mark },
   scatter: ['driftwood', 'shells'], rank: 3, near: rippled };

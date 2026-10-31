@@ -14,6 +14,7 @@ import type { Paint } from '../common.ts';
 import type { GroundLook, Plot, Square } from './look.ts';
 import { pebbled } from './dirt.ts';
 import { stones } from './near.ts';
+import type { Pixels } from './near.ts';
 
 /** Cobbles: rounded stones packed in a jittered grid, each with a lit top edge. */
 function cobbles(p: Paint, base: string, sq: Square): void {
@@ -89,7 +90,7 @@ function track(p: Paint, base: string, sq: Square): void {
 }
 
 /** Near to (#1102, near.ts): grit in the joints of the cobbles, a pebble lit on its top here and there. */
-function grit(p: Paint, base: string, sq: Square): void { stones(p, base, sq, { rows: 6, cols: 8, size: [2, 3], bare: 0.6, body: 0.72, lit: 1.3, shadow: 0.5 }).fill(p); }
+function grit(p: Paint, base: string, sq: Square): Pixels { return stones(p, base, sq, { rows: 6, cols: 8, size: [2, 3], bare: 0.6, body: 0.72, lit: 1.3, shadow: 0.5 }); }
 
 export const road: GroundLook = { color: () => TERRAIN_COLORS.road, snow: 0.72, wets: true, splashes: true, ripples: false, vary: 0.08, lays: cobbles, puddles: true, plot: roadPlot, near: grit,
   // The track's earth near to as the dirt's, pebbled and cracked, over its ruts and its grass.

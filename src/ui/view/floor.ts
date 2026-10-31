@@ -5,11 +5,11 @@
 import type { Terrain, MapPalette } from '../../game/mapdef.ts';
 import { shade, rgba } from '../../lib/art/palettes.ts';
 import { hash } from '../paint/brush.ts';
-import { unit, fog, LIT, unitIn, floorPt, quad } from './common.ts';
+import { unit, fog, LIT, unitIn, floorPt, quad, addPoly } from './common.ts';
 import type { Paint } from './common.ts';
 import { GROUND, asDrawn, groundColor, variantAt } from './ground/index.ts';
 import type { Plot, Rims, Square } from './ground/look.ts';
-import { drawEdges } from './ground/edges.ts';
+import { drawEdges, under } from './ground/edges.ts';
 import type { Edges } from './ground/edges.ts';
 
 export function drawFloor(p: Paint, laid: Terrain, d: number, l: number, cell: { x: number; y: number }, seed: number, floorPal: string, plot?: Plot, rims?: Rims, edges?: Edges): void {
@@ -42,8 +42,18 @@ export function drawFloor(p: Paint, laid: Terrain, d: number, l: number, cell: {
   }
   // What the look lays over its tiles: a field's rows and hedges, cobbles, a glow.
   look.lays?.(p, base, sq);
-  // In the nearest rows, its detail at the scale they allow (ground/near.ts, #1102).
-  if (d <= 1) look.near?.(p, base, sq);
+  // In the nearest rows, its detail at the scale they allow (ground/near.ts, #1102), under the marks and the tongues:
+  // what is rooted under a tongue is kept to the square, so no tip of it stands past the square beside the tongue
+  // (which carries its own detail over it), and nothing is left out, so a tongue changes nothing past its outline.
+  if (d <= 1 && look.near) {
+    const own = look.near(p, base, edges ? { ...sq, foot: { keep: (s, t) => under(edges, s, t) < 0 } } : sq);
+    own.flat.fill(p); own.up.fill(p);
+    if (edges) {
+      const buried = look.near(p, base, { ...sq, foot: { keep: (s, t) => under(edges, s, t) >= 0 } });
+      ctx.save(); ctx.beginPath(); addPoly(ctx, [floorPt(cx, horizon, h, d, l, 0, 0), floorPt(cx, horizon, h, d, l, 0, 1), floorPt(cx, horizon, h, d, l, 1, 1), floorPt(cx, horizon, h, d, l, 1, 0)]); ctx.clip();
+      buried.flat.fill(p); buried.up.fill(p); ctx.restore();
+    }
+  }
   // What lies on it: a few marks a square, placed by hash, scaled by depth, each painted by the look.
   const u = unit(d, h);
   if (look.lies) for (let i = 0; i < look.lies.marks; i++) {

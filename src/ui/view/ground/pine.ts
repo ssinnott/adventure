@@ -10,6 +10,7 @@ import { fog, grassColor } from '../common.ts';
 import type { Paint } from '../common.ts';
 import type { GroundLook, Mark, Square } from './look.ts';
 import { leaves, needles, spots, stones } from './near.ts';
+import type { Pixels } from './near.ts';
 
 /** The pinewoods' floor: needles and moss, brown through the year and a little greener in the spring. */
 function pineColor(day: number): string { return mix(TERRAIN_COLORS.pine, grassColor(day), 0.18); }
@@ -53,32 +54,32 @@ function bilberry(p: Paint, m: Mark): void {
 // cushions lit on their tops; the bilberry's leaves, red in the autumn, and its berries in late summer.
 
 /** The needles near to. */
-function fallen(p: Paint, base: string, sq: Square): void {
+function fallen(p: Paint, base: string, sq: Square): Pixels {
   const px = needles(p, base, sq, { rows: 9, cols: 11, a: '#8a6a3c', b: 0.68 });
   if (p.env.cover <= 0.55) {
     const body = fog(p, '#6a4a2a', sq.d), lit = fog(p, '#a07a48', sq.d);
     for (const q of spots(p, sq, 3, 4, 201)) {
       if (q.a > 0.45) continue;
       const w = Math.max(2, Math.round(3 * q.k)), hh = Math.max(2, Math.round(2 * q.k));
-      px.put(body, q.x - w / 2, q.y - hh, w, hh);
-      for (let j = 0; j < w; j += 2 * q.w) px.put(lit, q.x - w / 2 + j, q.y - hh, q.w, q.w);
+      px.flat.put(body, q.x - w / 2, q.y - hh, w, hh);
+      for (let j = 0; j < w; j += 2 * q.w) px.flat.put(lit, q.x - w / 2 + j, q.y - hh, q.w, q.w);
     }
   }
-  px.fill(p);
+  return px;
 }
 
 /** The moss's: cushions lit on their tops. */
-function cushions(p: Paint, base: string, sq: Square): void { stones(p, base, sq, { rows: 7, cols: 9, size: [3, 5], bare: 0.35, body: mix(base, '#3e7a2a', 0.4), lit: mix(base, '#9ac85a', 0.5), shadow: 0.6 }).fill(p); }
+function cushions(p: Paint, base: string, sq: Square): Pixels { return stones(p, base, sq, { rows: 7, cols: 9, size: [3, 5], bare: 0.35, body: mix(base, '#3e7a2a', 0.4), lit: mix(base, '#9ac85a', 0.5), shadow: 0.6 }); }
 
 /** The bilberry's: its leaves, red from Leafturn, and blue-black berries among them in late summer. */
-function bilberryNear(p: Paint, base: string, sq: Square): void {
+function bilberryNear(p: Paint, base: string, sq: Square): Pixels {
   const red = Math.max(0, Math.min(1, (p.env.day - 62) / 8, (96 - p.env.day) / 8)), leaf = mix(mix(base, '#2e4a22', 0.5), '#9a3a2a', red);
   const px = leaves(p, base, sq, 8, 10, [leaf, shade(leaf, 1.3), shade(leaf, 0.8)]);
   if (p.env.cover <= 0.55 && p.env.day >= 34 && p.env.day <= 62) {
     const berry = fog(p, '#2a2a4e', sq.d), shine = fog(p, '#6a6a9a', sq.d);
-    for (const q of spots(p, sq, 4, 6, 211)) if (q.a < 0.5) { px.put(berry, q.x, q.y - 2 * q.w, 2 * q.w, 2 * q.w); px.put(shine, q.x, q.y - 2 * q.w, q.w, q.w); }
+    for (const q of spots(p, sq, 4, 6, 211)) if (q.a < 0.5) { px.flat.put(berry, q.x, q.y - 2 * q.w, 2 * q.w, 2 * q.w); px.flat.put(shine, q.x, q.y - 2 * q.w, q.w, q.w); }
   }
-  px.fill(p);
+  return px;
 }
 
 export const pine: GroundLook = { color: pineColor, drift: { toward: ['#3a7032', '#b07a46'], by: 0.6 }, snow: 0.72, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },

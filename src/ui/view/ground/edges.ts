@@ -17,6 +17,7 @@ import { fog, floorPt, unit, unitIn } from '../common.ts';
 import type { Paint } from '../common.ts';
 import { GROUND, asDrawn, groundColor, variantAt } from './index.ts';
 import type { Square } from './look.ts';
+import type { Pixels } from './near.ts';
 
 /** How many stretches a tongue's outline runs in along its edge. */
 const STEPS = 16;
@@ -96,16 +97,35 @@ function reachAt(t: Tongue, a: number): number {
 }
 
 /**
- * The tongues on a square, over its tiles and marks: each in its ground's colour at the cell it runs
- * from, as the floors draw that cell, and a share of that ground's marks on it, placed by the edge.
+ * Which of a square's tongues lies over a point of it, `s` deep and `t` across as seen facing `edges.f`: the
+ * highest there, as they are painted, or -1. A function of the edges alone, as the outline is (#1102: a piece of
+ * the square's detail rooted there is the tongue's).
+ */
+export function under(edges: Edges, s: number, t: number): number {
+  const f = edges.f, rf = ((f + 1) & 3) as Facing, fx = FACING_DX[f], fy = FACING_DY[f], rx = FACING_DX[rf], ry = FACING_DY[rf];
+  // The point u east and v south of the square's north-west corner: `drawEdges`'s turned about.
+  const u = fx ? (fx > 0 ? s : 1 - s) : rx > 0 ? t : 1 - t, v = fy ? (fy > 0 ? s : 1 - s) : ry > 0 ? t : 1 - t;
+  let top = -1;
+  edges.tongues.forEach((tg, k) => {
+    const dx = tg.from.x - tg.into.x, dy = tg.from.y - tg.into.y, [a, r] = dx ? [v, dx > 0 ? 1 - u : u] : [u, dy > 0 ? 1 - v : v];
+    if (a >= 0 && a <= 1 && r < reachAt(tg, a)) top = k;
+  });
+  return top;
+}
+
+/**
+ * The tongues on a square, over its tiles, its marks and what of its detail lies flat: each in its ground's
+ * colour at the cell it runs from, as the floors draw that cell, and a share of that ground's marks on it,
+ * placed by the edge. In the nearest rows that ground's detail too (#1102), on a lattice laid along the edge and
+ * rooted only under the tongue: what lies flat kept to the tongue, what stands up filled once every tongue is down.
  */
 export function drawEdges(p: Paint, sq: Square, edges: Edges, floorPal: string): void {
   const { ctx, cx, horizon, h } = p, { d, l } = sq, f = edges.f, rf = ((f + 1) & 3) as Facing;
   const fx = FACING_DX[f], fy = FACING_DY[f], rx = FACING_DX[rf], ry = FACING_DY[rf];
   // A point of the square, u east and v south of its north-west corner, as the view's depth and across.
   const st = (u: number, v: number): [number, number] => [fx ? (fx > 0 ? u : 1 - u) : fy > 0 ? v : 1 - v, rx ? (rx > 0 ? u : 1 - u) : ry > 0 ? v : 1 - v];
-  const u0 = unit(d, h);
-  for (const t of edges.tongues) {
+  const u0 = unit(d, h), standing: Pixels[] = [];
+  for (const [k, t] of edges.tongues.entries()) {
     const dx = t.from.x - t.into.x, dy = t.from.y - t.into.y;
     // A point `a` of the way along the edge and `r` in from it.
     const uv = (a: number, r: number): [number, number] => (dx ? [dx > 0 ? 1 - r : r, a] : [a, dy > 0 ? 1 - r : r]);
@@ -118,9 +138,13 @@ export function drawEdges(p: Paint, sq: Square, edges: Edges, floorPal: string):
     for (let i = last; i >= 0; i--) ctx.lineTo(...pt(i / last, t.reach[i]));
     ctx.lineTo(...pt(-e0, t.reach[0])); ctx.closePath();
     ctx.fillStyle = fog(p, base, d); ctx.fill();
-    // In the nearest rows, the higher ground's detail on its tongue, placed by the edge and kept to the tongue (#1102).
-    const near = v?.near ?? GROUND[t.terrain].near;
-    if (near && d <= 1) { ctx.save(); ctx.clip(); near(p, base, { ...sq, seed: t.seed }); ctx.restore(); }
+    // In the nearest rows, the higher ground's detail (#1102): seeded and laid along the edge, rooted under this tongue alone.
+    const near = d <= 1 ? v?.near ?? GROUND[t.terrain].near : undefined;
+    if (near) {
+      const span = Math.max(...t.reach), px = near(p, base, { ...sq, seed: t.seed, foot: { keep: (s, tt) => under(edges, s, tt) === k, lattice: { span, at: (x, y) => st(...uv(y, x * span)) } } });
+      ctx.save(); ctx.clip(); px.flat.fill(p); ctx.restore();
+      standing.push(px);
+    }
     const lies = v?.lies ?? GROUND[t.terrain].lies;
     if (!lies) continue;
     for (let i = 0; i < Math.round(lies.marks * MARKS); i++) {
@@ -129,4 +153,5 @@ export function drawEdges(p: Paint, sq: Square, edges: Edges, floorPal: string):
       lies.mark(p, { ...sq, seed: t.seed, i, s, t: tt, x, y, sc: unitIn(d, s, h) / u0, base });
     }
   }
+  for (const px of standing) px.up.fill(p);
 }

@@ -8,6 +8,7 @@ import type { Terrain, Solid } from '../../../game/mapdef.ts';
 import type { Facing } from '../../../game/types.ts';
 import type { Env, Paint } from '../common.ts';
 import type { Prop } from '../model.ts';
+import type { Pixels } from './near.ts';
 
 /**
  * A farm square as the view sees it: its field's crop, whether the rows run away from the eye or
@@ -20,9 +21,16 @@ export interface Rims { near: boolean; far: boolean }
 /**
  * A square of ground as its look's painters take it: how deep and how far across it is in view, its
  * cell on the map (`mx`, `my`, as a board's), its seed and what the scene worked out for it (a field's
- * plot, a drop's rims).
+ * plot, a drop's rims, where its detail in the nearest rows may root).
  */
-export interface Square { d: number; l: number; mx: number; my: number; seed: number; plot?: Plot; rims?: Rims }
+export interface Square { d: number; l: number; mx: number; my: number; seed: number; plot?: Plot; rims?: Rims; foot?: Footing }
+/**
+ * Where a square's detail in the nearest rows roots (#1102): the points of it that `keep` holds, `s` deep and `t`
+ * across, and for a tongue's detail its lattice (`at`, a point `x` in from the edge and `y` along it, each 0 to 1, to
+ * the square's `s` and `t`), laid along the edge so that it lies as the tongue does from every side, its rows shrunk
+ * to the tongue's `span`.
+ */
+interface Footing { keep?: (s: number, t: number) => boolean; lattice?: { span: number; at: (x: number, y: number) => [number, number] } }
 /**
  * A mark lying on a square: its number, where it falls (`s` deep and `t` across the square, `x` and
  * `y` on the screen), its scale there and the square's colour.
@@ -71,10 +79,11 @@ export interface GroundLook {
   lays?: (p: Paint, base: string, sq: Square) => void;
   /**
    * Its detail in the nearest rows (#1102, view/ground/near.ts), the company's square and the one ahead, where the
-   * floor fills half the view: over what it lays and under what lies on it, at the scale those rows allow, placed by
-   * the cell. A variant may have its own.
+   * floor fills half the view, at the scale those rows allow, placed by the cell, rooted where the square's footing
+   * keeps: gathered for the floor to fill, what lies flat under what lies on it and the tongues, what stands up over
+   * them. A variant may have its own.
    */
-  near?: (p: Paint, base: string, sq: Square) => void;
+  near?: (p: Paint, base: string, sq: Square) => Pixels;
   /**
    * A drop: painted in place of the floor, nothing lies on it, it has rims where ground stands before it
    * and beyond it, and the ground does not run on to the horizon over it.

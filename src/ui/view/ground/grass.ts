@@ -10,6 +10,7 @@ import type { Paint } from '../common.ts';
 import type { Ramp } from '../model.ts';
 import type { GroundLook, Mark, Square } from './look.ts';
 import { blades, fronds, spots, sward, tone } from './near.ts';
+import type { Pixels } from './near.ts';
 
 /** How many flowers are out: none before Sowing or after Leafturn. */
 export function flowering(day: number): number { return Math.max(0, Math.min(1, (day - 12) / 8, (72 - day) / 10)); }
@@ -68,28 +69,28 @@ function frond(p: Paint, m: Mark): void {
 // rough's coarse tussocks with dead straw in them and the bracken's fronds arching over, each a blade's width.
 
 /** The meadow's: its sward, and flowers on their stalks from Sowing into Leafturn, none under snow. */
-function meadowNear(p: Paint, base: string, sq: Square): void {
+function meadowNear(p: Paint, base: string, sq: Square): Pixels {
   const px = blades(p, base, sq, { rows: 8, cols: 10, tall: [4, 7], lean: 1, lit: 1.18, dark: 0.82, bare: 0.25 });
   if (p.env.cover <= 0.1) {
     const stalk = tone(p, sq, 0.72, base);
     for (const q of spots(p, sq, 4, 6, 161)) {
       if (q.a > 0.5 * flowering(p.env.day)) continue;
       const c = ['#f0e060', '#ffffff', '#e05a6a', '#c080e0', '#ffffff'][Math.floor(q.b * 5)], top = q.y - Math.round((2 + 2 * q.b) * q.k), w = 2 * q.w;
-      px.put(stalk, q.x, top, q.w, q.y - top);
-      px.put(fog(p, c, sq.d), q.x - q.w, top - w, w + q.w, w);
-      px.put(fog(p, c === '#f0e060' ? '#c08a30' : '#f0d040', sq.d), q.x, top - w, q.w, q.w);
+      px.up.put(stalk, q.x, top, q.w, q.y - top);
+      px.up.put(fog(p, c, sq.d), q.x - q.w, top - w, w + q.w, w);
+      px.up.put(fog(p, c === '#f0e060' ? '#c08a30' : '#f0d040', sq.d), q.x, top - w, q.w, q.w);
     }
   }
-  px.fill(p);
+  return px;
 }
 
 /** The rough's: tussocks of long coarse blades, a tussock dark or dead straw. */
-function roughNear(p: Paint, base: string, sq: Square): void { blades(p, base, sq, { rows: 5, cols: 7, tall: [6, 10], lean: 1, lit: mix(base, '#c8bc78', 0.45), dark: 0.66, bare: 0.45, tuft: true, turns: true }).fill(p); }
+function roughNear(p: Paint, base: string, sq: Square): Pixels { return blades(p, base, sq, { rows: 5, cols: 7, tall: [6, 10], lean: 1, lit: mix(base, '#c8bc78', 0.45), dark: 0.66, bare: 0.45, tuft: true, turns: true }); }
 
 /** The bracken's: fronds arching over to one side or the other, a leaflet hanging under each step, green or russet by the year. */
-function brackenNear(p: Paint, base: string, sq: Square): void {
+function brackenNear(p: Paint, base: string, sq: Square): Pixels {
   const c = rampColor(BRACKEN, p.env.day);
-  fronds(p, base, sq, { rows: 4, cols: 5, len: [9, 15], lit: shade(c, 1.15), dark: shade(c, 0.72), bare: 0.15 }).fill(p);
+  return fronds(p, base, sq, { rows: 4, cols: 5, len: [9, 15], lit: shade(c, 1.15), dark: shade(c, 0.72), bare: 0.15 });
 }
 
 export const grass: GroundLook = { color: grassColor, drift: { toward: ['#24702a', '#bcae5e'], by: 0.6 }, snow: 0.92, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark },

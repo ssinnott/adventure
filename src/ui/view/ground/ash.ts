@@ -9,6 +9,7 @@ import { fog, unitIn, floorPt } from '../common.ts';
 import type { Paint } from '../common.ts';
 import type { GroundLook, Mark, Square } from './look.ts';
 import { cracks as craze, ripples, stones } from './near.ts';
+import type { Pixels } from './near.ts';
 
 /** An ember, a drift, ripples, then cinders. */
 function mark(p: Paint, m: Mark): void {
@@ -71,13 +72,13 @@ function cracks(p: Paint, base: string, sq: Square): void {
 // the crust crazed between its cracks, the crazing glowing by night as the cracks do. A deep snow hides them all.
 
 /** The cinders near to. */
-function cinders(p: Paint, base: string, sq: Square): void { stones(p, base, sq, { rows: 8, cols: 10, size: [1.5, 4.5], bare: 0.4, body: '#1c1a1a', lit: 1.7, shadow: '#0e0c0c' }).fill(p); }
+function cinders(p: Paint, base: string, sq: Square): Pixels { return stones(p, base, sq, { rows: 8, cols: 10, size: [1.5, 4.5], bare: 0.4, body: '#1c1a1a', lit: 1.7, shadow: '#0e0c0c' }); }
 
 /** The fine fall's: long soft ripples. */
-function drifted(p: Paint, base: string, sq: Square): void { ripples(p, base, sq, { rows: 8, cols: 1, half: 22, lit: 1.45, shadow: 0.7 }).fill(p); }
+function drifted(p: Paint, base: string, sq: Square): Pixels { return ripples(p, base, sq, { rows: 8, cols: 1, half: 22, lit: 1.45, shadow: 0.7 }); }
 
 /** The crust's crazing: short cracks every way between the long ones, dark by day and lit by the fire under them by night. */
-function crazed(p: Paint, base: string, sq: Square): void { craze(p, sq, 9,p.dark ? '#b8501e' : fog(p, shade(base, 0.4), sq.d)).fill(p); }
+function crazed(p: Paint, base: string, sq: Square): Pixels { return craze(p, sq, 9, p.dark ? '#b8501e' : fog(p, shade(base, 0.4), sq.d)); }
 
 export const ash: GroundLook = { color: () => TERRAIN_COLORS.ash, drift: { toward: ['#141212', '#6e6a66'], by: 0.6 }, snow: 0.65, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 6, mark },
   scatter: ['stump', 'steam', 'cinder'], rank: 1, near: cinders,

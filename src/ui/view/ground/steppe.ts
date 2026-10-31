@@ -9,6 +9,7 @@ import type { Paint } from '../common.ts';
 import type { Ramp } from '../model.ts';
 import type { GroundLook, Mark, Square } from './look.ts';
 import { blades, spots, stones as pebbles, tone } from './near.ts';
+import type { Pixels } from './near.ts';
 
 /**
  * The steppe through the year: dun after the winter, green-gold in Sowing, gold by Longlight and
@@ -52,22 +53,22 @@ function stones(p: Paint, m: Mark): void {
 // cropped close; the gravel's stones lit on their tops, a blade or two between.
 
 /** The feather-grass near to. */
-function feathered(p: Paint, base: string, sq: Square): void {
+function feathered(p: Paint, base: string, sq: Square): Pixels {
   const px = blades(p, base, sq, { rows: 7, cols: 9, tall: [7, 12], lean: 1, bias: 1.5, lit: 1.25, dark: 0.78, bare: 0.25 });
   if (p.env.cover <= 0.3) {
     const plume = tone(p, sq, 1.5, base);
-    for (const q of spots(p, sq, 4, 5, 221)) if (q.a < 0.6) px.put(plume, q.x + 2 * q.w, q.y - Math.round((8 + 3 * q.b) * q.k), 2 * q.w, Math.max(2, Math.round(3 * q.k)));
+    for (const q of spots(p, sq, 4, 5, 221)) if (q.a < 0.6) px.up.put(plume, q.x + 2 * q.w, q.y - Math.round((8 + 3 * q.b) * q.k), 2 * q.w, Math.max(2, Math.round(3 * q.k)));
   }
-  px.fill(p);
+  return px;
 }
 
 /** The short grass's: a close sward. */
-function cropped(p: Paint, base: string, sq: Square): void { blades(p, base, sq, { rows: 9, cols: 11, tall: [2, 4], lean: 1, lit: 1.22, dark: 0.8, bare: 0.2 }).fill(p); }
+function cropped(p: Paint, base: string, sq: Square): Pixels { return blades(p, base, sq, { rows: 9, cols: 11, tall: [2, 4], lean: 1, lit: 1.22, dark: 0.8, bare: 0.2 }); }
 
 /** The gravel's: stones, and a blade or two between. */
-function gravelled(p: Paint, base: string, sq: Square): void {
+function gravelled(p: Paint, base: string, sq: Square): Pixels {
   const px = pebbles(p, base, sq, { rows: 7, cols: 9, size: [2, 4], bare: 0.35, body: mix(base, '#6a6660', 0.5), lit: mix(base, '#d0ccc0', 0.6), shadow: 0.55 });
-  blades(p, base, sq, { rows: 4, cols: 5, tall: [4, 7], lean: 1, bias: 1, lit: 1.25, dark: 0.8, bare: 0.4, salt: 105 }, px).fill(p);
+  return blades(p, base, sq, { rows: 4, cols: 5, tall: [4, 7], lean: 1, bias: 1, lit: 1.25, dark: 0.8, bare: 0.4, salt: 105 }, px);
 }
 
 export const steppe: GroundLook = { color: steppeColor, drift: { toward: ['#6e9640', '#d4c070'], by: 0.6 }, snow: 0.9, wets: true, splashes: true, ripples: false, vary: 0.08, lies: { marks: 7, mark },
