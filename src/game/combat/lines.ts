@@ -68,3 +68,15 @@ export function victoryLine(loot: Loot): string {
   const [least, most] = shareRange(loot);
   return least === most ? `Victory! ${loot.xp} experience, ${loot.gold} gold.` : `Victory! ${least} to ${most} experience by level, ${loot.gold} gold.`;
 }
+
+/**
+ * The barbarian's feats (#1113, combat/feats/barbarian.ts): a Frenzy, the line before a Cleave's blows,
+ * a War Cry at a group and a Deathless; one under it who fights on, the mark after the blow's or the
+ * poison's line that fells it, and one who falls as it ends.
+ */
+export const FRENZY_LINE = (who: string): string => `${who} flies into a frenzy.`;
+export const CLEAVE_LINE = (who: string, foes: string): string => `${who} cleaves into ${foes}.`;
+export const WAR_CRY_LINE = (who: string, foes: string): string => `${who} roars at ${foes}.`;
+export const DEATHLESS_LINE = (who: string): string => `${who} will not fall.`;
+export const FIGHTS_ON_LINE = (who: string): string => `${who} fights on.`;
+export const FALLS_LINE = (who: string): string => `${who} falls!`;

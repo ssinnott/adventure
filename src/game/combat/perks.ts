@@ -26,8 +26,11 @@ export const BANNER_HIT = 2, MARKSMAN_MORE = 2, HOLY_STRIKE_RISEN = 6, SNEAK_GRO
 const SONG_DMG = 1, SONG_RISEN = 2;
 /** The share of its hit points a barbarian's Rage starts below: half, three quarters at its second prestige. */
 export const rageBelow = (c: Character): number => (c.cls === 'barbarian' && prestigeOf(c) >= 2 ? 0.75 : 0.5);
-/** Whether a member rages: it has Rage and stands below `rageBelow` (its blows' damage, and the barbarian's stamina, #1113). */
-export const rages = (c: Character): boolean => hasTrait(c, 'rage') && c.hp < c.maxHp * rageBelow(c);
+/**
+ * Whether a member rages: it has Rage and stands below `rageBelow`, or a Frenzy of its own runs (`at`,
+ * its slot; #1113): its blows' damage, and the barbarian's stamina.
+ */
+export const rages = (s: CombatState, c: Character, at?: number): boolean => hasTrait(c, 'rage') && (c.hp < c.maxHp * rageBelow(c) || (at !== undefined && !!s.frenzy?.[at]));
 
 /**
  * Blows a turn with the weapon in hand: one, and a prestige's more where its weapon suits it, a
@@ -80,13 +83,13 @@ export function songDamage(party: Party): number {
   return sung >= 3 ? SONG_RISEN : sung >= 1 ? SONG_DMG : 0;
 }
 
-/** Extra weapon damage from the attacker's traits and prestiges. */
-export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: MonsterInst, sneak = sneaks(s, c, m)): number {
+/** Extra weapon damage from the attacker's traits and prestiges; `at`, its slot, where a Frenzy may run (`rages`). */
+export function traitDamage(s: CombatState, c: Character, w: ItemDef, m: MonsterInst, sneak = sneaks(s, c, m), at?: number): number {
   let n = 0;
   if (w.ranged) { if (hasTrait(c, 'marksman')) n += MARKSMAN_DMG + (prestigeOf(c) >= 2 ? MARKSMAN_MORE : 0); }
   else {
     if (hasTrait(c, 'weapon_master')) n += WEAPON_MASTER_DMG;
-    if (rages(c)) n += RAGE_DMG;
+    if (rages(s, c, at)) n += RAGE_DMG;
   }
   if (hasTrait(c, 'holy_strike') && KINDS[m.def.kind].holy) n += c.cls === 'paladin' && prestigeOf(c) >= 2 ? HOLY_STRIKE_RISEN : HOLY_STRIKE_DMG;
   if (sneak) n += sneakDamage(c);

@@ -283,8 +283,8 @@ function knight(): void {
   const m = createParty([member('knight', 23, true), member('cleric'), member('barbarian')]), mf = fight(m, [[STRAW]], 1);
   mf.f.stamina![0] = 3;
   const labels = [0, 1, 2].map((i) => commandRows(T, m, mf.f, i)[1]), rows = featRows(T, m, mf.f, 0);
-  ok(labels.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === 'Feat,Cast,Feat-' && rows.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === "Challenge (2),Mighty Blow (3),Rally (4)-,Champion's Strike (5)-",
-    `with the feats on, the knight's and the barbarian's menu read Feat (the barbarian's barred: no feats yet) and the cleric's Cast; the knight's list on 3: ${rows.map((x) => x.label + (x.disabled ? ' barred' : '')).join(', ')}`);
+  ok(labels.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === 'Feat,Cast,Feat' && rows.map((x) => `${x.label}${x.disabled ? '-' : ''}`).join() === "Challenge (2),Mighty Blow (3),Rally (4)-,Champion's Strike (5)-",
+    `with the feats on, the knight's and the barbarian's menu read Feat and the cleric's Cast; the knight's list on 3: ${rows.map((x) => x.label + (x.disabled ? ' barred' : '')).join(', ')}`);
 
   // Under the list, what the feat the cursor is on does: its words, DESIGN's, whole and wrapped to the
   // panel in three lines at most (Rally's the longest), each class's; nothing under an artifact's spell.
