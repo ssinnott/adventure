@@ -55,7 +55,7 @@ import { inTent, tentView, drawTentRoof } from './tents.ts';
 import { Scenes } from './kept.ts';
 import { drawScatter } from './scatter.ts';
 import { drawFeatures } from './features.ts';
-import { castHorizon, drawLand, standing } from './horizon.ts';
+import { castHorizon, drawLand, standing, standsOver } from './horizon.ts';
 import type { Horizon } from './horizon.ts';
 import { LANDMARK_REACH, landmarkShows, volcanoScale } from './landmarks.ts';
 import { GRID } from '../../content/maps.ts';
@@ -272,7 +272,12 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
     const R = lamp.r * LAMP_REACH, G = lamp.r * 6;
     const x0 = Math.max(r.x, Math.floor(lamp.x - R)), x1 = Math.min(r.x + r.w, Math.ceil(lamp.x + R));
     const y0 = Math.max(r.y, Math.floor(lamp.y - G)), y1 = Math.min(r.y + r.h, Math.ceil(lamp.y + G));
-    if (x1 > x0 && y1 > y0) fl.reach = { x: x0, y: y0, w: x1 - x0, h: y1 - y0, before: ctx.getImageData(x0, y0, x1 - x0, y1 - y0) };
+    if (x1 > x0 && y1 > y0) {
+      // Where the land nearer than it stands, painted before it, the strip is marked as painted over since.
+      const before = ctx.getImageData(x0, y0, x1 - x0, y1 - y0);
+      if (shows) for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) if (!shows(x + 0.5, y + 0.5)) before.data[((y - y0) * (x1 - x0) + x - x0) * 4 + 3] = 0;
+      fl.reach = { x: x0, y: y0, w: x1 - x0, h: y1 - y0, before };
+    }
     p.flames.push(fl);
   };
   // Past the squares drawn, a landmark still stands over the land, out to its kind's reach (landmarks.ts):
@@ -280,15 +285,16 @@ export function paintScene(ctx: CanvasRenderingContext2D, skyCtx: CanvasRenderin
   // the horizon, column by column (#1096), and anything nearer is painted over it. A volcano is drawn to
   // the range the skyline stands there and in its colour, so the cone is that range's summit. The weather
   // that takes the fourth square takes it too (fog, a downpour), its lamp with it; short of that, murk fades its tone.
+  const land = cast;
   if (map.kind === 'outdoor' && !backdrop && (!wx || weatherSight(wx) >= 4)) for (const lm of map.landmarks) {
     const dx = lm.x - px, dy = lm.y - py, k = dx * FACING_DX[f] + dy * FACING_DY[f], lat = dx * FACING_DX[rf] + dy * FACING_DY[rf];
     if (k <= Math.min(DEPTH, sight) || k > LANDMARK_REACH[lm.kind]) continue;
     const u = unit(k, r.h), bx = cx + lat * 2 * u, range = lm.kind === 'volcano' ? standing('volcano', k, light) : undefined, s = range ? volcanoScale(range.h, u) : u;
     if (bx < r.x - s * 3 || bx > r.x + r.w + s * 3) continue;
-    const shown = cast && landmarkShows(cast, Math.floor(bx - s * 3 - r.x), Math.ceil(bx + s * 3 - r.x), k);
+    const shown = land && landmarkShows(land, Math.floor(bx - s * 3 - r.x), Math.ceil(bx + s * 3 - r.x), k);
     ctx.save();
     if (shown) { ctx.beginPath(); for (const q of shown) ctx.rect(r.x + q.c, r.y, q.n, q.top ? horizon - q.top - r.y : r.h); ctx.clip(); }
-    drawLandmark(lm, bx, horizon + u, s, landmarkTone, range?.colour, shown && ((x, y) => shown.some((q) => x - r.x >= q.c && x - r.x < q.c + q.n && (!q.top || y < horizon - q.top))));
+    drawLandmark(lm, bx, horizon + u, s, landmarkTone, range?.colour, land && ((x, y) => { const top = standsOver(land, Math.floor(x - r.x), k); return !top || y < horizon - top; }));
     ctx.restore();
   }
 
