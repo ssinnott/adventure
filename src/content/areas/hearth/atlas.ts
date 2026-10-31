@@ -36,7 +36,7 @@ export const PLACES: readonly AtlasPlace[] = [
 export const SITES: readonly AtlasSite[] = [
   // XII. Hearth Isle (docs/areas/hearth.md §10 has the names).
   { name: 'The Hearth', icon: 'hearth', at: [256, 174], label: 'none' }, // the column's foot on H6, 24,16 (#753)
-  { name: 'Anchorhold', icon: 'tower', at: [268, 176], label: 'right' }, // the cell on I6, 4,18 (#754): the Cleric's third prestige
+  { name: 'Anchorhold', icon: 'tower', map: 'hearthisle_i6', at: [4, 18], label: 'right' }, // the cell on I6, world cell 268,176 (#754): the Cleric's third prestige; by its map, so the sheet draws its tower (#1096)
 ];
 
 export const LINKS: readonly AtlasLink[] = [
