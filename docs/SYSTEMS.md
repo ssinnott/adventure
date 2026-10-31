@@ -155,6 +155,12 @@ Everything is drawn at runtime from vector shapes; there are no bitmaps in the r
   `Tables.looks`: its `air` casts the sky, the haze and the sun toward its colours by day, a fifth of
   the way at most, none by night and lost in murk. It changes at a zone's border; an ending's cast wins
   (`airOf`, `src/ui/view/sky.ts`). With none, as over the Foreland and Thornmark, the sky is as it was.
+- **A region's trees** (#1104): its look's `trees` names, by weight, those its forests and woods stand
+  (`forest`) and its pinewoods (`pine`, conifers only). A square takes its region's, picked by its hash
+  as before (`treeOf`, `src/ui/scenery.ts`), so a wood changes at a zone's border. Beside the five of
+  old stand an oak, a willow, a poplar, a rowan, a wind-bent thorn, a larch, a Scots pine and a
+  flat-topped tree of the steppe, each dressed by the year as the five are, the rowan's and the
+  thorn's berries red from Harvest. With none named a region stands today's mix.
 - **The features** (#1110): the view draws each feature on open ground as the automap marks it, by
   one rule (`markOf`, `src/game/ink.ts`; `src/ui/view/features.ts`), each kind a small drawing of
   `src/ui/scenery.ts`: a cairn, a chest, a camp's ring and fire, a shrine, a well, a statue, a
