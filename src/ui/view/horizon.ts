@@ -38,7 +38,7 @@ interface Stand { h: number; day: string | ((day: number) => string); snow: numb
 const STAND: Readonly<Partial<Record<WorldTerrain, Stand>>> = {
   peak: { h: 56, day: '#e4eaf0', snow: 1 },
   volcano: { h: 56, day: '#56607c', snow: 0.4 },
-  mountain: { h: 44, day: '#64769a', snow: 0.85 },
+  mountain: { h: 44, day: '#6c7ea4', snow: 0.85 },
   cliff: { h: 30, day: '#8a7a68', snow: 0.6 },
   pine: { h: 18, day: '#2a4a3a', snow: 0.6 },
   forest: { h: 16, day: (d) => mix('#30563a', grassColor(d), 0.3), snow: 0.6 },
@@ -190,7 +190,7 @@ interface Light { daylight: number; dark: boolean; murk: number; cover: number; 
 function standColor(t: number, d: number, o: Light): string {
   const s = STAND[TERRAINS[t]] ?? STAND.mountain!;
   const day = mix(typeof s.day === 'string' ? s.day : s.day(o.day), SNOW, s.snow >= 1 ? 1 : o.cover * s.snow);
-  const c = mix(mix('#101426', day, o.daylight), o.haze, Math.min(1, 0.06 + (0.4 * d) / REACH + o.murk * 1.3));
+  const c = mix(mix('#101426', day, o.daylight), o.haze, Math.min(1, 0.12 + (0.4 * d) / REACH + o.murk * 1.3));
   return o.dark ? shade(c, 0.5) : c;
 }
 
