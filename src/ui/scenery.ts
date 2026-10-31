@@ -696,7 +696,7 @@ function smoke(ctx: CanvasRenderingContext2D, x: number, y: number, r0: number, 
     const t = k / (n - 1), r = r0 * (1 + 0.9 * t), px = x + o.wind * rise * 0.9 * t * t, py = y - rise * t;
     ctx.globalAlpha = 1 - 0.5 * t * t;
     ctx.fillStyle = mix(grey, fire, o.glow * 0.7 * (1 - t)); ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2); ctx.fill();
-    ctx.fillStyle = pale; ctx.beginPath(); ctx.arc(px - r * 0.25, py - r * 0.3, r * 0.55, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = mix(pale, fire, o.glow * 0.5 * (1 - t)); ctx.beginPath(); ctx.arc(px - r * 0.25, py - r * 0.3, r * 0.55, 0, Math.PI * 2); ctx.fill();
   }
   ctx.globalAlpha = 1;
 }
