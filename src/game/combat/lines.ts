@@ -68,3 +68,14 @@ export function victoryLine(loot: Loot): string {
   const [least, most] = shareRange(loot);
   return least === most ? `Victory! ${loot.xp} experience, ${loot.gold} gold.` : `Victory! ${least} to ${most} experience by level, ${loot.gold} gold.`;
 }
+
+/**
+ * The thief's feats (#1113, combat/feats/thief.ts): the line before an Ambush's blows; Blind's and
+ * Hamstring's words after the hit on the foe they take, or on one no hold takes; the line when the held
+ * move again at a round's end; and Deathblow's mark, after a sneak attack's and before a death.
+ */
+export const AMBUSH_LINE = (who: string): string => `${who} strikes from ambush.`;
+export const BLIND_LINE = (foe: string): string => `${foe} is blinded.`;
+export const HAMSTRING_LINE = (foe: string): string => `${foe} is held fast.`, UNHELD_LINE = (foe: string): string => `${foe} is not held.`;
+export const LOOSE_LINE = (foes: string): string => `${foes} can move again.`;
+export const DEATHBLOW_LINE = 'A deathblow.';

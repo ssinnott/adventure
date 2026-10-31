@@ -28,6 +28,7 @@ import type { CombatState, PartyAction, Strike } from './state.ts';
 import { canAttackFromRow, rages } from './perks.ts';
 import { canReach } from './foes.ts';
 import { KNIGHT } from './feats/knight.ts';
+import { THIEF } from './feats/thief.ts';
 
 /** The most stamina a member holds. */
 export const STAMINA_MAX = 6;
@@ -64,7 +65,7 @@ export interface FeatClass {
 }
 
 /** Each class's feats, a line a class: the barbarian's, the thief's and the monk's come in pull requests of their own. */
-const BY_CLASS: Partial<Record<ClassId, FeatClass>> = { knight: KNIGHT };
+const BY_CLASS: Partial<Record<ClassId, FeatClass>> = { knight: KNIGHT, thief: THIEF };
 
 /** Every feat, class by class. */
 export const FEATS: readonly FeatDef[] = Object.values(BY_CLASS).flatMap((k) => k.feats);
@@ -82,7 +83,7 @@ export const staminaOf = (s: CombatState, c: Character, i: number): number | und
 
 const add = (s: CombatState, i: number, n: number): void => { s.stamina![i] = Math.min(STAMINA_MAX, s.stamina![i] + n); };
 
-/** A blow of member `i`'s own landed (the attack loop): 1, and 1 more for the barbarian raging, the thief's sneak attack, the monk's felling blow. */
+/** A blow of member `i`'s own landed (the attack loop): 1, and 1 more for the barbarian raging, the thief's own sneak attack (`sneaks`, not a feat's), the monk's felling blow. */
 export function landed(s: CombatState, c: Character, i: number, sneak: boolean, fells: boolean): void {
   if (!s.stamina || !builds(c)) return;
   add(s, i, (c.cls === 'barbarian' && rages(c)) || (c.cls === 'thief' && sneak) || (c.cls === 'monk' && fells) ? 2 : 1);

@@ -14,6 +14,7 @@ import type { World } from '../world.ts';
 import type { Items, Tables } from '../tables.ts';
 import {
   FRONT_ROW, MAX_MONSTERS, MAX_GROUPS, BLESS_HIT, WARD_AC, describe, toHit, roll, standing, frontStands, isLeader, SLUMBER_CHANCE,
+  BLIND_HIT,
 } from './state.ts';
 import type { MonsterInst, CombatState } from './state.ts';
 import {
@@ -41,8 +42,8 @@ export function challenger<T extends { i: number }>(s: CombatState, m: MonsterIn
 
 /** A monster's armour, with a Ward over its group. */
 export const monsterAc = (s: CombatState, m: MonsterInst): number => m.def.ac + (s.foeShield[m.band] > 0 ? WARD_AC : 0);
-/** A monster's to-hit, with a Bless over its group and the weather's toll on its bow. */
-export const monsterHit = (s: CombatState, m: MonsterInst): number => m.def.attack + (s.foeBless[m.band] > 0 ? BLESS_HIT : 0) - (m.def.missile ? s.rangedPenalty : 0);
+/** A monster's to-hit, with a Bless over its group, the weather's toll on its bow and a thief's Blind (#1113). */
+export const monsterHit = (s: CombatState, m: MonsterInst): number => m.def.attack + (s.foeBless[m.band] > 0 ? BLESS_HIT : 0) - (m.def.missile ? s.rangedPenalty : 0) - (m.blind ? BLIND_HIT : 0);
 /** What the company has seen the element do to the monster: the share of a spell's damage or a blow's die, or 1 where it has not seen it. */
 export const seenMult = (s: CombatState, m: MonsterInst, el: Element | undefined): number => (el ? s.seen[m.def.id]?.[el] ?? 1 : 1);
 
