@@ -3,4 +3,6 @@ import type { AreaLook } from '../../area.ts';
 
 export const LOOK: AreaLook = {
   // No air: the sky as it always was.
+  // Oaks, low and broad, with a broadleaf and a thorn here and there.
+  trees: { forest: { oak: 4, broadleaf: 1, thorn: 1 } },
 };

@@ -2,6 +2,7 @@
 // answers to the questions the viewport asks of its ground, each once, and the shapes its painters take.
 // view/ground/index.ts holds the looks in `GROUND`, a record over every terrain.
 
+import type { Trees } from '../../../content/area.ts';
 import type { GameMap } from '../../../game/map.ts';
 import type { Terrain, Solid } from '../../../game/mapdef.ts';
 import type { Facing } from '../../../game/types.ts';
@@ -31,9 +32,10 @@ export interface Mark extends Square { i: number; s: number; t: number; x: numbe
 interface Board { x: number; y: number; u: number; tone: number; mx: number; my: number; cloud: number }
 /**
  * The trees at the sides of a square, the way through it left open: under what hash a side has none,
- * a tree's size and how much a hash adds to it, and the painter of one, its kind picked by a hash.
+ * a tree's size and how much a hash adds to it, and the painter of one, its kind picked by a hash from
+ * the trees of the square's region (#1104).
  */
-interface Sides { bare: number; size: number; spread: number; tree: (p: Paint, x: number, y: number, s: number, tone: number, pick: number) => void }
+interface Sides { bare: number; size: number; spread: number; tree: (p: Paint, x: number, y: number, s: number, tone: number, pick: number, trees?: Trees) => void }
 
 export interface GroundLook {
   /** Its colour on a day of the year (a field's by its crop), before rain and snow. */

@@ -4,4 +4,6 @@ import type { AreaLook } from '../../area.ts';
 export const LOOK: AreaLook = {
   // Out in the gulf: a sky of slate and steel over the sea.
   air: { strength: 0.2, top: '#102030', foot: '#304860', haze: '#405870' },
+  // Wind-bent thorns and the odd rowan on the gulf's isles.
+  trees: { forest: { thorn: 3, rowan: 1 } },
 };
