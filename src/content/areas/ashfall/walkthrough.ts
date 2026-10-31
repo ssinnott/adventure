@@ -302,8 +302,8 @@ function theRoad(): Scene[] {
       // The cone: its mouth at the atlas's mark, a vent in the volcano; the lookout on its shoulder, the
       // cairn on its ash foot, the Hills' line on the west, and the flows coming down off it.
       const cone = ATLAS.sites.find((q) => q.name === 'Fire Mountain')!;
-      const [cx, cy] = [Math.floor(cone.at[0]) - g11.x, Math.floor(cone.at[1]) - g11.y];
-      ok(!cone.planned && cx === 15 && cy === 8 && out.at(g11.x + cx, g11.y + cy).terrain === 'vent' && [[1, 0], [-1, 0], [0, 1], [0, -1]].every(([dx, dy]) => out.at(g11.x + cx + dx, g11.y + cy + dy).terrain === 'volcano'),
+      const [cx, cy] = [Math.floor(cone.at[0]), Math.floor(cone.at[1])];
+      ok(!cone.planned && cone.map === 'firemount_g11' && cx === 15 && cy === 8 && out.at(g11.x + cx, g11.y + cy).terrain === 'vent' && [[1, 0], [-1, 0], [0, 1], [0, -1]].every(([dx, dy]) => out.at(g11.x + cx + dx, g11.y + cy + dy).terrain === 'volcano'),
         `the cone's mouth is Fire Mountain's mark on the atlas, G11's 15,8, a vent in the volcano (${cone.at.join(',')})`);
       for (const id of ['g11_lookout', 'g11_hills', 'g11_bed', 'g11_crust', 'g11_heaps', 'g11_tracks', 'g11_bombs', 'g11_bones', 'g11_glass', 'g11_ember']) see(w, `firemount_g11:${id}`);
       const cairn = G11.features!.find((f) => f.kind === 'cairn' && f.id === 'g11_cairn');

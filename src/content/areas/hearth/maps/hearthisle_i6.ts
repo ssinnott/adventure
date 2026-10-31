@@ -35,6 +35,8 @@ export const HEARTHISLE_I6: MapDef<'hearthisle_i6'> = {
   region: 'hearth',
   // Where the rim's path comes out of the rock over the sea.
   start: { x: 8, y: 19, facing: SOUTH },
+  // Anchorhold drawn tall: the cell built into the rim stands over the land as a tower, on its own square.
+  landmarks: [{ x: 4, y: 18, kind: 'tower' }],
   rows: [
     ',,^~~~WWWWWWWWWWWWWWWWWWWWWWWWWW',
     ',,,_~~~WWWWWWWWWWWWWWWWWWWWWWWWW',
