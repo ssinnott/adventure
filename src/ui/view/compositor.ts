@@ -43,6 +43,7 @@ import { murkOf, toPair, drawnAt, standsAt, looksHouse, building, tentOf } from 
 import { airOf, hazeOf, drawSkyBand } from './sky.ts';
 import type { SkyOpts } from './sky.ts';
 import { drawWeather, strike, drawBolt } from './weather.ts';
+import { drawLife } from './life.ts';
 import { drawFloor, drawCeiling } from './floor.ts';
 import { GROUND, groundColor } from './ground/index.ts';
 import { drawVoidFront, drawVoidSide, drawFrontFace, drawLighthouseFlank, LAMP_REACH, drawLamp, drawFlame, drawSideFace } from './walls.ts';
@@ -136,6 +137,8 @@ export function drawViewport(
     ctx.fillStyle = g; ctx.fillRect(r.x, r.y, r.w, r.h);
   }
   ctx.restore();
+  // What moves over the land (life.ts), under the weather; a fight, which draws its own weather, draws none.
+  if (weather) drawLife(ctx, world, r, frame);
   if (weather) drawWeather(ctx, world, r, frame);
 }
 
