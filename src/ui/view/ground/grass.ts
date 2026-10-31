@@ -45,7 +45,7 @@ function meadow(p: Paint, m: Mark): void {
   ctx.fillRect(Math.round(x), Math.round(y - 2 * sc), Math.max(1, Math.round(2 * sc)), Math.max(1, Math.round(2 * sc)));
 }
 
-/** The rough's: the turf's tufts coarse, dark blades and dead straw by turns, and no flowers. */
+/** The rough's: the turf's tufts coarse, dark blades and dead straw by turns; no flowers. */
 function coarse(p: Paint, m: Mark): void {
   const { ctx, env } = p, { i, x, y, sc, base, d } = m;
   if (i >= 5 || env.cover > 0.55) return;

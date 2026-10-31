@@ -462,6 +462,13 @@ function variants(): void {
   const towns = out.exits.filter((e) => kinds.get(e.to) === 'town'), tracked = towns.filter((e) => roads.some((r) => steps(r, e) <= 2 && r.k !== 'road/cobbles'));
   const country = roads.filter((r) => out.exits.every((e) => steps(r, e) > TOWN_STEPS)), cobbled = roads.filter((r) => r.k === 'road/cobbles').length;
   ok(towns.length >= 10 && !tracked.length && country.every((r) => r.k === 'road/track') && cobbled > 0, `the road is cobbled by the towns' doors and a track in the country (${towns.length} ways into a town, ${tracked.length} with a track by the door; ${cobbled} of ${roads.length} road squares cobbled, within ${TOWN_STEPS} steps of a way in set in a building or a wall)`);
+  // A track runs the same way in the world from every facing: the sides its plot opens, or a lone square's run, turned back from the facing.
+  const runs = (x: number, y: number, f: Facing): string => {
+    const pl = GROUND.road.plot!(out, x, y, f), sides = [(f + 2) & 3, f, (f + 3) & 3, (f + 1) & 3].filter((_, k) => !pl.hedge[k]);
+    return (sides.length ? sides : pl.away ? [f & 1, (f & 1) + 2] : [(f + 1) & 1, ((f + 1) & 1) + 2]).sort().join();
+  };
+  const turned = roads.filter((r) => new Set(([NORTH, EAST, SOUTH, WEST] as Facing[]).map((f) => runs(r.x, r.y, f))).size > 1);
+  ok(!turned.length, `a track runs the same way from every facing, along its road (${roads.length} road squares, ${turned.length} otherwise${turned.length ? `: ${turned.map((r) => `${r.x},${r.y}`).join(' ')}` : ''})`);
   // Where a look's variants meet: the ground samples of the grass and the heather each show two or more of one ground's from the start.
   const met = GROUND_SAMPLES.filter((d) => /grass|heather/.test(d.id)).map((d) => {
     const m = new GameMap(d), names = new Set<string>();

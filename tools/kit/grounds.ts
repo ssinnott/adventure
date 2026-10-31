@@ -159,8 +159,8 @@ export const GROUND_SAMPLES: readonly MapDef[] = [
     ],
   },
   {
-    // The downs in their looks (#1101): turf, meadow, rough and bracken meeting, a track over them up to a
-    // shepherd's hut, and a rock.
+    // The downs in their looks (#1101): turf, meadow, rough and bracken meeting and a track over them up to a
+    // shepherd's hut; a rock.
     id: 'ground_grass', name: 'Grass', kind: 'outdoor', region: 'shelf', start: { x: 6, y: 8, facing: NORTH },
     rows: [
       'MMMMMMMMMMMM',

@@ -99,10 +99,10 @@ export interface GroundLook {
 
 /**
  * One of a ground's looks (#1101): its name, its share of the ground where the land's noise chooses, how its
- * colour is shifted from the ground's (as far as the ground's colour on `DRIFT_DAY` goes toward `toward`, a
- * colour or one by the day, `by` of the way, kept the year round; then drifted, wetted and snowed on as the
- * ground's is) and what it lays and what lies on it in place of the ground's; the ground's own where it gives
- * none. Only a picture: the way, the snow it holds and the automap's colour are its ground's.
+ * colour is shifted from the ground's (as far as the ground's colour on `DRIFT_DAY` goes `by` of the way toward
+ * `toward`, kept the year round, or where `toward` is a colour by the day the day's colour `by` of the way
+ * toward it; then drifted, wetted and snowed on as the ground's is) and what it lays and what lies on it in
+ * place of the ground's; the ground's own where it gives none. Only a picture: the way, the snow it holds and the automap's colour are its ground's.
  */
 export interface Variant {
   name: string; share?: number;

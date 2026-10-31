@@ -49,13 +49,14 @@ function roadPlot(map: GameMap, x: number, y: number, f: Facing): Plot {
   const rf = ((f + 1) & 3) as Facing, fx = FACING_DX[f], fy = FACING_DY[f], rx = FACING_DX[rf], ry = FACING_DY[rf];
   const off = (dx: number, dy: number): boolean => { if (!map.inBounds(x + dx, y + dy)) return true; const c = map.at(x + dx, y + dy); return (c.look ?? c).terrain !== 'road'; };
   const hedge = [off(-fx, -fy), off(fx, fy), off(-rx, -ry), off(rx, ry)] as const;
-  return { crop: 0, away: !hedge[0] || !hedge[1] || (hedge[2] && hedge[3]), hedge };
+  // A lone square's track runs north and south, from whichever side it is seen.
+  return { crop: 0, away: !hedge[0] || !hedge[1] || (hedge[2] && hedge[3] && fx === 0), hedge };
 }
 
 /**
  * The track: two ruts and the grass between them, along the square where the road runs straight, a quarter
- * round its corner where it bends, and from each side it goes on to into the middle where it forks or ends; a
- * lone square runs as its plot does. Out to the third square; a deep snow leaves the ruts and buries the grass.
+ * round its corner where it bends and from each side it goes on to into the middle where it forks or ends; a
+ * lone square north and south. Out to the third square; a deep snow leaves the ruts and buries the grass.
  */
 function track(p: Paint, base: string, sq: Square): void {
   const { ctx, cx, horizon, h, env } = p, { d, l, plot } = sq;

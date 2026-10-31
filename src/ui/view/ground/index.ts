@@ -118,8 +118,12 @@ export function groundColor(p: Paint, t: Terrain, floorPal: string, x: number, y
   // In this order: the look's colour today, its variant's shift, the land's drift at the cell, then rain and snow over it.
   let c = look.color(env.day, crop);
   if (v?.shift) {
-    const { toward, by } = v.shift, ref = look.color(DRIFT_DAY, 0), from = hexToRgb(ref), to = hexToRgb(mix(ref, typeof toward === 'string' ? toward : toward(env.day), by)), at = hexToRgb(c);
-    c = rgbToHex(at[0] + to[0] - from[0], at[1] + to[1] - from[1], at[2] + to[2] - from[2]);
+    const { toward, by } = v.shift;
+    // A fixed colour moves it as the drift does; a colour of the day is mixed into the day's, as the bracken turns.
+    if (typeof toward === 'string') {
+      const ref = look.color(DRIFT_DAY, 0), from = hexToRgb(ref), to = hexToRgb(mix(ref, toward, by)), at = hexToRgb(c);
+      c = rgbToHex(at[0] + to[0] - from[0], at[1] + to[1] - from[1], at[2] + to[2] - from[2]);
+    } else c = mix(c, toward(env.day), by);
   }
   c = drifted(look, c, x, y, p.map.id);
   if (env.wet > 0 && look.wets) c = shade(c, 1 - 0.18 * env.wet);
