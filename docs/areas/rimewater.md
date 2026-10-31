@@ -211,7 +211,8 @@ coat of mail. It goes into NAMES §2's row for the hill folk, Cairnmoor's and Ri
   black mail (the Plate Mail +4); their ids stay (#490's 15). The Matron's Cap is plain English, a
   machine's part. The sleepers' ring has no name: none came that did not tell the secret, and it is
   cut (§11). Trollbrand, the enclave's spear (#832's 26), is plain English as the furrier's wares
-  are: the row has no word for a spear or for fire.
+  are: the row has no word for a spear or for fire. The locker's other two, the Hunter's Short
+  Bow +1 and the Hide Sling +1 (#1115), keep the ladder's names: the row has none for either.
 - **The stair** is *Under Loch Fuar*, as Carn Dubh's is *Under Carn Dubh*, since nothing on the
   surface names the bay; the lower level keeps the docs' plain name (#490's 7).
 
