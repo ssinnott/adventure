@@ -80,7 +80,7 @@ export const CINDERCOAST_G9: MapDef<'cindercoast_g9'> = {
   secrets: [{ x: 13, y: 28, hint: 'g9_step' }],
   encounters: [
     // The box's one fight: two drakes on the beach east of the wall, down off the mountain for the seals.
-    // A stoker beside the drake since the class changes (#1117): two drakes were 18 fights to a rest.
-    { id: 'g9_drakes', x: 27, y: 25, monsters: ['cinder_drake', 'stoker'], aware: 5, respawn: RESPAWN.twoDays },
+    // A flue walker beside the drake since the class changes (#1117): two drakes were 18 fights to a rest, a stoker 13.4.
+    { id: 'g9_drakes', x: 27, y: 25, monsters: ['cinder_drake', 'flue_walker'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

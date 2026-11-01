@@ -71,7 +71,7 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Riftling Elder (`riftling_elder`) | riftling | rift | 9 | 45 | 16 | +7 | 3d4+2 | 15 | 440 | 0 |  | paralyses, 0.15 a hit |
 | Ogre (`ogre`) | ogre | person | 7 | 60 | 14 | +7 | 2d8+2 | 8 | 520 | 15–50 |  |  |
 | Hand of Ash (`ashen_hand`) | cultist | person | 10 | 440 | 17 | +12 | 6d8+18 | 13 | 2000 | 100–200 |  | never breaks |
-| Warden of the Cut (`cut_warden`) | riftling | rift | 10 | 450 | 18 | +12 | 4d8+15 | 12 | 3000 | 50–100 |  | shrugs off sleep |
+| Warden of the Cut (`cut_warden`) | riftling | rift | 10 | 450 | 18 | +12 | 4d8+17 | 12 | 3000 | 50–100 |  | shrugs off sleep |
 | Great Owl (`great_owl`) | birds | beast | 8 | 57 | 15 | +6 | 2d6+2 | 15 | 176 | 0 | *Wings as wide as a cart, and not a sound.* | reaches the back row |
 | Bramble (`bramble`) | oldwood | beast | 8 | 57 | 15 | +6 | 2d6+2 | 6 | 176 | 0 | *A thicket that closes behind you.* | paralyses, 0.3 a hit |
 | Rootwalker (`rootwalker`) | oldwood | beast | 9 | 83 | 18 | +6 | 2d6+3 | 8 | 265 | 0 | *A stump walking on its roots, its bark like plate.* |  |
