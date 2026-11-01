@@ -10,7 +10,7 @@ import { World, seen } from '../../src/game/world.ts';
 import { GameMap } from '../../src/game/map.ts';
 import { OUTDOORS } from '../../src/game/outdoors.ts';
 import { defaultParty } from '../../src/game/party.ts';
-import { serialize, deserialize, upgrade, load, SAVE_VERSION, SAVE_KEY } from '../../src/game/save.ts';
+import { serialize, deserialize, upgrade, load, hasSave, SAVE_VERSION, SAVE_KEY, AUTOSAVE_KEY } from '../../src/game/save.ts';
 import { UPGRADES } from '../../src/game/upgrades.ts';
 import type { Upgrade } from '../../src/game/upgrades.ts';
 import type { SaveData, Store } from '../../src/game/save.ts';
@@ -220,5 +220,28 @@ export function save(): void {
     const gone = g.loadGame();
     ok(first === true && gone === "The save could not be read: unknown map 'gone_map'." && g.world === was && g.party === party && g.rng.state === seed,
       `a save naming a map this build has not got gives its reason (${gone}) and leaves the game loaded before as it was`);
+  }
+  { // The game saves itself to a slot of its own on a new map or a long rest, and Continue takes the newer.
+    const disk = new Map<string, string>();
+    const store: Store = { getItem: (k) => disk.get(k) ?? null, setItem: (k, v) => { disk.set(k, v); }, removeItem: (k) => { disk.delete(k); } };
+    const g = new Game(TABLES, store);
+    g.newGame(5);
+    g.update(null);
+    const quiet = disk.size === 0 && !hasSave(store);
+    g.world.move('forward'); g.update(null);
+    const step = disk.size === 0;
+    g.world.advance(480); g.update(null);
+    const rested = disk.has(AUTOSAVE_KEY) && !disk.has(SAVE_KEY);
+    g.saveGame();
+    const both = disk.has(SAVE_KEY) && disk.has(AUTOSAVE_KEY) && hasSave(store);
+    const stamp = (k: string, at: number): void => { disk.set(k, JSON.stringify({ ...JSON.parse(disk.get(k)!), savedAt: at })); };
+    stamp(SAVE_KEY, 100); stamp(AUTOSAVE_KEY, 200);
+    const auto = (load(store) as SaveData).savedAt === 200;
+    stamp(SAVE_KEY, 300);
+    const manual = (load(store) as SaveData).savedAt === 300;
+    disk.set(AUTOSAVE_KEY, 'not a save');
+    const broken = typeof load(store) === 'object';
+    ok(quiet && step && rested && both && auto && manual && broken,
+      'a step saves nothing and a rest saves to the autosave slot alone; F5 keeps its own; Continue takes the newer, and a broken slot does not hide the other');
   }
 }

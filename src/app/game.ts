@@ -18,7 +18,7 @@ import type { Feature, Interior, Choice, Passage, Teaching } from '../game/mapde
 import * as passage from '../game/passage.ts';
 import * as prestige from '../game/prestige.ts';
 import { startCombat } from '../game/combat.ts';
-import { save as saveTo, load as loadFrom, browserStore, hasSave } from '../game/save.ts';
+import { save as saveTo, autosave as autosaveTo, load as loadFrom, browserStore, hasSave } from '../game/save.ts';
 import type { Store } from '../game/save.ts';
 import type { Action } from './input.ts';
 import { monster } from '../game/monsters.ts';
@@ -47,6 +47,8 @@ import type { Host, Screen, TextInput } from '../ui/screen.ts';
  */
 const ATTRACT_WHY: readonly [string, string] = ['The pilot plays.', 'Any key for the title.'];
 export const ATTRACT_HOLD = 60 * 3;
+/** Hours passing at once, in minutes, that count as a rest for the autosave: a night's rest is 480, a step a few. */
+const REST_MINUTES = 240;
 
 export class Game implements Host {
   world!: World;
@@ -102,10 +104,11 @@ export class Game implements Host {
     this.party = party ?? defaultParty(this.tables, this.rng);
     this.world = new World(this.tables, this.maps, this.party, this.rng);
     this.log = [];
+    this.seen = null;
     this.fell = null;
     this.pilot?.forget();
     this.screens = [new ExploreScreen()];
-    this.say('Arrows move. Space acts. R rests, F searches, C casts, I inventory, J quests, F5/F9 save/load.');
+    this.say('Arrows move. Space acts. R rests, F searches, C casts, I inventory, J quests, F5/F9 save/load. It also saves itself.');
     for (const m of this.world.eventsHere()) this.say(m);
     this.enterCell();
     this.markQuests();
@@ -164,6 +167,7 @@ export class Game implements Host {
     this.party = data.party;
     this.world = world;
     this.log = [];
+    this.seen = null;
     this.fell = null;
     this.pilot?.forget();
     this.screens = [new ExploreScreen()];
@@ -171,6 +175,21 @@ export class Game implements Host {
     // A save carries its quest log implicitly; take it as read rather than announcing it all again.
     this.markQuests();
     return true;
+  }
+
+  /** Where the last look found the party (map and clock), so `checkpoint` sees a crossing or a long rest. */
+  private seen: { mapId: string; minutes: number } | null = null;
+
+  /**
+   * The game's own save, to its own slot (`autosave`), when the party is exploring and has crossed into
+   * another map or let hours pass (a rest, a night at the inn, a crossing). Quiet, and never in attract
+   * mode; a store that will not take it is no matter, F5 says so.
+   */
+  private checkpoint(): void {
+    const s = this.world.state, was = this.seen;
+    this.seen = { mapId: s.mapId, minutes: s.minutes };
+    if (!was || this.attracting || !this.store) return;
+    if (s.mapId !== was.mapId || s.minutes - was.minutes >= REST_MINUTES) autosaveTo(this.store, this.world.state, this.party, this.rng.state);
   }
 
   saveGame(): void {
@@ -202,6 +221,7 @@ export class Game implements Host {
     if (!(this.top instanceof ExploreScreen)) return;
     // Whatever moved the clock (a step, a rest, the inn), the log says so once the party is back
     // to exploring and the sky has turned. The sky goes first, so a quest's news is the last word.
+    this.checkpoint();
     const news = this.world.weatherNews(); if (news) this.say(news);
     // What a turn, an arrival, a load or a light has brought into sight, the first time it is seen.
     if (a) for (const look of this.world.sightings()) this.say(look);

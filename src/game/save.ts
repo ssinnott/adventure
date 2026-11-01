@@ -18,6 +18,8 @@ import type { Upgrade } from './upgrades.ts';
  */
 export const SAVE_VERSION = 6;
 export const SAVE_KEY = 'hearth-of-caldera.save';
+/** The slot the game fills of its own accord (`autosave`); F5 never touches it, and it never touches F5's. */
+export const AUTOSAVE_KEY = 'hearth-of-caldera.autosave';
 
 export interface SaveData {
   version: number;
@@ -57,13 +59,28 @@ export function browserStore(): Store | null {
   try { const s = window.localStorage; s.getItem(SAVE_KEY); return s; } catch { return null; }
 }
 
-export function save(store: Store, world: WorldState, party: Party, rngState: number): boolean {
-  try { store.setItem(SAVE_KEY, serialize(world, party, rngState)); return true; } catch { return false; }
+export function save(store: Store, world: WorldState, party: Party, rngState: number, key = SAVE_KEY): boolean {
+  try { store.setItem(key, serialize(world, party, rngState)); return true; } catch { return false; }
 }
 
-/** The save in storage, brought up to date; null with none; or, for one that will not load, the reason why, for the player (#945). */
+/** The game's own checkpoint, in a slot apart from the player's (see `AUTOSAVE_KEY`). */
+export function autosave(store: Store, world: WorldState, party: Party, rngState: number): boolean { return save(store, world, party, rngState, AUTOSAVE_KEY); }
+
+/**
+ * The save in storage, brought up to date: the newer of the player's save and the autosave that reads.
+ * Null with none; or, for one that will not load, the reason why, for the player (#945).
+ */
 export function load(store: Store): SaveData | string | null {
-  try { const t = store.getItem(SAVE_KEY); return t ? deserialize(t) : null; } catch (e) { return e instanceof Error ? e.message : String(e); }
+  let best: SaveData | null = null, why: string | null = null;
+  for (const key of [SAVE_KEY, AUTOSAVE_KEY]) {
+    try {
+      const t = store.getItem(key);
+      if (!t) continue;
+      const d = deserialize(t);
+      if (!best || d.savedAt > best.savedAt) best = d;
+    } catch (e) { why ??= e instanceof Error ? e.message : String(e); }
+  }
+  return best ?? why;
 }
 
-export function hasSave(store: Store | null): boolean { return !!store && !!store.getItem(SAVE_KEY); }
+export function hasSave(store: Store | null): boolean { return !!store && !!(store.getItem(SAVE_KEY) || store.getItem(AUTOSAVE_KEY)); }
