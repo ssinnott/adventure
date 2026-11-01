@@ -11,9 +11,10 @@
 import { AREAS } from '../../src/content/index.ts';
 import type { RegionId } from '../../src/content/index.ts';
 import type { Area } from '../../src/content/area.ts';
-import { ATLAS, MAP_DEFS } from '../../src/content/index.ts';
+import { ATLAS, MAP_DEFS, MONSTERS } from '../../src/content/index.ts';
 import { CURVE } from '../../src/content/progression.ts';
 import type { EncounterDef, Feature, MapDef } from '../../src/game/mapdef.ts';
+import { monsterImmune } from '../../src/game/monsters.ts';
 import { rest, MAX_LEVEL } from '../../src/game/party.ts';
 import { gateFight, gateOpts, winRate, rate, fights, seeded, spread, settle, SEED_LADDER, MARGIN, SEEDS, type Measure, type Settled } from '../kit/fight.ts';
 import { gateCompany } from '../kit/company.ts';
@@ -508,6 +509,11 @@ function fixed(): void {
     .filter((k) => ownerOf(k) !== a.id));
   ok(!strays.length && ownerOf(`${LAIR.id}: rest`) === FIXTURE.area && ownerOf('fx_nowhere: floor') === undefined,
     `every owed key goes to the part of the area it names, the fixture lair's to ${FIXTURE.area}'s, any other to the fixed part${strays.length ? ` (not: ${strays.join(', ')})` : ''}`);
+  // The bosses from 16 up are proof against a hold (DESIGN §5, Hamstring; #1117): sized with none on them, they are
+  // won without a thief as with one. A boss is its group's leader, else the group's first monster.
+  const late = AREAS.flatMap((a) => a.maps.flatMap((d) => (d.encounters ?? []).filter((g) => g.boss).map((g) => g.leader ?? g.monsters[0]))).filter((id) => MONSTERS[id].level >= 16);
+  const held = [...new Set(late.filter((id) => !monsterImmune(MONSTERS[id], 'paralysed')))];
+  ok(late.length > 0 && !held.length, `every boss from 16 up is proof against a hold, ${new Set(late).size} of them${held.length ? ` (but not ${held.join(', ')})` : ''}`);
 }
 
 /** An area's part: its maps, its pools and its zones against the curve; Saltreach's with the enclave's fixture. */

@@ -155,6 +155,7 @@ row unless it is `ranged` or the front row is down, rolls to hit against that me
 deals its dice. A hit may add a condition at a chance (`inflict`: poison, disease, sleep or
 paralysis); ten monsters use it, and none for sleep. `ranged` lets it pick the back row, `missile`
 marks the bows the weather spoils, and `mindless` shrugs off Slumber. It carries gold and drops.
+A boss from 16 up is proof against a hold (`immune: ['paralysed']`, #1117).
 
 That is all, but for ranks and morale (#160): a group may stand a `back` rank, which a blade reaches
 only once the fight's front is down and which waits, bow or spell aside, till then; and a fight's

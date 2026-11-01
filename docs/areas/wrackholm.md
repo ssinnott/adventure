@@ -157,7 +157,7 @@ underfoot and the wreck, the Tide Ship's site.
   Hole's lower level's 89% won, the weather deck's 5.49, the Rift's 83.6% won at 12 and its 8.56,
   and Old Nick's 81.9% at 32. The gate judges the Dead-Drop's levels here too, by their own floors
   (`docs/areas/dead_drop.md`), and four of theirs are off their aim as well: the drop's 74.6% two
-  under, and the counting house's 85.4% won, its Tallymaster's 70.8% at 27 and its 13.66 fights to a
+  under, and the counting house's 85.4% won, its Tallymaster's 70.8% at 27 (proof against a hold) and its 13.66 fights to a
   rest, 93.4% of its days ending in a fight broken off (#1117).
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, E6 100% and F6 95.9%;
   within 12 in the country, E5, F5 and F7 100%; the dungeons 100% within 7, the Rift 97.6%.

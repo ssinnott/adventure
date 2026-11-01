@@ -785,7 +785,8 @@ points tier 5 was at 8.
 The damage spells' dice are those the harness sized as stand-ins (MONSTERS.md §4.4), and the tiers
 are built (#20). Walk on Water lasts twelve steps and Levitate six; Lampglass's element is picked as
 it is cast. Grasping Roots holds each of a group at one in two, a blow does not free it, and each
-held monster tears free at 0.35 a round.
+held monster tears free at 0.35 a round. The bosses from 16 up are proof against it, as against
+Hamstring.
 
 **Ranks.** A rank belongs to the caster, not the spell: it lifts every spell they know, those
 learned later too. Each rank adds 15% to the dice of a damage spell and to what a mending spell
