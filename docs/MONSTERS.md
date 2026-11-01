@@ -297,7 +297,7 @@ Decided by delegate for #537, each the owner's to overturn:
    own group, act from the next round and pay as the rest; one called may call in its turn.
 6. **A call is a chance a turn, as casting is, naming its group by id,** for any caller: Vask's
    sentries need nothing new, and one only ever called counts as placed. The test caller (three
-   fodder at a half, beside six) costs a company of 20 a fight or two a day: 8.0 to a rest, not 9.6.
+   fodder at a quarter, beside six) costs a company of 20 a fight or two a day: 7.4 to a rest, not 9.1.
 7. **The bots aim at a caller with room to call, as at a leader,** a leader first, since its fall
    stops the fight growing; they read the fight as it stands each turn, its called groups with it.
 8. **A hit's line says only a condition that takes:** none for a cleric's Faith, nor one already
@@ -586,52 +586,51 @@ points run down. The calibration:
   two levels under it wins half the time (EXPANSION.md §5.2).
 - It is made at every level to 10, every fourth level to 32, every level of Act III, every level
   of Act IV from 24 and every level of Act V, 28 to 32, 300 seeds a point (200 for the levels past
-  10, made again with #20, #541, #549, #752 and #793), with the levels between interpolated. Past 10 the company
-  runs on play's rules: its spells stop growing at 10 (#159), it takes its prestiges at 11, 19 and 27 with their hit points, spell
+  10), with the levels between interpolated: made again whole with #1117, in three chunks (1 to 10,
+  12 and 16 to 22, 24 to 32), after #20, #541, #549, #752 and #793 (the log has each). The company
+  runs on play's rules: from 1 its feats on stamina and its crits (#1113, #1114), and past 10 its
+  spells stop growing (#159), it takes its prestiges at 11, 19 and 27 with their hit points, spell
   points and perks (#19), and with them its spell ranks, and it learns tiers 6 and 7 at 15 and 23
-  (#20). It wears the ladder's gear: Act II's steps were in when the levels past 10 were made again
-  (#399, #18), Act III's when the levels past 16 were (#535, #541), each of 17 to 22 on its own,
-  since the company steps at 17, 19, 21 and 22, and Act IV's one, Cinderport's armourer at 25
-  (#542), when 25 to 27 were (#549), each on its own, since the company steps at 25 and at 27, its
-  third prestige, and Act V's rung, the Hand's steel at 28 (#746), when 28, 30 and 32 were (#752)
-  and 29 and 31 after them (#793).
-  22 to 24 are #541's still: their company has not changed.
+  (#20). It wears the ladder's gear, each act's short bow and sling beside its long bow (#1115): Act
+  II's steps by 16, then the company steps at 17, 19, 21 and 22 (Act III), 25 (Cinderport's
+  armourer) and 27, its third prestige, and 28 (the Hand's steel), so each of those is a point of its own.
 
 Hit points / average damage a hit, by role and level:
 
 | Level | Fodder | Skirmisher | Soldier | Archer | Caster | Controller | Armoured | Elite | Brute | Boss |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 3 / 1.5 | 6 / 3 | 7 / 3.5 | 6 / 3 | 8 / 3.5 | 7 / 2.5 | 13 / 3.5 | 12 / 4.5 | 26 / 5 | none |
-| 2 | 6 / 3 | 13 / 4 | 15 / 4 | 14 / 3.5 | 21 / 4 | 13 / 4.5 | 18 / 8 | 26 / 5.5 | 35 / 8 | none |
-| 3 | 7 / 4 | 17 / 4.5 | 17 / 5.5 | 16 / 4 | 24 / 4.5 | 14 / 5.5 | 20 / 7 | 32 / 7 | 41 / 9 | 111 / 18.5 |
-| 4 | 13 / 4.5 | 24 / 6.5 | 23 / 8 | 24 / 4.5 | 31 / 7 | 20 / 7 | 29 / 11 | 50 / 10 | 67 / 11 | 138 / 21 |
-| 5 | 17 / 5 | 27 / 8 | 26 / 9 | 26 / 6.5 | 33 / 8 | 25 / 8 | 34 / 10 | 52 / 11.5 | 80 / 11.5 | 174 / 24 |
-| 6 | 22 / 3.5 | 31 / 8 | 29 / 9 | 29 / 7 | 38 / 9 | 29 / 7 | 35 / 10 | 53 / 11 | 82 / 11 | 222 / 29.5 |
-| 7 | 27 / 4 | 39 / 6.5 | 35 / 9 | 39 / 5.5 | 45 / 8 | 34 / 9 | 41 / 11.5 | 58 / 12 | 83 / 11 | 265 / 33 |
-| 8 | 47 / 4.5 | 57 / 9 | 59 / 9 | 56 / 9 | 70 / 9 | 57 / 10 | 70 / 11 | 88 / 13 | 119 / 13 | 311 / 37.5 |
-| 9 | 50 / 9 | 73 / 7 | 73 / 8 | 72 / 8 | 81 / 9 | 69 / 9 | 83 / 10 | 102 / 14 | 136 / 14 | 350 / 41 |
-| 10 | 60 / 10 | 89 / 10 | 90 / 10 | 86 / 9 | 102 / 11.5 | 87 / 10 | 99 / 14 | 122 / 15 | 165 / 15.5 | 415 / 47 |
-| 12 | 107 / 6.5 | 133 / 11.5 | 138 / 13 | 138 / 10 | 184 / 14 | 124 / 12 | 158 / 16.5 | 244 / 15.5 | 278 / 18 | 540 / 59 |
-| 16 | 127 / 11 | 179 / 15.5 | 182 / 16.5 | 187 / 13 | 278 / 15.5 | 203 / 13 | 249 / 18 | 351 / 19.5 | 393 / 23 | 872 / 90 |
-| 17 | 128 / 14 | 196 / 16.5 | 199 / 17.5 | 193 / 15 | 279 / 15.5 | 204 / 15 | 250 / 18 | 360 / 22 | 404 / 25 | 970 / 99 |
-| 18 | 132 / 13 | 213 / 15.5 | 200 / 17 | 204 / 14 | 280 / 18 | 204 / 15.5 | 252 / 21 | 365 / 21 | 418 / 23 | 1001 / 101 |
-| 19 | 158 / 14.5 | 270 / 17 | 294 / 17.5 | 244 / 17 | 361 / 19 | 232 / 21 | 325 / 22 | 434 / 26 | 529 / 26.5 | 1102 / 109.5 |
-| 20 | 170 / 13 | 288 / 17 | 314 / 17 | 264 / 18 | 393 / 19.5 | 247 / 19 | 358 / 20 | 450 / 25.5 | 554 / 25 | 1113 / 110 |
-| 21 | 170 / 15 | 289 / 17.5 | 315 / 16 | 268 / 18 | 394 / 20 | 248 / 20 | 358 / 18.5 | 504 / 24 | 570 / 27 | 1294 / 126.5 |
-| 22 | 186 / 14.5 | 328 / 18 | 317 / 20 | 324 / 18 | 427 / 22 | 282 / 20 | 360 / 24 | 505 / 27.5 | 621 / 28 | 1299 / 126 |
-| 24 | 188 / 15 | 330 / 17.5 | 319 / 20 | 327 / 18 | 443 / 24 | 284 / 19.5 | 397 / 23 | 509 / 27 | 641 / 28 | 1381 / 132 |
-| 25 | 188 / 17 | 331 / 18.5 | 320 / 20 | 328 / 19 | 444 / 23 | 289 / 20 | 398 / 21 | 596 / 26 | 665 / 30.5 | 1496 / 142.5 |
-| 26 | 191 / 17.5 | 332 / 19.5 | 321 / 21 | 328 / 21 | 479 / 23 | 290 / 22 | 399 / 25 | 597 / 26.5 | 692 / 30 | 1498 / 142 |
-| 27 | 260 / 16 | 383 / 26 | 378 / 28.5 | 402 / 26.5 | 533 / 31 | 376 / 27 | 522 / 31 | 670 / 38.5 | 988 / 34 | 1550 / 146 |
-| 28 | 280 / 17.5 | 466 / 26 | 420 / 31 | 437 / 29.5 | 642 / 32 | 411 / 29.5 | 637 / 29.5 | 780 / 39 | 1052 / 37 | 1552 / 146 |
-| 29 | 281 / 17.5 | 467 / 26 | 435 / 30.5 | 438 / 28.5 | 643 / 30.5 | 412 / 28.5 | 638 / 25.5, held | 782 / 40.5 | 1056 / 38.5 | 1933 / 181 |
-| 30 | 281 / 18.5 | 468 / 26 | 435 / 30.5 | 454 / 29.5 | 645 / 33 | 430 / 28.5 | 640 / 29.5 | 784 / 38.5 | 1057 / 37 | 2089 / 194.5 |
-| 31 | 282 / 18 | 469 / 25 | 437 / 30 | 458 / 28.5 | 646 / 31 | 431 / 27 | 641 / 24, held | 785 / 40 | 1060 / 38 | 2095 / 194 |
-| 32 | 298 / 17 | 470 / 26 | 455 / 30 | 480 / 29 | 648 / 36 | 449 / 27 | 644 / 29 | 787 / 38.5 | 1062 / 38.5 | 2100 / 194 |
+| 1 | 3 / 1.5 | 6 / 3 | 7 / 3.5 | 6 / 3 | 9 / 3.5 | 7 / 3 | 15 / 3.5 | 12 / 4.5 | 28 / 5 | none |
+| 2 | 6 / 3 | 14 / 4 | 16 / 5 | 16 / 3.5 | 23 / 4 | 14 / 4.5 | 18 / 8 | 29 / 5.5 | 38 / 8 | none |
+| 3 | 9 / 7 | 26 / 6.5 | 24 / 9 | 20 / 5.5 | 29 / 6 | 25 / 7 | 34 / 9 | 59 / 10 | 71 / 11.5 | 117 / 20 |
+| 4 | 15 / 4.5 | 27 / 6.5 | 26 / 8 | 27 / 5.5 | 34 / 8 | 26 / 6 | 36 / 10 | 61 / 9 | 74 / 13 | 144 / 22 |
+| 5 | 22 / 5 | 32 / 8 | 33 / 10 | 35 / 6.5 | 44 / 8 | 33 / 8 | 51 / 10 | 87 / 11.5 | 101 / 14.5 | 219 / 31 |
+| 6 | 25 / 5 | 39 / 8 | 40 / 9 | 40 / 7 | 51 / 10 | 38 / 7 | 53 / 10 | 89 / 11 | 104 / 13 | 239 / 32 |
+| 7 | 30 / 5.5 | 43 / 8 | 43 / 9 | 48 / 8 | 54 / 9 | 43 / 9 | 53 / 12 | 90 / 10 | 105 / 13 | 299 / 38 |
+| 8 | 49 / 5.5 | 64 / 9 | 69 / 10 | 64 / 7 | 79 / 10 | 64 / 8 | 82 / 11 | 107 / 13 | 141 / 13 | 347 / 42 |
+| 9 | 64 / 6.5 | 91 / 9 | 87 / 10 | 85 / 8 | 106 / 9 | 80 / 8 | 106 / 11.5 | 131 / 14 | 176 / 15 | 387 / 46 |
+| 10 | 74 / 6.5 | 102 / 10 | 106 / 11 | 101 / 9 | 120 / 11.5 | 101 / 10 | 122 / 14 | 188 / 14 | 205 / 17.5 | 468 / 53 |
+| 12 | 121 / 8 | 157 / 14 | 149 / 15 | 157 / 12 | 236 / 14 | 141 / 13 | 211 / 16.5 | 309 / 17 | 337 / 22 | 629 / 69 |
+| 16 | 150 / 11 | 257 / 16 | 269 / 16 | 213 / 16.5 | 276 / 21 | 223 / 17.5 | 308 / 20 | 449 / 23 | 535 / 26.5 | 1016 / 104.5 |
+| 17 | 161 / 11 | 274 / 16.5 | 271 / 18.5 | 217 / 18.5 | 298 / 21 | 250 / 17 | 309 / 22 | 459 / 25 | 537 / 29 | 1134 / 115 |
+| 18 | 172 / 10 | 275 / 17 | 292 / 17.5 | 238 / 17 | 361 / 20 | 251 / 18 | 325 / 21 | 471 / 25 | 539 / 28.5 | 1224 / 123 |
+| 19 | 197 / 12 | 338 / 20 | 342 / 22 | 334 / 19 | 431 / 23 | 339 / 19 | 361 / 26.5 | 603 / 29 | 644 / 34 | 1298 / 129 |
+| 20 | 217 / 12 | 376 / 18 | 368 / 19.5 | 362 / 19 | 463 / 25 | 360 / 18.5 | 433 / 25 | 605 / 28.5 | 677 / 33 | 1301 / 128.5 |
+| 21 | 217 / 11.5 | 377 / 19 | 369 / 21 | 363 / 20 | 465 / 24 | 360 / 19 | 434 / 25 | 640 / 29 | 680 / 34 | 1578 / 154.5 |
+| 22 | 235 / 13 | 427 / 21 | 405 / 23 | 398 / 21 | 523 / 27.5 | 407 / 20 | 492 / 26.5 | 708 / 30.5 | 777 / 35 | 1590 / 154.5 |
+| 24 | 261 / 13 | 454 / 21 | 448 / 23 | 421 / 23 | 561 / 29 | 410 / 21 | 519 / 27 | 767 / 30 | 852 / 36 | 1806 / 173 |
+| 25 | 262 / 11 | 455 / 20 | 449 / 22 | 422 / 23 | 562 / 28 | 411 / 23 | 520 / 27 | 777 / 32 | 880 / 39 | 1919 / 183 |
+| 26 | 268 / 13 | 456 / 21 | 449 / 24 | 423 / 24 | 589 / 29 | 428 / 21 | 545 / 28 | 799 / 31 | 899 / 37.5 | 1923 / 182 |
+| 27 | 335 / 15.5 | 522 / 28.5 | 509 / 30 | 496 / 31 | 778 / 33 | 461 / 31 | 707 / 33 | 1130 / 37.5 | 1389 / 43 | 1928 / 182 |
+| 28 | 352 / 18.5 | 628 / 29.5 | 622 / 33 | 522 / 34 | 876 / 38.5 | 554 / 32 | 801 / 37 | 1196 / 41 | 1463 / 48 | 1931 / 181 |
+| 29 | 356 / 17.5 | 630 / 29.5 | 623 / 32 | 575 / 32 | 877 / 35 | 596 / 30 | 802 / 35 | 1214 / 43 | 1501 / 48 | 2628 / 245 |
+| 30 | 373 / 17.5 | 631 / 29 | 624 / 32 | 576 / 34 | 899 / 38.5 | 597 / 30 | 820 / 36 | 1216 / 40.5 | 1529 / 45 | 2783 / 259 |
+| 31 | 374 / 16 | 631 / 29 | 626 / 30 | 577 / 33 | 900 / 36 | 598 / 29 | 822 / 31 | 1218 / 41.5 | 1559 / 46 | 2882 / 267 |
+| 32 | 400 / 15.5 | 633 / 30 | 627 / 32 | 581 / 34 | 902 / 39.5 | 599 / 30 | 824 / 36.5 | 1219 / 41.5 | 1562 / 44 | 2888 / 266.5 |
 
-Held: the armoured at 29 and 31 hit for 25.5 and 24 against 29.5 at 28 and 30, as their hit points
-are held at the level under's (no monster has fewer than the one a level under it), so they end 38
-and 49% of their days badly there, 13% free of the hold (#793); no armoured monster stands at either.
+Held: 68 of the 270 points hold their hit points at the level under's (no monster has fewer than the
+one a level under it) and have their blow solved again (#793), 39 of them at 24 to 32. The deepest
+is the armoured at 31, hitting for 31 against 36 at 30 and 36.5 at 32 and ending 22% of its days
+badly (#1117).
 
 Armour and to-hit are the line's, rounded, plus the role's offsets in §4.2: armour 12 and to-hit 2
 at level 1, 16 and 7 at 10, 27 and 18 at 32. Speeds are the roles': fodder, archers, casters and
@@ -671,6 +670,12 @@ III's.
   1. **J2 stands** (EXPANSION §5.2): the line is not made on optional power, the softening cap
      (#541, decision 3) and the limits (#273) are not moved, and `tools/restate.ts` keeps waiting for
      the day the line is made again.
+
+  Decided by the owner's delegate for #1117, each the owner's to overturn:
+
+  1. **The line is made on what a level brings:** the feats, the crits and the ladder's short bows
+     and slings are a level's, not optional power, so the line was made again on them as it stood,
+     no feat dearer and no crit smaller, and the 69 monsters on it restated; J2's refused levers stay so.
 
 `node tools/harness.ts` reports every role's standard encounter at every calibrated level: the
 fights before a rest, what ended the day, the rounds a fight took, what one fight from a fresh start
