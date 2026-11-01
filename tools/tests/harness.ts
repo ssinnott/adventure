@@ -238,7 +238,9 @@ function artifactsWhatIf(): void {
     `under --artifacts the company bears each artifact on the first member who may and nothing else moves, at ${at.join(', ')} ${holds(dressed[1])}; the newer company ${holds(newer)}, with no ranger for Akkush; off, and in the gate's company, none`);
   // Dressed, the company is no weaker than plain in the same seeded fights at 30, and Holdfast's bearer,
   // who strikes nothing from her row, casts its charges: the bot weighs an artifact's hold whatever `--bot` asks.
-  const fights = [...['deep_knocker', 'inspector', 'hearth_moth', 'ashen_champion', 'ashen_preacher', 'deep_rat'].map((id) => [id, id, id]), ['tallymaster'], ['grey_lion'], ['vask']];
+  // Its three lone foes are ones a hold acts on: the late bosses are proof against holds since #1117, and
+  // there a hold cannot make up for the bow Holdfast takes, by design.
+  const fights = [...['deep_knocker', 'inspector', 'hearth_moth', 'ashen_champion', 'ashen_preacher', 'deep_rat'].map((id) => [id, id, id]), ['deep_crawler'], ['grey_hand'], ['hand_rearguard']];
   const weigh = (arts: readonly string[] | undefined): { won: number; cost: number; roots: number } => {
     const rules = { artifacts: arts };
     let won = 0, cost = 0, roots = 0;
