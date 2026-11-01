@@ -33,6 +33,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // Riders' foals, the lair's boss at 32 (MONSTERS §13): it flies, so it hunts the back row (`ranged` without `missile`,
   // as the vulture's does), and stands at size 1.8. Drawn at the line's boss at 32 (2,100 hp, 34d8+41), it was won 16%
   // at 30 and 28% at 32; set by the lair's pull request at the gate's company, it hits more often and half as hard and
-  // stands longer, won 57% at its floor of 30 and 81% at 32 (docs/areas/glasswold.md §9, #833's 25)
-  { id: 'foal_taker', name: 'The Foal-taker', plural: 'Foal-takers', sprite: 'foal_taker', kind: 'beast', look: 'When its shadow crosses the herd, the herd runs.', level: 32, hp: 2900, ac: 29, attack: 23, dice: 18, sides: 8, bonus: 20, speed: 13, xp: 20373, gold: [0, 0], ranged: true, offLine: 'Kushdag\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#833)', tint: '#cdbf9c', size: 1.8 },
+  // stands longer, won 57% at its floor of 30 and 81% at 32 (docs/areas/glasswold.md §9, #833's 25); held by nothing
+  // since the thief's Hamstring held it to 97% at 30, it is set again for the class changes, 58.5% and 82.3% (#1117)
+  { id: 'foal_taker', name: 'The Foal-taker', plural: 'Foal-takers', sprite: 'foal_taker', kind: 'beast', look: 'When its shadow crosses the herd, the herd runs.', level: 32, hp: 2320, ac: 29, attack: 23, dice: 27, sides: 8, bonus: 31, speed: 13, xp: 20373, gold: [0, 0], ranged: true, immune: ['paralysed'], offLine: 'Kushdag\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#833), held by nothing and set again on its odds for the class changes (#1117)', tint: '#cdbf9c', size: 1.8 },
 ];
