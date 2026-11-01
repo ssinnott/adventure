@@ -135,11 +135,11 @@ area on the road, it claims nothing new (`novel`), and the novelty check asks no
   fights (`GATE.through`'s aim); two under, 86.2% of 32 groups, listed and inside `GATE.back`'s
   limit. The bosses at their floors and two above: the Rift Warden 74.3% and 100%, off its aim and
   inside its limit, the smugglers' captain 62% and 100%, the Deacon 67.8% and 100%, the Berth's
-  captain 65% and 100%; the Hag, set again for the class changes (#1117), 63% at 30 and 90% at 32.
+  captain 65% and 100%; the Hag, set again for the class changes (#1117) and proof against a hold, 70% at 30 and 86% at 32.
 - **Fights to a rest** (aim 5.5 to 7.5, limit 4 to 10): the Foreland map 4.76, Brandy Hole 4.68,
   the Seam 8.43, the cellar 8.44, F2 7.31, F3 7.59, E3 9.08, E2 8.15, D2 9.11, D3 9.80, D4 8.82 and
   the Berth 8.34, which wins 93% at its floor. Eleven are off their aim, the first two under it and
-  all but F2 after them over, of the gate's thirteen.
+  all but F2 after them over, of the gate's fourteen with the Hag's 86% at 32.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, the Foreland map 97.4%, F3
   100%, E3 96.9% and D2 92.6%; within 12 in the country, F2 99.5%, E2 96.4% (its furthest square 20,
   on the limit), D3 99.7%, D4 96.7% and E4 100%.

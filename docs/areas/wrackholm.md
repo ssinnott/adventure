@@ -126,7 +126,7 @@ Goes (`compact_fence`), the stair's foot seen, 200 gold and 600 xp; and the Fact
 Founder's Hand (`compact_factor`), once Act IV opens, the Compact's Orders brought up from the
 counting house, 800 gold and 4,800 xp, which opens Ruan's choice at the Keel.
 
-**Holdfast** (#846), the bounds' artifact: in Nick's Locker, behind Old Nick (boss, 32: 1,600 hit
+**Holdfast** (#846), the bounds' artifact: in Nick's Locker, behind Old Nick (boss, 32: 1,120 hit
 points, attack 20), found and never told. The rumour is Merryn's, at a meeting after her first,
 while Old Nick lives. A light weapon, 1d8+15, borne by the thief, the bard and the sorcerer, that
 casts Grasping Roots three times a day.
@@ -150,14 +150,14 @@ underfoot and the wreck, the Tide Ship's site.
   fights (`GATE.through`'s aim); two under, its groups pooled at 10 manage 3.51 fights to a rest,
   50.1% of the floor's 7 (at most: `GATE.backDay`'s aim). The road is walked every time at 12. The
   bosses at their floors and two above: the Great Devilfish 56% and 92%, the Warden of the Tide 62%
-  and 93%; Old Nick 55% at 30 and 75.2% at 32.
+  and 93%; Old Nick, proof against a hold since the class changes (#1117), 63% at 30 and 81.9% at 32.
 - **Fights to a rest** (aim 6 to 8 at 12, 6.25 to 8.25 at 13): E6 6.62, Kelp Hole's two levels
   6.77 and 6.05, F6 8.00, the Tide Ship's three decks 5.49, 7.36 and 6.70 and the Rift 8.56; the
   Brokenback 7.50 at 14 (aim 6.5 to 8.5). Five figures are off their aim, inside the limits: Kelp
   Hole's lower level's 89% won, the weather deck's 5.49, the Rift's 83.6% won at 12 and its 8.56,
-  and Old Nick's 75.2% at 32. The gate judges the Dead-Drop's levels here too, by their own floors
+  and Old Nick's 81.9% at 32. The gate judges the Dead-Drop's levels here too, by their own floors
   (`docs/areas/dead_drop.md`), and four of theirs are off their aim as well: the drop's 74.6% two
-  under, and the counting house's 85.5% won, its Tallymaster's 71% at 27 and its 13.66 fights to a
+  under, and the counting house's 85.4% won, its Tallymaster's 70.8% at 27 and its 13.66 fights to a
   rest, 93.4% of its days ending in a fight broken off (#1117).
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, E6 100% and F6 95.9%;
   within 12 in the country, E5, F5 and F7 100%; the dungeons 100% within 7, the Rift 97.6%.

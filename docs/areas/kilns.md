@@ -165,20 +165,21 @@ here (`novel`): the knockers and the salamanders; pine, ash and lava underfoot; 
   and 17,497 gold of 7,920; a company entering at the floor and clearing three quarters leaves at
   19.4, +1.4 over the next floor 18, a named exception held at 19.5 (`overRoad`, in its checks).
   The enclave and the lair, counted in no clear, give 4,617 xp a member and 1,200 gold.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.1% of its 66 groups'
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.9% of its 66 groups'
   fights (`GATE.through`'s aim); two under, its groups pooled at 14 manage 4.63 fights to a rest,
   57.9% of the floor's 8 (at most: `GATE.backDay`'s aim). Each zone's road is walked every time
-  at 16. The bosses at their floors and two above: the Foreman 65% and 91%, the Warden of the Anvil
-  50% and 91%, the Great Salamander 61% and 94%; the Steiger 60% at 30 and 77.9% at 32. The bottom's
-  groups with the Foreman are won 88.3% and the deep tubes' with the Great Salamander 87%, off the
-  aim and inside the limit; the Rift's 90%.
+  at 16. The bosses at their floors and two above: the Foreman 56% and 92%, the Warden of the Anvil
+  51% and 95%, the Great Salamander 55% and 95%; the Steiger 69.5% at 30 and 85.5% at 32; the four
+  proof against a hold since the class changes (#1117). The bottom's groups with the Foreman are won
+  85.3% and the deep tubes' with the Great Salamander 85%, off the aim and inside the limit; the
+  Rift's 90.2%.
 - **Fights to a rest** (aim 7 to 9 at 16, 7.25 to 9.25 at 17): M3 9.68, N3 8.67, N4 8.93, the
   Tiefzeche's three levels 7.21, 9.32 and 10.16, N2 9.07, N5 9.06, N6 7.21, M6 9.68, O5 7.92, the
   Rift 7.73, L6 8.23, O6 8.91, the tubes' two levels 7.51 and 7.31, M4, M5, O3 and K6 6.25 each, O4
   8.14, P5 8.18, P6 8.93 and L7 7.21; the Seestollen 8.43 at 19, 82% of its days ending in a fight
   broken off. Thirteen figures are off their aim, inside the limits, since the class changes
   (#1117): M3's, M6's, N2's and the Tiefzeche's second level's fights, the bottom's two, the deep
-  tubes' 87%, the Steiger's 77.9% at 32, the four 6.25s (a worm pair is a heavy fight) and N2's two
+  tubes' 85%, the Steiger's 85.5% at 32, the four 6.25s (a worm pair is a heavy fight) and N2's two
   under, 69%.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, N3 97.6%, N4 97.7%, N5
   97.4%, O5 97.4% and L6 100%; within 12 in the country, M3 98.5%, N6 99.9%, M6 99.4%, O6 98.6%,

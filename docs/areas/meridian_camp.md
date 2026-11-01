@@ -143,8 +143,8 @@ nor do the corridors (§8, the corridors' 16) or the camp (§8, the camp's 16).
 - **The gate.** Each level is held at its own floor (EXPANSION §5.2). The Brood Drake is won about
   half the time at 26, the corridors' floor, and nearly always at 28. As built, a company at the
   vents' floor, 25, wins every fight and manages 10.78 fights to a rest (§4.1); at the corridors'
-  floor, 26, it wins 87.3% of the fights and manages 9.28, and the Brood Drake is won 49% of the
-  time at 26 and 100% at 28 (§4.2; §8, the corridors' 5). At the camp's floor, 27, it wins every
+  floor, 26, it wins 87.3% of the fights and manages 9.28, and the Brood Drake is won 55% of the
+  time at 26 and 99% at 28 (§4.2; §8, the corridors' 5). At the camp's floor, 27, it wins every
   fight and manages 10.84 fights to a rest; two under, at 25, it wins every fight (§4.3; §8, the
   camp's 2 and 18). Since the class changes (#1117) the vents and the corridors end 83% and 86% of
   their floors' days in a fight broken off, the camp 37%.

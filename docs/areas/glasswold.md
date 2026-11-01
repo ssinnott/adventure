@@ -133,14 +133,14 @@ the glass walkers are a family of their own. It claims the glass walkers, dunes 
   and 14,900 gold of 12,720; a company entering at the floor and clearing three quarters leaves at
   28.1, +0.1 over the next floor 28. Karaordu and Kushdag are counted in no clear: 4,906 xp a member and
   2,500 gold.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.8% of its 32 groups'
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 99% of its 32 groups'
   fights (`GATE.through`'s aim); two under, pooled at 24, 6.58 fights to a rest, 62.7% of the
-  floor's 10.5. The Grey Lion, set off the line, is won 63% at 27 and 94% at 29, the Foal-taker,
-  proof against a hold since the class changes (#1117), 59% at 30 and 82.3% at 32. The Wold's road is
+  floor's 10.5. The Grey Lion, set off the line, is won 64.8% at 27 and 87% at 29, the Foal-taker
+  59% at 30 and 82.3% at 32, both proof against a hold since the class changes (#1117). The Wold's road is
   walked every time.
 - **Fights to a rest** (aim 9.5 to 11.5, limit 8 to 14): D10 10.76, D9 9.00, D8 10.37, C8 10.84, B9
   8.31, E9 12.80, E8 12.59 and D7 11.58; B8 10.74 at 27, where a company wins 87.7% of its fights;
-  Karaordu 11.17 at 28. Twelve figures are off their aim, inside their limits. B9 ends 76.9% of its
+  Karaordu 11.17 at 28. Thirteen figures are off their aim, inside their limits. B9 ends 76.9% of its
   days in a fight broken off; D7's walkers are three since the class changes, one at the
   Scarp's end and one each with the vultures and the lions, which took D7 from 7.05 to 11.58.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, D10 99.4%, D9 99.8% and D8
@@ -194,7 +194,7 @@ for #444.
 - **Owed to no check:** its checks have no `owes`, and the curve, the gate, density and the ladder
   hold the Glasswold with nothing owed.
 - **Watched, not moved:** E8's 12.00 and E9's 11.86 fights to a rest are over their aim, and the
-  Grey Lion's 75% at 27 over its, each inside its limit (plan, §8). What the owner finds by hand
+  Grey Lion's 87% at 29 under its, each inside its limit (plan, §8). What the owner finds by hand
   goes here; none yet.
 - **The Glass** is the reach, Phase 1.6's: no map and no step of the quest. Its doc decides Tashkum,
   the Tower's floors and the cap's gate (plan, §11).

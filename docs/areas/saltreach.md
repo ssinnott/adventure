@@ -167,15 +167,14 @@ gleaners. New here (`novel`): the long bodies and the toads, two new families, a
   the Upper Water's and the Delta's at 10 and the Saltings' at 11. The Choirmaster is won 51% at 11
   and 98% at 13. Wytgat is judged at its own band and out of these: every fight won at 13, and two
   under, at 11, 4.31 fights to a rest, 59.4% of the floor's 7.25. So is the lair: the Old Chanter,
-  its one group, is won 59% at 30 and 86% at 32, inside its limits, its numbers set by that gate
-  (plan, §12.13) and again for the class changes (#1117).
+  its one group, is won 64% at 30 and 93% at 32, its numbers set by that gate (plan, §12.13) and
+  again for the class changes (#1117), which made it proof against a hold.
 - **Fights to a rest** (aim 5.5 to 7.5 at 10, 5.75 to 7.75 at 11): C5 7.67 and its Rift 7.64, C4
   7.22, C3 7.73, B5 7.71 and its Rifts 4.96 each, B6 7.54, the temples' two levels 6.76 and 6.83,
   C6 7.04, C7 5.42, B3 7.22, B4 7.87, C2 6.71, B2 6.19, A3 6.39, A4 7.56, A5 7.41, A6 6.76, B7 7.32
-  and D6 5.18; Wytgat 6.76 at 13 (aim 6.25 to 8.25). Twelve figures are off their aim, inside the
+  and D6 5.18; Wytgat 6.76 at 13 (aim 6.25 to 8.25). Eleven figures are off their aim, inside the
   limits, since the class changes (#1117): C5, its Rift, C3, B4 and A4 over 7.5, B5's two Rifts,
-  C7 and D6 under 5.75, C5 two under 67.1% of its floor's, the choir's 84.8% won at 11 and the
-  Old Chanter's 86% at 32.
+  C7 and D6 under 5.75, C5 two under 67.1% of its floor's and the choir's 84.8% won at 11.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, C3 98.7%, B5 95.6%, B6
   96.3% and C6 93.7%; within 12 in the country, D5 100%, C5 97.9%, C4 97.8%, C7 99.0%, B3 96.7%
   (its furthest square 20), B4 97.6%, A5 97.0%, B7 98.5% and C2, B2, A3, A4, A6 and D6 100%; within

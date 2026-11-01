@@ -125,15 +125,15 @@ brothers are machines in robes. It claims the giants, peaks and cliffs underfoot
 - **The curve** (`tools/tests/curve.ts`): a clear gives 23,292 xp a member of the 17,867 it asks
   and 11,450 gold of 10,800; a company entering at the floor and clearing three quarters leaves at
   24.4, the next floor 24.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.7% of its 31 groups'
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98% of its 31 groups'
   fights (`GATE.through`'s aim); two under, pooled at 20, 5.29 fights to a rest, 55.7% of the
-  floor's 9.5. The Abbot is won 60% at 23 and 86.5% at 25, the Stair-king 72.3% at 22 and 88% at
-  24, both set again for the class changes (#1117); at I10's floor a company wins 93.6% of its
+  floor's 9.5. The Abbot is won 71.5% at 23 and 89% at 25, the Stair-king 69.3% at 22 and 93% at
+  24, both set again for the class changes (#1117) and proof against a hold; at I10's floor a company wins 93.6% of its
   fights, the king counted. The roads of Monks' Vale, the High Spine and Sheer Point are walked
   every time.
 - **Fights to a rest** (aim 8.5 to 10.5, limit 7 to 13): J11 8.58, Highcell's upper house 11.17,
   I11 9.66, I10 9.83, I9 8.78, I8 7.65, J10 9.01, I12 and J12 7.90 and J8 9.72; the lower house
-  11.33 at 23, where a company wins 83.9% of its fights. Nine figures are off their aim, inside
+  11.33 at 23, where a company wins 85.8% of its fights. Eight figures are off their aim, inside
   their limits. I8 ends 79% of its days in a fight broken off, I12 and J12 45%, J11 33%.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, J11 99.1%, I11 99.5%, I10
   99.7% and I8 100.0%; within 12 in the country, I9, J10, I12, J12 and J8 100.0%; Highcell's two
@@ -177,7 +177,7 @@ founded from below and the giants, who have no names on the map. Chosen for #444
 - **Owed to no check:** its checks have no `owes`, and the curve, the gate, density and the ladder
   hold the Whitespine with nothing owed.
 - **Watched, not moved:** Highcell's upper house at 11.38 fights to a rest is over its aim, and the
-  Stair-king's 79% at 24 is under it, each inside its limit (plan, §8). What the owner finds by
+  Abbot's 71.5% at 23 is over it, each inside its limit (plan, §8). What the owner finds by
   hand goes here; none yet.
 - **Owed by a box as built** (plan, §11): the Abbot's robe opening as he is hurt waits on a systems
   change; the shard from I8's sea cave, the Ember Stone's quest item, is not placed.

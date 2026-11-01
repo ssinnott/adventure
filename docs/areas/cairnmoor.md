@@ -107,7 +107,7 @@ The coach's quest on N8 (#56's 40) is Rimewater's (#494). The guilds'
 `q_ring_spoke` holds; 300 gold and 2,400 xp.
 
 **Torhide** (#846), the bounds' artifact: in the old man's kist in Bearn Liath, behind the Rim Troll
-(boss, 32: 2,700 hit points, attack 22), found and never told. The rumour is the drover's on N7, at
+(boss, 32: 2,970 hit points, attack 22), found and never told. The rumour is the drover's on N7, at
 every meeting after his first. A shield for the knight, the paladin and the ranger, armour 9; its
 bearer mends a tenth of their most hit points each whole hour, never in a fight.
 
@@ -127,12 +127,13 @@ It claims the lights, a new family, snow and ice underfoot, curse and the ring (
   1,360 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 99.1% of its 36 groups'
   fights (`GATE.through`'s aim); two under, pooled at 16, 6.48 fights to a rest, 76.2% of the
-  floor's 8.5. The Cairn King is won 66.5% at 19 and 89% at 21, the Rim Troll 70.8% at 30 and 84.5% at 32.
+  floor's 8.5. The Cairn King is won 67.3% at 19 and 96% at 21, the Rim Troll 60% at 30 and 88% at 32,
+  both proof against a hold since the class changes (#1117).
   Under Carn Dubh a company at 19 wins 89.3% of its fights. High Moor's road and the Cairnfield's
   are walked every time.
 - **Fights to a rest** (aim 7.5 to 9.5, limit 6 to 12): N7 8.40, N8 8.92, O7 8.11, O8 11.20, M7
   9.74, M8 7.19, P7 10.38, P8 7.94, L8 8.34 and Carn Dubh 11.08; Under Carn Dubh 10.00 at 19, off its
-  aim, and Carn Fada 8.97 at 20. Twenty figures are off their aim, inside their limits. M7's ravens
+  aim, and Carn Fada 8.97 at 20. Eighteen figures are off their aim, inside their limits. M7's ravens
   are four and a tor troll since the class changes, which took M7 from 12.07 to 9.74 (#1117).
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, N7 99.2%, N8 99.6% and O7
   99.4%; within 12 in the country, O8, M7, P7, P8 and L8 100.0% and M8 99.7%; the four dungeon
@@ -182,7 +183,7 @@ elves' Cornish and the Tidefolk's Frisian.
 - **Owed to no check:** its checks have no `owes`, and the curve, the gate, density and the ladder
   hold Cairnmoor with nothing owed.
 - **Watched, not moved:** O8's 11.13 fights to a rest and Carn Dubh's 10.70 sit off the aim, near
-  the limit of 12, and the Rim Troll's 89% at 32 is under `GATE.bossAbove`'s aim (plan, §8). What
+  the limit of 12, and the Rim Troll's 88% at 32 is under `GATE.bossAbove`'s aim (plan, §8). What
   the owner finds by hand goes here; none yet.
 - **Owed by a box as built** (plan, §11): the Watcher's page lies in a chest, not on his wight; the
   door behind the Cairn King's seat opens on nothing.

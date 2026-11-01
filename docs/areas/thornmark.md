@@ -132,14 +132,14 @@ the tower, the barrow and the grove.
 - **The curve** (`tools/tests/curve.ts`): a clear gives 16,765 xp a member of the 13,667 it asks
   and 9,355 gold of 8,400; a company entering at the floor and clearing three quarters leaves at
   10.2, the next floor 10.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.4% of its 75 groups'
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.2% of its 75 groups'
   fights (`GATE.through`'s aim); two under (a town's or dungeon's, the area's 5), 63.2%, off
   `GATE.back`'s aim and inside its limit. The Thornmark map wins 100% at 5 and 26.1% at 3. The
-  bosses at their floors and two above: the Hand of Ash 54% and 100%, the Warden of the Cut 78.2%
-  and 100%, the Eldest 47% and 100%, the Hand and the Eldest set again for the class changes (#1117).
+  bosses at their floors and two above: the Hand of Ash 54% and 100%, the Warden of the Cut 72%
+  and 100%, the Eldest 47% and 100%, the three set again for the class changes (#1117).
 - **Fights to a rest** (aim 5.5 to 7.5, limit 4 to 10): the Thornmark map 6.32, the Grove Roots
   6.26, the Cut Stone 7.03, H3 8.49, I3 8.27, I4 8.38, I5 8.35, J4 8.36 and J5 7.35. H3, I3, I4,
-  I5 and J4 are off their aim, and so are J5's floor (89.4% won), the Warden's 78.2% and the two
+  I5 and J4 are off their aim, and so are J5's floor (89.4% won), the Warden's 72% and the two
   unders, the map's and the area's: the gate's nine.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, the Thornmark map 97.7%, I4
   98.9% and J5 100%; within 12 in the country, H3 100%, I3 99.4%, I5 100% and J4 98.6% (its
