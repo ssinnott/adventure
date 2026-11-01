@@ -54,6 +54,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // The knockers' overseer, the lair's boss at 32 (MONSTERS §13): a machine, so it never breaks, and it calls a group of
   // deep knockers, three at a half a turn as the inspector does. Drawn at the line's boss at 32 (2,100 hp, 34d8+41), it
   // was won 34% at 30 and 45% at 32; set by the lair's pull request at the gate's company, it hits more often and half
-  // as hard and stands longer, won 56% at its floor of 30 and 81% at 32 (docs/areas/kilns.md §9, #831's 41)
-  { id: 'steiger', name: 'The Steiger', plural: 'Steigers', sprite: 'steiger', kind: 'machine', look: 'It knocks once, and the whole seam answers.', level: 32, hp: 2760, ac: 29, attack: 24, dice: 28, sides: 8, bonus: 32, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], chance: 0.5 }, offLine: 'the Randzeche\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#831), set again on its odds for the class changes (#1117)', tint: '#4a4f5a', size: 1.4 },
+  // as hard and stands longer, won 56% at its floor of 30 and 81% at 32 (docs/areas/kilns.md §9, #831's 41); set again
+  // for the class changes once its knockers were, 2,210 and 30d8+35 (#1117)
+  { id: 'steiger', name: 'The Steiger', plural: 'Steigers', sprite: 'steiger', kind: 'machine', look: 'It knocks once, and the whole seam answers.', level: 32, hp: 2210, ac: 29, attack: 24, dice: 30, sides: 8, bonus: 35, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['deep_knocker', 'deep_knocker', 'deep_knocker'], chance: 0.5 }, offLine: 'the Randzeche\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#831), set again on its odds for the class changes (#1117)', tint: '#4a4f5a', size: 1.4 },
 ];
