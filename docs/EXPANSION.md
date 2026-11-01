@@ -216,8 +216,8 @@ pilot on every box of the Downs and left as they were until the owner's own play
   early from a fight it can survive or run from, not from a wipe.
 - **The reach asks the most.** In a reach area, a company at the cap that has walked the road wins
   about half its first fights; what it finds there is what makes the rest winnable.
-- **The gate's company takes what a level brings and buys nothing optional.** It wears the gear the
-  curve says a company has at each level and takes the prestiges it brings (#541), so the check keeps
+- **The gate's company takes what a level brings and buys nothing optional.** It wears the ladder's
+  gear at each level and takes the prestiges and feats it brings (#541, #1117), so the check keeps
   up; it takes no tier, Master, skill, charm or item, and its bot plays plainer than a player: it never
   blesses, sleeps, drinks or flees, since a flight only turns a win into a loss and the gate measures
   whether a fight is winnable. The game's own bot, the auto-fight and the pilot's fights with it,

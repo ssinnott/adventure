@@ -1350,9 +1350,10 @@ function mountainBehind(w: Walk, ok: (cond: boolean, msg: string) => void): void
   w.world.travel(H11.id, watcher.x, watcher.y);
   ok(meet(watcher, w.party, heard(w.world, watcher)).text.includes('Leave the hollows be'), 'the drake-watcher at the pines\' edge says where the drakes lay, and to leave the hollows be');
   listen(w);
-  // Each box's one group, won at its floor: six drakelings, the mountain's youngest, the band's top.
-  ok([H11, H12, G12].every((d) => d.encounters!.length === 1 && d.encounters!.every((g) => g.monsters.length === 6 && g.monsters.every((m) => m === 'drakeling') && !g.after && g.respawn === RESPAWN.twoDays)),
-    'each box\'s one fight is six drakelings, the mountain\'s youngest, at the band\'s top');
+  // Each box's one group, won at its floor: two drakelings, the mountain's youngest, and a flue walker
+  // since the class changes (#1117), the band's top.
+  ok([H11, H12, G12].every((d) => d.encounters!.length === 1 && d.encounters!.every((g) => g.monsters.join() === 'drakeling,drakeling,flue_walker' && !g.after && g.respawn === RESPAWN.twoDays)),
+    'each box\'s one fight is two drakelings, the mountain\'s youngest, and a flue walker, at the band\'s top');
   for (const g of H11.encounters!) fight(w, `${H11.id}:${g.id}`);
   // The secret: an old axe-head driven into a rock on the slope, and behind the rock the war-chest.
   const war = shut(out, h11, [26, 27], [26, 26], [25, 25]);

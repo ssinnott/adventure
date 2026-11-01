@@ -95,11 +95,11 @@ export const WOLD_D7: MapDef<'wold_d7'> = {
   ],
   secrets: [{ x: 7, y: 23, hint: 'd7_tar' }],
   encounters: [
-    // From the way in: four vultures over the foal's bones on the shore, the nearest; three lions lying up
-    // in the long grass; at the Scarp's end the two glass walkers that walked north to the edge and
-    // stopped, the farthest and the hardest.
-    { id: 'd7_vultures', x: 22, y: 28, monsters: ['vulture', 'vulture', 'vulture', 'vulture'], aware: 3, respawn: RESPAWN.twoDays },
-    { id: 'd7_lions', x: 13, y: 29, monsters: ['wold_lion', 'wold_lion', 'wold_lion'], aware: 4, respawn: RESPAWN.twoDays },
-    { id: 'd7_walker', x: 12, y: 23, monsters: ['glass_walker', 'glass_walker'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
+    // From the way in: three vultures over the foal's bones on the shore, the nearest; two lions lying up
+    // in the long grass; at the Scarp's end a glass walker that walked north to the edge and stopped, the
+    // farthest; and a walker more with the vultures and with the lions (#1117).
+    { id: 'd7_vultures', x: 22, y: 28, monsters: ['vulture', 'vulture', 'vulture', 'glass_walker'], aware: 3, respawn: RESPAWN.twoDays },
+    { id: 'd7_lions', x: 13, y: 29, monsters: ['wold_lion', 'wold_lion', 'glass_walker'], aware: 4, respawn: RESPAWN.twoDays },
+    { id: 'd7_walker', x: 12, y: 23, monsters: ['glass_walker'], aware: 3, roams: false, respawn: RESPAWN.twoDays },
   ],
 };

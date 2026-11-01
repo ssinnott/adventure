@@ -295,8 +295,9 @@ ok(heard.join('|') === "FAIL: a scene's name is lower case, holds no colon and c
 
 // What no run of ./walks/ reaches (#1018): a scene held to the goals it says it walks, one that
 // fails a check stopping none, the lookups throwing by name, featureOn keeping to its kind and
-// fight's memo keyed on the cap, a count read from its run of seeds (the mill's warden at 2 is won
-// 55% of 100 seeds capped, 50% of the first ten of them and 60% of ten uncapped).
+// fight's memo keyed on the cap, a count read from its run of seeds (the mill's warden at 1 is won
+// 17% of 100 seeds capped, 30% of the first ten of them and 40% of ten uncapped; at 2, since the
+// class changes (#1117), the cap no longer moves the first ten).
 heard.length = 0;
 const claimed = fx[0].walks![0] as string;
 await playScenes(hear, [{ name: 'liar', walks: [claimed], play: (o) => o(false, 'a check fails') }, { name: 'next', play: (o) => o(true, 'the next scene plays') }]);
@@ -311,7 +312,7 @@ ok(groupOn('mill', 'm_warden').id === 'm_warden' && featureOn('greywater2', 'gw2
   && unfound[2].startsWith('no way out of greywater2 leads to nowhere: the nearest are '), `groupOn, featureOn and exitTo find what is there, of its kind, and throw naming what is not (${unfound.join(' | ')})`);
 const { rate, winRate, gateOpts } = await import('../../kit/fight.ts');
 const warden = groupOn('mill', 'm_warden'), asks = [[100, 15], [10, 15], [10, Infinity]] as const;
-const memo = asks.map(([s, c]) => rate(warden, 2, s, c)), worked = asks.map(([s, c]) => winRate(2, warden, s, c, gateOpts(warden)));
+const memo = asks.map(([s, c]) => rate(warden, 1, s, c)), worked = asks.map(([s, c]) => winRate(1, warden, s, c, gateOpts(warden)));
 ok(memo.join() === worked.join() && new Set(worked).size === 3, `fight's memo keys on the cap and reads a count from its run of seeds: one group at one level asked three ways is three rates, each winRate's (${memo.join(', ')})`);
 
 // A walk's palettes are shared with every other walk's copy, frozen as its cells are (#1018).

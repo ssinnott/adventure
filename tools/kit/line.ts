@@ -158,8 +158,11 @@ export function standardEncounter(role: Role, level: number, hp = scaleAt(HP, ro
 export const TROLL = { hp: 0.75, regen: 0.1 };
 /** What a wight's hit curses at, where the test controller's held (MONSTERS §7.2). */
 export const WIGHT_CURSE = 0.2;
-/** What a caller brings: CALL.monsters of the test fodder, at CALL.chance a turn. */
-export const CALL = { monsters: 3, chance: 0.5 };
+/**
+ * What a caller brings: CALL.monsters of the test fodder, at CALL.chance a turn: a quarter since #1117, where at a
+ * half the stronger company's day lost 2.7 fights to the call, its hit points and blow moving that not at all.
+ */
+export const CALL = { monsters: 3, chance: 0.25 };
 
 /** The test troll: the test brute with fewer hit points, which it mends (`regen`). */
 export function testTroll(level: number): MonsterDef {

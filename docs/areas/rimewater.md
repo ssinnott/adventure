@@ -135,7 +135,7 @@ filed here is the Wardens': A Sword at the Hole (`wardens_hole`,
 `src/content/areas/rimewater/guilds.ts`), the fourth night's fight won; 300 gold and 2,400 xp.
 
 **The Wakerobe** (#846), the bounds' artifact of #832, Rimewater's and the Whitespine's together:
-in the locker by the Infirmary's last bed, behind the Infirmarer (boss, 32: 2,100 hit points,
+in the locker by the Infirmary's last bed, behind the Infirmarer (boss, 32: 2,420 hit points,
 attack 22, 26d8+30 a blow; its touch puts to sleep, and it mends itself), found and never told. The
 rumour is the lodge-keeper's at Rime Lodge, at a meeting after her first. A robe of armour 14 for
 the cleric, the sorcerer, the druid and the monk; its bearer is never put to sleep (a ward).
@@ -152,20 +152,22 @@ the keepers with the bay; the rest is on the road before it, or no kind the chec
 
 ## 8. The numbers
 
-- **The curve** (`tools/tests/curve.ts`): a clear gives 30,421 xp a member of the 16,267 it asks and
+- **The curve** (`tools/tests/curve.ts`): a clear gives 30,685 xp a member of the 16,267 it asks and
   11,390 gold of 9,840; a company entering at the floor and clearing three quarters leaves at 23.0,
   +1.0 over the next floor 22. The enclave and the lair are counted in no clear: 4,586 xp a member
   and 1,200 gold.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 99.2% of its 51 groups'
-  fights (`GATE.through`'s aim); two under, its groups pooled at 18, 5.27 fights to a rest, 58.6% of
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 99.3% of its 51 groups'
+  fights (`GATE.through`'s aim); two under, its groups pooled at 18, 4.80 fights to a rest, 53.3% of
   the floor's 9. Every box wins every fight at 20, and the roads of Loch Fada and Loch Fuar are
-  walked every time. The bay at 21 wins 89.8%, the Matron deciding it: 59% at 21 and 92% at 23.
-  Creag Fionn wins every fight at 22; the Infirmarer is won 60% at 30 and 78% at 32.
-- **Fights to a rest** (aim 8 to 10, limit 6.5 to 12.5): M9 9.55, L9 9.27, K9 8.54, K10 9.45, the
-  stair 9.64, J9 8.81, K11 8.09, K12 9.31 and L12 8.09; L10 and M10 12.05 and L11, M11 and N9 11.06,
-  past the aim; the bay 9.16 (aim 8.25 to 10.25) and Creag Fionn 9.76 (aim 8.5 to 10.5). The gate
-  lists eight figures off their aim, inside their limits: those five, the stair two under (76.1% of
-  the floor's 9), the bay's 89.8% and the Infirmarer's 78% at 32.
+  walked every time. The bay at 21 wins 90.5%, the Matron deciding it: 62% at 21 and 90% at 23.
+  Creag Fionn wins every fight at 22; the Infirmarer is won 67% at 30 and 83% at 32. The Matron and
+  the Infirmarer are proof against a hold since the class changes (#1117).
+- **Fights to a rest** (aim 8 to 10, limit 6.5 to 12.5): M9 10.10, L9 9.22, K9 9.03, K10 9.69, the
+  stair 8.95, J9 9.20, K11 8.78, K12 10.09 and L12 8.78; L10 and M10 11.06, each pike group three
+  since the class changes (#1117), and L11, M11 and N9 11.74, past the aim; the bay 9.48 (aim 8.25 to
+  10.25) and Creag Fionn 9.72 (aim 8.5 to 10.5). The gate lists nine figures off their aim, inside
+  their limits: M9, K12 and those five, the stair two under (71.6% of the floor's 9) and the
+  Infirmarer's 83% at 32. The stair ends 51% of its days in a fight broken off.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, M9 98.1%, K9 99.5% and K10
   99.9%; within 12 in the country, L11 96.5% (its furthest square 18) and M10 99.0% (17), every
   other box 100%; the town and the dungeons 100% within 7.
@@ -173,7 +175,7 @@ the keepers with the bay; the rest is on the road before it, or no kind the chec
   furrier, by 22 its finds, every class bettered by each. Its ranged rungs (`ranged`, #1115): the
   Hunter's Short Bow and the Hide Sling, a step and two behind the Hunter's Bow, sold beside it at
   the furrier's and found with a plus beside Bogha Fionn +1 in the bay's locker and in Whitespine's
-  cache on I9. They are off the gate's ladder until #1117.
+  cache on I9. They are on the gate's ladder since #1117.
 
 ## 10. Names
 

@@ -1,7 +1,7 @@
 // The Dead-Drop, level three and the last: the counting house. Down the steps from the people's vault
 // (WRITER_STAIR) to a door with marks over it like the Kilns'; through it a long hushed room of high desks in
 // rows, a ledger open on each, shelves of them to the roof and a stool at every desk that nobody sits on; a
-// tally clerk counting by the rail with a loader holding up its crate. Through the gate in the rail, at the
+// tally clerk counting by the rail, its loaders to call. Through the gate in the rail, at the
 // room's head, the Tallymaster at its desk, writing the Compact's orders in the dead founder's hand; it
 // fights only a company that steps to its desk. Beside the desk the in-tray, letters in the hand that
 // countersigned the customs seal, and the out-tray, the orders, which a company takes without a fight; the
@@ -82,8 +82,9 @@ export const DEAD_DROP3: MapDef<'dead_drop3'> = {
     { kind: 'chest', x: 20, y: 20, id: 'dd3_heap', gold: 0, items: ['clerk_frame', 'tally_nib'] },
   ],
   encounters: [
-    // A tally clerk by the rail, counting, a loader beside it holding its crate up: the day's one group.
-    { id: 'dd3_clerk', x: 12, y: 14, monsters: ['tally_clerk', 'loader'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
+    // A tally clerk by the rail, counting, its loaders to call: the day's one group (its loader beside it
+    // gone for the class changes, #1117).
+    { id: 'dd3_clerk', x: 12, y: 14, monsters: ['tally_clerk'], aware: 2, respawn: RESPAWN.twoDays, roams: false },
     // The Tallymaster at its desk, drawn with it, which fights only a company that steps to the desk (16,19).
     { id: 'dd3_tallymaster', x: 16, y: 20, monsters: ['tallymaster'], aware: 1, roams: false, boss: true,
       slainText: 'The pens stop mid-line. The six lights across its brow go out one at a time, counting down.' },

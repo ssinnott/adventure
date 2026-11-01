@@ -89,6 +89,8 @@ export const FIREMOUNT_H11: MapDef<'firemount_h11'> = {
   secrets: [{ x: 26, y: 26, hint: 'h11_axe' }],
   encounters: [
     // The box's one fight: the drakelings at their shell in the warm ash, the band's top.
-    { id: 'h11_drakelings', x: 19, y: 22, monsters: ['drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling'], aware: 3, respawn: RESPAWN.twoDays },
+    // Two and a flue walker since the class changes (#1117): six drakelings were 17 fights to a rest, three
+    // with ember salamanders stood under the band's top and four with a sentry paid past the area's 27.4.
+    { id: 'h11_drakelings', x: 19, y: 22, monsters: ['drakeling', 'drakeling', 'flue_walker'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

@@ -37,7 +37,8 @@
 // `BotOpts` (#853), off unless `--bot` sets them and from level 11 only (`optsFor`), it blesses
 // and sleeps where the cast pays, weighed as a damage spell is, lets the sleepers lie while another
 // can strike (`striker`, #865), the whole company once one is past Act I (`letsLie`), and drinks
-// where no spell pays and no mender can. Between fights it lifts stone and
+// where no spell pays and no mender can. It spends stamina on the feats as the gate's bot does
+// (`featFor`, #1117), once a fight has them. Between fights it lifts stone and
 // mends as a player would. The report and the calibration run on every core.
 import { pathToFileURL } from 'node:url';
 import fs from 'node:fs';

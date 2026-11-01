@@ -90,7 +90,7 @@ export const asWritten: Sees = () => true;
  * at it, as the player reads it (a sweep, a breath, a blow that drinks or takes spell points, a call).
  * A leader shows only in its fall, the people breaking at the last one's, so it is never known first.
  * One Slumber cannot take shows once a Slumber has put none of its kind to sleep; one the roots cannot
- * hold never does, since their failure names no one (none is so, as built).
+ * hold never does, since their failure names no one (the bosses from 16 up, #1117).
  */
 export const asSeen: Sees = (s, m, trait) => {
   if (trait === 'leader' || trait === 'unheld') return false;

@@ -1213,16 +1213,18 @@ function botOpts(): void {
     };
     // Main's fight, pinned: each bot's turns, outcome and digest with the options absent, as main played
     // it at e74bffb0 before the options came; pinned again when #1070 marked the thief's sneak attacks in
-    // the log, its marks taken out the digests main's (3e52eed053fa and 06399b5beb17), turn for turn.
+    // the log, its marks taken out the digests main's (3e52eed053fa and 06399b5beb17), turn for turn; and
+    // again for the class changes (#1117), the company of 4 dressed by the ladder with its bows and slings
+    // and the crits and the feats on as play has them, where the game's bot flees the fight it lost.
     const MAIN = {
-      written: [46, '9922b0b4122b45b581ad2946ddc39aa05b984e269c99561c69bd6a3fb008724f'],
-      seen: [46, '9922b0b4122b45b581ad2946ddc39aa05b984e269c99561c69bd6a3fb008724f'],
-      thrifty: [52, '6b64eae28851604f9f0e42baf864e47dcd604bfcad45748841ed2928899119f2'],
+      written: [37, 'victory', 'd188a26814cb2704a7322badb92d411e76d6f7e2a0e289806448ae3e84082eb5'],
+      seen: [26, 'fled', '30421ca85504f1666c64aa46e92aa31e0188aac82e9b73d0774bba6f62e49c7b'],
+      thrifty: [46, 'victory', 'd49413974aa973944d02eddca54903c05b63789bafd9f8b5e6efc5e988b43a05'],
     } as const;
     for (const bot of ['written', 'seen', 'thrifty'] as const) {
       const absent = turns(bot), off = turns(bot, OFF), on = turns(bot, ON), lines = absent.split('\n'), digest = createHash('sha256').update(absent).digest('hex');
       const ten = turns(bot, OFF, 10), eleven = turns(bot, OFF, 11);
-      ok(absent === off && absent === on && lines.length - 1 === MAIN[bot][0] && lines.at(-1) === 'victory' && digest === MAIN[bot][1] && turns(bot, ON, 10) === ten && turns(bot, ON, 11) !== eleven,
+      ok(absent === off && absent === on && lines.length - 1 === MAIN[bot][0] && lines.at(-1) === MAIN[bot][1] && digest === MAIN[bot][2] && turns(bot, ON, 10) === ten && turns(bot, ON, 11) !== eleven,
         `off, the ${bot === 'thrifty' ? "thrifty bot's" : bot === 'seen' ? "game's bot's" : "gate's bot's"} seeded fight is main's turn for turn, absent and present but false (${lines.length - 1} turns, ${lines.at(-1)}, ${digest.slice(0, 12)}), and on too under level 11, at 4 and at 10; at 11, on, it is another`);
     }
   }

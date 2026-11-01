@@ -17,7 +17,7 @@ import { gateCompany, HARNESS } from '../kit/company.ts';
 import { GATE } from '../kit/rules/gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../kit/line.ts';
 import type { Role } from '../kit/line.ts';
-import { measure, days, fight, play, outcomeOf, spent, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, WORST, CAP, casting, cellsOnCores } from '../kit/harness.ts';
+import { measure, days, fight, play, outcomeOf, spent, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, WORST, CAP, casting, cellsOnCores, thrifty } from '../kit/harness.ts';
 import { mustRest, REST_AT, ANSWER, wakeWith, breathGuard } from '../../src/game/bot.ts';
 import { companyAt, newerCompany, edgeOf, unforge, GEAR, GEAR_TOP, whatIfs, writeRefusal, artifactIds } from '../kit/company.ts';
 import { ROUND_CAP, playOut } from '../kit/fight.ts';
@@ -144,6 +144,7 @@ export async function harness(): Promise<void> {
   const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
   ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
   whatIfsOff();
+  thriftyFeats();
   artifactsWhatIf();
   onTheLine();
   abilities();
@@ -157,10 +158,11 @@ export async function harness(): Promise<void> {
  */
 function whatIfsOff(): void {
   // With every what-if off the company is main's: the premade six at twelve levels, as main made them at
-  // 0463be91 before the tiers came to it, as #865 keeps them (J2).
-  const MAIN_SIX = '7e6a61134152748ffac828dcc3d47dbaa7a00e5df03c584054338f7720d24677', sixAt = [1, 5, 10, 11, 12, 13, 19, 24, 25, 27, 28, 32];
+  // 0463be91 before the tiers came to it, as #865 keeps them (J2); pinned again for the class changes
+  // (#1117), the ladder giving the thief its short bows and the sorcerer its slings from 5.
+  const MAIN_SIX = '35d563596b5bd6d89de6142e5a6d6ff0906c8bde3a00efcc87b933c8a26d6719', sixAt = [1, 5, 10, 11, 12, 13, 19, 24, 25, 27, 28, 32];
   const six = createHash('sha256').update(JSON.stringify(sixAt.map((l) => companyAt(l, 3)))).digest('hex');
-  ok(!whatIfs().length && six === MAIN_SIX, `with every what-if off the company is main's: the premade six at ${sixAt.join(', ')} (${six.slice(0, 12)})`);
+  ok(!whatIfs().length && six === MAIN_SIX, `with every what-if off the company is play's: the premade six at ${sixAt.join(', ')} (${six.slice(0, 12)})`);
   // Under --tiers it takes Expert at 13 and Master at 25 on its class's lines, after its prestiges, and
   // nothing else moves; without, it holds none (#852). The newer company takes them as it does.
   const at = [12, 13, 24, 25, 32], bare = at.map((l) => companyAt(l, 3)), newBare = at.map((l) => newerCompany(l, 3));
@@ -200,6 +202,25 @@ function whatIfsOff(): void {
 }
 
 /**
+ * The thrifty bot spends stamina on the feats as the gate's bot does (`featFor`, #1117), once a fight
+ * has them, so the line is made on the company as play has it; asked off, it spends none.
+ */
+function thriftyFeats(): void {
+  const spends = (rules: { bot?: BotOpts }): number => {
+    let n = 0;
+    for (let k = 1; k <= 5; k++) {
+      const p = companyAt(23, k), rng = makeRng(fightSeed(k)), s = startCombat(HARNESS, p, [{ id: 'g', monsters: standardEncounter('soldier', 23) }], rng);
+      // Stamina falls only where a feat is paid for (game/combat/feats.ts, `spend`): each fall is a feat.
+      if (s.stamina) s.stamina = new Proxy(s.stamina, { set: (st, i, v) => { if (typeof i === 'string' && v < st[Number(i)]) n++; return Reflect.set(st, i, v); } });
+      playOut(s, p, rng, thrifty, rules, ROUND_CAP);
+    }
+    return n;
+  };
+  const played = spends({}), asked = spends({ bot: { feats: false } });
+  ok(played > 0 && asked === 0, `the thrifty bot spends stamina on a feat once a fight has them, as the gate's does: ${played} feats in five fights of the premade six at 23 against four test soldiers; asked off, none`);
+}
+
+/**
  * The bounds' artifacts in the harness's what-if (#847, `--artifacts`): each borne by the first member
  * who may, one in the world, all eight in the premade six, and nothing else moves; off, the company bears none, and the gate's
  * company stays the plain one (#891).
@@ -217,7 +238,9 @@ function artifactsWhatIf(): void {
     `under --artifacts the company bears each artifact on the first member who may and nothing else moves, at ${at.join(', ')} ${holds(dressed[1])}; the newer company ${holds(newer)}, with no ranger for Akkush; off, and in the gate's company, none`);
   // Dressed, the company is no weaker than plain in the same seeded fights at 30, and Holdfast's bearer,
   // who strikes nothing from her row, casts its charges: the bot weighs an artifact's hold whatever `--bot` asks.
-  const fights = [...['deep_knocker', 'inspector', 'hearth_moth', 'ashen_champion', 'ashen_preacher', 'deep_rat'].map((id) => [id, id, id]), ['tallymaster'], ['grey_lion'], ['vask']];
+  // Its three lone foes are ones a hold acts on: the late bosses are proof against holds since #1117, and
+  // there a hold cannot make up for the bow Holdfast takes, by design.
+  const fights = [...['deep_knocker', 'inspector', 'hearth_moth', 'ashen_champion', 'ashen_preacher', 'deep_rat'].map((id) => [id, id, id]), ['deep_crawler'], ['grey_hand'], ['hand_rearguard']];
   const weigh = (arts: readonly string[] | undefined): { won: number; cost: number; roots: number } => {
     const rules = { artifacts: arts };
     let won = 0, cost = 0, roots = 0;

@@ -61,7 +61,7 @@ export function traits(): void {
       const p = defaultParty(TABLES, makeRng(seed));
       p.members = p.members.filter((c) => c.cls === 'thief');
       p.members[0].stats.speed = 50;
-      const f = startCombat(TABLES, p, [{ id: 'r', monsters: [{ ...MONSTERS.rat, id: 'test_rat', hp, ac: 0, attack: -50, dice: 1, sides: 1, speed }] }], makeRng(seed));
+      const f = startCombat(TABLES, p, [{ id: 'r', monsters: [{ ...MONSTERS.rat, id: 'test_rat', hp, ac: 0, attack: -50, dice: 1, sides: 1, speed }] }], makeRng(seed), { crits: false, feats: false });
       if (currentTurn(f, p, makeRng(seed))?.side === 'monster') monsterAct(f, p, makeRng(seed));
       partyAct(f, p, makeRng(seed + 10), { type: 'attack', target: 0 });
       return f.log.filter((l) => l.startsWith(`${p.members[0].name} hits `));

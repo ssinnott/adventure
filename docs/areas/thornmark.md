@@ -132,14 +132,15 @@ the tower, the barrow and the grove.
 - **The curve** (`tools/tests/curve.ts`): a clear gives 16,765 xp a member of the 13,667 it asks
   and 9,355 gold of 8,400; a company entering at the floor and clearing three quarters leaves at
   10.2, the next floor 10.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.1% of its 75 groups'
-  fights (`GATE.through`'s aim); two under (a town's or dungeon's, the area's 5), 60.6%, off
-  `GATE.back`'s aim and inside its limit. The Thornmark map wins 100% at 5 and 22.2% at 3. The
-  bosses at their floors and two above: the Hand of Ash 63% and 100%, the Warden of the Cut 41% and
-  100%, the Eldest 55% and 100%.
-- **Fights to a rest** (aim 5.5 to 7.5, limit 4 to 10): the Thornmark map 5.96, the Grove Roots
-  5.95, the Cut Stone 6.70, H3 8.06, I3 7.47, I4 7.55, I5 7.31, J4 7.58 and J5 6.27. H3, I4 and J4
-  are off their aim, and with the two under they are the gate's four.
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.2% of its 75 groups'
+  fights (`GATE.through`'s aim); two under (a town's or dungeon's, the area's 5), 63.2%, off
+  `GATE.back`'s aim and inside its limit. The Thornmark map wins 100% at 5 and 26.1% at 3. The
+  bosses at their floors and two above: the Hand of Ash 54% and 100%, the Warden of the Cut 72%
+  and 100%, the Eldest 47% and 100%, the three set again for the class changes (#1117).
+- **Fights to a rest** (aim 5.5 to 7.5, limit 4 to 10): the Thornmark map 6.32, the Grove Roots
+  6.26, the Cut Stone 7.03, H3 8.49, I3 8.27, I4 8.38, I5 8.35, J4 8.36 and J5 7.35. H3, I3, I4,
+  I5 and J4 are off their aim, and so are J5's floor (89.4% won), the Warden's 72% and the two
+  unders, the map's and the area's: the gate's nine.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, the Thornmark map 97.7%, I4
   98.9% and J5 100%; within 12 in the country, H3 100%, I3 99.4%, I5 100% and J4 98.6% (its
   furthest square 16 of 20); within 7, the town and the dungeons 99.1% to 100%.
@@ -148,7 +149,7 @@ the tower, the barrow and the grove.
   Eldest's Bough, a find for every class, each inside the window of 1,200 gold. Its ranged rungs
   (`ranged`, #1115): the Thornmark Short Bow and the Deerskin Sling, a step and two behind the
   Thornmark Bow, sold beside it in the Armoury and found with its plus beside the bow's +1 in the
-  Grove Roots and its +2 in I4. They are off the gate's ladder until #1117.
+  Grove Roots and its +2 in I4. They are on the gate's ladder since #1117.
 
 ## 10. Names
 

@@ -321,6 +321,55 @@ What it shows:
   and #793 knew; each addition alone breaks the line for several roles, both together more. Nothing is
   written: the line and the monsters past 10 stay as they were, and `tools/restate.ts` waits for the
   day the line is made again.
+- **Made again whole with the feats, the crits and the ladder's bows on (#1117).** With the four
+  fighters' feats (#1113), the crits (#1114) and each act's short bow and sling beside its long bow
+  (#1115) on in play and in the gate's company, and the thrifty bot spending stamina as the gate's
+  does, the line was made again at every point (`--calibrate --write`, 1 to 10 at 300 seeds a point,
+  12, 16 to 22 and 24 to 32 at 200, in three chunks of two runs split by role, about three and a half
+  hours of three cores) and the 69 monsters on it restated (`node tools/restate.ts origin/main
+  --write`: hit points ×1.08 to 1.69, blows ×0.74 to 1.28). Read first at 19 (100 seeds), it was
+  #865's shape at half its size: the hit point factor 4.73 to 5.91, the blow 1.60 to 1.81, the days
+  ended badly 14 to 20% on the mean; the owner's delegate had it made as it stood (MONSTERS §4.4).
+  Days that end in a death, a lost fight or one broken off, in %, at the points made (the boss: fights
+  lost from two under):
+
+  | Level | Fodder | Skirmisher | Soldier | Archer | Caster | Controller | Armoured | Elite | Brute | Boss |
+  |---|---|---|---|---|---|---|---|---|---|---|
+  | 1 | 0 | 1 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 53 |
+  | 2 | 5 | 3 | 4 | 0 | 0 | 4 | 6 | 1 | 4 | 51 |
+  | 3 | 7 | 4 | 7 | 1 | 1 | 7 | 9 | 14 | 23 | 48 |
+  | 4 | 0 | 0 | 0 | 0 | 1 | 0 | 5 | 7 | 28 | 51 |
+  | 5 | 0 | 1 | 5 | 1 | 5 | 2 | 3 | 14 | 31 | 53 |
+  | 6 | 0 | 1 | 1 | 1 | 4 | 0 | 2 | 6 | 15 | 50 |
+  | 7 | 0 | 1 | 1 | 1 | 5 | 1 | 9 | 3 | 5 | 52 |
+  | 8 | 0 | 1 | 2 | 0 | 4 | 0 | 8 | 4 | 7 | 48 |
+  | 9 | 1 | 0 | 0 | 1 | 0 | 0 | 2 | 7 | 12 | 50 |
+  | 10 | 0 | 2 | 2 | 1 | 3 | 1 | 9 | 5 | 11 | 47 |
+  | 12 | 1 | 10 | 9 | 4 | 8 | 4 | 11 | 8 | 28 | 51 |
+  | 16 | 2 | 9 | 5 | 9 | 17 | 8 | 17 | 14 | 28 | 51 |
+  | 17 | 1 | 12 | 9 | 10 | 17 | 9 | 24 | 22 | 37 | 50 |
+  | 18 | 2 | 9 | 7 | 6 | 18 | 8 | 17 | 19 | 30 | 51 |
+  | 19 | 2 | 20 | 13 | 13 | 20 | 7 | 36 | 27 | 42 | 50 |
+  | 20 | 3 | 13 | 9 | 10 | 27 | 4 | 26 | 24 | 34 | 50 |
+  | 21 | 12 | 11 | 14 | 9 | 16 | 7 | 12 | 19 | 42 | 45 |
+  | 22 | 6 | 15 | 14 | 6 | 25 | 5 | 27 | 21 | 39 | 49 |
+  | 24 | 9 | 11 | 6 | 10 | 23 | 7 | 23 | 11 | 31 | 50 |
+  | 25 | 56 | 21 | 15 | 8 | 18 | 7 | 29 | 21 | 31 | 46 |
+  | 26 | 10 | 10 | 10 | 12 | 22 | 3 | 18 | 12 | 22 | 51 |
+  | 27 | 3 | 5 | 6 | 10 | 9 | 7 | 9 | 6 | 9 | 50 |
+  | 28 | 0 | 7 | 9 | 8 | 12 | 7 | 15 | 8 | 21 | 50 |
+  | 29 | 2 | 5 | 6 | 9 | 9 | 5 | 17 | 9 | 19 | 50 |
+  | 30 | 0 | 5 | 6 | 9 | 6 | 3 | 9 | 6 | 9 | 49 |
+  | 31 | 10 | 3 | 6 | 3 | 9 | 2 | 22 | 5 | 7 | 45 |
+  | 32 | 5 | 3 | 3 | 3 | 8 | 4 | 6 | 2 | 3 | 50 |
+
+  Against main's written line and company (200 seeds) the nine roles' mean rose most at 19, 16.1 to
+  20.0, and at 25, 17.4 to 22.9, where fodder ends 56% of its days in a fight broken off and none in
+  a death (the hold step, as #793 met); from 27 it is 4 to 10%. The hit points rose about a third and
+  the blows about a ninth: at 19 4.67 to 5.90 and 1.62 to 1.81 times the line's, at 28 5.75 to 7.78
+  and 1.80 to 2.04. The hardest blow is 2.38 times the line's (the controller at 27 and 28, the
+  archer at 28), inside 2.5; 14 of the 153 points past 10 hit past twice the line, where #865's
+  line had seven of nine roles at 2.0 to 2.9. 68 of the 270 points are held (§4.4).
 
 Decided by delegate for #541, each the owner's to overturn:
 

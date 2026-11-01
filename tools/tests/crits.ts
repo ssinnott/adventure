@@ -1,9 +1,9 @@
 // Critical blows (#1114; DESIGN §6): a member's weapon blow that lands crits at a chance from its Luck
 // as borne, never under the floor, a knight's, barbarian's, thief's or monk's rising at 15 and 23, for
 // double its damage, marked in the log after the hit and before a death; spells and monsters never
-// crit. Built off (`CRITS_ON`): in play no member's chance is anything, so no blow crits or draws for
-// one, and a fight's `crits` turns them on for a tool, as here, where a fight with them on draws as
-// one with them off up to the crit.
+// crit. On in play since #1117 (`CRITS_ON`); a fight's `crits: false` turns them off for a tool, as
+// here, and off no member's chance is anything, so no blow crits or draws for one, where a fight with
+// them on draws as one with them off up to the crit.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import { createCharacter, createParty, critChance, CRITS_ON, CRIT_BASE, CRIT_PER_LUCK, CRIT_FLOOR, CRIT_STEP, CLASSES } from '../../src/game/party.ts';
 import type { Character, ClassId, RaceId } from '../../src/game/party.ts';
@@ -34,10 +34,11 @@ function strike(c: Character, crits: boolean | undefined, seed: number, act: 'at
 }
 
 export function crits(): void {
-  // Off in play: every member of every class, at any level and Luck, has no chance at all.
+  // On in play (#1117): every member of every class has the chance a fight with them on gives it; off, none at all.
   const classes = Object.keys(CLASSES) as ClassId[];
-  ok(!CRITS_ON && classes.every((k) => [1, 15, 23, 32].every((l) => critChance(TABLES.items, member(k, l, 20)) === 0)),
-    'crits are built off: in play no member of any class, at any level or Luck, has a chance to crit');
+  const played = (c: Character): boolean => critChance(TABLES.items, c) > 0 && critChance(TABLES.items, c) === critChance(TABLES.items, c, true) && critChance(TABLES.items, c, false) === 0;
+  ok(CRITS_ON && classes.every((k) => [1, 15, 23, 32].every((l) => played(member(k, l, 20)))),
+    'crits are on: in play every member of every class, at any level, has its chance to crit, and off none');
 
   // On, the chance: 5%, and 2% a point of Luck over 10, never under 1%; the four's 5% more at 15 and 23.
   const on = (c: Character): number => pct(critChance(TABLES.items, c, true));
@@ -60,7 +61,7 @@ export function crits(): void {
   // In a fight: a member whose chance is whole crits every blow that lands, for double what the same
   // blow does with crits off, the dice drawn alike; the log says so after the hit.
   const lucky = (): Character => member('knight', 1, 60);
-  const offFight = strike(lucky(), undefined, 7), onFight = strike(lucky(), true, 7);
+  const offFight = strike(lucky(), false, 7), onFight = strike(lucky(), true, 7);
   const hitOf = (f: CombatState): string => f.log.find((l) => l.includes(' hits ')) ?? '', dmgOf = (l: string): number => Number(/ for (\d+)\./.exec(l)?.[1] ?? NaN);
   const offHit = hitOf(offFight), onHit = hitOf(onFight);
   ok(!!offHit && !!onHit && dmgOf(onHit) === 2 * dmgOf(offHit) && onHit.endsWith(`for ${dmgOf(onHit)}. ${CRIT_LINE}`) && !offHit.includes(CRIT_LINE),

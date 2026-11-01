@@ -2,9 +2,10 @@
 // suite holds. Frenzy has it rage for three rounds whatever its wounds, its blows the harder and its
 // stamina the faster; Cleave is a blow at each foe of the front rank, one each and no more; War Cry has a
 // group that breaks break with half of it down, and the fled pay nothing; Deathless keeps it on its feet
-// under 0 hit points for three rounds, to its death line, and then it falls. Off, each is refused with
-// nothing drawn; on and none spent, a company with a barbarian plays as off; and the bots spend on each
-// where the barbarian's policy finds it pays, never on one barred.
+// under 0 hit points for three rounds, to its death line, and then it falls. On in play (#1117); off, as
+// a fight's `feats: false` asks, each is refused with nothing drawn; on and none spent, a company with a
+// barbarian plays as off; and the bots spend on each where the barbarian's policy finds it pays, never
+// on one barred.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
 import { createCharacter, createParty, CLASSES, RAGE_DMG, deathAt, isDown, hasCondition } from '../../src/game/party.ts';
@@ -91,29 +92,30 @@ export function feats_barbarian(): void {
 }
 
 function off(): void {
-  // Off in play: each feat refused with nothing drawn, said or marked, and the bots try none.
-  const p = createParty([member(B, 23, true)]), { f, rng } = fight(p, [[STRAW]], 1, {});
+  // Off, as a fight's `feats: false` asks: each feat refused with nothing drawn, said or marked, and the bots try none.
+  const p = createParty([member(B, 23, true)]), { f, rng } = fight(p, [[STRAW]], 1, { feats: false });
   until(f, p, rng, 0);
   const was = f.log.length, drawn = rng.draws(), refused = BARB.every((x) => !partyAct(f, p, rng, feat(x.id)));
-  ok(refused && f.log.length === was && rng.draws() === drawn && f.frenzy === undefined && f.deathless === undefined && f.cried === undefined && featFor(f, p, 0, 0) === undefined,
-    "off, each of the barbarian's feats is refused with nothing drawn, said or marked, and the bots try none");
+  ok(f.stamina === undefined && refused && f.log.length === was && rng.draws() === drawn && f.frenzy === undefined && f.deathless === undefined && f.cried === undefined && featFor(f, p, 0, 0) === undefined,
+    "off, a barbarian of 23 builds no stamina, each of its feats is refused with nothing drawn, said or marked, and the bots try none");
 
   // On and none spent, the newer company (its barbarian in front) plays as off, line for line and draw
   // for draw: Rage, the monsters' blows, spells and sweeps on it and the groups' morale as before.
   const groups: MonsterDef[][] = [['smuggler', 'smuggler', 'smuggler_bowman', 'smuggler_captain'], ['boar', 'boar', 'boar', 'boar'], ['skeleton', 'drowned_chanter', 'stair_giant']].map((g) => g.map((id) => MONSTERS[id]));
-  let same = 0, cases = 0, fled = 0;
+  let same = 0, cases = 0, fled = 0, built = 0;
   for (const level of [4, 12, 23]) for (const g of groups) for (let seed = 1; seed <= 3; seed++) {
-    const play = (opts: CombatOpts): { log: string; draws: number } => {
+    const play = (opts: CombatOpts): { log: string; draws: number; st: number } => {
       const q = newerCompany(level, seed), { f: x, rng: r } = fight(q, [g], seed, opts);
       for (let n = 0; n < 400 && x.outcome === 'ongoing'; n++) { const t = currentTurn(x, q, r); if (!t) break; if (t.side === 'monster') monsterAct(x, q, r); else botTurn(x, q, r, t.i); }
-      return { log: x.log.join('\n'), draws: r.draws() };
+      return { log: x.log.join('\n'), draws: r.draws(), st: (x.stamina ?? []).reduce((k, v) => k + v, 0) };
     };
-    const a = play({}), b = play({ feats: true });
+    const a = play({ feats: false }), b = play({});
     cases++;
     if (a.log === b.log && a.draws === b.draws) same++;
+    if (b.st > 0) built++;
     if (/ (breaks? and runs?|bolts?)\./.test(a.log)) fled++;
   }
-  ok(same === cases && fled > 0, `the feats on and none spent, ${same} of ${cases} fights of the newer company play as off, line and draw alike (${fled} with a group breaking)`);
+  ok(same === cases && fled > 0 && built > 0, `the feats on and none spent, ${same} of ${cases} fights of the newer company play as off, line and draw alike (${fled} with a group breaking, stamina built in ${built})`);
 
   // The registry: the barbarian's four as DESIGN §5 has them, each at its level and as it affords it.
   ok(BARB.map((x) => `${x.name} ${x.cost} ${x.level}`).join(', ') === 'Frenzy 2 1, Cleave 3 8, War Cry 3 15, Deathless 5 23',

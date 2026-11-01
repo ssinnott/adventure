@@ -99,7 +99,7 @@ function strike(tables: Tables, seed: number, def: MonsterDef, dress: (p: Party)
   const p = defaultParty(tables, makeRng(1)), rng = makeRng(seed);
   for (const c of p.members) c.hp = c.maxHp = 999;
   dress(p);
-  const s = startCombat(tables, p, [{ id: 'a', monsters: [def] }], rng);
+  const s = startCombat(tables, p, [{ id: 'a', monsters: [def] }], rng, { crits: false, feats: false });
   for (let guard = 0; guard < 50 && s.outcome === 'ongoing'; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t) break;
@@ -480,8 +480,9 @@ function powers(): void {
   const most = spellDice(SPELLS.meteor, ARTIFACT_LEVEL) * (SPELLS.meteor.sides ?? 4), dealt = swarm.s.monsters.map((x) => x.def.hp - x.hp);
   ok(swarm.done[0] && dealt.every((n) => n === most * swarm.done.filter(Boolean).length) && rankMult(swarm.q.members[1]) > 1 && swarm.done.filter(Boolean).length === axe.casts!.times,
     `Idris at ${MAX_LEVEL}, ranked, casts Meteor Swarm from Grim's Axe ${axe.casts!.times} times, each at most ${most} on every foe, a level-${ARTIFACT_LEVEL} unranked roll (${dealt.join(' ')} in all)`);
-  // Through the fight's screen, by keys: Ottilie's list holds Holdfast's spell with its castings left; Cast,
-  // the spell and a group take a charge; once they are spent the screen says so and casts nothing.
+  // Through the fight's screen, by keys: Ottilie's list holds Holdfast's spell with its castings left; Feat
+  // (a thief's Cast while the feats are on, #1117), past her Ambush to the spell, and a group take a
+  // charge; once they are spent the screen says so and casts nothing.
   CombatScreen.instant = true;
   try {
     const g3 = headlessGame(4), o3 = g3.party.members[3], seen: string[] = [], after: number[] = [];
@@ -496,13 +497,13 @@ function powers(): void {
       if (t.i !== 3) { g3.update('n4' as Action); continue; }
       const had = chargesLeft(TABLES.items, g3.party, knife.id);
       seen.push(castRows(TABLES, g3.party, o3).map((r) => r.label).join());
-      g3.update('n2' as Action); g3.update('interact');
+      g3.update('n2' as Action); g3.update('down'); g3.update('interact');
       if (had > 0) g3.update('interact'); else { seen.push(g3.log.at(-1) ?? ''); g3.update('cancel'); g3.update('n4' as Action); }
       after.push(chargesLeft(TABLES.items, g3.party, knife.id));
     }
     const cast3 = st.log.filter((l) => l.startsWith(`${o3.name} casts Grasping Roots`)).length;
     ok(after.join() === '2,1,0,0' && seen[0] === 'Grasping Roots (3 LEFT)' && seen[3] === 'Grasping Roots (0 LEFT)' && seen[4] === 'Nothing left in it until dawn.' && cast3 === 3,
-      `through the fight's screen, by keys, Ottilie's spells read ${seen[0]}; Cast, the spell and a group take a charge each time (${after.join(', ')} left), and once spent: ${seen[4]}`);
+      `through the fight's screen, by keys, Ottilie's spells read ${seen[0]}; Feat, past Ambush to the spell, and a group take a charge each time (${after.join(', ')} left), and once spent: ${seen[4]}`);
   } finally {
     CombatScreen.instant = false;
   }

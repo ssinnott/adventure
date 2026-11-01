@@ -85,8 +85,9 @@ export const HARNESS: Tables = { ...TABLES, items: OWN };
 
 /** A ladder's rows: by a level, the items a company has by then. */
 type Rungs = readonly (readonly [number, readonly string[]])[];
-/** The areas' rungs (`AreaChecks.gear`), in road order. */
-const RUNGS = areaRows((c) => c.gear).map(([at, ids]) => [Number(at), ids] as const);
+/** The areas' rungs (`AreaChecks.gear`), in road order, each long bow's with its short bow and sling beside it (`AreaChecks.ranged`, #1117). */
+const RUNGS = areaRows((c) => Object.fromEntries(Object.entries(c.gear ?? {}).map(([at, ids]) => [at, [...ids, ...(c.ranged?.[Number(at)]?.slice(1) ?? [])]])))
+  .map(([at, ids]) => [Number(at), ids] as const);
 /** What a company wears (a weapon, armour or a shield), as against what it carries in its bag. */
 const worn = (id: string): boolean => (OWN[id]?.slot ?? 'weapon') !== 'none';
 /** The areas' rungs of one kind, worn or carried, in the order of their levels. */

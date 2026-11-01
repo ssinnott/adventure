@@ -254,8 +254,8 @@ adds armour: in the harness, armour that keeps up makes monsters hit harder, and
 the Monk, have feats: a turn's action of their own, paid in stamina. Stamina is built in a fight and
 gone at its end, so it plays apart from spell points, which a day spends and a rest restores.
 Decided by the owner, 30 October 2026 (#1113); the rules and the feats below are that issue's
-design, the owner's to settle and to overturn. Built off (`FEATS_ON`, game/party/tables.ts; the
-frame, game/combat/feats.ts) until #1117 turns them on.
+design, the owner's to settle and to overturn. On since #1117 (`FEATS_ON`, game/party/tables.ts;
+the frame, game/combat/feats.ts).
 
 - **Building it.** A member of the four starts a fight with none and takes 1 for each blow of its
   own that lands and 1 for each that lands on it (a sweep, a breath or a spell is no blow), 6 at
@@ -272,11 +272,11 @@ frame, game/combat/feats.ts) until #1117 turns them on.
 |---|---|---|---|---|
 | Knight | Challenge (2): a group strikes only the knight for two rounds | Mighty Blow (3): one blow, sure to land, for double | Rally (4): the front row hits +2 for three rounds and shakes off sleep and paralysis | Champion's Strike (5): every blow this turn crits (#1114) |
 | Barbarian | Frenzy (2): attacks and rages for three rounds, whatever its wounds | Cleave (3): a blow at every foe of the front rank | War Cry (3): a group that breaks breaks with half of it down, not waiting for its leader or three in four | Deathless (5): for three rounds it fights on under 0 hit points, to its death line |
-| Thief | Ambush (2): its blows this turn are sneak attacks | Blind (3): a foe it hits has −4 to hit for three rounds | Hamstring (3): a blow that, landing, holds its foe fast for a round | Deathblow (5): a sneak attack on a foe asleep or held, for triple |
+| Thief | Ambush (2): its blows this turn are sneak attacks | Blind (3): a foe it hits has −4 to hit for three rounds | Hamstring (3): a blow that, landing, holds its foe fast for a round; bosses from 16 up are proof | Deathblow (5): a sneak attack on a foe asleep or held, for triple |
 | Monk | Flurry (2): two more strikes this turn | Quiet Palm (3): a strike that, landing, puts its foe to sleep | Leap (3): strikes a foe of the back rank, past the front | Wind Step (5): attacks, then takes another turn at once |
 
 No feat's name is a skill's, a trait's or a spell's. The bots play a feat where it pays, as they
-weigh a spell, and the gate measures the feats once #1117 turns them on.
+weigh a spell: the game's, the gate's and the line's (#1117).
 
 **The trainers.** Every first is taught in a city a company reaches by 11, by someone with a job
 there. Every second is off the beaten path: not a step of the one quest, and not within about ten
@@ -334,7 +334,7 @@ country, band 26 to 28.
 - Seven stats: Might, Intellect, Personality, Endurance, Accuracy, Speed, Luck. Four do something in
   a fight: Might a blow's damage, Accuracy its to-hit, Speed armour, the turn's order and a flight,
   Personality a heal. Endurance and the spell stat are read when a level is gained, and Luck a
-  blow's chance to crit (§6), built off until #1117 turns it on.
+  blow's chance to crit (§6).
   A stat as a member stands is their own raised by what they bear (`statOf`, `ItemDef.stat`, #855):
   what they wear and the slotless items in their own pack, as a resistance is borne; armour in the
   pack and the bag raise nothing, and a save holds no raise. Four found items raise one by 3: the
@@ -682,7 +682,7 @@ Decided by the builder, each the owner's to overturn:
 - **Turn order** by Speed, party and monsters interleaved. One action per character. While an Arms
   Master stands, every standing member acts before any monster, in every round (§5, #856, #1070).
 - **Feats** (§5): a knight, barbarian, thief or monk may spend the stamina it has built in the fight
-  on a feat, its action for the turn (#1113; built off until #1117).
+  on a feat, its action for the turn (#1113; on since #1117).
 - **Rows:** front three take and deal melee; back three need reach, ranged, or spells. Swap costs
   a turn.
 - **Encounter cap:** a single fight is at most 12 monsters in at most 3 groups. Bigger threats
@@ -718,8 +718,8 @@ Decided by the builder, each the owner's to overturn:
   says "A true blow." after the hit. Its chance is 5%, and 2% for each point of Luck over 10 as
   borne, never under 1%; a knight's, barbarian's, thief's or monk's 5% more at 15 and again at 23
   (`critChance`). Spells and monsters never crit. Decided by the owner, 30 October 2026, which
-  overturns #18's call 7 for Luck; the figures are #1117's to size. Built off (`CRITS_ON`): no blow
-  crits, nor draws for one, until #1117 turns it on, and a tool may turn it on in a fight (`crits`).
+  overturns #18's call 7 for Luck; on since #1117 at those figures (`CRITS_ON`), and a tool may turn
+  it off in a fight (`crits`), when no blow crits nor draws for one.
 
 Decided by the owner's delegate for #18, each the owner's to overturn:
 
@@ -785,7 +785,8 @@ points tier 5 was at 8.
 The damage spells' dice are those the harness sized as stand-ins (MONSTERS.md §4.4), and the tiers
 are built (#20). Walk on Water lasts twelve steps and Levitate six; Lampglass's element is picked as
 it is cast. Grasping Roots holds each of a group at one in two, a blow does not free it, and each
-held monster tears free at 0.35 a round.
+held monster tears free at 0.35 a round. The bosses from 16 up are proof against it, as against
+Hamstring.
 
 **Ranks.** A rank belongs to the caster, not the spell: it lifts every spell they know, those
 learned later too. Each rank adds 15% to the dice of a damage spell and to what a mending spell

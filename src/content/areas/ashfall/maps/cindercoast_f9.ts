@@ -82,6 +82,7 @@ export const CINDERCOAST_F9: MapDef<'cindercoast_f9'> = {
   secrets: [{ x: 24, y: 24, hint: 'f9_track' }],
   encounters: [
     // The box's one fight: two drakes down on the Waste's ash at the slope's foot, hunting the shore.
-    { id: 'f9_drakes', x: 3, y: 28, monsters: ['cinder_drake', 'cinder_drake'], aware: 5, respawn: RESPAWN.twoDays },
+    // Two stokers since the class changes (#1117), tending the drakes' shore: two drakes were 18 fights to a rest, a drake and a stoker 13.4.
+    { id: 'f9_drakes', x: 3, y: 28, monsters: ['stoker', 'stoker'], aware: 5, respawn: RESPAWN.twoDays },
   ],
 };

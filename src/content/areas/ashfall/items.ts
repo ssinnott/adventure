@@ -26,16 +26,14 @@ export const cinderRobe = A('cinder_robe', 'Cinder Robe', 2000, 12);
 export const basaltShield: ItemDef = { id: 'basalt_shield', name: 'Basalt Shield', slot: 'shield', price: 1400, ac: 7, classes: MAIL };
 const WARES = [slagMace, marlinspike, ashwoodBow, flamberge, battleStaff, drakeskin, cinderRobe, basaltShield];
 
-/** The Ashwood Bow's short bow and sling (#1115), beside the step and off the gate's ladder: `ARMOURER_RANGED`, below. */
+/** The Ashwood Bow's short bow and sling (#1115), beside the step: `ARMOURER_RANGED`, below. */
 const RANGED = [ashwoodShortbow, drakeskinSling];
 
 /** The armourer's stock, the act's one step (#512); the Wold has no town and buys here by the Rider's ride (#547). */
 export const ARMOURER: readonly string[] = WARES.map((d) => d.id);
 /**
- * The Ashwood Bow's short bow and sling (#1115), sold at the same counter after the step. Off the gate's
- * ladder, they stay out of `ARMOURER`, the rung's own: `ACT_IV` (tools/kit/rules/ladder.ts) takes its wares
- * from it, and the ladder suite holds those to the rung's `gear`. #1117 moves them into `WARES` with the
- * `gear` row, and this list goes.
+ * The Ashwood Bow's short bow and sling (#1115), sold at the same counter after the step and on the
+ * gate's ladder beside it since #1117: `ACT_IV` (tools/kit/rules/ladder.ts) takes its wares from both.
  */
 export const ARMOURER_RANGED: readonly string[] = RANGED.map((d) => d.id);
 

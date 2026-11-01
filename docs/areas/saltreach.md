@@ -161,19 +161,20 @@ gleaners. New here (`novel`): the long bodies and the toads, two new families, a
   paid by Tallis at Saltmouth, and the Watcher on Wrackholm's 80 xp a member and 150 gold, the
   Compact's, its deed on the isle. Wytgat, the enclave, and Sjongwierde, the lair, are counted in no
   clear: 1,104 xp a member and 921 gold, and 3,396 and 500.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.9% of its 48 groups'
-  fights (`GATE.through`'s aim); two under, its groups pooled at 8 manage 2.85 fights to a rest,
-  43.8% of the floor's 6.5 (at most: `GATE.backDay`'s aim). Each zone's road is walked every time,
-  the Upper Water's and the Delta's at 10 and the Saltings' at 11. The Choirmaster is won 48% at 11
-  and 100% at 13. Wytgat is judged at its own band and out of these: every fight won at 13, and two
-  under, at 11, 4.61 fights to a rest, 63.6% of the floor's 7.25. So is the lair: the Old Chanter,
-  its one group, is won 61% at 30 and 93% at 32, inside both aims, its numbers set by that gate
-  (plan, §12.13).
-- **Fights to a rest** (aim 5.5 to 7.5 at 10, 5.75 to 7.75 at 11): C5 7.02 and its Rift 6.39, C4
-  6.70, C3 7.12, B5 7.11 and its Rifts 4.75 each, B6 6.96, the temples' two levels 7.18 and 7.49,
-  C6 7.26, C7 6.00, B3 7.09, B4 7.10, C2 6.47, B2 5.76, A3 5.89, A4 6.82, A5 6.84, A6 7.18, B7 7.41
-  and D6 5.76; Wytgat 6.66 at 13 (aim 6.25 to 8.25). Three figures are off their aim, inside the
-  limits: B5's two Rifts, 4.75 each, and the choir's 82.7% won at 11.
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 99% of its 48 groups'
+  fights (`GATE.through`'s aim); two under, its groups pooled at 8 manage 2.58 fights to a rest,
+  39.7% of the floor's 6.5 (at most: `GATE.backDay`'s aim). Each zone's road is walked every time,
+  the Upper Water's and the Delta's at 10 and the Saltings' at 11. The Choirmaster is won 51% at 11
+  and 98% at 13. Wytgat is judged at its own band and out of these: every fight won at 13, and two
+  under, at 11, 4.31 fights to a rest, 59.4% of the floor's 7.25. So is the lair: the Old Chanter,
+  its one group, is won 64% at 30 and 93% at 32, its numbers set by that gate (plan, §12.13) and
+  again for the class changes (#1117), which made it proof against a hold.
+- **Fights to a rest** (aim 5.5 to 7.5 at 10, 5.75 to 7.75 at 11): C5 7.67 and its Rift 7.64, C4
+  7.22, C3 7.73, B5 7.71 and its Rifts 4.96 each, B6 7.54, the temples' two levels 6.76 and 6.83,
+  C6 7.04, C7 5.42, B3 7.22, B4 7.87, C2 6.71, B2 6.19, A3 6.39, A4 7.56, A5 7.41, A6 6.76, B7 7.32
+  and D6 5.18; Wytgat 6.76 at 13 (aim 6.25 to 8.25). Eleven figures are off their aim, inside the
+  limits, since the class changes (#1117): C5, its Rift, C3, B4 and A4 over 7.5, B5's two Rifts,
+  C7 and D6 under 5.75, C5 two under 67.1% of its floor's and the choir's 84.8% won at 11.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, C3 98.7%, B5 95.6%, B6
   96.3% and C6 93.7%; within 12 in the country, D5 100%, C5 97.9%, C4 97.8%, C7 99.0%, B3 96.7%
   (its furthest square 20), B4 97.6%, A5 97.0%, B7 98.5% and C2, B2, A3, A4, A6 and D6 100%; within
@@ -186,7 +187,7 @@ gleaners. New here (`novel`): the long bodies and the toads, two new families, a
   the Elixir and the Sapphire Vial are consumables and the Telstok an artifact. Its ranged rung
   (`ranged`, #1115) puts a short bow a step behind the Horn Bow and a sling two: the Horn Short Bow
   and the Sharkskin Sling at the Seawall Armoury beside it, each with a plus in C7's hoard beside the
-  Horn Bow +1 (13, on Wrackholm's checks). They are off the gate's ladder until #1117.
+  Horn Bow +1 (13, on Wrackholm's checks). They are on the gate's ladder since #1117.
 
 ## 10. Names
 

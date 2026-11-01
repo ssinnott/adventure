@@ -1638,11 +1638,11 @@ function theBounds(): Scene[] {
       const camp = D7.features!.find((f) => f.kind === 'camp')!;
       w.world.travel(D7.id, camp.x, camp.y);
       ok(restRefused(w.world) === '' && D7.encounters!.every((g) => Math.abs(g.x - camp.x) + Math.abs(g.y - camp.y) > 8), 'the Riders\' old watch-fire on the lip, clear of every group, where a company may rest');
-      // The groups, each won at 26: the vultures over the bones, the lions in the grass, the walkers at the end.
+      // The groups, each won at 26: the vultures over the bones, the lions in the grass, a walker at the end.
       const g7 = (id: string) => groupOn(D7, id);
-      ok(D7.encounters!.length === 3 && g7('d7_vultures').monsters.join() === 'vulture,vulture,vulture,vulture' && g7('d7_lions').monsters.join() === 'wold_lion,wold_lion,wold_lion'
-        && g7('d7_walker').monsters.join() === 'glass_walker,glass_walker' && D7.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && lip.has(square(out, d7, g.x, g.y))),
-        'four vultures over the bones, three lions in the long grass and two glass walkers at the Scarp\'s end, all on the lip');
+      ok(D7.encounters!.length === 3 && g7('d7_vultures').monsters.join() === 'vulture,vulture,vulture,glass_walker' && g7('d7_lions').monsters.join() === 'wold_lion,wold_lion,glass_walker'
+        && g7('d7_walker').monsters.join() === 'glass_walker' && D7.encounters!.every((g) => g.respawn === RESPAWN.twoDays && !g.slainText && lip.has(square(out, d7, g.x, g.y))),
+        'three vultures over the bones, two lions in the long grass, a glass walker with each and one at the Scarp\'s end, all on the lip');
       for (const g of D7.encounters!) fight(w, `${D7.id}:${g.id}`);
       // The secret: the beacon's cold hearth and the smell of tar, searched; the keepers' store behind it.
       const [rock] = D7.secrets!;

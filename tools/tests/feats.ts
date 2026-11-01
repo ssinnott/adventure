@@ -1,9 +1,9 @@
 // The feats on stamina (#1113; DESIGN §5, game/combat/feats.ts): the frame and the knight's four.
 // Stamina is built in a fight by blows that land, the member's own and those on it, each of the four
 // classes one way faster, to six, and is gone with the fight; a feat costs it and takes the turn.
-// Built off (`FEATS_ON`): in play no stamina is built, no feat is legal or offered, the bots try none
-// and a fight draws as before, which a fight with the feats on and none spent holds to the draw; a
-// fight's `feats` turns them on for a tool, as here. The knight's Challenge, Mighty Blow, Rally and
+// On in play since #1117 (`FEATS_ON`); a fight's `feats: false` turns them off for a tool, as here, and
+// off no stamina is built, no feat is legal or offered, the bots try none and a fight draws as before,
+// which a fight with the feats on and none spent holds to the draw. The knight's Challenge, Mighty Blow, Rally and
 // Champion's Strike each do what DESIGN says, and the bots spend on them by the knight's policy. The
 // Feat list says what the feat under its cursor does and, on Space, why a barred one is barred. A
 // class's feats to come add their lines in a block of their own beside the knight's.
@@ -62,8 +62,8 @@ function counted(seed: number): RngInstance & { draws: () => number } {
     pick: (arr) => (arr.length ? arr[Math.floor(next() * arr.length)] : undefined), chance: (p) => next() < p, draws: () => n,
   };
 }
-/** A fight of `p` against groups of foes, the feats on unless `opts` says, on seed `seed`. */
-function fight(p: Party, groups: readonly (readonly MonsterDef[])[], seed: number, opts: CombatOpts = { feats: true }): { f: CombatState; rng: ReturnType<typeof counted> } {
+/** A fight of `p` against groups of foes, the feats on and the crits off unless `opts` says, on seed `seed`. */
+function fight(p: Party, groups: readonly (readonly MonsterDef[])[], seed: number, opts: CombatOpts = { feats: true, crits: false }): { f: CombatState; rng: ReturnType<typeof counted> } {
   const rng = counted(seed);
   return { f: startCombat(T, p, groups.map((monsters, k) => ({ id: `g${k}`, monsters })), rng, opts), rng };
 }
@@ -95,10 +95,11 @@ export function feats(): void {
 }
 
 function frame(): void {
-  // Off in play: no stamina, no feat legal or offered, the bots spend nothing, whatever the member has.
-  const k = member('knight', 23, true), p = createParty([k]), off = fight(p, [[STRAW]], 1, {});
-  ok(!FEATS_ON && off.f.stamina === undefined && off.f.feats === undefined && featsOf(off.f, p, 0).length === 0 && staminaOf(off.f, k, 0) === undefined,
-    'the feats are built off: in play a fight builds no stamina and a knight of 23 has no feat it may use');
+  // On in play (#1117): a fight builds stamina and a knight's Cast reads Feat. Off, as a fight's
+  // `feats: false` asks: no stamina, no feat legal or offered, the bots spend nothing, whatever the member has.
+  const k = member('knight', 23, true), p = createParty([k]), played = fight(p, [[STRAW]], 1, {}), off = fight(p, [[STRAW]], 1, { feats: false });
+  ok(FEATS_ON && staminaOf(played.f, k, 0) === 0 && commandRows(T, p, played.f, 0)[1].label === 'Feat' && off.f.stamina === undefined && featsOf(off.f, p, 0).length === 0 && staminaOf(off.f, k, 0) === undefined,
+    'the feats are on: in play a fight builds a knight of 23 stamina from none and his Cast reads Feat; off, it builds none and he has no feat he may use');
   until(off.f, p, off.rng, 0);
   const was = off.f.log.length, drawn = off.rng.draws(), refused = KNIGHT.every((x) => !partyAct(off.f, p, off.rng, feat(x.id)));
   ok(refused && off.f.log.length === was && off.rng.draws() === drawn && commandRows(T, p, off.f, 0)[1].label === 'Cast',
@@ -115,7 +116,7 @@ function frame(): void {
       for (let n = 0; n < 400 && f.outcome === 'ongoing'; n++) { const t = currentTurn(f, q, rng); if (!t) break; if (t.side === 'monster') monsterAct(f, q, rng); else botTurn(f, q, rng, t.i); }
       return { log: f.log.join('\n'), draws: rng.draws(), st: (f.stamina ?? []).reduce((a, b) => a + b, 0) };
     };
-    const a = play({}), b = play({ feats: true });
+    const a = play({ feats: false }), b = play({});
     cases++;
     if (a.log === b.log && a.draws === b.draws) same++;
     if (b.st > 0) built++;
@@ -436,7 +437,7 @@ function thief(): void {
   ok(by.join(' ') === 'ambush/1 ambush/2 ambush,blind/2 ambush,blind,hamstring/3 ambush,blind,hamstring/4 ambush,blind,hamstring,deathblow/4 ambush,blind,hamstring/4 /4 ambush,blind,hamstring,deathblow/4',
     `a thief has its feats by its level and may use those it affords, Deathblow while a foe lies asleep, a blow's from the back row with a sling and not a blade (${by.join(' ')})`);
   {
-    const q = createParty([rogue(23)]), off = rogueFight(q, [[STRAW]], 1, {});
+    const q = createParty([rogue(23)]), off = rogueFight(q, [[STRAW]], 1, { feats: false });
     until(off.f, q, off.rng, 0);
     off.f.monsters[0].conditions = ['asleep'];
     const was = off.f.log.length, drawn = off.rng.draws();
@@ -677,9 +678,9 @@ function monk(): void {
   ok(by.join(' ') === 'flurry flurry flurry,quiet_palm flurry,quiet_palm flurry,quiet_palm,leap flurry,quiet_palm,leap,wind_step flurry,quiet_palm,wind_step - -',
     `a monk has its feats by its level and its stamina, from the back row only from its second prestige, and Leap only while a back rank stands (${by.join(' ')})`);
 
-  // Off in play, as the knight's: none built, each feat refused with nothing drawn or said, the menu's Cast, the bots strike.
+  // Off, as the knight's: none built, each feat refused with nothing drawn or said, the menu's Cast, the bots strike.
   {
-    const q = createParty([monkAt(23)]), { f, rng } = band(q, [STRAW, BOW], 1, 1, {});
+    const q = createParty([monkAt(23)]), { f, rng } = band(q, [STRAW, BOW], 1, 1, { feats: false });
     until(f, q, rng, 0);
     const label = commandRows(T, q, f, 0)[1].label, was = f.log.length, drawn = rng.draws(), refused = MONKS.every((x) => !partyAct(f, q, rng, feat(x.id, x.id === 'leap' ? 1 : 0)));
     ok(f.stamina === undefined && featsOf(f, q, 0).length === 0 && refused && f.log.length === was && rng.draws() === drawn && featFor(f, q, 0, 0) === undefined && label === 'Cast'

@@ -131,14 +131,15 @@ area on the road, it claims nothing new (`novel`), and the novelty check asks no
 - **The curve** (`tools/tests/curve.ts`): a clear gives 4,101 xp a member of the 3,734 it asks and
   4,646 gold of 1,500; a company entering at the floor and clearing three quarters leaves at 5.3,
   the next floor 5. Hag Hole, the lair, is counted in no clear: 3,395 xp a member and 500 gold.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.3% of its 81 groups'
-  fights (`GATE.through`'s aim); two under, 82.7% of 32 groups, listed and inside `GATE.back`'s
-  limit. The bosses at their floors and two above: the Rift Warden 55% and 100%, the smugglers'
-  captain 50% and 100%, the Deacon 50% and 100%, the Berth's captain 44% and 100%; the Hag 66% at 30
-  and 91% at 32.
-- **Fights to a rest** (aim 5.5 to 7.5, limit 4 to 10): the Foreland map 4.55, Brandy Hole 4.09,
-  the Seam 6.69, the cellar 7.41, F2 6.60, F3 7.07, E3 7.53, E2 6.93, D2 7.59, D3 8.21, D4 7.54 and
-  the Berth 7.12, which wins 88.8% at its floor. Six are off their aim, of the gate's eight.
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.2% of its 81 groups'
+  fights (`GATE.through`'s aim); two under, 86.2% of 32 groups, listed and inside `GATE.back`'s
+  limit. The bosses at their floors and two above: the Rift Warden 74.3% and 100%, off its aim and
+  inside its limit, the smugglers' captain 62% and 100%, the Deacon 67.8% and 100%, the Berth's
+  captain 65% and 100%; the Hag, set again for the class changes (#1117) and proof against a hold, 70% at 30 and 86% at 32.
+- **Fights to a rest** (aim 5.5 to 7.5, limit 4 to 10): the Foreland map 4.76, Brandy Hole 4.68,
+  the Seam 8.43, the cellar 8.44, F2 7.31, F3 7.59, E3 9.08, E2 8.15, D2 9.11, D3 9.80, D4 8.82 and
+  the Berth 8.34, which wins 93% at its floor. Eleven are off their aim, the first two under it and
+  all but F2 after them over, of the gate's fourteen with the Hag's 86% at 32.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, the Foreland map 97.4%, F3
   100%, E3 96.9% and D2 92.6%; within 12 in the country, F2 99.5%, E2 96.4% (its furthest square 20,
   on the limit), D3 99.7%, D4 96.7% and E4 100%.
@@ -146,7 +147,7 @@ area on the road, it claims nothing new (`novel`), and the novelty check asks no
   and the kits' weapons with a plus, by 5 the kits' armour with a plus and the Downs' last finds.
   Its ranged rungs (`ranged`, #1115) put a short bow a step behind the Long Bow and a sling two: the
   Yew Short Bow and the Leather Sling at Mottram's and in the Seam's chest beside it, each with a
-  plus in D3's camp beside the Long Bow +1. They are off the gate's ladder until #1117.
+  plus in D3's camp beside the Long Bow +1. They are on the gate's ladder since #1117.
 
 ## 10. Names
 

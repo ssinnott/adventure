@@ -242,9 +242,11 @@ export class CombatScreen implements Screen {
           this.pendingFeat = f.id;
           if (f.target === 'none') act({ type: 'feat', featId: f.id, target: 0 });
           else { this.mode = 'featTarget'; this.sub = 0; }
-        } else if (is(a, 'interact') && known[this.sub]) {
-          // Space on a feat barred (the list took it for no choice) says why, as the spell list does for a spell it cannot cast.
-          const why = featBar(g.tables, g.party, s, who, known[this.sub]);
+        } else if (is(a, 'interact')) {
+          // Space on a row barred (the list took it for no choice) says why, as the spell list does for a
+          // spell it cannot cast: a feat's bar, or an artifact's spell spent in that list's words (#1117).
+          const f = known[this.sub], e = castable(g.tables, g.party.members[who])[this.sub - known.length];
+          const why = f ? featBar(g.tables, g.party, s, who, f) : e && (e.from ? 'Nothing left in it until dawn.' : 'Not enough spell points.');
           if (why) g.say(why);
         }
         break;

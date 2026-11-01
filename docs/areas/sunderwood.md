@@ -128,14 +128,14 @@ chasm underfoot; sleep inflicted (`inflict:asleep`); the falls.
 - **The curve** (`tools/tests/curve.ts`): a clear gives 13,831 xp a member of the 11,467 it asks
   and 6,997 gold of 6,960; a company entering at the floor and clearing three quarters leaves at
   16.5, the next floor 16.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.7% of its 35 groups'
-  fights (`GATE.through`'s aim); two under, its maps' groups pooled at 12, a company manages 4.11
-  fights to a rest, 54.8% of the floor's 7.5 (at most: `GATE.backDay`'s aim). The Warden of the
-  Sunder is won 56% at 14 and 95% at 16, and the Sunder's floor, at 14, 85.3% of its fights, off
-  `GATE.through`'s aim and inside its limit: the gate's one.
-- **Fights to a rest** (aim 6.5 to 8.5 at 14 and 6.75 to 8.75 at 15): I2 7.51, J2 7.76, K2 7.76,
-  K3 8.05, the Rift 7.30, the Sunder 6.68 and its floor 7.74, J3 7.60, L2 8.20, M2 8.36, L3 7.77,
-  L4 8.50 and K4 7.34, each inside its aim.
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.9% of its 35 groups'
+  fights (`GATE.through`'s aim); two under, its maps' groups pooled at 12, a company manages 3.74
+  fights to a rest, 49.9% of the floor's 7.5 (at most: `GATE.backDay`'s aim). The Warden of the
+  Sunder is won 61% at 14 and 93% at 16, set again for the class changes (#1117) and proof against a
+  hold, and the Sunder's floor, at 14, 87% of its fights, off `GATE.through`'s aim and inside its limit.
+- **Fights to a rest** (aim 6.5 to 8.5 at 14 and 6.75 to 8.75 at 15): I2 7.19, J2 7.45, K2 7.81,
+  K3 8.20, the Rift 6.77, the Sunder 6.51 and its floor 8.33, J3 7.36, L2 8.38, M2 8.39, L3 7.76,
+  L4 8.98 and K4 7.02, each inside its aim but L4, inside its limit.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, J2 92.1%, K2 97.9%, K3
   96.0% and L2 100%; within 12 in the country, I2 96.6% (its furthest square 16 of 20), J3 99.3%,
   M2, L3 and L4 100% and K4 99.8%; within 7, the Rift 92.9%, the Sunder 100%, its floor 99.6% and
@@ -145,7 +145,7 @@ chasm underfoot; sleep inflicted (`inflict:asleep`); the falls.
   1,500 the dearest find, each inside the window of 3,000 gold. Its ranged rungs (`ranged`, #1115) put
   a short bow a step behind the Ironwood Bow and a sling two: the Ironwood Short Bow and the Watch
   Sling in the Watch's stores beside it, each with a plus in the Sunder's fallen chest beside the
-  Ironwood Bow +1. They are off the gate's ladder until #1117.
+  Ironwood Bow +1. They are on the gate's ladder since #1117.
 
 ## 10. Names
 
@@ -158,7 +158,7 @@ and the Lanterns Helmstow's. A naming pass is the owner's to ask for; none is fi
 
 - **Owed to no check:** its checks have no `owes`, and the curve, the gate, density and the ladder
   hold Sunderwood with nothing owed.
-- **Watched, not moved:** the Sunder's floor, won 85.3% at 14, is off its aim and inside its limit.
+- **Watched, not moved:** the Sunder's floor, won 87% at 14, is off its aim and inside its limit.
   What the owner finds by hand goes here; none yet.
 - **Cut:** the rim's row and the mountain edges (plan, §11); the Deepthorn's three boxes are
   Thornmark's.
