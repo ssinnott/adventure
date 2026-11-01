@@ -11,17 +11,17 @@ export const SPRITES = [
 
 export const MONSTERS: readonly MonsterDef[] = [
   // under the lochs' ice (#486), a skirmisher on MONSTERS §4.4's line at 20: a group placed on ice, which strikes a company on it at one square
-  { id: 'ice_pike', name: 'Ice Pike', plural: 'Ice Pike', sprite: 'ice_pike', kind: 'beast', look: "The ice under Ottilie's feet has an eye in it.", level: 20, hp: 288, ac: 21, attack: 12, dice: 3, sides: 7, bonus: 5, speed: 15, xp: 793, gold: [0, 0], tint: '#56634a', size: 0.85 },
+  { id: 'ice_pike', name: 'Ice Pike', plural: 'Ice Pike', sprite: 'ice_pike', kind: 'beast', look: "The ice under Ottilie's feet has an eye in it.", level: 20, hp: 376, ac: 21, attack: 12, dice: 3, sides: 7, bonus: 6, speed: 15, xp: 793, gold: [0, 0], tint: '#56634a', size: 0.85 },
   // the pinewoods (#486), a skirmisher on MONSTERS §4.4's line at 20: it leaps at the back row
-  { id: 'snow_lynx', name: 'Snow Lynx', plural: 'Snow Lynxes', sprite: 'snow_lynx', kind: 'beast', look: 'Grey, tufted, and it has already jumped.', level: 20, hp: 288, ac: 21, attack: 12, dice: 3, sides: 7, bonus: 5, speed: 15, xp: 793, gold: [0, 0], ranged: true, tint: '#9c978c', size: 0.8 },
+  { id: 'snow_lynx', name: 'Snow Lynx', plural: 'Snow Lynxes', sprite: 'snow_lynx', kind: 'beast', look: 'Grey, tufted, and it has already jumped.', level: 20, hp: 376, ac: 21, attack: 12, dice: 3, sides: 7, bonus: 6, speed: 15, xp: 793, gold: [0, 0], ranged: true, tint: '#9c978c', size: 0.8 },
   // up through Rime Lodge's ice-hole on the fourth night (#487), a caller on a soldier's numbers at 20 (MONSTERS §4.2), with six
   // knockers: it calls three more at a half a turn, as #537's test caller does, room for one call beside the six
-  { id: 'tallyman', name: 'Tallyman', plural: 'Tallymen', sprite: 'tallyman', kind: 'machine', look: 'It stops and clicks, once for each of you.', level: 20, hp: 314, ac: 21, attack: 12, dice: 3, sides: 7, bonus: 5, speed: 11, xp: 793, gold: [0, 0], calls: { monsters: ['knocker', 'knocker', 'knocker'], chance: 0.5 }, tint: '#6e7884', size: 0.6 },
+  { id: 'tallyman', name: 'Tallyman', plural: 'Tallymen', sprite: 'tallyman', kind: 'machine', look: 'It stops and clicks, once for each of you.', level: 20, hp: 368, ac: 21, attack: 12, dice: 3, sides: 8, bonus: 6, speed: 11, xp: 793, gold: [0, 0], calls: { monsters: ['knocker', 'knocker', 'knocker'], chance: 0.5 }, tint: '#6e7884', size: 0.6 },
   // the glacier's edge (#486), a brute on MONSTERS §4.4's line at 21
-  { id: 'ice_bear', name: 'Ice Bear', plural: 'Ice Bears', sprite: 'ice_bear', kind: 'beast', look: 'White, and bigger than the last one.', level: 21, hp: 570, ac: 20, attack: 13, dice: 5, sides: 7, bonus: 7, speed: 8, xp: 1667, gold: [0, 0], tint: '#e4dfd2', size: 1.3 },
+  { id: 'ice_bear', name: 'Ice Bear', plural: 'Ice Bears', sprite: 'ice_bear', kind: 'beast', look: 'White, and bigger than the last one.', level: 21, hp: 680, ac: 20, attack: 13, dice: 6, sides: 8, bonus: 7, speed: 8, xp: 1667, gold: [0, 0], tint: '#e4dfd2', size: 1.3 },
   // the Sleepers' Bay (#490), a controller on MONSTERS §4.4's line at 21: its touch puts to sleep, at 0.3 a hit, and it mends
   // the most hurt of its group one turn in four (at one in two the harness's bot broke off a fifth of its days at fifteen rounds)
-  { id: 'bay_keeper', name: 'Bay Keeper', plural: 'Bay Keepers', sprite: 'bay_keeper', kind: 'machine', look: 'Tall and grey, with too many fingers, and gentle.', level: 21, hp: 248, ac: 22, attack: 12, dice: 4, sides: 8, bonus: 2, speed: 12, xp: 833, gold: [0, 0], inflict: { cond: 'asleep', chance: 0.3 }, cast: { spells: ['heal'], chance: 0.25 }, tint: '#8d9399', size: 1.1 },
+  { id: 'bay_keeper', name: 'Bay Keeper', plural: 'Bay Keepers', sprite: 'bay_keeper', kind: 'machine', look: 'Tall and grey, with too many fingers, and gentle.', level: 21, hp: 360, ac: 22, attack: 12, dice: 3, sides: 7, bonus: 7, speed: 12, xp: 833, gold: [0, 0], inflict: { cond: 'asleep', chance: 0.3 }, cast: { spells: ['heal'], chance: 0.25 }, tint: '#8d9399', size: 1.1 },
   // the bay's last row (#490), its boss at 22; it never comes back, it mends itself one turn in ten and it leaves its
   // cap. Off MONSTERS §4.4's boss line (1,299 hp, 22d8+27, won 79% at 21 and 93% at 23), its hit points, its blow and
   // its mending are set for #490's gate: about half at its floor, 21, and nearly always at 23
