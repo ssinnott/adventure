@@ -770,9 +770,9 @@ function countingHouse(w: Walk): void {
   w.level = 27;
   for (const id of ['dd3_in', 'dd3_ledgers', 'dd3_shelves', 'dd3_stools']) see(w, `${C.id}:${id}`);
   const groups = C.encounters!, desk = groups.find((g) => g.id === 'dd3_tallymaster'), clerk = groups.find((g) => g.id === 'dd3_clerk');
-  w.ok(groups.length === 2 && clerk?.monsters.join() === 'tally_clerk,loader' && !!clerk.respawn && clerk.roams === false && clerk.y < 16
+  w.ok(groups.length === 2 && clerk?.monsters.join() === 'tally_clerk' && !!clerk.respawn && clerk.roams === false && clerk.y < 16
     && desk?.monsters.join() === 'tallymaster' && desk.roams === false && !desk.respawn && !!desk.slainText && !desk.after && !desk.when,
-    'a tally clerk with a loader by the rail, and at the room\'s head the Tallymaster alone at its desk, which never moves and once broken stays so');
+    'a tally clerk by the rail, and at the room\'s head the Tallymaster alone at its desk, which never moves and once broken stays so');
   if (!desk) return;
   const beside = [[-1, 0], [1, 0], [0, -1], [0, 1]].map(([dx, dy]) => ({ x: desk.x + dx, y: desk.y + dy })).filter((c) => map.passable(c.x, c.y) === 'ok');
   w.ok(beside.length === 1 && beside[0].x === desk.x && beside[0].y === desk.y - 1,
