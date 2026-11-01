@@ -157,10 +157,11 @@ export async function harness(): Promise<void> {
  */
 function whatIfsOff(): void {
   // With every what-if off the company is main's: the premade six at twelve levels, as main made them at
-  // 0463be91 before the tiers came to it, as #865 keeps them (J2).
-  const MAIN_SIX = '7e6a61134152748ffac828dcc3d47dbaa7a00e5df03c584054338f7720d24677', sixAt = [1, 5, 10, 11, 12, 13, 19, 24, 25, 27, 28, 32];
+  // 0463be91 before the tiers came to it, as #865 keeps them (J2); pinned again for the class changes
+  // (#1117), the ladder giving the thief its short bows and the sorcerer its slings from 5.
+  const MAIN_SIX = '35d563596b5bd6d89de6142e5a6d6ff0906c8bde3a00efcc87b933c8a26d6719', sixAt = [1, 5, 10, 11, 12, 13, 19, 24, 25, 27, 28, 32];
   const six = createHash('sha256').update(JSON.stringify(sixAt.map((l) => companyAt(l, 3)))).digest('hex');
-  ok(!whatIfs().length && six === MAIN_SIX, `with every what-if off the company is main's: the premade six at ${sixAt.join(', ')} (${six.slice(0, 12)})`);
+  ok(!whatIfs().length && six === MAIN_SIX, `with every what-if off the company is play's: the premade six at ${sixAt.join(', ')} (${six.slice(0, 12)})`);
   // Under --tiers it takes Expert at 13 and Master at 25 on its class's lines, after its prestiges, and
   // nothing else moves; without, it holds none (#852). The newer company takes them as it does.
   const at = [12, 13, 24, 25, 32], bare = at.map((l) => companyAt(l, 3)), newBare = at.map((l) => newerCompany(l, 3));
