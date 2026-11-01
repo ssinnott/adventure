@@ -53,7 +53,7 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Barrow Wolf (`barrow_wolf`) | wolf | beast | 5 | 52 | 14 | +5 | 3d6+1 | 15 | 218 | 0 | *Grey to the muzzle and big as a pony, and the pack waits on it.* |  |
 | Old Rook (`old_rook`) | birds | beast | 4 | 50 | 14 | +5 | 2d6+3 | 15 | 173 | 0 | *Grey in the face, and older than the trees it keeps.* | reaches the back row |
 | Cutthroat (`cutthroat`) | bandit | person | 5 | 52 | 14 | +5 | 3d6+1 | 15 | 218 | 10–30 | *A captain's sash on a thief's coat, and a knife for every pocket.* |  |
-| The Hag (`hag`) | longbodies | beast | 32 | 2000 | 29 | +26 | 24d8+26 | 13 | 20373 | 0 | *No eyes, and it found you first.* | paralyses, 0.2 a hit |
+| The Hag (`hag`) | longbodies | beast | 32 | 2600 | 29 | +26 | 27d8+30 | 13 | 20373 | 0 | *No eyes, and it found you first.* | paralyses, 0.2 a hit |
 
 ## Thornmark (`thornmark`)
 
@@ -70,13 +70,13 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Wraith (`wraith`) | wraith | dead | 9 | 32 | 17 | +7 | 2d6 | 13 | 330 | 0 |  | paralyses, 0.2 a hit |
 | Riftling Elder (`riftling_elder`) | riftling | rift | 9 | 45 | 16 | +7 | 3d4+2 | 15 | 440 | 0 |  | paralyses, 0.15 a hit |
 | Ogre (`ogre`) | ogre | person | 7 | 60 | 14 | +7 | 2d8+2 | 8 | 520 | 15–50 |  |  |
-| Hand of Ash (`ashen_hand`) | cultist | person | 10 | 440 | 17 | +12 | 4d8+13 | 13 | 2000 | 100–200 |  | never breaks |
+| Hand of Ash (`ashen_hand`) | cultist | person | 10 | 440 | 17 | +12 | 6d8+18 | 13 | 2000 | 100–200 |  | never breaks |
 | Warden of the Cut (`cut_warden`) | riftling | rift | 10 | 450 | 18 | +12 | 4d8+15 | 12 | 3000 | 50–100 |  | shrugs off sleep |
 | Great Owl (`great_owl`) | birds | beast | 8 | 57 | 15 | +6 | 2d6+2 | 15 | 176 | 0 | *Wings as wide as a cart, and not a sound.* | reaches the back row |
 | Bramble (`bramble`) | oldwood | beast | 8 | 57 | 15 | +6 | 2d6+2 | 6 | 176 | 0 | *A thicket that closes behind you.* | paralyses, 0.3 a hit |
 | Rootwalker (`rootwalker`) | oldwood | beast | 9 | 83 | 18 | +6 | 2d6+3 | 8 | 265 | 0 | *A stump walking on its roots, its bark like plate.* |  |
 | Heartwood (`heartwood`) | oldwood | beast | 10 | 165 | 15 | +8 | 3d8+2 | 8 | 443 | 0 | *An oak that has decided to move.* |  |
-| The Eldest (`eldest`) | oldwood | beast | 10 | 450 | 18 | +12 | 4d8+12 | 12 | 3000 | 0 | *The oldest tree in Caldera, and it is awake.* | shrugs off sleep |
+| The Eldest (`eldest`) | oldwood | beast | 10 | 450 | 18 | +12 | 6d8+17 | 12 | 3000 | 0 | *The oldest tree in Caldera, and it is awake.* | shrugs off sleep |
 
 ## Saltreach (`saltreach`)
 
@@ -84,153 +84,153 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
 | Brineling (`brineling`) | riftling | rift | 10 | 89 | 16 | +7 | 2d6+3 | 15 | 393 | 0 | *Green glass, walking, with a light in it.* | paralyses, 0.1 a hit; shrugs off cold; weak to lightning |
 | Bargeman (`bargeman`) | bandit | person | 10 | 90 | 16 | +7 | 2d6+3 | 11 | 393 | 12–35 | *A barge pole, a knife, and no questions.* |  |
-| Barge Master (`barge_master`) | bandit | person | 11 | 113 | 17 | +7 | 1d10+6 | 11 | 433 | 40–100 | *A ledger in one hand and a cudgel in the other.* |  |
-| Drowned Man (`temple_drowned`) | skeleton | dead | 11 | 219 | 15 | +8 | 3d8+3 | 8 | 867 | 0–15 | *It roped the stone to its own neck, and it has not let go.* |  |
-| Drowned Chanter (`drowned_chanter`) | skeleton | dead | 11 | 141 | 17 | +9 | 2d8+3 | 12 | 578 | 0–15 | *A priest of the drowned god, still chanting.* | reaches the back row; casts Slumber, 0.1 a turn |
-| The Choirmaster (`choirmaster`) | skeleton | dead | 12 | 825 | 20 | +11 | 11d8+15 | 13 | 1565 | 60–120 | *The choir's master, beating time on a bell.* | casts Bless, every turn |
+| Barge Master (`barge_master`) | bandit | person | 11 | 127 | 17 | +7 | 2d8+4 | 11 | 433 | 40–100 | *A ledger in one hand and a cudgel in the other.* |  |
+| Drowned Man (`temple_drowned`) | skeleton | dead | 11 | 267 | 15 | +8 | 3d8+6 | 8 | 867 | 0–15 | *It roped the stone to its own neck, and it has not let go.* |  |
+| Drowned Chanter (`drowned_chanter`) | skeleton | dead | 11 | 175 | 17 | +9 | 2d8+4 | 12 | 578 | 0–15 | *A priest of the drowned god, still chanting.* | reaches the back row; casts Slumber, 0.1 a turn |
+| The Choirmaster (`choirmaster`) | skeleton | dead | 12 | 950 | 20 | +11 | 12d8+16 | 13 | 1565 | 60–120 | *The choir's master, beating time on a bell.* | casts Bless, every turn |
 | Fen Eel (`fen_eel`) | longbodies | beast | 10 | 89 | 16 | +7 | 2d6+3 | 15 | 393 | 0 | *A back as thick as a man's leg, turning in the reeds.* |  |
 | Fen Toad (`fen_toad`) | toads | beast | 10 | 87 | 16 | +7 | 2d6+3 | 12 | 393 | 0 | *A toad the size of a sheep, its skin weeping.* | poisons, 0.3 a hit |
 | Grey Heron (`grey_heron`) | birds | beast | 10 | 89 | 16 | +7 | 2d6+3 | 15 | 393 | 0 | *Taller than Bram, and it has been watching.* | reaches the back row |
-| Salt Crab (`salt_crab`) | spider | beast | 11 | 127 | 19 | +7 | 3d7+3 | 8 | 578 | 0 | *White with salt, and it glitters when it moves.* | shrugs off sleep |
+| Salt Crab (`salt_crab`) | spider | beast | 11 | 164 | 19 | +7 | 3d7+3 | 8 | 578 | 0 | *White with salt, and it glitters when it moves.* | shrugs off sleep |
 | Leech (`leech`) | longbodies | beast | 10 | 87 | 16 | +7 | 2d6+3 | 12 | 393 | 0 | *Black, and as long as your arm.* | its hits heal it |
-| Bull Toad (`bull_toad`) | toads | beast | 12 | 278 | 16 | +9 | 3d7+6 | 8 | 947 | 0 | *It could swallow Ottilie whole.* | diseases, 0.15 a hit |
-| The Old Chanter (`old_chanter`) | skeleton | dead | 32 | 2150 | 29 | +25 | 25d8+41 | 13 | 20373 | 0 | *The first of the chanters, and it still sings the old song.* | curses, 0.2 a hit; casts Bless, every turn |
+| Bull Toad (`bull_toad`) | toads | beast | 12 | 337 | 16 | +9 | 4d8+4 | 8 | 947 | 0 | *It could swallow Ottilie whole.* | diseases, 0.15 a hit |
+| The Old Chanter (`old_chanter`) | skeleton | dead | 32 | 2800 | 29 | +25 | 31d8+50 | 13 | 20373 | 0 | *The first of the chanters, and it still sings the old song.* | curses, 0.2 a hit; casts Bless, every turn |
 
 ## Wrackholm (`wrackholm`)
 
 | Monster | Family | Kind | Level | HP | Armour | To hit | Blow | Speed | XP | Gold | Look | What it does |
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
-| Devilfish (`devilfish`) | devilfish | beast | 13 | 142 | 18 | +8 | 2d8+4 | 12 | 513 | 0 | *Arms, coming up over the side.* | reaches the back row; paralyses, 0.2 a hit |
-| Great Devilfish (`great_devilfish`) | devilfish | beast | 14 | 650 | 20 | +11 | 12d7+15 | 13 | 8853 | 0 | *What the smugglers feed.* | reaches the back row; paralyses, 0.2 a hit; shrugs off sleep |
-| Ashen Overseer (`ashen_overseer`) | cultist | person | 13 | 142 | 18 | +8 | 2d8+4 | 12 | 513 | 20–50 | *Grey to the wrist, and a chain in each hand.* | paralyses, 0.25 a hit; never breaks |
-| Wrack Smuggler (`wrack_smuggler`) | bandit | person | 12 | 138 | 17 | +8 | 2d8+4 | 11 | 473 | 15–40 | *A Compact knife in a Helmstow coat.* |  |
-| Wrack Bowman (`wrack_bowman`) | bandit | person | 12 | 138 | 17 | +9 | 2d6+3 | 12 | 473 | 12–35 | *A bow, and the high ground.* | reaches the back row with a bow |
-| Bilge Rat (`bilge_rat`) | rat | beast | 12 | 107 | 16 | +7 | 1d6+3 | 12 | 237 | 0 | *The rats aboard have been eating well.* | diseases, 0.15 a hit |
-| Wrack Gull (`wrack_gull`) | birds | beast | 12 | 107 | 16 | +7 | 1d6+3 | 12 | 237 | 0 | *A thousand gulls, and all of them angry.* | reaches the back row |
-| Tide Elder (`tide_elder`) | riftling | rift | 13 | 270 | 18 | +9 | 3d8+3 | 15 | 1027 | 0 | *A shard of the sea, stood up.* | paralyses, 0.15 a hit |
-| Warden of the Tide (`tide_warden`) | riftling | rift | 14 | 780 | 20 | +11 | 12d7+18 | 13 | 8853 | 0 | *The Stone's own light, standing guard over it.* | shrugs off sleep |
-| Loader (`loader`) | machines | machine | 26 | 692 | 23 | +16 | 5d7+10 | 8 | 2067 | 0 | *It carries a crate the size of a cart, and does not set it down.* |  |
-| Tally Clerk (`tally_clerk`) | knockers | machine | 26 | 321 | 24 | +15 | 4d8+3 | 11 | 1033 | 0 | *It counts the crates, then turns and counts you.* | calls 2 Loaders, 0.5 a turn |
-| Hold Keeper (`hold_keeper`) | keepers | machine | 27 | 376 | 25 | +15 | 5d7+7 | 12 | 1073 | 0 | *It carries water to the pens, and nobody is in them.* | puts to sleep, 0.3 a hit; casts Mend, 0.25 a turn |
-| The Tallymaster (`tallymaster`) | keepers | machine | 28 | 1552 | 27 | +18 | 28d8+50 | 13 | 17813 | 0 | *It writes, and does not look up.* | calls 2 Tally Clerks, 0.5 a turn |
-| Old Nick (`old_nick`) | devilfish | beast | 32 | 1600 | 29 | +20 | 20d8+20 | 13 | 20373 | 0 | *What the smugglers fed first.* | reaches the back row; its hits heal it |
+| Devilfish (`devilfish`) | devilfish | beast | 13 | 160 | 18 | +8 | 3d8+1 | 12 | 513 | 0 | *Arms, coming up over the side.* | reaches the back row; paralyses, 0.2 a hit |
+| Great Devilfish (`great_devilfish`) | devilfish | beast | 14 | 750 | 20 | +11 | 15d7+19 | 13 | 8853 | 0 | *What the smugglers feed.* | reaches the back row; paralyses, 0.2 a hit; shrugs off sleep |
+| Ashen Overseer (`ashen_overseer`) | cultist | person | 13 | 160 | 18 | +8 | 3d8+1 | 12 | 513 | 20–50 | *Grey to the wrist, and a chain in each hand.* | paralyses, 0.25 a hit; never breaks |
+| Wrack Smuggler (`wrack_smuggler`) | bandit | person | 12 | 149 | 17 | +8 | 3d7+3 | 11 | 473 | 15–40 | *A Compact knife in a Helmstow coat.* |  |
+| Wrack Bowman (`wrack_bowman`) | bandit | person | 12 | 157 | 17 | +9 | 2d8+3 | 12 | 473 | 12–35 | *A bow, and the high ground.* | reaches the back row with a bow |
+| Bilge Rat (`bilge_rat`) | rat | beast | 12 | 121 | 16 | +7 | 2d6+1 | 12 | 237 | 0 | *The rats aboard have been eating well.* | diseases, 0.15 a hit |
+| Wrack Gull (`wrack_gull`) | birds | beast | 12 | 121 | 16 | +7 | 2d6+1 | 12 | 237 | 0 | *A thousand gulls, and all of them angry.* | reaches the back row |
+| Tide Elder (`tide_elder`) | riftling | rift | 13 | 342 | 18 | +9 | 3d7+6 | 15 | 1027 | 0 | *A shard of the sea, stood up.* | paralyses, 0.15 a hit |
+| Warden of the Tide (`tide_warden`) | riftling | rift | 14 | 780 | 20 | +11 | 17d7+25 | 13 | 8853 | 0 | *The Stone's own light, standing guard over it.* | shrugs off sleep |
+| Loader (`loader`) | machines | machine | 26 | 899 | 23 | +16 | 7d8+6 | 8 | 2067 | 0 | *It carries a crate the size of a cart, and does not set it down.* |  |
+| Tally Clerk (`tally_clerk`) | knockers | machine | 26 | 449 | 24 | +15 | 4d8+6 | 11 | 1033 | 0 | *It counts the crates, then turns and counts you.* | calls 2 Loaders, 0.5 a turn |
+| Hold Keeper (`hold_keeper`) | keepers | machine | 27 | 461 | 25 | +15 | 6d8+4 | 12 | 1073 | 0 | *It carries water to the pens, and nobody is in them.* | puts to sleep, 0.3 a hit; casts Mend, 0.25 a turn |
+| The Tallymaster (`tallymaster`) | keepers | machine | 28 | 2330 | 27 | +18 | 30d8+54 | 13 | 17813 | 0 | *It writes, and does not look up.* | calls 2 Tally Clerks, 0.5 a turn |
+| Old Nick (`old_nick`) | devilfish | beast | 32 | 1600 | 29 | +20 | 33d8+33 | 13 | 20373 | 0 | *What the smugglers fed first.* | reaches the back row; its hits heal it |
 
 ## Sunderwood (`sunderwood`)
 
 | Monster | Family | Kind | Level | HP | Armour | To hit | Blow | Speed | XP | Gold | Look | What it does |
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
-| Pine Bear (`pine_bear`) | bears | beast | 14 | 334 | 17 | +10 | 4d8+2 | 8 | 1107 | 0 | *A bear, and then the rest of the bear.* |  |
-| Sunderling (`sunderling`) | riftling | rift | 14 | 156 | 18 | +9 | 2d8+4 | 15 | 553 | 0 | *Black glass, with a white light inside.* | paralyses, 0.1 a hit |
-| Warden of the Sunder (`sunder_warden`) | riftling | rift | 16 | 1020 | 21 | +12 | 13d8+13 | 13 | 10133 | 0 | *The Sunder's own knot, and it has held for centuries.* | shrugs off sleep |
-| Ashen Gleaner (`ashen_gleaner`) | cultist | person | 15 | 171 | 19 | +9 | 3d8+2 | 11 | 593 | 25–60 | *A sack of glowing shards, and a knife for the next.* | never breaks |
-| Glass Spider (`glass_spider`) | spider | beast | 15 | 181 | 19 | +9 | 2d8+4 | 12 | 593 | 0 | *Threads of glass, and something walking them.* | paralyses, 0.25 a hit |
-| Sunder Hound (`sunder_hound`) | wolf | rift | 15 | 167 | 19 | +9 | 3d8+1 | 15 | 593 | 0 | *A rift hound, gone to glass.* | paralyses, 0.15 a hit; shrugs off cold; weak to fire |
-| Lantern Moth (`lantern_moth`) | moths | beast | 14 | 118 | 17 | +8 | 2d6+2 | 12 | 277 | 0 | *Wings like a pair of hands, and dust that glitters.* | reaches the back row; puts to sleep, 0.2 a hit |
-| Glass Bear (`glass_bear`) | bears | beast | 16 | 249 | 21 | +10 | 3d7+6 | 8 | 844 | 0 | *Glass through its fur like frost.* | shrugs off fire |
-| Deathshead (`deathshead`) | moths | beast | 16 | 351 | 20 | +11 | 3d8+6 | 15 | 1267 | 0 | *A skull on its back, and a scream in its wings.* | reaches the back row; puts to sleep, 0.35 a hit |
+| Pine Bear (`pine_bear`) | bears | beast | 14 | 431 | 17 | +10 | 4d8+6 | 8 | 1107 | 0 | *A bear, and then the rest of the bear.* |  |
+| Sunderling (`sunderling`) | riftling | rift | 14 | 204 | 18 | +9 | 3d8+1 | 15 | 553 | 0 | *Black glass, with a white light inside.* | paralyses, 0.1 a hit |
+| Warden of the Sunder (`sunder_warden`) | riftling | rift | 16 | 1170 | 21 | +12 | 17d8+17 | 13 | 10133 | 0 | *The Sunder's own knot, and it has held for centuries.* | shrugs off sleep |
+| Ashen Gleaner (`ashen_gleaner`) | cultist | person | 15 | 236 | 19 | +9 | 3d7+4 | 11 | 593 | 25–60 | *A sack of glowing shards, and a knife for the next.* | never breaks |
+| Glass Spider (`glass_spider`) | spider | beast | 15 | 201 | 19 | +9 | 3d8+3 | 12 | 593 | 0 | *Threads of glass, and something walking them.* | paralyses, 0.25 a hit |
+| Sunder Hound (`sunder_hound`) | wolf | rift | 15 | 230 | 19 | +9 | 3d7+3 | 15 | 593 | 0 | *A rift hound, gone to glass.* | paralyses, 0.15 a hit; shrugs off cold; weak to fire |
+| Lantern Moth (`lantern_moth`) | moths | beast | 14 | 136 | 17 | +8 | 2d6+2 | 12 | 277 | 0 | *Wings like a pair of hands, and dust that glitters.* | reaches the back row; puts to sleep, 0.2 a hit |
+| Glass Bear (`glass_bear`) | bears | beast | 16 | 308 | 21 | +10 | 4d8+2 | 8 | 844 | 0 | *Glass through its fur like frost.* | shrugs off fire |
+| Deathshead (`deathshead`) | moths | beast | 16 | 449 | 20 | +11 | 4d8+5 | 15 | 1267 | 0 | *A skull on its back, and a scream in its wings.* | reaches the back row; puts to sleep, 0.35 a hit |
 
 ## The Kilns (`kilns`)
 
 | Monster | Family | Kind | Level | HP | Armour | To hit | Blow | Speed | XP | Gold | Look | What it does |
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
-| Knocker (`knocker`) | knockers | machine | 16 | 127 | 18 | +9 | 3d5+2 | 12 | 317 | 0 | *Something small and grey, knocking on the rock as it comes.* |  |
-| Mender (`mender`) | knockers | machine | 17 | 199 | 20 | +10 | 3d8+4 | 11 | 673 | 0 | *It stops to mend the others, and they let it.* | casts Mending Light, 0.5 a turn |
-| The Foreman (`foreman`) | knockers | machine | 18 | 1500 | 22 | +13 | 15d8+14 | 13 | 11413 | 0 | *It checks you the way a clerk checks a list, and finds nobody on it.* |  |
-| Fire Beetle (`fire_beetle`) | spider | beast | 16 | 249 | 21 | +10 | 3d7+6 | 8 | 844 | 0 | *A beetle with a coal in its back.* | shrugs off fire |
-| Slagling (`slagling`) | riftling | rift | 16 | 179 | 19 | +10 | 3d8+2 | 15 | 633 | 0 | *Slag, walking, with a red iron heart.* | paralyses, 0.1 a hit; resists fire; weak to cold |
-| Rock Worm (`rock_worm`) | longbodies | beast | 17 | 404 | 18 | +11 | 4d8+7 | 8 | 1347 | 0 | *This tunnel was not dug by dwarves.* |  |
-| Anvil Guard (`anvil_guard`) | bandit | person | 17 | 250 | 22 | +10 | 3d7+6 | 8 | 898 | 30–70 | *Short, broad, and in the thane's iron.* |  |
-| Slag Elder (`slag_elder`) | riftling | rift | 18 | 365 | 21 | +12 | 4d8+3 | 15 | 1427 | 0 | *Iron runs off it like sweat.* | paralyses, 0.15 a hit; resists fire; weak to cold |
-| Warden of the Anvil (`anvil_warden`) | riftling | rift | 18 | 1200 | 22 | +13 | 13d8+12 | 13 | 11413 | 0 | *The Stone's heat, standing up out of the cut.* | shrugs off sleep; resists fire; weak to cold |
-| Salamander (`salamander`) | salamanders | beast | 16 | 179 | 19 | +10 | 3d8+2 | 15 | 633 | 0 | *A lizard with the fire showing through its skin.* | shrugs off fire; weak to cold |
-| Great Salamander (`great_salamander`) | salamanders | beast | 18 | 950 | 22 | +13 | 15d8+14 | 13 | 11413 | 0 | *The fire in the rock, with a head.* | shrugs off sleep and fire; weak to cold |
-| The Steiger (`steiger`) | knockers | machine | 32 | 2400 | 29 | +24 | 18d8+20 | 13 | 20373 | 0 | *It knocks once, and the whole seam answers.* | calls 3 Deep Knockers, 0.5 a turn |
+| Knocker (`knocker`) | knockers | machine | 16 | 150 | 18 | +9 | 2d6+4 | 12 | 317 | 0 | *Something small and grey, knocking on the rock as it comes.* |  |
+| Mender (`mender`) | knockers | machine | 17 | 271 | 20 | +10 | 3d8+5 | 11 | 673 | 0 | *It stops to mend the others, and they let it.* | casts Mending Light, 0.5 a turn |
+| The Foreman (`foreman`) | knockers | machine | 18 | 1500 | 22 | +13 | 20d8+19 | 13 | 11413 | 0 | *It checks you the way a clerk checks a list, and finds nobody on it.* |  |
+| Fire Beetle (`fire_beetle`) | spider | beast | 16 | 308 | 21 | +10 | 4d8+2 | 8 | 844 | 0 | *A beetle with a coal in its back.* | shrugs off fire |
+| Slagling (`slagling`) | riftling | rift | 16 | 257 | 19 | +10 | 3d7+4 | 15 | 633 | 0 | *Slag, walking, with a red iron heart.* | paralyses, 0.1 a hit; resists fire; weak to cold |
+| Rock Worm (`rock_worm`) | longbodies | beast | 17 | 537 | 18 | +11 | 5d7+9 | 8 | 1347 | 0 | *This tunnel was not dug by dwarves.* |  |
+| Anvil Guard (`anvil_guard`) | bandit | person | 17 | 309 | 22 | +10 | 4d8+4 | 8 | 898 | 30–70 | *Short, broad, and in the thane's iron.* |  |
+| Slag Elder (`slag_elder`) | riftling | rift | 18 | 471 | 21 | +12 | 4d8+7 | 15 | 1427 | 0 | *Iron runs off it like sweat.* | paralyses, 0.15 a hit; resists fire; weak to cold |
+| Warden of the Anvil (`anvil_warden`) | riftling | rift | 18 | 1200 | 22 | +13 | 20d8+18 | 13 | 11413 | 0 | *The Stone's heat, standing up out of the cut.* | shrugs off sleep; resists fire; weak to cold |
+| Salamander (`salamander`) | salamanders | beast | 16 | 257 | 19 | +10 | 3d7+4 | 15 | 633 | 0 | *A lizard with the fire showing through its skin.* | shrugs off fire; weak to cold |
+| Great Salamander (`great_salamander`) | salamanders | beast | 18 | 1240 | 22 | +13 | 17d8+16 | 13 | 11413 | 0 | *The fire in the rock, with a head.* | shrugs off sleep and fire; weak to cold |
+| The Steiger (`steiger`) | knockers | machine | 32 | 2210 | 29 | +24 | 30d8+35 | 13 | 20373 | 0 | *It knocks once, and the whole seam answers.* | calls 3 Deep Knockers, 0.5 a turn |
 
 ## Cairnmoor (`cairnmoor`)
 
 | Monster | Family | Kind | Level | HP | Armour | To hit | Blow | Speed | XP | Gold | Look | What it does |
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
-| Raven (`raven`) | birds | beast | 18 | 132 | 19 | +10 | 2d8+4 | 12 | 357 | 0 | *They were here first.* | reaches the back row |
-| Bog Light (`bog_light`) | lights | rift | 18 | 117 | 20 | +11 | 2d6+2 | 12 | 713 | 0 | *A light over the bog, where nobody is.* | reaches the back row; its hits take spell points first |
-| Bog Body (`bog_body`) | skeleton | dead | 18 | 200 | 20 | +11 | 3d7+5 | 11 | 713 | 0 | *Leather over bone, and a rope still round its neck.* | diseases, 0.2 a hit |
-| Moor Hound (`moor_hound`) | wolf | beast | 19 | 270 | 21 | +11 | 3d7+5 | 15 | 753 | 0 | *The Downs' black dog, grown old and huge.* | paralyses, 0.15 a hit |
-| Cairn Wight (`cairn_wight`) | wraith | dead | 19 | 232 | 21 | +11 | 4d8+3 | 12 | 753 | 20–60 | *A shroud with grave-gold at its throat.* | curses, 0.2 a hit |
-| Tor Troll (`tor_troll`) | ogre | beast | 19 | 397 | 19 | +12 | 5d8+4 | 8 | 1507 | 0 | *A tor that stood up.* | mends 40 a round unless burnt |
-| The Cairn King (`cairn_king`) | skeleton | dead | 20 | 1800 | 23 | +14 | 16d8+14 | 13 | 12693 | 150–300 | *Crowned, and older than the crown.* | curses, 0.2 a hit |
-| The Rim Troll (`rim_troll`) | ogre | beast | 32 | 2700 | 26 | +22 | 25d8+18 | 8 | 20373 | 0 | *The rim stood up.* | mends 80 a round unless burnt |
+| Raven (`raven`) | birds | beast | 18 | 172 | 19 | +10 | 2d6+3 | 12 | 357 | 0 | *They were here first.* | reaches the back row |
+| Bog Light (`bog_light`) | lights | rift | 18 | 144 | 20 | +11 | 2d6+3 | 12 | 713 | 0 | *A light over the bog, where nobody is.* | reaches the back row; its hits take spell points first |
+| Bog Body (`bog_body`) | skeleton | dead | 18 | 292 | 20 | +11 | 3d8+4 | 11 | 713 | 0 | *Leather over bone, and a rope still round its neck.* | diseases, 0.2 a hit |
+| Moor Hound (`moor_hound`) | wolf | beast | 19 | 338 | 21 | +11 | 4d8+2 | 15 | 753 | 0 | *The Downs' black dog, grown old and huge.* | paralyses, 0.15 a hit |
+| Cairn Wight (`cairn_wight`) | wraith | dead | 19 | 339 | 21 | +11 | 3d7+7 | 12 | 753 | 20–60 | *A shroud with grave-gold at its throat.* | curses, 0.2 a hit |
+| Tor Troll (`tor_troll`) | ogre | beast | 19 | 483 | 19 | +12 | 6d8+7 | 8 | 1507 | 0 | *A tor that stood up.* | mends 48 a round unless burnt |
+| The Cairn King (`cairn_king`) | skeleton | dead | 20 | 2070 | 23 | +14 | 18d8+16 | 13 | 12693 | 150–300 | *Crowned, and older than the crown.* | curses, 0.2 a hit |
+| The Rim Troll (`rim_troll`) | ogre | beast | 32 | 2700 | 26 | +22 | 50d8+36 | 8 | 20373 | 0 | *The rim stood up.* | mends 80 a round unless burnt |
 
 ## Rimewater (`rimewater`)
 
 | Monster | Family | Kind | Level | HP | Armour | To hit | Blow | Speed | XP | Gold | Look | What it does |
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
-| Ice Pike (`ice_pike`) | longbodies | beast | 20 | 288 | 21 | +12 | 3d7+5 | 15 | 793 | 0 | *The ice under Ottilie's feet has an eye in it.* |  |
-| Snow Lynx (`snow_lynx`) | cats | beast | 20 | 288 | 21 | +12 | 3d7+5 | 15 | 793 | 0 | *Grey, tufted, and it has already jumped.* | reaches the back row |
-| Tallyman (`tallyman`) | knockers | machine | 20 | 314 | 21 | +12 | 3d7+5 | 11 | 793 | 0 | *It stops and clicks, once for each of you.* | calls 3 Knockers, 0.5 a turn |
-| Ice Bear (`ice_bear`) | bears | beast | 21 | 570 | 20 | +13 | 5d7+7 | 8 | 1667 | 0 | *White, and bigger than the last one.* |  |
-| Bay Keeper (`bay_keeper`) | keepers | machine | 21 | 248 | 22 | +12 | 4d8+2 | 12 | 833 | 0 | *Tall and grey, with too many fingers, and gentle.* | puts to sleep, 0.3 a hit; casts Mend, 0.25 a turn |
-| The Matron (`matron`) | keepers | machine | 22 | 1900 | 24 | +15 | 17d8+18 | 13 | 13973 | 0 | *It has tended them for four hundred years.* | casts Mend, 0.1 a turn |
-| The Infirmarer (`infirmarer`) | keepers | machine | 32 | 2100 | 29 | +22 | 26d8+30 | 13 | 20373 | 0 | *No robe, too many fingers and a bed made up for you.* | puts to sleep, 0.3 a hit; casts Mend, 0.1 a turn |
+| Ice Pike (`ice_pike`) | longbodies | beast | 20 | 376 | 21 | +12 | 3d7+6 | 15 | 793 | 0 | *The ice under Ottilie's feet has an eye in it.* |  |
+| Snow Lynx (`snow_lynx`) | cats | beast | 20 | 376 | 21 | +12 | 3d7+6 | 15 | 793 | 0 | *Grey, tufted, and it has already jumped.* | reaches the back row |
+| Tallyman (`tallyman`) | knockers | machine | 20 | 368 | 21 | +12 | 3d8+6 | 11 | 793 | 0 | *It stops and clicks, once for each of you.* | calls 3 Knockers, 0.5 a turn |
+| Ice Bear (`ice_bear`) | bears | beast | 21 | 680 | 20 | +13 | 6d8+7 | 8 | 1667 | 0 | *White, and bigger than the last one.* |  |
+| Bay Keeper (`bay_keeper`) | keepers | machine | 21 | 360 | 22 | +12 | 3d7+7 | 12 | 833 | 0 | *Tall and grey, with too many fingers, and gentle.* | puts to sleep, 0.3 a hit; casts Mend, 0.25 a turn |
+| The Matron (`matron`) | keepers | machine | 22 | 1900 | 24 | +15 | 21d8+23 | 13 | 13973 | 0 | *It has tended them for four hundred years.* | casts Mend, 0.1 a turn |
+| The Infirmarer (`infirmarer`) | keepers | machine | 32 | 2420 | 29 | +22 | 34d8+40 | 13 | 20373 | 0 | *No robe, too many fingers and a bed made up for you.* | puts to sleep, 0.3 a hit; casts Mend, 0.1 a turn |
 
 ## The Whitespine (`whitespine`)
 
 | Monster | Family | Kind | Level | HP | Armour | To hit | Blow | Speed | XP | Gold | Look | What it does |
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
-| Brother (`brother`) | keepers | machine | 22 | 317 | 22 | +13 | 4d8+2 | 11 | 873 | 0 | *A monk, walking as if someone had described walking to it.* |  |
-| Bell-ringer (`bell_ringer`) | keepers | machine | 23 | 284 | 23 | +13 | 4d8+2 | 12 | 913 | 0 | *Eleven strokes, a gap, and eleven more.* | reaches the back row; paralyses, 0.2 a hit |
-| The Abbot (`abbot`) | keepers | machine | 24 | 1700 | 25 | +16 | 19d8+16 | 13 | 15253 | 0 | *The abbot keeps the hours, and it is time.* |  |
-| Spine Eagle (`spine_eagle`) | birds | beast | 22 | 328 | 22 | +13 | 3d7+6 | 15 | 873 | 0 | *It takes the light out of the sky as it comes down.* | reaches the back row |
-| Snow Troll (`snow_troll`) | ogre | beast | 23 | 474 | 21 | +14 | 5d7+8 | 8 | 1827 | 0 | *A drift that stood up.* | mends 47 a round unless burnt |
-| Ashen Mason (`ashen_mason`) | cultist | person | 23 | 319 | 23 | +13 | 4d8+2 | 11 | 913 | 45–100 | *A hammer from below, and a shard to set.* | never breaks |
-| Stair Giant (`stair_giant`) | giants | person | 23 | 537 | 21 | +14 | 4d7+8 | 8 | 1827 | 70–160 | *A man as tall as a house, holding out his hand.* | sweeps a row, 0.25 a turn |
-| The Stair-king (`stair_king`) | giants | person | 24 | 1650 | 25 | +16 | 16d8+16 | 13 | 15253 | 250–500 | *He has taken the toll here since before Helmstow.* | sweeps a row, 0.25 a turn |
+| Brother (`brother`) | keepers | machine | 22 | 405 | 22 | +13 | 4d8+5 | 11 | 873 | 0 | *A monk, walking as if someone had described walking to it.* |  |
+| Bell-ringer (`bell_ringer`) | keepers | machine | 23 | 409 | 23 | +13 | 4d8+3 | 12 | 913 | 0 | *Eleven strokes, a gap, and eleven more.* | reaches the back row; paralyses, 0.2 a hit |
+| The Abbot (`abbot`) | keepers | machine | 24 | 1700 | 25 | +16 | 28d8+23 | 13 | 15253 | 0 | *The abbot keeps the hours, and it is time.* |  |
+| Spine Eagle (`spine_eagle`) | birds | beast | 22 | 427 | 22 | +13 | 4d8+3 | 15 | 873 | 0 | *It takes the light out of the sky as it comes down.* | reaches the back row |
+| Snow Troll (`snow_troll`) | ogre | beast | 23 | 611 | 21 | +14 | 6d8+8 | 8 | 1827 | 0 | *A drift that stood up.* | mends 61 a round unless burnt |
+| Ashen Mason (`ashen_mason`) | cultist | person | 23 | 426 | 23 | +13 | 4d8+5 | 11 | 913 | 45–100 | *A hammer from below, and a shard to set.* | never breaks |
+| Stair Giant (`stair_giant`) | giants | person | 23 | 692 | 21 | +14 | 5d7+10 | 8 | 1827 | 70–160 | *A man as tall as a house, holding out his hand.* | sweeps a row, 0.25 a turn |
+| The Stair-king (`stair_king`) | giants | person | 24 | 1650 | 25 | +16 | 19d8+19 | 13 | 15253 | 250–500 | *He has taken the toll here since before Helmstow.* | sweeps a row, 0.25 a turn |
 
 ## Ashfall (`ashfall`)
 
 | Monster | Family | Kind | Level | HP | Armour | To hit | Blow | Speed | XP | Gold | Look | What it does |
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
-| Strangler Vine (`strangler_vine`) | oldwood | beast | 24 | 284 | 23 | +14 | 3d8+6 | 6 | 953 | 0 | *The vines hang lower than they did.* | paralyses, 0.3 a hit |
-| Cinder Beetle (`cinder_beetle`) | spider | beast | 24 | 397 | 25 | +14 | 4d8+5 | 8 | 1271 | 0 | *Its shell is the colour of the beach.* | shrugs off fire |
-| Ember Salamander (`ember_salamander`) | salamanders | beast | 24 | 330 | 23 | +14 | 3d8+4 | 16 | 953 | 0 | *Grown in the mountain's own fire.* | shrugs off fire; weak to cold |
-| Ash Husk (`ash_husk`) | skeleton | dead | 25 | 320 | 24 | +14 | 4d8+2 | 10 | 993 | 0 | *A man of ash, still holding his cup.* |  |
+| Strangler Vine (`strangler_vine`) | oldwood | beast | 24 | 410 | 23 | +14 | 4d8+3 | 6 | 953 | 0 | *The vines hang lower than they did.* | paralyses, 0.3 a hit |
+| Cinder Beetle (`cinder_beetle`) | spider | beast | 24 | 519 | 25 | +14 | 5d7+7 | 8 | 1271 | 0 | *Its shell is the colour of the beach.* | shrugs off fire |
+| Ember Salamander (`ember_salamander`) | salamanders | beast | 24 | 454 | 23 | +14 | 4d8+3 | 16 | 953 | 0 | *Grown in the mountain's own fire.* | shrugs off fire; weak to cold |
+| Ash Husk (`ash_husk`) | skeleton | dead | 25 | 449 | 24 | +14 | 4d8+4 | 10 | 993 | 0 | *A man of ash, still holding his cup.* |  |
 | Cinder Drake (`cinder_drake`) | drakes | beast | 25 | 584 | 22 | +15 | 5d8+3 | 8 | 1987 | 0 | *The mountain has children.* | reaches the back row; breathes fire on a row, 0.25 a turn; shrugs off fire |
-| The Old Drake (`old_drake`) | drakes | beast | 26 | 1000 | 26 | +17 | 21d7+32 | 13 | 16533 | 0 | *The mountain's eldest, asleep on what is left of the town.* | breathes fire on a row, 0.25 a turn; shrugs off fire |
-| Stoker (`stoker`) | machines | machine | 25 | 665 | 22 | +15 | 5d8+8 | 8 | 1987 | 0 | *It shovels nothing into nothing, and turns as you come.* | shrugs off fire |
-| Sentry (`sentry`) | machines | machine | 26 | 597 | 25 | +16 | 5d8+4 | 15 | 2067 | 0 | *It is looking for whoever touched the Stones.* | paralyses, 0.15 a hit |
-| The Sentinel (`sentinel`) | machines | machine | 26 | 1400 | 26 | +17 | 25d7+42 | 13 | 16533 | 0 | *The first thing up through the doors.* |  |
-| Drakeling (`drakeling`) | drakes | beast | 26 | 191 | 23 | +14 | 3d8+4 | 12 | 517 | 0 | *The mountain's youngest. Its crust has not set.* | reaches the back row; shrugs off fire |
-| The Brood Drake (`brood_drake`) | drakes | beast | 27 | 1250 | 26 | +17 | 19d7+28 | 13 | 17173 | 0 | *It will not leave the eggs.* | reaches the back row; breathes fire on a row, 0.25 a turn; shrugs off fire |
-| Flue Walker (`flue_walker`) | machines | machine | 27 | 670 | 25 | +16 | 7d8+7 | 15 | 2147 | 0 | *It walks the corridor to its end, and back.* | paralyses, 0.15 a hit; shrugs off fire |
-| Deep Knocker (`deep_knocker`) | knockers | machine | 28 | 523 | 27 | +16 | 6d8+5 | 8 | 1484 | 0 | *Still knocking, on a wall that has never cracked.* |  |
+| The Old Drake (`old_drake`) | drakes | beast | 26 | 1000 | 26 | +17 | 26d7+39 | 13 | 16533 | 0 | *The mountain's eldest, asleep on what is left of the town.* | breathes fire on a row, 0.25 a turn; shrugs off fire |
+| Stoker (`stoker`) | machines | machine | 25 | 880 | 22 | +15 | 7d7+11 | 8 | 1987 | 0 | *It shovels nothing into nothing, and turns as you come.* | shrugs off fire |
+| Sentry (`sentry`) | machines | machine | 26 | 799 | 25 | +16 | 6d8+4 | 15 | 2067 | 0 | *It is looking for whoever touched the Stones.* | paralyses, 0.15 a hit |
+| The Sentinel (`sentinel`) | machines | machine | 26 | 2100 | 26 | +17 | 23d7+39 | 13 | 16533 | 0 | *The first thing up through the doors.* |  |
+| Drakeling (`drakeling`) | drakes | beast | 26 | 268 | 23 | +14 | 2d8+4 | 12 | 517 | 0 | *The mountain's youngest. Its crust has not set.* | reaches the back row; shrugs off fire |
+| The Brood Drake (`brood_drake`) | drakes | beast | 27 | 1250 | 26 | +17 | 26d7+38 | 13 | 17173 | 0 | *It will not leave the eggs.* | reaches the back row; breathes fire on a row, 0.25 a turn; shrugs off fire |
+| Flue Walker (`flue_walker`) | machines | machine | 27 | 1130 | 25 | +16 | 7d8+6 | 15 | 2147 | 0 | *It walks the corridor to its end, and back.* | paralyses, 0.15 a hit; shrugs off fire |
+| Deep Knocker (`deep_knocker`) | knockers | machine | 28 | 660 | 27 | +16 | 8d8+4 | 8 | 1484 | 0 | *Still knocking, on a wall that has never cracked.* |  |
 | Inspector (`inspector`) | knockers | machine | 28 | 408 | 25 | +16 | 5d7+8 | 11 | 1113 | 0 | *It holds its light to the wall, and then to you.* | calls 3 Deep Knockers, 0.5 a turn |
-| The Grave Drake (`grave_drake`) | drakes | beast | 32 | 1600 | 29 | +20 | 27d8+28 | 13 | 20373 | 0 | *Asleep on a warlord's grave, and the grave is warm.* | breathes fire on a row, 0.25 a turn; shrugs off fire |
+| The Grave Drake (`grave_drake`) | drakes | beast | 32 | 2080 | 29 | +20 | 30d8+32 | 13 | 20373 | 0 | *Asleep on a warlord's grave, and the grave is warm.* | breathes fire on a row, 0.25 a turn; shrugs off fire |
 
 ## The Glasswold (`glasswold`)
 
 | Monster | Family | Kind | Level | HP | Armour | To hit | Blow | Speed | XP | Gold | Look | What it does |
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
-| Vulture (`vulture`) | birds | beast | 26 | 191 | 23 | +14 | 3d8+4 | 12 | 517 | 0 | *They land when something is about to die.* | reaches the back row |
-| Wold Lion (`wold_lion`) | cats | beast | 26 | 332 | 24 | +15 | 3d8+6 | 15 | 1033 | 0 | *Tawny as the grass, and seen only when it moves.* |  |
-| Glass Scorpion (`glass_scorpion`) | spider | beast | 26 | 290 | 24 | +15 | 4d8+4 | 12 | 1033 | 0 | *Its sting is glass, and so is its shell.* | poisons, 0.35 a hit |
-| Basilisk (`basilisk`) | salamanders | beast | 27 | 376 | 25 | +15 | 5d7+7 | 12 | 1073 | 0 | *Don't meet its eyes.* | reaches the back row; turns to stone, 0.15 a hit |
-| The Grey Lion (`grey_lion`) | cats | beast | 28 | 3000 | 27 | +18 | 16d8+16 | 13 | 17813 | 0 | *Old, scarred, and king of all of this.* |  |
-| Glass Walker (`glass_walker`) | glasswalkers | machine | 27 | 670 | 25 | +16 | 7d8+7 | 15 | 2147 | 0 | *Something walking out of the Glass, and it has walked a long way.* | paralyses, 0.15 a hit |
-| The Foal-taker (`foal_taker`) | birds | beast | 32 | 2900 | 29 | +23 | 18d8+20 | 13 | 20373 | 0 | *When its shadow crosses the herd, the herd runs.* | reaches the back row |
+| Vulture (`vulture`) | birds | beast | 26 | 268 | 23 | +14 | 2d8+4 | 12 | 517 | 0 | *They land when something is about to die.* | reaches the back row |
+| Wold Lion (`wold_lion`) | cats | beast | 26 | 456 | 24 | +15 | 4d8+3 | 15 | 1033 | 0 | *Tawny as the grass, and seen only when it moves.* |  |
+| Glass Scorpion (`glass_scorpion`) | spider | beast | 26 | 428 | 24 | +15 | 4d8+3 | 12 | 1033 | 0 | *Its sting is glass, and so is its shell.* | poisons, 0.35 a hit |
+| Basilisk (`basilisk`) | salamanders | beast | 27 | 461 | 25 | +15 | 6d8+4 | 12 | 1073 | 0 | *Don't meet its eyes.* | reaches the back row; turns to stone, 0.15 a hit |
+| The Grey Lion (`grey_lion`) | cats | beast | 28 | 3000 | 27 | +18 | 28d8+28 | 13 | 17813 | 0 | *Old, scarred, and king of all of this.* |  |
+| Glass Walker (`glass_walker`) | glasswalkers | machine | 27 | 1130 | 25 | +16 | 7d8+6 | 15 | 2147 | 0 | *Something walking out of the Glass, and it has walked a long way.* | paralyses, 0.15 a hit |
+| The Foal-taker (`foal_taker`) | birds | beast | 32 | 2320 | 29 | +23 | 27d8+31 | 13 | 20373 | 0 | *When its shadow crosses the herd, the herd runs.* | reaches the back row; shrugs off paralysis |
 
 ## Hearth Isle (`hearth`)
 
 | Monster | Family | Kind | Level | HP | Armour | To hit | Blow | Speed | XP | Gold | Look | What it does |
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
-| Hearth Moth (`hearth_moth`) | moths | beast | 28 | 280 | 24 | +15 | 3d8+4 | 12 | 557 | 0 | *The sky over the isle is moving.* | reaches the back row; puts to sleep, 0.2 a hit |
-| Ashen Champion (`ashen_champion`) | cultist | person | 29 | 435 | 26 | +16 | 5d8+8 | 11 | 1153 | 0 | *The Hand's best, in steel from below.* | never breaks |
-| Ashen Preacher (`ashen_preacher`) | cultist | person | 29 | 643 | 26 | +18 | 5d8+8 | 12 | 1538 | 0 | *Still preaching, and the fire is the sermon.* | reaches the back row; casts Fire Bolt or Ward, 0.5 a turn; never breaks |
-| Deep Rat (`deep_rat`) | rat | beast | 30 | 281 | 25 | +16 | 3d8+5 | 12 | 597 | 0 | *Rats. Even here.* | diseases, 0.2 a hit |
-| Keeper (`keeper`) | keepers | machine | 30 | 435 | 26 | +17 | 5d8+8 | 11 | 1193 | 0 | *A keeper with no bay to keep, and no robe.* | puts to sleep, 0.15 a hit |
-| Ashen Rearguard (`hand_rearguard`) | cultist | person | 30 | 640 | 28 | +17 | 5d8+7 | 8 | 1591 | 0 | *The last of the Hand still standing, and standing in the way.* | never breaks |
-| Grey Hand (`grey_hand`) | cultist | person | 31 | 785 | 27 | +18 | 7d7+12 | 15 | 2467 | 0 | *Hands the colour of ash, to the shoulder.* | paralyses, 0.15 a hit; never breaks |
-| Core Sentry (`core_sentry`) | machines | machine | 31 | 890 | 27 | +17 | 5d7+10 | 11 | 1233 | 0 | *The core's own, and it takes orders from the ring.* | leaves once its leaders fall |
-| Lord Vask (`vask`) | cultist | person | 32 | 1850 | 29 | +20 | 22d8+23 | 13 | 20373 | 0 | *A tall man with a quiet voice, and the Queen's ring on his finger.* | calls a Core Sentry, every turn; never breaks |
-| Deep Crawler (`deep_crawler`) | crawlers | machine | 31 | 1060 | 25 | +18 | 7d7+10 | 8 | 2467 | 0 | *It comes down from above, on too many legs.* | reaches the back row |
-| The Catcher (`catcher`) | crawlers | machine | 31 | 1300 | 28 | +19 | 32d8+37 | 13 | 19733 | 0 | *It caught the Hand on these stairs.* | reaches the back row; paralyses, 0.2 a hit |
+| Hearth Moth (`hearth_moth`) | moths | beast | 28 | 352 | 24 | +15 | 3d8+5 | 12 | 557 | 0 | *The sky over the isle is moving.* | reaches the back row; puts to sleep, 0.2 a hit |
+| Ashen Champion (`ashen_champion`) | cultist | person | 29 | 623 | 26 | +16 | 6d8+5 | 11 | 1153 | 0 | *The Hand's best, in steel from below.* | never breaks |
+| Ashen Preacher (`ashen_preacher`) | cultist | person | 29 | 877 | 26 | +18 | 6d8+8 | 12 | 1538 | 0 | *Still preaching, and the fire is the sermon.* | reaches the back row; casts Fire Bolt or Ward, 0.5 a turn; never breaks |
+| Deep Rat (`deep_rat`) | rat | beast | 30 | 373 | 25 | +16 | 3d8+4 | 12 | 597 | 0 | *Rats. Even here.* | diseases, 0.2 a hit |
+| Keeper (`keeper`) | keepers | machine | 30 | 624 | 26 | +17 | 6d8+5 | 11 | 1193 | 0 | *A keeper with no bay to keep, and no robe.* | puts to sleep, 0.15 a hit |
+| Ashen Rearguard (`hand_rearguard`) | cultist | person | 30 | 820 | 28 | +17 | 6d8+9 | 8 | 1591 | 0 | *The last of the Hand still standing, and standing in the way.* | never breaks |
+| Grey Hand (`grey_hand`) | cultist | person | 31 | 1218 | 27 | +18 | 7d8+10 | 15 | 2467 | 0 | *Hands the colour of ash, to the shoulder.* | paralyses, 0.15 a hit; never breaks |
+| Core Sentry (`core_sentry`) | machines | machine | 31 | 300 | 27 | +17 | 4d7+8 | 11 | 1233 | 0 | *The core's own, and it takes orders from the ring.* | leaves once its leaders fall |
+| Lord Vask (`vask`) | cultist | person | 32 | 1850 | 29 | +20 | 35d8+38 | 13 | 20373 | 0 | *A tall man with a quiet voice, and the Queen's ring on his finger.* | calls a Core Sentry, every turn; never breaks |
+| Deep Crawler (`deep_crawler`) | crawlers | machine | 31 | 1559 | 25 | +18 | 8d8+10 | 8 | 2467 | 0 | *It comes down from above, on too many legs.* | reaches the back row |
+| The Catcher (`catcher`) | crawlers | machine | 31 | 2280 | 28 | +19 | 29d8+33 | 13 | 19733 | 0 | *It caught the Hand on these stairs.* | reaches the back row; paralyses, 0.2 a hit |
 
 ## The families
 
