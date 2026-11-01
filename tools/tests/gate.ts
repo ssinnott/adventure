@@ -73,11 +73,10 @@ const nameOf = (id: string): string => {
  * limit on 1,600, the ladder's top, which judges it: ember_stone at its floor, 82.5% won on 100 and
  * 79.25% on 1,600 (at least 80%); kushdag's boss kd_foal_taker two above its floor, 81% and 73.8% (at
  * least 75%); core's core_vask_thinned at the cap, 78% and 80.1% (at most 80%). Each is its area's to
- * bring inside its limit, which drops its row: the company of #1117 brought the first two inside.
+ * bring inside its limit, which drops its row: the company of #1117 brought the first two inside, and
+ * Vask's blow set again for it the third.
  */
-export const OWED: Record<string, { whose: string; at: number }> = {
-  'core:core_vask_thinned: floor': { whose: 'hearth', at: 0.80125 },
-};
+export const OWED: Record<string, { whose: string; at: number }> = {};
 
 const pc = (x: number): string => `${(x * 100).toFixed(1).replace(/\.0$/, '')}%`;
 
@@ -293,11 +292,11 @@ function judgeMap(d: Fought, areaFloor: number, bosses: readonly string[], own: 
     const boss = groups.find((e) => `${d.id}:${e.id}` === b);
     if (!boss) continue;
     // The sentries' lever (#752): Vask's own group with the clock let run (the bots take the called first) is
-    // won a quarter to a third of the time, the plan's figure, which holds only on the sentries at 890 (`MonsterDef.offLine`).
+    // won a quarter to a third of the time, the plan's figure, which holds only on the sentries at 300 since #1117 (`MonsterDef.offLine`).
     // Settled on the seeds' ladder as a figure checked is (#848).
     if (b === 'core:core_vask') {
       const plan = within([0.2, 0.45]), run = settle(ratesAt([[boss, d.band[0]]], { answer: { ...ANSWER, clock: 'called' } }), [plan]);
-      const msg = `${b}: the clock let run at ${d.band[0]}: ${pc(run.value)} won (the plan's quarter to a third, on the sentries at 890: 20% to 45%)${onSeeds(run)}`;
+      const msg = `${b}: the clock let run at ${d.band[0]}: ${pc(run.value)} won (the plan's quarter to a third, on the sentries at 300: 20% to 45%)${onSeeds(run)}`;
       if (run.near) near.push(msg);
       ok(plan(run.value) <= 1e-9, msg);
     }
