@@ -141,7 +141,7 @@ the glass walkers are a family of their own. It claims the glass walkers, dunes 
 - **Fights to a rest** (aim 9.5 to 11.5, limit 8 to 14): D10 10.76, D9 9.00, D8 10.37, C8 10.84, B9
   8.31, E9 12.80, E8 12.59 and D7 11.58; B8 10.74 at 27, where a company wins 87.7% of its fights;
   Karaordu 11.17 at 28. Twelve figures are off their aim, inside their limits. B9 ends 76.9% of its
-  days in a fight broken off; D7's two walkers stand apart since the class changes, one at the
+  days in a fight broken off; D7's walkers are three since the class changes, one at the
   Scarp's end and one each with the vultures and the lions, which took D7 from 7.05 to 11.58.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, D10 99.4%, D9 99.8% and D8
   and B8 100.0%; within 12 in the country, C8, B9, E9, E8, D7 and E7 100.0%; Karaordu and Kushdag

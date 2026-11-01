@@ -153,7 +153,7 @@ Sentinel, two of them new families, the drakes and the heavy machines. The sentr
 the Stone is lit (`after`). Meridian Camp's are #22's; Blackdraw places its flue walker, inspector
 and deep knocker again at its own band, and Grim's Howe the Grave Drake alone, a new kind of the
 drakes (MONSTERS §13). For the class changes (#1117) E11's, H11's, H12's and G12's group became two
-drakelings and a flue walker, F9's, G9's and H9's a cinder drake and a stoker, and the deep knocker
+drakelings and a flue walker and F9's, G9's and H9's a cinder drake and a stoker; the deep knocker took
 660 hit points and 8d8+4, the armoured line's own move at 28. Its `novel` claims the drakes and the vines underfoot with G10, the heavy
 machines and the volcano with G11 and the springs with H10; the rest is on the road before it
 (`noveltyFaults`, `tools/tests/pillars.ts`).
