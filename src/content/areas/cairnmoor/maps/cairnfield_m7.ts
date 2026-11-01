@@ -82,9 +82,9 @@ export const CAIRNFIELD_M7: MapDef<'cairnfield_m7'> = {
   ],
   secrets: [{ x: 14, y: 25, hint: 'm7_cupmark' }],
   encounters: [
-    // The ravens at the dead ewe by the fold, and by night the moor hounds down off the moor onto the
-    // grazing below the shielings.
-    { id: 'm7_ravens', x: 23, y: 25, monsters: ['raven', 'raven', 'raven', 'raven', 'raven'], aware: 4, respawn: RESPAWN.day, roams: false },
+    // The ravens at the dead ewe by the fold, a tor troll come down to it among them (#1117), and by
+    // night the moor hounds down off the moor onto the grazing below the shielings.
+    { id: 'm7_ravens', x: 23, y: 25, monsters: ['raven', 'raven', 'raven', 'raven', 'tor_troll'], aware: 4, respawn: RESPAWN.day, roams: false },
     { id: 'm7_hounds', x: 14, y: 9, monsters: ['moor_hound', 'moor_hound', 'moor_hound'], aware: 5, respawn: RESPAWN.twoDays, when: { hours: 'night' } },
   ],
 };
