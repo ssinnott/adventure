@@ -73,11 +73,9 @@ const nameOf = (id: string): string => {
  * limit on 1,600, the ladder's top, which judges it: ember_stone at its floor, 82.5% won on 100 and
  * 79.25% on 1,600 (at least 80%); kushdag's boss kd_foal_taker two above its floor, 81% and 73.8% (at
  * least 75%); core's core_vask_thinned at the cap, 78% and 80.1% (at most 80%). Each is its area's to
- * bring inside its limit, which drops its row.
+ * bring inside its limit, which drops its row: the company of #1117 brought the first two inside.
  */
 export const OWED: Record<string, { whose: string; at: number }> = {
-  'ember_stone: floor': { whose: 'ashfall', at: 0.7925 },
-  'kushdag:kd_foal_taker: above': { whose: 'glasswold', at: 0.738125 },
   'core:core_vask_thinned: floor': { whose: 'hearth', at: 0.80125 },
 };
 

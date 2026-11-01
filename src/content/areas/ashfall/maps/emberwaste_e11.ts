@@ -97,6 +97,7 @@ export const EMBERWASTE_E11: MapDef<'emberwaste_e11'> = {
   encounters: [
     // A clutch of young drakes lying up in the hollows on the flow's warm bank, the box's one fight and its
     // hardest, at the band's top: four were too light a fight for the pace (24.7 fights to a rest).
-    { id: 'e11_drakelings', x: 12, y: 18, monsters: ['drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling', 'drakeling'], aware: 3, respawn: RESPAWN.twoDays },
+    // Half of them ember salamanders since the class changes (#1117): six drakelings were 17 fights to a rest.
+    { id: 'e11_drakelings', x: 12, y: 18, monsters: ['drakeling', 'drakeling', 'drakeling', 'ember_salamander', 'ember_salamander', 'ember_salamander'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };

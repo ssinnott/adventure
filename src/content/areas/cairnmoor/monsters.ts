@@ -29,7 +29,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // on its seat at the end of the hall under Carn Dubh (#480), the area's boss at 20; it never comes back, and it curses
   // as its wights do (0.2). Off MONSTERS §4.4's boss line (1,113 hp, 20d8+20, won 81% at 19 and 91% at 21), its hit
   // points and its blow are set for #480's gate: about half at its floor, 19, and nearly always at 21
-  { id: 'cairn_king', name: 'The Cairn King', plural: 'Cairn Kings', sprite: 'cairn_king', kind: 'dead', look: 'Crowned, and older than the crown.', level: 20, hp: 1800, ac: 23, attack: 14, dice: 16, sides: 8, bonus: 14, speed: 13, xp: 12693, gold: [150, 300], inflict: { cond: 'cursed', chance: 0.2 }, offLine: 'Carn Dubh\'s boss, its hit points and its blow set by its gate (#480)', tint: '#b9a682', size: 1.3 },
+  { id: 'cairn_king', name: 'The Cairn King', plural: 'Cairn Kings', sprite: 'cairn_king', kind: 'dead', look: 'Crowned, and older than the crown.', level: 20, hp: 2070, ac: 23, attack: 14, dice: 18, sides: 8, bonus: 16, speed: 13, xp: 12693, gold: [150, 300], inflict: { cond: 'cursed', chance: 0.2 }, offLine: 'Carn Dubh\'s boss, its hit points and its blow set by its gate (#480), set again on its odds for the class changes (#1117)', tint: '#b9a682', size: 1.3 },
   // the bounds' lair (#834): Bearn Liath, the cleft in the rim behind P7, where it keeps Torhide in the hollow under the
   // tops. The rim stood up, the lair's boss at 32 (MONSTERS §13): it mends each round but a round fire struck it (`regen`,
   // as the tor troll's), and stands at size 2, a tall boss drawn inside TALL_REACH. Drawn at the test troll's at 32 (797
@@ -37,5 +37,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   // request at the gate's company, it stands three times as long and hits harder and more often, its armour, its pace
   // and its mending kept, won 59% at its floor of 30 and 89% at 32, and it pays the boss line's xp at 32
   // (docs/areas/cairnmoor.md §9, #834's 31)
-  { id: 'rim_troll', name: 'The Rim Troll', plural: 'Rim Trolls', sprite: 'rim_troll', kind: 'beast', look: 'The rim stood up.', level: 32, hp: 2700, ac: 26, attack: 22, dice: 25, sides: 8, bonus: 18, speed: 8, xp: 20373, gold: [0, 0], regen: 80, offLine: 'Bearn Liath\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above, its mending the test troll\'s at 32 (#834)', tint: '#67717d', size: 2 },
+  { id: 'rim_troll', name: 'The Rim Troll', plural: 'Rim Trolls', sprite: 'rim_troll', kind: 'beast', look: 'The rim stood up.', level: 32, hp: 2700, ac: 26, attack: 22, dice: 50, sides: 8, bonus: 36, speed: 8, xp: 20373, gold: [0, 0], regen: 80, offLine: 'Bearn Liath\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above, its mending the test troll\'s at 32 (#834), set again on its odds for the class changes (#1117)', tint: '#67717d', size: 2 },
 ];

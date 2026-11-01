@@ -41,5 +41,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   // on the line as it was then, 2,096 and 35d7+54, it is won 14% at 30 and 28% at 32; the line made at 31 since is 2,095
   // and 34d8+41, #793): it reaches the back row, and what it
   // holds is held
-  { id: 'catcher', name: 'The Catcher', plural: 'Catchers', sprite: 'catcher', kind: 'machine', look: 'It caught the Hand on these stairs.', level: 31, hp: 1300, ac: 28, attack: 19, dice: 32, sides: 8, bonus: 37, speed: 13, xp: 19733, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, offLine: 'the Stair\'s boss, its hit points and its blow set by its gate (#758) and set again on its odds on the line made with the Hand\'s steel (#752)', tint: '#3a363c', size: 2 },
+  { id: 'catcher', name: 'The Catcher', plural: 'Catchers', sprite: 'catcher', kind: 'machine', look: 'It caught the Hand on these stairs.', level: 31, hp: 2280, ac: 28, attack: 19, dice: 29, sides: 8, bonus: 33, speed: 13, xp: 19733, gold: [0, 0], ranged: true, inflict: { cond: 'paralysed', chance: 0.2 }, offLine: 'the Stair\'s boss, its hit points and its blow set by its gate (#758) and set again on its odds on the line made with the Hand\'s steel (#752), set again on its odds for the class changes (#1117)', tint: '#3a363c', size: 2 },
 ];
