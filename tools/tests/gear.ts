@@ -44,7 +44,7 @@ function check(lent: Tables): void {
   const blow = (weapon: string, seed: number): number | null => {
     const rng = makeRng(seed), party = defaultParty(lent, rng);
     party.members = [party.members[0]]; party.members[0].equipment.weapon = weapon;
-    const s = startCombat(lent, party, [{ id: 'a', monsters: ['wraith'] }], rng);
+    const s = startCombat(lent, party, [{ id: 'a', monsters: ['wraith'] }], rng, { crits: false, feats: false });
     for (let i = 0; i < 20; i++) {
       const t = currentTurn(s, party, rng); if (!t) return null;
       if (t.side !== 'party') { monsterAct(s, party, rng); continue; }

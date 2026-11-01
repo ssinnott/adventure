@@ -60,7 +60,7 @@ const DUMMY: MonsterDef = { ...AREAS.flatMap((a) => a.monsters).find((m) => m.le
 
 /** One fight on one seed: the company's turns pass until the first member's comes, which does `act`; the state after. */
 function turn(p: Party, act: PartyAction, seed: number): CombatState {
-  const rng = makeRng(seed), s = startCombat(TABLES, p, [{ id: 'test', monsters: [DUMMY] }], rng);
+  const rng = makeRng(seed), s = startCombat(TABLES, p, [{ id: 'test', monsters: [DUMMY] }], rng, { crits: false, feats: false });
   for (let n = 0; n < 40; n++) {
     const t = currentTurn(s, p, rng);
     if (!t) break;

@@ -99,7 +99,7 @@ function strike(tables: Tables, seed: number, def: MonsterDef, dress: (p: Party)
   const p = defaultParty(tables, makeRng(1)), rng = makeRng(seed);
   for (const c of p.members) c.hp = c.maxHp = 999;
   dress(p);
-  const s = startCombat(tables, p, [{ id: 'a', monsters: [def] }], rng);
+  const s = startCombat(tables, p, [{ id: 'a', monsters: [def] }], rng, { crits: false, feats: false });
   for (let guard = 0; guard < 50 && s.outcome === 'ongoing'; guard++) {
     const t = currentTurn(s, p, rng);
     if (!t) break;
