@@ -168,15 +168,15 @@ here (`novel`): the knockers and the salamanders; pine, ash and lava underfoot; 
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.8% of its 66 groups'
   fights (`GATE.through`'s aim); two under, its groups pooled at 14 manage 4.83 fights to a rest,
   60.4% of the floor's 8 (at most: `GATE.backDay`'s aim). Each zone's road is walked every time
-  at 16. The bosses at their floors and two above: the Foreman 50% and 95%, the Warden of the Anvil
-  54% and 93%, the Great Salamander 53% and 94%; the Steiger 56% at 30 and 81% at 32. The bottom's
+  at 16. The bosses at their floors and two above: the Foreman 65% and 91%, the Warden of the Anvil
+  50% and 91%, the Great Salamander 61% and 94%; the Steiger 60% at 30 and 77.9% at 32. The bottom's
   groups with the Foreman are won 83.3% and the deep tubes' with the Great Salamander 84.3%, off the
   aim and inside the limit; the Rift's 90.8%.
 - **Fights to a rest** (aim 7 to 9 at 16, 7.25 to 9.25 at 17): M3 8.97, N3 8.38, N4 8.73, the
   Tiefzeche's three levels 7.52, 8.67 and 9.64, N2 8.76, N5 8.57, N6 7.52, M6 8.97, O5 8.34, the
   Rift 7.74, L6 7.79, O6 8.65, the tubes' two levels 7.31 and 7.56, M4, M5, O3 and K6 6.59 each, O4
   8.37, P5 and P6 8.15 each and L7 7.52; the Seestollen 8.40 at 19. Eleven figures are off their
-  aim, inside the limits: the bottom's two, the deep tubes' 84.3%, the Steiger's 81% at 32, the four
+  aim, inside the limits: the bottom's two, the deep tubes' 84.3%, the Steiger's 77.9% at 32, the four
   6.59s (a worm pair is a heavy fight) and N4's, the Old Workings' and N2's two under, 69.9%, 67.1%
   and 67%.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, N3 97.6%, N4 97.7%, N5

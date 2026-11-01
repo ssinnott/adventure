@@ -152,8 +152,8 @@ crawlers, the Core's clock (`encounter:clock`) and the Hearth, its landmark.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.9% of its 51 groups'
   fights (`GATE.through`'s aim); two under, its groups pooled at 26 manage 5.02 fights to a rest,
   45.6% of the floor's 11 (at most: `GATE.backDay`'s aim). Its road is walked every time at 28. The
-  Stair is won 95.2% at its floor. The Catcher is won 57% at 30 and 80% at 32; Vask 60% at 32 with
-  the Hands first and 33% with the clock let run (held to 20% to 45%); his thinned group 78%.
+  Stair is won 95.2% at its floor. The Catcher is won 61% at 30 and 88% at 32; Vask 40% at 32 with
+  the Hands first and 36.8% with the clock let run (held to 20% to 45%); his thinned group 60%.
 - **Fights to a rest** (aim 10 to 12 at 28, a quarter more a level): H6 12.34, I6 11.63,
   Hearthfane 11.27, the crypt 10.46 at 29, the Ways 11.27 and the Stair 10.71 at 30; the Heart holds
   its boss alone. Three figures are off their aim, inside the limits: H6's 12.34, the Catcher's 80%

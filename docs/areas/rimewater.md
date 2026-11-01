@@ -159,8 +159,8 @@ the keepers with the bay; the rest is on the road before it, or no kind the chec
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 99.2% of its 51 groups'
   fights (`GATE.through`'s aim); two under, its groups pooled at 18, 5.27 fights to a rest, 58.6% of
   the floor's 9. Every box wins every fight at 20, and the roads of Loch Fada and Loch Fuar are
-  walked every time. The bay at 21 wins 89.8%, the Matron deciding it: 59% at 21 and 92% at 23.
-  Creag Fionn wins every fight at 22; the Infirmarer is won 60% at 30 and 78% at 32.
+  walked every time. The bay at 21 wins 92.3%, the Matron deciding it: 65.5% at 21 and 93% at 23.
+  Creag Fionn wins every fight at 22; the Infirmarer is won 60.8% at 30 and 88% at 32.
 - **Fights to a rest** (aim 8 to 10, limit 6.5 to 12.5): M9 9.55, L9 9.27, K9 8.54, K10 9.45, the
   stair 9.64, J9 8.81, K11 8.09, K12 9.31 and L12 8.09; L10 and M10 12.05 and L11, M11 and N9 11.06,
   past the aim; the bay 9.16 (aim 8.25 to 10.25) and Creag Fionn 9.76 (aim 8.5 to 10.5). The gate

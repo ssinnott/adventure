@@ -127,7 +127,7 @@ It claims the lights, a new family, snow and ice underfoot, curse and the ring (
   1,360 gold.
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.8% of its 36 groups'
   fights (`GATE.through`'s aim); two under, pooled at 16, 6.82 fights to a rest, 80.2% of the
-  floor's 8.5. The Cairn King is won 57% at 19 and 94% at 21, the Rim Troll 59% at 30 and 89% at 32.
+  floor's 8.5. The Cairn King is won 66.5% at 19 and 89% at 21, the Rim Troll 70.8% at 30 and 84.5% at 32.
   Under Carn Dubh a company at 19 wins 85.7% of its fights. High Moor's road and the Cairnfield's
   are walked every time.
 - **Fights to a rest** (aim 7.5 to 9.5, limit 6 to 12): N7 8.46, N8 8.66, O7 8.88, O8 11.13, M7
