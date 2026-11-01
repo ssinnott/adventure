@@ -121,18 +121,19 @@ It claims the lights, a new family, snow and ice underfoot, curse and the ring (
 
 ## 8. The numbers
 
-- **The curve** (`tools/tests/curve.ts`): a clear gives 17,609 xp a member of the 14,667 it asks
+- **The curve** (`tools/tests/curve.ts`): a clear gives 17,800 xp a member of the 14,667 it asks
   and 10,285 gold of 8,880; a company entering at the floor and clearing three quarters leaves at
   20.3, the next floor 20. Carn Fada and Bearn Liath are counted in no clear: 5,166 xp a member and
   1,360 gold.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 98.8% of its 36 groups'
-  fights (`GATE.through`'s aim); two under, pooled at 16, 6.82 fights to a rest, 80.2% of the
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 99.1% of its 36 groups'
+  fights (`GATE.through`'s aim); two under, pooled at 16, 6.48 fights to a rest, 76.2% of the
   floor's 8.5. The Cairn King is won 66.5% at 19 and 89% at 21, the Rim Troll 70.8% at 30 and 84.5% at 32.
-  Under Carn Dubh a company at 19 wins 85.7% of its fights. High Moor's road and the Cairnfield's
+  Under Carn Dubh a company at 19 wins 89.3% of its fights. High Moor's road and the Cairnfield's
   are walked every time.
-- **Fights to a rest** (aim 7.5 to 9.5, limit 6 to 12): N7 8.46, N8 8.66, O7 8.88, O8 11.13, M7
-  10.51, M8 7.60, P7 8.94, P8 7.97, L8 8.54 and Carn Dubh 10.70; Under Carn Dubh 9.20 at 19 and Carn
-  Fada 9.08 at 20, each inside its own aim. Fifteen figures are off their aim, inside their limits.
+- **Fights to a rest** (aim 7.5 to 9.5, limit 6 to 12): N7 8.40, N8 8.92, O7 8.11, O8 11.20, M7
+  9.74, M8 7.19, P7 10.38, P8 7.94, L8 8.34 and Carn Dubh 11.08; Under Carn Dubh 10.00 at 19, off its
+  aim, and Carn Fada 8.97 at 20. Twenty figures are off their aim, inside their limits. M7's ravens
+  are four and a tor troll since the class changes, which took M7 from 12.07 to 9.74 (#1117).
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, N7 99.2%, N8 99.6% and O7
   99.4%; within 12 in the country, O8, M7, P7, P8 and L8 100.0% and M8 99.7%; the four dungeon
   levels 100.0% within 7.

@@ -61,7 +61,7 @@ the tally clerk and the hold keeper, restated on the line (§8, the drop's 5); t
 places the Tallymaster, set off the line for its gate (§8, the counting house's 4). The deep
 knocker is Meridian Camp's, drawn by #657. The vaults place it at the sealed door, with the loader
 and the keeper again; they restate nothing (§8, the vaults' 5). The counting house places the
-tally clerk with a loader again. The Dead-Drop is built; its Factor's rung and Ruan's choice and
+tally clerk alone, its loader taken away for the class changes (#1117). The Dead-Drop is built; its Factor's rung and Ruan's choice and
 the Thief's third prestige are built (§5).
 
 Its maps, a row each: its id and name, kind, size and band; its groups (its encounters); and its

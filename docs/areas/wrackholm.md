@@ -146,17 +146,19 @@ underfoot and the wreck, the Tide Ship's site.
   and 7,729 gold of 6,000; a company entering at the floor and clearing three quarters leaves at
   14.3, +0.3 over the next floor 14. The enclave and the lair, counted in no clear, give 4,146 xp a
   member and 1,368 gold.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.3% of its 25 groups'
-  fights (`GATE.through`'s aim); two under, its groups pooled at 10 manage 3.58 fights to a rest,
-  51.1% of the floor's 7 (at most: `GATE.backDay`'s aim). The road is walked every time at 12. The
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 96.7% of its 25 groups'
+  fights (`GATE.through`'s aim); two under, its groups pooled at 10 manage 3.51 fights to a rest,
+  50.1% of the floor's 7 (at most: `GATE.backDay`'s aim). The road is walked every time at 12. The
   bosses at their floors and two above: the Great Devilfish 56% and 92%, the Warden of the Tide 62%
   and 93%; Old Nick 55% at 30 and 75.2% at 32.
-- **Fights to a rest** (aim 6 to 8 at 12, 6.25 to 8.25 at 13): E6 7.20, Kelp Hole's two levels
-  6.83 and 6.19, F6 8.02, the Tide Ship's three decks 5.72, 7.36 and 6.77 and the Rift 7.24; the
-  Brokenback 7.48 at 14 (aim 6.5 to 8.5). Three figures are off their aim, inside the limits: the
-  weather deck's 5.72, the Rift's 83% won at 12 and Old Nick's 81% at 32. The gate judges the
-  Dead-Drop's levels here too, by their own floors (`docs/areas/dead_drop.md`), and two of theirs
-  are off their aim as well: the drop's 76.2% two under and the counting house's 85% won.
+- **Fights to a rest** (aim 6 to 8 at 12, 6.25 to 8.25 at 13): E6 6.62, Kelp Hole's two levels
+  6.77 and 6.05, F6 8.00, the Tide Ship's three decks 5.49, 7.36 and 6.70 and the Rift 8.56; the
+  Brokenback 7.50 at 14 (aim 6.5 to 8.5). Five figures are off their aim, inside the limits: Kelp
+  Hole's lower level's 89% won, the weather deck's 5.49, the Rift's 83.6% won at 12 and its 8.56,
+  and Old Nick's 75.2% at 32. The gate judges the Dead-Drop's levels here too, by their own floors
+  (`docs/areas/dead_drop.md`), and four of theirs are off their aim as well: the drop's 74.6% two
+  under, and the counting house's 85.5% won, its Tallymaster's 71% at 27 and its 13.66 fights to a
+  rest, 93.4% of its days ending in a fight broken off (#1117).
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, E6 100% and F6 95.9%;
   within 12 in the country, E5, F5 and F7 100%; the dungeons 100% within 7, the Rift 97.6%.
 - **The ladder:** rung 13 is Wrackholm's (`gear`, in its checks): the same with a plus from

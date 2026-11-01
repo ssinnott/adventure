@@ -34,7 +34,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the Heart (#759), the boss at 32 with his hit points and blow set on his odds, the clock played and the Hands
   // killed first (#752; on the line, 2,100 and 34d8+41, he is won 9% so, 21% going for him first and 5% fighting
   // the sentries as they come): he calls the core's sentries with the Queen's ring, and never breaks; his blow set again
-  // on his odds for the class changes, 40d8+44 (#1117)
+  // on his odds for the class changes, 35d8+38, where the dressed company still holds him (#1117)
   { id: 'vask', name: 'Lord Vask', plural: 'Lord Vasks', sprite: 'vask', kind: 'person', look: 'A tall man with a quiet voice, and the Queen\'s ring on his finger.', steady: true, level: 32, hp: 1850, ac: 29, attack: 20, dice: 35, sides: 8, bonus: 38, speed: 13, xp: 20373, gold: [0, 0], calls: { monsters: ['core_sentry'], chance: 1 }, offLine: 'the Heart\'s boss, his hit points and his blow set by its gate with the clock played and the Hands killed first (#759), and set again on his odds on the line made with the Hand\'s steel (#752) and for the class changes (#1117)', tint: '#6c7078', size: 1.6 },
   // the Ways' last run and the Stair (#757, #758), a brute on the line at 31: a machine (§2), so it never breaks; it comes
   // down from above and reaches the back row

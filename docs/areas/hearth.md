@@ -149,15 +149,16 @@ crawlers, the Core's clock (`encounter:clock`) and the Hearth, its landmark.
   28,700 gold of 28,320; a company entering at 28 and clearing three quarters leaves at 31.9, 0.1
   under the next floor, the cap, 32. Its row's window is 7,000, and the dearest find, the Grey Mail
   at 7,000, sits in it.
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.9% of its 51 groups'
-  fights (`GATE.through`'s aim); two under, its groups pooled at 26 manage 5.02 fights to a rest,
-  45.6% of the floor's 11 (at most: `GATE.backDay`'s aim). Its road is walked every time at 28. The
-  Stair is won 95.2% at its floor. The Catcher is won 61% at 30 and 88% at 32; Vask 40% at 32 with
-  the Hands first and 36.8% with the clock let run (held to 20% to 45%); his thinned group 60%.
-- **Fights to a rest** (aim 10 to 12 at 28, a quarter more a level): H6 12.34, I6 11.63,
-  Hearthfane 11.27, the crypt 10.46 at 29, the Ways 11.27 and the Stair 10.71 at 30; the Heart holds
-  its boss alone. Three figures are off their aim, inside the limits: H6's 12.34, the Catcher's 80%
-  at 32 and the thinned group's 78%.
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.8% of its 51 groups'
+  fights (`GATE.through`'s aim); two under, its groups pooled at 26 manage 4.05 fights to a rest,
+  36.8% of the floor's 11 (at most: `GATE.backDay`'s aim). Its road is walked every time at 28. The
+  Stair is won 95.7% at its floor. The Catcher is won 61% at 30 and 88% at 32; Vask, on a blow of
+  35d8+38 and his sentries on 300 hit points since the class changes (#1117), 62% at 32 with the
+  Hands first and 41% with the clock let run (held to 20% to 45%); his thinned group 64%.
+- **Fights to a rest** (aim 10 to 12 at 28, a quarter more a level): H6 11.32, I6 10.86,
+  Hearthfane 10.64, the crypt 9.19 at 29, the Ways 10.45 and the Stair 10.50 at 30; the Heart holds
+  its boss alone. Three figures are off their aim, inside the limits: the crypt's 9.19, the Ways'
+  10.45 and the Catcher's 88% at 32.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, H6 99.7% and I6 100%;
   within 7 in the dungeons, the Stair 98.1% (its furthest square 9) and the other four 100%.
 - **The ladder:** rung 28 is Hearth Isle's (`gear`, in its checks): the Hand's steel, nine pieces,

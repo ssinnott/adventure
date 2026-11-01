@@ -142,11 +142,12 @@ nor do the corridors (§8, the corridors' 16) or the camp (§8, the camp's 16).
   Ashfall's other maps a clear is 29,386 of the area's 19,467 (ashfall §8).
 - **The gate.** Each level is held at its own floor (EXPANSION §5.2). The Brood Drake is won about
   half the time at 26, the corridors' floor, and nearly always at 28. As built, a company at the
-  vents' floor, 25, wins every fight and manages 10.98 fights to a rest (§4.1); at the corridors'
-  floor, 26, it wins 90.3% of the fights and manages 8.69, and the Brood Drake is won 49% of the
+  vents' floor, 25, wins every fight and manages 10.78 fights to a rest (§4.1); at the corridors'
+  floor, 26, it wins 87.3% of the fights and manages 9.28, and the Brood Drake is won 49% of the
   time at 26 and 100% at 28 (§4.2; §8, the corridors' 5). At the camp's floor, 27, it wins every
-  fight and manages 10.64 fights to a rest; two under, at 25, it wins every fight (§4.3; §8, the
-  camp's 2 and 18).
+  fight and manages 10.84 fights to a rest; two under, at 25, it wins every fight (§4.3; §8, the
+  camp's 2 and 18). Since the class changes (#1117) the vents and the corridors end 83% and 86% of
+  their floors' days in a fight broken off, the camp 37%.
 - **Gold and finds.** Machines carry parts; the Company's kit is the finds, a named piece on each
   of the lower two levels, in the band's window. As built, the vents hold 900 gold and a Sapphire
   Vial, in the drift, but no gear (§8, the vents' 8); their parts are the Stone's first, a quest

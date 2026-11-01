@@ -84,8 +84,8 @@ and Meridian Camp's three levels have none.
 | `cindercoast_f9`, F9 | outdoor, 32×32, 24–25 | the fishers' bay west of Cinderport: their hamlet on the black sand, a fisherman on the Compact's tenth and a fish stone that gives accuracy; one group | 24,24, the fishers' store: a path up the ridge that stops at a rock at 24,26 (`f9_track`) |
 | `cindercoast_g9`, G9 | outdoor, 32×32, 24–25 | Cinderport's harbour side, between the sea wall's moles: the lantern on the mole's end, the fishers' slip on the cove and an old fisherman; one group | 13,28, the smugglers' cell: a step worn hollow at the sea wall's foot at 15,28 (`g9_step`) |
 | `cindercoast_h9`, H9 | outdoor, 32×32, 24–25 | the shore under the Sheer: a fishers' hamlet and a fishwife, a gull stone that gives intellect; the Sheer shuts its east edge; one group | 27,27, a cleft with a hearth and a sea-chest: rocks black with old smoke at 25,27 (`h9_soot`) |
-| `emberwaste_e11`, E11 | outdoor, 32×32, 25–26 | the Waste's west: the flow running south-west under the mountains, cinder cones, a knapper at the flow's edge and a black stone that gives might; one group, drakelings in their cast skins | 18,12, a tube under the flow, a man's bones by his pack: a crack breathing cold air at 18,11 (`e11_draught`) |
-| `firemount_h11`, H11 | outdoor, 32×32, 25–26 | the east flank between Fire Mountain and the Sheer: Grimsforge's back, the stream on flat stones and a drake-watcher at his fire; one group, drakelings at their shell | 26,26, a hollow with an old war-chest: an axe-head driven into the rock at 26,27 (`h11_axe`) |
+| `emberwaste_e11`, E11 | outdoor, 32×32, 25–26 | the Waste's west: the flow running south-west under the mountains, cinder cones, a knapper at the flow's edge and a black stone that gives might; one group, drakelings in their cast skins and a flue walker | 18,12, a tube under the flow, a man's bones by his pack: a crack breathing cold air at 18,11 (`e11_draught`) |
+| `firemount_h11`, H11 | outdoor, 32×32, 25–26 | the east flank between Fire Mountain and the Sheer: Grimsforge's back, the stream on flat stones and a drake-watcher at his fire; one group, drakelings at their shell and a flue walker | 26,26, a hollow with an old war-chest: an axe-head driven into the rock at 26,27 (`h11_axe`) |
 | `firemount_h12`, H12 | outdoor, 32×32, 25–26 | the south-east foot: the flow's end under its own crust, a warm spring that gives luck and a drake's wallow; one group | 7,9, the tube the flow ran out of: the crust split along one line at 7,8 (`h12_seam`) |
 | `firemount_g12`, G12 | outdoor, 32×32, 25–26 | the south foot: the ash in long folds off the cone, warm over Meridian Camp, and hollows scraped in a row; one group | 12,11, the drakes' hollow: claw-marks scored across one rock at 12,10 (`g12_claws`) |
 | `emberwaste_f12`, F12 | outdoor, 32×32, 25–26 | the bounds' first, the flow's end under the rim: its dam of black rock, a man of stone with a riddle and the sulphur vents; the lair's way in under the dam's crust and the enclave's flue mouth in the mountain's face; no group | 29,12, the knapper's store: flakes of black glass heaped at 29,11 (`f12_flakes`) |
@@ -152,28 +152,33 @@ the Ember Salamander, the Ash Husk, the Stoker, the Cinder Drake, the Sentry, th
 Sentinel, two of them new families, the drakes and the heavy machines. The sentries walk only once
 the Stone is lit (`after`). Meridian Camp's are #22's; Blackdraw places its flue walker, inspector
 and deep knocker again at its own band, and Grim's Howe the Grave Drake alone, a new kind of the
-drakes (MONSTERS §13). Its `novel` claims the drakes and the vines underfoot with G10, the heavy
+drakes (MONSTERS §13). For the class changes (#1117) E11's, H11's, H12's and G12's group became two
+drakelings and a flue walker, F9's, G9's and H9's a cinder drake and a stoker, and the deep knocker
+660 hit points and 8d8+4, the armoured line's own move at 28. Its `novel` claims the drakes and the vines underfoot with G10, the heavy
 machines and the volcano with G11 and the springs with H10; the rest is on the road before it
 (`noveltyFaults`, `tools/tests/pillars.ts`).
 
 ## 8. The numbers
 
-- **The curve** (`tools/tests/curve.ts`): a clear gives 35,919 xp a member of the 19,467 it asks and
+- **The curve** (`tools/tests/curve.ts`): a clear gives 35,971 xp a member of the 19,467 it asks and
   12,160 gold of 11,760; a company entering at the floor and clearing three quarters leaves at 27.4,
   +1.4 over the next floor 26, a named exception the curve holds at 27.4 (`overRoad`, in its
   checks). Meridian Camp's last level is outside its budget (3,003 xp a member and 1,200 gold), and
   the enclave and the lair are counted in no clear (4,186 xp a member and 1,200 gold).
-- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.6% of its 45 groups'
-  fights (`GATE.through`'s aim); two under, its groups pooled at 22, 7.61 fights to a rest, 76.1% of
+- **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.5% of its 45 groups'
+  fights (`GATE.through`'s aim); two under, its groups pooled at 22, 6.92 fights to a rest, 69.2% of
   the floor's 10. Old Cinder and the Ember Stone at 25 win 84% and 84.3%, their bosses deciding it:
   the Old Drake 66.5% at 25 and 99% at 27, the Sentinel 68.5% and 99%. The Brood Drake is won 49%
-  at 26 and 100% at 28, the Grave Drake 63.2% at 30 and 90% at 32. The corridors win 90.3% at 26 and
+  at 26 and 100% at 28, the Grave Drake 63.2% at 30 and 90% at 32. The corridors win 87.3% at 26 and
   every other map every fight at its floor; the three zones' roads are walked every time.
-- **Fights to a rest** (aim 9 to 11 at 24, a quarter more a level): H10 10.21, G10 10.88, F10 9.19,
-  F9, G9 and H9 10.51 and the undercroft 10.10 at 24; G11 10.23, the vents 10.98, E10 10.49 and F11
-  10.82 at 25, with the Ember Stone's 8.57, Old Cinder's 11.76 and E11's, H11's, H12's and G12's
-  11.39 off the aim; the corridors 8.69 at 26, off it; the camp 10.64 and Blackdraw 11.14 at 27. The
-  gate lists eighteen figures off their aim, inside their limits.
+- **Fights to a rest** (aim 9 to 11 at 24, a quarter more a level): H10 10.51, G10 11.23, F10 9.10,
+  F9, G9 and H9 13.42 and the undercroft 9.85 at 24; G11 9.03, the vents 10.78, E10 12.03 and F11
+  11.29 at 25, with the Ember Stone's 8.97, Old Cinder's 11.22 and E11's, H11's, H12's and G12's
+  11.84; the corridors 9.28 at 26; the camp 10.84 and Blackdraw 11.97 at 27. The gate lists
+  twenty-three figures off their aim, inside their limits, since the class changes (#1117): G10,
+  F9, G9, H9, G11, E10, F11, the Ember Stone, the four drakelings' boxes, the corridors and
+  Blackdraw by their fights, the corridors, Old Cinder and the Ember Stone by their floors' wins,
+  and H10, G10, F9, G9, H9 and the area two under.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, G10 97.3% and H10, G11 and
   F11 100%; within 12 in the country, E11 99.4% and H11 98.1% (their furthest squares 15), every
   other box 100%; the town and the dungeons 100% within 7.
@@ -214,7 +219,8 @@ of theirs is named here: the trading ground and Scaldwell are the coast's.
 - **Owed to no check:** its checks owe nothing (the Grave Drake, the last row, left with the lair,
   #836), and the curve, the gate, density and the ladder hold Ashfall with nothing owed; its lead is
   the curve's named exception (§8).
-- **Watched, not moved:** Old Cinder's 11.76 fights to a rest and the drakelings' boxes' 11.39 sit
-  past the aim, inside the limit (plan, §8). What the owner finds by hand goes here; none yet.
+- **Watched, not moved:** F9's, G9's and H9's 13.42 fights to a rest, against a limit of 13.5, and
+  the drakelings' boxes' 11.84 sit past the aim, inside the limit; G11, the vents and the corridors
+  end 83 to 91% of their floors' days in a fight broken off (#1117). What the owner finds by hand goes here; none yet.
 - **Meridian Camp** is #22's, its doc `docs/areas/meridian_camp.md`; its levels are Ashfall's maps.
 - **What is next:** nothing. The plan's briefs are all built, and a new box starts its brief there.
