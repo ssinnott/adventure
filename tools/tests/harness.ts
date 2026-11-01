@@ -17,7 +17,7 @@ import { gateCompany, HARNESS } from '../kit/company.ts';
 import { GATE } from '../kit/rules/gate.ts';
 import { testMonster, standardEncounter, line, scaleAt, groupsPerLevel, xpFor, HP, DAMAGE, ROLES, ROLE_IDS, TROLL, SWEEP, testTroll, trollEncounter, wightEncounter, callerEncounter, lightEncounter, testGiant, testDrake, giantEncounter, drakeEncounter, BASILISK_STONE, testBasilisk, basiliskEncounter, clockEncounter } from '../kit/line.ts';
 import type { Role } from '../kit/line.ts';
-import { measure, days, fight, play, outcomeOf, spent, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, WORST, CAP, casting, cellsOnCores } from '../kit/harness.ts';
+import { measure, days, fight, play, outcomeOf, spent, mendBetween, day as oneDay, bossFloor, longest, slowest, fightsPerRest, WORST, CAP, casting, cellsOnCores, thrifty } from '../kit/harness.ts';
 import { mustRest, REST_AT, ANSWER, wakeWith, breathGuard } from '../../src/game/bot.ts';
 import { companyAt, newerCompany, edgeOf, unforge, GEAR, GEAR_TOP, whatIfs, writeRefusal, artifactIds } from '../kit/company.ts';
 import { ROUND_CAP, playOut } from '../kit/fight.ts';
@@ -144,6 +144,7 @@ export async function harness(): Promise<void> {
   const boss = measure(bossFloor(8), standardEncounter('boss', 8), 80, 5001);
   ok(boss.won >= 0.3 && boss.won <= 0.7, `a company two levels under the test boss wins ${(boss.won * 100).toFixed(0)}% of the time (half asked)`);
   whatIfsOff();
+  thriftyFeats();
   artifactsWhatIf();
   onTheLine();
   abilities();
@@ -198,6 +199,25 @@ function whatIfsOff(): void {
   const refused = [writeRefusal(tiers), writeRefusal(bot), writeRefusal({ company: 'newer' })];
   ok(writeRefusal() === undefined && refused.every((r, k) => r?.startsWith('a what-if is for weighing') && r.endsWith(`(${['tiers', 'bot', 'company'][k]})`)),
     `the refusal --calibrate --write throws names --tiers, --bot and --company while each is set, as every what-if (${refused.map((r) => r?.slice(r.indexOf('('))).join(', ')}), and there is none with all off`);
+}
+
+/**
+ * The thrifty bot spends stamina on the feats as the gate's bot does (`featFor`, #1117), once a fight
+ * has them, so the line is made on the company as play has it; asked off, it spends none.
+ */
+function thriftyFeats(): void {
+  const spends = (rules: { bot?: BotOpts }): number => {
+    let n = 0;
+    for (let k = 1; k <= 5; k++) {
+      const p = companyAt(23, k), rng = makeRng(fightSeed(k)), s = startCombat(HARNESS, p, [{ id: 'g', monsters: standardEncounter('soldier', 23) }], rng);
+      // Stamina falls only where a feat is paid for (game/combat/feats.ts, `spend`): each fall is a feat.
+      if (s.stamina) s.stamina = new Proxy(s.stamina, { set: (st, i, v) => { if (typeof i === 'string' && v < st[Number(i)]) n++; return Reflect.set(st, i, v); } });
+      playOut(s, p, rng, thrifty, rules, ROUND_CAP);
+    }
+    return n;
+  };
+  const played = spends({}), asked = spends({ bot: { feats: false } });
+  ok(played > 0 && asked === 0, `the thrifty bot spends stamina on a feat once a fight has them, as the gate's does: ${played} feats in five fights of the premade six at 23 against four test soldiers; asked off, none`);
 }
 
 /**
