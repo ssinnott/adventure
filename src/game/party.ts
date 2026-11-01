@@ -88,7 +88,7 @@ export function attackBonus(items: Items, c: Character): number {
  * The share of a member's weapon blows that land and crit, for double (DESIGN §6, #1114): CRIT_BASE,
  * and CRIT_PER_LUCK for each point of Luck over 10 as borne, never under CRIT_FLOOR; a knight's,
  * barbarian's, thief's or monk's CRIT_STEP more at each of CRIT_LEVELS. None while crits are off
- * (`on`, CRITS_ON in play, a tool's own where it turns them on), so a blow draws nothing for one.
+ * (`on`: CRITS_ON in play, false where a tool or a suite turns them off), so a blow draws nothing for one.
  */
 export function critChance(items: Items, c: Character, on = CRITS_ON): number {
   if (!on) return 0;

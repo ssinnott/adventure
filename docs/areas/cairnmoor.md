@@ -139,7 +139,7 @@ It claims the lights, a new family, snow and ice underfoot, curse and the ring (
 - **The ladder:** rung 19 is the Kilns' and Cairnmoor's finds (`gear`, in its checks), O7's Banded
   Staff +1 among them. Its ranged rung (`ranged`, #1115) is the Steel Bow +1's: the coach's
   strongbox on N8, which holds a second Steel Bow +1, holds the Steel Short Bow +1 and the Wire
-  Sling +1 beside it, as the Kilns' shelter does. They are off the gate's ladder until #1117.
+  Sling +1 beside it, as the Kilns' shelter does. They are on the gate's ladder since #1117.
 
 ## 10. Names
 

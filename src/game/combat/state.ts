@@ -102,9 +102,9 @@ export interface CombatState {
   spellsGrowTo?: number;
   /** What a spell rank adds, where a tool tries another: RANK_STEP in play (see `rankMult`). */
   rankStep?: number;
-  /** Whether a blow may crit, where a tool turns crits on before play does: CRITS_ON in play (see `critChance`). */
+  /** Whether a blow may crit: CRITS_ON in play, false where a tool or a suite turns crits off (see `critChance`). */
   crits?: boolean;
-  /** Whether the feats are on, where a tool turns them on before play does: FEATS_ON in play (see combat/feats.ts). */
+  /** Whether the feats are on: FEATS_ON in play, false where a tool or a suite turns them off (see combat/feats.ts). */
   feats?: boolean;
   /** Each member's stamina, by its slot, while the feats are on; none else, and none past the fight (#1113). */
   stamina?: number[];

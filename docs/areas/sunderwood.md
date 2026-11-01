@@ -145,7 +145,7 @@ chasm underfoot; sleep inflicted (`inflict:asleep`); the falls.
   1,500 the dearest find, each inside the window of 3,000 gold. Its ranged rungs (`ranged`, #1115) put
   a short bow a step behind the Ironwood Bow and a sling two: the Ironwood Short Bow and the Watch
   Sling in the Watch's stores beside it, each with a plus in the Sunder's fallen chest beside the
-  Ironwood Bow +1. They are off the gate's ladder until #1117.
+  Ironwood Bow +1. They are on the gate's ladder since #1117.
 
 ## 10. Names
 

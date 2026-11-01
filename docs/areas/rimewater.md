@@ -173,7 +173,7 @@ the keepers with the bay; the rest is on the road before it, or no kind the chec
   furrier, by 22 its finds, every class bettered by each. Its ranged rungs (`ranged`, #1115): the
   Hunter's Short Bow and the Hide Sling, a step and two behind the Hunter's Bow, sold beside it at
   the furrier's and found with a plus beside Bogha Fionn +1 in the bay's locker and in Whitespine's
-  cache on I9. They are off the gate's ladder until #1117.
+  cache on I9. They are on the gate's ladder since #1117.
 
 ## 10. Names
 

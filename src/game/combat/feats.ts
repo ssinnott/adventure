@@ -82,7 +82,7 @@ const BUILDERS: readonly ClassId[] = ['knight', 'barbarian', 'thief', 'monk'];
 /** Whether a member builds stamina. */
 export const builds = (c: Pick<Character, 'cls'>): boolean => BUILDERS.includes(c.cls);
 
-/** Whether the fight has the feats: FEATS_ON in play, a tool's own where it turns them on. */
+/** Whether the fight has the feats: FEATS_ON in play, false where a tool or a suite turns them off. */
 export const featsOn = (s: Pick<CombatState, 'feats'>): boolean => s.feats ?? FEATS_ON;
 
 /** A member's stamina as its card shows it: one of the four's while the feats are on; none else. */

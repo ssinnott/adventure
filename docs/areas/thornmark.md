@@ -148,7 +148,7 @@ the tower, the barrow and the grove.
   Eldest's Bough, a find for every class, each inside the window of 1,200 gold. Its ranged rungs
   (`ranged`, #1115): the Thornmark Short Bow and the Deerskin Sling, a step and two behind the
   Thornmark Bow, sold beside it in the Armoury and found with its plus beside the bow's +1 in the
-  Grove Roots and its +2 in I4. They are off the gate's ladder until #1117.
+  Grove Roots and its +2 in I4. They are on the gate's ladder since #1117.
 
 ## 10. Names
 

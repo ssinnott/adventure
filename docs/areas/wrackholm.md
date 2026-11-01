@@ -164,7 +164,7 @@ underfoot and the wreck, the Tide Ship's site.
   window, 2,500, and the Brokenback's, Keelhaul at 1,600, in the Sunderwood's, 3,000. Its ranged rung
   (`ranged`, #1115) is the Horn Bow +1's, Saltreach's bow, with its short bow and sling from C7's
   hoard; E6's cache holds Act I's Long Bow +1, and beside it now the Yew Short Bow +1 and the Leather
-  Sling +1. They are off the gate's ladder until #1117.
+  Sling +1. They are on the gate's ladder since #1117.
 
 ## 10. Names
 
