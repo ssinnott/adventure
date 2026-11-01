@@ -21,7 +21,7 @@ export const MONSTERS: readonly MonsterDef[] = [
   // MONSTERS §4.4's boss line (1,381 hp, 24d8+24, won 59% at 23 and 80% at 25), its hit points and its blow are set for
   // #500's gate: two times in three at its floor, 23, which keeps the lower house's floor with its one other fight, and
   // nearly always at 25
-  { id: 'abbot', name: 'The Abbot', plural: 'Abbots', sprite: 'abbot', kind: 'machine', look: 'The abbot keeps the hours, and it is time.', level: 24, hp: 1700, ac: 25, attack: 16, dice: 28, sides: 8, bonus: 23, speed: 13, xp: 15253, gold: [0, 0], offLine: 'Highcell\'s boss, its hit points and its blow set by its gate (#500), set again on its odds for the class changes (#1117)', tint: '#3a2f3b', size: 1.4 },
+  { id: 'abbot', name: 'The Abbot', plural: 'Abbots', sprite: 'abbot', kind: 'machine', look: 'The abbot keeps the hours, and it is time.', level: 24, hp: 1530, ac: 25, attack: 16, dice: 24, sides: 8, bonus: 20, speed: 13, xp: 15253, gold: [0, 0], immune: ['paralysed'], offLine: 'Highcell\'s boss, its hit points and its blow set by its gate (#500), proof against a hold and set again on its odds for the class changes (#1117)', tint: '#3a2f3b', size: 1.4 },
   // over the High Spine, from J11 on (#499, #501, #504), a skirmisher on MONSTERS §4.4's line at 22: it flies, reaching the back row
   { id: 'spine_eagle', name: 'Spine Eagle', plural: 'Spine Eagles', sprite: 'spine_eagle', kind: 'beast', look: 'It takes the light out of the sky as it comes down.', level: 22, hp: 427, ac: 22, attack: 13, dice: 4, sides: 8, bonus: 3, speed: 15, xp: 873, gold: [0, 0], ranged: true, tint: '#4a3828', size: 0.9 },
   // the High Spine's snow, from J11 on (#499, #501, #503), a brute at 23 as MONSTERS §3.3 makes a troll (#537): three quarters of
@@ -36,5 +36,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   // the Stair's head (#502), its boss at 24 with two giants, sweeping as they do; tuned by #502's gate from the boss
   // line's 1,381 and 24d8+24 to 1,650 and 16d8+16, won about half the time at 22 and 23 and nearly always at 25; the
   // toll's coin in his purse
-  { id: 'stair_king', name: 'The Stair-king', plural: 'Stair-kings', sprite: 'stair_king', kind: 'person', look: 'He has taken the toll here since before Helmstow.', level: 24, hp: 1650, ac: 25, attack: 16, dice: 19, sides: 8, bonus: 19, speed: 13, xp: 15253, gold: [250, 500], sweep: { chance: 0.25 }, offLine: 'the Stair\'s head\'s boss, its hit points and its blow set by its gate (#502), set again on its odds for the class changes (#1117)', tint: '#4f5560', size: 2 },
+  { id: 'stair_king', name: 'The Stair-king', plural: 'Stair-kings', sprite: 'stair_king', kind: 'person', look: 'He has taken the toll here since before Helmstow.', level: 24, hp: 1490, ac: 25, attack: 16, dice: 18, sides: 8, bonus: 18, speed: 13, xp: 15253, gold: [250, 500], sweep: { chance: 0.25 }, immune: ['paralysed'], offLine: 'the Stair\'s head\'s boss, its hit points and its blow set by its gate (#502), proof against a hold and set again on its odds for the class changes (#1117)', tint: '#4f5560', size: 2 },
 ];

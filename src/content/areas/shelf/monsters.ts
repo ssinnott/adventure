@@ -73,5 +73,5 @@ export const MONSTERS: readonly MonsterDef[] = [
   // set by the lair's pull request at the gate's company, it falls a little sooner and hits more often and two
   // thirds as hard, its armour, its pace and its hold kept, won 66% at its floor of 30 and 91% at 32, and it pays the
   // boss line's xp at 32 (docs/areas/shelf.md §9, #837's 14)
-  { id: 'hag', name: 'The Hag', plural: 'Hags', sprite: 'hag', kind: 'beast', look: 'No eyes, and it found you first.', level: 32, hp: 2600, ac: 29, attack: 26, dice: 27, sides: 8, bonus: 30, speed: 13, xp: 20373, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.2 }, offLine: 'Hag Hole\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#837), set again on its odds for the class changes (#1117)', tint: '#a39b92', size: 1.8 },
+  { id: 'hag', name: 'The Hag', plural: 'Hags', sprite: 'hag', kind: 'beast', look: 'No eyes, and it found you first.', level: 32, hp: 2600, ac: 29, attack: 26, dice: 23, sides: 8, bonus: 26, speed: 13, xp: 20373, gold: [0, 0], inflict: { cond: 'paralysed', chance: 0.2 }, immune: ['paralysed'], offLine: 'Hag Hole\'s boss, its hit points and its blow set by its gate at the lair\'s floor and two above (#837), proof against a hold and set again on its odds for the class changes (#1117)', tint: '#a39b92', size: 1.8 },
 ];

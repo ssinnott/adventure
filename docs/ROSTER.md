@@ -53,7 +53,7 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Barrow Wolf (`barrow_wolf`) | wolf | beast | 5 | 52 | 14 | +5 | 3d6+1 | 15 | 218 | 0 | *Grey to the muzzle and big as a pony, and the pack waits on it.* |  |
 | Old Rook (`old_rook`) | birds | beast | 4 | 50 | 14 | +5 | 2d6+3 | 15 | 173 | 0 | *Grey in the face, and older than the trees it keeps.* | reaches the back row |
 | Cutthroat (`cutthroat`) | bandit | person | 5 | 52 | 14 | +5 | 3d6+1 | 15 | 218 | 10–30 | *A captain's sash on a thief's coat, and a knife for every pocket.* |  |
-| The Hag (`hag`) | longbodies | beast | 32 | 2600 | 29 | +26 | 27d8+30 | 13 | 20373 | 0 | *No eyes, and it found you first.* | paralyses, 0.2 a hit |
+| The Hag (`hag`) | longbodies | beast | 32 | 2600 | 29 | +26 | 23d8+26 | 13 | 20373 | 0 | *No eyes, and it found you first.* | paralyses, 0.2 a hit; shrugs off paralysis |
 
 ## Thornmark (`thornmark`)
 
@@ -94,7 +94,7 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Salt Crab (`salt_crab`) | spider | beast | 11 | 164 | 19 | +7 | 3d7+3 | 8 | 578 | 0 | *White with salt, and it glitters when it moves.* | shrugs off sleep |
 | Leech (`leech`) | longbodies | beast | 10 | 87 | 16 | +7 | 2d6+3 | 12 | 393 | 0 | *Black, and as long as your arm.* | its hits heal it |
 | Bull Toad (`bull_toad`) | toads | beast | 12 | 337 | 16 | +9 | 4d8+4 | 8 | 947 | 0 | *It could swallow Ottilie whole.* | diseases, 0.15 a hit |
-| The Old Chanter (`old_chanter`) | skeleton | dead | 32 | 2800 | 29 | +25 | 31d8+50 | 13 | 20373 | 0 | *The first of the chanters, and it still sings the old song.* | curses, 0.2 a hit; casts Bless, every turn |
+| The Old Chanter (`old_chanter`) | skeleton | dead | 32 | 2800 | 29 | +25 | 24d8+38 | 13 | 20373 | 0 | *The first of the chanters, and it still sings the old song.* | curses, 0.2 a hit; casts Bless, every turn; shrugs off paralysis |
 
 ## Wrackholm (`wrackholm`)
 
@@ -112,8 +112,8 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Loader (`loader`) | machines | machine | 26 | 899 | 23 | +16 | 7d8+6 | 8 | 2067 | 0 | *It carries a crate the size of a cart, and does not set it down.* |  |
 | Tally Clerk (`tally_clerk`) | knockers | machine | 26 | 449 | 24 | +15 | 4d8+6 | 11 | 1033 | 0 | *It counts the crates, then turns and counts you.* | calls 2 Loaders, 0.5 a turn |
 | Hold Keeper (`hold_keeper`) | keepers | machine | 27 | 461 | 25 | +15 | 6d8+4 | 12 | 1073 | 0 | *It carries water to the pens, and nobody is in them.* | puts to sleep, 0.3 a hit; casts Mend, 0.25 a turn |
-| The Tallymaster (`tallymaster`) | keepers | machine | 28 | 2330 | 27 | +18 | 30d8+54 | 13 | 17813 | 0 | *It writes, and does not look up.* | calls 2 Tally Clerks, 0.5 a turn |
-| Old Nick (`old_nick`) | devilfish | beast | 32 | 1600 | 29 | +20 | 33d8+33 | 13 | 20373 | 0 | *What the smugglers fed first.* | reaches the back row; its hits heal it |
+| The Tallymaster (`tallymaster`) | keepers | machine | 28 | 2330 | 27 | +18 | 21d8+38 | 13 | 17813 | 0 | *It writes, and does not look up.* | calls 2 Tally Clerks, 0.5 a turn; shrugs off paralysis |
+| Old Nick (`old_nick`) | devilfish | beast | 32 | 1120 | 29 | +20 | 30d8+30 | 13 | 20373 | 0 | *What the smugglers fed first.* | reaches the back row; its hits heal it; shrugs off paralysis |
 
 ## Sunderwood (`sunderwood`)
 
@@ -121,7 +121,7 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
 | Pine Bear (`pine_bear`) | bears | beast | 14 | 431 | 17 | +10 | 4d8+6 | 8 | 1107 | 0 | *A bear, and then the rest of the bear.* |  |
 | Sunderling (`sunderling`) | riftling | rift | 14 | 204 | 18 | +9 | 3d8+1 | 15 | 553 | 0 | *Black glass, with a white light inside.* | paralyses, 0.1 a hit |
-| Warden of the Sunder (`sunder_warden`) | riftling | rift | 16 | 1170 | 21 | +12 | 17d8+17 | 13 | 10133 | 0 | *The Sunder's own knot, and it has held for centuries.* | shrugs off sleep |
+| Warden of the Sunder (`sunder_warden`) | riftling | rift | 16 | 1170 | 21 | +12 | 14d8+14 | 13 | 10133 | 0 | *The Sunder's own knot, and it has held for centuries.* | shrugs off sleep and paralysis |
 | Ashen Gleaner (`ashen_gleaner`) | cultist | person | 15 | 236 | 19 | +9 | 3d7+4 | 11 | 593 | 25–60 | *A sack of glowing shards, and a knife for the next.* | never breaks |
 | Glass Spider (`glass_spider`) | spider | beast | 15 | 201 | 19 | +9 | 3d8+3 | 12 | 593 | 0 | *Threads of glass, and something walking them.* | paralyses, 0.25 a hit |
 | Sunder Hound (`sunder_hound`) | wolf | rift | 15 | 230 | 19 | +9 | 3d7+3 | 15 | 593 | 0 | *A rift hound, gone to glass.* | paralyses, 0.15 a hit; shrugs off cold; weak to fire |
@@ -135,16 +135,16 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
 | Knocker (`knocker`) | knockers | machine | 16 | 150 | 18 | +9 | 2d6+4 | 12 | 317 | 0 | *Something small and grey, knocking on the rock as it comes.* |  |
 | Mender (`mender`) | knockers | machine | 17 | 271 | 20 | +10 | 3d8+5 | 11 | 673 | 0 | *It stops to mend the others, and they let it.* | casts Mending Light, 0.5 a turn |
-| The Foreman (`foreman`) | knockers | machine | 18 | 1500 | 22 | +13 | 20d8+19 | 13 | 11413 | 0 | *It checks you the way a clerk checks a list, and finds nobody on it.* |  |
+| The Foreman (`foreman`) | knockers | machine | 18 | 1500 | 22 | +13 | 17d8+16 | 13 | 11413 | 0 | *It checks you the way a clerk checks a list, and finds nobody on it.* | shrugs off paralysis |
 | Fire Beetle (`fire_beetle`) | spider | beast | 16 | 308 | 21 | +10 | 4d8+2 | 8 | 844 | 0 | *A beetle with a coal in its back.* | shrugs off fire |
 | Slagling (`slagling`) | riftling | rift | 16 | 257 | 19 | +10 | 3d7+4 | 15 | 633 | 0 | *Slag, walking, with a red iron heart.* | paralyses, 0.1 a hit; resists fire; weak to cold |
 | Rock Worm (`rock_worm`) | longbodies | beast | 17 | 537 | 18 | +11 | 5d7+9 | 8 | 1347 | 0 | *This tunnel was not dug by dwarves.* |  |
 | Anvil Guard (`anvil_guard`) | bandit | person | 17 | 309 | 22 | +10 | 4d8+4 | 8 | 898 | 30–70 | *Short, broad, and in the thane's iron.* |  |
 | Slag Elder (`slag_elder`) | riftling | rift | 18 | 471 | 21 | +12 | 4d8+7 | 15 | 1427 | 0 | *Iron runs off it like sweat.* | paralyses, 0.15 a hit; resists fire; weak to cold |
-| Warden of the Anvil (`anvil_warden`) | riftling | rift | 18 | 1200 | 22 | +13 | 20d8+18 | 13 | 11413 | 0 | *The Stone's heat, standing up out of the cut.* | shrugs off sleep; resists fire; weak to cold |
+| Warden of the Anvil (`anvil_warden`) | riftling | rift | 18 | 1200 | 22 | +13 | 16d8+14 | 13 | 11413 | 0 | *The Stone's heat, standing up out of the cut.* | shrugs off sleep and paralysis; resists fire; weak to cold |
 | Salamander (`salamander`) | salamanders | beast | 16 | 257 | 19 | +10 | 3d7+4 | 15 | 633 | 0 | *A lizard with the fire showing through its skin.* | shrugs off fire; weak to cold |
-| Great Salamander (`great_salamander`) | salamanders | beast | 18 | 1240 | 22 | +13 | 17d8+16 | 13 | 11413 | 0 | *The fire in the rock, with a head.* | shrugs off sleep and fire; weak to cold |
-| The Steiger (`steiger`) | knockers | machine | 32 | 2210 | 29 | +24 | 30d8+35 | 13 | 20373 | 0 | *It knocks once, and the whole seam answers.* | calls 3 Deep Knockers, 0.5 a turn |
+| Great Salamander (`great_salamander`) | salamanders | beast | 18 | 1120 | 22 | +13 | 16d8+15 | 13 | 11413 | 0 | *The fire in the rock, with a head.* | shrugs off sleep, fire and paralysis; weak to cold |
+| The Steiger (`steiger`) | knockers | machine | 32 | 1770 | 29 | +24 | 25d8+30 | 13 | 20373 | 0 | *It knocks once, and the whole seam answers.* | calls 3 Deep Knockers, 0.5 a turn; shrugs off paralysis |
 
 ## Cairnmoor (`cairnmoor`)
 
@@ -156,8 +156,8 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Moor Hound (`moor_hound`) | wolf | beast | 19 | 338 | 21 | +11 | 4d8+2 | 15 | 753 | 0 | *The Downs' black dog, grown old and huge.* | paralyses, 0.15 a hit |
 | Cairn Wight (`cairn_wight`) | wraith | dead | 19 | 339 | 21 | +11 | 3d7+7 | 12 | 753 | 20–60 | *A shroud with grave-gold at its throat.* | curses, 0.2 a hit |
 | Tor Troll (`tor_troll`) | ogre | beast | 19 | 483 | 19 | +12 | 6d8+7 | 8 | 1507 | 0 | *A tor that stood up.* | mends 48 a round unless burnt |
-| The Cairn King (`cairn_king`) | skeleton | dead | 20 | 2070 | 23 | +14 | 18d8+16 | 13 | 12693 | 150–300 | *Crowned, and older than the crown.* | curses, 0.2 a hit |
-| The Rim Troll (`rim_troll`) | ogre | beast | 32 | 2700 | 26 | +22 | 50d8+36 | 8 | 20373 | 0 | *The rim stood up.* | mends 80 a round unless burnt |
+| The Cairn King (`cairn_king`) | skeleton | dead | 20 | 2070 | 23 | +14 | 15d8+14 | 13 | 12693 | 150–300 | *Crowned, and older than the crown.* | curses, 0.2 a hit; shrugs off paralysis |
+| The Rim Troll (`rim_troll`) | ogre | beast | 32 | 2970 | 26 | +22 | 28d8+20 | 8 | 20373 | 0 | *The rim stood up.* | mends 80 a round unless burnt; shrugs off paralysis |
 
 ## Rimewater (`rimewater`)
 
@@ -168,8 +168,8 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Tallyman (`tallyman`) | knockers | machine | 20 | 368 | 21 | +12 | 3d8+6 | 11 | 793 | 0 | *It stops and clicks, once for each of you.* | calls 3 Knockers, 0.5 a turn |
 | Ice Bear (`ice_bear`) | bears | beast | 21 | 680 | 20 | +13 | 6d8+7 | 8 | 1667 | 0 | *White, and bigger than the last one.* |  |
 | Bay Keeper (`bay_keeper`) | keepers | machine | 21 | 360 | 22 | +12 | 3d7+7 | 12 | 833 | 0 | *Tall and grey, with too many fingers, and gentle.* | puts to sleep, 0.3 a hit; casts Mend, 0.25 a turn |
-| The Matron (`matron`) | keepers | machine | 22 | 1900 | 24 | +15 | 21d8+23 | 13 | 13973 | 0 | *It has tended them for four hundred years.* | casts Mend, 0.1 a turn |
-| The Infirmarer (`infirmarer`) | keepers | machine | 32 | 2420 | 29 | +22 | 34d8+40 | 13 | 20373 | 0 | *No robe, too many fingers and a bed made up for you.* | puts to sleep, 0.3 a hit; casts Mend, 0.1 a turn |
+| The Matron (`matron`) | keepers | machine | 22 | 1520 | 24 | +15 | 22d8+24 | 13 | 13973 | 0 | *It has tended them for four hundred years.* | casts Mend, 0.1 a turn; shrugs off paralysis |
+| The Infirmarer (`infirmarer`) | keepers | machine | 32 | 2420 | 29 | +22 | 27d8+32 | 13 | 20373 | 0 | *No robe, too many fingers and a bed made up for you.* | puts to sleep, 0.3 a hit; casts Mend, 0.1 a turn; shrugs off paralysis |
 
 ## The Whitespine (`whitespine`)
 
@@ -177,12 +177,12 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 |---|---|---|---:|---:|---:|---:|---|---:|---:|---|---|---|
 | Brother (`brother`) | keepers | machine | 22 | 405 | 22 | +13 | 4d8+5 | 11 | 873 | 0 | *A monk, walking as if someone had described walking to it.* |  |
 | Bell-ringer (`bell_ringer`) | keepers | machine | 23 | 409 | 23 | +13 | 4d8+3 | 12 | 913 | 0 | *Eleven strokes, a gap, and eleven more.* | reaches the back row; paralyses, 0.2 a hit |
-| The Abbot (`abbot`) | keepers | machine | 24 | 1700 | 25 | +16 | 28d8+23 | 13 | 15253 | 0 | *The abbot keeps the hours, and it is time.* |  |
+| The Abbot (`abbot`) | keepers | machine | 24 | 1530 | 25 | +16 | 24d8+20 | 13 | 15253 | 0 | *The abbot keeps the hours, and it is time.* | shrugs off paralysis |
 | Spine Eagle (`spine_eagle`) | birds | beast | 22 | 427 | 22 | +13 | 4d8+3 | 15 | 873 | 0 | *It takes the light out of the sky as it comes down.* | reaches the back row |
 | Snow Troll (`snow_troll`) | ogre | beast | 23 | 611 | 21 | +14 | 6d8+8 | 8 | 1827 | 0 | *A drift that stood up.* | mends 61 a round unless burnt |
 | Ashen Mason (`ashen_mason`) | cultist | person | 23 | 426 | 23 | +13 | 4d8+5 | 11 | 913 | 45–100 | *A hammer from below, and a shard to set.* | never breaks |
 | Stair Giant (`stair_giant`) | giants | person | 23 | 692 | 21 | +14 | 5d7+10 | 8 | 1827 | 70–160 | *A man as tall as a house, holding out his hand.* | sweeps a row, 0.25 a turn |
-| The Stair-king (`stair_king`) | giants | person | 24 | 1650 | 25 | +16 | 19d8+19 | 13 | 15253 | 250–500 | *He has taken the toll here since before Helmstow.* | sweeps a row, 0.25 a turn |
+| The Stair-king (`stair_king`) | giants | person | 24 | 1490 | 25 | +16 | 18d8+18 | 13 | 15253 | 250–500 | *He has taken the toll here since before Helmstow.* | sweeps a row, 0.25 a turn; shrugs off paralysis |
 
 ## Ashfall (`ashfall`)
 
@@ -193,16 +193,16 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Ember Salamander (`ember_salamander`) | salamanders | beast | 24 | 454 | 23 | +14 | 4d8+3 | 16 | 953 | 0 | *Grown in the mountain's own fire.* | shrugs off fire; weak to cold |
 | Ash Husk (`ash_husk`) | skeleton | dead | 25 | 449 | 24 | +14 | 4d8+4 | 10 | 993 | 0 | *A man of ash, still holding his cup.* |  |
 | Cinder Drake (`cinder_drake`) | drakes | beast | 25 | 584 | 22 | +15 | 5d8+3 | 8 | 1987 | 0 | *The mountain has children.* | reaches the back row; breathes fire on a row, 0.25 a turn; shrugs off fire |
-| The Old Drake (`old_drake`) | drakes | beast | 26 | 1000 | 26 | +17 | 26d7+39 | 13 | 16533 | 0 | *The mountain's eldest, asleep on what is left of the town.* | breathes fire on a row, 0.25 a turn; shrugs off fire |
+| The Old Drake (`old_drake`) | drakes | beast | 26 | 1000 | 26 | +17 | 24d7+36 | 13 | 16533 | 0 | *The mountain's eldest, asleep on what is left of the town.* | breathes fire on a row, 0.25 a turn; shrugs off fire and paralysis |
 | Stoker (`stoker`) | machines | machine | 25 | 880 | 22 | +15 | 7d7+11 | 8 | 1987 | 0 | *It shovels nothing into nothing, and turns as you come.* | shrugs off fire |
 | Sentry (`sentry`) | machines | machine | 26 | 799 | 25 | +16 | 6d8+4 | 15 | 2067 | 0 | *It is looking for whoever touched the Stones.* | paralyses, 0.15 a hit |
-| The Sentinel (`sentinel`) | machines | machine | 26 | 2100 | 26 | +17 | 23d7+39 | 13 | 16533 | 0 | *The first thing up through the doors.* |  |
+| The Sentinel (`sentinel`) | machines | machine | 26 | 1890 | 26 | +17 | 22d7+37 | 13 | 16533 | 0 | *The first thing up through the doors.* | shrugs off paralysis |
 | Drakeling (`drakeling`) | drakes | beast | 26 | 268 | 23 | +14 | 2d8+4 | 12 | 517 | 0 | *The mountain's youngest. Its crust has not set.* | reaches the back row; shrugs off fire |
-| The Brood Drake (`brood_drake`) | drakes | beast | 27 | 1250 | 26 | +17 | 26d7+38 | 13 | 17173 | 0 | *It will not leave the eggs.* | reaches the back row; breathes fire on a row, 0.25 a turn; shrugs off fire |
+| The Brood Drake (`brood_drake`) | drakes | beast | 27 | 1000 | 26 | +17 | 27d7+40 | 13 | 17173 | 0 | *It will not leave the eggs.* | reaches the back row; breathes fire on a row, 0.25 a turn; shrugs off fire and paralysis |
 | Flue Walker (`flue_walker`) | machines | machine | 27 | 1130 | 25 | +16 | 7d8+6 | 15 | 2147 | 0 | *It walks the corridor to its end, and back.* | paralyses, 0.15 a hit; shrugs off fire |
 | Deep Knocker (`deep_knocker`) | knockers | machine | 28 | 660 | 27 | +16 | 8d8+4 | 8 | 1484 | 0 | *Still knocking, on a wall that has never cracked.* |  |
 | Inspector (`inspector`) | knockers | machine | 28 | 408 | 25 | +16 | 5d7+8 | 11 | 1113 | 0 | *It holds its light to the wall, and then to you.* | calls 3 Deep Knockers, 0.5 a turn |
-| The Grave Drake (`grave_drake`) | drakes | beast | 32 | 2080 | 29 | +20 | 30d8+32 | 13 | 20373 | 0 | *Asleep on a warlord's grave, and the grave is warm.* | breathes fire on a row, 0.25 a turn; shrugs off fire |
+| The Grave Drake (`grave_drake`) | drakes | beast | 32 | 1660 | 29 | +20 | 29d8+31 | 13 | 20373 | 0 | *Asleep on a warlord's grave, and the grave is warm.* | breathes fire on a row, 0.25 a turn; shrugs off fire and paralysis |
 
 ## The Glasswold (`glasswold`)
 
@@ -212,7 +212,7 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Wold Lion (`wold_lion`) | cats | beast | 26 | 456 | 24 | +15 | 4d8+3 | 15 | 1033 | 0 | *Tawny as the grass, and seen only when it moves.* |  |
 | Glass Scorpion (`glass_scorpion`) | spider | beast | 26 | 428 | 24 | +15 | 4d8+3 | 12 | 1033 | 0 | *Its sting is glass, and so is its shell.* | poisons, 0.35 a hit |
 | Basilisk (`basilisk`) | salamanders | beast | 27 | 461 | 25 | +15 | 6d8+4 | 12 | 1073 | 0 | *Don't meet its eyes.* | reaches the back row; turns to stone, 0.15 a hit |
-| The Grey Lion (`grey_lion`) | cats | beast | 28 | 3000 | 27 | +18 | 28d8+28 | 13 | 17813 | 0 | *Old, scarred, and king of all of this.* |  |
+| The Grey Lion (`grey_lion`) | cats | beast | 28 | 2400 | 27 | +18 | 28d8+28 | 13 | 17813 | 0 | *Old, scarred, and king of all of this.* | shrugs off paralysis |
 | Glass Walker (`glass_walker`) | glasswalkers | machine | 27 | 1130 | 25 | +16 | 7d8+6 | 15 | 2147 | 0 | *Something walking out of the Glass, and it has walked a long way.* | paralyses, 0.15 a hit |
 | The Foal-taker (`foal_taker`) | birds | beast | 32 | 2320 | 29 | +23 | 27d8+31 | 13 | 20373 | 0 | *When its shadow crosses the herd, the herd runs.* | reaches the back row; shrugs off paralysis |
 
@@ -228,9 +228,9 @@ Blow is a hit's dice; gold is what each drops. What it does is the def's own: it
 | Ashen Rearguard (`hand_rearguard`) | cultist | person | 30 | 820 | 28 | +17 | 6d8+9 | 8 | 1591 | 0 | *The last of the Hand still standing, and standing in the way.* | never breaks |
 | Grey Hand (`grey_hand`) | cultist | person | 31 | 1218 | 27 | +18 | 7d8+10 | 15 | 2467 | 0 | *Hands the colour of ash, to the shoulder.* | paralyses, 0.15 a hit; never breaks |
 | Core Sentry (`core_sentry`) | machines | machine | 31 | 300 | 27 | +17 | 4d7+8 | 11 | 1233 | 0 | *The core's own, and it takes orders from the ring.* | leaves once its leaders fall |
-| Lord Vask (`vask`) | cultist | person | 32 | 1850 | 29 | +20 | 35d8+38 | 13 | 20373 | 0 | *A tall man with a quiet voice, and the Queen's ring on his finger.* | calls a Core Sentry, every turn; never breaks |
+| Lord Vask (`vask`) | cultist | person | 32 | 1850 | 29 | +20 | 26d8+28 | 13 | 20373 | 0 | *A tall man with a quiet voice, and the Queen's ring on his finger.* | calls a Core Sentry, every turn; shrugs off paralysis; never breaks |
 | Deep Crawler (`deep_crawler`) | crawlers | machine | 31 | 1559 | 25 | +18 | 8d8+10 | 8 | 2467 | 0 | *It comes down from above, on too many legs.* | reaches the back row |
-| The Catcher (`catcher`) | crawlers | machine | 31 | 2280 | 28 | +19 | 29d8+33 | 13 | 19733 | 0 | *It caught the Hand on these stairs.* | reaches the back row; paralyses, 0.2 a hit |
+| The Catcher (`catcher`) | crawlers | machine | 31 | 1820 | 28 | +19 | 26d8+29 | 13 | 19733 | 0 | *It caught the Hand on these stairs.* | reaches the back row; paralyses, 0.2 a hit; shrugs off paralysis |
 
 ## The families
 
