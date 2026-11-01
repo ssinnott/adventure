@@ -2,9 +2,10 @@
 // suite holds. Frenzy has it rage for three rounds whatever its wounds, its blows the harder and its
 // stamina the faster; Cleave is a blow at each foe of the front rank, one each and no more; War Cry has a
 // group that breaks break with half of it down, and the fled pay nothing; Deathless keeps it on its feet
-// under 0 hit points for three rounds, to its death line, and then it falls. Off, each is refused with
-// nothing drawn; on and none spent, a company with a barbarian plays as off; and the bots spend on each
-// where the barbarian's policy finds it pays, never on one barred.
+// under 0 hit points for three rounds, to its death line, and then it falls. On in play (#1117); off, as
+// a fight's `feats: false` asks, each is refused with nothing drawn; on and none spent, a company with a
+// barbarian plays as off; and the bots spend on each where the barbarian's policy finds it pays, never
+// on one barred.
 import { makeRng } from '../../src/lib/engine/rng.ts';
 import type { RngInstance } from '../../src/lib/engine/rng.ts';
 import { createCharacter, createParty, CLASSES, RAGE_DMG, deathAt, isDown, hasCondition } from '../../src/game/party.ts';
@@ -91,8 +92,8 @@ export function feats_barbarian(): void {
 }
 
 function off(): void {
-  // Off in play: each feat refused with nothing drawn, said or marked, and the bots try none.
-  const p = createParty([member(B, 23, true)]), { f, rng } = fight(p, [[STRAW]], 1, {});
+  // Off, as a fight's `feats: false` asks: each feat refused with nothing drawn, said or marked, and the bots try none.
+  const p = createParty([member(B, 23, true)]), { f, rng } = fight(p, [[STRAW]], 1, { feats: false });
   until(f, p, rng, 0);
   const was = f.log.length, drawn = rng.draws(), refused = BARB.every((x) => !partyAct(f, p, rng, feat(x.id)));
   ok(refused && f.log.length === was && rng.draws() === drawn && f.frenzy === undefined && f.deathless === undefined && f.cried === undefined && featFor(f, p, 0, 0) === undefined,
@@ -108,7 +109,7 @@ function off(): void {
       for (let n = 0; n < 400 && x.outcome === 'ongoing'; n++) { const t = currentTurn(x, q, r); if (!t) break; if (t.side === 'monster') monsterAct(x, q, r); else botTurn(x, q, r, t.i); }
       return { log: x.log.join('\n'), draws: r.draws() };
     };
-    const a = play({}), b = play({ feats: true });
+    const a = play({ feats: false }), b = play({});
     cases++;
     if (a.log === b.log && a.draws === b.draws) same++;
     if (/ (breaks? and runs?|bolts?)\./.test(a.log)) fled++;
