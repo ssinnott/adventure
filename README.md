@@ -123,7 +123,7 @@ issue for it.
 npm install
 npx playwright install chromium   # once, for the smoke test (the session containers have it already)
 npm run dev        # http://localhost:8080/ — .ts served through esbuild per request, no build step
-npm run build      # dist/index.html, a single self-contained file
+npm run build      # dist/index.html and dist/wiki.html, each a single self-contained file
 npm run check      # typecheck + Node tests + headless Chromium smoke test
 ```
 
@@ -146,6 +146,18 @@ tests, `npm run build`, then publish `dist/` to GitHub Pages at
 <https://ssinnott.github.io/adventure/>. Pages must be set to deploy from **GitHub Actions**
 (Settings → Pages → Source); the workflow enables that on its first run if it can.
 
+## The wiki
+
+The wiki, `wiki.html`, is published beside the game at
+<https://ssinnott.github.io/adventure/wiki.html> (and by `npm run dev` too): the
+races, the classes with their traits, prestiges and feats, every pairing's first numbers and a
+bestiary of every monster by area in road order. Its tables are read from the game's own
+(`src/app/wiki/pages.ts`) and its pictures drawn by the game's own painters, the portraits and the
+monsters as the fight draws them (`src/app/wiki/main.ts`), so nothing in it is written by hand and
+it cannot drift. The `wiki` suite holds it to the tables, an entry to every race, class, trait,
+prestige, feat, kind and monster with their numbers, and the smoke's `wiki` part opens it and checks
+every picture paints.
+
 Every pull request runs [.github/workflows/checks.yml](.github/workflows/checks.yml): the typecheck,
 the tests, the smoke test and the smoke's crack sweep, in jobs side by side that each end inside
 three minutes (#848; docs/SYSTEMS.md names them). Main has no branch protection, by the owner's
@@ -157,7 +169,7 @@ only where the plan sweeps no map.
 
 ```
 src/main.ts        boot: canvas, input, loop
-src/app/           game.ts, the Game (the screen stack, save and load, attract mode); input.ts, keyboard -> queued actions (plus a text mode for names); pilot/, which plays the game for watching
+src/app/           game.ts, the Game (the screen stack, save and load, attract mode); input.ts, keyboard -> queued actions (plus a text mode for names); pilot/, which plays the game for watching; wiki/, the wiki's page
 src/game/          the model: map, outdoors, world, calendar, weather, party, people, guilds, items, spells, monsters, combat, quests, save
 src/content/       the content, in TypeScript: index.ts lists the areas in road order and merges their tables; guilds.ts the guilds
 src/content/areas/ one folder per area: its maps, monsters, items, chapter of the one quest, side quests, guild quests, climate and look (docs/areas/ has each one's doc)
