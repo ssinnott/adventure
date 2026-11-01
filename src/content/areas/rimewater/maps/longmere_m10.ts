@@ -76,9 +76,9 @@ export const LONGMERE_M10: MapDef<'longmere_m10'> = {
   ],
   secrets: [{ x: 17, y: 21, hint: 'm10_runners' }],
   encounters: [
-    // Ice pike under the ice off the fishers' holes, the nearer group; and a pair of ice bears in the
+    // Three ice pike under the ice off the fishers' holes (#1117), the nearer group; and a pair of ice bears in the
     // pines past the burn, the box's hardest, come down off the glacier.
-    { id: 'm10_pike', x: 8, y: 9, monsters: ['ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice' },
+    { id: 'm10_pike', x: 8, y: 9, monsters: ['ice_pike', 'ice_pike', 'ice_pike'], aware: 3, respawn: RESPAWN.day, under: 'ice' },
     { id: 'm10_bears', x: 27, y: 25, monsters: ['ice_bear', 'ice_bear'], aware: 3, respawn: RESPAWN.twoDays },
   ],
 };
