@@ -593,7 +593,7 @@ points run down. The calibration:
   points and perks (#19), and with them its spell ranks, and it learns tiers 6 and 7 at 15 and 23
   (#20). It wears the ladder's gear, each act's short bow and sling beside its long bow (#1115): Act
   II's steps by 16, then the company steps at 17, 19, 21 and 22 (Act III), 25 (Cinderport's
-  armourer) and 27, its third prestige, and 28 (the Hand's steel), so each of those is a point of its own.
+  armourer), 27 (its third prestige) and 28 (the Hand's steel), so each of those is a point of its own.
 
 Hit points / average damage a hit, by role and level:
 

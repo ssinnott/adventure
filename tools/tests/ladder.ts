@@ -399,14 +399,18 @@ export function ladder(): void {
     return out;
   });
   ok(RANGED.length > 0 && !placed.length, `each ranged rung's short bow and sling is its long bow's area's, sold where the bow is sold and found where it is found there, cheaper and inside the area's window, and on the gate's ladder (#1117) (${RANGED.map((r) => `${r.level}: ${[...new Set(home(r.bows[0]) ? placesIn(home(r.bows[0])!, r.bows[0]) : [])].join(', ')}`).join('; ')})${placed.length ? ` (but ${placed.join('; ')})` : ''}`);
-  // And every box that gives a ranged rung's long bow, in any area, gives its short bow and sling: Wrackholm's
-  // E6 cache gives the Long Bow +1. A drop is no box: a draw on the fight's generator, it waits for #1117.
+  // And every box that gives a ranged rung's long bow, in any area, gives its short bow and sling, and so does every
+  // monster that drops one (#1117): Wrackholm's E6 cache gives the Long Bow +1, and its Wrack Bowman drops the Long Bow.
   const paired: string[] = [], unpaired: string[] = [];
   for (const r of RANGED) for (const m of MAP_DEFS) for (const f of m.features ?? []) {
     const got = giftOf(f)?.items ?? [];
     if (got.includes(r.bows[0])) (r.bows.slice(1).every((id) => got.includes(id)) ? paired : unpaired).push(`${r.level}: ${spentId(f) ?? f.kind} on ${m.id}`);
   }
-  ok(paired.length > 0 && !unpaired.length, `every box that gives a ranged rung's long bow, in its area or another, gives its short bow and sling (${paired.join(', ')})${unpaired.length ? ` (but not ${unpaired.join(', ')})` : ''}`);
+  for (const r of RANGED) for (const d of Object.values(MONSTERS)) {
+    const got = (d.drops ?? []).map((x) => x.item);
+    if (got.includes(r.bows[0])) (r.bows.slice(1).every((id) => got.includes(id)) ? paired : unpaired).push(`${r.level}: ${d.id}'s drop`);
+  }
+  ok(paired.length > 0 && !unpaired.length, `every box and every drop that gives a ranged rung's long bow, in its area or another, gives its short bow and sling (${paired.join(', ')})${unpaired.length ? ` (but not ${unpaired.join(', ')})` : ''}`);
   // And every rung of the ladder that holds a long bow has its ranged row on its area, led by that bow:
   // an act that forgets its row fails here.
   const rowless = onAreas.flatMap(([area, at, ids]) => ids.filter((id) => longBows.some((d) => d.id === id) && CHECKS.get(area)?.ranged?.[at]?.[0] !== id).map((id) => `${at}: ${id} on ${area}`));
