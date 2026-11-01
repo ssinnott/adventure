@@ -153,7 +153,7 @@ Sentinel, two of them new families, the drakes and the heavy machines. The sentr
 the Stone is lit (`after`). Meridian Camp's are #22's; Blackdraw places its flue walker, inspector
 and deep knocker again at its own band, and Grim's Howe the Grave Drake alone, a new kind of the
 drakes (MONSTERS §13). For the class changes (#1117) E11's, H11's, H12's and G12's group became two
-drakelings and a flue walker and F9's, G9's and H9's a cinder drake and a flue walker; the deep knocker took
+drakelings and a flue walker and F9's, G9's and H9's two stokers; the deep knocker took
 660 hit points and 8d8+4, the armoured line's own move at 28. Its `novel` claims the drakes and the vines underfoot with G10, the heavy
 machines and the volcano with G11 and the springs with H10; the rest is on the road before it
 (`noveltyFaults`, `tools/tests/pillars.ts`).
@@ -166,20 +166,20 @@ machines and the volcano with G11 and the springs with H10; the rest is on the r
   checks). Meridian Camp's last level is outside its budget (3,003 xp a member and 1,200 gold), and
   the enclave and the lair are counted in no clear (4,186 xp a member and 1,200 gold).
 - **The gate** (`tools/tests/gate.ts`): at its maps' floors the area wins 97.5% of its 45 groups'
-  fights (`GATE.through`'s aim); two under, its groups pooled at 22, 6.71 fights to a rest, 67.1% of
+  fights (`GATE.through`'s aim); two under, its groups pooled at 22, 6.52 fights to a rest, 65.2% of
   the floor's 10. Old Cinder and the Ember Stone at 25 win 83.8% and 83.1%, their bosses deciding it:
   the Old Drake 64.8% at 25 and 100% at 27, the Sentinel 65.8% and 100%. The Brood Drake is won 55%
   at 26 and 99% at 28, the Grave Drake 66.5% at 30 and 91% at 32; the four are proof against a hold
   since the class changes (#1117). The corridors win 87.3% at 26 and
   every other map every fight at its floor; the three zones' roads are walked every time.
 - **Fights to a rest** (aim 9 to 11 at 24, a quarter more a level): H10 10.51, G10 11.23, F10 9.10,
-  F9, G9 and H9 8.93 and the undercroft 9.85 at 24; G11 9.03, the vents 10.78, E10 12.03 and F11
+  F9, G9 and H9 8.67 and the undercroft 9.85 at 24; G11 9.03, the vents 10.78, E10 12.03 and F11
   11.29 at 25, with the Ember Stone's 8.97, Old Cinder's 11.22 and E11's, H11's, H12's and G12's
   11.84; the corridors 9.28 at 26; the camp 10.84 and Blackdraw 11.97 at 27. The gate lists
-  twenty figures off their aim, inside their limits, since the class changes (#1117): G10,
+  nineteen figures off their aim, inside their limits, since the class changes (#1117): G10,
   F9, G9, H9, G11, E10, F11, the Ember Stone, the four drakelings' boxes, the corridors and
   Blackdraw by their fights, the corridors, Old Cinder and the Ember Stone by their floors' wins,
-  and H10, G10 and the area two under.
+  and H10 and G10 two under.
 - **Density** (`tools/tests/density.ts`): within 8 squares in the core, G10 97.3% and H10, G11 and
   F11 100%; within 12 in the country, E11 99.4% and H11 98.1% (their furthest squares 15), every
   other box 100%; the town and the dungeons 100% within 7.
@@ -220,8 +220,8 @@ of theirs is named here: the trading ground and Scaldwell are the coast's.
 - **Owed to no check:** its checks owe nothing (the Grave Drake, the last row, left with the lair,
   #836), and the curve, the gate, density and the ladder hold Ashfall with nothing owed; its lead is
   the curve's named exception (§8).
-- **Watched, not moved:** F9's, G9's and H9's 8.93 fights to a rest, under the aim of 9 since their
-  flue walker, and the drakelings' boxes' 11.84 sit past the aim, inside the limit; G11, the vents and the corridors
+- **Watched, not moved:** F9's, G9's and H9's 8.67 fights to a rest, under the aim of 9 since their
+  two stokers, and the drakelings' boxes' 11.84 sit past the aim, inside the limit; G11, the vents and the corridors
   end 83 to 91% of their floors' days in a fight broken off (#1117). What the owner finds by hand goes here; none yet.
 - **Meridian Camp** is #22's, its doc `docs/areas/meridian_camp.md`; its levels are Ashfall's maps.
 - **What is next:** nothing. The plan's briefs are all built, and a new box starts its brief there.
